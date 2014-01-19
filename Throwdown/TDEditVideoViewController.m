@@ -14,14 +14,16 @@
 
 
 @interface TDEditVideoViewController ()<SAVideoRangeSliderDelegate>
+
 @property (strong, nonatomic) SAVideoRangeSlider *slider;
-@property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 @property (strong, nonatomic) AVPlayer *player;
 @property (strong, nonatomic) NSURL *videoUrl;
 @property (strong, nonatomic) NSURL *tmpVideoUrl;
 @property (strong, nonatomic) AVAssetExportSession *exportSession;
 @property (nonatomic) CGFloat startTime;
 @property (nonatomic) CGFloat stopTime;
+@property (nonatomic) BOOL hasEdited;
+
 - (IBAction)playButton:(UIButton *)sender;
 - (IBAction)doneButton:(id)sender;
 
@@ -41,16 +43,14 @@
     [super viewWillAppear:animated];
     NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/WorkingMovieTemp.m4v"];
     self.tmpVideoUrl = [NSURL fileURLWithPath:pathToMovie];
+    [self deleteTmpFile];
+    self.hasEdited = NO;
 }
 
 - (void) editVideoAt:(NSString *)videoPath {
     self.videoUrl = [NSURL fileURLWithPath:videoPath];
 
     self.slider = [[SAVideoRangeSlider alloc] initWithFrame:CGRectMake(0, 20, 320, 50) videoUrl:self.videoUrl];
-    self.slider.bubleText.enabled = NO;
-//    self.slider.bubleText.font = [UIFont systemFontOfSize:12];
-//    [self.slider setPopoverBubbleSize:120 height:60];
-
     self.slider.topBorder.backgroundColor = [UIColor colorWithRed: 0.996 green: 0.951 blue: 0.502 alpha: 1];
     self.slider.bottomBorder.backgroundColor = [UIColor colorWithRed: 0.992 green: 0.902 blue: 0.004 alpha: 1];
     self.slider.delegate = self;
@@ -69,6 +69,7 @@
 
 - (void)trimVideo {
     [self deleteTmpFile];
+    self.hasEdited = YES;
 
     AVAsset *anAsset = [[AVURLAsset alloc] initWithURL:self.videoUrl options:nil];
     NSArray *compatiblePresets = [AVAssetExportSession exportPresetsCompatibleWithAsset:anAsset];
@@ -104,8 +105,10 @@
 }
 
 -(void)playMovie {
-    AVPlayerItem *item = [[AVPlayerItem alloc] initWithURL:self.tmpVideoUrl];
-    [self.player replaceCurrentItemWithPlayerItem:item];
+    if (self.hasEdited) {
+        AVPlayerItem *item = [[AVPlayerItem alloc] initWithURL:self.tmpVideoUrl];
+        [self.player replaceCurrentItemWithPlayerItem:item];
+    }
     [self.player play];
 }
 
@@ -132,12 +135,9 @@
     NSError *err;
     if (exist) {
         [fm removeItemAtURL:self.tmpVideoUrl error:&err];
-        NSLog(@"file deleted");
         if (err) {
             NSLog(@"file remove error, %@", err.localizedDescription );
         }
-    } else {
-        NSLog(@"no file by that name");
     }
 }
 
@@ -146,7 +146,10 @@
 {
     self.startTime = leftPosition;
     self.stopTime = rightPosition;
-    self.timeLabel.text = [NSString stringWithFormat:@"%f - %f", leftPosition, rightPosition];
+}
+
+- (void)videoRange:(SAVideoRangeSlider *)videoRange didGestureStateEndedLeftPosition:(CGFloat)leftPosition rightPosition:(CGFloat)rightPosition
+{
     [self trimVideo];
 }
 
