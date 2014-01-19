@@ -210,8 +210,8 @@
         
     }
     
-    _popoverBubble.alpha = 1;
-    
+//    _popoverBubble.alpha = 1;
+
     [self setTimeLabel];
     
     if (gesture.state == UIGestureRecognizerStateEnded){
@@ -254,8 +254,8 @@
         
     }
     
-    _popoverBubble.alpha = 1;
-    
+//    _popoverBubble.alpha = 1;
+
     [self setTimeLabel];
     
     
@@ -289,8 +289,8 @@
         
     }
     
-    _popoverBubble.alpha = 1;
-    
+//    _popoverBubble.alpha = 1;
+
     [self setTimeLabel];
     
     if (gesture.state == UIGestureRecognizerStateEnded){
