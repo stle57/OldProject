@@ -23,6 +23,11 @@
 		A11E05051888CB79002F981A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A11E05031888CB79002F981A /* InfoPlist.strings */; };
 		A11E05071888CB79002F981A /* ThrowdownTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A11E05061888CB79002F981A /* ThrowdownTests.m */; };
 		A11E05121889293C002F981A /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11E05111889293C002F981A /* AssetsLibrary.framework */; };
+		A182D8261889E8D900F794A5 /* TDEditVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A182D8251889E8D900F794A5 /* TDEditVideoViewController.m */; };
+		A182D830188B60CD00F794A5 /* SAResizibleBubble.m in Sources */ = {isa = PBXBuildFile; fileRef = A182D829188B60CD00F794A5 /* SAResizibleBubble.m */; };
+		A182D831188B60CD00F794A5 /* SASliderLeft.m in Sources */ = {isa = PBXBuildFile; fileRef = A182D82B188B60CD00F794A5 /* SASliderLeft.m */; };
+		A182D832188B60CD00F794A5 /* SASliderRight.m in Sources */ = {isa = PBXBuildFile; fileRef = A182D82D188B60CD00F794A5 /* SASliderRight.m */; };
+		A182D833188B60CD00F794A5 /* SAVideoRangeSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = A182D82F188B60CD00F794A5 /* SAVideoRangeSlider.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +61,16 @@
 		A11E05041888CB79002F981A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A11E05061888CB79002F981A /* ThrowdownTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ThrowdownTests.m; sourceTree = "<group>"; };
 		A11E05111889293C002F981A /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		A182D8241889E8D900F794A5 /* TDEditVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDEditVideoViewController.h; sourceTree = "<group>"; };
+		A182D8251889E8D900F794A5 /* TDEditVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDEditVideoViewController.m; sourceTree = "<group>"; };
+		A182D828188B60CD00F794A5 /* SAResizibleBubble.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SAResizibleBubble.h; sourceTree = "<group>"; };
+		A182D829188B60CD00F794A5 /* SAResizibleBubble.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SAResizibleBubble.m; sourceTree = "<group>"; };
+		A182D82A188B60CD00F794A5 /* SASliderLeft.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SASliderLeft.h; sourceTree = "<group>"; };
+		A182D82B188B60CD00F794A5 /* SASliderLeft.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SASliderLeft.m; sourceTree = "<group>"; };
+		A182D82C188B60CD00F794A5 /* SASliderRight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SASliderRight.h; sourceTree = "<group>"; };
+		A182D82D188B60CD00F794A5 /* SASliderRight.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SASliderRight.m; sourceTree = "<group>"; };
+		A182D82E188B60CD00F794A5 /* SAVideoRangeSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SAVideoRangeSlider.h; sourceTree = "<group>"; };
+		A182D82F188B60CD00F794A5 /* SAVideoRangeSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SAVideoRangeSlider.m; sourceTree = "<group>"; };
 		BC8AD58EF48B41289E5CE49E /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 		E657ABE418B84EA68554F855 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -109,6 +124,7 @@
 		A11E04DA1888CB79002F981A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A182D827188B60CD00F794A5 /* SAVideoRangeSlider */,
 				A11E05111889293C002F981A /* AssetsLibrary.framework */,
 				A11E04DB1888CB79002F981A /* Foundation.framework */,
 				A11E04DD1888CB79002F981A /* CoreGraphics.framework */,
@@ -125,6 +141,8 @@
 				A11E04EA1888CB79002F981A /* TDAppDelegate.h */,
 				A11E04EB1888CB79002F981A /* TDAppDelegate.m */,
 				A11E04ED1888CB79002F981A /* Main.storyboard */,
+				A182D8241889E8D900F794A5 /* TDEditVideoViewController.h */,
+				A182D8251889E8D900F794A5 /* TDEditVideoViewController.m */,
 				A11E04F01888CB79002F981A /* TDViewController.h */,
 				A11E04F11888CB79002F981A /* TDViewController.m */,
 				A11E04F31888CB79002F981A /* Images.xcassets */,
@@ -160,6 +178,21 @@
 				A11E05031888CB79002F981A /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		A182D827188B60CD00F794A5 /* SAVideoRangeSlider */ = {
+			isa = PBXGroup;
+			children = (
+				A182D828188B60CD00F794A5 /* SAResizibleBubble.h */,
+				A182D829188B60CD00F794A5 /* SAResizibleBubble.m */,
+				A182D82A188B60CD00F794A5 /* SASliderLeft.h */,
+				A182D82B188B60CD00F794A5 /* SASliderLeft.m */,
+				A182D82C188B60CD00F794A5 /* SASliderRight.h */,
+				A182D82D188B60CD00F794A5 /* SASliderRight.m */,
+				A182D82E188B60CD00F794A5 /* SAVideoRangeSlider.h */,
+				A182D82F188B60CD00F794A5 /* SAVideoRangeSlider.m */,
+			);
+			path = SAVideoRangeSlider;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -297,7 +330,12 @@
 			files = (
 				A11E04F21888CB79002F981A /* TDViewController.m in Sources */,
 				A11E04EC1888CB79002F981A /* TDAppDelegate.m in Sources */,
+				A182D833188B60CD00F794A5 /* SAVideoRangeSlider.m in Sources */,
+				A182D832188B60CD00F794A5 /* SASliderRight.m in Sources */,
+				A182D830188B60CD00F794A5 /* SAResizibleBubble.m in Sources */,
+				A182D8261889E8D900F794A5 /* TDEditVideoViewController.m in Sources */,
 				A11E04E81888CB79002F981A /* main.m in Sources */,
+				A182D831188B60CD00F794A5 /* SASliderLeft.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

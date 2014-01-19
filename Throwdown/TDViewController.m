@@ -7,8 +7,8 @@
 //
 
 #import "TDViewController.h"
+#import "TDEditVideoViewController.h"
 #import "GPUImage.h"
-#import "AssetsLibrary/ALAssetsLibrary.h"
 
 @interface TDViewController ()
 @property (weak, nonatomic) IBOutlet UIButton *button;
@@ -36,42 +36,48 @@
     self.videoCamera.outputImageOrientation = UIInterfaceOrientationPortrait;
 
     self.filter = [[GPUImageCropFilter alloc] initWithCropRegion:CGRectMake(0.f, 0.125f, 1.f, .75f)];
-//    self.filter = [[GPUImageCropFilter alloc] initWithCropRegion:CGRectMake(0.125f, 0.f, 1.f, .75f)];
-//    self.filter = [[GPUImageCropFilter alloc] initWithCropRegion:CGRectMake(0.f, 0.f, 1.f, 1.f)];
     [self.filter addTarget:self.previewLayer];
 
     [self.videoCamera addTarget:self.filter];
     [self.videoCamera startCameraCapture];
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
+//- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+//
+//    UITouch *touch = [touches anyObject];
+//    CGPoint touchPoint = [touch locationInView:self.view];
+//
+//    if([videoCamera.inputCamera isFocusPointOfInterestSupported]&&[videoCamera.inputCamera isFocusModeSupported:AVCaptureFocusModeAutoFocus])
+//    {
+//
+//        if([videoCamera.inputCamera lockForConfiguration :nil])
+//        {
+//            [videoCamera.inputCamera setFocusPointOfInterest :touchPoint];
+//            [videoCamera.inputCamera setFocusMode :AVCaptureFocusModeLocked];
+//
+//            if([videoCamera.inputCamera isExposurePointOfInterestSupported])
+//            {
+//                [videoCamera.inputCamera setExposurePointOfInterest:touchPoint];
+//                [videoCamera.inputCamera setExposureMode:AVCaptureExposureModeLocked];
+//            }
+//            [videoCamera.inputCamera unlockForConfiguration];
+//        }
+//    }
+//    
+//}
 
 - (void)stopRecording {
     [self.button setTitle:@"Start" forState:UIControlStateNormal];
     [self.button setBackgroundColor:[UIColor greenColor]];
-//    self.button.enabled = NO; // Avoids any future clicking before moving into edit mode
+    self.button.enabled = NO; // Avoids any future clicking before moving into edit mode
 
     [self.filter removeTarget:self.movieWriter];
     self.videoCamera.audioEncodingTarget = nil;
     [self.movieWriter finishRecording];
 
-    NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/WorkingMovie.m4v"];
-    ALAssetsLibrary* library = [[ALAssetsLibrary alloc] init];
-    [library writeVideoAtPathToSavedPhotosAlbum:[NSURL URLWithString:pathToMovie] completionBlock:^(NSURL *assetURL, NSError *error1) {
-        self.movieWriter = nil;
-        NSLog(@"Movie completed");
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Saved!"
-                                                        message: @"Saved to the camera roll."
-                                                       delegate:self
-                                              cancelButtonTitle:nil
-                                              otherButtonTitles:@"OK", nil];
-        [alert show];
-    }];
 
+    [self performSegueWithIdentifier:@"editVideoView" sender:nil];
+    self.movieWriter = nil;
 
     //            [videoCamera.inputCamera lockForConfiguration:nil];
     //            [videoCamera.inputCamera setTorchMode:AVCaptureTorchModeOff];
@@ -85,7 +91,6 @@
 
     self.movieWriter = [[GPUImageMovieWriter alloc] initWithMovieURL:movieURL size:CGSizeMake(640.0, 640.0)];
     [self.filter addTarget:self.movieWriter];
-
     [self.button setTitle:@"Stop" forState:UIControlStateNormal];
     [self.button setBackgroundColor:[UIColor redColor]];
 
@@ -108,6 +113,15 @@
     } else {
         self.isRecording = YES;
         [self startRecording];
+    }
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([[segue identifier] isEqualToString:@"editVideoView"]) {
+        TDEditVideoViewController *vc = [segue destinationViewController];
+        NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/WorkingMovie.m4v"];
+        [vc editVideoAt:pathToMovie];
     }
 }
 
