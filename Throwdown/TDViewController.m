@@ -71,10 +71,10 @@
     [self.button setBackgroundColor:[UIColor greenColor]];
     self.button.enabled = NO; // Avoids any future clicking before moving into edit mode
 
-    [self.filter removeTarget:self.movieWriter];
     self.videoCamera.audioEncodingTarget = nil;
+    [self.filter removeTarget:self.movieWriter];
     [self.movieWriter finishRecording];
-
+    [self.videoCamera stopCameraCapture];
 
     [self performSegueWithIdentifier:@"editVideoView" sender:nil];
     self.movieWriter = nil;
