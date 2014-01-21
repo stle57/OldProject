@@ -14,6 +14,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>Pods-NMSSH.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -22,17 +27,22 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>4060D40A1F7E423CB5190B9B</key>
+		<key>1749E981D583453EADD136E5</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>B1B8B1F7556B429BB7CD5F82</key>
+		<key>32BC0C52C91D4C76B374CECC</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>D789B4FE987349AEADA4FD6E</key>
+		<key>4939088678A74C898DA65C3B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>CBEAF6B1E559431283F6CD55</key>
 		<dict>
 			<key>primary</key>
 			<true/>
