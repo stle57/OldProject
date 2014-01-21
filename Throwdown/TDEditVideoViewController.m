@@ -24,8 +24,9 @@
 @property (nonatomic) CGFloat stopTime;
 @property (nonatomic) BOOL hasEdited;
 
-- (IBAction)playButton:(UIButton *)sender;
-- (IBAction)doneButton:(id)sender;
+- (IBAction)playButtonPressed:(UIButton *)sender;
+- (IBAction)doneButtonPressed:(UIButton *)sender;
+- (IBAction)cancelButtonPressed:(UIButton *)sender;
 
 @end
 
@@ -113,11 +114,11 @@
     [self.player play];
 }
 
-- (IBAction)playButton:(UIButton *)sender {
+- (IBAction)playButtonPressed:(UIButton *)sender {
     [self playMovie];
 }
 
-- (IBAction)doneButton:(id)sender {
+- (IBAction)doneButtonPressed:(UIButton *)sender {
     ALAssetsLibrary* library = [[ALAssetsLibrary alloc] init];
     [library writeVideoAtPathToSavedPhotosAlbum:self.tmpVideoUrl completionBlock:^(NSURL *assetURL, NSError *error1) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Saved!"
@@ -127,6 +128,10 @@
                                               otherButtonTitles:@"OK", nil];
         [alert show];
     }];
+}
+
+- (IBAction)cancelButtonPressed:(UIButton *)sender {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark - Other

@@ -28,6 +28,8 @@
 		A182D831188B60CD00F794A5 /* SASliderLeft.m in Sources */ = {isa = PBXBuildFile; fileRef = A182D82B188B60CD00F794A5 /* SASliderLeft.m */; };
 		A182D832188B60CD00F794A5 /* SASliderRight.m in Sources */ = {isa = PBXBuildFile; fileRef = A182D82D188B60CD00F794A5 /* SASliderRight.m */; };
 		A182D833188B60CD00F794A5 /* SAVideoRangeSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = A182D82F188B60CD00F794A5 /* SAVideoRangeSlider.m */; };
+		A182D839188F2C2D00F794A5 /* TDHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A182D838188F2C2D00F794A5 /* TDHomeViewController.m */; };
+		A182D83A188F2C2D00F794A5 /* TDHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A182D838188F2C2D00F794A5 /* TDHomeViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +73,8 @@
 		A182D82D188B60CD00F794A5 /* SASliderRight.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SASliderRight.m; sourceTree = "<group>"; };
 		A182D82E188B60CD00F794A5 /* SAVideoRangeSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SAVideoRangeSlider.h; sourceTree = "<group>"; };
 		A182D82F188B60CD00F794A5 /* SAVideoRangeSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SAVideoRangeSlider.m; sourceTree = "<group>"; };
+		A182D837188F2C2D00F794A5 /* TDHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDHomeViewController.h; sourceTree = "<group>"; };
+		A182D838188F2C2D00F794A5 /* TDHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDHomeViewController.m; sourceTree = "<group>"; };
 		BC8AD58EF48B41289E5CE49E /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 		E657ABE418B84EA68554F855 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -138,13 +142,10 @@
 		A11E04E11888CB79002F981A /* Throwdown */ = {
 			isa = PBXGroup;
 			children = (
+				A182D836188F2C0100F794A5 /* Controllers */,
 				A11E04EA1888CB79002F981A /* TDAppDelegate.h */,
 				A11E04EB1888CB79002F981A /* TDAppDelegate.m */,
 				A11E04ED1888CB79002F981A /* Main.storyboard */,
-				A182D8241889E8D900F794A5 /* TDEditVideoViewController.h */,
-				A182D8251889E8D900F794A5 /* TDEditVideoViewController.m */,
-				A11E04F01888CB79002F981A /* TDViewController.h */,
-				A11E04F11888CB79002F981A /* TDViewController.m */,
 				A11E04F31888CB79002F981A /* Images.xcassets */,
 				A11E04E21888CB79002F981A /* Supporting Files */,
 			);
@@ -193,6 +194,19 @@
 				A182D82F188B60CD00F794A5 /* SAVideoRangeSlider.m */,
 			);
 			path = SAVideoRangeSlider;
+			sourceTree = "<group>";
+		};
+		A182D836188F2C0100F794A5 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				A182D8241889E8D900F794A5 /* TDEditVideoViewController.h */,
+				A182D8251889E8D900F794A5 /* TDEditVideoViewController.m */,
+				A11E04F01888CB79002F981A /* TDViewController.h */,
+				A11E04F11888CB79002F981A /* TDViewController.m */,
+				A182D837188F2C2D00F794A5 /* TDHomeViewController.h */,
+				A182D838188F2C2D00F794A5 /* TDHomeViewController.m */,
+			);
+			name = Controllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -328,6 +342,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A182D839188F2C2D00F794A5 /* TDHomeViewController.m in Sources */,
 				A11E04F21888CB79002F981A /* TDViewController.m in Sources */,
 				A11E04EC1888CB79002F981A /* TDAppDelegate.m in Sources */,
 				A182D833188B60CD00F794A5 /* SAVideoRangeSlider.m in Sources */,
@@ -344,6 +359,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A11E05071888CB79002F981A /* ThrowdownTests.m in Sources */,
+				A182D83A188F2C2D00F794A5 /* TDHomeViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

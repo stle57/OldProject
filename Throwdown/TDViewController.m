@@ -12,7 +12,6 @@
 
 @interface TDViewController ()
 @property (weak, nonatomic) IBOutlet UIButton *button;
-- (IBAction)recordButton:(id)sender;
 @property (weak, nonatomic) IBOutlet GPUImageView *previewLayer;
 
 @property GPUImageCropFilter<GPUImageInput> *filter;
@@ -20,6 +19,8 @@
 @property GPUImageVideoCamera *videoCamera;
 @property BOOL isRecording;
 
+- (IBAction)recordButtonPressed:(UIButton *)sender;
+- (IBAction)closeButtonPressed:(UIButton *)sender;
 @end
 
 @implementation TDViewController
@@ -106,7 +107,7 @@
 //    });
 }
 
-- (IBAction)recordButton:(UIButton *)button {
+- (IBAction)recordButtonPressed:(UIButton *)button {
     if (self.isRecording) {
         self.isRecording = NO;
         [self stopRecording];
@@ -114,6 +115,10 @@
         self.isRecording = YES;
         [self startRecording];
     }
+}
+
+- (IBAction)closeButtonPressed:(UIButton *)button {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
