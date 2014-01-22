@@ -42,4 +42,9 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)returnToRoot {
+    [self dismissViewControllerAnimated:NO completion:nil];
+    [self.navigationController popToRootViewControllerAnimated:YES];
+}
+
 @end

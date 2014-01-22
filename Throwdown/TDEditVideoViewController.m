@@ -7,13 +7,14 @@
 //
 
 #import "TDEditVideoViewController.h"
+#import "TDHomeViewController.h"
 #import "SAVideoRangeSlider.h"
 #import <QuartzCore/QuartzCore.h>
 #import "AVFoundation/AVFoundation.h"
 #import "AssetsLibrary/ALAssetsLibrary.h"
 
 
-@interface TDEditVideoViewController ()<SAVideoRangeSliderDelegate>
+@interface TDEditVideoViewController ()<SAVideoRangeSliderDelegate, UIAlertViewDelegate>
 
 @property (strong, nonatomic) SAVideoRangeSlider *slider;
 @property (strong, nonatomic) AVPlayer *player;
@@ -139,6 +140,12 @@
                                               otherButtonTitles:@"OK", nil];
         [alert show];
     }];
+}
+
+- (void)alertView:(UIAlertView *)theAlert clickedButtonAtIndex:(NSInteger)buttonIndex {
+    UINavigationController *nav = (UINavigationController*) self.view.window.rootViewController;
+    TDHomeViewController *root = (TDHomeViewController *)[nav.viewControllers objectAtIndex:0];
+    [root performSelector:@selector(returnToRoot)];
 }
 
 - (IBAction)cancelButtonPressed:(UIButton *)sender {
