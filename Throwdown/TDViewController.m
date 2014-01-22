@@ -28,6 +28,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self setNeedsStatusBarAppearanceUpdate];
 
     self.isRecording = NO;
     self.videoCamera = [[GPUImageVideoCamera alloc]
@@ -41,6 +42,10 @@
 
     [self.videoCamera addTarget:self.filter];
     [self.videoCamera startCameraCapture];
+}
+
+-(UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
 }
 
 //- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {

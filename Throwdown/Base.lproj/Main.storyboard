@@ -9,8 +9,8 @@
             <objects>
                 <viewController id="vXZ-lx-hvc" customClass="TDViewController" sceneMemberID="viewController">
                     <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="9Rn-MU-f4N"/>
-                        <viewControllerLayoutGuide type="bottom" id="Oex-iU-AB8"/>
+                        <viewControllerLayoutGuide type="top" id="JTw-kB-bCs"/>
+                        <viewControllerLayoutGuide type="bottom" id="FUc-ni-fsf"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
@@ -52,6 +52,7 @@
                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <navigationItem key="navigationItem" id="EPz-aL-cnP"/>
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
                         <outlet property="button" destination="1Jc-mN-hx2" id="1ms-cv-hpl"/>
@@ -68,8 +69,8 @@
             <objects>
                 <viewController id="mmN-3Z-6Sw" customClass="TDEditVideoViewController" sceneMemberID="viewController">
                     <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="dED-cy-jme"/>
-                        <viewControllerLayoutGuide type="bottom" id="LgV-VM-m88"/>
+                        <viewControllerLayoutGuide type="top" id="Kg3-Df-JyB"/>
+                        <viewControllerLayoutGuide type="bottom" id="TeT-df-d6A"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="G7b-98-X0g">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
@@ -139,8 +140,8 @@
             <objects>
                 <viewController id="y50-ZI-obS" customClass="TDHomeViewController" sceneMemberID="viewController">
                     <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="98h-LR-nCR"/>
-                        <viewControllerLayoutGuide type="bottom" id="LJT-rN-lCH"/>
+                        <viewControllerLayoutGuide type="top" id="qUU-Tg-oi2"/>
+                        <viewControllerLayoutGuide type="bottom" id="YIj-E8-Evs"/>
                     </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="kau-AR-TTK">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>

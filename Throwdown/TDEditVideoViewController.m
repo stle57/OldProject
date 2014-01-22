@@ -40,6 +40,16 @@
     return self;
 }
 
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    [self setNeedsStatusBarAppearanceUpdate];
+}
+
+-(UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
+}
+
 - (void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/WorkingMovieTemp.m4v"];
