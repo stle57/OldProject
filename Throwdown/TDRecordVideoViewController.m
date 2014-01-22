@@ -6,11 +6,11 @@
 //  Copyright (c) 2014 Throwdown. All rights reserved.
 //
 
-#import "TDViewController.h"
+#import "TDRecordVideoViewController.h"
 #import "TDEditVideoViewController.h"
 #import "GPUImage.h"
 
-@interface TDViewController ()
+@interface TDRecordVideoViewController ()
 @property (weak, nonatomic) IBOutlet UIButton *button;
 @property (weak, nonatomic) IBOutlet GPUImageView *previewLayer;
 
@@ -23,7 +23,7 @@
 - (IBAction)closeButtonPressed:(UIButton *)sender;
 @end
 
-@implementation TDViewController
+@implementation TDRecordVideoViewController
 
 - (void)viewDidLoad
 {

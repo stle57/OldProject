@@ -15,7 +15,7 @@
 		A11E04E81888CB79002F981A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A11E04E71888CB79002F981A /* main.m */; };
 		A11E04EC1888CB79002F981A /* TDAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A11E04EB1888CB79002F981A /* TDAppDelegate.m */; };
 		A11E04EF1888CB79002F981A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A11E04ED1888CB79002F981A /* Main.storyboard */; };
-		A11E04F21888CB79002F981A /* TDViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A11E04F11888CB79002F981A /* TDViewController.m */; };
+		A11E04F21888CB79002F981A /* TDRecordVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A11E04F11888CB79002F981A /* TDRecordVideoViewController.m */; };
 		A11E04F41888CB79002F981A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A11E04F31888CB79002F981A /* Images.xcassets */; };
 		A11E04FB1888CB79002F981A /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11E04FA1888CB79002F981A /* XCTest.framework */; };
 		A11E04FC1888CB79002F981A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11E04DB1888CB79002F981A /* Foundation.framework */; };
@@ -54,8 +54,8 @@
 		A11E04EA1888CB79002F981A /* TDAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TDAppDelegate.h; sourceTree = "<group>"; };
 		A11E04EB1888CB79002F981A /* TDAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TDAppDelegate.m; sourceTree = "<group>"; };
 		A11E04EE1888CB79002F981A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		A11E04F01888CB79002F981A /* TDViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TDViewController.h; sourceTree = "<group>"; };
-		A11E04F11888CB79002F981A /* TDViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TDViewController.m; sourceTree = "<group>"; };
+		A11E04F01888CB79002F981A /* TDRecordVideoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TDRecordVideoViewController.h; sourceTree = "<group>"; };
+		A11E04F11888CB79002F981A /* TDRecordVideoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TDRecordVideoViewController.m; sourceTree = "<group>"; };
 		A11E04F31888CB79002F981A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		A11E04F91888CB79002F981A /* ThrowdownTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ThrowdownTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A11E04FA1888CB79002F981A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -201,8 +201,8 @@
 			children = (
 				A182D8241889E8D900F794A5 /* TDEditVideoViewController.h */,
 				A182D8251889E8D900F794A5 /* TDEditVideoViewController.m */,
-				A11E04F01888CB79002F981A /* TDViewController.h */,
-				A11E04F11888CB79002F981A /* TDViewController.m */,
+				A11E04F01888CB79002F981A /* TDRecordVideoViewController.h */,
+				A11E04F11888CB79002F981A /* TDRecordVideoViewController.m */,
 				A182D837188F2C2D00F794A5 /* TDHomeViewController.h */,
 				A182D838188F2C2D00F794A5 /* TDHomeViewController.m */,
 			);
@@ -343,7 +343,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A182D839188F2C2D00F794A5 /* TDHomeViewController.m in Sources */,
-				A11E04F21888CB79002F981A /* TDViewController.m in Sources */,
+				A11E04F21888CB79002F981A /* TDRecordVideoViewController.m in Sources */,
 				A11E04EC1888CB79002F981A /* TDAppDelegate.m in Sources */,
 				A182D833188B60CD00F794A5 /* SAVideoRangeSlider.m in Sources */,
 				A182D832188B60CD00F794A5 /* SASliderRight.m in Sources */,
