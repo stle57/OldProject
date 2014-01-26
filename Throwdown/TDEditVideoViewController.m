@@ -12,9 +12,12 @@
 #import <QuartzCore/QuartzCore.h>
 #import "AVFoundation/AVFoundation.h"
 #import "AssetsLibrary/ALAssetsLibrary.h"
+#import "TDPostAPI.h"
+#import "TDUserAPI.h"
 
+#define TEMP_FILE_PATH @"Documents/WorkingMovieTemp.m4v"
 
-@interface TDEditVideoViewController ()<SAVideoRangeSliderDelegate, UIAlertViewDelegate>
+@interface TDEditVideoViewController ()<SAVideoRangeSliderDelegate>
 
 @property (strong, nonatomic) SAVideoRangeSlider *slider;
 @property (strong, nonatomic) AVPlayer *player;
@@ -53,7 +56,7 @@
 
 - (void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/WorkingMovieTemp.m4v"];
+    NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:TEMP_FILE_PATH];
     self.tmpVideoUrl = [NSURL fileURLWithPath:pathToMovie];
     [self deleteTmpFile];
     self.hasEdited = NO;
@@ -133,19 +136,23 @@
 - (IBAction)doneButtonPressed:(UIButton *)sender {
     ALAssetsLibrary* library = [[ALAssetsLibrary alloc] init];
     [library writeVideoAtPathToSavedPhotosAlbum:self.tmpVideoUrl completionBlock:^(NSURL *assetURL, NSError *error1) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle: @"Saved!"
-                                                        message: @"Saved to the camera roll."
-                                                       delegate:self
-                                              cancelButtonTitle:nil
-                                              otherButtonTitles:@"OK", nil];
-        [alert show];
-    }];
-}
+        TDUserAPI *user = [TDUserAPI sharedInstance];
+        TDPostAPI *api = [TDPostAPI sharedInstance];
 
-- (void)alertView:(UIAlertView *)theAlert clickedButtonAtIndex:(NSInteger)buttonIndex {
-    UINavigationController *nav = (UINavigationController*) self.view.window.rootViewController;
-    TDHomeViewController *root = (TDHomeViewController *)[nav.viewControllers objectAtIndex:0];
-    [root performSelector:@selector(returnToRoot)];
+        NSString *newName = [TDPostAPI createUploadFileNameFor:user]; // Will be used doing post to server API
+        NSString *path;
+        if (self.hasEdited) {
+            path = [self.tmpVideoUrl path];
+        } else {
+            path = [self.videoUrl path];
+        }
+
+        [api startVideoUploadFrom:path newName:newName];
+
+        UINavigationController *nav = (UINavigationController*) self.view.window.rootViewController;
+        TDHomeViewController *root = (TDHomeViewController *)[nav.viewControllers objectAtIndex:0];
+        [root performSelector:@selector(returnToRoot)];
+    }];
 }
 
 - (IBAction)cancelButtonPressed:(UIButton *)sender {

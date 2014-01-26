@@ -10,6 +10,8 @@
 #import "TDEditVideoViewController.h"
 #import "GPUImage.h"
 
+#define MOVIE_FILE_PATH @"Documents/WorkingMovie.m4v"
+
 @interface TDRecordVideoViewController ()
 @property (weak, nonatomic) IBOutlet UIButton *button;
 @property (weak, nonatomic) IBOutlet GPUImageView *previewLayer;
@@ -91,7 +93,7 @@
 }
 
 - (void)startRecording {
-    NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/WorkingMovie.m4v"];
+    NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:MOVIE_FILE_PATH];
     unlink([pathToMovie UTF8String]); // If a file already exists, AVAssetWriter won't let you record new frames, so delete the old movie
     NSURL *movieURL = [NSURL fileURLWithPath:pathToMovie];
 
