@@ -39,7 +39,7 @@
             [session authenticateByPassword:VOD_VIDEO_PASS];
 
             if (session.isAuthorized) {
-                NSString *newVideoPath = [newName stringByAppendingString:@".m4v"];
+                NSString *newVideoPath = [newName stringByAppendingString:@".mp4"];
                 // TODO: upload jpg thumnail too...
 
                 unsigned long long fileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:fromLocalVideoPath error:nil][NSFileSize] unsignedLongLongValue];

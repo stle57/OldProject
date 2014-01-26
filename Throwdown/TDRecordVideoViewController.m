@@ -97,7 +97,7 @@
     unlink([pathToMovie UTF8String]); // If a file already exists, AVAssetWriter won't let you record new frames, so delete the old movie
     NSURL *movieURL = [NSURL fileURLWithPath:pathToMovie];
 
-    self.movieWriter = [[GPUImageMovieWriter alloc] initWithMovieURL:movieURL size:CGSizeMake(640.0, 640.0)];
+    self.movieWriter = [[GPUImageMovieWriter alloc] initWithMovieURL:movieURL size:CGSizeMake(640.0, 640.0) fileType:AVFileTypeMPEG4 outputSettings:nil];
     [self.filter addTarget:self.movieWriter];
     [self.button setTitle:@"Stop" forState:UIControlStateNormal];
     [self.button setBackgroundColor:[UIColor redColor]];
