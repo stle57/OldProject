@@ -16,6 +16,7 @@
 #import "TDUserAPI.h"
 
 #define TEMP_FILE_PATH @"Documents/WorkingMovieTemp.m4v"
+#define TEMP_IMG_PATH @"Documents/working_image.jpg"
 
 @interface TDEditVideoViewController ()<SAVideoRangeSliderDelegate>
 
@@ -139,15 +140,9 @@
         TDUserAPI *user = [TDUserAPI sharedInstance];
         TDPostAPI *api = [TDPostAPI sharedInstance];
 
+        NSString *thumbnailPath = [self saveThumbnail];
         NSString *newName = [TDPostAPI createUploadFileNameFor:user]; // Will be used doing post to server API
-        NSString *path;
-        if (self.hasEdited) {
-            path = [self.tmpVideoUrl path];
-        } else {
-            path = [self.videoUrl path];
-        }
-
-        [api startVideoUploadFrom:path newName:newName];
+        [api uploadAsyncVideo:[(self.hasEdited ? self.tmpVideoUrl : self.videoUrl) path] withThumbnail:thumbnailPath newName:newName];
 
         UINavigationController *nav = (UINavigationController*) self.view.window.rootViewController;
         TDHomeViewController *root = (TDHomeViewController *)[nav.viewControllers objectAtIndex:0];
@@ -157,6 +152,25 @@
 
 - (IBAction)cancelButtonPressed:(UIButton *)sender {
     [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (NSString *) saveThumbnail
+{
+    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:(self.hasEdited ? self.tmpVideoUrl : self.videoUrl) options:nil];
+    AVAssetImageGenerator *gen = [[AVAssetImageGenerator alloc] initWithAsset:asset];
+    gen.appliesPreferredTrackTransform = YES;
+    CMTime time = CMTimeMakeWithSeconds(0.0, 600);
+    NSError *error = nil;
+    CMTime actualTime;
+
+    CGImageRef image = [gen copyCGImageAtTime:time actualTime:&actualTime error:&error];
+    UIImage *thumb = [[UIImage alloc] initWithCGImage:image];
+    CGImageRelease(image);
+
+    NSString *filePath = [NSHomeDirectory() stringByAppendingPathComponent:TEMP_IMG_PATH];
+    unlink([filePath UTF8String]); // If a file already exists
+    [UIImageJPEGRepresentation(thumb, .97f) writeToFile:filePath atomically:YES];
+    return filePath;
 }
 
 #pragma mark - Other

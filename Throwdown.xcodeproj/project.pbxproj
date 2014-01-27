@@ -151,6 +151,7 @@
 		A11E04E11888CB79002F981A /* Throwdown */ = {
 			isa = PBXGroup;
 			children = (
+				A19FF5E81895C821001A0AD0 /* Adapters */,
 				A19FF5E11891FEDF001A0AD0 /* Models */,
 				A175678D1891C20A0034AD05 /* API */,
 				A182D836188F2C0100F794A5 /* Controllers */,
@@ -238,6 +239,13 @@
 				A19FF5E31891FEEF001A0AD0 /* TDPost.m */,
 			);
 			name = Models;
+			sourceTree = "<group>";
+		};
+		A19FF5E81895C821001A0AD0 /* Adapters */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Adapters;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
