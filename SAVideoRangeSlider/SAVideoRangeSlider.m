@@ -160,12 +160,18 @@
 -(void)setMaxGap:(NSInteger)maxGap{
     _leftPosition = 0;
     _rightPosition = _frame_width*maxGap/_durationSeconds;
+    if (_rightPosition > _frame_width) {
+        _rightPosition = _frame_width;
+    }
     _maxGap = maxGap;
 }
 
 -(void)setMinGap:(NSInteger)minGap{
     _leftPosition = 0;
     _rightPosition = _frame_width*minGap/_durationSeconds;
+    if (_rightPosition > _frame_width) {
+        _rightPosition = _frame_width;
+    }
     _minGap = minGap;
 }
 

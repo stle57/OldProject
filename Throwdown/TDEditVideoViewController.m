@@ -69,7 +69,7 @@
     self.slider.topBorder.backgroundColor = [UIColor colorWithRed: 0.996 green: 0.951 blue: 0.502 alpha: 1];
     self.slider.bottomBorder.backgroundColor = [UIColor colorWithRed: 0.992 green: 0.902 blue: 0.004 alpha: 1];
     self.slider.delegate = self;
-    [self.slider setMinGap:1];
+    [self.slider setMinGap:.1f];
     [self.slider setMaxGap:30];
 
     [self.view addSubview:self.slider];
@@ -79,7 +79,7 @@
     AVPlayerLayer *layer = [AVPlayerLayer layer];
     [layer setPlayer:self.player];
     [layer setFrame:CGRectMake(0, 100, 320, 320)];
-    [layer setBackgroundColor:[UIColor redColor].CGColor];
+    [layer setBackgroundColor:[UIColor blackColor].CGColor];
     [layer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
     [self.view.layer addSublayer:layer];
 }
