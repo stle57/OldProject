@@ -27,12 +27,23 @@
 
 @implementation TDRecordVideoViewController
 
+-(UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     [self setNeedsStatusBarAppearanceUpdate];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+
 
     self.isRecording = NO;
+
     self.videoCamera = [[GPUImageVideoCamera alloc]
                         initWithSessionPreset:AVCaptureSessionPreset640x480
                         cameraPosition:AVCaptureDevicePositionBack];
@@ -42,12 +53,45 @@
     self.filter = [[GPUImageCropFilter alloc] initWithCropRegion:CGRectMake(0.f, 0.125f, 1.f, .75f)];
     [self.filter addTarget:self.previewLayer];
 
+    NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:MOVIE_FILE_PATH];
+    unlink([pathToMovie UTF8String]); // If a file already exists, AVAssetWriter won't let you record new frames, so delete the old movie
+    NSURL *movieURL = [NSURL fileURLWithPath:pathToMovie];
+
+    int videoSize = 640;
+
+    NSMutableDictionary *settings = [[NSMutableDictionary alloc] init];
+    [settings setObject:AVVideoCodecH264 forKey:AVVideoCodecKey];
+    [settings setObject:[NSNumber numberWithInt:videoSize] forKey:AVVideoWidthKey];
+    [settings setObject:[NSNumber numberWithInt:videoSize] forKey:AVVideoHeightKey];
+
+    NSDictionary *videoCleanApertureSettings = [NSDictionary dictionaryWithObjectsAndKeys:
+                                                [NSNumber numberWithInt:videoSize], AVVideoCleanApertureWidthKey,
+                                                [NSNumber numberWithInt:videoSize], AVVideoCleanApertureHeightKey,
+                                                [NSNumber numberWithInt:0], AVVideoCleanApertureHorizontalOffsetKey,
+                                                [NSNumber numberWithInt:0], AVVideoCleanApertureVerticalOffsetKey,
+                                                nil];
+
+    NSDictionary *videoAspectRatioSettings = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              [NSNumber numberWithInt:3], AVVideoPixelAspectRatioHorizontalSpacingKey,
+                                              [NSNumber numberWithInt:3], AVVideoPixelAspectRatioVerticalSpacingKey,
+                                              nil];
+
+    NSMutableDictionary * compressionProperties = [[NSMutableDictionary alloc] init];
+    [compressionProperties setObject:videoCleanApertureSettings forKey:AVVideoCleanApertureKey];
+    [compressionProperties setObject:videoAspectRatioSettings forKey:AVVideoPixelAspectRatioKey];
+    [compressionProperties setObject:[NSNumber numberWithInt: 1000000] forKey:AVVideoAverageBitRateKey];
+    [compressionProperties setObject:[NSNumber numberWithInt: 16] forKey:AVVideoMaxKeyFrameIntervalKey];
+    [compressionProperties setObject:AVVideoProfileLevelH264BaselineAutoLevel forKey:AVVideoProfileLevelKey];
+
+    [settings setObject:compressionProperties forKey:AVVideoCompressionPropertiesKey];
+
+    self.movieWriter = [[GPUImageMovieWriter alloc] initWithMovieURL:movieURL size:CGSizeMake(videoSize, videoSize) fileType:AVFileTypeMPEG4 outputSettings:settings];
+    [self.filter addTarget:self.movieWriter];
+
+    self.videoCamera.audioEncodingTarget = self.movieWriter;
+
     [self.videoCamera addTarget:self.filter];
     [self.videoCamera startCameraCapture];
-}
-
--(UIStatusBarStyle)preferredStatusBarStyle {
-    return UIStatusBarStyleLightContent;
 }
 
 //- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -93,19 +137,9 @@
 }
 
 - (void)startRecording {
-    NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:MOVIE_FILE_PATH];
-    unlink([pathToMovie UTF8String]); // If a file already exists, AVAssetWriter won't let you record new frames, so delete the old movie
-    NSURL *movieURL = [NSURL fileURLWithPath:pathToMovie];
-
-    self.movieWriter = [[GPUImageMovieWriter alloc] initWithMovieURL:movieURL size:CGSizeMake(640.0, 640.0) fileType:AVFileTypeMPEG4 outputSettings:nil];
-    [self.filter addTarget:self.movieWriter];
+    [self.movieWriter startRecording];
     [self.button setTitle:@"Stop" forState:UIControlStateNormal];
     [self.button setBackgroundColor:[UIColor redColor]];
-
-    // TODO: microphone should be done on load and unload to avoid the popup
-    self.videoCamera.audioEncodingTarget = self.movieWriter;
-    [self.movieWriter startRecording];
-    NSLog(@"Movie started");
 
 //    double delayInSeconds = 30.0;
 //    dispatch_time_t stopTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
