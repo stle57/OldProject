@@ -33,6 +33,11 @@
 		A182D83A188F2C2D00F794A5 /* TDHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A182D838188F2C2D00F794A5 /* TDHomeViewController.m */; };
 		A19FF5E41891FEEF001A0AD0 /* TDPost.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF5E31891FEEF001A0AD0 /* TDPost.m */; };
 		A19FF5E718932868001A0AD0 /* TDUserAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF5E618932868001A0AD0 /* TDUserAPI.m */; };
+		A19FF60D18970BBB001A0AD0 /* RSCDNContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF5FD18970BBB001A0AD0 /* RSCDNContainer.m */; };
+		A19FF60E18970BBB001A0AD0 /* RSClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF5FF18970BBB001A0AD0 /* RSClient.m */; };
+		A19FF60F18970BBB001A0AD0 /* RSContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF60118970BBB001A0AD0 /* RSContainer.m */; };
+		A19FF61018970BBB001A0AD0 /* RSModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF60318970BBB001A0AD0 /* RSModel.m */; };
+		A19FF61118970BBB001A0AD0 /* RSStorageObject.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF60518970BBB001A0AD0 /* RSStorageObject.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +89,16 @@
 		A19FF5E31891FEEF001A0AD0 /* TDPost.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDPost.m; sourceTree = "<group>"; };
 		A19FF5E518932868001A0AD0 /* TDUserAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserAPI.h; sourceTree = "<group>"; };
 		A19FF5E618932868001A0AD0 /* TDUserAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUserAPI.m; sourceTree = "<group>"; };
+		A19FF5FC18970BBB001A0AD0 /* RSCDNContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSCDNContainer.h; sourceTree = "<group>"; };
+		A19FF5FD18970BBB001A0AD0 /* RSCDNContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSCDNContainer.m; sourceTree = "<group>"; };
+		A19FF5FE18970BBB001A0AD0 /* RSClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSClient.h; sourceTree = "<group>"; };
+		A19FF5FF18970BBB001A0AD0 /* RSClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSClient.m; sourceTree = "<group>"; };
+		A19FF60018970BBB001A0AD0 /* RSContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSContainer.h; sourceTree = "<group>"; };
+		A19FF60118970BBB001A0AD0 /* RSContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSContainer.m; sourceTree = "<group>"; };
+		A19FF60218970BBB001A0AD0 /* RSModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSModel.h; sourceTree = "<group>"; };
+		A19FF60318970BBB001A0AD0 /* RSModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSModel.m; sourceTree = "<group>"; };
+		A19FF60418970BBB001A0AD0 /* RSStorageObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSStorageObject.h; sourceTree = "<group>"; };
+		A19FF60518970BBB001A0AD0 /* RSStorageObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSStorageObject.m; sourceTree = "<group>"; };
 		BC8AD58EF48B41289E5CE49E /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 		E657ABE418B84EA68554F855 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -137,6 +152,7 @@
 		A11E04DA1888CB79002F981A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A19FF5FB18970BBA001A0AD0 /* RSCloudFiles */,
 				A182D827188B60CD00F794A5 /* SAVideoRangeSlider */,
 				A11E05111889293C002F981A /* AssetsLibrary.framework */,
 				A11E04DB1888CB79002F981A /* Foundation.framework */,
@@ -246,6 +262,24 @@
 			children = (
 			);
 			name = Adapters;
+			sourceTree = "<group>";
+		};
+		A19FF5FB18970BBA001A0AD0 /* RSCloudFiles */ = {
+			isa = PBXGroup;
+			children = (
+				A19FF5FC18970BBB001A0AD0 /* RSCDNContainer.h */,
+				A19FF5FD18970BBB001A0AD0 /* RSCDNContainer.m */,
+				A19FF5FE18970BBB001A0AD0 /* RSClient.h */,
+				A19FF5FF18970BBB001A0AD0 /* RSClient.m */,
+				A19FF60018970BBB001A0AD0 /* RSContainer.h */,
+				A19FF60118970BBB001A0AD0 /* RSContainer.m */,
+				A19FF60218970BBB001A0AD0 /* RSModel.h */,
+				A19FF60318970BBB001A0AD0 /* RSModel.m */,
+				A19FF60418970BBB001A0AD0 /* RSStorageObject.h */,
+				A19FF60518970BBB001A0AD0 /* RSStorageObject.m */,
+			);
+			name = RSCloudFiles;
+			path = RackspaceCloudFiles/Source;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -381,10 +415,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A19FF61018970BBB001A0AD0 /* RSModel.m in Sources */,
+				A19FF61118970BBB001A0AD0 /* RSStorageObject.m in Sources */,
+				A19FF60F18970BBB001A0AD0 /* RSContainer.m in Sources */,
+				A19FF60D18970BBB001A0AD0 /* RSCDNContainer.m in Sources */,
 				A182D839188F2C2D00F794A5 /* TDHomeViewController.m in Sources */,
 				A19FF5E718932868001A0AD0 /* TDUserAPI.m in Sources */,
 				A11E04F21888CB79002F981A /* TDRecordVideoViewController.m in Sources */,
 				A11E04EC1888CB79002F981A /* TDAppDelegate.m in Sources */,
+				A19FF60E18970BBB001A0AD0 /* RSClient.m in Sources */,
 				A182D833188B60CD00F794A5 /* SAVideoRangeSlider.m in Sources */,
 				A182D832188B60CD00F794A5 /* SASliderRight.m in Sources */,
 				A182D830188B60CD00F794A5 /* SAResizibleBubble.m in Sources */,

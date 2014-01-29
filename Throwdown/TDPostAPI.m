@@ -7,16 +7,17 @@
 //
 
 #import "TDPostAPI.h"
-#import "NMSSH.h"
+#import "RSClient.h"
+#import "RSContainer.h"
+#import "RSStorageObject.h"
 
-//#define VOD_VIDEO_HOST @"ftp.tdvod1.throwdownlabsinc.netdna-cdn.com"
-//#define VOD_VIDEO_USER @"tdvod1.throwdownlabsinc"
-//#define VOD_VIDEO_PASS @"pobx2u3XVbvHfk"
+#define RS_USERNAME @"throwdown"
+#define RS_API_KEY @"c93395c50887cf4926d2d24e1d9ed4e7"
 
-#define VOD_VIDEO_HOST @"ftp.tdpush1.throwdownlabsinc.netdna-cdn.com"
-#define VOD_VIDEO_USER @"tdpush1.throwdownlabsinc"
-#define VOD_VIDEO_PASS @"rB9Tvii3vPgNiY"
-
+#define FILE_TYPE_VIDEO @".mp4"
+#define FILE_TYPE_IMAGE @".jpg"
+#define CONTENT_TYPE_VIDEO @"video/mp4"
+#define CONTENT_TYPE_IMAGE @"image/jpeg"
 
 @implementation TDPostAPI
 
@@ -38,34 +39,45 @@
 - (void)uploadAsyncVideo:(NSString *)fromLocalVideoPath withThumbnail:(NSString *)fromPhotoPath newName:(NSString *)newName
 {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NMSSHSession *session = [NMSSHSession connectToHost:VOD_VIDEO_HOST
-                                               withUsername:VOD_VIDEO_USER];
-        if (session.isConnected) {
-            [session authenticateByPassword:VOD_VIDEO_PASS];
+        RSClient *client = [[RSClient alloc] initWithProvider:RSProviderTypeRackspaceUS username:RS_USERNAME apiKey:RS_API_KEY];
 
-            if (session.isAuthorized) {
-                NSString *newVideoPath = [@"public_html/" stringByAppendingString:[newName stringByAppendingString:@".mp4"]];
-                NSString *newPhotoPath = [@"public_html/" stringByAppendingString:[newName stringByAppendingString:@".jpg"]];
-                // TODO: upload jpg thumnail too...
+        [client authenticate:^{
+            NSLog(@"Authentication successful");
+            [client getContainers:^(NSArray *containers, NSError *jsonError) {
+
+                RSContainer *storage = [containers objectAtIndex:0];
 
                 unsigned long long videoFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:fromLocalVideoPath error:nil][NSFileSize] unsignedLongLongValue];
-                unsigned long long photoFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:fromPhotoPath error:nil][NSFileSize] unsignedLongLongValue];
-
+                NSString *newVideoPath = [newName stringByAppendingString:FILE_TYPE_VIDEO];
                 NSLog(@"VIDEO FROM %@ TO %@ SIZE %llu", fromLocalVideoPath, newVideoPath, videoFileSize);
-                [session.channel uploadFile:fromLocalVideoPath to:newVideoPath progress:^(NSUInteger prog){
-//                    dispatch_sync(dispatch_get_main_queue(), ^{
-//                        float percent = (float)prog / (float)videoFileSize;
-//                        NSLog(@"PROGESS on main thread %f%%", percent * 100);
-//                    });
-                    return YES;
+
+                RSStorageObject *video = [[RSStorageObject alloc] init];
+                video.name = newVideoPath;
+                [storage uploadObject:video fromFile:fromLocalVideoPath success:^{
+                    NSLog(@"Video upload success");
+                } failure:^(NSHTTPURLResponse *response, NSData *data, NSError *error) {
+                    NSLog(@"ERROR: Video upload fail");
                 }];
-                NSLog(@"PHOTO FROM %@ TO %@ SIZE %llu", fromPhotoPath, newPhotoPath, photoFileSize);
-                [session.channel uploadFile:fromLocalVideoPath to:newVideoPath progress:^(NSUInteger prog){
-                    return YES;
+
+                unsigned long long photoFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:fromPhotoPath error:nil][NSFileSize] unsignedLongLongValue];
+                NSString *newPhotoPath = [newName stringByAppendingString:FILE_TYPE_IMAGE];
+                NSLog(@"IMAGE FROM %@ TO %@ SIZE %llu", fromPhotoPath, newPhotoPath, photoFileSize);
+
+                RSStorageObject *image = [[RSStorageObject alloc] init];
+                image.name = newPhotoPath;
+                [storage uploadObject:image fromFile:fromPhotoPath success:^{
+                    NSLog(@"Image upload success");
+                } failure:^(NSHTTPURLResponse *response, NSData *data, NSError *error) {
+                    NSLog(@"ERROR: Image upload fail");
                 }];
-                [session disconnect];
-            }
-        }
+
+            } failure:^(NSHTTPURLResponse *response, NSData *data, NSError *error) {
+                NSLog(@"ERROR: Couldn't find containers");
+            }];
+        } failure:^(NSHTTPURLResponse *response, NSData *data, NSError *error) {
+            NSLog(@"ERROR: Authentication failed");
+        }];
     });
 }
+
 @end
