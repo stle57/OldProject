@@ -10,4 +10,9 @@
 
 @interface TDPost : NSObject
 
+@property (nonatomic, copy, readonly) NSString *filename, *username;
+@property (nonatomic, copy, readonly) NSNumber *userId;
+
+- (id)initWithUsername:(NSString *)username userId:(NSNumber *)userId filename:(NSString *)filename;
+
 @end

@@ -10,4 +10,15 @@
 
 @implementation TDPost
 
+- (id)initWithUsername:(NSString *)username userId:(NSNumber *)userId filename:(NSString *)filename
+{
+    self = [super init];
+    if (self)
+    {
+        _userId = userId;
+        _username = username;
+        _filename = filename;
+    }
+    return self;
+}
 @end

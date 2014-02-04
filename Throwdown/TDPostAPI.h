@@ -14,5 +14,9 @@
 + (TDPostAPI *)sharedInstance;
 + (NSString *)createUploadFileNameFor:(TDUserAPI *)user;
 
-- (void)uploadAsyncVideo:(NSString *)fromVideoPath withThumbnail:(NSString *)fromPhotoPath newName:(NSString *)newName;
+- (void)uploadVideo:(NSString *)fromVideoPath withThumbnail:(NSString *)localPhotoPath newName:(NSString *)newName;
+- (void)addPost:(TDPost *)post;
+- (NSArray *)getPosts;
+- (UIImage *)getImage:(NSString *)imageName;
+
 @end

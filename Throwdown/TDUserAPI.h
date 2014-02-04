@@ -10,5 +10,6 @@
 
 @interface TDUserAPI : NSObject
 + (TDUserAPI *)sharedInstance;
-- (int)getUserId;
+- (NSNumber*)getUserId;
+- (NSString*)getUsername;
 @end

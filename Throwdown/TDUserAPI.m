@@ -20,8 +20,12 @@
     return _sharedInstance;
 }
 
-- (int) getUserId {
-    return 1;
+- (NSNumber*) getUserId {
+    return [[NSNumber alloc] initWithInt:1];
+}
+
+- (NSString *) getUsername {
+    return @"acr";
 }
 
 @end

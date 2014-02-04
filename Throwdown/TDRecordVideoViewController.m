@@ -1,5 +1,5 @@
 //
-//  TDViewController.m
+//  TDRecordVideoViewController.m
 //  Throwdown
 //
 //  Created by Andrew C on 1/16/14.
