@@ -8,49 +8,51 @@
 		<dict>
 			<key>isShown</key>
 			<false/>
-			<key>orderHint</key>
-			<integer>4</integer>
 		</dict>
 		<key>Pods-GPUImage.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
-			<key>orderHint</key>
-			<integer>5</integer>
 		</dict>
 		<key>Pods-NMSSH.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
-			<key>orderHint</key>
-			<integer>6</integer>
+		</dict>
+		<key>Pods-TestFlightSDK.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
 		</dict>
 		<key>Pods.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
-			<key>orderHint</key>
-			<integer>3</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>1749E981D583453EADD136E5</key>
+		<key>63D33B9B94D64BFE903CBED4</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>32BC0C52C91D4C76B374CECC</key>
+		<key>B2DB61B26F4D4948A07E2E21</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>4939088678A74C898DA65C3B</key>
+		<key>C7D2A456B36245B48939C3BB</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>CBEAF6B1E559431283F6CD55</key>
+		<key>DC0788FE2985467AAF65A258</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E2BCDCD985164D668434F06D</key>
 		<dict>
 			<key>primary</key>
 			<true/>

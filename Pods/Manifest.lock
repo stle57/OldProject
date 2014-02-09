@@ -19,15 +19,18 @@ PODS:
     - AFNetworking/NSURLConnection
   - GPUImage (0.1.2)
   - NMSSH (2.0.0)
+  - TestFlightSDK (2.2.1-beta)
 
 DEPENDENCIES:
   - AFNetworking
   - GPUImage
   - NMSSH
+  - TestFlightSDK
 
 SPEC CHECKSUMS:
   AFNetworking: c7d7901a83f631414c7eda1737261f696101a5cd
   GPUImage: 007145faa0e27f1ddbcab93e07f026c9776e2fa2
   NMSSH: 360317a1a304a22e2dd228ac4a6cb6901b9df05e
+  TestFlightSDK: 4249c2f70e621bcfbdebf019073169c8fe36be13
 
 COCOAPODS: 0.29.0
