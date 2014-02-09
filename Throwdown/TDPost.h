@@ -14,5 +14,6 @@
 @property (nonatomic, copy, readonly) NSNumber *userId;
 
 - (id)initWithUsername:(NSString *)username userId:(NSNumber *)userId filename:(NSString *)filename;
-
+- (id)initWithDictionary:(NSDictionary *)dict;
+- (NSDictionary *)jsonRepresentation;
 @end

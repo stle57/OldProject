@@ -9,6 +9,7 @@
 #import "TDHomeViewController.h"
 #import "TDPostAPI.h"
 #import "TDPostView.h"
+#import "TDConstants.h"
 
 #define CELL_IDENTIFIER @"TDPostView"
 
@@ -29,14 +30,18 @@
 {
     [super viewDidLoad];
 
-    [self.view bringSubviewToFront:self.recordButton];
-    [self.view bringSubviewToFront:self.notificationButton];
-    [self.view bringSubviewToFront:self.profileButton];
+    [self.view insertSubview:self.recordButton aboveSubview:self.tableView];
+    [self.view insertSubview:self.notificationButton aboveSubview:self.tableView];
+    [self.view insertSubview:self.profileButton aboveSubview:self.tableView];
+//    [self.view bringSubviewToFront:self.recordButton];
+//    [self.view bringSubviewToFront:self.notificationButton];
+//    [self.view bringSubviewToFront:self.profileButton];
 
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    [self reloadPosts];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadPosts:) name:@"TDReloadPostsNotification" object:nil];
+    [self reloadPosts];
+    [[TDPostAPI sharedInstance] fetchPostsUpstream];
 }
 
 //- (void)viewWillAppear:(BOOL)animated
@@ -73,7 +78,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSLog(@"number of rows in section %d", [posts count]);
+    NSLog(@"number of rows in section %lu", (unsigned long)[posts count]);
     return [posts count];
 }
 

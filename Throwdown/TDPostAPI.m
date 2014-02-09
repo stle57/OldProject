@@ -7,6 +7,7 @@
 //
 
 #import "TDPostAPI.h"
+#import "TDConstants.h"
 #import "RSClient.h"
 #import "RSContainer.h"
 #import "RSStorageObject.h"
@@ -65,17 +66,48 @@
 -(void)addPost:(TDPost *)post
 {
     NSLog(@"New post added");
-    [posts addObject:post];
+    [posts insertObject:post atIndex:0];
 
-    // Notify any views to reload
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"TDReloadPostsNotification"
-                                                        object:self
-                                                      userInfo:nil];
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts.json"];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager POST:url parameters:[post jsonRepresentation] success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"JSON: %@", [responseObject class]);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"Error: %@", error);
+    }];
+
+    [self notifyPostsReload];
+}
+
+- (void)fetchPostsUpstream
+{
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:[[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts.json"] parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSArray class]]) {
+            [posts removeAllObjects];
+            for (id postObject in (NSArray *)responseObject) {
+                if ([postObject isKindOfClass:[NSDictionary class]]) {
+                    [posts addObject:[[TDPost alloc]initWithDictionary:postObject]];
+                }
+            }
+            [self notifyPostsReload];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"HTTP Error: %@", error);
+    }];
 }
 
 - (NSArray *)getPosts
 {
     return [posts mutableCopy];
+}
+
+- (void)notifyPostsReload
+{
+    // Notify any views to reload
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"TDReloadPostsNotification"
+                                                        object:self
+                                                      userInfo:nil];
 }
 
 # pragma mark - image/video getting/saving
@@ -115,9 +147,9 @@
 - (void)downloadImage:(NSNotification*)notification
 {
     UIImageView *imageView = notification.userInfo[@"imageView"];
-    NSString *filename = notification.userInfo[@"filename"];
+    NSString *filename = [notification.userInfo[@"filename"] stringByAppendingString:FILE_TYPE_IMAGE];
 
-    imageView.image = [self getImage:[[filename lastPathComponent] stringByAppendingString:FILE_TYPE_IMAGE]];
+    imageView.image = [self getImage:filename];
 
     if (imageView.image == nil) {
 //        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -126,10 +158,11 @@
         AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[NSURLRequest alloc] initWithURL:imageURL]];
         operation.responseSerializer = [AFImageResponseSerializer serializer];
         [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-            NSLog(@"Response: %@, %@", filename, responseObject);
-            UIImage *image = [UIImage imageWithData:responseObject];
-            imageView.image = image;
-            [self saveImage:image filename:filename];
+            if ([responseObject isKindOfClass:[UIImage class]]) {
+                UIImage *image = (UIImage *)responseObject;
+                imageView.image = image;
+                [self saveImage:image filename:notification.userInfo[@"filename"]];
+            }
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             NSLog(@"Image error: %@, %@", filename, error);
         }];

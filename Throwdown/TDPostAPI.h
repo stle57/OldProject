@@ -16,6 +16,7 @@
 
 - (void)uploadVideo:(NSString *)fromVideoPath withThumbnail:(NSString *)localPhotoPath newName:(NSString *)newName;
 - (void)addPost:(TDPost *)post;
+- (void)fetchPostsUpstream;
 - (NSArray *)getPosts;
 - (UIImage *)getImage:(NSString *)imageName;
 

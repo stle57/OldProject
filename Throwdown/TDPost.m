@@ -21,4 +21,13 @@
     }
     return self;
 }
+
+- (id)initWithDictionary:(NSDictionary *)dict {
+    return [self initWithUsername:[dict objectForKey:@"username"] userId:[dict objectForKey:@"user_id"] filename:[dict objectForKey:@"filename"]];
+}
+
+- (NSDictionary *)jsonRepresentation
+{
+    return @{@"post": @{@"user_id": _userId, @"filename": _filename}};
+}
 @end
