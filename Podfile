@@ -6,6 +6,7 @@ pod 'AFNetworking'
 pod 'NMSSH'
 # pod 'RackspaceCloudFiles'
 pod 'TestFlightSDK'
+pod 'libPhoneNumber-iOS'
 
 # target "Throwdown" do
 # 
