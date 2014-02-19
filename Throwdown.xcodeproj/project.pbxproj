@@ -41,8 +41,6 @@
 		A19FF61118970BBB001A0AD0 /* RSStorageObject.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF60518970BBB001A0AD0 /* RSStorageObject.m */; };
 		A1C1D0F318A02FAB00666D2A /* TDPostView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A1C1D0F218A02FAA00666D2A /* TDPostView.xib */; };
 		A1C1D0F618A0387B00666D2A /* TDPostView.m in Sources */ = {isa = PBXBuildFile; fileRef = A1C1D0F518A0387B00666D2A /* TDPostView.m */; };
-		A1C1D0F918A06AAE00666D2A /* prof_pic_med2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A1C1D0F818A06AAE00666D2A /* prof_pic_med2@2x.png */; };
-		A1C1D0FB18A06AF500666D2A /* prof_pic_med2.png in Resources */ = {isa = PBXBuildFile; fileRef = A1C1D0FA18A06AF500666D2A /* prof_pic_med2.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -109,8 +107,6 @@
 		A1C1D0F218A02FAA00666D2A /* TDPostView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDPostView.xib; sourceTree = "<group>"; };
 		A1C1D0F418A0387B00666D2A /* TDPostView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDPostView.h; sourceTree = "<group>"; };
 		A1C1D0F518A0387B00666D2A /* TDPostView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDPostView.m; sourceTree = "<group>"; };
-		A1C1D0F818A06AAE00666D2A /* prof_pic_med2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "prof_pic_med2@2x.png"; sourceTree = "<group>"; };
-		A1C1D0FA18A06AF500666D2A /* prof_pic_med2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = prof_pic_med2.png; sourceTree = "<group>"; };
 		BC8AD58EF48B41289E5CE49E /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 		E657ABE418B84EA68554F855 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -195,7 +191,6 @@
 		A11E04E21888CB79002F981A /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				A1C1D0F718A0697300666D2A /* Assets */,
 				A11E04E31888CB79002F981A /* Throwdown-Info.plist */,
 				A11E04E41888CB79002F981A /* InfoPlist.strings */,
 				A11E04E71888CB79002F981A /* main.m */,
@@ -300,15 +295,6 @@
 			name = Views;
 			sourceTree = "<group>";
 		};
-		A1C1D0F718A0697300666D2A /* Assets */ = {
-			isa = PBXGroup;
-			children = (
-				A1C1D0FA18A06AF500666D2A /* prof_pic_med2.png */,
-				A1C1D0F818A06AAE00666D2A /* prof_pic_med2@2x.png */,
-			);
-			name = Assets;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -392,9 +378,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1C1D0F318A02FAB00666D2A /* TDPostView.xib in Resources */,
-				A1C1D0F918A06AAE00666D2A /* prof_pic_med2@2x.png in Resources */,
 				A11E04F41888CB79002F981A /* Images.xcassets in Resources */,
-				A1C1D0FB18A06AF500666D2A /* prof_pic_med2.png in Resources */,
 				A11E04E61888CB79002F981A /* InfoPlist.strings in Resources */,
 				A11E04EF1888CB79002F981A /* Main.storyboard in Resources */,
 			);
