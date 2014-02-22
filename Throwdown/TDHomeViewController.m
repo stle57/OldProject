@@ -7,9 +7,11 @@
 //
 
 #import "TDHomeViewController.h"
+#import "TDAppDelegate.h"
 #import "TDPostAPI.h"
 #import "TDPostView.h"
 #import "TDConstants.h"
+#import "TDUserAPI.h"
 
 #define CELL_IDENTIFIER @"TDPostView"
 
@@ -112,10 +114,28 @@
 
 # pragma mark - navigation
 
+// HACK to get log out to work
+- (IBAction)profileButtonPressed:(id)sender {
+    [[TDUserAPI sharedInstance] logout];
+    [self showWelcomeController];
+}
 
 - (void)returnToRoot {
     [self dismissViewControllerAnimated:NO completion:nil];
     [self.navigationController popToRootViewControllerAnimated:YES];
 }
+
+- (void)showWelcomeController
+{
+    [self dismissViewControllerAnimated:NO completion:nil];
+
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *welcomeViewController = [storyboard instantiateViewControllerWithIdentifier:@"WelcomeViewController"];
+
+    TDAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
+    delegate.window.rootViewController = welcomeViewController;
+    [self.navigationController popToRootViewControllerAnimated:NO];
+}
+
 
 @end

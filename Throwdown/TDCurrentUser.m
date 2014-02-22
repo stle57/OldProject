@@ -59,13 +59,27 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     _authToken   = [dictionary objectForKey:@"authentication_token"];
     _phoneNumber = [dictionary objectForKey:@"phone_number"];
 
-    NSString *filename = [NSHomeDirectory() stringByAppendingString:DATA_LOCATION];
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self];
-    [data writeToFile:filename atomically:YES];
+    [self save];
 }
 
 - (BOOL)isLoggedIn {
     return self.authToken != nil;
+}
+
+- (void)logout {
+    _userId = nil;
+    _username = nil;
+    _name = nil;
+    _email = nil;
+    _phoneNumber = nil;
+    _authToken = nil;
+    [self save];
+}
+
+- (void)save {
+    NSString *filename = [NSHomeDirectory() stringByAppendingString:DATA_LOCATION];
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self];
+    [data writeToFile:filename atomically:YES];
 }
 
 @end

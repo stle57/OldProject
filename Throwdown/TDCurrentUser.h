@@ -20,5 +20,6 @@
 + (TDCurrentUser *)sharedInstance;
 - (void)updateFromDictionary:(NSDictionary *)dictionary;
 - (BOOL)isLoggedIn;
+- (void)logout;
 
 @end

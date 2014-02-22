@@ -59,4 +59,8 @@
     return [self.currentUser isLoggedIn];
 }
 
+- (void)logout {
+    [self.currentUser logout];
+}
+
 @end
