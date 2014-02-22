@@ -187,7 +187,7 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 
         NSError *error = nil;
         NBPhoneNumberUtil *phoneUtil = [NBPhoneNumberUtil sharedInstance];
-        NBPhoneNumber *phoneNumber = [phoneUtil parseWithPhoneCarrierRegion:self.verifiedPhoneNumber error:&error];
+        NBPhoneNumber *phoneNumber = [phoneUtil parseWithPhoneCarrierRegion:self.phoneField.text error:&error];
         if (!error && [phoneUtil isValidNumber:phoneNumber]) {
             NSString *phoneNumberString = [phoneUtil format:phoneNumber numberFormat:NBEPhoneNumberFormatE164 error:&error];
             self.verifiedPhoneNumber = phoneNumberString;
