@@ -8,6 +8,7 @@
 
 #import "TDAppDelegate.h"
 #import "TestFlight.h"
+#import "TDUserAPI.h"
 
 @implementation TDAppDelegate
 
@@ -15,7 +16,14 @@
 {
     [TestFlight takeOff:@"6fef227c-c5cb-4505-9502-9052e2819f45"];
 
-    // Override point for customization after application launch.
+    NSString *storyboardId = [[TDUserAPI sharedInstance] isLoggedIn] ? @"HomeViewController" : @"WelcomeViewController";
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *initViewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
+
+    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.window.rootViewController = initViewController;
+    [self.window makeKeyAndVisible];
+
     return YES;
 }
 							

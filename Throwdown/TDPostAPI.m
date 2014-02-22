@@ -38,9 +38,9 @@
     return _sharedInstance;
 }
 
-+ (NSString *)createUploadFileNameFor:(TDUserAPI *)user
++ (NSString *)createUploadFileNameFor:(TDCurrentUser *)user
 {
-    return [NSString stringWithFormat:@"%@_%f",[user getUserId], [[NSDate date] timeIntervalSince1970]];
+    return [NSString stringWithFormat:@"%@_%f",user.userId, [[NSDate date] timeIntervalSince1970]];
 }
 
 - (id)init

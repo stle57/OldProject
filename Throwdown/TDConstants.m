@@ -31,4 +31,9 @@
     return [NSURL URLWithString:location];
 }
 
++ (UIColor *)brandingRedColor
+{
+    return [UIColor colorWithRed:.929411765 green:.294117647 blue:.243137255 alpha:1.0];
+}
+
 @end

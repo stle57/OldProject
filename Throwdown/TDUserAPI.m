@@ -7,6 +7,7 @@
 //
 
 #import "TDUserAPI.h"
+#import "TDAPIClient.h"
 
 @implementation TDUserAPI
 
@@ -20,12 +21,42 @@
     return _sharedInstance;
 }
 
-- (NSNumber*) getUserId {
-    return [[NSNumber alloc] initWithInt:1];
+- (id)init {
+    self = [super init];
+    if (self) {
+        _currentUser = [TDCurrentUser sharedInstance];
+    }
+    return self;
 }
 
-- (NSString *) getUsername {
-    return @"acr";
+- (void)dealloc {
+    _currentUser = nil;
+}
+
+# pragma mark - instance methods
+
+- (void)signupUser:(NSDictionary *)userAttributes callback:(void (^)(BOOL))callback
+{
+    [[TDAPIClient sharedInstance] signupUser:userAttributes callback:^(BOOL success, NSDictionary *user) {
+        if (success) {
+            [self.currentUser updateFromDictionary:user];
+        }
+        callback(success);
+    }];
+}
+
+- (void)loginUser:(NSString *)email withPassword:(NSString *)password callback:(void (^)(BOOL))callback
+{
+    [[TDAPIClient sharedInstance] loginUser:email withPassword:password callback:^(BOOL success, NSDictionary *user) {
+        if (success) {
+            [self.currentUser updateFromDictionary:user];
+        }
+        callback(success);
+    }];
+}
+
+- (BOOL)isLoggedIn {
+    return [self.currentUser isLoggedIn];
 }
 
 @end

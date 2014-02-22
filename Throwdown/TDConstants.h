@@ -12,5 +12,6 @@
 
 + (NSString *)getBaseURL;
 + (NSURL *)getStreamingUrlFor:(NSString *)filename;
++ (UIColor *)brandingRedColor;
 
 @end

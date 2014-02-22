@@ -7,9 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "TDCurrentUser.h"
 
 @interface TDUserAPI : NSObject
+
+@property (strong, nonatomic, readonly) TDCurrentUser *currentUser;
+
 + (TDUserAPI *)sharedInstance;
-- (NSNumber*)getUserId;
-- (NSString*)getUsername;
+
+- (void)signupUser:(NSDictionary *)userAttributes callback:(void (^)(BOOL success))callback;
+- (void)loginUser:(NSString *)email withPassword:(NSString *)password callback:(void (^)(BOOL success))callback;
+- (BOOL)isLoggedIn;
+
 @end
