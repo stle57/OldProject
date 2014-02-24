@@ -10,110 +10,128 @@
 #import "TDConstants.h"
 #import "AVFoundation/AVFoundation.h"
 
-@implementation TDPostView
-{
-    AVPlayer *player;
-    AVPlayerItem *playerItem;
-    AVPlayerLayer *playerLayer;
-}
-
-// Define this constant for the key-value observation context.
 static const NSString *ItemStatusContext;
 
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
-{
-    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
-    if (self) {
-        // Initialization code
-    }
-    return self;
-}
+@interface TDPostView ()
 
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated
-{
+@property (weak, nonatomic) IBOutlet UIView *videoHolderView;
+@property (weak, nonatomic) IBOutlet UIView *controlView;
+@property (weak, nonatomic) IBOutlet UIImageView *playImage;
+@property (strong, nonatomic) AVPlayer *player;
+@property (strong, nonatomic) AVPlayerItem *playerItem;
+@property (strong, nonatomic) AVPlayerLayer *playerLayer;
+@property (nonatomic) BOOL isPlaying;
+@property (nonatomic) BOOL didPlay;
+@property (nonatomic) BOOL isLoading;
+
+@end
+
+@implementation TDPostView
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
 }
 
-- (void) awakeFromNib
-{
+- (void)awakeFromNib {
     self.profileImage.layer.cornerRadius = 16.0;
     self.profileImage.layer.masksToBounds = YES;
     self.profileImage.layer.borderColor = [UIColor lightGrayColor].CGColor;
     self.profileImage.layer.borderWidth = 1.0;
 
     UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapGestureCaptured:)];
+    [self.controlView addGestureRecognizer:singleTap];
 
-    [self.previewImage addGestureRecognizer:singleTap];
     [self.previewImage setMultipleTouchEnabled:YES];
     [self.previewImage setUserInteractionEnabled:YES];
     self.userInteractionEnabled=YES;
-
-//    [self.profileImage setImage:[UIImage imageWithContentsOfFile:@"prof_pic_med2.png"]];
 }
 
-- (void)singleTapGestureCaptured:(UITapGestureRecognizer *)gesture
-{
-//    UIView *tappedView = [gesture.view hitTest:[gesture locationInView:gesture.view] withEvent:nil];
-//    NSLog(@"Touch event on view: %@",[tappedView class]);
+- (void) setPreviewImageFrom:(NSString *)filename {
+    self.filename = filename;
+    self.isLoading = NO;
+    self.isPlaying = NO;
+    self.didPlay = NO;
+    self.playImage.hidden = NO;
 
-    NSURL *location = [TDConstants getStreamingUrlFor:self.filename];
-//    NSURL *location = [NSURL URLWithString:@"http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8"];
-    NSLog(@"Loading movie from: %@", location);
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:AVPlayerItemDidPlayToEndTimeNotification
+                                                  object:self.playerItem];
+    [self.playerItem removeObserver:self forKeyPath:@"status" context:&ItemStatusContext];
 
-    self.previewImage.hidden = YES;
+    [self.playerLayer removeFromSuperlayer];
+    self.player = nil;
+    self.playerItem = nil;
+    self.playerLayer = nil;
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"TDDownloadPreviewImageNotification"
+                                                        object:self
+                                                      userInfo:@{@"imageView":self.previewImage, @"filename":filename}];
+}
 
-//    [item addObserver:self forKeyPath:@"status" options:0 context:&ItemStatusContext];
-//    player = [AVPlayer playerWithPlayerItem:playerItem];
-    playerLayer = [AVPlayerLayer layer];
-//    [playerLayer setPlayer:player];
-    [playerLayer setFrame:self.previewImage.frame];
-    [playerLayer setBackgroundColor:[UIColor blackColor].CGColor];
-    [playerLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
-    [self.layer addSublayer:playerLayer];
+- (void)singleTapGestureCaptured:(UITapGestureRecognizer *)gesture {
+    if (!self.isLoading) {
+        if (self.isPlaying) {
+            [self.player pause];
+            self.playImage.hidden = NO;
+        } else {
+            [self startVideo];
+            self.playImage.hidden = YES;
+        }
+        self.isPlaying = !self.isPlaying;
+    }
+}
 
+- (void)startVideo {
+    if (self.player == nil)  {
+        self.isLoading = YES;
+        NSURL *location = [TDConstants getStreamingUrlFor:self.filename];
+        NSLog(@"Loading movie from: %@", location);
 
-    AVURLAsset *asset = [AVURLAsset URLAssetWithURL:location options:nil];
-    NSString *tracksKey = @"tracks";
+        self.playerLayer = [AVPlayerLayer layer];
+        [self.playerLayer setFrame:CGRectMake(0, 0, 320, 320)];
+        [self.playerLayer setBackgroundColor:[UIColor blackColor].CGColor];
+        [self.playerLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
+        [self.videoHolderView.layer addSublayer:self.playerLayer];
+        self.playerLayer.hidden = YES;
 
-    [asset loadValuesAsynchronouslyForKeys:@[tracksKey] completionHandler:^{
+        AVURLAsset *asset = [AVURLAsset URLAssetWithURL:location options:nil];
+        NSString *tracksKey = @"tracks";
+
+        [asset loadValuesAsynchronouslyForKeys:@[tracksKey] completionHandler:^{
+            dispatch_async(dispatch_get_main_queue(), ^{
+               NSError *error;
+               AVKeyValueStatus status = [asset statusOfValueForKey:tracksKey error:&error];
+
+               if (status == AVKeyValueStatusLoaded) {
+                   self.playerItem = [AVPlayerItem playerItemWithAsset:asset];
+                   [self.playerItem addObserver:self forKeyPath:@"status"
+                                        options:0 context:&ItemStatusContext];
+                   [[NSNotificationCenter defaultCenter] addObserver:self
+                                                            selector:@selector(playerItemDidReachEnd:)
+                                                                name:AVPlayerItemDidPlayToEndTimeNotification
+                                                              object:self.playerItem];
+                   self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
+                   [self.playerLayer setPlayer:self.player];
+               } else {
+                   // TODO: Put up an error state on the view
+                   NSLog(@"The asset's tracks were not loaded:\n%@", [error localizedDescription]);
+               }
+           });
+         }];
+    } else {
+        [self.player play];
+    }
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if (context == &ItemStatusContext && self.playerItem.status == AVPlayerItemStatusReadyToPlay) {
         dispatch_async(dispatch_get_main_queue(), ^{
-           NSError *error;
-           AVKeyValueStatus status = [asset statusOfValueForKey:tracksKey error:&error];
-
-           if (status == AVKeyValueStatusLoaded) {
-//               playerItem = [AVPlayerItem playerItemWithURL:location];
-               playerItem = [AVPlayerItem playerItemWithAsset:asset];
-               [playerItem addObserver:self forKeyPath:@"status"
-                                    options:0 context:&ItemStatusContext];
-//               [[NSNotificationCenter defaultCenter] addObserver:self
-//                                                        selector:@selector(playerItemDidReachEnd:)
-//                                                            name:AVPlayerItemDidPlayToEndTimeNotification
-//                                                          object:playerItem];
-               player = [AVPlayer playerWithPlayerItem:playerItem];
-               [playerLayer setPlayer:player];
-           } else {
-               // You should deal with the error appropriately.
-               NSLog(@"The asset's tracks were not loaded:\n%@", [error localizedDescription]);
-           }
-       });
-         // The completion block goes here.
-     }];
-
-//    [player play];
-}
-
-- (IBAction)play:sender {
-    [player play];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object
-                        change:(NSDictionary *)change context:(void *)context {
-
-    if (context == &ItemStatusContext) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            NSLog(@"GOT STATUS CHANGE");
-            [player play];
-//            [self syncUI];
+            self.playerLayer.hidden = NO;
+            // Only play once on status change (status change is called every time the player is reset)
+            if (!self.didPlay) {
+                self.isLoading = NO;
+                self.didPlay = YES;
+                [self.player play];
+            }
         });
         return;
     }
@@ -122,31 +140,11 @@ static const NSString *ItemStatusContext;
     return;
 }
 
-
-- (void) setPreviewImageFrom:(NSString *)filename
-{
-    self.filename = filename;
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"TDDownloadPreviewImageNotification"
-                                                        object:self
-                                                      userInfo:@{@"imageView":self.previewImage, @"filename":filename}];
+- (void)playerItemDidReachEnd:(NSNotification *)notification {
+    self.playImage.hidden = NO;
+    self.isPlaying = NO;
+    [self.player seekToTime:kCMTimeZero];
 }
-
-//- (void)imageTapped {
-//    NSURL *url = [NSURL URLWithString:@"http://www.samkeeneinteractivedesign.com/videos/littleVid3.mp4"];
-//    self.mPlayer = [AVPlayer playerWithURL:url];
-//    self.mPlayer2 = [AVPlayer playerWithURL:url];
-//    [mPlayer addObserver:self forKeyPath:@"status" options:0 context:AVPlayerDemoPlaybackViewControllerStatusObservationContext];
-//}
-//
-//- (void)observeValueForKeyPath:(NSString*) path ofObject:(id)object change:(NSDictionary*)change context:(void*)context
-//{
-//    if (mPlayer.status == AVPlayerStatusReadyToPlay) {
-//        [self.mPlaybackView2 setPlayer:self.mPlayer2];
-//        [self.mPlaybackView setPlayer:self.mPlayer];
-//        [self.mPlayer play];
-//        [self.mPlayer2 play];
-//    }
-//}
 
 
 @end

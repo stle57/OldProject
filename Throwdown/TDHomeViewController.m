@@ -69,7 +69,6 @@
 
 - (void)reloadPosts:(NSNotification*)notification
 {
-    NSLog(@"reload posts with notification");
     [self reloadPosts];
 }
 
@@ -80,12 +79,10 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    NSLog(@"number of rows in section %lu", (unsigned long)[posts count]);
     return [posts count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"cell for row at %@", indexPath);
     TDPostView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER];
     if (!cell) {
         // Load the nib and assign an owner

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="4514" systemVersion="13A603" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="4514" systemVersion="13B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment defaultVersion="1536" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
@@ -29,16 +29,33 @@
                         <color key="textColor" red="0.92549019607843142" green="0.21568627450980393" blue="0.14901960784313725" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ibx-f9-4Ka" userLabel="VideoHolderView">
+                        <rect key="frame" x="0.0" y="42" width="320" height="320"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    </view>
+                    <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="v_playbutton" highlightedImage="v_playbutton_hit" translatesAutoresizingMaskIntoConstraints="NO" id="gZn-Xq-elD">
+                        <rect key="frame" x="0.0" y="42" width="320" height="320"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    </imageView>
+                    <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QBM-3c-aVV" userLabel="ButtonView">
+                        <rect key="frame" x="0.0" y="42" width="320" height="320"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    </view>
                 </subviews>
             </tableViewCellContentView>
             <connections>
+                <outlet property="controlView" destination="QBM-3c-aVV" id="rYj-Ru-Lqa"/>
+                <outlet property="playImage" destination="gZn-Xq-elD" id="uOk-ds-tn0"/>
                 <outlet property="previewImage" destination="oJk-aR-BDT" id="ew8-3V-eGB"/>
                 <outlet property="profileImage" destination="8Fw-ky-lb1" id="MzS-eo-8nY"/>
                 <outlet property="usernameLabel" destination="HdL-dJ-gD3" id="azD-55-WKT"/>
+                <outlet property="videoHolderView" destination="ibx-f9-4Ka" id="yxp-9L-tD8"/>
             </connections>
         </tableViewCell>
     </objects>
     <resources>
         <image name="prof_pic_med2.png" width="32" height="32"/>
+        <image name="v_playbutton" width="40" height="40"/>
+        <image name="v_playbutton_hit" width="40" height="40"/>
     </resources>
 </document>
