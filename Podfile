@@ -3,7 +3,7 @@ platform :ios, "6.0"
 
 pod 'GPUImage'
 pod 'AFNetworking'
-pod 'TestFlightSDK'
+pod 'TestFlightSDK', '3.0.0'
 pod 'libPhoneNumber-iOS'
 pod 'NSDate+TimeAgo'
 

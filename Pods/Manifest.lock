@@ -20,20 +20,20 @@ PODS:
   - GPUImage (0.1.2)
   - libPhoneNumber-iOS (0.7.1)
   - NSDate+TimeAgo (1.0.2)
-  - TestFlightSDK (2.2.1-beta)
+  - TestFlightSDK (3.0.0)
 
 DEPENDENCIES:
   - AFNetworking
   - GPUImage
   - libPhoneNumber-iOS
   - NSDate+TimeAgo
-  - TestFlightSDK
+  - TestFlightSDK (= 3.0.0)
 
 SPEC CHECKSUMS:
   AFNetworking: c7d7901a83f631414c7eda1737261f696101a5cd
   GPUImage: 007145faa0e27f1ddbcab93e07f026c9776e2fa2
   libPhoneNumber-iOS: 7052b3e419f5512dfe74098a32f7382a562efb0e
   NSDate+TimeAgo: fe93d3042e83093ae3630bc47ae7d57f782733f6
-  TestFlightSDK: 4249c2f70e621bcfbdebf019073169c8fe36be13
+  TestFlightSDK: 71e3e78d3a46144dbad975a4bf80a14dae6a818a
 
 COCOAPODS: 0.29.0

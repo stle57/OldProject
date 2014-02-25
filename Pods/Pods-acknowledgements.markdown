@@ -56,7 +56,7 @@ THIS SOFTWARE.
 
 ## TestFlightSDK
 
-All text and design is copyright © 2010-2013 TestFlight App, Inc.
+All text and design is copyright © 2010-2014 TestFlight App, Inc.
 
 All rights reserved.
 
