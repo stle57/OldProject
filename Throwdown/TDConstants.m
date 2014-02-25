@@ -19,7 +19,7 @@
 
 + (NSString*)getBaseURL
 {
-    return STAGING_SERVER;
+   // Andrew B return STAGING_SERVER;
     #ifdef DEBUG
         return DEV_SERVER;
     #else
