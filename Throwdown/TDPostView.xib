@@ -18,7 +18,7 @@
                         <rect key="frame" x="0.0" y="42" width="320" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     </imageView>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="prof_pic_med2" translatesAutoresizingMaskIntoConstraints="NO" id="8Fw-ky-lb1" userLabel="profile image view">
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="prof_pic_default" translatesAutoresizingMaskIntoConstraints="NO" id="8Fw-ky-lb1" userLabel="profile image view">
                         <rect key="frame" x="7" y="5" width="32" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     </imageView>
@@ -72,7 +72,7 @@
     </objects>
     <resources>
         <image name="clock_icon" width="12" height="12"/>
-        <image name="prof_pic_med2" width="32" height="32"/>
+        <image name="prof_pic_default" width="70" height="70"/>
         <image name="v_playbutton" width="40" height="40"/>
         <image name="v_playbutton_hit" width="40" height="40"/>
     </resources>
