@@ -143,7 +143,8 @@
         NSString *thumbnailPath = [self saveThumbnail];
         NSString *newName = [TDPostAPI createUploadFileNameFor:user]; // Will be used doing post to server API
         [api uploadVideo:[(self.hasEdited ? self.tmpVideoUrl : self.videoUrl) path] withThumbnail:thumbnailPath newName:newName];
-        [api addPost:[[TDPost alloc]initWithUsername:user.username userId:user.userId filename:newName]];
+        [api addPost:newName];
+//        [api addPost:[[TDPost alloc]initWithUsername:user.username userId:user.userId filename:newName]];
 
         UINavigationController *nav = (UINavigationController*) self.view.window.rootViewController;
         TDHomeViewController *root = (TDHomeViewController *)[nav.viewControllers objectAtIndex:0];

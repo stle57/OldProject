@@ -7,13 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "TDUser.h"
 
 @interface TDPost : NSObject
 
-@property (nonatomic, copy, readonly) NSString *filename, *username;
-@property (nonatomic, copy, readonly) NSNumber *userId;
+@property (nonatomic, copy, readonly) NSString *filename;
+@property (nonatomic, readonly) TDUser *user;
+@property (nonatomic, readonly) NSDate *createdAt;
 
-- (id)initWithUsername:(NSString *)username userId:(NSNumber *)userId filename:(NSString *)filename;
 - (id)initWithDictionary:(NSDictionary *)dict;
 - (NSDictionary *)jsonRepresentation;
+
 @end

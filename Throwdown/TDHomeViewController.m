@@ -32,17 +32,14 @@
 
 @synthesize refreshControl;
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
 
     [self.view insertSubview:self.recordButton aboveSubview:self.tableView];
     [self.view insertSubview:self.notificationButton aboveSubview:self.tableView];
     [self.view insertSubview:self.profileButton aboveSubview:self.tableView];
-//    [self.view bringSubviewToFront:self.recordButton];
-//    [self.view bringSubviewToFront:self.notificationButton];
-//    [self.view bringSubviewToFront:self.profileButton];
 
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadPosts:) name:@"TDReloadPostsNotification" object:nil];
@@ -58,14 +55,7 @@
     [self.refreshControl setTintColor:[TDConstants brandingRedColor]];
 }
 
-//- (void)viewWillAppear:(BOOL)animated
-//{
-//    [super viewWillAppear:animated];
-//    [self reloadPosts];
-//}
-
-- (void)didReceiveMemoryWarning
-{
+- (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
@@ -110,15 +100,13 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     TDPostView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER];
     if (!cell) {
-        // Load the nib and assign an owner
         NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER owner:self options:nil];
         cell = [topLevelObjects objectAtIndex:0];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 
     TDPost *post = (TDPost *)[posts objectAtIndex:indexPath.row];
-    [cell.usernameLabel setText:post.username];
-    [cell setPreviewImageFrom:post.filename];
+    [cell setPost:post];
     return cell;
 }
 
@@ -130,7 +118,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 362.0f;
+    return 404.0f;
 }
 
 

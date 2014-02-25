@@ -10,24 +10,32 @@
 
 @implementation TDPost
 
-- (id)initWithUsername:(NSString *)username userId:(NSNumber *)userId filename:(NSString *)filename
-{
+- (id)initWithDictionary:(NSDictionary *)dict {
     self = [super init];
     if (self)
     {
-        _userId = userId;
-        _username = username;
-        _filename = filename;
+        _user = [[TDUser alloc] initWithDictionary:[dict objectForKey:@"user"]];
+        _filename = [dict objectForKey:@"filename"];
+        _createdAt = [TDPost dateForRFC3339DateTimeString:[dict objectForKey:@"created_at"]];
     }
     return self;
 }
 
-- (id)initWithDictionary:(NSDictionary *)dict {
-    return [self initWithUsername:[dict objectForKey:@"username"] userId:[dict objectForKey:@"user_id"] filename:[dict objectForKey:@"filename"]];
-}
-
 - (NSDictionary *)jsonRepresentation
 {
-    return @{@"post": @{@"user_id": _userId, @"filename": _filename}};
+    return @{ @"filename": self.filename };
 }
+
++ (NSDate *)dateForRFC3339DateTimeString:(NSString *)rfc3339DateTimeString {
+
+	NSDateFormatter *rfc3339DateFormatter = [[NSDateFormatter alloc] init];
+
+	[rfc3339DateFormatter setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'"];
+	[rfc3339DateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+
+	// Convert the RFC 3339 date time string to an NSDate.
+	NSDate *result = [rfc3339DateFormatter dateFromString:rfc3339DateTimeString];
+	return result;
+}
+
 @end

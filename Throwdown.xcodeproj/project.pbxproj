@@ -31,6 +31,7 @@
 		A14B2B8218B5DF9B00980A31 /* TDSignupStepThreeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A14B2B8118B5DF9B00980A31 /* TDSignupStepThreeViewController.m */; };
 		A14B2B8818B8351E00980A31 /* TDCurrentUser.m in Sources */ = {isa = PBXBuildFile; fileRef = A14B2B8718B8351E00980A31 /* TDCurrentUser.m */; };
 		A150F08A18A31B14009A72AD /* TDConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = A150F08918A31B14009A72AD /* TDConstants.m */; };
+		A151958B18BAE8FD0050A45B /* TDUser.m in Sources */ = {isa = PBXBuildFile; fileRef = A151958A18BAE8FD0050A45B /* TDUser.m */; };
 		A17567901891C7F20034AD05 /* TDPostAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = A175678F1891C7F20034AD05 /* TDPostAPI.m */; };
 		A182D8261889E8D900F794A5 /* TDEditVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A182D8251889E8D900F794A5 /* TDEditVideoViewController.m */; };
 		A182D830188B60CD00F794A5 /* SAResizibleBubble.m in Sources */ = {isa = PBXBuildFile; fileRef = A182D829188B60CD00F794A5 /* SAResizibleBubble.m */; };
@@ -98,6 +99,8 @@
 		A14B2B8718B8351E00980A31 /* TDCurrentUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDCurrentUser.m; sourceTree = "<group>"; };
 		A150F08818A31B14009A72AD /* TDConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDConstants.h; sourceTree = "<group>"; };
 		A150F08918A31B14009A72AD /* TDConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDConstants.m; sourceTree = "<group>"; };
+		A151958918BAE8FD0050A45B /* TDUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUser.h; sourceTree = "<group>"; };
+		A151958A18BAE8FD0050A45B /* TDUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUser.m; sourceTree = "<group>"; };
 		A175678E1891C7F20034AD05 /* TDPostAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDPostAPI.h; sourceTree = "<group>"; };
 		A175678F1891C7F20034AD05 /* TDPostAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDPostAPI.m; sourceTree = "<group>"; };
 		A182D8241889E8D900F794A5 /* TDEditVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDEditVideoViewController.h; sourceTree = "<group>"; };
@@ -319,6 +322,8 @@
 				A19FF5E31891FEEF001A0AD0 /* TDPost.m */,
 				A14B2B8618B8351D00980A31 /* TDCurrentUser.h */,
 				A14B2B8718B8351E00980A31 /* TDCurrentUser.m */,
+				A151958918BAE8FD0050A45B /* TDUser.h */,
+				A151958A18BAE8FD0050A45B /* TDUser.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -490,6 +495,7 @@
 			files = (
 				A19FF61018970BBB001A0AD0 /* RSModel.m in Sources */,
 				A19FF61118970BBB001A0AD0 /* RSStorageObject.m in Sources */,
+				A151958B18BAE8FD0050A45B /* TDUser.m in Sources */,
 				A19FF60F18970BBB001A0AD0 /* RSContainer.m in Sources */,
 				A19FF60D18970BBB001A0AD0 /* RSCDNContainer.m in Sources */,
 				A14B2B7F18B5308000980A31 /* TDAPIClient.m in Sources */,

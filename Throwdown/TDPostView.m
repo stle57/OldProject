@@ -9,6 +9,7 @@
 #import "TDPostView.h"
 #import "TDConstants.h"
 #import "AVFoundation/AVFoundation.h"
+#import "NSDate+TimeAgo.h"
 
 static const NSString *ItemStatusContext;
 
@@ -17,6 +18,7 @@ static const NSString *ItemStatusContext;
 @property (weak, nonatomic) IBOutlet UIView *videoHolderView;
 @property (weak, nonatomic) IBOutlet UIView *controlView;
 @property (weak, nonatomic) IBOutlet UIImageView *playImage;
+
 @property (strong, nonatomic) AVPlayer *player;
 @property (strong, nonatomic) AVPlayerItem *playerItem;
 @property (strong, nonatomic) AVPlayerLayer *playerLayer;
@@ -46,8 +48,11 @@ static const NSString *ItemStatusContext;
     self.userInteractionEnabled=YES;
 }
 
-- (void) setPreviewImageFrom:(NSString *)filename {
-    self.filename = filename;
+- (void)setPost:(TDPost *)post {
+    self.usernameLabel.text = post.user.username;
+    self.createdLabel.text = [post.createdAt timeAgo];
+
+    self.filename = post.filename;
     self.isLoading = NO;
     self.isPlaying = NO;
     self.didPlay = NO;
@@ -64,7 +69,7 @@ static const NSString *ItemStatusContext;
     self.playerLayer = nil;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"TDDownloadPreviewImageNotification"
                                                         object:self
-                                                      userInfo:@{@"imageView":self.previewImage, @"filename":filename}];
+                                                      userInfo:@{@"imageView":self.previewImage, @"filename":self.filename}];
 }
 
 - (void)singleTapGestureCaptured:(UITapGestureRecognizer *)gesture {

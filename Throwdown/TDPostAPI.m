@@ -8,6 +8,7 @@
 
 #import "TDPostAPI.h"
 #import "TDConstants.h"
+#import "TDCurrentUser.h"
 #import "RSClient.h"
 #import "RSContainer.h"
 #import "RSStorageObject.h"
@@ -56,6 +57,8 @@
 
 - (void)dealloc
 {
+    currentUploads = nil;
+    posts = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -63,15 +66,13 @@
 # pragma mark - posts get/add/remove
 
 
--(void)addPost:(TDPost *)post
-{
-    debug NSLog(@"New post added");
-    [posts insertObject:post atIndex:0];
-
+-(void)addPost:(NSString *)filename {
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts.json"];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager POST:url parameters:[post jsonRepresentation] success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager POST:url parameters:@{ @"post": @{@"filename": filename}, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
         debug NSLog(@"JSON: %@", [responseObject class]);
+        // Not the best way to do this but for now...
+        [self fetchPostsUpstream];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"Error: %@", error);
     }];
@@ -79,10 +80,9 @@
     [self notifyPostsReload];
 }
 
-- (void)fetchPostsUpstream
-{
+- (void)fetchPostsUpstream {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager GET:[[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts.json"] parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:[[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts.json"] parameters:@{@"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSArray class]]) {
             [posts removeAllObjects];
             for (id postObject in (NSArray *)responseObject) {

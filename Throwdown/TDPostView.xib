@@ -7,28 +7,44 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="TDPostView" rowHeight="409" id="wCZ-UE-T81" customClass="TDPostView">
-            <rect key="frame" x="0.0" y="0.0" width="320" height="362"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="TDPostView" rowHeight="404" id="wCZ-UE-T81" customClass="TDPostView">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="404"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="wCZ-UE-T81" id="Bwt-g5-LTv">
-                <rect key="frame" x="0.0" y="0.0" width="320" height="361"/>
+                <rect key="frame" x="0.0" y="0.0" width="320" height="403"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oJk-aR-BDT" userLabel="post preview image">
                         <rect key="frame" x="0.0" y="42" width="320" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     </imageView>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="prof_pic_med2.png" translatesAutoresizingMaskIntoConstraints="NO" id="8Fw-ky-lb1" userLabel="profile image view">
-                        <rect key="frame" x="5" y="5" width="32" height="32"/>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="prof_pic_med2" translatesAutoresizingMaskIntoConstraints="NO" id="8Fw-ky-lb1" userLabel="profile image view">
+                        <rect key="frame" x="7" y="5" width="32" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     </imageView>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="acr" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HdL-dJ-gD3">
-                        <rect key="frame" x="45" y="5" width="255" height="32"/>
+                        <rect key="frame" x="47" y="5" width="253" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                         <color key="textColor" red="0.92549019607843142" green="0.21568627450980393" blue="0.14901960784313725" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="time label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" enabled="NO" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lmo-V5-bmk">
+                        <rect key="frame" x="23" y="365" width="275" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                        <color key="textColor" red="0.63529411764705879" green="0.63529411764705879" blue="0.63529411764705879" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="clock_icon" translatesAutoresizingMaskIntoConstraints="NO" id="daO-w2-vqL">
+                        <rect key="frame" x="7" y="368" width="12" height="12"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    </imageView>
+                    <view userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fjd-nt-ku2" userLabel="Padding line">
+                        <rect key="frame" x="0.0" y="399" width="320" height="5"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" red="0.78431372549019607" green="0.78431372549019607" blue="0.78431372549019607" alpha="1" colorSpace="calibratedRGB"/>
+                    </view>
                     <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ibx-f9-4Ka" userLabel="VideoHolderView">
                         <rect key="frame" x="0.0" y="42" width="320" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -45,16 +61,18 @@
             </tableViewCellContentView>
             <connections>
                 <outlet property="controlView" destination="QBM-3c-aVV" id="rYj-Ru-Lqa"/>
+                <outlet property="createdLabel" destination="lmo-V5-bmk" id="jmA-al-8fK"/>
                 <outlet property="playImage" destination="gZn-Xq-elD" id="uOk-ds-tn0"/>
                 <outlet property="previewImage" destination="oJk-aR-BDT" id="ew8-3V-eGB"/>
                 <outlet property="profileImage" destination="8Fw-ky-lb1" id="MzS-eo-8nY"/>
-                <outlet property="usernameLabel" destination="HdL-dJ-gD3" id="azD-55-WKT"/>
+                <outlet property="usernameLabel" destination="HdL-dJ-gD3" id="hyy-Fd-btN"/>
                 <outlet property="videoHolderView" destination="ibx-f9-4Ka" id="yxp-9L-tD8"/>
             </connections>
         </tableViewCell>
     </objects>
     <resources>
-        <image name="prof_pic_med2.png" width="32" height="32"/>
+        <image name="clock_icon" width="12" height="12"/>
+        <image name="prof_pic_med2" width="32" height="32"/>
         <image name="v_playbutton" width="40" height="40"/>
         <image name="v_playbutton_hit" width="40" height="40"/>
     </resources>
