@@ -18,15 +18,19 @@
 @interface TDHomeViewController () <UITableViewDataSource, UITableViewDelegate>
 {
     NSArray *posts;
+    UIRefreshControl *refreshControl;
 }
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIButton *recordButton;
 @property (weak, nonatomic) IBOutlet UIButton *notificationButton;
 @property (weak, nonatomic) IBOutlet UIButton *profileButton;
+@property (nonatomic, retain) UIRefreshControl *refreshControl;
 
 @end
 
 @implementation TDHomeViewController
+
+@synthesize refreshControl;
 
 - (void)viewDidLoad
 {
@@ -44,6 +48,14 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadPosts:) name:@"TDReloadPostsNotification" object:nil];
     [self reloadPosts];
     [[TDPostAPI sharedInstance] fetchPostsUpstream];
+    
+    // Add refresh control
+    self.refreshControl = [[UIRefreshControl alloc] init];
+    [self.refreshControl addTarget:self
+                            action:@selector(refreshControlUsed)
+                  forControlEvents:UIControlEventValueChanged];
+    [self.tableView addSubview:self.refreshControl];
+    [self.refreshControl setTintColor:[TDConstants brandingRedColor]];
 }
 
 //- (void)viewWillAppear:(BOOL)animated
@@ -61,8 +73,21 @@
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
+    self.refreshControl = nil;
 }
 
+#pragma mark - refresh control
+-(void)refreshControlUsed
+{
+    debug NSLog(@"refreshControlUsed");
+    
+    [self reloadPosts];
+    // uirefreshcontrol should be attached to a uitableviewcontroller - this stops a slight jutter
+    [self.refreshControl performSelector:@selector(endRefreshing)
+                              withObject:nil
+                              afterDelay:0.1];
+}
 
 # pragma mark - table view delegate
 
@@ -73,7 +98,7 @@
 }
 
 - (void)reloadPosts {
-    NSLog(@"reload posts");
+    debug NSLog(@"reload posts");
     posts = [[TDPostAPI sharedInstance] getPosts];
     [self.tableView reloadData];
 }

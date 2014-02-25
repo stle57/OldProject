@@ -106,13 +106,13 @@
         [self.exportSession exportAsynchronouslyWithCompletionHandler:^{
             switch ([self.exportSession status]) {
                 case AVAssetExportSessionStatusFailed:
-                    NSLog(@"Export failed: %@", [[self.exportSession error] localizedDescription]);
+                    debug NSLog(@"Export failed: %@", [[self.exportSession error] localizedDescription]);
                     break;
                 case AVAssetExportSessionStatusCancelled:
-                    NSLog(@"Export canceled");
+                    debug NSLog(@"Export canceled");
                     break;
                 default:
-                    NSLog(@"NONE");
+                    debug NSLog(@"NONE");
                     dispatch_async(dispatch_get_main_queue(), ^{
 //                        [self playMovie];
                     });
@@ -182,7 +182,7 @@
     if (exist) {
         [fm removeItemAtURL:self.tmpVideoUrl error:&err];
         if (err) {
-            NSLog(@"file remove error, %@", err.localizedDescription );
+            debug NSLog(@"file remove error, %@", err.localizedDescription );
         }
     }
 }

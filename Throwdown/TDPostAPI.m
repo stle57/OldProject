@@ -65,15 +65,15 @@
 
 -(void)addPost:(TDPost *)post
 {
-    NSLog(@"New post added");
+    debug NSLog(@"New post added");
     [posts insertObject:post atIndex:0];
 
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts.json"];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager POST:url parameters:[post jsonRepresentation] success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"JSON: %@", [responseObject class]);
+        debug NSLog(@"JSON: %@", [responseObject class]);
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"Error: %@", error);
+        debug NSLog(@"Error: %@", error);
     }];
 
     [self notifyPostsReload];
@@ -93,7 +93,7 @@
             [self notifyPostsReload];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"HTTP Error: %@", error);
+        debug NSLog(@"HTTP Error: %@", error);
     }];
 }
 
@@ -164,7 +164,7 @@
                 [self saveImage:image filename:notification.userInfo[@"filename"]];
             }
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            NSLog(@"Image error: %@, %@", filename, error);
+            debug NSLog(@"Image error: %@, %@", filename, error);
         }];
         [operation start];
 
@@ -177,7 +177,7 @@
 //
 //                }
 //                failure:^(NSURLRequest *request, NSHTTPURLResponse *response, NSError *error) {
-//                    NSLog(@"%@", [error localizedDescription]);
+//                    debug NSLog(@"%@", [error localizedDescription]);
 //                }];
 //            [operation start];
 
@@ -226,40 +226,40 @@
         RSClient *client = [[RSClient alloc] initWithProvider:RSProviderTypeRackspaceUS username:RS_USERNAME apiKey:RS_API_KEY];
 
         [client authenticate:^{
-            NSLog(@"Authentication successful");
+            debug NSLog(@"Authentication successful");
             [client getContainers:^(NSArray *containers, NSError *jsonError) {
 
                 RSContainer *storage = [containers objectAtIndex:0];
 
                 unsigned long long videoFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:localVideoPath error:nil][NSFileSize] unsignedLongLongValue];
-                NSLog(@"VIDEO FROM %@ TO %@ SIZE %llu", localVideoPath, newVideoPath, videoFileSize);
+                debug NSLog(@"VIDEO FROM %@ TO %@ SIZE %llu", localVideoPath, newVideoPath, videoFileSize);
 
                 RSStorageObject *video = [[RSStorageObject alloc] init];
                 video.name = newVideoPath;
                 [storage uploadObject:video fromFile:localVideoPath success:^{
 //                    [self uploadCompleteFor:newName];
-                    NSLog(@"Video upload success");
+                    debug NSLog(@"Video upload success");
                 } failure:^(NSHTTPURLResponse *response, NSData *data, NSError *error) {
-                    NSLog(@"ERROR: Video upload fail");
+                    debug NSLog(@"ERROR: Video upload fail");
                 }];
 
                 unsigned long long photoFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:localPhotoPath error:nil][NSFileSize] unsignedLongLongValue];
-                NSLog(@"IMAGE FROM %@ TO %@ SIZE %llu", localPhotoPath, newPhotoPath, photoFileSize);
+                debug NSLog(@"IMAGE FROM %@ TO %@ SIZE %llu", localPhotoPath, newPhotoPath, photoFileSize);
 
                 RSStorageObject *image = [[RSStorageObject alloc] init];
                 image.name = newPhotoPath;
                 [storage uploadObject:image fromFile:localPhotoPath success:^{
 //                    [self uploadCompleteFor:newName];
-                    NSLog(@"Image upload success");
+                    debug NSLog(@"Image upload success");
                 } failure:^(NSHTTPURLResponse *response, NSData *data, NSError *error) {
-                    NSLog(@"ERROR: Image upload fail");
+                    debug NSLog(@"ERROR: Image upload fail");
                 }];
 
             } failure:^(NSHTTPURLResponse *response, NSData *data, NSError *error) {
-                NSLog(@"ERROR: Couldn't find containers");
+                debug NSLog(@"ERROR: Couldn't find containers");
             }];
         } failure:^(NSHTTPURLResponse *response, NSData *data, NSError *error) {
-            NSLog(@"ERROR: Authentication failed");
+            debug NSLog(@"ERROR: Authentication failed");
         }];
     });
 }

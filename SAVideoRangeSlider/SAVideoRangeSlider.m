@@ -470,10 +470,10 @@
                                                   }
                                                   
                                                   if (result == AVAssetImageGeneratorFailed) {
-                                                      NSLog(@"Failed with error: %@", [error localizedDescription]);
+                                                      debug NSLog(@"Failed with error: %@", [error localizedDescription]);
                                                   }
                                                   if (result == AVAssetImageGeneratorCancelled) {
-                                                      NSLog(@"Canceled");
+                                                      debug NSLog(@"Canceled");
                                                   }
                                               }];
 }
@@ -519,8 +519,8 @@
 
 -(void) setTimeLabel{
     self.bubleText.text = [self trimIntervalStr];
-    //NSLog([self timeDuration1]);
-    //NSLog([self timeDuration]);
+    //debug NSLog([self timeDuration1]);
+    //debug NSLog([self timeDuration]);
 }
 
 

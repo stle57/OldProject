@@ -56,11 +56,11 @@
             NSNumber *valid = (NSNumber *)[response objectForKey:@"valid"];
             callback([valid boolValue]);
         } else {
-            NSLog(@"ERROR in validation response, got: %@", [responseObject class]);
+            debug NSLog(@"ERROR in validation response, got: %@", [responseObject class]);
             callback(NO);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"ERROR in validation call: %@", [error localizedDescription]);
+        debug NSLog(@"ERROR in validation call: %@", [error localizedDescription]);
         callback(NO);
     }];
 }
@@ -79,11 +79,11 @@
                 callback(NO, nil);
             }
         } else {
-            NSLog(@"ERROR in signup response, got: %@", [responseObject class]);
+            debug NSLog(@"ERROR in signup response, got: %@", [responseObject class]);
             callback(NO, nil);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"ERROR in signup call: %@", [error localizedDescription]);
+        debug NSLog(@"ERROR in signup call: %@", [error localizedDescription]);
         callback(NO, nil);
     }];
 }
@@ -102,11 +102,11 @@
                 callback(NO, nil);
             }
         } else {
-            NSLog(@"ERROR in signup response, got: %@", [responseObject class]);
+            debug NSLog(@"ERROR in signup response, got: %@", [responseObject class]);
             callback(NO, nil);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"ERROR in signup call: %@", [error localizedDescription]);
+        debug NSLog(@"ERROR in signup call: %@", [error localizedDescription]);
         callback(NO, nil);
     }];
 }

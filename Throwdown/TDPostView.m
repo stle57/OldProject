@@ -84,7 +84,7 @@ static const NSString *ItemStatusContext;
     if (self.player == nil)  {
         self.isLoading = YES;
         NSURL *location = [TDConstants getStreamingUrlFor:self.filename];
-        NSLog(@"Loading movie from: %@", location);
+        debug NSLog(@"Loading movie from: %@", location);
 
         self.playerLayer = [AVPlayerLayer layer];
         [self.playerLayer setFrame:CGRectMake(0, 0, 320, 320)];
@@ -113,7 +113,7 @@ static const NSString *ItemStatusContext;
                    [self.playerLayer setPlayer:self.player];
                } else {
                    // TODO: Put up an error state on the view
-                   NSLog(@"The asset's tracks were not loaded:\n%@", [error localizedDescription]);
+                   debug NSLog(@"The asset's tracks were not loaded:\n%@", [error localizedDescription]);
                }
            });
          }];

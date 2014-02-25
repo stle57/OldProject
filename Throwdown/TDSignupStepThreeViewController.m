@@ -100,7 +100,7 @@
     if ([TDViewControllerHelper validateEmail:email] && ![email isEqualToString:self.validatingEmail]) {
         self.validatingEmail = email;
         [[TDAPIClient sharedInstance] validateCredentials:@{@"email": email} callback:^(BOOL valid) {
-            NSLog(@"callback with %hhd", valid);
+            debug NSLog(@"callback with %hhd", valid);
             [self setStatus:valid];
         }];
     } else {
