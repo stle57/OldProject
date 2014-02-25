@@ -58,18 +58,21 @@ static const NSString *ItemStatusContext;
     self.didPlay = NO;
     self.playImage.hidden = NO;
 
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:AVPlayerItemDidPlayToEndTimeNotification
-                                                  object:self.playerItem];
-    [self.playerItem removeObserver:self forKeyPath:@"status" context:&ItemStatusContext];
-
-    [self.playerLayer removeFromSuperlayer];
-    self.player = nil;
-    self.playerItem = nil;
-    self.playerLayer = nil;
     [[NSNotificationCenter defaultCenter] postNotificationName:@"TDDownloadPreviewImageNotification"
                                                         object:self
                                                       userInfo:@{@"imageView":self.previewImage, @"filename":self.filename}];
+
+    if (self.player != nil) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                        name:AVPlayerItemDidPlayToEndTimeNotification
+                                                      object:self.playerItem];
+        [self.playerItem removeObserver:self forKeyPath:@"status" context:&ItemStatusContext];
+
+        [self.playerLayer removeFromSuperlayer];
+        self.player = nil;
+        self.playerItem = nil;
+        self.playerLayer = nil;
+    }
 }
 
 - (void)singleTapGestureCaptured:(UITapGestureRecognizer *)gesture {
