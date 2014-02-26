@@ -12,6 +12,8 @@
 #import "TDPostView.h"
 #import "TDConstants.h"
 #import "TDUserAPI.h"
+#import "VideoButtonSegue.h"
+#import "VideoCloseSegue.h"
 
 #define CELL_IDENTIFIER @"TDPostView"
 
@@ -66,6 +68,25 @@
     
     self.refreshControl = nil;
 }
+
+#pragma mark - video seque
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    
+    if([segue isKindOfClass:[VideoButtonSegue class]]) {
+    }
+}
+
+- (UIStoryboardSegue *)segueForUnwindingToViewController:(UIViewController *)toViewController fromViewController:(UIViewController *)fromViewController identifier:(NSString *)identifier {
+    
+    // Instantiate a new VideoCloseSegue
+    VideoCloseSegue *segue = [[VideoCloseSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
+    return segue;
+}
+
+- (IBAction)unwindToHome:(UIStoryboardSegue *)sender {
+    
+}
+
 
 #pragma mark - refresh control
 -(void)refreshControlUsed

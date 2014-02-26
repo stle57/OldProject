@@ -159,7 +159,10 @@
 }
 
 - (IBAction)closeButtonPressed:(UIButton *)button {
-    [self.navigationController popViewControllerAnimated:YES];
+    //    [self.navigationController popViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES
+                             completion:^{
+                             }];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender

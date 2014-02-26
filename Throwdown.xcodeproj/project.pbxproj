@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D5714CC18BD9AB300AF0B4D /* VideoButtonSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5714C918BD9AB300AF0B4D /* VideoButtonSegue.m */; };
+		2D5714CD18BD9AB300AF0B4D /* VideoCloseSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5714CB18BD9AB300AF0B4D /* VideoCloseSegue.m */; };
 		579149E08F7B4EE789901248 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E657ABE418B84EA68554F855 /* libPods.a */; };
 		A11E04DC1888CB79002F981A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11E04DB1888CB79002F981A /* Foundation.framework */; };
 		A11E04DE1888CB79002F981A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11E04DD1888CB79002F981A /* CoreGraphics.framework */; };
@@ -63,6 +65,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2D5714C818BD9AB300AF0B4D /* VideoButtonSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoButtonSegue.h; sourceTree = "<group>"; };
+		2D5714C918BD9AB300AF0B4D /* VideoButtonSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoButtonSegue.m; sourceTree = "<group>"; };
+		2D5714CA18BD9AB300AF0B4D /* VideoCloseSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoCloseSegue.h; sourceTree = "<group>"; };
+		2D5714CB18BD9AB300AF0B4D /* VideoCloseSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoCloseSegue.m; sourceTree = "<group>"; };
 		A11E04D81888CB79002F981A /* Throwdown.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Throwdown.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A11E04DB1888CB79002F981A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A11E04DD1888CB79002F981A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -164,6 +170,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2D5714C718BD9A5800AF0B4D /* Segues */ = {
+			isa = PBXGroup;
+			children = (
+				2D5714C818BD9AB300AF0B4D /* VideoButtonSegue.h */,
+				2D5714C918BD9AB300AF0B4D /* VideoButtonSegue.m */,
+				2D5714CA18BD9AB300AF0B4D /* VideoCloseSegue.h */,
+				2D5714CB18BD9AB300AF0B4D /* VideoCloseSegue.m */,
+			);
+			name = Segues;
+			sourceTree = "<group>";
+		};
 		A11E04CF1888CB79002F981A = {
 			isa = PBXGroup;
 			children = (
@@ -207,6 +224,7 @@
 				A19FF5E11891FEDF001A0AD0 /* Models */,
 				A175678D1891C20A0034AD05 /* API */,
 				A182D836188F2C0100F794A5 /* Controllers */,
+				2D5714C718BD9A5800AF0B4D /* Segues */,
 				A11E04EA1888CB79002F981A /* TDAppDelegate.h */,
 				A11E04EB1888CB79002F981A /* TDAppDelegate.m */,
 				A11E04ED1888CB79002F981A /* Main.storyboard */,
@@ -496,6 +514,7 @@
 				A19FF61018970BBB001A0AD0 /* RSModel.m in Sources */,
 				A19FF61118970BBB001A0AD0 /* RSStorageObject.m in Sources */,
 				A151958B18BAE8FD0050A45B /* TDUser.m in Sources */,
+				2D5714CC18BD9AB300AF0B4D /* VideoButtonSegue.m in Sources */,
 				A19FF60F18970BBB001A0AD0 /* RSContainer.m in Sources */,
 				A19FF60D18970BBB001A0AD0 /* RSCDNContainer.m in Sources */,
 				A14B2B7F18B5308000980A31 /* TDAPIClient.m in Sources */,
@@ -518,6 +537,7 @@
 				A1432CE418A99DA40073E492 /* TDSignupStepOneViewController.m in Sources */,
 				A17567901891C7F20034AD05 /* TDPostAPI.m in Sources */,
 				A182D831188B60CD00F794A5 /* SASliderLeft.m in Sources */,
+				2D5714CD18BD9AB300AF0B4D /* VideoCloseSegue.m in Sources */,
 				A1E90CDD18B445FC0046D281 /* TDSignupStepTwoViewController.m in Sources */,
 				A1432CE718A99DB30073E492 /* TDLoginViewController.m in Sources */,
 				A1432CE118A99D750073E492 /* TDWelcomeViewController.m in Sources */,
