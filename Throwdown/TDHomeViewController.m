@@ -21,18 +21,25 @@
 {
     NSArray *posts;
     UIRefreshControl *refreshControl;
+    BOOL goneDownstream;
+    CGPoint origRecordButtonCenter;
+    CGPoint origNotificationButtonCenter;
+    CGPoint origProfileButtonCenter;
+    UIDynamicAnimator *animator;
 }
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIButton *recordButton;
 @property (weak, nonatomic) IBOutlet UIButton *notificationButton;
 @property (weak, nonatomic) IBOutlet UIButton *profileButton;
 @property (nonatomic, retain) UIRefreshControl *refreshControl;
+@property (nonatomic, retain) UIDynamicAnimator *animator;
 
 @end
 
 @implementation TDHomeViewController
 
 @synthesize refreshControl;
+@synthesize animator;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -40,6 +47,10 @@
     [self.view insertSubview:self.recordButton aboveSubview:self.tableView];
     [self.view insertSubview:self.notificationButton aboveSubview:self.tableView];
     [self.view insertSubview:self.profileButton aboveSubview:self.tableView];
+    
+    origRecordButtonCenter = self.recordButton.center;
+    origNotificationButtonCenter = self.notificationButton.center;
+    origProfileButtonCenter = self.profileButton.center;
 
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.delegate = self;
@@ -57,6 +68,23 @@
     [self.refreshControl setTintColor:[TDConstants brandingRedColor]];
 }
 
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+
+    if (goneDownstream) {
+        [self animateButtonsOnToScreen];
+    }
+    goneDownstream = NO;
+}
+
+-(void)viewDidLayoutSubviews
+{
+    if (goneDownstream) {
+        [self hideBottomButtons];
+    }
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -67,12 +95,68 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     self.refreshControl = nil;
+    self.animator = nil;
+}
+
+#pragma mark - Bottom Buttons Bounce
+-(void)hideBottomButtons
+{
+    // Place off screen
+    [self.recordButton setTranslatesAutoresizingMaskIntoConstraints:YES];
+    [self.notificationButton setTranslatesAutoresizingMaskIntoConstraints:YES];
+    [self.profileButton setTranslatesAutoresizingMaskIntoConstraints:YES];
+    
+    self.recordButton.center = CGPointMake(self.recordButton.center.x, origRecordButtonCenter.y+self.recordButton.frame.size.height*1.2);
+    self.notificationButton.center = CGPointMake(self.notificationButton.center.x, origNotificationButtonCenter.y+self.recordButton.frame.size.height*1.2);
+    self.profileButton.center = CGPointMake(self.profileButton.center.x, origProfileButtonCenter.y+self.recordButton.frame.size.height*1.2);
+}
+
+-(void)animateButtonsOnToScreen
+{
+    UIDynamicAnimator* anAnimator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
+    self.animator = anAnimator;
+    //self.animator.delegate = self;
+    
+    UIGravityBehavior* gravityBeahvior = [[UIGravityBehavior alloc] initWithItems:@[self.recordButton, self.notificationButton, self.profileButton]];
+    gravityBeahvior.magnitude = 4.0;
+    gravityBeahvior.gravityDirection = CGVectorMake(0.0, -1.0);
+    UICollisionBehavior* collisionBehavior1 = [[UICollisionBehavior alloc] initWithItems:@[self.recordButton]];
+    collisionBehavior1.translatesReferenceBoundsIntoBoundary = NO;
+    [collisionBehavior1 addBoundaryWithIdentifier:@"middle"
+                                        fromPoint:CGPointMake(0.0,
+                                                              origRecordButtonCenter.y-self.recordButton.frame.size.height/2.0)
+                                          toPoint:CGPointMake(self.view.frame.size.width,
+                                                              origRecordButtonCenter.y-self.recordButton.frame.size.height/2.0)];
+    UICollisionBehavior* collisionBehavior2 = [[UICollisionBehavior alloc] initWithItems:@[self.notificationButton]];
+    collisionBehavior2.translatesReferenceBoundsIntoBoundary = NO;
+    [collisionBehavior2 addBoundaryWithIdentifier:@"middle"
+                                        fromPoint:CGPointMake(0.0,
+                                                              origNotificationButtonCenter.y-self.notificationButton.frame.size.height/2.0)
+                                          toPoint:CGPointMake(self.view.frame.size.width,
+                                                              origNotificationButtonCenter.y-self.notificationButton.frame.size.height/2.0)];
+    UICollisionBehavior* collisionBehavior3 = [[UICollisionBehavior alloc] initWithItems:@[self.profileButton]];
+    collisionBehavior3.translatesReferenceBoundsIntoBoundary = NO;
+    [collisionBehavior3 addBoundaryWithIdentifier:@"middle"
+                                        fromPoint:CGPointMake(0.0,
+                                                              origProfileButtonCenter.y-self.profileButton.frame.size.height/2.0)
+                                          toPoint:CGPointMake(self.view.frame.size.width,
+                                                              origProfileButtonCenter.y-self.profileButton.frame.size.height/2.0)];
+    UIDynamicItemBehavior* propertiesBehavior = [[UIDynamicItemBehavior alloc] initWithItems:@[self.recordButton, self.notificationButton, self.profileButton]];
+    propertiesBehavior.elasticity = 0.5;
+    [self.animator addBehavior:gravityBeahvior];
+    [self.animator addBehavior:collisionBehavior1];
+    [self.animator addBehavior:collisionBehavior2];
+    [self.animator addBehavior:collisionBehavior3];
+    [self.animator addBehavior:propertiesBehavior];
+    
+//    collisionBehavior.collisionDelegate = self;
 }
 
 #pragma mark - video seque
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    
+
     if([segue isKindOfClass:[VideoButtonSegue class]]) {
+        goneDownstream = YES;
     }
 }
 
