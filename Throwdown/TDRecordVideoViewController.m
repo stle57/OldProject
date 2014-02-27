@@ -22,9 +22,16 @@
 @property GPUImageMovieWriter *movieWriter;
 @property GPUImageVideoCamera *videoCamera;
 @property BOOL isRecording;
+@property BOOL torchIsOn;
 
+@property (weak, nonatomic) IBOutlet UIView *videoContainerView;
+@property (weak, nonatomic) IBOutlet UIButton *switchCamerabutton;
+@property (weak, nonatomic) IBOutlet UIButton *flashButton;
+@property (weak, nonatomic) IBOutlet UIView *progressBarView;
+@property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 - (IBAction)recordButtonPressed:(UIButton *)sender;
 - (IBAction)closeButtonPressed:(UIButton *)sender;
+
 @end
 
 @implementation TDRecordVideoViewController
