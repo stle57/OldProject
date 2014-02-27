@@ -48,6 +48,13 @@
     [self.view insertSubview:self.notificationButton aboveSubview:self.tableView];
     [self.view insertSubview:self.profileButton aboveSubview:self.tableView];
     
+    // Fix buttons for 3.5" screens
+    if ([UIScreen mainScreen].bounds.size.height == 480.0) {
+        self.recordButton.center = CGPointMake(self.recordButton.center.x, [UIScreen mainScreen].bounds.size.height-(568.0-528.0));
+        self.notificationButton.center = CGPointMake(self.notificationButton.center.x, [UIScreen mainScreen].bounds.size.height-(568.0-538.0));
+        self.profileButton.center = CGPointMake(self.profileButton.center.x, [UIScreen mainScreen].bounds.size.height-(568.0-538.0));
+    }
+    
     origRecordButtonCenter = self.recordButton.center;
     origNotificationButtonCenter = self.notificationButton.center;
     origProfileButtonCenter = self.profileButton.center;

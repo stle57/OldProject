@@ -14,6 +14,7 @@
 
 @interface TDRecordVideoViewController ()
 @property (weak, nonatomic) IBOutlet UIButton *button;
+@property (weak, nonatomic) IBOutlet UIButton *closeButton;
 @property (weak, nonatomic) IBOutlet GPUImageView *previewLayer;
 
 @property GPUImageCropFilter<GPUImageInput> *filter;
@@ -35,6 +36,12 @@
 {
     [super viewDidLoad];
     [self setNeedsStatusBarAppearanceUpdate];
+    
+    // Fix buttons for 3.5" screens
+    if ([UIScreen mainScreen].bounds.size.height == 480.0) {
+        self.button.center = CGPointMake(self.button.center.x, [UIScreen mainScreen].bounds.size.height-(568.0-538.0));
+        self.closeButton.center = CGPointMake(self.closeButton.center.x, [UIScreen mainScreen].bounds.size.height-(568.0-538.0));
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated

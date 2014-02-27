@@ -28,6 +28,10 @@
 @property (nonatomic) CGFloat startTime;
 @property (nonatomic) CGFloat stopTime;
 @property (nonatomic) BOOL hasEdited;
+@property (weak, nonatomic) IBOutlet UIButton *cancelButton;
+@property (weak, nonatomic) IBOutlet UIButton *playButton;
+@property (weak, nonatomic) IBOutlet UIButton *doneButton;
+
 
 - (IBAction)playButtonPressed:(UIButton *)sender;
 - (IBAction)doneButtonPressed:(UIButton *)sender;
@@ -49,6 +53,13 @@
 {
     [super viewDidLoad];
     [self setNeedsStatusBarAppearanceUpdate];
+    
+    // Fix buttons for 3.5" screens
+    if ([UIScreen mainScreen].bounds.size.height == 480.0) {
+        self.cancelButton.center = CGPointMake(self.cancelButton.center.x, [UIScreen mainScreen].bounds.size.height-(568.0-523.0));
+        self.playButton.center = CGPointMake(self.playButton.center.x, [UIScreen mainScreen].bounds.size.height-(568.0-523.0));
+        self.doneButton.center = CGPointMake(self.doneButton.center.x, [UIScreen mainScreen].bounds.size.height-(568.0-523.0));
+    }
 }
 
 -(UIStatusBarStyle)preferredStatusBarStyle {
