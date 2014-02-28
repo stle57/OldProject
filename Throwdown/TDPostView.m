@@ -58,6 +58,9 @@ static const NSString *ItemStatusContext;
     self.didPlay = NO;
     self.playImage.hidden = NO;
 
+    // Likes
+    [self.likeCommentView setLike:post.liked];
+
     [[NSNotificationCenter defaultCenter] postNotificationName:@"TDDownloadPreviewImageNotification"
                                                         object:self
                                                       userInfo:@{@"imageView":self.previewImage, @"filename":self.filename}];

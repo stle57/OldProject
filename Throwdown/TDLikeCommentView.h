@@ -11,6 +11,7 @@
 @protocol TDLikeCommentViewDelegate <NSObject>
 @optional
 -(void)likeButtonPressedFromRow:(NSInteger)row;
+-(void)unLikeButtonPressedFromRow:(NSInteger)row;
 -(void)commentButtonPressedFromRow:(NSInteger)row;
 @end
 
@@ -18,6 +19,7 @@
 {
     id <TDLikeCommentViewDelegate> __unsafe_unretained delegate;
     NSInteger row;
+    BOOL like;
 }
 
 @property (nonatomic, assign) id <TDLikeCommentViewDelegate> __unsafe_unretained delegate;
@@ -27,5 +29,7 @@
 
 - (IBAction)likeButtonPressed:(UIButton *)sender;
 - (IBAction)commentButtonPressed:(UIButton *)sender;
+-(void)setLike:(BOOL)liked;
+-(void)setComment:(BOOL)commented;
 
 @end

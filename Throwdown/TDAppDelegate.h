@@ -7,9 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TDPost.h"
 
 @interface TDAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
+
++ (TDAppDelegate*)appDelegate;
+-(TDPost *)postWithPostId:(NSNumber *)postId;
 
 @end

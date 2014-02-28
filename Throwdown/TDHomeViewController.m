@@ -250,6 +250,18 @@
     }
 }
 
+-(void)unLikeButtonPressedFromRow:(NSInteger)row
+{
+    NSLog(@"Home-unLikeButtonPressedFromRow:%ld", (long)row);
+
+    TDPost *post = (TDPost *)[posts objectAtIndex:row];
+
+    if (post.postId) {
+        TDPostAPI *api = [TDPostAPI sharedInstance];
+        [api unLikePostWithId:post.postId];
+    }
+}
+
 -(void)commentButtonPressedFromRow:(NSInteger)row
 {
     NSLog(@"Home-commentButtonPressedFromRow:%ld", (long)row);

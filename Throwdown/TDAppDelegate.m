@@ -9,6 +9,7 @@
 #import "TDAppDelegate.h"
 #import "TestFlight.h"
 #import "TDUserAPI.h"
+#import "TDPostAPI.h"
 
 @implementation TDAppDelegate
 
@@ -52,6 +53,24 @@
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
++ (TDAppDelegate*)appDelegate
+{
+	return (TDAppDelegate*)[[UIApplication sharedApplication] delegate];
+}
+
+#pragma mark - Post Operations
+-(TDPost *)postWithPostId:(NSNumber *)postId
+{
+    NSArray *posts = [[TDPostAPI sharedInstance] getPosts];
+    for (TDPost *post in posts) {
+        if (post.postId == postId) {
+            return post;
+        }
+    }
+
+    return nil;
 }
 
 @end

@@ -40,9 +40,17 @@
 
 - (IBAction)likeButtonPressed:(UIButton *)sender
 {
-    if (delegate) {
-        if ([delegate respondsToSelector:@selector(likeButtonPressedFromRow:)]) {
-            [delegate likeButtonPressedFromRow:row];
+    if (like) {
+        if (delegate) {
+            if ([delegate respondsToSelector:@selector(unLikeButtonPressedFromRow:)]) {
+                [delegate unLikeButtonPressedFromRow:row];
+            }
+        }
+    } else {
+        if (delegate) {
+            if ([delegate respondsToSelector:@selector(likeButtonPressedFromRow:)]) {
+                [delegate likeButtonPressedFromRow:row];
+            }
         }
     }
 }
@@ -54,6 +62,27 @@
             [delegate commentButtonPressedFromRow:row];
         }
     }
+}
+
+-(void)setLike:(BOOL)liked
+{
+    like = liked;
+    if (liked) {
+        UIImage *buttonImage = [UIImage imageNamed:@"but_liked_big.png"];
+        [self.likeButton setImage:buttonImage forState:UIControlStateNormal];
+        buttonImage = nil;
+    } else {
+        UIImage *buttonImage = [UIImage imageNamed:@"but_like_big.png"];
+        [self.likeButton setImage:buttonImage forState:UIControlStateNormal];
+        buttonImage = nil;
+    }
+}
+
+-(void)setComment:(BOOL)commented
+{
+    UIImage *buttonImage = [UIImage imageNamed:@"but_comment_big.png"];
+    [self.commentButton setImage:buttonImage forState:UIControlStateNormal];
+    buttonImage = nil;
 }
 
 @end

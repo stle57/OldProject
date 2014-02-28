@@ -13,6 +13,7 @@
 #import "RSContainer.h"
 #import "RSStorageObject.h"
 #import "AFNetworking.h"
+#import "TDAppDelegate.h"
 
 #define RS_USERNAME @"throwdown"
 #define RS_API_KEY @"c93395c50887cf4926d2d24e1d9ed4e7"
@@ -127,6 +128,19 @@
             if ([returnDict objectForKey:@"success"]) {
                 if ([[returnDict objectForKey:@"success"] boolValue]) {
                     NSLog(@"Like Success!");
+
+                    // Change the like in that post
+                    TDPost *post = (TDPost *)[[TDAppDelegate appDelegate] postWithPostId:postId];
+
+                    if (post) {
+                        
+                        post.liked = YES;
+
+                        // Notify any views to reload
+                        [[NSNotificationCenter defaultCenter] postNotificationName:@"TDReloadPostsNotification"
+                                                                            object:self
+                                                                          userInfo:nil];
+                    }
                 }
             }
         }
@@ -135,7 +149,45 @@
 
         NSLog(@"LIKE Error: %@", error);
     }];
-    
+}
+
+-(void)unLikePostWithId:(NSNumber *)postId
+{
+    //  /api/v1/posts/{post's id}/like.json
+
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts/[POST_ID]/like.json"];
+    url = [url stringByReplacingOccurrencesOfString:@"[POST_ID]"
+                                         withString:[postId stringValue]];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager DELETE:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+
+        if ([responseObject isKindOfClass:[NSDictionary class]])
+        {
+            NSDictionary *returnDict = [NSDictionary dictionaryWithDictionary:responseObject];
+            if ([returnDict objectForKey:@"success"]) {
+                if ([[returnDict objectForKey:@"success"] boolValue]) {
+                    NSLog(@"unLike Success!");
+
+                    // Change the like in that post
+                    TDPost *post = (TDPost *)[[TDAppDelegate appDelegate] postWithPostId:postId];
+
+                    if (post) {
+
+                        post.liked = NO;
+
+                        // Notify any views to reload
+                        [[NSNotificationCenter defaultCenter] postNotificationName:@"TDReloadPostsNotification"
+                                                                            object:self
+                                                                          userInfo:nil];
+                    }
+                }
+            }
+        }
+
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+        NSLog(@"UNLIKE Error: %@", error);
+    }];
 }
 
 # pragma mark - image/video getting/saving
