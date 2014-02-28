@@ -70,7 +70,7 @@
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts.json"];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager POST:url parameters:@{ @"post": @{@"filename": filename}, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        debug NSLog(@"JSON: %@", [responseObject class]);
+        NSLog(@"JSON: %@", [responseObject class]);
         // Not the best way to do this but for now...
         [self fetchPostsUpstream];
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -108,6 +108,34 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:@"TDReloadPostsNotification"
                                                         object:self
                                                       userInfo:nil];
+}
+
+#pragma mark - like & comment
+-(void)likePostWithId:(NSNumber *)postId
+{
+    //  /api/v1/posts/{post's id}/like.json
+
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts/[POST_ID]/like.json"];
+    url = [url stringByReplacingOccurrencesOfString:@"[POST_ID]"
+                                         withString:[postId stringValue]];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager POST:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+
+        if ([responseObject isKindOfClass:[NSDictionary class]])
+        {
+            NSDictionary *returnDict = [NSDictionary dictionaryWithDictionary:responseObject];
+            if ([returnDict objectForKey:@"success"]) {
+                if ([[returnDict objectForKey:@"success"] boolValue]) {
+                    NSLog(@"Like Success!");
+                }
+            }
+        }
+
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+
+        NSLog(@"LIKE Error: %@", error);
+    }];
+    
 }
 
 # pragma mark - image/video getting/saving

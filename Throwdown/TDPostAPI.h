@@ -18,6 +18,7 @@
 - (void)addPost:(NSString *)filename;
 - (void)fetchPostsUpstream;
 - (NSArray *)getPosts;
+-(void)likePostWithId:(NSNumber *)postId;
 - (UIImage *)getImage:(NSString *)imageName;
 
 @end

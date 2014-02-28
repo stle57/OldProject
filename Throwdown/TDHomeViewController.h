@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TDLikeCommentView.h"
 
-@interface TDHomeViewController : UIViewController
+@interface TDHomeViewController : UIViewController <TDLikeCommentViewDelegate>
 - (void)returnToRoot;
 @end

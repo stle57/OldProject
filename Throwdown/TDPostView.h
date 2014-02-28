@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "TDPost.h"
+#import "TDLikeCommentView.h"
 
 @interface TDPostView : UITableViewCell
 
@@ -15,6 +16,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *usernameLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *previewImage;
 @property (weak, nonatomic) IBOutlet UILabel *createdLabel;
+@property (weak, nonatomic) IBOutlet TDLikeCommentView *likeCommentView;
 @property (strong, nonatomic) NSString *filename;
 
 - (void)setPost:(TDPost *)post;

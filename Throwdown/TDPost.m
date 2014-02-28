@@ -10,13 +10,37 @@
 
 @implementation TDPost
 
+/*
+ 
+ "comment_count" = 0;
+ comments =     (
+ );
+ "created_at" = "2014-02-26T05:15:41.000Z";
+ filename = "6_1393391740.356891";
+ id = 17;
+ "like_count" = 0;
+ liked = 0;
+ likers =     (
+ );
+ user =     {
+    id = 6;
+    name = "Joseph Huang";
+    username = jh;
+ };
+ }
+
+ */
+
+
 - (id)initWithDictionary:(NSDictionary *)dict {
     self = [super init];
     if (self)
     {
+        _postId   = [dict objectForKey:@"id"];
         _user = [[TDUser alloc] initWithDictionary:[dict objectForKey:@"user"]];
         _filename = [dict objectForKey:@"filename"];
         _createdAt = [TDPost dateForRFC3339DateTimeString:[dict objectForKey:@"created_at"]];
+        _liked = [[dict objectForKey:@"liked"] boolValue];
     }
     return self;
 }

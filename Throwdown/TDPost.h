@@ -11,9 +11,11 @@
 
 @interface TDPost : NSObject
 
+@property (strong, nonatomic, readonly) NSNumber *postId;
 @property (nonatomic, copy, readonly) NSString *filename;
 @property (nonatomic, readonly) TDUser *user;
 @property (nonatomic, readonly) NSDate *createdAt;
+@property (nonatomic, assign) BOOL liked;
 
 - (id)initWithDictionary:(NSDictionary *)dict;
 - (NSDictionary *)jsonRepresentation;

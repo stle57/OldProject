@@ -14,6 +14,7 @@
 #import "TDUserAPI.h"
 #import "VideoButtonSegue.h"
 #import "VideoCloseSegue.h"
+#import "TDLikeCommentView.h"
 
 #define CELL_IDENTIFIER @"TDPostView"
 
@@ -215,10 +216,13 @@
         NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER owner:self options:nil];
         cell = [topLevelObjects objectAtIndex:0];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        
+        cell.likeCommentView.delegate = self;
     }
 
     TDPost *post = (TDPost *)[posts objectAtIndex:indexPath.row];
     [cell setPost:post];
+    cell.likeCommentView.row = indexPath.row;
     return cell;
 }
 
@@ -230,9 +234,26 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 404.0f;
+    return 404.0f+48.0;
 }
 
+#pragma mark - TDLikeCommentViewDelegates
+-(void)likeButtonPressedFromRow:(NSInteger)row
+{
+    NSLog(@"Home-likeButtonPressedFromRow:%ld", (long)row);
+    
+    TDPost *post = (TDPost *)[posts objectAtIndex:row];
+    
+    if (post.postId) {
+        TDPostAPI *api = [TDPostAPI sharedInstance];
+        [api likePostWithId:post.postId];
+    }
+}
+
+-(void)commentButtonPressedFromRow:(NSInteger)row
+{
+    NSLog(@"Home-commentButtonPressedFromRow:%ld", (long)row);
+}
 
 # pragma mark - navigation
 
