@@ -50,8 +50,7 @@
     return self;
 }
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
     [self setNeedsStatusBarAppearanceUpdate];
 
@@ -69,7 +68,7 @@
     return UIStatusBarStyleLightContent;
 }
 
-- (void) viewWillAppear:(BOOL)animated {
+- (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     debug NSLog(@"edit view will appear");
     NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:TEMP_FILE_PATH];
@@ -78,7 +77,7 @@
     self.hasEdited = NO;
 }
 
-- (void) editVideoAt:(NSString *)videoPath {
+- (void)editVideoAt:(NSString *)videoPath {
     self.videoUrl = [NSURL fileURLWithPath:videoPath];
 
     debug NSLog(@"edit video at %@", videoPath);
@@ -153,26 +152,25 @@
 
 - (IBAction)doneButtonPressed:(UIButton *)sender {
     ALAssetsLibrary* library = [[ALAssetsLibrary alloc] init];
-    [library writeVideoAtPathToSavedPhotosAlbum:(self.hasEdited ? self.tmpVideoUrl : self.videoUrl) completionBlock:^(NSURL *assetURL, NSError *error1) {
-        TDCurrentUser *user = [TDUserAPI sharedInstance].currentUser;
-        TDPostAPI *api = [TDPostAPI sharedInstance];
 
-        NSString *thumbnailPath = [self saveThumbnail];
-        NSString *newName = [TDPostAPI createUploadFileNameFor:user]; // Will be used doing post to server API
-        [api uploadVideo:[(self.hasEdited ? self.tmpVideoUrl : self.videoUrl) path] withThumbnail:thumbnailPath newName:newName];
-        [api addPost:newName];
+    [library writeVideoAtPathToSavedPhotosAlbum:(self.hasEdited ? self.tmpVideoUrl : self.videoUrl) completionBlock:nil];
+    TDCurrentUser *user = [TDUserAPI sharedInstance].currentUser;
+    TDPostAPI *api = [TDPostAPI sharedInstance];
+
+    NSString *thumbnailPath = [self saveThumbnail];
+    NSString *newName = [TDPostAPI createUploadFileNameFor:user]; // Will be used doing post to server API
+    [api uploadVideo:[(self.hasEdited ? self.tmpVideoUrl : self.videoUrl) path] withThumbnail:thumbnailPath newName:newName];
+    [api addPost:newName];
 //        [api addPost:[[TDPost alloc]initWithUsername:user.username userId:user.userId filename:newName]];
 
-        [self performSegueWithIdentifier:@"VideoCloseSegue" sender:self];
-    }];
+    [self performSegueWithIdentifier:@"VideoCloseSegue" sender:self];
 }
 
 - (IBAction)cancelButtonPressed:(UIButton *)sender {
-    [self dismissViewControllerAnimated:YES completion:NULL];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
-- (NSString *) saveThumbnail
-{
+- (NSString *)saveThumbnail {
     AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:(self.hasEdited ? self.tmpVideoUrl : self.videoUrl) options:nil];
     AVAssetImageGenerator *gen = [[AVAssetImageGenerator alloc] initWithAsset:asset];
     gen.appliesPreferredTrackTransform = YES;
@@ -191,6 +189,7 @@
 }
 
 #pragma mark - Other
+
 -(void)deleteTmpFile {
     NSFileManager *fm = [NSFileManager defaultManager];
     BOOL exist = [fm fileExistsAtPath:self.tmpVideoUrl.path];
@@ -204,6 +203,7 @@
 }
 
 #pragma mark - SAVideoRangeSliderDelegate
+
 - (void)videoRange:(SAVideoRangeSlider *)videoRange didChangeLeftPosition:(CGFloat)leftPosition rightPosition:(CGFloat)rightPosition
 {
     self.startTime = leftPosition;

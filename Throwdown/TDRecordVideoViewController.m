@@ -41,8 +41,7 @@
     return UIStatusBarStyleLightContent;
 }
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
     [self setNeedsStatusBarAppearanceUpdate];
 
@@ -53,6 +52,12 @@
     }
 
     debug NSLog(@"record view did load");
+    [[UIApplication sharedApplication] setStatusBarHidden:YES
+                                            withAnimation:UIStatusBarAnimationFade];
+}
+
+- (BOOL)prefersStatusBarHidden {
+    return YES;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -69,14 +74,20 @@
 
 - (void)startCamera {
     debug NSLog(@"record view start camera");
-
     self.isRecording = NO;
     self.previewLayer.hidden = NO;
+    self.torchIsOn = NO;
     self.videoCamera = [[GPUImageVideoCamera alloc]
                         initWithSessionPreset:AVCaptureSessionPreset640x480
                                cameraPosition:AVCaptureDevicePositionBack];
-
     self.videoCamera.outputImageOrientation = UIInterfaceOrientationPortrait;
+
+    if (![self.videoCamera isBackFacingCameraPresent]) {
+        [self updateSwitchCameraButton:NO];
+        [self updateFlashButton:NO];
+    } else if (![self.videoCamera isFrontFacingCameraPresent]) {
+        [self updateSwitchCameraButton:NO];
+    }
 
     self.filter = [[GPUImageCropFilter alloc] initWithCropRegion:CGRectMake(0.f, 0.125f, 1.f, .75f)];
     [self.filter addTarget:self.previewLayer];
@@ -161,6 +172,13 @@
 //
 //}
 
+//    double delayInSeconds = 30.0;
+//    dispatch_time_t stopTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+//    dispatch_after(stopTime, dispatch_get_main_queue(), ^(void){
+//        [self stopRecording];
+//    });
+
+
 - (void)stopRecording {
     [self.recordButton setImage:[UIImage imageNamed:@"v_recstartbutton"] forState:UIControlStateNormal];
     [self.recordButton setImage:[UIImage imageNamed:@"v_recstartbutton_hit"] forState:UIControlStateHighlighted];
@@ -175,20 +193,14 @@
             [self performSegueWithIdentifier:@"EditVideoSegue" sender:nil];
         });
     }];
-//            [videoCamera.inputCamera lockForConfiguration:nil];
-//            [videoCamera.inputCamera setTorchMode:AVCaptureTorchModeOff];
-//            [videoCamera.inputCamera unlockForConfiguration];
 }
 
 - (void)startRecording {
     [self.recordButton setImage:[UIImage imageNamed:@"v_stoprecbutton"] forState:UIControlStateNormal];
     [self.recordButton setImage:[UIImage imageNamed:@"v_stoprecbutton_hit"] forState:UIControlStateHighlighted];
 
-//    double delayInSeconds = 30.0;
-//    dispatch_time_t stopTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-//    dispatch_after(stopTime, dispatch_get_main_queue(), ^(void){
-//        [self stopRecording];
-//    });
+    [self updateFlashButton:NO];
+    [self updateSwitchCameraButton:NO];
 
     [self.movieWriter startRecording];
 }
@@ -202,18 +214,33 @@
     self.isRecording = !self.isRecording;
 }
 
-- (IBAction)closeButtonPressed:(UIButton *)button {
-    //    [self.navigationController popViewControllerAnimated:YES];
-    [self dismissViewControllerAnimated:YES
-                             completion:^{
-                             }];
+- (IBAction)switchCameraButtonPressed:(id)sender {
+    [self.videoCamera rotateCamera];
+    [self updateFlashButton:[self.videoCamera.inputCamera position] == AVCaptureDevicePositionBack];
+}
+
+- (void)updateSwitchCameraButton:(BOOL)enable {
+    self.switchCamerabutton.enabled = enable;
+    self.switchCamerabutton.hidden = !enable;
+}
+
+- (void)updateFlashButton:(BOOL)enable {
+    self.flashButton.enabled = enable;
+    self.flashButton.hidden = !enable;
+}
+
+- (IBAction)flashButtonPressed:(id)sender {
+    [self.videoCamera.inputCamera lockForConfiguration:nil];
+    [self.videoCamera.inputCamera setTorchMode:(self.torchIsOn ? AVCaptureTorchModeOff : AVCaptureTorchModeOn)];
+    [self.videoCamera.inputCamera unlockForConfiguration];
+    self.torchIsOn = !self.torchIsOn;
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue isKindOfClass:[TDEditVideoSegue class]]) {
         debug NSLog(@"record prepare for segue");
         TDEditVideoViewController *vc = [segue destinationViewController];
-        NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/WorkingMovie.m4v"];
+        NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:MOVIE_FILE_PATH];
         [vc editVideoAt:pathToMovie];
     }
 }
