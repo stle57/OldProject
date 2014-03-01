@@ -44,6 +44,7 @@
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
+        debug NSLog(@"edit init with nib");
         // Custom initialization
     }
     return self;
@@ -53,13 +54,15 @@
 {
     [super viewDidLoad];
     [self setNeedsStatusBarAppearanceUpdate];
-    
+
     // Fix buttons for 3.5" screens
     if ([UIScreen mainScreen].bounds.size.height == 480.0) {
         self.cancelButton.center = CGPointMake(self.cancelButton.center.x, [UIScreen mainScreen].bounds.size.height-(568.0-523.0));
         self.playButton.center = CGPointMake(self.playButton.center.x, [UIScreen mainScreen].bounds.size.height-(568.0-523.0));
         self.doneButton.center = CGPointMake(self.doneButton.center.x, [UIScreen mainScreen].bounds.size.height-(568.0-523.0));
     }
+
+    debug NSLog(@"edit view did load");
 }
 
 -(UIStatusBarStyle)preferredStatusBarStyle {
@@ -68,6 +71,7 @@
 
 - (void) viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    debug NSLog(@"edit view will appear");
     NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:TEMP_FILE_PATH];
     self.tmpVideoUrl = [NSURL fileURLWithPath:pathToMovie];
     [self deleteTmpFile];
@@ -76,6 +80,8 @@
 
 - (void) editVideoAt:(NSString *)videoPath {
     self.videoUrl = [NSURL fileURLWithPath:videoPath];
+
+    debug NSLog(@"edit video at %@", videoPath);
 
     self.slider = [[SAVideoRangeSlider alloc] initWithFrame:CGRectMake(0, 20, 320, 50) videoUrl:self.videoUrl];
     self.slider.topBorder.backgroundColor = [UIColor colorWithRed: 0.996 green: 0.951 blue: 0.502 alpha: 1];
@@ -147,7 +153,7 @@
 
 - (IBAction)doneButtonPressed:(UIButton *)sender {
     ALAssetsLibrary* library = [[ALAssetsLibrary alloc] init];
-    [library writeVideoAtPathToSavedPhotosAlbum:self.tmpVideoUrl completionBlock:^(NSURL *assetURL, NSError *error1) {
+    [library writeVideoAtPathToSavedPhotosAlbum:(self.hasEdited ? self.tmpVideoUrl : self.videoUrl) completionBlock:^(NSURL *assetURL, NSError *error1) {
         TDCurrentUser *user = [TDUserAPI sharedInstance].currentUser;
         TDPostAPI *api = [TDPostAPI sharedInstance];
 
@@ -157,14 +163,12 @@
         [api addPost:newName];
 //        [api addPost:[[TDPost alloc]initWithUsername:user.username userId:user.userId filename:newName]];
 
-        UINavigationController *nav = (UINavigationController*) self.view.window.rootViewController;
-        TDHomeViewController *root = (TDHomeViewController *)[nav.viewControllers objectAtIndex:0];
-        [root performSelector:@selector(returnToRoot)];
+        [self performSegueWithIdentifier:@"ReturnHomeSegue" sender:self];
     }];
 }
 
 - (IBAction)cancelButtonPressed:(UIButton *)sender {
-    [self.navigationController popViewControllerAnimated:YES];
+    [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 - (NSString *) saveThumbnail

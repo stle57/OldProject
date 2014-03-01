@@ -10,4 +10,6 @@
 
 @interface TDRecordVideoViewController : UIViewController
 
+- (void)startCamera;
+
 @end

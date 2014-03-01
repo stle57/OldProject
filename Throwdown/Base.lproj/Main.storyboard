@@ -17,7 +17,7 @@
                                 <rect key="frame" x="0.0" y="124" width="320" height="320"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dBh-cg-coo" userLabel="GPUImage View" customClass="GPUImageView">
+                                    <view hidden="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dBh-cg-coo" userLabel="GPUImage View" customClass="GPUImageView">
                                         <rect key="frame" x="0.0" y="0.0" width="320" height="320"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
@@ -54,7 +54,7 @@
                                         </state>
                                         <state key="highlighted" image="v_closebutton_hit"/>
                                         <connections>
-                                            <action selector="closeButtonPressed:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="ytW-V3-nrc"/>
+                                            <segue destination="YgZ-o0-OG3" kind="unwind" identifier="VideoCloseSegue" unwindAction="unwindToHome:" id="sTQ-bs-8p5"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -122,6 +122,7 @@
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
+                <exit id="YgZ-o0-OG3" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="-805" y="1113"/>
         </scene>
@@ -173,9 +174,11 @@
                         <outlet property="cancelButton" destination="8NJ-bQ-lJc" id="tED-Bd-Kh3"/>
                         <outlet property="doneButton" destination="Njs-Cf-zmw" id="G2z-1M-X0y"/>
                         <outlet property="playButton" destination="jCp-Qn-DFT" id="JSd-wq-CUZ"/>
+                        <segue destination="Mi2-Xw-H7z" kind="unwind" identifier="ReturnHomeSegue" unwindAction="unwindToHome:" id="aGd-fI-rfI"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="K7O-RT-cG4" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="Mi2-Xw-H7z" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="-242" y="1113"/>
         </scene>
@@ -368,7 +371,7 @@
         <!--Navigation Controller-->
         <scene sceneID="tZz-7y-WPA">
             <objects>
-                <navigationController storyboardIdentifier="HomeViewController" definesPresentationContext="YES" navigationBarHidden="YES" id="DPQ-qf-8sb" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="HomeViewController" definesPresentationContext="YES" navigationBarHidden="YES" id="DPQ-qf-8sb" customClass="TDNavigationController" sceneMemberID="viewController">
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" translucent="NO" id="PCx-Gh-7D3">

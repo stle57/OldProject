@@ -29,9 +29,9 @@
                          sourceView.center = CGPointMake(window.center.x - window.frame.size.width, window.center.y);
                          destinationView.center = CGPointMake(window.center.x, window.center.y);}
                      completion:^(BOOL finished){
-                         [sourceView removeFromSuperview];
-                         [sourceViewController.navigationController pushViewController:destinationViewController animated:NO];
-//                         [sourceViewController presentViewController:destinationViewController animated:NO completion:NULL];
+                         debug NSLog(@"edit video segue complete");
+                         [destinationView removeFromSuperview]; // remove from temp super view
+                         [sourceViewController presentViewController:destinationViewController animated:NO completion:NULL];
                      }];
 }
 

@@ -7,6 +7,7 @@
 //
 
 #import "VideoButtonSegue.h"
+#import "TDRecordVideoViewController.h"
 
 @implementation VideoButtonSegue
 
@@ -25,12 +26,13 @@
                           delay:0.0
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{
-
                          destinationViewController.view.transform = CGAffineTransformMakeScale(1.0, 1.0);
                      }
                      completion:^(BOOL finished){
+                         debug NSLog(@"record video button segue complete");
                          [destinationViewController.view removeFromSuperview]; // remove from temp super view
-                         [sourceViewController presentViewController:destinationViewController animated:NO completion:NULL]; // present VC
+                         [sourceViewController presentViewController:destinationViewController animated:NO completion:NULL];
+                         [(TDRecordVideoViewController *)destinationViewController startCamera];
                      }];
 }
 

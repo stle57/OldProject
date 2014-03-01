@@ -160,7 +160,8 @@
 //    collisionBehavior.collisionDelegate = self;
 }
 
-#pragma mark - video seque
+#pragma mark - seques
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
 
     if([segue isKindOfClass:[VideoButtonSegue class]]) {
@@ -168,19 +169,19 @@
     }
 }
 
-- (UIStoryboardSegue *)segueForUnwindingToViewController:(UIViewController *)toViewController fromViewController:(UIViewController *)fromViewController identifier:(NSString *)identifier {
-    
-    // Instantiate a new VideoCloseSegue
-    VideoCloseSegue *segue = [[VideoCloseSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
-    return segue;
+- (IBAction)unwindToHome:(UIStoryboardSegue *)sender {
+    debug NSLog(@"home view unwindToHome with identifier %@", sender.identifier);
+//    UIStoryboardSegue *segue = [self segueForUnwindingToViewController:self fromViewController:sender.sourceViewController identifier:sender.identifier];
 }
 
-- (IBAction)unwindToHome:(UIStoryboardSegue *)sender {
-    
+- (void)returnToRoot {
+    [self dismissViewControllerAnimated:NO completion:nil];
+    [self.navigationController popToRootViewControllerAnimated:NO];
 }
 
 
 #pragma mark - refresh control
+
 -(void)refreshControlUsed
 {
     debug NSLog(@"refreshControlUsed");
@@ -273,11 +274,6 @@
 - (IBAction)profileButtonPressed:(id)sender {
     [[TDUserAPI sharedInstance] logout];
     [self showWelcomeController];
-}
-
-- (void)returnToRoot {
-    [self dismissViewControllerAnimated:NO completion:nil];
-    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 - (void)showWelcomeController

@@ -10,6 +10,7 @@
 #import "TDEditVideoViewController.h"
 #import "TDEditVideoSegue.h"
 #import "GPUImage.h"
+#import "VideoCloseSegue.h"
 
 #define MOVIE_FILE_PATH @"Documents/WorkingMovie.m4v"
 
@@ -50,18 +51,18 @@
         self.recordButton.center = CGPointMake(self.recordButton.center.x, [UIScreen mainScreen].bounds.size.height-(568.0-538.0));
         self.closeButton.center = CGPointMake(self.closeButton.center.x, [UIScreen mainScreen].bounds.size.height-(568.0-538.0));
     }
+
+    debug NSLog(@"record view did load");
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-
+- (void)startCamera {
+    debug NSLog(@"record view start camera");
 
     self.isRecording = NO;
-
+    self.previewLayer.hidden = NO;
     self.videoCamera = [[GPUImageVideoCamera alloc]
                         initWithSessionPreset:AVCaptureSessionPreset640x480
-                        cameraPosition:AVCaptureDevicePositionBack];
+                               cameraPosition:AVCaptureDevicePositionBack];
 
     self.videoCamera.outputImageOrientation = UIInterfaceOrientationPortrait;
 
@@ -101,15 +102,27 @@
     [settings setObject:compressionProperties forKey:AVVideoCompressionPropertiesKey];
 
     self.movieWriter = [[GPUImageMovieWriter alloc] initWithMovieURL:movieURL size:CGSizeMake(videoSize, videoSize) fileType:AVFileTypeMPEG4 outputSettings:settings];
-}
-
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
 
     [self.filter addTarget:self.movieWriter];
     self.videoCamera.audioEncodingTarget = self.movieWriter;
     [self.videoCamera addTarget:self.filter];
     [self.videoCamera startCameraCapture];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [self.videoCamera stopCameraCapture];
+    [self stopCamera];
+}
+
+- (void)stopCamera {
+    if (self.videoCamera) {
+        [self.filter removeTarget:self.movieWriter];
+        self.previewLayer.hidden = YES;
+        self.videoCamera.audioEncodingTarget = nil;
+        self.movieWriter = nil;
+        self.filter = nil;
+        self.videoCamera = nil;
+    }
 }
 
 //- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -140,16 +153,13 @@
     [self.recordButton setImage:[UIImage imageNamed:@"v_recstartbutton"] forState:UIControlStateNormal];
     [self.recordButton setImage:[UIImage imageNamed:@"v_recstartbutton_hit"] forState:UIControlStateHighlighted];
 
-    self.videoCamera.audioEncodingTarget = nil;
-    [self.filter removeTarget:self.movieWriter];
-    [self.movieWriter finishRecording];
-    [self.videoCamera stopCameraCapture];
-    [self performSegueWithIdentifier:@"EditVideoSegue" sender:nil];
-    self.movieWriter = nil;
-
-    //            [videoCamera.inputCamera lockForConfiguration:nil];
-    //            [videoCamera.inputCamera setTorchMode:AVCaptureTorchModeOff];
-    //            [videoCamera.inputCamera unlockForConfiguration];
+    [self.movieWriter finishRecordingWithCompletionHandler:^{
+        [self stopCamera];
+        [self performSegueWithIdentifier:@"EditVideoSegue" sender:nil];
+    }];
+//            [videoCamera.inputCamera lockForConfiguration:nil];
+//            [videoCamera.inputCamera setTorchMode:AVCaptureTorchModeOff];
+//            [videoCamera.inputCamera unlockForConfiguration];
 }
 
 - (void)startRecording {
@@ -182,7 +192,8 @@
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if([segue isKindOfClass:[TDEditVideoSegue class]]) {
+    if ([segue isKindOfClass:[TDEditVideoSegue class]]) {
+        debug NSLog(@"record prepare for segue");
         TDEditVideoViewController *vc = [segue destinationViewController];
         NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents/WorkingMovie.m4v"];
         [vc editVideoAt:pathToMovie];
