@@ -38,7 +38,6 @@
 		A151958B18BAE8FD0050A45B /* TDUser.m in Sources */ = {isa = PBXBuildFile; fileRef = A151958A18BAE8FD0050A45B /* TDUser.m */; };
 		A17567901891C7F20034AD05 /* TDPostAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = A175678F1891C7F20034AD05 /* TDPostAPI.m */; };
 		A180D4DF18C14EA7003B9378 /* TDNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = A180D4DE18C14EA7003B9378 /* TDNavigationController.m */; };
-		A180D4E218C181FE003B9378 /* TDReturnHomeSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = A180D4E118C181FE003B9378 /* TDReturnHomeSegue.m */; };
 		A182D8261889E8D900F794A5 /* TDEditVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A182D8251889E8D900F794A5 /* TDEditVideoViewController.m */; };
 		A182D830188B60CD00F794A5 /* SAResizibleBubble.m in Sources */ = {isa = PBXBuildFile; fileRef = A182D829188B60CD00F794A5 /* SAResizibleBubble.m */; };
 		A182D831188B60CD00F794A5 /* SASliderLeft.m in Sources */ = {isa = PBXBuildFile; fileRef = A182D82B188B60CD00F794A5 /* SASliderLeft.m */; };
@@ -119,8 +118,6 @@
 		A175678F1891C7F20034AD05 /* TDPostAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDPostAPI.m; sourceTree = "<group>"; };
 		A180D4DD18C14EA7003B9378 /* TDNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDNavigationController.h; sourceTree = "<group>"; };
 		A180D4DE18C14EA7003B9378 /* TDNavigationController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDNavigationController.m; sourceTree = "<group>"; };
-		A180D4E018C181FE003B9378 /* TDReturnHomeSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDReturnHomeSegue.h; sourceTree = "<group>"; };
-		A180D4E118C181FE003B9378 /* TDReturnHomeSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDReturnHomeSegue.m; sourceTree = "<group>"; };
 		A182D8241889E8D900F794A5 /* TDEditVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDEditVideoViewController.h; sourceTree = "<group>"; };
 		A182D8251889E8D900F794A5 /* TDEditVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDEditVideoViewController.m; sourceTree = "<group>"; };
 		A182D828188B60CD00F794A5 /* SAResizibleBubble.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SAResizibleBubble.h; sourceTree = "<group>"; };
@@ -193,8 +190,6 @@
 				2D5714CB18BD9AB300AF0B4D /* VideoCloseSegue.m */,
 				A1BC0B3D18BE825200F507B3 /* TDEditVideoSegue.h */,
 				A1BC0B3E18BE825200F507B3 /* TDEditVideoSegue.m */,
-				A180D4E018C181FE003B9378 /* TDReturnHomeSegue.h */,
-				A180D4E118C181FE003B9378 /* TDReturnHomeSegue.m */,
 			);
 			name = Segues;
 			sourceTree = "<group>";
@@ -566,7 +561,6 @@
 				2D5714CD18BD9AB300AF0B4D /* VideoCloseSegue.m in Sources */,
 				A1E90CDD18B445FC0046D281 /* TDSignupStepTwoViewController.m in Sources */,
 				A1432CE718A99DB30073E492 /* TDLoginViewController.m in Sources */,
-				A180D4E218C181FE003B9378 /* TDReturnHomeSegue.m in Sources */,
 				A1432CE118A99D750073E492 /* TDWelcomeViewController.m in Sources */,
 				A180D4DF18C14EA7003B9378 /* TDNavigationController.m in Sources */,
 			);

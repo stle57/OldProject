@@ -16,22 +16,43 @@
     
     UIViewController *sourceViewController = self.sourceViewController;
     UIViewController *destinationViewController = self.destinationViewController;
-    
-    [sourceViewController.view.superview insertSubview:destinationViewController.view atIndex:0];
-    
-    sourceViewController.view.transform = CGAffineTransformMakeScale(1.00, 1.00);
 
-    [UIView animateWithDuration:0.1
+    // Create screenshots for animation
+    UIGraphicsBeginImageContextWithOptions(sourceViewController.view.bounds.size, NO, 0.0);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    [sourceViewController.view.layer renderInContext:context];
+    UIImageView *screenShotSource = [[UIImageView alloc] initWithImage:UIGraphicsGetImageFromCurrentImageContext()];
+    UIGraphicsEndImageContext();
+
+    UIGraphicsBeginImageContextWithOptions(destinationViewController.view.bounds.size, NO, 0.0);
+    context = UIGraphicsGetCurrentContext();
+    [destinationViewController.view.layer renderInContext:context];
+    UIImageView *screenShotDestination = [[UIImageView alloc] initWithImage:UIGraphicsGetImageFromCurrentImageContext()];
+    UIGraphicsEndImageContext();
+
+    // Put destination view controller and screen shot in place
+    UIWindow *window = sourceViewController.view.window;
+    [window addSubview:screenShotDestination];
+    [window addSubview:screenShotSource];
+    [window setBackgroundColor:[UIColor blackColor]];
+    destinationViewController.view.hidden = YES;
+    [destinationViewController dismissViewControllerAnimated:NO completion:nil];
+    [destinationViewController.navigationController popToRootViewControllerAnimated:NO];
+
+    // Set and start animations
+    screenShotDestination.transform = CGAffineTransformMakeScale(0.95, 0.95);
+    screenShotSource.alpha = 1;
+    [UIView animateWithDuration:0.2
                           delay:0.0
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{
-                         sourceViewController.view.transform = CGAffineTransformMakeScale(0.05, 0.05);
+                         screenShotSource.alpha = 0;
+                         screenShotDestination.transform = CGAffineTransformMakeScale(1, 1);
                      }
-                     completion:^(BOOL finished) {
-                         debug NSLog(@"video close segue complete");
-                         [destinationViewController.view removeFromSuperview];
-                         [sourceViewController dismissViewControllerAnimated:NO completion:nil];
-                         [destinationViewController.navigationController popToRootViewControllerAnimated:NO];
+                     completion:^(BOOL finished){
+                         [screenShotSource removeFromSuperview];
+                         [screenShotDestination removeFromSuperview];
+                         destinationViewController.view.hidden = NO;
                      }];
 }
 

@@ -163,7 +163,7 @@
         [api addPost:newName];
 //        [api addPost:[[TDPost alloc]initWithUsername:user.username userId:user.userId filename:newName]];
 
-        [self performSegueWithIdentifier:@"ReturnHomeSegue" sender:self];
+        [self performSegueWithIdentifier:@"VideoCloseSegue" sender:self];
     }];
 }
 

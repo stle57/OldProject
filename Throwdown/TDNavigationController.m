@@ -21,8 +21,6 @@
 
     if ([@"VideoCloseSegue" isEqualToString:identifier]) {
         return [[VideoCloseSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
-    } else if ([@"ReturnHomeSegue" isEqualToString:identifier]) {
-        return [[TDReturnHomeSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
     } else {
         return [super segueForUnwindingToViewController:toViewController
                                      fromViewController:fromViewController

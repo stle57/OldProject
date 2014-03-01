@@ -55,6 +55,18 @@
     debug NSLog(@"record view did load");
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    debug NSLog(@"record view will appear");
+
+    // This is to allow transitions to finish before starting the camera which slows the animation down
+    double delayInSeconds = 0.5;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        [self startCamera];
+    });
+}
+
 - (void)startCamera {
     debug NSLog(@"record view start camera");
 
@@ -110,12 +122,12 @@
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
-    [self.videoCamera stopCameraCapture];
     [self stopCamera];
 }
 
 - (void)stopCamera {
     if (self.videoCamera) {
+        [self.videoCamera stopCameraCapture];
         [self.filter removeTarget:self.movieWriter];
         self.previewLayer.hidden = YES;
         self.videoCamera.audioEncodingTarget = nil;
@@ -155,7 +167,13 @@
 
     [self.movieWriter finishRecordingWithCompletionHandler:^{
         [self stopCamera];
-        [self performSegueWithIdentifier:@"EditVideoSegue" sender:nil];
+        // This is to allow camera to stop properly before running animations
+        // Especially lets the microphone usage warning go away in time.
+        double delayInSeconds = 0.5;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+            [self performSegueWithIdentifier:@"EditVideoSegue" sender:nil];
+        });
     }];
 //            [videoCamera.inputCamera lockForConfiguration:nil];
 //            [videoCamera.inputCamera setTorchMode:AVCaptureTorchModeOff];

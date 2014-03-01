@@ -174,7 +174,7 @@
                         <outlet property="cancelButton" destination="8NJ-bQ-lJc" id="tED-Bd-Kh3"/>
                         <outlet property="doneButton" destination="Njs-Cf-zmw" id="G2z-1M-X0y"/>
                         <outlet property="playButton" destination="jCp-Qn-DFT" id="JSd-wq-CUZ"/>
-                        <segue destination="Mi2-Xw-H7z" kind="unwind" identifier="ReturnHomeSegue" unwindAction="unwindToHome:" id="aGd-fI-rfI"/>
+                        <segue destination="Mi2-Xw-H7z" kind="unwind" identifier="VideoCloseSegue" unwindAction="unwindToHome:" id="aGd-fI-rfI"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="K7O-RT-cG4" userLabel="First Responder" sceneMemberID="firstResponder"/>
