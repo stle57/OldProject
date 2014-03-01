@@ -15,7 +15,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oJk-aR-BDT" userLabel="post preview image">
-                        <rect key="frame" x="0.0" y="42" width="320" height="239"/>
+                        <rect key="frame" x="0.0" y="42" width="320" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     </imageView>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="prof_pic_default" translatesAutoresizingMaskIntoConstraints="NO" id="8Fw-ky-lb1" userLabel="profile image view">
@@ -41,7 +41,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     </imageView>
                     <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ibx-f9-4Ka" userLabel="VideoHolderView">
-                        <rect key="frame" x="0.0" y="42" width="320" height="239"/>
+                        <rect key="frame" x="0.0" y="42" width="320" height="320"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     </view>
                     <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="v_playbutton" highlightedImage="v_playbutton_hit" translatesAutoresizingMaskIntoConstraints="NO" id="gZn-Xq-elD">

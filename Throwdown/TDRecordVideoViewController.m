@@ -31,8 +31,6 @@
 @property (weak, nonatomic) IBOutlet UIView *progressBarView;
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 - (IBAction)recordButtonPressed:(UIButton *)sender;
-- (IBAction)closeButtonPressed:(UIButton *)sender;
-
 @end
 
 @implementation TDRecordVideoViewController
