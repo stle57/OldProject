@@ -171,11 +171,18 @@ static int const kMaxRecordingSeconds = 30;
     [self.videoCamera addTarget:self.filter];
     [self.videoCamera startCameraCapture];
 
-    if ([self.videoCamera.inputCamera isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
-        if ([self.videoCamera.inputCamera lockForConfiguration:nil]) {
-            [self.videoCamera.inputCamera setFocusMode:AVCaptureFocusModeAutoFocus];
-            [self.videoCamera.inputCamera unlockForConfiguration];
-         }
+    AVCaptureDevice *camera = self.videoCamera.inputCamera;
+    if ([camera lockForConfiguration:nil]) {
+        if ([camera isFocusModeSupported:AVCaptureFocusModeContinuousAutoFocus]) {
+            [camera setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
+        } else if ([camera isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
+            [camera setFocusMode:AVCaptureFocusModeAutoFocus];
+        }
+
+        if ([camera isWhiteBalanceModeSupported:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance]) {
+            [camera setWhiteBalanceMode:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance];
+        }
+        [camera unlockForConfiguration];
     }
 }
 
@@ -189,6 +196,25 @@ static int const kMaxRecordingSeconds = 30;
         self.movieWriter = nil;
         self.filter = nil;
         self.videoCamera = nil;
+    }
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    AVCaptureDevice *camera = self.videoCamera.inputCamera;
+    UITouch *touch = [touches anyObject];
+    CGPoint touchPoint = [touch locationInView:self.view];
+    CGPoint focusTo = CGPointMake(touchPoint.x / 320.0, touchPoint.y / 320.0);
+    debug NSLog(@"focus at %f x %f", focusTo.x, focusTo.y);
+
+    if (touch.view == self.previewLayer &&
+        [camera isFocusPointOfInterestSupported] &&
+        [camera isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
+
+        if ([camera lockForConfiguration:nil]) {
+            [camera setFocusPointOfInterest:focusTo];
+            [camera setFocusMode:AVCaptureFocusModeAutoFocus];
+            [camera unlockForConfiguration];
+        }
     }
 }
 
