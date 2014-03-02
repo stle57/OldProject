@@ -28,10 +28,11 @@
 @property (nonatomic) CGFloat startTime;
 @property (nonatomic) CGFloat stopTime;
 @property (nonatomic) BOOL hasEdited;
-@property (weak, nonatomic) IBOutlet UIButton *cancelButton;
+
 @property (weak, nonatomic) IBOutlet UIButton *playButton;
 @property (weak, nonatomic) IBOutlet UIButton *doneButton;
-
+@property (weak, nonatomic) IBOutlet UIView *videoContainerView;
+@property (weak, nonatomic) IBOutlet UIView *controlsView;
 
 - (IBAction)playButtonPressed:(UIButton *)sender;
 - (IBAction)doneButtonPressed:(UIButton *)sender;
@@ -41,13 +42,12 @@
 
 @implementation TDEditVideoViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        debug NSLog(@"edit init with nib");
-        // Custom initialization
-    }
-    return self;
+-(UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
+}
+
+- (BOOL)prefersStatusBarHidden {
+    return YES;
 }
 
 - (void)viewDidLoad {
@@ -56,16 +56,12 @@
 
     // Fix buttons for 3.5" screens
     if ([UIScreen mainScreen].bounds.size.height == 480.0) {
-        self.cancelButton.center = CGPointMake(self.cancelButton.center.x, [UIScreen mainScreen].bounds.size.height-(568.0-523.0));
-        self.playButton.center = CGPointMake(self.playButton.center.x, [UIScreen mainScreen].bounds.size.height-(568.0-523.0));
-        self.doneButton.center = CGPointMake(self.doneButton.center.x, [UIScreen mainScreen].bounds.size.height-(568.0-523.0));
+        self.controlsView.center = CGPointMake(self.controlsView.center.x, 430);
+        self.videoContainerView.center = CGPointMake(self.controlsView.center.x, 240);
     }
 
-    debug NSLog(@"edit view did load");
-}
-
--(UIStatusBarStyle)preferredStatusBarStyle {
-    return UIStatusBarStyleLightContent;
+    [[UIApplication sharedApplication] setStatusBarHidden:YES
+                                            withAnimation:UIStatusBarAnimationFade];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -94,11 +90,18 @@
     self.player = [AVPlayer playerWithURL:self.videoUrl];
 
     AVPlayerLayer *layer = [AVPlayerLayer layer];
+    layer.hidden = YES;
     [layer setPlayer:self.player];
-    [layer setFrame:CGRectMake(0, 100, 320, 320)];
+    [layer setFrame:CGRectMake(0, 0, 320, 320)];
     [layer setBackgroundColor:[UIColor blackColor].CGColor];
     [layer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
-    [self.view.layer addSublayer:layer];
+    [self.videoContainerView.layer addSublayer:layer];
+
+    double delayInSeconds = 0.5;
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        layer.hidden = NO;
+    });
 }
 
 - (void)trimVideo {
@@ -129,9 +132,9 @@
                     break;
                 default:
                     debug NSLog(@"NONE");
-                    dispatch_async(dispatch_get_main_queue(), ^{
+//                    dispatch_async(dispatch_get_main_queue(), ^{
 //                        [self playMovie];
-                    });
+//                    });
                     break;
             }
         }];
