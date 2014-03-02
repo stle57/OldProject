@@ -1,5 +1,5 @@
 //
-//  TDEditVideoSegue.h
+//  TDSlideLeftSegue.h
 //  Throwdown
 //
 //  Created by Andrew C on 2/26/14.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TDEditVideoSegue : UIStoryboardSegue
+@interface TDSlideLeftSegue : UIStoryboardSegue
 
 @end

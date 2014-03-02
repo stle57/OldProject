@@ -119,7 +119,7 @@
                         <outlet property="switchCamerabutton" destination="93b-E6-3u5" id="gdi-bG-RHF"/>
                         <outlet property="timeLabel" destination="Emc-Hw-KVu" id="gn9-Ls-Uxf"/>
                         <outlet property="videoContainerView" destination="lpd-Xk-QaL" id="a2l-m2-M2e"/>
-                        <segue destination="mmN-3Z-6Sw" kind="custom" identifier="EditVideoSegue" customClass="TDEditVideoSegue" id="dIK-mC-q5V"/>
+                        <segue destination="mmN-3Z-6Sw" kind="custom" identifier="EditVideoSegue" customClass="TDSlideLeftSegue" id="dIK-mC-q5V"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
@@ -153,7 +153,7 @@
                                         </state>
                                         <state key="highlighted" image="v_closebutton_hit"/>
                                         <connections>
-                                            <action selector="cancelButtonPressed:" destination="mmN-3Z-6Sw" eventType="touchUpInside" id="UA3-Np-2uQ"/>
+                                            <segue destination="Mi2-Xw-H7z" kind="unwind" identifier="UnwindSlideLeftSegue" unwindAction="unwindToRecordVideo:" id="ACf-zb-hJN"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="jCp-Qn-DFT" userLabel="Play Button">

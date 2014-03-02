@@ -36,7 +36,6 @@
 
 - (IBAction)playButtonPressed:(UIButton *)sender;
 - (IBAction)doneButtonPressed:(UIButton *)sender;
-- (IBAction)cancelButtonPressed:(UIButton *)sender;
 
 @end
 
@@ -167,10 +166,6 @@
 //        [api addPost:[[TDPost alloc]initWithUsername:user.username userId:user.userId filename:newName]];
 
     [self performSegueWithIdentifier:@"VideoCloseSegue" sender:self];
-}
-
-- (IBAction)cancelButtonPressed:(UIButton *)sender {
-    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (NSString *)saveThumbnail {

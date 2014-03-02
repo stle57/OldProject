@@ -13,7 +13,7 @@
 
 - (void)perform {
     
-    NSLog(@"PERFORM-VideoButtonSegue");
+    debug NSLog(@"PERFORM-VideoButtonSegue");
 
     UIViewController *sourceViewController = self.sourceViewController;
     UIViewController *destinationViewController = self.destinationViewController;

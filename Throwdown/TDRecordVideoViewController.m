@@ -8,7 +8,8 @@
 
 #import "TDRecordVideoViewController.h"
 #import "TDEditVideoViewController.h"
-#import "TDEditVideoSegue.h"
+#import "TDSlideLeftSegue.h"
+#import "TDUnwindSlideLeftSegue.h"
 #import "GPUImage.h"
 #import "VideoCloseSegue.h"
 #import <QuartzCore/QuartzCore.h>
@@ -307,10 +308,26 @@ static int const kMaxRecordingSeconds = 30;
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue isKindOfClass:[TDEditVideoSegue class]]) {
+    if ([segue isKindOfClass:[TDSlideLeftSegue class]]) {
         TDEditVideoViewController *vc = [segue destinationViewController];
         NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:kMovieFilePath];
         [vc editVideoAt:pathToMovie];
+    }
+}
+
+- (IBAction)unwindToRecordVideo:(UIStoryboardSegue *)sender {
+    // Empty on purpose
+}
+
+- (UIStoryboardSegue *)segueForUnwindingToViewController:(UIViewController *)toViewController fromViewController:(UIViewController *)fromViewController identifier:(NSString *)identifier {
+    debug NSLog(@"record video segue for unwinding with identifier %@", identifier);
+
+    if ([@"UnwindSlideLeftSegue" isEqualToString:identifier]) {
+        return [[TDUnwindSlideLeftSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
+    } else {
+        return [super segueForUnwindingToViewController:toViewController
+                                     fromViewController:fromViewController
+                                             identifier:identifier];
     }
 }
 
