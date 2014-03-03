@@ -170,15 +170,12 @@
 }
 
 - (IBAction)unwindToHome:(UIStoryboardSegue *)sender {
+    // hide the buttons here b/c the seuge animates a screenshot of current view and buttons are visible
+    if (goneDownstream) {
+        [self hideBottomButtons];
+    }
     debug NSLog(@"home view unwindToHome with identifier %@", sender.identifier);
-//    UIStoryboardSegue *segue = [self segueForUnwindingToViewController:self fromViewController:sender.sourceViewController identifier:sender.identifier];
 }
-
-- (void)returnToRoot {
-    [self dismissViewControllerAnimated:NO completion:nil];
-    [self.navigationController popToRootViewControllerAnimated:NO];
-}
-
 
 #pragma mark - refresh control
 
