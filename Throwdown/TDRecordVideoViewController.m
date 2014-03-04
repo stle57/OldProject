@@ -80,7 +80,7 @@ static int const kMaxRecordingSeconds = 30;
     // Fix buttons for 3.5" screens
     if ([UIScreen mainScreen].bounds.size.height == 480.0) {
         self.controlsView.center = CGPointMake(self.controlsView.center.x, 430);
-        self.videoContainerView.center = CGPointMake(self.videoContainerView.center.x, 240);
+        self.videoContainerView.center = CGPointMake(self.videoContainerView.center.x, 212);
     }
     [[UIApplication sharedApplication] setStatusBarHidden:YES
                                             withAnimation:UIStatusBarAnimationFade];
