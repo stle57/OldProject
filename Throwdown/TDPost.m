@@ -41,6 +41,8 @@
         _filename = [dict objectForKey:@"filename"];
         _createdAt = [TDPost dateForRFC3339DateTimeString:[dict objectForKey:@"created_at"]];
         _liked = [[dict objectForKey:@"liked"] boolValue];
+        _likers = [dict objectForKey:@"likers"];
+        _comments = [dict objectForKey:@"comments"];
     }
     return self;
 }

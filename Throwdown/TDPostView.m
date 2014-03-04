@@ -49,6 +49,7 @@ static const NSString *ItemStatusContext;
 }
 
 - (void)setPost:(TDPost *)post {
+
     self.usernameLabel.text = post.user.username;
     self.createdLabel.text = [post.createdAt timeAgo];
 
@@ -58,8 +59,10 @@ static const NSString *ItemStatusContext;
     self.didPlay = NO;
     self.playImage.hidden = NO;
 
-    // Likes
+    // Likes & Comments
     [self.likeCommentView setLike:post.liked];
+    [self.likeCommentView setLikesArray:post.likers];
+    [self.likeCommentView setCommentsArray:post.comments];
 
     [[NSNotificationCenter defaultCenter] postNotificationName:@"TDDownloadPreviewImageNotification"
                                                         object:self

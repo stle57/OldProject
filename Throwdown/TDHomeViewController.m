@@ -232,7 +232,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 404.0f+48.0;
+    return 480.0;//404.0f+48.0;
 }
 
 #pragma mark - TDLikeCommentViewDelegates
@@ -263,6 +263,11 @@
 -(void)commentButtonPressedFromRow:(NSInteger)row
 {
     NSLog(@"Home-commentButtonPressedFromRow:%ld", (long)row);
+}
+
+-(void)miniLikeButtonPressedForLiker:(NSDictionary *)liker
+{
+    NSLog(@"Home-miniLikeButtonPressedForLiker:%@", liker);
 }
 
 # pragma mark - navigation

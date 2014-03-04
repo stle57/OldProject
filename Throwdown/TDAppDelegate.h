@@ -15,5 +15,6 @@
 
 + (TDAppDelegate*)appDelegate;
 -(TDPost *)postWithPostId:(NSNumber *)postId;
++(UIColor *)randomColor;
 
 @end

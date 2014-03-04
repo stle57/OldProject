@@ -16,6 +16,8 @@
 @property (nonatomic, readonly) TDUser *user;
 @property (nonatomic, readonly) NSDate *createdAt;
 @property (nonatomic, assign) BOOL liked;
+@property (strong, nonatomic, readonly) NSArray *likers;
+@property (strong, nonatomic, readonly) NSArray *comments;
 
 - (id)initWithDictionary:(NSDictionary *)dict;
 - (NSDictionary *)jsonRepresentation;
