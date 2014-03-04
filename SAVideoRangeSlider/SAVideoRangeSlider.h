@@ -40,7 +40,7 @@
 @property (nonatomic, weak) id <SAVideoRangeSliderDelegate> delegate;
 @property (nonatomic) CGFloat leftPosition;
 @property (nonatomic) CGFloat rightPosition;
-@property (nonatomic, strong) UILabel *bubleText;
+//@property (nonatomic, strong) UILabel *bubleText;
 @property (nonatomic, strong) UIView *topBorder;
 @property (nonatomic, strong) UIView *bottomBorder;
 @property (nonatomic, assign) NSInteger maxGap;
@@ -48,7 +48,7 @@
 
 
 - (id)initWithFrame:(CGRect)frame videoUrl:(NSURL *)videoUrl;
-- (void)setPopoverBubbleSize: (CGFloat) width height:(CGFloat)height;
+//- (void)setPopoverBubbleSize: (CGFloat) width height:(CGFloat)height;
 
 
 @end

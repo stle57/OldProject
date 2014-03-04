@@ -35,7 +35,7 @@
 @property (nonatomic, strong) SASliderRight *rightThumb;
 @property (nonatomic) CGFloat frame_width;
 @property (nonatomic) Float64 durationSeconds;
-@property (nonatomic, strong) SAResizibleBubble *popoverBubble;
+//@property (nonatomic, strong) SAResizibleBubble *popoverBubble;
 
 @end
 
@@ -44,6 +44,7 @@
 
 #define SLIDER_BORDERS_SIZE 6.0f
 #define BG_VIEW_BORDERS_SIZE 3.0f
+#define REAL_THUMB_WIDTH 20
 
 
 - (id)initWithFrame:(CGRect)frame videoUrl:(NSURL *)videoUrl{
@@ -52,11 +53,12 @@
     if (self) {
         
         _frame_width = frame.size.width;
-        
+
+        UIColor *grey = [UIColor colorWithRed:0.1333333333f green:0.1333333333f blue:0.1333333333f alpha:1.0f];
         int thumbWidth = ceil(frame.size.width*0.05);
         
         _bgView = [[UIControl alloc] initWithFrame:CGRectMake(thumbWidth-BG_VIEW_BORDERS_SIZE, 0, frame.size.width-(thumbWidth*2)+BG_VIEW_BORDERS_SIZE*2, frame.size.height)];
-        _bgView.layer.borderColor = [UIColor grayColor].CGColor;
+        _bgView.layer.borderColor = grey.CGColor;
         _bgView.layer.borderWidth = BG_VIEW_BORDERS_SIZE;
         [self addSubview:_bgView];
         
@@ -64,16 +66,16 @@
         
         
         _topBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, SLIDER_BORDERS_SIZE)];
-        _topBorder.backgroundColor = [UIColor colorWithRed: 0.996 green: 0.951 blue: 0.502 alpha: 1];
+        _topBorder.backgroundColor = grey;
         [self addSubview:_topBorder];
         
         
         _bottomBorder = [[UIView alloc] initWithFrame:CGRectMake(0, frame.size.height-SLIDER_BORDERS_SIZE, frame.size.width, SLIDER_BORDERS_SIZE)];
-        _bottomBorder.backgroundColor = [UIColor colorWithRed: 0.992 green: 0.902 blue: 0.004 alpha: 1];
+        _bottomBorder.backgroundColor = grey;
         [self addSubview:_bottomBorder];
         
         
-        _leftThumb = [[SASliderLeft alloc] initWithFrame:CGRectMake(0, 0, thumbWidth, frame.size.height)];
+        _leftThumb = [[SASliderLeft alloc] initWithFrame:CGRectMake(0, 0, REAL_THUMB_WIDTH, frame.size.height)];
         _leftThumb.contentMode = UIViewContentModeLeft;
         _leftThumb.userInteractionEnabled = YES;
         _leftThumb.clipsToBounds = YES;
@@ -86,7 +88,7 @@
         [_leftThumb addGestureRecognizer:leftPan];
         
         
-        _rightThumb = [[SASliderRight alloc] initWithFrame:CGRectMake(0, 0, thumbWidth, frame.size.height)];
+        _rightThumb = [[SASliderRight alloc] initWithFrame:CGRectMake(0, 0, REAL_THUMB_WIDTH, frame.size.height)];
         
         _rightThumb.contentMode = UIViewContentModeRight;
         _rightThumb.userInteractionEnabled = YES;
@@ -111,20 +113,20 @@
         [_centerView addGestureRecognizer:centerPan];
         
         
-        _popoverBubble = [[SAResizibleBubble alloc] initWithFrame:CGRectMake(0, -50, 100, 50)];
-        _popoverBubble.alpha = 0;
-        _popoverBubble.backgroundColor = [UIColor clearColor];
-        [self addSubview:_popoverBubble];
-        
-        
-        _bubleText = [[UILabel alloc] initWithFrame:_popoverBubble.frame];
-        _bubleText.font = [UIFont boldSystemFontOfSize:20];
-        _bubleText.backgroundColor = [UIColor clearColor];
-        _bubleText.textColor = [UIColor blackColor];
-        _bubleText.textAlignment = NSTextAlignmentCenter;
-        
-        [_popoverBubble addSubview:_bubleText];
-        
+//        _popoverBubble = [[SAResizibleBubble alloc] initWithFrame:CGRectMake(0, -50, 100, 50)];
+//        _popoverBubble.alpha = 0;
+//        _popoverBubble.backgroundColor = [UIColor clearColor];
+//        [self addSubview:_popoverBubble];
+//        
+//        
+//        _bubleText = [[UILabel alloc] initWithFrame:_popoverBubble.frame];
+//        _bubleText.font = [UIFont boldSystemFontOfSize:20];
+//        _bubleText.backgroundColor = [UIColor clearColor];
+//        _bubleText.textColor = [UIColor blackColor];
+//        _bubleText.textAlignment = NSTextAlignmentCenter;
+//        
+//        [_popoverBubble addSubview:_bubleText];
+
         [self getMovieFrame];
     }
     
@@ -142,19 +144,19 @@
 }
 
 
--(void)setPopoverBubbleSize: (CGFloat) width height:(CGFloat)height{
-    
-    CGRect currentFrame = _popoverBubble.frame;
-    currentFrame.size.width = width;
-    currentFrame.size.height = height;
-    currentFrame.origin.y = -height;
-    _popoverBubble.frame = currentFrame;
-    
-    currentFrame.origin.x = 0;
-    currentFrame.origin.y = 0;
-    _bubleText.frame = currentFrame;
-    
-}
+//-(void)setPopoverBubbleSize: (CGFloat) width height:(CGFloat)height{
+//    
+//    CGRect currentFrame = _popoverBubble.frame;
+//    currentFrame.size.width = width;
+//    currentFrame.size.height = height;
+//    currentFrame.origin.y = -height;
+//    _popoverBubble.frame = currentFrame;
+//    
+//    currentFrame.origin.x = 0;
+//    currentFrame.origin.y = 0;
+//    _bubleText.frame = currentFrame;
+//    
+//}
 
 
 -(void)setMaxGap:(NSInteger)maxGap{
@@ -181,7 +183,12 @@
     if ([_delegate respondsToSelector:@selector(videoRange:didChangeLeftPosition:rightPosition:)]){
         [_delegate videoRange:self didChangeLeftPosition:self.leftPosition rightPosition:self.rightPosition];
     }
-    
+}
+
+- (void)delegateNotificationGestureEnded {
+    if ([_delegate respondsToSelector:@selector(videoRange:didGestureStateEndedLeftPosition:rightPosition:)]){
+        [_delegate videoRange:self didGestureStateEndedLeftPosition:self.leftPosition rightPosition:self.rightPosition];
+    }
 }
 
 
@@ -215,13 +222,12 @@
         [self delegateNotification];
         
     }
-    
-//    _popoverBubble.alpha = 1;
 
-    [self setTimeLabel];
-    
+//    _popoverBubble.alpha = 1;
+//    [self setTimeLabel];
     if (gesture.state == UIGestureRecognizerStateEnded){
-        [self hideBubble:_popoverBubble];
+        [self delegateNotificationGestureEnded];
+//        [self hideBubble:_popoverBubble];
     }
 }
 
@@ -259,14 +265,12 @@
         [self delegateNotification];
         
     }
-    
-//    _popoverBubble.alpha = 1;
 
-    [self setTimeLabel];
-    
-    
+//    _popoverBubble.alpha = 1;
+//    [self setTimeLabel];
     if (gesture.state == UIGestureRecognizerStateEnded){
-        [self hideBubble:_popoverBubble];
+        [self delegateNotificationGestureEnded];
+//        [self hideBubble:_popoverBubble];
     }
 }
 
@@ -294,15 +298,14 @@
         [self delegateNotification];
         
     }
-    
-//    _popoverBubble.alpha = 1;
 
-    [self setTimeLabel];
-    
+//    _popoverBubble.alpha = 1;
+//    [self setTimeLabel];
     if (gesture.state == UIGestureRecognizerStateEnded){
-        [self hideBubble:_popoverBubble];
+        [self delegateNotificationGestureEnded];
+//        [self hideBubble:_popoverBubble];
     }
-    
+
 }
 
 
@@ -322,9 +325,9 @@
     _centerView.frame = CGRectMake(_leftThumb.frame.origin.x + _leftThumb.frame.size.width, _centerView.frame.origin.y, _rightThumb.frame.origin.x - _leftThumb.frame.origin.x - _leftThumb.frame.size.width, _centerView.frame.size.height);
     
     
-    CGRect frame = _popoverBubble.frame;
-    frame.origin.x = _centerView.frame.origin.x+_centerView.frame.size.width/2-frame.size.width/2;
-    _popoverBubble.frame = frame;
+//    CGRect frame = _popoverBubble.frame;
+//    frame.origin.x = _centerView.frame.origin.x+_centerView.frame.size.width/2-frame.size.width/2;
+//    _popoverBubble.frame = frame;
 }
 
 
@@ -497,31 +500,31 @@
 
 
 
-#pragma mark - Bubble
-
-- (void)hideBubble:(UIView *)popover
-{
-    [UIView animateWithDuration:0.4
-                          delay:0
-                        options:UIViewAnimationCurveEaseIn | UIViewAnimationOptionAllowUserInteraction
-                     animations:^(void) {
-                         
-                         _popoverBubble.alpha = 0;
-                     }
-                     completion:nil];
-    
-    if ([_delegate respondsToSelector:@selector(videoRange:didGestureStateEndedLeftPosition:rightPosition:)]){
-        [_delegate videoRange:self didGestureStateEndedLeftPosition:self.leftPosition rightPosition:self.rightPosition];
-        
-    }
-}
-
-
--(void) setTimeLabel{
-    self.bubleText.text = [self trimIntervalStr];
-    //debug NSLog([self timeDuration1]);
-    //debug NSLog([self timeDuration]);
-}
+//#pragma mark - Bubble
+//
+//- (void)hideBubble:(UIView *)popover
+//{
+//    [UIView animateWithDuration:0.4
+//                          delay:0
+//                        options:UIViewAnimationCurveEaseIn | UIViewAnimationOptionAllowUserInteraction
+//                     animations:^(void) {
+//                         
+//                         _popoverBubble.alpha = 0;
+//                     }
+//                     completion:nil];
+//    
+//    if ([_delegate respondsToSelector:@selector(videoRange:didGestureStateEndedLeftPosition:rightPosition:)]){
+//        [_delegate videoRange:self didGestureStateEndedLeftPosition:self.leftPosition rightPosition:self.rightPosition];
+//        
+//    }
+//}
+//
+//
+//-(void) setTimeLabel{
+//    self.bubleText.text = [self trimIntervalStr];
+//    //debug NSLog([self timeDuration1]);
+//    //debug NSLog([self timeDuration]);
+//}
 
 
 -(NSString *)trimDurationStr{
