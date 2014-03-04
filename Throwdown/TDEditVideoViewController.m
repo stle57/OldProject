@@ -91,8 +91,8 @@ static const NSString *ItemStatusContext;
 
 - (void)updatePlayButtonWith:(BOOL)playing {
     if (playing) {
-        [self.playButton setImage:[UIImage imageNamed:@"v_stopbutton"] forState:UIControlStateNormal];
-        [self.playButton setImage:[UIImage imageNamed:@"v_stopbutton_hit"] forState:UIControlStateHighlighted];
+        [self.playButton setImage:[UIImage imageNamed:@"v_pausebutton"] forState:UIControlStateNormal];
+        [self.playButton setImage:[UIImage imageNamed:@"v_pausebutton_hit"] forState:UIControlStateHighlighted];
     } else {
         [self.playButton setImage:[UIImage imageNamed:@"v_playbutton"] forState:UIControlStateNormal];
         [self.playButton setImage:[UIImage imageNamed:@"v_playbutton_hit"] forState:UIControlStateHighlighted];
