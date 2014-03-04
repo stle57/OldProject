@@ -20,7 +20,7 @@
 
 static const NSString *ItemStatusContext;
 
-@interface TDEditVideoViewController ()<SAVideoRangeSliderDelegate>
+@interface TDEditVideoViewController ()<SAVideoRangeSliderDelegate, UIAlertViewDelegate>
 
 @property (strong, nonatomic) SAVideoRangeSlider *slider;
 @property (strong, nonatomic) AVPlayer *player;
@@ -98,6 +98,18 @@ static const NSString *ItemStatusContext;
         [self.playButton setImage:[UIImage imageNamed:@"v_playbutton_hit"] forState:UIControlStateHighlighted];
     }
 }
+
+- (IBAction)cancelButtonPressed:(id)sender {
+    UIAlertView *confirm = [[UIAlertView alloc] initWithTitle:@"Go back?" message:@"Your video will be lost!" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Go Back", nil];
+    [confirm show];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex != alertView.cancelButtonIndex) {
+        [self performSegueWithIdentifier:@"UnwindSlideLeftSegue" sender:self];
+    }
+}
+
 
 # pragma mark - saving
 
