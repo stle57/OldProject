@@ -100,7 +100,7 @@ static const NSString *ItemStatusContext;
         self.playerLayer = [AVPlayerLayer layer];
         [self.playerLayer setFrame:CGRectMake(0, 0, 320, 320)];
         [self.playerLayer setBackgroundColor:[UIColor blackColor].CGColor];
-        [self.playerLayer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
+        [self.playerLayer setVideoGravity:AVLayerVideoGravityResize];
         [self.videoHolderView.layer addSublayer:self.playerLayer];
         self.playerLayer.hidden = YES;
 
