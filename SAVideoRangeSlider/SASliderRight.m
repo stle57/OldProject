@@ -41,9 +41,9 @@
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGContextRef context = UIGraphicsGetCurrentContext();
 
-    CGContextSetFillColorWithColor(context, [UIColor colorWithRed:0.1333333333f green:0.1333333333f blue:0.1333333333f alpha:1.0f].CGColor);
+    CGContextSetFillColorWithColor(context, [UIColor colorWithRed:0.94 green:0.73 blue:0.25 alpha:1.0].CGColor);
     CGContextFillRect(context, self.bounds);
-    UIImage *arrow = [UIImage imageNamed:@"v_trimright"];
+    UIImage *arrow = [UIImage imageNamed:@"v_thumbright"];
     [arrow drawInRect:CGRectMake(5, 7, 10, 30)];
     CGColorSpaceRelease(colorSpace);
 }

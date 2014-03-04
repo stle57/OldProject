@@ -54,24 +54,25 @@
         
         _frame_width = frame.size.width;
 
-        UIColor *grey = [UIColor colorWithRed:0.1333333333f green:0.1333333333f blue:0.1333333333f alpha:1.0f];
         int thumbWidth = ceil(frame.size.width*0.05);
         
         _bgView = [[UIControl alloc] initWithFrame:CGRectMake(thumbWidth-BG_VIEW_BORDERS_SIZE, 0, frame.size.width-(thumbWidth*2)+BG_VIEW_BORDERS_SIZE*2, frame.size.height)];
-        _bgView.layer.borderColor = grey.CGColor;
+        _bgView.layer.borderColor = [UIColor colorWithRed:0.1333333333f green:0.1333333333f blue:0.1333333333f alpha:1.0f].CGColor;
         _bgView.layer.borderWidth = BG_VIEW_BORDERS_SIZE;
         [self addSubview:_bgView];
         
         _videoUrl = videoUrl;
         
-        
+
+        UIColor *mainColor = [UIColor colorWithRed:0.94 green:0.73 blue:0.25 alpha:1.0];
+
         _topBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, SLIDER_BORDERS_SIZE)];
-        _topBorder.backgroundColor = grey;
+        _topBorder.backgroundColor = mainColor;
         [self addSubview:_topBorder];
         
         
         _bottomBorder = [[UIView alloc] initWithFrame:CGRectMake(0, frame.size.height-SLIDER_BORDERS_SIZE, frame.size.width, SLIDER_BORDERS_SIZE)];
-        _bottomBorder.backgroundColor = grey;
+        _bottomBorder.backgroundColor = mainColor;
         [self addSubview:_bottomBorder];
         
         
