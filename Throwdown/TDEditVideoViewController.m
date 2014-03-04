@@ -100,12 +100,12 @@ static const NSString *ItemStatusContext;
 }
 
 - (IBAction)cancelButtonPressed:(id)sender {
-    UIAlertView *confirm = [[UIAlertView alloc] initWithTitle:@"Go back?" message:@"Your video will be lost!" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Go Back", nil];
+    UIAlertView *confirm = [[UIAlertView alloc] initWithTitle:@"Delete this video?" message:nil delegate:self cancelButtonTitle:@"Delete Video" otherButtonTitles:@"Keep", nil];
     [confirm show];
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (buttonIndex != alertView.cancelButtonIndex) {
+    if (buttonIndex == alertView.cancelButtonIndex) {
         [self performSegueWithIdentifier:@"UnwindSlideLeftSegue" sender:self];
     }
 }
