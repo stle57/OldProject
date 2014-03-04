@@ -430,24 +430,24 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Tdo-gQ-7zF" userLabel="Notification Button">
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Tdo-gQ-7zF" userLabel="Notification Button">
                                 <rect key="frame" x="10" y="518" width="40" height="40"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="10"/>
-                                <state key="normal" title="Notif.">
+                                <state key="normal" image="nav_notif">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <state key="highlighted" image="nav_notif_hit"/>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Uso-in-hkr" userLabel="Profile Button">
-                                <rect key="frame" x="270" y="518" width="40" height="40"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Uso-in-hkr" userLabel="Profile Button">
+                                <rect key="frame" x="255" y="503" width="70" height="70"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="9"/>
-                                <state key="normal" title="Log out">
+                                <state key="normal" image="nav_profile">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <state key="highlighted" image="nav_profile_hit"/>
                                 <connections>
                                     <action selector="profileButtonPressed:" destination="y50-ZI-obS" eventType="touchUpInside" id="Zt1-df-eW8"/>
                                 </connections>
@@ -583,6 +583,10 @@
     </scenes>
     <resources>
         <image name="nav_camera" width="61" height="61"/>
+        <image name="nav_notif" width="40" height="40"/>
+        <image name="nav_notif_hit" width="40" height="40"/>
+        <image name="nav_profile" width="40" height="40"/>
+        <image name="nav_profile_hit" width="40" height="40"/>
         <image name="v_checkbutton" width="30" height="30"/>
         <image name="v_checkbutton_hit" width="30" height="30"/>
         <image name="v_closebutton" width="30" height="30"/>
