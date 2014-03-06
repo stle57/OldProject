@@ -11,7 +11,7 @@ typedef void (^URLConnectioDownloadProgressBlock)   (float progress);
 + (void)asyncConnectionWithRequest:(NSURLRequest *)request 
                    completionBlock:(URLConnectionCompletionBlock)completionBlock
                         errorBlock:(URLConnectioErrorBlock)errorBlock
-               uploadPorgressBlock:(URLConnectioUploadProgressBlock)uploadBlock
+               uploadProgressBlock:(URLConnectioUploadProgressBlock)uploadBlock
              downloadProgressBlock:(URLConnectioDownloadProgressBlock)downloadBlock;
 
 + (void)asyncConnectionWithRequest:(NSURLRequest *)request 

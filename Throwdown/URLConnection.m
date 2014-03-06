@@ -16,7 +16,7 @@
 - (id)initWithRequest:(NSURLRequest *)request 
       completionBlock:(URLConnectionCompletionBlock)completionBlock
            errorBlock:(URLConnectioErrorBlock)errorBlock
-  uploadPorgressBlock:(URLConnectioUploadProgressBlock)uploadBlock
+  uploadProgressBlock:(URLConnectioUploadProgressBlock)uploadBlock
 downloadProgressBlock:(URLConnectioDownloadProgressBlock)downloadBlock;
 - (void)start;
 
@@ -27,16 +27,16 @@ downloadProgressBlock:(URLConnectioDownloadProgressBlock)downloadBlock;
 + (void)asyncConnectionWithRequest:(NSURLRequest *)request 
                    completionBlock:(URLConnectionCompletionBlock)completionBlock
                         errorBlock:(URLConnectioErrorBlock)errorBlock
-               uploadPorgressBlock:(URLConnectioUploadProgressBlock)uploadBlock
+               uploadProgressBlock:(URLConnectioUploadProgressBlock)uploadBlock
              downloadProgressBlock:(URLConnectioDownloadProgressBlock)downloadBlock {
     
     URLConnection *connection = [[URLConnection alloc] initWithRequest:request 
                                                        completionBlock:completionBlock 
                                                             errorBlock:errorBlock
-                                                   uploadPorgressBlock:uploadBlock
+                                                   uploadProgressBlock:uploadBlock
                                                  downloadProgressBlock:downloadBlock];
     [connection start];
-    [connection release];
+//    [connection release];
 }
 
 + (void)asyncConnectionWithRequest:(NSURLRequest *)request 
@@ -45,7 +45,7 @@ downloadProgressBlock:(URLConnectioDownloadProgressBlock)downloadBlock;
     [URLConnection asyncConnectionWithRequest:request 
                               completionBlock:completionBlock 
                                    errorBlock:errorBlock 
-                          uploadPorgressBlock:nil 
+                          uploadProgressBlock:nil
                         downloadProgressBlock:nil];
 }
 
@@ -65,12 +65,12 @@ downloadProgressBlock:(URLConnectioDownloadProgressBlock)downloadBlock;
 - (id)initWithRequest:(NSURLRequest *)_request 
       completionBlock:(URLConnectionCompletionBlock)_completionBlock
            errorBlock:(URLConnectioErrorBlock)_errorBlock
-  uploadPorgressBlock:(URLConnectioUploadProgressBlock)_uploadBlock
+  uploadProgressBlock:(URLConnectioUploadProgressBlock)_uploadBlock
 downloadProgressBlock:(URLConnectioDownloadProgressBlock)_downloadBlock {
     
     self = [super init];
     if (self) {
-        request =           [_request retain];
+        request =           [_request copy];
         completionBlock =   [_completionBlock copy];
         errorBlock =        [_errorBlock copy];
         uploadBlock =       [_uploadBlock copy];
@@ -80,16 +80,13 @@ downloadProgressBlock:(URLConnectioDownloadProgressBlock)_downloadBlock {
 }
 
 - (void)dealloc {
-    [request release];
-    [data release];
-    [response release];
-    
-    [completionBlock release];
-    [errorBlock release];
-    [uploadBlock release];
-    [downloadBlock release];
-    
-    [super dealloc];
+    request = nil;
+    data = nil;
+    response = nil;
+    completionBlock = nil;
+    errorBlock = nil;
+    uploadBlock = nil;
+    downloadBlock = nil;
 }
 
 - (void)start {
@@ -115,7 +112,7 @@ downloadProgressBlock:(URLConnectioDownloadProgressBlock)_downloadBlock {
 
 - (void)connection:(NSURLConnection *)connection 
 didReceiveResponse:(NSHTTPURLResponse *)_response {
-    response = [_response retain];
+    response = [_response copy];
     downloadSize = [response expectedContentLength];
 }
 
