@@ -8,6 +8,7 @@
 
 #import "RSClient.h"
 #import <objc/message.h>
+#import "URLConnection.h"
 
 #define $S(format, ...) [NSString stringWithFormat:format, ## __VA_ARGS__]
 
@@ -82,6 +83,53 @@
     return [self cdnRequest:path httpMethod:@"GET"];
     
 }
+
+- (void)sendAsynchronousRequest:(SEL)requestSelector object:(id)object sender:(id)sender successHandler:(void (^)(NSHTTPURLResponse*, NSData*, NSError*))successHandler failureHandler:(void (^)(NSHTTPURLResponse*, NSData*, NSError*))failureHandler progressHandler:(void (^)(float progress))progressHandler {
+
+    // if the client hasn't been authenticated yet, this method will attempt to auth first,
+    // then send the request.  if auth retry fails, the failureHandler is called
+
+    // this method takes a selector instead of an actual NSURLRequest object because if the
+    // account isn't authenticated, the request will likely be an invalid URL,
+    // such as "NULL/<path>".  after authentication, the selector is called again to create
+    // a valid request
+
+    if (self.authenticated) {
+
+        // TODO: make sure you're using the appropriate NSOperationQueue
+
+        [URLConnection asyncConnectionWithRequest:objc_msgSend(sender, requestSelector, object)
+                                  completionBlock:^(NSData *data, NSURLResponse *urlResponse) {
+
+                                          NSHTTPURLResponse *response = (NSHTTPURLResponse *)urlResponse;
+                                          if (response.statusCode >= 200 && response.statusCode <= 299) {
+                                              if (successHandler) {
+                                                  successHandler(response, data, nil);
+                                              }
+                                          } else if (failureHandler) {
+                                              failureHandler(response, data, nil);
+                                          }
+                                  } errorBlock:^(NSError *error) {
+                                      if (failureHandler) {
+                                          failureHandler(nil, nil, error);
+                                      }
+                                  } uploadProgressBlock:progressHandler downloadProgressBlock:nil];
+    } else {
+
+        [self authenticate:^{
+
+            [self sendAsynchronousRequest:requestSelector object:object sender:self successHandler:successHandler failureHandler:failureHandler];
+
+        } failure:^(NSHTTPURLResponse *response, NSData *data, NSError *error) {
+
+            if (failureHandler) {
+                failureHandler(response, data, error);
+            }
+
+        }];
+    }
+}
+
 
 - (void)sendAsynchronousRequest:(SEL)requestSelector object:(id)object sender:(id)sender successHandler:(void (^)(NSHTTPURLResponse*, NSData*, NSError*))successHandler failureHandler:(void (^)(NSHTTPURLResponse*, NSData*, NSError*))failureHandler {
 

@@ -118,6 +118,17 @@ typedef enum {
  *  @param sender The object that owns the requestSelector
  *  @param successHandler A block that will be executed if the request is successfully executed and returns a HTTP response code in the 2xx block (200-299)
  *  @param failureHandler A block that will be executed if the request is not successfully executed or returns a HTTP response code outside of the 2xx block (for example, a 404 Not Found response)
+ *  @param progressHandler A block that will be executed continiously during upload with progress percentage (0.0 - 1.0 float)
+ */
+- (void)sendAsynchronousRequest:(SEL)requestSelector object:(id)object sender:(id)sender successHandler:(void (^)(NSHTTPURLResponse*, NSData*, NSError*))successHandler failureHandler:(void (^)(NSHTTPURLResponse*, NSData*, NSError*))failureHandler progressHandler:(void (^)(float progress))progressHandler;
+
+
+/** Asynchronously sends a HTTP request with callbacks for success and failure responses.
+ *  @param requestSelector A selector to retrieve the HTTP request to send
+ *  @param object Optional argument for the requestSelector
+ *  @param sender The object that owns the requestSelector
+ *  @param successHandler A block that will be executed if the request is successfully executed and returns a HTTP response code in the 2xx block (200-299)
+ *  @param failureHandler A block that will be executed if the request is not successfully executed or returns a HTTP response code outside of the 2xx block (for example, a 404 Not Found response)
  */
 - (void)sendAsynchronousRequest:(SEL)requestSelector object:(id)object sender:(id)sender successHandler:(void (^)(NSHTTPURLResponse*, NSData*, NSError*))successHandler failureHandler:(void (^)(NSHTTPURLResponse*, NSData*, NSError*))failureHandler;
 

@@ -79,7 +79,7 @@
     return request;
 }
 
-- (void)uploadObject:(RSStorageObject *)object success:(void (^)())successHandler failure:(void (^)(NSHTTPURLResponse*, NSData*, NSError*))failureHandler {
+- (void)uploadObject:(RSStorageObject *)object success:(void (^)())successHandler failure:(void (^)(NSHTTPURLResponse*, NSData*, NSError*))failureHandler progressHandler:(void (^)(float progress))progressHandler {
     
     [self.client sendAsynchronousRequest:@selector(uploadObjectRequest:) object:object sender:self successHandler:^(NSHTTPURLResponse *response, NSData *data, NSError *error) {
         
@@ -90,15 +90,20 @@
             successHandler();
         }
         
-    } failureHandler:failureHandler];
+    } failureHandler:failureHandler progressHandler:progressHandler];
     
 }
 
-- (void)uploadObject:(RSStorageObject *)object fromFile:(NSString *)path success:(void (^)())successHandler failure:(void (^)(NSHTTPURLResponse*, NSData*, NSError*))failureHandler {
-    
+- (void)uploadObject:(RSStorageObject *)object fromFile:(NSString *)path success:(void (^)())successHandler failure:(void (^)(NSHTTPURLResponse*, NSData*, NSError*))failureHandler progressHandler:(void (^)(float progress))progressHandler {
+
     object.data = [NSData dataWithContentsOfFile:path];
-    [self uploadObject:object success:successHandler failure:failureHandler];
-    
+    [self uploadObject:object success:successHandler failure:failureHandler progressHandler:progressHandler];
+
+}
+
+- (void)uploadObject:(RSStorageObject *)object fromFile:(NSString *)path success:(void (^)())successHandler failure:(void (^)(NSHTTPURLResponse*, NSData*, NSError*))failureHandler {
+
+    [self uploadObject:object fromFile:path success:successHandler failure:failureHandler progressHandler:nil];
 }
 
 - (NSURLRequest *)deleteObjectRequest:(RSStorageObject *)object {

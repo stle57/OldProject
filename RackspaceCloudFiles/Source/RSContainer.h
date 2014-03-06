@@ -69,7 +69,16 @@
  *  @param successHandler Executes if successful
  *  @param failureHandler Executes if not successful
  */
-- (void)uploadObject:(RSStorageObject *)object success:(void (^)())successHandler failure:(void (^)(NSHTTPURLResponse*, NSData*, NSError*))failureHandler;
+- (void)uploadObject:(RSStorageObject *)object success:(void (^)())successHandler failure:(void (^)(NSHTTPURLResponse*, NSData*, NSError*))failureHandler progressHandler:(void (^)(float progress))progressHandler;
+
+/** Uploads a file into the container from the local filesystem.
+ *  @param object The file to upload
+ *  @param path The path for the file's data on the local filesystem
+ *  @param successHandler Executes if successful
+ *  @param failureHandler Executes if not successful
+ *  @param progressHandler Executes during upload with current progress
+ */
+- (void)uploadObject:(RSStorageObject *)object fromFile:(NSString *)path success:(void (^)())successHandler failure:(void (^)(NSHTTPURLResponse*, NSData*, NSError*))failureHandler progressHandler:(void (^)(float progress))progressHandler;
 
 /** Uploads a file into the container from the local filesystem.
  *  @param object The file to upload
