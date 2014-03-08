@@ -11,10 +11,11 @@
 #import "TDCurrentUser.h"
 
 @interface TDPostAPI : NSObject
+
 + (TDPostAPI *)sharedInstance;
 + (NSString *)createUploadFileNameFor:(TDCurrentUser *)user;
 
-- (void)uploadVideo:(NSString *)fromVideoPath withThumbnail:(NSString *)localPhotoPath newName:(NSString *)newName;
+- (void)uploadVideo:(NSString *)localVideoPath withThumbnail:(NSString *)localPhotoPath;
 - (void)addPost:(NSString *)filename;
 - (void)fetchPostsUpstream;
 - (NSArray *)getPosts;

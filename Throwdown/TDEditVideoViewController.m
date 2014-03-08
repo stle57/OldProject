@@ -13,7 +13,6 @@
 #import "AVFoundation/AVFoundation.h"
 #import "AssetsLibrary/ALAssetsLibrary.h"
 #import "TDPostAPI.h"
-#import "TDUserAPI.h"
 
 #define TEMP_FILE_PATH @"Documents/WorkingMovieTemp.m4v"
 #define TEMP_IMG_PATH @"Documents/working_image.jpg"
@@ -117,16 +116,12 @@ static const NSString *ItemStatusContext;
     ALAssetsLibrary* library = [[ALAssetsLibrary alloc] init];
 
     [library writeVideoAtPathToSavedPhotosAlbum:(self.editingVideoUrl) completionBlock:nil];
-    TDCurrentUser *user = [TDUserAPI sharedInstance].currentUser;
     TDPostAPI *api = [TDPostAPI sharedInstance];
 
     NSString *thumbnailPath = [NSHomeDirectory() stringByAppendingPathComponent:TEMP_IMG_PATH];
     [self saveThumbnailTo:thumbnailPath];
 
-    NSString *newName = [TDPostAPI createUploadFileNameFor:user]; // Will be used doing post to server API
-    [api uploadVideo:[self.editingVideoUrl path] withThumbnail:thumbnailPath newName:newName];
-    [api addPost:newName];
-//        [api addPost:[[TDPost alloc]initWithUsername:user.username userId:user.userId filename:newName]];
+    [api uploadVideo:[self.editingVideoUrl path] withThumbnail:thumbnailPath];
 
     [self performSegueWithIdentifier:@"VideoCloseSegue" sender:self];
 }

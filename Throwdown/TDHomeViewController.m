@@ -9,12 +9,14 @@
 #import "TDHomeViewController.h"
 #import "TDAppDelegate.h"
 #import "TDPostAPI.h"
+#import "TDPostUpload.h"
 #import "TDPostView.h"
 #import "TDConstants.h"
 #import "TDUserAPI.h"
 #import "VideoButtonSegue.h"
 #import "VideoCloseSegue.h"
 #import "TDLikeCommentView.h"
+#import "TDProgressIndicator.h"
 
 #define CELL_IDENTIFIER @"TDPostView"
 
@@ -74,10 +76,11 @@
                   forControlEvents:UIControlEventValueChanged];
     [self.tableView addSubview:self.refreshControl];
     [self.refreshControl setTintColor:[TDConstants brandingRedColor]];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadStarted:) name:@"TDPostUploadStarted" object:nil];
 }
 
--(void)viewDidAppear:(BOOL)animated
-{
+-(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
     if (goneDownstream) {
@@ -86,8 +89,7 @@
     goneDownstream = NO;
 }
 
--(void)viewDidLayoutSubviews
-{
+-(void)viewDidLayoutSubviews {
     if (goneDownstream) {
         [self hideBottomButtons];
     }
@@ -98,13 +100,22 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     self.refreshControl = nil;
     self.animator = nil;
 }
+
+#pragma mark - video upload indicator
+
+- (void)uploadStarted:(NSNotification *)notification {
+    NSString *thumbnailPath = (NSString *)[notification.userInfo objectForKey:@"thumbnailPath"];
+    TDPostUpload *upload = (TDPostUpload *)notification.object;
+    TDProgressIndicator *progressHeader = [[TDProgressIndicator alloc] initWithTableView:self.tableView thumbnailPath:thumbnailPath];
+    upload.delegate = progressHeader;
+}
+
 
 #pragma mark - Bottom Buttons Bounce
 -(void)hideBottomButtons

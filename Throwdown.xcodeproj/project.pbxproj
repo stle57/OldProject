@@ -56,7 +56,10 @@
 		A1BC0B3F18BE825200F507B3 /* TDSlideLeftSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = A1BC0B3E18BE825200F507B3 /* TDSlideLeftSegue.m */; };
 		A1C1D0F318A02FAB00666D2A /* TDPostView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A1C1D0F218A02FAA00666D2A /* TDPostView.xib */; };
 		A1C1D0F618A0387B00666D2A /* TDPostView.m in Sources */ = {isa = PBXBuildFile; fileRef = A1C1D0F518A0387B00666D2A /* TDPostView.m */; };
+		A1C2481118C6B9CA00F187D9 /* TDProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = A1C2481018C6B9CA00F187D9 /* TDProgressIndicator.m */; };
+		A1C2481418C7D4B000F187D9 /* URLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = A1C2481318C7D4B000F187D9 /* URLConnection.m */; };
 		A1E90CDD18B445FC0046D281 /* TDSignupStepTwoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E90CDC18B445FC0046D281 /* TDSignupStepTwoViewController.m */; };
+		A1F02FD418C92277002FEB2F /* TDPostUpload.m in Sources */ = {isa = PBXBuildFile; fileRef = A1F02FD318C92277002FEB2F /* TDPostUpload.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -152,8 +155,14 @@
 		A1C1D0F218A02FAA00666D2A /* TDPostView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDPostView.xib; sourceTree = "<group>"; };
 		A1C1D0F418A0387B00666D2A /* TDPostView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDPostView.h; sourceTree = "<group>"; };
 		A1C1D0F518A0387B00666D2A /* TDPostView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDPostView.m; sourceTree = "<group>"; };
+		A1C2480F18C6B9CA00F187D9 /* TDProgressIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDProgressIndicator.h; sourceTree = "<group>"; };
+		A1C2481018C6B9CA00F187D9 /* TDProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDProgressIndicator.m; sourceTree = "<group>"; };
+		A1C2481218C7D4B000F187D9 /* URLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLConnection.h; sourceTree = "<group>"; };
+		A1C2481318C7D4B000F187D9 /* URLConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = URLConnection.m; sourceTree = "<group>"; };
 		A1E90CDB18B445FC0046D281 /* TDSignupStepTwoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSignupStepTwoViewController.h; sourceTree = "<group>"; };
 		A1E90CDC18B445FC0046D281 /* TDSignupStepTwoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSignupStepTwoViewController.m; sourceTree = "<group>"; };
+		A1F02FD218C92277002FEB2F /* TDPostUpload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDPostUpload.h; sourceTree = "<group>"; };
+		A1F02FD318C92277002FEB2F /* TDPostUpload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDPostUpload.m; sourceTree = "<group>"; };
 		BC8AD58EF48B41289E5CE49E /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 		E657ABE418B84EA68554F855 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -263,6 +272,8 @@
 				A150F08918A31B14009A72AD /* TDConstants.m */,
 				A180D4DD18C14EA7003B9378 /* TDNavigationController.h */,
 				A180D4DE18C14EA7003B9378 /* TDNavigationController.m */,
+				A1C2481218C7D4B000F187D9 /* URLConnection.h */,
+				A1C2481318C7D4B000F187D9 /* URLConnection.m */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -320,6 +331,8 @@
 				A19FF5E618932868001A0AD0 /* TDUserAPI.m */,
 				A14B2B7D18B5308000980A31 /* TDAPIClient.h */,
 				A14B2B7E18B5308000980A31 /* TDAPIClient.m */,
+				A1F02FD218C92277002FEB2F /* TDPostUpload.h */,
+				A1F02FD318C92277002FEB2F /* TDPostUpload.m */,
 			);
 			name = API;
 			sourceTree = "<group>";
@@ -393,6 +406,8 @@
 				2DA73D7818BFCCD000D87370 /* TDLikeCommentView.xib */,
 				2DA73D7518BFCC2D00D87370 /* TDLikeCommentView.h */,
 				2DA73D7618BFCC2E00D87370 /* TDLikeCommentView.m */,
+				A1C2480F18C6B9CA00F187D9 /* TDProgressIndicator.h */,
+				A1C2481018C6B9CA00F187D9 /* TDProgressIndicator.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -537,6 +552,7 @@
 			files = (
 				A19FF61018970BBB001A0AD0 /* RSModel.m in Sources */,
 				A19FF61118970BBB001A0AD0 /* RSStorageObject.m in Sources */,
+				A1F02FD418C92277002FEB2F /* TDPostUpload.m in Sources */,
 				A151958B18BAE8FD0050A45B /* TDUser.m in Sources */,
 				2D5714CC18BD9AB300AF0B4D /* VideoButtonSegue.m in Sources */,
 				A19FF60F18970BBB001A0AD0 /* RSContainer.m in Sources */,
@@ -568,7 +584,9 @@
 				A1E90CDD18B445FC0046D281 /* TDSignupStepTwoViewController.m in Sources */,
 				A1432CE718A99DB30073E492 /* TDLoginViewController.m in Sources */,
 				A1432CE118A99D750073E492 /* TDWelcomeViewController.m in Sources */,
+				A1C2481418C7D4B000F187D9 /* URLConnection.m in Sources */,
 				A180D4DF18C14EA7003B9378 /* TDNavigationController.m in Sources */,
+				A1C2481118C6B9CA00F187D9 /* TDProgressIndicator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
