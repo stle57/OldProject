@@ -35,6 +35,7 @@ static const NSString *ItemStatusContext;
 }
 
 - (void)awakeFromNib {
+
     self.profileImage.layer.cornerRadius = 16.0;
     self.profileImage.layer.masksToBounds = YES;
     self.profileImage.layer.borderColor = [UIColor lightGrayColor].CGColor;

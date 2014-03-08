@@ -1,15 +1,15 @@
 //
-//  TDLikeCommentView.m
+//  TDDetailsLikesCell.m
 //  Throwdown
 //
-//  Created by Andrew Bennett on 2/27/14.
+//  Created by Andrew Bennett on 3/6/14.
 //  Copyright (c) 2014 Throwdown. All rights reserved.
 //
 
-#import "TDLikeCommentView.h"
+#import "TDDetailsLikesCell.h"
 #import "TDAppDelegate.h"
 
-@implementation TDLikeCommentView
+@implementation TDDetailsLikesCell
 
 @synthesize delegate;
 @synthesize row;
@@ -36,8 +36,6 @@
 {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        [self addSubview:[[[UINib nibWithNibName:@"TDLikeCommentView" bundle:nil] instantiateWithOwner:self options:nil] objectAtIndex:0]];
-
     }
     return self;
 }
@@ -46,24 +44,15 @@
 {
     if (like) {
         if (delegate) {
-            if ([delegate respondsToSelector:@selector(unLikeButtonPressedFromRow:)]) {
-                [delegate unLikeButtonPressedFromRow:row];
+            if ([delegate respondsToSelector:@selector(unLikeButtonPressedFromLikes)]) {
+                [delegate unLikeButtonPressedFromLikes];
             }
         }
     } else {
         if (delegate) {
-            if ([delegate respondsToSelector:@selector(likeButtonPressedFromRow:)]) {
-                [delegate likeButtonPressedFromRow:row];
+            if ([delegate respondsToSelector:@selector(likeButtonPressedFromLikes)]) {
+                [delegate likeButtonPressedFromLikes];
             }
-        }
-    }
-}
-
-- (IBAction)commentButtonPressed:(UIButton *)sender
-{
-    if (delegate) {
-        if ([delegate respondsToSelector:@selector(commentButtonPressedFromRow:)]) {
-            [delegate commentButtonPressedFromRow:row];
         }
     }
 }
@@ -72,17 +61,17 @@
 {
     like = liked;
     if (liked) {
-        UIImage *buttonImage = [UIImage imageNamed:@"but_liked_big.png"];
+        UIImage *buttonImage = [UIImage imageNamed:@"like_button_on.png"];
         [self.likeButton setImage:buttonImage forState:UIControlStateNormal];
         buttonImage = nil;
-        buttonImage = [UIImage imageNamed:@"but_liked_big_hit.png"];
+        buttonImage = [UIImage imageNamed:@"like_button_on.png"];
         [self.likeButton setImage:buttonImage forState:UIControlStateSelected];
         buttonImage = nil;
     } else {
-        UIImage *buttonImage = [UIImage imageNamed:@"but_like_big.png"];
+        UIImage *buttonImage = [UIImage imageNamed:@"like_button.png"];
         [self.likeButton setImage:buttonImage forState:UIControlStateNormal];
         buttonImage = nil;
-        buttonImage = [UIImage imageNamed:@"but_like_big_hit.png"];
+        buttonImage = [UIImage imageNamed:@"like_button.png"];
         [self.likeButton setImage:buttonImage forState:UIControlStateSelected];
         buttonImage = nil;
     }
@@ -90,51 +79,53 @@
 
 -(void)setComment:(BOOL)commented
 {
-    UIImage *buttonImage = [UIImage imageNamed:@"but_comment_big.png"];
+/*    UIImage *buttonImage = [UIImage imageNamed:@"but_comment_big.png"];
     [self.commentButton setImage:buttonImage forState:UIControlStateNormal];
     buttonImage = nil;
+ */
 }
 
 -(void)setLikesArray:(NSArray *)array
 {
     self.likers = array;
 
-    // Hide more for now
-    self.moreImageView.hidden = YES;
-    if ([self.likers count] > 9) {
-        self.moreImageView.hidden = NO;
-    }
-
-    self.likeIconImageView.hidden = YES;
-    if ([self.likers count] > 0) {
-        self.likeIconImageView.hidden = NO;
-    }
-
     // Add image buttons
+    NSInteger index = 0;
     for (NSDictionary *likerDict in self.likers) {
         if ([likerDict objectForKey:@"picture"]) {
             [self addButtonWithPicture:[likerDict objectForKey:@"picture"]
-                                 index:[self.likers indexOfObject:likerDict]];
+                                 index:index];
+            index++;
         }
     }
 }
 
--(void)setCommentsArray:(NSArray *)array
++(NSInteger)numberOfRowsForLikers:(NSInteger)count
 {
-    self.comments = array;
+    // 9 per row
+    return ceil((float)count/9.0);
+}
+
++(NSInteger)rowNumberForLiker:(NSInteger)index
+{
+    // 9 per row
+    return floor((float)index/9.0);
 }
 
 -(void)addButtonWithPicture:(NSString *)picture index:(NSInteger)index
 {
+    NSInteger likeRow = [TDDetailsLikesCell rowNumberForLiker:index];
+    NSInteger position = (index-likeRow*9);
+
     CGFloat gap = 3.0;
-    CGFloat widthOfOne = ((self.moreImageView.frame.origin.x-CGRectGetMaxX(self.likeIconImageView.frame)-gap*12.0)/9.0);
+    CGFloat widthOfOne = ((self.likeButton.frame.origin.x-CGRectGetMaxX(self.likeImageView.frame)-gap*12.0)/9.0);
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    button.frame = CGRectMake(((widthOfOne+gap)*index)+CGRectGetMaxX(self.likeIconImageView.frame)+gap*2.0,
+    button.frame = CGRectMake(((widthOfOne+gap)*position)+CGRectGetMaxX(self.likeImageView.frame)+gap*2.0,
                               0.0,
                               widthOfOne,
                               widthOfOne);
     button.center = CGPointMake(button.center.x,
-                                self.likeIconImageView.center.y);
+                                self.likeImageView.center.y+(likeRow*(widthOfOne+1.0)));
     button.backgroundColor = [UIColor clearColor];
     button.tag = 800+index;
     [button addTarget:self
@@ -161,18 +152,17 @@
         UIImage *image = [UIImage imageNamed:@"prof_pic_default"];
         [button setImage:image forState:UIControlStateNormal];
         image = nil;
-    }
+    } 
 }
 
 -(void)buttonPressed:(id)selector
 {
     UIButton *button = (UIButton *)selector;
     NSInteger index = button.tag-800;
-    NSLog(@"Tapped like buton index:%ld", (long)index);
 
     if (delegate) {
-        if ([delegate respondsToSelector:@selector(miniLikeButtonPressedForLiker:)]) {
-            [delegate miniLikeButtonPressedForLiker:[self.likers objectAtIndex:index]];
+        if ([delegate respondsToSelector:@selector(miniAvatarButtonPressedForLiker:)]) {
+            [delegate miniAvatarButtonPressedForLiker:[self.likers objectAtIndex:index]];
         }
     }
 }

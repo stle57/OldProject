@@ -7,6 +7,7 @@
 //
 
 #import "TDPost.h"
+#import "TDComment.h"
 
 @implementation TDPost
 
@@ -42,7 +43,16 @@
         _createdAt = [TDPost dateForRFC3339DateTimeString:[dict objectForKey:@"created_at"]];
         _liked = [[dict objectForKey:@"liked"] boolValue];
         _likers = [dict objectForKey:@"likers"];
-        _comments = [dict objectForKey:@"comments"];
+
+        TDComment *comment = nil;
+        NSMutableArray *commentsArray = [NSMutableArray arrayWithCapacity:0];
+        for (NSDictionary *commentsDict in [dict objectForKey:@"comments"]) {
+            comment = [[TDComment alloc] initWithDictionary:commentsDict];
+            [commentsArray addObject:comment];
+            comment = nil;
+        }
+
+        _comments = commentsArray;
     }
     return self;
 }

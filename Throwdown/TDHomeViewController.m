@@ -19,6 +19,7 @@
 #import "TDProgressIndicator.h"
 
 #define CELL_IDENTIFIER @"TDPostView"
+#import "TDDetailViewController.h"
 
 @interface TDHomeViewController () <UITableViewDataSource, UITableViewDelegate>
 {
@@ -29,6 +30,7 @@
     CGPoint origNotificationButtonCenter;
     CGPoint origProfileButtonCenter;
     UIDynamicAnimator *animator;
+    CGFloat postViewHeight;
 }
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIButton *recordButton;
@@ -62,6 +64,12 @@
     origNotificationButtonCenter = self.notificationButton.center;
     origProfileButtonCenter = self.profileButton.center;
 
+    // Cell height
+    NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_POST_VIEW owner:self options:nil];
+    TDPostView *cell = [topLevelObjects objectAtIndex:0];
+    postViewHeight = cell.frame.size.height;
+    cell = nil;
+    
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
@@ -220,9 +228,9 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    TDPostView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER];
+    TDPostView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_POST_VIEW];
     if (!cell) {
-        NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER owner:self options:nil];
+        NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_POST_VIEW owner:self options:nil];
         cell = [topLevelObjects objectAtIndex:0];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         
@@ -243,7 +251,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 480.0;//404.0f+48.0;
+    return postViewHeight;
 }
 
 #pragma mark - TDLikeCommentViewDelegates
@@ -274,6 +282,13 @@
 -(void)commentButtonPressedFromRow:(NSInteger)row
 {
     NSLog(@"Home-commentButtonPressedFromRow:%ld", (long)row);
+
+    // Goto Detail View
+    TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
+    TDPost *post = (TDPost *)[posts objectAtIndex:row];
+    vc.post = post;
+    [self.navigationController pushViewController:vc
+                                         animated:YES];
 }
 
 -(void)miniLikeButtonPressedForLiker:(NSDictionary *)liker

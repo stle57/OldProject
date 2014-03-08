@@ -17,6 +17,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *previewImage;
 @property (weak, nonatomic) IBOutlet UILabel *createdLabel;
 @property (weak, nonatomic) IBOutlet TDLikeCommentView *likeCommentView;
+@property (weak, nonatomic) IBOutlet UIView *bottomPaddingLine;
 @property (strong, nonatomic) NSString *filename;
 
 - (void)setPost:(TDPost *)post;

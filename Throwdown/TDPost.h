@@ -21,5 +21,6 @@
 
 - (id)initWithDictionary:(NSDictionary *)dict;
 - (NSDictionary *)jsonRepresentation;
++ (NSDate *)dateForRFC3339DateTimeString:(NSString *)rfc3339DateTimeString;
 
 @end

@@ -182,6 +182,28 @@
     }];
 }
 
+-(void)getFullPostInfoForPostId:(NSNumber *)postId
+{
+    //  /api/v1/posts/{post-id}.json
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts/[POST_ID].json"];
+    url = [url stringByReplacingOccurrencesOfString:@"[POST_ID]"
+                                         withString:[postId stringValue]];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager GET:url parameters:@{@"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+
+        NSLog(@"Full response:%@", responseObject);
+
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            // Notify any views to reload
+            [[NSNotificationCenter defaultCenter] postNotificationName:FULL_POST_INFO_NOTIFICATION
+                                                                object:self
+                                                              userInfo:responseObject];
+        }
+
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"Get full HTTP Error: %@", error);
+    }];
+}
 
 # pragma mark - image/video getting/saving
 

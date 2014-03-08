@@ -16,7 +16,7 @@
     {
         _userId   = [dict objectForKey:@"id"];
         _username = [dict objectForKey:@"username"];
-        _name     = [dict objectForKey:@"name"];;
+        _name     = [dict objectForKey:@"name"];
     }
     return self;
 }

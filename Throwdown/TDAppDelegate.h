@@ -16,5 +16,8 @@
 + (TDAppDelegate*)appDelegate;
 -(TDPost *)postWithPostId:(NSNumber *)postId;
 +(UIColor *)randomColor;
++(void)fixHeightOfThisLabel:(UILabel *)aLabel;
++(void)fixWidthOfThisLabel:(UILabel *)aLabel;
++(CGFloat)heightOfTextForString:(NSString *)aString andFont:(UIFont *)aFont maxSize:(CGSize)aSize;
 
 @end

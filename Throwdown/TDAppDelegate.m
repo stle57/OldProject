@@ -82,4 +82,46 @@
     return [UIColor colorWithRed:red green:green blue:blue alpha:1.0];
 }
 
++(void)fixHeightOfThisLabel:(UILabel *)aLabel
+{
+    aLabel.frame = CGRectMake(aLabel.frame.origin.x,
+                              aLabel.frame.origin.y,
+                              aLabel.frame.size.width,
+                              [TDAppDelegate heightOfTextForString:aLabel.text
+                                                           andFont:aLabel.font
+                                                           maxSize:CGSizeMake(aLabel.frame.size.width, MAXFLOAT)]);
+}
+
++(CGFloat)heightOfTextForString:(NSString *)aString andFont:(UIFont *)aFont maxSize:(CGSize)aSize
+{
+    CGSize sizeOfText = [aString boundingRectWithSize: aSize
+                                              options: (NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
+                                           attributes: [NSDictionary dictionaryWithObject:aFont
+                                                                                   forKey:NSFontAttributeName]
+                                              context: nil].size;
+
+    return ceilf(sizeOfText.height);
+}
+
++(void)fixWidthOfThisLabel:(UILabel *)aLabel
+{
+    aLabel.frame = CGRectMake(aLabel.frame.origin.x,
+                              aLabel.frame.origin.y,
+                              [TDAppDelegate widthOfTextForString:aLabel.text
+                                                          andFont:aLabel.font
+                                                          maxSize:CGSizeMake(MAXFLOAT, aLabel.frame.size.height)],
+                              aLabel.frame.size.height);
+}
+
++(CGFloat)widthOfTextForString:(NSString *)aString andFont:(UIFont *)aFont maxSize:(CGSize)aSize
+{
+    CGSize sizeOfText = [aString boundingRectWithSize: aSize
+                                              options: (NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
+                                           attributes: [NSDictionary dictionaryWithObject:aFont
+                                                                                   forKey:NSFontAttributeName]
+                                              context: nil].size;
+
+    return ceilf(sizeOfText.width);
+}
+
 @end

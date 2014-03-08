@@ -19,6 +19,11 @@ static NSString *const CTImage = @"image/jpeg";
 
 @interface TDConstants : NSObject
 
+#define CELL_IDENTIFIER_POST_VIEW   @"TDPostView"
+#define COMMENT_MESSAGE_WIDTH       268.0
+#define COMMENT_MESSAGE_FONT        [UIFont systemFontOfSize:14.0]
+#define FULL_POST_INFO_NOTIFICATION @"TDFullPostInfoNotification"
+
 + (NSString *)getBaseURL;
 + (NSURL *)getStreamingUrlFor:(NSString *)filename;
 + (UIColor *)brandingRedColor;

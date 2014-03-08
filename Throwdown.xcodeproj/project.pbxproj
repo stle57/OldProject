@@ -7,8 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D1AEE7018C937560055C315 /* TDDetailsLikesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1AEE6E18C937560055C315 /* TDDetailsLikesCell.m */; };
+		2D1AEE7118C937560055C315 /* TDDetailsLikesCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D1AEE6F18C937560055C315 /* TDDetailsLikesCell.xib */; };
+		2D2E832E18CA579B00846B2E /* TDComment.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D2E832D18CA579B00846B2E /* TDComment.m */; };
 		2D5714CC18BD9AB300AF0B4D /* VideoButtonSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5714C918BD9AB300AF0B4D /* VideoButtonSegue.m */; };
 		2D5714CD18BD9AB300AF0B4D /* VideoCloseSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5714CB18BD9AB300AF0B4D /* VideoCloseSegue.m */; };
+		2D648A1618C9415D002FE0AD /* TDDetailsCommentsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D648A1418C9415D002FE0AD /* TDDetailsCommentsCell.m */; };
+		2D648A1718C9415D002FE0AD /* TDDetailsCommentsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D648A1518C9415D002FE0AD /* TDDetailsCommentsCell.xib */; };
+		2DA41A5618C7D89C00B21C74 /* TDDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA41A5418C7D89C00B21C74 /* TDDetailViewController.m */; };
+		2DA41A5718C7D89C00B21C74 /* TDDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA41A5518C7D89C00B21C74 /* TDDetailViewController.xib */; };
+		2DA41A5A18C7E31000B21C74 /* TDTypingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA41A5918C7E31000B21C74 /* TDTypingView.m */; };
+		2DA41A6018C7E49D00B21C74 /* HPGrowingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA41A5D18C7E49D00B21C74 /* HPGrowingTextView.m */; };
+		2DA41A6118C7E49D00B21C74 /* HPTextViewInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA41A5F18C7E49D00B21C74 /* HPTextViewInternal.m */; };
 		2DA73D7718BFCC2E00D87370 /* TDLikeCommentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA73D7618BFCC2E00D87370 /* TDLikeCommentView.m */; };
 		2DA73D7918BFCCD000D87370 /* TDLikeCommentView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA73D7818BFCCD000D87370 /* TDLikeCommentView.xib */; };
 		579149E08F7B4EE789901248 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E657ABE418B84EA68554F855 /* libPods.a */; };
@@ -73,10 +83,27 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2D1AEE6D18C937560055C315 /* TDDetailsLikesCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDDetailsLikesCell.h; sourceTree = "<group>"; };
+		2D1AEE6E18C937560055C315 /* TDDetailsLikesCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDDetailsLikesCell.m; sourceTree = "<group>"; };
+		2D1AEE6F18C937560055C315 /* TDDetailsLikesCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDDetailsLikesCell.xib; sourceTree = "<group>"; };
+		2D2E832C18CA579B00846B2E /* TDComment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDComment.h; sourceTree = "<group>"; };
+		2D2E832D18CA579B00846B2E /* TDComment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDComment.m; sourceTree = "<group>"; };
 		2D5714C818BD9AB300AF0B4D /* VideoButtonSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoButtonSegue.h; sourceTree = "<group>"; };
 		2D5714C918BD9AB300AF0B4D /* VideoButtonSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoButtonSegue.m; sourceTree = "<group>"; };
 		2D5714CA18BD9AB300AF0B4D /* VideoCloseSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoCloseSegue.h; sourceTree = "<group>"; };
 		2D5714CB18BD9AB300AF0B4D /* VideoCloseSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoCloseSegue.m; sourceTree = "<group>"; };
+		2D648A1318C9415D002FE0AD /* TDDetailsCommentsCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDDetailsCommentsCell.h; sourceTree = "<group>"; };
+		2D648A1418C9415D002FE0AD /* TDDetailsCommentsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDDetailsCommentsCell.m; sourceTree = "<group>"; };
+		2D648A1518C9415D002FE0AD /* TDDetailsCommentsCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDDetailsCommentsCell.xib; sourceTree = "<group>"; };
+		2DA41A5318C7D89C00B21C74 /* TDDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDDetailViewController.h; sourceTree = "<group>"; };
+		2DA41A5418C7D89C00B21C74 /* TDDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDDetailViewController.m; sourceTree = "<group>"; };
+		2DA41A5518C7D89C00B21C74 /* TDDetailViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDDetailViewController.xib; sourceTree = "<group>"; };
+		2DA41A5818C7E31000B21C74 /* TDTypingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTypingView.h; sourceTree = "<group>"; };
+		2DA41A5918C7E31000B21C74 /* TDTypingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTypingView.m; sourceTree = "<group>"; };
+		2DA41A5C18C7E49D00B21C74 /* HPGrowingTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HPGrowingTextView.h; sourceTree = "<group>"; };
+		2DA41A5D18C7E49D00B21C74 /* HPGrowingTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPGrowingTextView.m; sourceTree = "<group>"; };
+		2DA41A5E18C7E49D00B21C74 /* HPTextViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HPTextViewInternal.h; sourceTree = "<group>"; };
+		2DA41A5F18C7E49D00B21C74 /* HPTextViewInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPTextViewInternal.m; sourceTree = "<group>"; };
 		2DA73D7518BFCC2D00D87370 /* TDLikeCommentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDLikeCommentView.h; sourceTree = "<group>"; };
 		2DA73D7618BFCC2E00D87370 /* TDLikeCommentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDLikeCommentView.m; sourceTree = "<group>"; };
 		2DA73D7818BFCCD000D87370 /* TDLikeCommentView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDLikeCommentView.xib; sourceTree = "<group>"; };
@@ -206,6 +233,27 @@
 				A180D4E418C33D26003B9378 /* TDUnwindSlideLeftSegue.m */,
 			);
 			name = Segues;
+			sourceTree = "<group>";
+		};
+		2DA41A5218C7D85F00B21C74 /* Detail */ = {
+			isa = PBXGroup;
+			children = (
+				2DA41A5518C7D89C00B21C74 /* TDDetailViewController.xib */,
+				2DA41A5318C7D89C00B21C74 /* TDDetailViewController.h */,
+				2DA41A5418C7D89C00B21C74 /* TDDetailViewController.m */,
+			);
+			name = Detail;
+			sourceTree = "<group>";
+		};
+		2DA41A5B18C7E3EA00B21C74 /* HPTypingView */ = {
+			isa = PBXGroup;
+			children = (
+				2DA41A5C18C7E49D00B21C74 /* HPGrowingTextView.h */,
+				2DA41A5D18C7E49D00B21C74 /* HPGrowingTextView.m */,
+				2DA41A5E18C7E49D00B21C74 /* HPTextViewInternal.h */,
+				2DA41A5F18C7E49D00B21C74 /* HPTextViewInternal.m */,
+			);
+			name = HPTypingView;
 			sourceTree = "<group>";
 		};
 		A11E04CF1888CB79002F981A = {
@@ -356,6 +404,7 @@
 			isa = PBXGroup;
 			children = (
 				A1432CDE18A99D500073E492 /* Onboarding */,
+				2DA41A5218C7D85F00B21C74 /* Detail */,
 				A182D8241889E8D900F794A5 /* TDEditVideoViewController.h */,
 				A182D8251889E8D900F794A5 /* TDEditVideoViewController.m */,
 				A11E04F01888CB79002F981A /* TDRecordVideoViewController.h */,
@@ -375,6 +424,8 @@
 				A14B2B8718B8351E00980A31 /* TDCurrentUser.m */,
 				A151958918BAE8FD0050A45B /* TDUser.h */,
 				A151958A18BAE8FD0050A45B /* TDUser.m */,
+				2D2E832C18CA579B00846B2E /* TDComment.h */,
+				2D2E832D18CA579B00846B2E /* TDComment.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -408,6 +459,15 @@
 				2DA73D7618BFCC2E00D87370 /* TDLikeCommentView.m */,
 				A1C2480F18C6B9CA00F187D9 /* TDProgressIndicator.h */,
 				A1C2481018C6B9CA00F187D9 /* TDProgressIndicator.m */,
+				2DA41A5818C7E31000B21C74 /* TDTypingView.h */,
+				2DA41A5918C7E31000B21C74 /* TDTypingView.m */,
+				2D1AEE6F18C937560055C315 /* TDDetailsLikesCell.xib */,
+				2D1AEE6D18C937560055C315 /* TDDetailsLikesCell.h */,
+				2D1AEE6E18C937560055C315 /* TDDetailsLikesCell.m */,
+				2D648A1518C9415D002FE0AD /* TDDetailsCommentsCell.xib */,
+				2D648A1318C9415D002FE0AD /* TDDetailsCommentsCell.h */,
+				2D648A1418C9415D002FE0AD /* TDDetailsCommentsCell.m */,
+				2DA41A5B18C7E3EA00B21C74 /* HPTypingView */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -497,7 +557,10 @@
 				A1C1D0F318A02FAB00666D2A /* TDPostView.xib in Resources */,
 				A11E04F41888CB79002F981A /* Images.xcassets in Resources */,
 				2DA73D7918BFCCD000D87370 /* TDLikeCommentView.xib in Resources */,
+				2DA41A5718C7D89C00B21C74 /* TDDetailViewController.xib in Resources */,
 				A11E04E61888CB79002F981A /* InfoPlist.strings in Resources */,
+				2D1AEE7118C937560055C315 /* TDDetailsLikesCell.xib in Resources */,
+				2D648A1718C9415D002FE0AD /* TDDetailsCommentsCell.xib in Resources */,
 				A11E04EF1888CB79002F981A /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -556,16 +619,22 @@
 				A151958B18BAE8FD0050A45B /* TDUser.m in Sources */,
 				2D5714CC18BD9AB300AF0B4D /* VideoButtonSegue.m in Sources */,
 				A19FF60F18970BBB001A0AD0 /* RSContainer.m in Sources */,
+				2DA41A5618C7D89C00B21C74 /* TDDetailViewController.m in Sources */,
+				2D2E832E18CA579B00846B2E /* TDComment.m in Sources */,
 				A19FF60D18970BBB001A0AD0 /* RSCDNContainer.m in Sources */,
+				2DA41A5A18C7E31000B21C74 /* TDTypingView.m in Sources */,
 				A1BC0B3F18BE825200F507B3 /* TDSlideLeftSegue.m in Sources */,
 				A14B2B7F18B5308000980A31 /* TDAPIClient.m in Sources */,
 				A182D839188F2C2D00F794A5 /* TDHomeViewController.m in Sources */,
 				A180D4E518C33D26003B9378 /* TDUnwindSlideLeftSegue.m in Sources */,
 				A1432D2018AA02990073E492 /* TDViewControllerHelper.m in Sources */,
 				A19FF5E718932868001A0AD0 /* TDUserAPI.m in Sources */,
+				2D648A1618C9415D002FE0AD /* TDDetailsCommentsCell.m in Sources */,
 				2DA73D7718BFCC2E00D87370 /* TDLikeCommentView.m in Sources */,
+				2DA41A6018C7E49D00B21C74 /* HPGrowingTextView.m in Sources */,
 				A11E04F21888CB79002F981A /* TDRecordVideoViewController.m in Sources */,
 				A11E04EC1888CB79002F981A /* TDAppDelegate.m in Sources */,
+				2D1AEE7018C937560055C315 /* TDDetailsLikesCell.m in Sources */,
 				A1C1D0F618A0387B00666D2A /* TDPostView.m in Sources */,
 				A14B2B8218B5DF9B00980A31 /* TDSignupStepThreeViewController.m in Sources */,
 				A19FF60E18970BBB001A0AD0 /* RSClient.m in Sources */,
@@ -580,6 +649,7 @@
 				A1432CE418A99DA40073E492 /* TDSignupStepOneViewController.m in Sources */,
 				A17567901891C7F20034AD05 /* TDPostAPI.m in Sources */,
 				A182D831188B60CD00F794A5 /* SASliderLeft.m in Sources */,
+				2DA41A6118C7E49D00B21C74 /* HPTextViewInternal.m in Sources */,
 				2D5714CD18BD9AB300AF0B4D /* VideoCloseSegue.m in Sources */,
 				A1E90CDD18B445FC0046D281 /* TDSignupStepTwoViewController.m in Sources */,
 				A1432CE718A99DB30073E492 /* TDLoginViewController.m in Sources */,

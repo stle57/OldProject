@@ -21,6 +21,7 @@
 - (NSArray *)getPosts;
 -(void)likePostWithId:(NSNumber *)postId;
 -(void)unLikePostWithId:(NSNumber *)postId;
+-(void)getFullPostInfoForPostId:(NSNumber *)postId;
 - (UIImage *)getImage:(NSString *)imageName;
 
 @end

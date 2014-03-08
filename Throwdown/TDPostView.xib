@@ -65,6 +65,7 @@
                 </subviews>
             </tableViewCellContentView>
             <connections>
+                <outlet property="bottomPaddingLine" destination="fjd-nt-ku2" id="2Zu-bc-jik"/>
                 <outlet property="controlView" destination="QBM-3c-aVV" id="rYj-Ru-Lqa"/>
                 <outlet property="createdLabel" destination="lmo-V5-bmk" id="jmA-al-8fK"/>
                 <outlet property="likeCommentView" destination="Nkw-3c-MoN" id="k37-hb-rn8"/>
