@@ -48,4 +48,5 @@
 +(CGFloat)typingHeight;
 -(void)removeKeyboard;
 -(BOOL)showingKeyboard;
+-(void)postButtonPressed:(id)selector;
 @end

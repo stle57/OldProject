@@ -79,7 +79,7 @@
     [self.view insertSubview:self.typingView aboveSubview:self.tableView];
     origTypingViewCenter = self.typingView.center;
 
-    // Adjust tableView
+    // Adjust tableView and frosted
     CGRect frame = self.tableView.frame;
     frame.size.height -= [TDTypingView typingHeight];
     self.tableView.frame = frame;
@@ -115,7 +115,8 @@
 #pragma mark - Notifications
 - (void)reloadPosts:(NSNotification*)notification
 {
-    [self.tableView reloadData];
+    TDPostAPI *api = [TDPostAPI sharedInstance];
+    [api getFullPostInfoForPostId:self.post.postId];
 }
 
 -(void)fullPostReturn:(NSNotification*)notification
@@ -213,6 +214,10 @@
 {
     debug NSLog(@"delegate-keyboardAppeared:%f curve:%ld", height, (long)curve);
 
+    CGRect newFrame = self.frostedViewWhileTyping.frame;
+    newFrame.size.height = self.view.frame.size.height-height-[TDTypingView typingHeight]-1.0;
+    self.frostedViewWhileTyping.frame = newFrame;
+
     [UIView animateWithDuration:0.5
                           delay:0.0
          usingSpringWithDamping:500.0
@@ -257,10 +262,20 @@
 {
     NSLog(@"chat-typingViewMessage:%@", message);
 
+    if (self.typingView.isUp) {
+        [self.typingView removeKeyboard];
+    }
+
+    // Post the comment to the server
+    TDPostAPI *api = [TDPostAPI sharedInstance];
+    [api postNewComment:message
+                forPost:self.post.postId];
 }
 
 -(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
+    NSLog(@"TDDetailViewController-touches");
+
     if (self.typingView.isUp) {
         [self.typingView removeKeyboard];
     }

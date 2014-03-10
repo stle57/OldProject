@@ -22,6 +22,7 @@
 -(void)likePostWithId:(NSNumber *)postId;
 -(void)unLikePostWithId:(NSNumber *)postId;
 -(void)getFullPostInfoForPostId:(NSNumber *)postId;
+-(void)postNewComment:(NSString *)messageBody forPost:(NSNumber *)postId;
 - (UIImage *)getImage:(NSString *)imageName;
 
 @end

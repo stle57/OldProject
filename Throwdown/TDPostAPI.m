@@ -205,6 +205,43 @@
     }];
 }
 
+#pragma mark - Comments
+-(void)postNewComment:(NSString *)messageBody forPost:(NSNumber *)postId
+{
+    /*
+    
+    POST /api/v1/comments.json with parameters:
+    + comment[body]={COMMENT BODY}
+    + comment[post_id]={POST ID}
+    + user_token={CURRENT USER TOKEN}
+    
+    */
+
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/comments.json"];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager POST:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken , @"comment[body]" : messageBody, @"comment[post_id]" : postId} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+
+        if ([responseObject isKindOfClass:[NSDictionary class]])
+        {
+            NSDictionary *returnDict = [NSDictionary dictionaryWithDictionary:responseObject];
+            if ([returnDict objectForKey:@"success"]) {
+                if ([[returnDict objectForKey:@"success"] boolValue]) {
+                    NSLog(@"New Comment Success!");
+
+                    // Notify any views to reload
+                    [[NSNotificationCenter defaultCenter] postNotificationName:@"TDReloadPostsNotification"
+                                                                        object:self
+                                                                      userInfo:nil];
+                }
+            }
+        }
+
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        
+        NSLog(@"New Comment Error: %@", error);
+    }];
+}
+
 # pragma mark - image/video getting/saving
 
 - (NSString *)getCachePath {

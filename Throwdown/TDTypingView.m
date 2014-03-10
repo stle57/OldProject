@@ -92,9 +92,10 @@
 
         self.postButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
         [self.postButton setTitle:@"Post" forState:UIControlStateNormal];
-        [self.postButton setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+        [self.postButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [self.postButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
         [self.postButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateSelected];
+        self.postButton.backgroundColor = [UIColor darkGrayColor];
         self.postButton.enabled = NO;
         self.postButton.layer.cornerRadius = 6.0;
         self.postButton.frame = CGRectMake(self.hpTextView.frame.origin.x+self.hpTextView.frame.size.width+6.0,
@@ -254,7 +255,7 @@
     self.counterLabel.text = [NSString stringWithFormat:@"%ld", (long)(MAX_LENGTH-[self.hpTextView.text length])];
 
     NSInteger numLines = growingTextView.internalTextView.contentSize.height/self.hpTextView.font.lineHeight;
-    NSLog(@"growingTextViewDidChange-Number of lines:%ld %f", (long)numLines, ((numLines-1)*self.textView.font.lineHeight));
+    NSLog(@"TDTypingView-growingTextViewDidChange-Number of lines:%ld %f", (long)numLines, ((numLines-1)*self.textView.font.lineHeight));
 
     lastNumberOfLines = numLines;
 
@@ -319,6 +320,8 @@
 
 -(void)removeKeyboard
 {
+    NSLog(@"TDTyping-hideKeyboard");
+
     self.hpTextView.text = @"";
 
     if ([self.hpTextView isFirstResponder]) {
@@ -364,7 +367,7 @@
 
 -(void)postButtonPressed:(id)selector
 {
-    NSLog(@"post button");
+    NSLog(@"post button:%@", self.hpTextView.text);
 
     self.postButton.enabled = NO;
 
