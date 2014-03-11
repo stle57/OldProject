@@ -16,13 +16,6 @@
 #import "TDAppDelegate.h"
 #import "TDPostUpload.h"
 
-@interface TDPostAPI ()
-
-@property (strong, atomic) NSMutableArray *currentUploads;
-
-@end
-
-
 @implementation TDPostAPI
 {
     NSMutableArray *posts;
@@ -44,7 +37,6 @@
 - (id)init {
     self = [super init];
     if (self) {
-        self.currentUploads = [[NSMutableArray alloc] init];
         posts = [[NSMutableArray alloc] init];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadImage:) name:@"TDDownloadPreviewImageNotification" object:nil];
     }
@@ -52,7 +44,6 @@
 }
 
 - (void)dealloc {
-    self.currentUploads = nil;
     posts = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
@@ -61,18 +52,23 @@
 # pragma mark - posts get/add/remove
 
 
--(void)addPost:(NSString *)filename {
+- (void)addPost:(NSString *)filename success:(void (^)(void))success failure:(void (^)(void))failure {
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts.json"];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager POST:url parameters:@{ @"post": @{@"filename": filename}, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"JSON: %@", [responseObject class]);
+        debug NSLog(@"JSON: %@", [responseObject class]);
         // Not the best way to do this but for now...
         [self fetchPostsUpstream];
+        [self notifyPostsReload];
+        if (success) {
+            success();
+        }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"Error: %@", error);
+        if (failure) {
+            failure();
+        }
     }];
-
-    [self notifyPostsReload];
 }
 
 - (void)fetchPostsUpstream {
@@ -280,8 +276,6 @@
     imageView.image = [self getImage:filename];
 
     if (imageView.image == nil) {
-//        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-
         NSURL *imageURL = [NSURL URLWithString:[RSHost stringByAppendingFormat:@"/%@", filename]];
         AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[NSURLRequest alloc] initWithURL:imageURL]];
         operation.responseSerializer = [AFImageResponseSerializer serializer];
@@ -289,7 +283,9 @@
             if ([responseObject isKindOfClass:[UIImage class]]) {
                 UIImage *image = (UIImage *)responseObject;
                 imageView.image = image;
-                [self saveImage:image filename:notification.userInfo[@"filename"]];
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                    [self saveImage:image filename:filename];
+                });
             }
         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
             debug NSLog(@"Image error: %@, %@", filename, error);
@@ -304,7 +300,7 @@
 - (void)uploadVideo:(NSString *)localVideoPath withThumbnail:(NSString *)localPhotoPath {
     NSString *newName = [TDPostAPI createUploadFileNameFor:[TDCurrentUser sharedInstance]];
     TDPostUpload *upload = [[TDPostUpload alloc] initWithVideoPath:localVideoPath thumbnailPath:localPhotoPath newName:newName];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"TDPostUploadStarted" object:upload userInfo:@{@"thumbnailPath": localPhotoPath}];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"TDPostUploadStarted" object:upload userInfo:nil];
 }
 
 @end

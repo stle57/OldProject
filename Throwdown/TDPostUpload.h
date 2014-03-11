@@ -7,12 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "TDProgressIndicator.h"
+#import "TDUploadProgressDelegate.h"
 
 @interface TDPostUpload : NSObject
 
-- (id)initWithVideoPath:(NSString *)videoPath thumbnailPath:(NSString *)thumbnailPath newName:(NSString *)newName;
+@property (nonatomic) NSString *persistedVideoPath;
+@property (nonatomic) NSString *persistedPhotoPath;
 
-@property (strong, nonatomic) id<TDProgressIndicatorDelegate> delegate;
+- (id)initWithVideoPath:(NSString *)videoPath thumbnailPath:(NSString *)thumbnailPath newName:(NSString *)newName;
+- (void)retryUpload;
+- (void)setDelegate:(id<TDUploadProgressDelegate>)delegate;
+- (CGFloat)totalProgress;
 
 @end

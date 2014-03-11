@@ -16,7 +16,7 @@
 #import "VideoButtonSegue.h"
 #import "VideoCloseSegue.h"
 #import "TDLikeCommentView.h"
-#import "TDProgressIndicator.h"
+#import "TDHomeHeaderView.h"
 
 #define CELL_IDENTIFIER @"TDPostView"
 #import "TDDetailViewController.h"
@@ -38,6 +38,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *profileButton;
 @property (nonatomic, retain) UIRefreshControl *refreshControl;
 @property (nonatomic, retain) UIDynamicAnimator *animator;
+@property (strong, nonatomic) TDHomeHeaderView *headerView;
 
 @end
 
@@ -85,6 +86,11 @@
     [self.tableView addSubview:self.refreshControl];
     [self.refreshControl setTintColor:[TDConstants brandingRedColor]];
 
+
+//    self.header = 
+//    self.progressIndicator = [[TDProgressIndicator alloc] initWithTableView:self.tableView postUpload:nil];
+    self.headerView = [[TDHomeHeaderView alloc] initWithTableView:self.tableView];
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadStarted:) name:@"TDPostUploadStarted" object:nil];
 }
 
@@ -118,10 +124,8 @@
 #pragma mark - video upload indicator
 
 - (void)uploadStarted:(NSNotification *)notification {
-    NSString *thumbnailPath = (NSString *)[notification.userInfo objectForKey:@"thumbnailPath"];
     TDPostUpload *upload = (TDPostUpload *)notification.object;
-    TDProgressIndicator *progressHeader = [[TDProgressIndicator alloc] initWithTableView:self.tableView thumbnailPath:thumbnailPath];
-    upload.delegate = progressHeader;
+    [self.headerView addUpload:upload];
 }
 
 

@@ -7,16 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TDPostUpload.h"
+#import "TDHomeHeaderUploadDelegate.h"
 
+@interface TDProgressIndicator : UIView
 
-@protocol TDProgressIndicatorDelegate <NSObject>
+@property (strong, nonatomic) UIImageView *thumbnailView;
 
-- (void)uploadDidUpdate:(CGFloat)progress;
-
-@end
-
-@interface TDProgressIndicator : UIView <TDProgressIndicatorDelegate>
-
-- (id)initWithTableView:(UITableView *)tableView thumbnailPath:(NSString *)thumbnailPath;
+- (id)initWithUpload:(TDPostUpload *)upload delegate:(id<TDHomeHeaderUploadDelegate>)delegate;
 
 @end

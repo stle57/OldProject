@@ -63,6 +63,7 @@
 		A19FF60F18970BBB001A0AD0 /* RSContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF60118970BBB001A0AD0 /* RSContainer.m */; };
 		A19FF61018970BBB001A0AD0 /* RSModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF60318970BBB001A0AD0 /* RSModel.m */; };
 		A19FF61118970BBB001A0AD0 /* RSStorageObject.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF60518970BBB001A0AD0 /* RSStorageObject.m */; };
+		A1B9002E18CC316800012A1F /* TDHomeHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = A1B9002D18CC316800012A1F /* TDHomeHeaderView.m */; };
 		A1BC0B3F18BE825200F507B3 /* TDSlideLeftSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = A1BC0B3E18BE825200F507B3 /* TDSlideLeftSegue.m */; };
 		A1C1D0F318A02FAB00666D2A /* TDPostView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A1C1D0F218A02FAA00666D2A /* TDPostView.xib */; };
 		A1C1D0F618A0387B00666D2A /* TDPostView.m in Sources */ = {isa = PBXBuildFile; fileRef = A1C1D0F518A0387B00666D2A /* TDPostView.m */; };
@@ -177,6 +178,10 @@
 		A19FF60318970BBB001A0AD0 /* RSModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSModel.m; sourceTree = "<group>"; };
 		A19FF60418970BBB001A0AD0 /* RSStorageObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSStorageObject.h; sourceTree = "<group>"; };
 		A19FF60518970BBB001A0AD0 /* RSStorageObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSStorageObject.m; sourceTree = "<group>"; };
+		A1B9002B18CBDCC800012A1F /* TDUploadProgressDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TDUploadProgressDelegate.h; sourceTree = "<group>"; };
+		A1B9002C18CC316700012A1F /* TDHomeHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDHomeHeaderView.h; sourceTree = "<group>"; };
+		A1B9002D18CC316800012A1F /* TDHomeHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDHomeHeaderView.m; sourceTree = "<group>"; };
+		A1B9002F18CC43FC00012A1F /* TDHomeHeaderUploadDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TDHomeHeaderUploadDelegate.h; sourceTree = "<group>"; };
 		A1BC0B3D18BE825200F507B3 /* TDSlideLeftSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSlideLeftSegue.h; sourceTree = "<group>"; };
 		A1BC0B3E18BE825200F507B3 /* TDSlideLeftSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSlideLeftSegue.m; sourceTree = "<group>"; };
 		A1C1D0F218A02FAA00666D2A /* TDPostView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDPostView.xib; sourceTree = "<group>"; };
@@ -468,6 +473,10 @@
 				2D648A1318C9415D002FE0AD /* TDDetailsCommentsCell.h */,
 				2D648A1418C9415D002FE0AD /* TDDetailsCommentsCell.m */,
 				2DA41A5B18C7E3EA00B21C74 /* HPTypingView */,
+				A1B9002B18CBDCC800012A1F /* TDUploadProgressDelegate.h */,
+				A1B9002C18CC316700012A1F /* TDHomeHeaderView.h */,
+				A1B9002D18CC316800012A1F /* TDHomeHeaderView.m */,
+				A1B9002F18CC43FC00012A1F /* TDHomeHeaderUploadDelegate.h */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -650,6 +659,7 @@
 				A17567901891C7F20034AD05 /* TDPostAPI.m in Sources */,
 				A182D831188B60CD00F794A5 /* SASliderLeft.m in Sources */,
 				2DA41A6118C7E49D00B21C74 /* HPTextViewInternal.m in Sources */,
+				A1B9002E18CC316800012A1F /* TDHomeHeaderView.m in Sources */,
 				2D5714CD18BD9AB300AF0B4D /* VideoCloseSegue.m in Sources */,
 				A1E90CDD18B445FC0046D281 /* TDSignupStepTwoViewController.m in Sources */,
 				A1432CE718A99DB30073E492 /* TDLoginViewController.m in Sources */,

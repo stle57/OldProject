@@ -16,7 +16,8 @@
 + (NSString *)createUploadFileNameFor:(TDCurrentUser *)user;
 
 - (void)uploadVideo:(NSString *)localVideoPath withThumbnail:(NSString *)localPhotoPath;
-- (void)addPost:(NSString *)filename;
+- (void)addPost:(NSString *)filename success:(void (^)(void))success failure:(void (^)(void))failure;
+- (void)saveImage:(UIImage*)image filename:(NSString*)filename;
 - (void)fetchPostsUpstream;
 - (NSArray *)getPosts;
 -(void)likePostWithId:(NSNumber *)postId;
