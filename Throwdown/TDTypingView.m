@@ -94,7 +94,7 @@
         [self.postButton setTitle:@"Post" forState:UIControlStateNormal];
         [self.postButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [self.postButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
-        [self.postButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateSelected];
+        [self.postButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateHighlighted];
         self.postButton.backgroundColor = [UIColor darkGrayColor];
         self.postButton.enabled = NO;
         self.postButton.layer.cornerRadius = 6.0;

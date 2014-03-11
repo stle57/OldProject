@@ -65,14 +65,14 @@
         [self.likeButton setImage:buttonImage forState:UIControlStateNormal];
         buttonImage = nil;
         buttonImage = [UIImage imageNamed:@"like_button_on.png"];
-        [self.likeButton setImage:buttonImage forState:UIControlStateSelected];
+        [self.likeButton setImage:buttonImage forState:UIControlStateHighlighted];
         buttonImage = nil;
     } else {
         UIImage *buttonImage = [UIImage imageNamed:@"like_button.png"];
         [self.likeButton setImage:buttonImage forState:UIControlStateNormal];
         buttonImage = nil;
         buttonImage = [UIImage imageNamed:@"like_button.png"];
-        [self.likeButton setImage:buttonImage forState:UIControlStateSelected];
+        [self.likeButton setImage:buttonImage forState:UIControlStateHighlighted];
         buttonImage = nil;
     }
 }
