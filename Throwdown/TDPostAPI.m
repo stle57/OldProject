@@ -59,7 +59,6 @@
         debug NSLog(@"JSON: %@", [responseObject class]);
         // Not the best way to do this but for now...
         [self fetchPostsUpstream];
-        [self notifyPostsReload];
         if (success) {
             success();
         }
@@ -81,7 +80,7 @@
                     [posts addObject:[[TDPost alloc]initWithDictionary:postObject]];
                 }
             }
-            [self notifyPostsReload];
+            [self notifyPostsRefreshed];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"HTTP Error: %@", error);
@@ -92,9 +91,9 @@
     return [posts mutableCopy];
 }
 
-- (void)notifyPostsReload {
-    // Notify any views to reload
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"TDReloadPostsNotification"
+/* Notify any views to reload, does not update or fetch posts from server */
+- (void)notifyPostsRefreshed {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"TDRefreshPostsNotification"
                                                         object:self
                                                       userInfo:nil];
 }
@@ -121,13 +120,8 @@
                     TDPost *post = (TDPost *)[[TDAppDelegate appDelegate] postWithPostId:postId];
 
                     if (post) {
-                        
                         post.liked = YES;
-
-                        // Notify any views to reload
-                        [[NSNotificationCenter defaultCenter] postNotificationName:@"TDReloadPostsNotification"
-                                                                            object:self
-                                                                          userInfo:nil];
+                        [self notifyPostsRefreshed];
                     }
                 }
             }
@@ -160,13 +154,8 @@
                     TDPost *post = (TDPost *)[[TDAppDelegate appDelegate] postWithPostId:postId];
 
                     if (post) {
-
                         post.liked = NO;
-
-                        // Notify any views to reload
-                        [[NSNotificationCenter defaultCenter] postNotificationName:@"TDReloadPostsNotification"
-                                                                            object:self
-                                                                          userInfo:nil];
+                        [self notifyPostsRefreshed];
                     }
                 }
             }
@@ -223,11 +212,7 @@
             if ([returnDict objectForKey:@"success"]) {
                 if ([[returnDict objectForKey:@"success"] boolValue]) {
                     NSLog(@"New Comment Success!");
-
-                    // Notify any views to reload
-                    [[NSNotificationCenter defaultCenter] postNotificationName:@"TDReloadPostsNotification"
-                                                                        object:self
-                                                                      userInfo:nil];
+                    [self notifyPostsRefreshed];
                 }
             }
         }

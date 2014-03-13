@@ -74,8 +74,8 @@
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadPosts:) name:@"TDReloadPostsNotification" object:nil];
-    [self reloadPosts];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshPostsList:) name:@"TDRefreshPostsNotification" object:nil];
+    [self refreshPostsList];
     [[TDPostAPI sharedInstance] fetchPostsUpstream];
     
     // Add refresh control
@@ -116,7 +116,7 @@
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
+
     self.refreshControl = nil;
     self.animator = nil;
 }
@@ -202,27 +202,26 @@
 
 #pragma mark - refresh control
 
--(void)refreshControlUsed
-{
+- (void)refreshControlUsed {
     debug NSLog(@"refreshControlUsed");
-    
-    [self reloadPosts];
-    // uirefreshcontrol should be attached to a uitableviewcontroller - this stops a slight jutter
-    [self.refreshControl performSelector:@selector(endRefreshing)
-                              withObject:nil
-                              afterDelay:0.1];
+    [[TDPostAPI sharedInstance] fetchPostsUpstream];
 }
 
 # pragma mark - table view delegate
 
-
-- (void)reloadPosts:(NSNotification*)notification
-{
-    [self reloadPosts];
+- (void)refreshPostsList:(NSNotification*)notification {
+    [self refreshPostsList];
 }
 
-- (void)reloadPosts {
-    debug NSLog(@"reload posts");
+/* Refreshes the list with currently downloaded posts */
+- (void)refreshPostsList {
+    debug NSLog(@"refresh post list");
+
+    // uirefreshcontrol should be attached to a uitableviewcontroller - this stops a slight jutter
+    [self.refreshControl performSelector:@selector(endRefreshing)
+                              withObject:nil
+                              afterDelay:0.1];
+
     posts = [[TDPostAPI sharedInstance] getPosts];
     [self.tableView reloadData];
 }
@@ -237,7 +236,7 @@
         NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_POST_VIEW owner:self options:nil];
         cell = [topLevelObjects objectAtIndex:0];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        
+
         cell.likeCommentView.delegate = self;
     }
 

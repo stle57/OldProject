@@ -25,7 +25,7 @@
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:@"TDReloadPostsNotification"
+                                                    name:@"TDRefreshPostsNotification"
                                                   object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:FULL_POST_INFO_NOTIFICATION
@@ -84,7 +84,7 @@
     frame.size.height -= [TDTypingView typingHeight];
     self.tableView.frame = frame;
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadPosts:) name:@"TDReloadPostsNotification" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadPosts:) name:@"TDRefreshPostsNotification" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fullPostReturn:) name:FULL_POST_INFO_NOTIFICATION object:nil];
 }
 
