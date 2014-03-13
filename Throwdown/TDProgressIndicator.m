@@ -25,7 +25,7 @@
 @implementation TDProgressIndicator
 
 - (id)initWithUpload:(TDPostUpload *)upload delegate:(id<TDHomeHeaderUploadDelegate>)delegate {
-    self = [super initWithFrame:CGRectMake(0.0, 0.0, 320.0, 55.0)];
+    self = [super initWithFrame:CGRectMake(0.0, 0.0, 320.0, 50.0)];
     if (self) {
 
         self.upload = upload;
@@ -33,13 +33,7 @@
 
         self.delegate = delegate;
 
-        UIColor *lightGrayColor = [UIColor colorWithRed:0.93 green:0.93 blue:0.93 alpha:1.0];
         UIColor *grayColor = [UIColor colorWithRed:0.78 green:0.78 blue:0.78 alpha:1.0];
-
-        UIView *topBorder = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, 320.0, 1.0)];
-        topBorder.backgroundColor = grayColor;
-        [self addSubview:topBorder];
-
 
         self.thumbnailView = [[UIImageView alloc] initWithFrame:CGRectMake(7.0, 5.0, 40.0, 40.0)];
         self.thumbnailView.contentMode = UIViewContentModeScaleToFill;
@@ -63,10 +57,6 @@
         UIView *bottomBorder = [[UIView alloc] initWithFrame:CGRectMake(0.0, 49.0, 320.0, 1.0)];
         bottomBorder.backgroundColor = grayColor;
         [self addSubview:bottomBorder];
-
-        UIView *bottomPadding = [[UIView alloc] initWithFrame:CGRectMake(0.0, 50.0, 320.0, 5.0)];
-        bottomPadding.backgroundColor = lightGrayColor;
-        [self addSubview:bottomPadding];
     }
     return self;
 }
@@ -82,6 +72,7 @@
 - (void)uploadComplete {
     [self.delegate uploadDidFinishFor:self];
     self.upload = nil;
+    self.delegate = nil;
 }
 
 - (void)uploadFailed {
