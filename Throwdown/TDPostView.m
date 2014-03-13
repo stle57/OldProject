@@ -12,13 +12,22 @@
 #import "NSDate+TimeAgo.h"
 
 static const NSString *ItemStatusContext;
+static NSString *const kSpinningAnimation = @"rotationAnimation";
+
+typedef enum {
+    ControlStatePaused,
+    ControlStatePlay,
+    ControlStateLoading,
+    ControlStateNone
+} ControlState;
 
 @interface TDPostView ()
 
 @property (weak, nonatomic) IBOutlet UIView *videoHolderView;
 @property (weak, nonatomic) IBOutlet UIView *controlView;
-@property (weak, nonatomic) IBOutlet UIImageView *playImage;
 
+@property (strong, nonatomic) UIImageView *controlImage;
+@property (strong, nonatomic) UIImageView *playerSpinner;
 @property (strong, nonatomic) AVPlayer *player;
 @property (strong, nonatomic) AVPlayerItem *playerItem;
 @property (strong, nonatomic) AVPlayerLayer *playerLayer;
@@ -27,6 +36,7 @@ static const NSString *ItemStatusContext;
 @property (nonatomic) BOOL isLoading;
 
 @end
+
 
 @implementation TDPostView
 
@@ -58,7 +68,7 @@ static const NSString *ItemStatusContext;
     self.isLoading = NO;
     self.isPlaying = NO;
     self.didPlay = NO;
-    self.playImage.hidden = NO;
+    [self updateControlImage:ControlStateNone];
 
     // Likes & Comments
     [self.likeCommentView setLike:post.liked];
@@ -82,14 +92,36 @@ static const NSString *ItemStatusContext;
     }
 }
 
+- (void)updateControlImage:(ControlState)controlState {
+    if (!self.playerSpinner) {
+        self.playerSpinner = [[UIImageView alloc] initWithFrame:CGRectMake(290.0, 332.0, 20.0, 20.0)];
+        [self addSubview:self.playerSpinner];
+    }
+    switch (controlState) {
+        case ControlStatePlay:
+            [self.playerSpinner setImage:[UIImage imageNamed:@"video_status_play"]];
+            break;
+        case ControlStatePaused:
+            [self.playerSpinner setImage:[UIImage imageNamed:@"video_status_pause"]];
+            break;
+        case ControlStateLoading:
+            [self.playerSpinner setImage:[UIImage imageNamed:@"video_status_spinner"]];
+            [self startSpinner];
+            break;
+        case ControlStateNone:
+            [self.playerSpinner setImage:nil];
+            [self stopSpinner];
+            break;
+    }
+}
+
 - (void)singleTapGestureCaptured:(UITapGestureRecognizer *)gesture {
     if (!self.isLoading) {
         if (self.isPlaying) {
             [self.player pause];
-            self.playImage.hidden = NO;
+            [self updateControlImage:ControlStatePaused];
         } else {
             [self startVideo];
-            self.playImage.hidden = YES;
         }
         self.isPlaying = !self.isPlaying;
     }
@@ -97,6 +129,7 @@ static const NSString *ItemStatusContext;
 
 - (void)startVideo {
     if (self.player == nil)  {
+
         self.isLoading = YES;
         NSURL *location = [TDConstants getStreamingUrlFor:self.filename];
         debug NSLog(@"Loading movie from: %@", location);
@@ -107,6 +140,8 @@ static const NSString *ItemStatusContext;
         [self.playerLayer setVideoGravity:AVLayerVideoGravityResize];
         [self.videoHolderView.layer addSublayer:self.playerLayer];
         self.playerLayer.hidden = YES;
+
+        [self updateControlImage:ControlStateLoading];
 
         AVURLAsset *asset = [AVURLAsset URLAssetWithURL:location options:nil];
         NSString *tracksKey = @"tracks";
@@ -134,6 +169,7 @@ static const NSString *ItemStatusContext;
          }];
     } else {
         [self.player play];
+        [self updateControlImage:ControlStateNone];
     }
 }
 
@@ -145,7 +181,10 @@ static const NSString *ItemStatusContext;
             if (!self.didPlay) {
                 self.isLoading = NO;
                 self.didPlay = YES;
+                self.isPlaying = YES;
+                [self stopSpinner];
                 [self.player play];
+                [self updateControlImage:ControlStateNone];
             }
         });
         return;
@@ -156,9 +195,25 @@ static const NSString *ItemStatusContext;
 }
 
 - (void)playerItemDidReachEnd:(NSNotification *)notification {
-    self.playImage.hidden = NO;
     self.isPlaying = NO;
     [self.player seekToTime:kCMTimeZero];
+    [self updateControlImage:ControlStatePlay];
+}
+
+- (void)startSpinner {
+    CABasicAnimation* rotationAnimation;
+    rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
+    rotationAnimation.toValue = [NSNumber numberWithFloat: M_PI * 2.0];
+    rotationAnimation.duration = 1.0;
+    rotationAnimation.cumulative = YES;
+    rotationAnimation.repeatCount = HUGE_VALF;
+    rotationAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
+
+    [self.playerSpinner.layer addAnimation:rotationAnimation forKey:kSpinningAnimation];
+}
+
+- (void)stopSpinner {
+    [self.playerSpinner.layer removeAnimationForKey:kSpinningAnimation];
 }
 
 
