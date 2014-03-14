@@ -80,14 +80,15 @@
         // you can also set the maximum height in points with maxHeight
         // textView.maxHeight = 200.0f;
         self.hpTextView.returnKeyType = UIReturnKeyDefault;
-        self.hpTextView.font = [UIFont systemFontOfSize:16.0];
+        self.hpTextView.font = [UIFont fontWithName:@"ProximaNova-Regular" size:18.0];;
         self.hpTextView.delegate = self;
         self.hpTextView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(5, 0, 5, 0);
-        self.hpTextView.placeholder = @"Write a comment...";
+        self.hpTextView.placeholder = @"";
+        self.hpTextView.text = @"Write a comment...";
         self.hpTextView.layer.cornerRadius = 4.0;
         self.hpTextView.layer.borderColor = [UIColor colorWithRed:(178.0/255.0) green:(178.0/255.0) blue:(178.0/255.0) alpha:1.0].CGColor;
         self.hpTextView.layer.borderWidth = 0.5;
-        self.hpTextView.textColor = [TDConstants headerTextColor];
+        self.hpTextView.textColor = [TDConstants commentTimeTextColor];
         [self addSubview:self.hpTextView];
         self.hpTextView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 

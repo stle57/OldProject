@@ -205,7 +205,7 @@
                                           toPoint:CGPointMake(self.view.frame.size.width,
                                                               origProfileButtonCenter.y-self.profileButton.frame.size.height/2.0)];
     UIDynamicItemBehavior* propertiesBehavior = [[UIDynamicItemBehavior alloc] initWithItems:@[self.recordButton, self.notificationButton, self.profileButton]];
-    propertiesBehavior.elasticity = 0.3;
+    propertiesBehavior.elasticity = 0.1;
     [self.animator addBehavior:gravityBeahvior];
     [self.animator addBehavior:collisionBehavior1];
     [self.animator addBehavior:collisionBehavior2];

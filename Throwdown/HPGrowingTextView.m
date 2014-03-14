@@ -27,6 +27,7 @@
 
 #import "HPGrowingTextView.h"
 #import "HPTextViewInternal.h"
+#import "TDConstants.h"
 
 @interface HPGrowingTextView(private)
 -(void)commonInitialiser;
@@ -613,6 +614,11 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 - (void)textViewDidBeginEditing:(UITextView *)textView {
+    if ([textView.text isEqualToString:@"Write a comment..."]) {
+        textView.text = @"";
+        textView.textColor = [TDConstants headerTextColor];
+        textView.font = [UIFont fontWithName:@"ProximaNova-Regular" size:18.0];
+    }
 	if ([delegate respondsToSelector:@selector(growingTextViewDidBeginEditing:)]) {
 		[delegate growingTextViewDidBeginEditing:self];
 	}
@@ -620,7 +626,12 @@
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-- (void)textViewDidEndEditing:(UITextView *)textView {		
+- (void)textViewDidEndEditing:(UITextView *)textView {
+	if ([textView.text isEqualToString:@""]) {
+        textView.text = @"Write a comment...";
+        textView.font = [UIFont fontWithName:@"ProximaNova-Regular" size:18.0];
+        textView.textColor = [TDConstants commentTimeTextColor];
+    }
 	if ([delegate respondsToSelector:@selector(growingTextViewDidEndEditing:)]) {
 		[delegate growingTextViewDidEndEditing:self];
 	}
