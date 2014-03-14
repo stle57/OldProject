@@ -21,6 +21,15 @@
 		2DA41A5A18C7E31000B21C74 /* TDTypingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA41A5918C7E31000B21C74 /* TDTypingView.m */; };
 		2DA41A6018C7E49D00B21C74 /* HPGrowingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA41A5D18C7E49D00B21C74 /* HPGrowingTextView.m */; };
 		2DA41A6118C7E49D00B21C74 /* HPTextViewInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA41A5F18C7E49D00B21C74 /* HPTextViewInternal.m */; };
+		2DA5F05118D36745003D2F99 /* ProximaNova-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5F04D18D36745003D2F99 /* ProximaNova-Bold.otf */; };
+		2DA5F05218D36745003D2F99 /* ProximaNova-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5F04E18D36745003D2F99 /* ProximaNova-Light.otf */; };
+		2DA5F05318D36745003D2F99 /* ProximaNova-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5F04F18D36745003D2F99 /* ProximaNova-Regular.otf */; };
+		2DA5F05418D36745003D2F99 /* ProximaNova-Semibold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5F05018D36745003D2F99 /* ProximaNova-Semibold.otf */; };
+		2DA5F05A18D37C70003D2F99 /* BebasNeue Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5F05518D37C70003D2F99 /* BebasNeue Bold.otf */; };
+		2DA5F05B18D37C70003D2F99 /* BebasNeue Book.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5F05618D37C70003D2F99 /* BebasNeue Book.otf */; };
+		2DA5F05C18D37C70003D2F99 /* BebasNeue Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5F05718D37C70003D2F99 /* BebasNeue Light.otf */; };
+		2DA5F05D18D37C70003D2F99 /* BebasNeue Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5F05818D37C70003D2F99 /* BebasNeue Regular.otf */; };
+		2DA5F05E18D37C70003D2F99 /* BebasNeue Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5F05918D37C70003D2F99 /* BebasNeue Thin.otf */; };
 		2DA73D7718BFCC2E00D87370 /* TDLikeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA73D7618BFCC2E00D87370 /* TDLikeView.m */; };
 		2DA73D7918BFCCD000D87370 /* TDLikeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA73D7818BFCCD000D87370 /* TDLikeView.xib */; };
 		579149E08F7B4EE789901248 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E657ABE418B84EA68554F855 /* libPods.a */; };
@@ -110,6 +119,15 @@
 		2DA41A5D18C7E49D00B21C74 /* HPGrowingTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPGrowingTextView.m; sourceTree = "<group>"; };
 		2DA41A5E18C7E49D00B21C74 /* HPTextViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HPTextViewInternal.h; sourceTree = "<group>"; };
 		2DA41A5F18C7E49D00B21C74 /* HPTextViewInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPTextViewInternal.m; sourceTree = "<group>"; };
+		2DA5F04D18D36745003D2F99 /* ProximaNova-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ProximaNova-Bold.otf"; path = "fonts/ProximaNova-Bold.otf"; sourceTree = "<group>"; };
+		2DA5F04E18D36745003D2F99 /* ProximaNova-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ProximaNova-Light.otf"; path = "fonts/ProximaNova-Light.otf"; sourceTree = "<group>"; };
+		2DA5F04F18D36745003D2F99 /* ProximaNova-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ProximaNova-Regular.otf"; path = "fonts/ProximaNova-Regular.otf"; sourceTree = "<group>"; };
+		2DA5F05018D36745003D2F99 /* ProximaNova-Semibold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ProximaNova-Semibold.otf"; path = "fonts/ProximaNova-Semibold.otf"; sourceTree = "<group>"; };
+		2DA5F05518D37C70003D2F99 /* BebasNeue Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "BebasNeue Bold.otf"; path = "fonts/BebasNeue Bold.otf"; sourceTree = "<group>"; };
+		2DA5F05618D37C70003D2F99 /* BebasNeue Book.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "BebasNeue Book.otf"; path = "fonts/BebasNeue Book.otf"; sourceTree = "<group>"; };
+		2DA5F05718D37C70003D2F99 /* BebasNeue Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "BebasNeue Light.otf"; path = "fonts/BebasNeue Light.otf"; sourceTree = "<group>"; };
+		2DA5F05818D37C70003D2F99 /* BebasNeue Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "BebasNeue Regular.otf"; path = "fonts/BebasNeue Regular.otf"; sourceTree = "<group>"; };
+		2DA5F05918D37C70003D2F99 /* BebasNeue Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "BebasNeue Thin.otf"; path = "fonts/BebasNeue Thin.otf"; sourceTree = "<group>"; };
 		2DA73D7518BFCC2D00D87370 /* TDLikeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDLikeView.h; sourceTree = "<group>"; };
 		2DA73D7618BFCC2E00D87370 /* TDLikeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDLikeView.m; sourceTree = "<group>"; };
 		2DA73D7818BFCCD000D87370 /* TDLikeView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDLikeView.xib; sourceTree = "<group>"; };
@@ -266,6 +284,22 @@
 			name = HPTypingView;
 			sourceTree = "<group>";
 		};
+		2DA5F04C18D36736003D2F99 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				2DA5F05518D37C70003D2F99 /* BebasNeue Bold.otf */,
+				2DA5F05618D37C70003D2F99 /* BebasNeue Book.otf */,
+				2DA5F05718D37C70003D2F99 /* BebasNeue Light.otf */,
+				2DA5F05818D37C70003D2F99 /* BebasNeue Regular.otf */,
+				2DA5F05918D37C70003D2F99 /* BebasNeue Thin.otf */,
+				2DA5F04D18D36745003D2F99 /* ProximaNova-Bold.otf */,
+				2DA5F04E18D36745003D2F99 /* ProximaNova-Light.otf */,
+				2DA5F04F18D36745003D2F99 /* ProximaNova-Regular.otf */,
+				2DA5F05018D36745003D2F99 /* ProximaNova-Semibold.otf */,
+			);
+			name = Fonts;
+			sourceTree = "<group>";
+		};
 		A11E04CF1888CB79002F981A = {
 			isa = PBXGroup;
 			children = (
@@ -313,6 +347,7 @@
 				A11E04EB1888CB79002F981A /* TDAppDelegate.m */,
 				A11E04ED1888CB79002F981A /* Main.storyboard */,
 				A11E04F31888CB79002F981A /* Images.xcassets */,
+				2DA5F04C18D36736003D2F99 /* Fonts */,
 				A11E04E21888CB79002F981A /* Supporting Files */,
 			);
 			path = Throwdown;
@@ -571,15 +606,24 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2DA5F05B18D37C70003D2F99 /* BebasNeue Book.otf in Resources */,
 				A1C1D0F318A02FAB00666D2A /* TDPostView.xib in Resources */,
+				2DA5F05D18D37C70003D2F99 /* BebasNeue Regular.otf in Resources */,
 				A11E04F41888CB79002F981A /* Images.xcassets in Resources */,
+				2DA5F05E18D37C70003D2F99 /* BebasNeue Thin.otf in Resources */,
 				2DA73D7918BFCCD000D87370 /* TDLikeView.xib in Resources */,
 				2DA41A5718C7D89C00B21C74 /* TDDetailViewController.xib in Resources */,
+				2DA5F05418D36745003D2F99 /* ProximaNova-Semibold.otf in Resources */,
 				A11E04E61888CB79002F981A /* InfoPlist.strings in Resources */,
+				2DA5F05318D36745003D2F99 /* ProximaNova-Regular.otf in Resources */,
 				2D3F8DF718CFC81E00333F0B /* TDTwoButtonView.xib in Resources */,
+				2DA5F05218D36745003D2F99 /* ProximaNova-Light.otf in Resources */,
 				2D1AEE7118C937560055C315 /* TDDetailsLikesCell.xib in Resources */,
 				2D648A1718C9415D002FE0AD /* TDDetailsCommentsCell.xib in Resources */,
+				2DA5F05C18D37C70003D2F99 /* BebasNeue Light.otf in Resources */,
 				A11E04EF1888CB79002F981A /* Main.storyboard in Resources */,
+				2DA5F05A18D37C70003D2F99 /* BebasNeue Bold.otf in Resources */,
+				2DA5F05118D36745003D2F99 /* ProximaNova-Bold.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

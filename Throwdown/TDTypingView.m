@@ -96,7 +96,7 @@
         [self.postButton setTitleColor:[TDConstants headerTextColor] forState:UIControlStateNormal];
         [self.postButton setTitleColor:[UIColor colorWithRed:(136.0/255.0) green:(136.0/255.0) blue:(136.0/255.0) alpha:1.0] forState:UIControlStateDisabled];
         [self.postButton setTitleColor:[UIColor colorWithRed:(136.0/255.0) green:(136.0/255.0) blue:(136.0/255.0) alpha:1.0] forState:UIControlStateHighlighted];
-        self.postButton.titleLabel.font = [UIFont boldSystemFontOfSize:18.0];
+        self.postButton.titleLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:18.0];
         self.postButton.backgroundColor = [UIColor colorWithRed:(237.0/255.0) green:(237.0/255.0) blue:(237.0/255.0) alpha:1.0];
         self.postButton.enabled = NO;
         self.postButton.layer.cornerRadius = 6.0;
@@ -105,7 +105,7 @@
                                            self.frame.size.width-(self.hpTextView.frame.origin.x+self.hpTextView.frame.size.width+12.0),
                                            self.hpTextView.frame.size.height);
         self.postButton.center = CGPointMake(self.postButton.center.x,
-                                             self.hpTextView.center.y);
+                                             self.hpTextView.center.y+1.0);
         [self.postButton addTarget:self
                             action:@selector(postButtonPressed:)
                   forControlEvents:UIControlEventTouchUpInside];

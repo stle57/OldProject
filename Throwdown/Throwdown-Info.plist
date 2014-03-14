@@ -38,6 +38,18 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>ProximaNova-Bold.otf</string>
+		<string>ProximaNova-Light.otf</string>
+		<string>ProximaNova-Regular.otf</string>
+		<string>ProximaNova-Semibold.otf</string>
+		<string>BebasNeue Bold.otf</string>
+		<string>BebasNeue Book.otf</string>
+		<string>BebasNeue Light.otf</string>
+		<string>BebasNeue Regular.otf</string>
+		<string>BebasNeue Thin.otf</string>
+	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
 </dict>

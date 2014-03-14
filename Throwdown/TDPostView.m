@@ -64,6 +64,9 @@ typedef enum {
     [self.previewImage setMultipleTouchEnabled:YES];
     [self.previewImage setUserInteractionEnabled:YES];
     self.userInteractionEnabled=YES;
+
+    self.usernameLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:17.0];
+    self.createdLabel.font = [UIFont fontWithName:@"ProximaNova-Light" size:14.0];
 }
 
 - (void)setPost:(TDPost *)post {

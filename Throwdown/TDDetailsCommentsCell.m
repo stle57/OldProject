@@ -51,6 +51,11 @@
     // Colors
     self.messageLabel.textColor = [TDConstants commentTextColor];
     self.timeLabel.textColor = [TDConstants commentTimeTextColor];
+
+    // Fonts
+    self.usernameLabel.font = [UIFont fontWithName:@"ProximaNova-Bold" size:16.0];
+    self.timeLabel.font = [UIFont fontWithName:@"ProximaNova-Light" size:13.0];
+    self.messageLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:16.0];
 }
 
 -(void)makeText:(NSString *)text
