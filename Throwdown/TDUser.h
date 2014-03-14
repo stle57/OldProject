@@ -13,7 +13,9 @@
 @property (strong, nonatomic, readonly) NSNumber *userId;
 @property (strong, nonatomic, readonly) NSString *username;
 @property (strong, nonatomic, readonly) NSString *name;
+@property (strong, nonatomic, readonly) NSString *picture;
 
 - (id)initWithDictionary:(NSDictionary *)dict;
+-(void)userId:(NSNumber *)userId userName:(NSString *)userName name:(NSString *)name picture:(NSString *)picture;
 
 @end

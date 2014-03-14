@@ -8,6 +8,7 @@
 
 #import "TDTypingView.h"
 #import "TDAppDelegate.h"
+#import "TDConstants.h"
 
 @implementation TDTypingView
 
@@ -48,20 +49,20 @@
         origFrame = frame;
         lastNumberOfLines = 1;
 
-        self.backgroundColor = [UIColor colorWithWhite:1.0 alpha:0.95];// [UIColor colorWithWhite:0.2 alpha:1.0];
+        self.backgroundColor = [UIColor colorWithRed:(237.0/255.0) green:(237.0/255.0) blue:(237.0/255.0) alpha:1.0];
 
         self.topLine = [[UIView alloc] initWithFrame:CGRectMake(0.0,
                                                                 0.0,
                                                                 self.frame.size.width,
                                                                 0.5)];
-        self.topLine.backgroundColor = [UIColor colorWithWhite:0.5 alpha:0.3];
+        self.topLine.backgroundColor = [UIColor colorWithRed:(178.0/255.0) green:(178.0/255.0) blue:(178.0/255.0) alpha:1.0];
         [self addSubview:self.topLine];
 
         self.bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0.0,
                                                                    self.frame.size.height-0.5,
                                                                    self.frame.size.width,
                                                                    0.5)];
-        self.bottomLine.backgroundColor = [UIColor colorWithWhite:0.5 alpha:0.3];
+        self.bottomLine.backgroundColor = [UIColor colorWithRed:(178.0/255.0) green:(178.0/255.0) blue:(178.0/255.0) alpha:1.0];
         [self addSubview:self.bottomLine];
 
         self.hpTextView = [[HPGrowingTextView alloc] initWithFrame:CGRectMake(12.0,
@@ -69,7 +70,7 @@
                                                                               self.frame.size.width-92.0,
                                                                               TYPING_HEIGHT-9.0)];
         self.hpTextView.isScrollable = NO;
-        self.hpTextView.backgroundColor = [UIColor clearColor];
+        self.hpTextView.backgroundColor = [UIColor whiteColor];
         self.hpTextView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
         self.hpTextView.internalTextView.keyboardType = UIKeyboardAppearanceDefault;
         self.hpTextView.internalTextView.keyboardAppearance = UIKeyboardAppearanceDark;
@@ -84,18 +85,19 @@
         self.hpTextView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(5, 0, 5, 0);
         self.hpTextView.placeholder = @"Write a comment...";
         self.hpTextView.layer.cornerRadius = 4.0;
-        self.hpTextView.layer.borderColor = [UIColor blackColor].CGColor;
+        self.hpTextView.layer.borderColor = [UIColor colorWithRed:(178.0/255.0) green:(178.0/255.0) blue:(178.0/255.0) alpha:1.0].CGColor;
         self.hpTextView.layer.borderWidth = 0.5;
-        self.hpTextView.textColor = [UIColor blackColor];
+        self.hpTextView.textColor = [TDConstants headerTextColor];
         [self addSubview:self.hpTextView];
         self.hpTextView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 
         self.postButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
         [self.postButton setTitle:@"Post" forState:UIControlStateNormal];
-        [self.postButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [self.postButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
-        [self.postButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateHighlighted];
-        self.postButton.backgroundColor = [UIColor darkGrayColor];
+        [self.postButton setTitleColor:[TDConstants headerTextColor] forState:UIControlStateNormal];
+        [self.postButton setTitleColor:[UIColor colorWithRed:(136.0/255.0) green:(136.0/255.0) blue:(136.0/255.0) alpha:1.0] forState:UIControlStateDisabled];
+        [self.postButton setTitleColor:[UIColor colorWithRed:(136.0/255.0) green:(136.0/255.0) blue:(136.0/255.0) alpha:1.0] forState:UIControlStateHighlighted];
+        self.postButton.titleLabel.font = [UIFont boldSystemFontOfSize:18.0];
+        self.postButton.backgroundColor = [UIColor colorWithRed:(237.0/255.0) green:(237.0/255.0) blue:(237.0/255.0) alpha:1.0];
         self.postButton.enabled = NO;
         self.postButton.layer.cornerRadius = 6.0;
         self.postButton.frame = CGRectMake(self.hpTextView.frame.origin.x+self.hpTextView.frame.size.width+6.0,

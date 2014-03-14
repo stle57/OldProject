@@ -1,20 +1,21 @@
 //
-//  TDLikeCommentView.m
+//  TDLikeView.m
 //  Throwdown
 //
 //  Created by Andrew Bennett on 2/27/14.
 //  Copyright (c) 2014 Throwdown. All rights reserved.
 //
 
-#import "TDLikeCommentView.h"
+#import "TDLikeView.h"
 #import "TDAppDelegate.h"
 
-@implementation TDLikeCommentView
+@implementation TDLikeView
 
 @synthesize delegate;
 @synthesize row;
 @synthesize likers;
 @synthesize comments;
+@synthesize like;
 
 - (void)dealloc
 {
@@ -36,14 +37,14 @@
 {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        [self addSubview:[[[UINib nibWithNibName:@"TDLikeCommentView" bundle:nil] instantiateWithOwner:self options:nil] objectAtIndex:0]];
-
     }
     return self;
 }
 
 - (IBAction)likeButtonPressed:(UIButton *)sender
 {
+    NSLog(@"TDLikeView-likeButtonPressed:%d", like);
+
     if (like) {
         if (delegate) {
             if ([delegate respondsToSelector:@selector(unLikeButtonPressedFromRow:)]) {
@@ -110,6 +111,16 @@
         self.likeIconImageView.hidden = NO;
     }
 
+    // Remove any old buttons for cell reuse
+    UIView *buttonView = nil;
+    for (int i=800; i < 810; i++) {
+        buttonView = [self viewWithTag:i];
+        if (buttonView) {
+            [buttonView removeFromSuperview];
+        }
+        buttonView = nil;
+    }
+
     // Add image buttons
     for (NSDictionary *likerDict in self.likers) {
         if ([likerDict objectForKey:@"picture"]) {
@@ -124,15 +135,20 @@
     self.comments = array;
 }
 
--(void)addButtonWithPicture:(NSString *)picture index:(NSInteger)index
+-(CGRect)frameForButtonWithIndex:(NSInteger)index
 {
     CGFloat gap = 3.0;
     CGFloat widthOfOne = ((self.moreImageView.frame.origin.x-CGRectGetMaxX(self.likeIconImageView.frame)-gap*12.0)/9.0);
+    return CGRectMake(((widthOfOne+gap)*index)+CGRectGetMaxX(self.likeIconImageView.frame)+gap*2.0,
+                      0.0,
+                      widthOfOne,
+                      widthOfOne);
+}
+
+-(void)addButtonWithPicture:(NSString *)picture index:(NSInteger)index
+{
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    button.frame = CGRectMake(((widthOfOne+gap)*index)+CGRectGetMaxX(self.likeIconImageView.frame)+gap*2.0,
-                              0.0,
-                              widthOfOne,
-                              widthOfOne);
+    button.frame = [self frameForButtonWithIndex:index];
     button.center = CGPointMake(button.center.x,
                                 self.likeIconImageView.center.y);
     button.backgroundColor = [UIColor clearColor];
@@ -175,6 +191,11 @@
             [delegate miniLikeButtonPressedForLiker:[self.likers objectAtIndex:index]];
         }
     }
+}
+
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [super touchesBegan:touches withEvent:event];
 }
 
 @end

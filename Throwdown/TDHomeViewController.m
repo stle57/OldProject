@@ -10,12 +10,11 @@
 #import "TDAppDelegate.h"
 #import "TDPostAPI.h"
 #import "TDPostUpload.h"
-#import "TDPostView.h"
 #import "TDConstants.h"
 #import "TDUserAPI.h"
 #import "VideoButtonSegue.h"
 #import "VideoCloseSegue.h"
-#import "TDLikeCommentView.h"
+#import "TDLikeView.h"
 #import "TDHomeHeaderView.h"
 
 #define CELL_IDENTIFIER @"TDPostView"
@@ -31,7 +30,11 @@
     CGPoint origProfileButtonCenter;
     UIDynamicAnimator *animator;
     CGFloat postViewHeight;
+    CGFloat likeHeight;
+    CGFloat commentButtonsHeight;
+    CGFloat commentRowHeight;
 }
+@property (nonatomic, retain) NSArray *posts;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIButton *recordButton;
 @property (weak, nonatomic) IBOutlet UIButton *notificationButton;
@@ -44,6 +47,7 @@
 
 @implementation TDHomeViewController
 
+@synthesize posts;
 @synthesize refreshControl;
 @synthesize animator;
 
@@ -65,12 +69,25 @@
     origNotificationButtonCenter = self.notificationButton.center;
     origProfileButtonCenter = self.profileButton.center;
 
-    // Cell height
+    // Cell heights
     NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_POST_VIEW owner:self options:nil];
     TDPostView *cell = [topLevelObjects objectAtIndex:0];
     postViewHeight = cell.frame.size.height;
     cell = nil;
-    
+    topLevelObjects = nil;
+    topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_LIKE_VIEW owner:self options:nil];
+    TDLikeView *likeCell = [topLevelObjects objectAtIndex:0];
+    likeHeight = likeCell.frame.size.height;
+    likeCell = nil;
+    topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_COMMENT_VIEW owner:self options:nil];
+    TDTwoButtonView *commentCell = [topLevelObjects objectAtIndex:0];
+    commentButtonsHeight = commentCell.frame.size.height;
+    commentCell = nil;
+    topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDDetailsCommentsCell" owner:self options:nil];
+    TDDetailsCommentsCell *commentDetailsCell = [topLevelObjects objectAtIndex:0];
+    commentRowHeight = commentDetailsCell.frame.size.height;
+    commentDetailsCell = nil;
+
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
@@ -92,6 +109,20 @@
     self.headerView = [[TDHomeHeaderView alloc] initWithTableView:self.tableView];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadStarted:) name:@"TDPostUploadStarted" object:nil];
+}
+
+-(void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+
+    // If we're coming back from the details screen, we need to
+    // order the comments to only the most recent 2
+    if ([self.posts count] > 0) {
+        for (TDPost *post in self.posts) {
+            [post orderCommentsForHomeScreen];
+        }
+    }
+
+    [self.tableView reloadData];
 }
 
 -(void)viewDidAppear:(BOOL)animated {
@@ -117,6 +148,7 @@
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
+    self.posts = nil;
     self.refreshControl = nil;
     self.animator = nil;
 }
@@ -207,7 +239,7 @@
     [[TDPostAPI sharedInstance] fetchPostsUpstream];
 }
 
-# pragma mark - table view delegate
+# pragma mark - Figure out what's on each row
 
 - (void)refreshPostsList:(NSNotification*)notification {
     [self refreshPostsList];
@@ -226,23 +258,106 @@
     [self.tableView reloadData];
 }
 
+# pragma mark - table view delegate
+- (void)reloadPosts:(NSNotification*)notification
+{
+    [self reloadPosts];
+}
+
+- (void)reloadPosts {
+    NSLog(@"reload posts");
+    self.posts = [[TDPostAPI sharedInstance] getPosts];
+    [self.tableView reloadData];
+}
+
+// 1 section per post
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return [self.posts count];
+}
+
+// Rows is 1 (for the video) + 1 for likes row + # of comments + 1 for like/comment buttons
+// -1 if no likers
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return [posts count];
+    TDPost *post = (TDPost *)[self.posts objectAtIndex:section];
+    if ([post.likers count] > 0) {
+        return 3+([post.comments count] > 2 ? 2 : [post.comments count]);//[posts count];
+    }
+    return 2+([post.comments count] > 2 ? 2 : [post.comments count]);//[posts count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    TDPostView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_POST_VIEW];
-    if (!cell) {
-        NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_POST_VIEW owner:self options:nil];
-        cell = [topLevelObjects objectAtIndex:0];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
 
-        cell.likeCommentView.delegate = self;
+    // The video
+    TDPost *post = (TDPost *)[self.posts objectAtIndex:indexPath.section];
+    if (indexPath.row == 0)
+    {
+        TDPostView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_POST_VIEW];
+        if (!cell) {
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_POST_VIEW owner:self options:nil];
+            cell = [topLevelObjects objectAtIndex:0];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+
+            //        cell.likeView.delegate = self;
+            cell.delegate = self;
+        }
+
+        [cell setPost:post];
+        cell.row = indexPath.section;
+        return cell;
     }
 
-    TDPost *post = (TDPost *)[posts objectAtIndex:indexPath.row];
-    [cell setPost:post];
-    cell.likeCommentView.row = indexPath.row;
+    // Likes
+    if ([post.likers count] > 0 && indexPath.row == 1)
+    {
+        TDLikeView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_LIKE_VIEW];
+        if (!cell) {
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_LIKE_VIEW owner:self options:nil];
+            cell = [topLevelObjects objectAtIndex:0];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.delegate = self;
+        }
+
+        TDPost *post = (TDPost *)[self.posts objectAtIndex:indexPath.section];
+        cell.row = indexPath.section;
+        [cell setLike:post.liked];
+        [cell setLikesArray:post.likers];
+        return cell;
+    }
+
+    // Like Comment Buttons - last row
+    NSInteger lastRowDelta = 3;
+    if ([post.likers count] == 0) {
+        lastRowDelta = 2;
+    }
+    if (indexPath.row == (lastRowDelta+([post.comments count] > 2 ? 2 : [post.comments count]))-1)
+    {
+        TDTwoButtonView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_COMMENT_VIEW];
+        if (!cell) {
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_COMMENT_VIEW owner:self options:nil];
+            cell = (TDTwoButtonView *)[topLevelObjects objectAtIndex:0];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.delegate = self;
+        }
+
+        [cell setLike:post.liked];
+        cell.row = indexPath.section;
+        
+        return cell;
+    }
+
+    TDDetailsCommentsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDDetailsCommentsCell"];
+    if (!cell) {
+        NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDDetailsCommentsCell" owner:self options:nil];
+        cell = [topLevelObjects objectAtIndex:0];
+        cell.origTimeFrame = cell.timeLabel.frame;
+        cell.delegate = self;
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    }
+
+    TDComment *comment = [post.comments objectAtIndex:(indexPath.row-(lastRowDelta-1))];
+    [cell makeText:comment.body];
+    [cell makeTime:comment.createdAt name:comment.user.username];
     return cell;
 }
 
@@ -254,7 +369,46 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return postViewHeight;
+    if (indexPath.row == 0) {
+        return postViewHeight;
+    }
+
+    TDPost *post = (TDPost *)[self.posts objectAtIndex:indexPath.section];
+    if ([post.likers count] > 0 && indexPath.row == 1) {
+        return likeHeight;
+    }
+
+    NSInteger lastRowDelta = 3;
+    if ([post.likers count] == 0) {
+        lastRowDelta = 2;
+    }
+    if (indexPath.row == ((lastRowDelta+([post.comments count] > 2 ? 2 : [post.comments count]))-1))
+    {
+        return commentButtonsHeight;
+    }
+
+    return commentRowHeight;
+}
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
+
+    TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
+    TDPost *post = (TDPost *)[self.posts objectAtIndex:indexPath.section];
+    vc.post = post;
+    [self.navigationController pushViewController:vc
+                                         animated:YES];
+}
+
+#pragma mark - TDPostView Delegate
+-(void)postTouchedFromRow:(NSInteger)row
+{
+    TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
+    TDPost *post = (TDPost *)[self.posts objectAtIndex:row];
+    vc.post = post;
+    [self.navigationController pushViewController:vc
+                                         animated:YES];
 }
 
 #pragma mark - TDLikeCommentViewDelegates
@@ -262,9 +416,14 @@
 {
     NSLog(@"Home-likeButtonPressedFromRow:%ld", (long)row);
     
-    TDPost *post = (TDPost *)[posts objectAtIndex:row];
+    TDPost *post = (TDPost *)[self.posts objectAtIndex:row];
     
     if (post.postId) {
+
+        // Add the like for the update
+        [post addLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
+
+        // Send to server
         TDPostAPI *api = [TDPostAPI sharedInstance];
         [api likePostWithId:post.postId];
     }
@@ -274,9 +433,13 @@
 {
     NSLog(@"Home-unLikeButtonPressedFromRow:%ld", (long)row);
 
-    TDPost *post = (TDPost *)[posts objectAtIndex:row];
+    TDPost *post = (TDPost *)[self.posts objectAtIndex:row];
 
     if (post.postId) {
+
+        // Remove the like for the update
+        [post removeLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
+
         TDPostAPI *api = [TDPostAPI sharedInstance];
         [api unLikePostWithId:post.postId];
     }
@@ -288,7 +451,7 @@
 
     // Goto Detail View
     TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
-    TDPost *post = (TDPost *)[posts objectAtIndex:row];
+    TDPost *post = (TDPost *)[self.posts objectAtIndex:row];
     vc.post = post;
     [self.navigationController pushViewController:vc
                                          animated:YES];

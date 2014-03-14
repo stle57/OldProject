@@ -27,6 +27,16 @@
     return self;
 }
 
+-(void)user:(TDUser *)user dict:(NSDictionary *)commentDict
+{
+    _user = user;
+
+    _commentId = [commentDict objectForKey:@"id"];
+    _body = [commentDict objectForKey:@"body"];
+    _createdAt = [TDPost dateForRFC3339DateTimeString:[commentDict objectForKey:@"created_at"]];
+    [self figureOutMessageLabelHeightForThisMessage:_body];
+}
+
 -(void)figureOutMessageLabelHeightForThisMessage:(NSString *)text
 {
     _messageHeight = [TDAppDelegate heightOfTextForString:text

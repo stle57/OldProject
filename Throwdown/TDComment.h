@@ -18,5 +18,6 @@
 @property (nonatomic, assign) CGFloat messageHeight;
 
 - (id)initWithDictionary:(NSDictionary *)dict;
+-(void)user:(TDUser *)user dict:(NSDictionary *)commentDict;
 -(void)figureOutMessageLabelHeightForThisMessage:(NSString *)text;
 @end

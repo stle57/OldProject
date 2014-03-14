@@ -20,6 +20,7 @@
     UIView *frostedViewWhileTyping;
     CGFloat postViewHeight;
     CGFloat postCommentViewHeight;
+    CGFloat minLikeheight;
 }
 
 @property (nonatomic, retain) TDPost *post;
@@ -27,8 +28,10 @@
 @property (nonatomic, retain) UIView *frostedViewWhileTyping;
 @property (weak, nonatomic) IBOutlet UIView *postViewContainer;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 
 - (void)reloadPosts:(NSNotification*)notification;
 -(void)fullPostReturn:(NSNotification*)notification;
+-(void)newCommentReturn:(NSNotification*)notification;
 
 @end

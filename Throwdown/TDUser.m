@@ -17,8 +17,19 @@
         _userId   = [dict objectForKey:@"id"];
         _username = [dict objectForKey:@"username"];
         _name     = [dict objectForKey:@"name"];
+        _picture  = [dict objectForKey:@"picture"];
     }
     return self;
+}
+
+-(void)userId:(NSNumber *)userId userName:(NSString *)userName name:(NSString *)name picture:(NSString *)picture
+{
+    _userId = userId;
+    _username = userName;
+    _name = name;
+    if (picture) {
+        _picture = picture;
+    }
 }
 
 @end

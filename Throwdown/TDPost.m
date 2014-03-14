@@ -7,7 +7,6 @@
 //
 
 #import "TDPost.h"
-#import "TDComment.h"
 
 @implementation TDPost
 
@@ -37,24 +36,29 @@
     self = [super init];
     if (self)
     {
-        _postId   = [dict objectForKey:@"id"];
-        _user = [[TDUser alloc] initWithDictionary:[dict objectForKey:@"user"]];
-        _filename = [dict objectForKey:@"filename"];
-        _createdAt = [TDPost dateForRFC3339DateTimeString:[dict objectForKey:@"created_at"]];
-        _liked = [[dict objectForKey:@"liked"] boolValue];
-        _likers = [dict objectForKey:@"likers"];
-
-        TDComment *comment = nil;
-        NSMutableArray *commentsArray = [NSMutableArray arrayWithCapacity:0];
-        for (NSDictionary *commentsDict in [dict objectForKey:@"comments"]) {
-            comment = [[TDComment alloc] initWithDictionary:commentsDict];
-            [commentsArray addObject:comment];
-            comment = nil;
-        }
-
-        _comments = commentsArray;
+        [self loadUpFromDict:dict];
     }
     return self;
+}
+
+-(void)loadUpFromDict:(NSDictionary *)dict
+{
+    _postId   = [dict objectForKey:@"id"];
+    _user = [[TDUser alloc] initWithDictionary:[dict objectForKey:@"user"]];
+    _filename = [dict objectForKey:@"filename"];
+    _createdAt = [TDPost dateForRFC3339DateTimeString:[dict objectForKey:@"created_at"]];
+    _liked = [[dict objectForKey:@"liked"] boolValue];
+    _likers = [dict objectForKey:@"likers"];
+
+    TDComment *comment = nil;
+    NSMutableArray *commentsArray = [NSMutableArray arrayWithCapacity:0];
+    for (NSDictionary *commentsDict in [dict objectForKey:@"comments"]) {
+        comment = [[TDComment alloc] initWithDictionary:commentsDict];
+        [commentsArray addObject:comment];
+        comment = nil;
+    }
+
+    _comments = commentsArray;
 }
 
 - (NSDictionary *)jsonRepresentation
@@ -72,6 +76,73 @@
 	// Convert the RFC 3339 date time string to an NSDate.
 	NSDate *result = [rfc3339DateFormatter dateFromString:rfc3339DateTimeString];
 	return result;
+}
+
+-(void)addLikerUser:(TDUser *)likerUser
+{
+    NSMutableDictionary *likerDict = [NSMutableDictionary dictionaryWithCapacity:0];
+    [likerDict setObject:likerUser.userId forKey:@"id"];
+    [likerDict setObject:likerUser.username forKey:@"username"];
+    [likerDict setObject:likerUser.name forKey:@"name"];
+    if (likerUser.picture) {
+        [likerDict setObject:likerUser.picture forKey:@"picture"];
+    }
+    NSMutableArray *newArray = [NSMutableArray arrayWithArray:self.likers];
+    [newArray addObject:likerDict];
+    _likers = newArray;
+
+    // Assume it's current user
+    _liked = YES;
+}
+
+-(void)removeLikerUser:(TDUser *)likerUser
+{
+    for (NSDictionary *likerDict in [NSArray arrayWithArray:self.likers]) {
+        if ([[likerDict objectForKey:@"id"] isEqualToNumber:likerUser.userId]) {
+            // Remove it
+            NSMutableArray *newArray = [NSMutableArray arrayWithArray:self.likers];
+            [newArray removeObject:likerDict];
+            _likers = newArray;
+            break;
+        }
+    }
+
+    // Assume it's current user
+    _liked = NO;
+}
+
+-(void)addComment:(TDComment *)newComment
+{
+    NSMutableArray *newArray = [NSMutableArray arrayWithArray:self.comments];
+    [newArray addObject:newComment];
+    _comments = newArray;
+}
+
+-(void)orderCommentsForHomeScreen
+{
+    NSMutableArray *sortingArray = [self.comments mutableCopy];
+
+    // Sort by dates - newest on bottom
+    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"createdAt"
+                                                               ascending:YES];
+    [sortingArray sortUsingDescriptors:[NSArray arrayWithObjects:descriptor,nil]];
+
+    // Now only need the last 2
+    if ([sortingArray count] > 2) {
+        [sortingArray removeObjectsInRange:NSMakeRange(0, [sortingArray count]-2)];
+    }
+    _comments = [NSArray arrayWithArray:sortingArray];
+}
+
+-(void)orderCommentsForDetailsScreen
+{
+    NSMutableArray *sortingArray = [self.comments mutableCopy];
+
+    // Sort by dates - newest on bottom
+    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"createdAt"
+                                                               ascending:YES];
+    [sortingArray sortUsingDescriptors:[NSArray arrayWithObjects:descriptor,nil]];
+    _comments = [NSArray arrayWithArray:sortingArray];
 }
 
 @end

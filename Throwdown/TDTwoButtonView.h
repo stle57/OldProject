@@ -1,5 +1,5 @@
 //
-//  TDLikeCommentView.h
+//  TDTwoButtonView.h
 //  Throwdown
 //
 //  Created by Andrew Bennett on 2/27/14.
@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@protocol TDLikeCommentViewDelegate <NSObject>
+@protocol TDTwoButtonViewDelegate <NSObject>
 @optional
 -(void)likeButtonPressedFromRow:(NSInteger)row;
 -(void)unLikeButtonPressedFromRow:(NSInteger)row;
@@ -16,29 +16,21 @@
 -(void)miniLikeButtonPressedForLiker:(NSDictionary *)liker;
 @end
 
-@interface TDLikeCommentView : UIView
+@interface TDTwoButtonView : UITableViewCell
 {
-    id <TDLikeCommentViewDelegate> __unsafe_unretained delegate;
+    id <TDTwoButtonViewDelegate> __unsafe_unretained delegate;
     NSInteger row;
     BOOL like;
-    NSArray *likers;
-    NSArray *comments;
 }
 
-@property (nonatomic, assign) id <TDLikeCommentViewDelegate> __unsafe_unretained delegate;
+@property (nonatomic, assign) id <TDTwoButtonViewDelegate> __unsafe_unretained delegate;
 @property (nonatomic, assign) NSInteger row;
 @property (weak, nonatomic) IBOutlet UIButton *likeButton;
 @property (weak, nonatomic) IBOutlet UIButton *commentButton;
-@property (weak, nonatomic) IBOutlet UIImageView *moreImageView;
-@property (weak, nonatomic) IBOutlet UIImageView *likeIconImageView;
-@property (nonatomic, retain) NSArray *likers;
-@property (nonatomic, retain) NSArray *comments;
 
 - (IBAction)likeButtonPressed:(UIButton *)sender;
 - (IBAction)commentButtonPressed:(UIButton *)sender;
 -(void)setLike:(BOOL)liked;
 -(void)setComment:(BOOL)commented;
--(void)setLikesArray:(NSArray *)array;
--(void)setCommentsArray:(NSArray *)array;
 
 @end

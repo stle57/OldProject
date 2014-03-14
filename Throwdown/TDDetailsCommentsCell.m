@@ -42,10 +42,15 @@
 
 - (void)awakeFromNib {
 
+    // Round off profile pic
     self.profileImage.layer.cornerRadius = 16.0;
     self.profileImage.layer.masksToBounds = YES;
     self.profileImage.layer.borderColor = [UIColor lightGrayColor].CGColor;
     self.profileImage.layer.borderWidth = 1.0;
+
+    // Colors
+    self.messageLabel.textColor = [TDConstants commentTextColor];
+    self.timeLabel.textColor = [TDConstants commentTimeTextColor];
 }
 
 -(void)makeText:(NSString *)text

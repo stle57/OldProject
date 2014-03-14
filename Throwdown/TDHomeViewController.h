@@ -7,8 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TDLikeCommentView.h"
+#import "TDLikeView.h"
+#import "TDPostView.h"
+#import "TDTwoButtonView.h"
+#import "TDDetailsCommentsCell.h"
 
-@interface TDHomeViewController : UIViewController <TDLikeCommentViewDelegate>
+@interface TDHomeViewController : UIViewController <TDLikeViewDelegate, TDPostViewDelegate, TDTwoButtonViewDelegate, TDDetailsCommentsCellDelegate>
 
 @end

@@ -30,6 +30,9 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:FULL_POST_INFO_NOTIFICATION
                                                   object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:NEW_COMMENT_INFO_NOTICIATION
+                                                  object:nil];
 
     self.post = nil;
     self.typingView = nil;
@@ -52,7 +55,9 @@
 {
     [super viewDidLoad];
 
-    self.title = @"Details";
+    // Title
+    self.titleLabel.textColor = [TDConstants headerTextColor];
+    [self.navigationItem setTitleView:self.titleLabel];
 
     // Frosted View for while we're typing to stop video playing
     self.frostedViewWhileTyping = [[UIView alloc] initWithFrame:CGRectMake(0.0,
@@ -63,16 +68,21 @@
     [self.view addSubview:self.frostedViewWhileTyping];
     self.frostedViewWhileTyping.hidden = YES;
 
-    // Cell height
+    // Cell heights
     NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_POST_VIEW owner:self options:nil];
     TDPostView *cell = [topLevelObjects objectAtIndex:0];
     postViewHeight = cell.frame.size.height;
-    postCommentViewHeight = cell.likeCommentView.frame.size.height;
+    postCommentViewHeight = cell.likeView.frame.size.height;
     cell = nil;
+    topLevelObjects = nil;
+    topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDDetailsLikesCell" owner:self options:nil];
+    TDDetailsLikesCell *cell1 = [topLevelObjects objectAtIndex:0];
+    minLikeheight = cell1.frame.size.height;
+    cell1 = nil;
 
     // Typing Bottom
     self.typingView = [[TDTypingView alloc] initWithFrame:CGRectMake(0.0,
-                                                                    [UIScreen mainScreen].bounds.size.height-[TDTypingView typingHeight]-self.navigationController.navigationBar.frame.size.height-[[UIApplication sharedApplication] statusBarFrame].size.height,
+                                                                    [UIScreen mainScreen].bounds.size.height-[TDTypingView typingHeight],
                                                                     self.view.frame.size.width,
                                                                     [TDTypingView typingHeight])];
     self.typingView.delegate = self;
@@ -86,6 +96,7 @@
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadPosts:) name:@"TDRefreshPostsNotification" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fullPostReturn:) name:FULL_POST_INFO_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newCommentReturn:) name:NEW_COMMENT_INFO_NOTICIATION object:nil];
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -124,9 +135,27 @@
     if ([notification.userInfo isKindOfClass:[NSDictionary class]]) {
         TDPost *newPost = [[TDPost alloc] initWithDictionary:notification.userInfo];
         if ([newPost.postId isEqualToNumber:self.post.postId]) {
-            self.post = nil;
-            self.post = [[TDPost alloc] initWithDictionary:notification.userInfo];
+            [self.post loadUpFromDict:notification.userInfo];
             [self.tableView reloadData];
+        }
+    }
+}
+
+-(void)newCommentReturn:(NSNotification*)notification
+{
+    if ([notification.userInfo isKindOfClass:[NSDictionary class]]) {
+
+        NSDictionary *commentDict = (NSDictionary *)notification.userInfo;
+        if ([commentDict objectForKey:@"comment"] && [[commentDict objectForKey:@"comment"] objectForKey:@"comment"]) {
+            TDComment *newComment = [[TDComment alloc] init];
+            [newComment user:[[TDCurrentUser sharedInstance] currentUserObject]
+                        dict:[[commentDict objectForKey:@"comment"] objectForKey:@"comment"]];
+            [self.post addComment:newComment];
+            [self.tableView reloadData];
+            [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:(2+[self.post.comments count])-1
+                                                                      inSection:0]
+                                  atScrollPosition:UITableViewScrollPositionBottom
+                                          animated:NO];
         }
     }
 }
@@ -146,11 +175,11 @@
             cell = [topLevelObjects objectAtIndex:0];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             cell.bottomPaddingLine.hidden = YES;
-            cell.likeCommentView.hidden = YES;
+            cell.likeView.hidden = YES;
         }
 
         [cell setPost:self.post];
-        cell.likeCommentView.row = indexPath.row;
+        cell.likeView.row = indexPath.row;
         return cell;
     }
 
@@ -197,9 +226,9 @@
     // Likes row
     if (indexPath.row == 1) {
         if ([self.post.likers count] == 0) {
-            return 33.0;    // at least one row to show 'like' button
+            return minLikeheight;    // at least one row to show 'like' button
         } else {
-            return [TDDetailsLikesCell numberOfRowsForLikers:[self.post.likers count]]*33.0;
+            return [TDDetailsLikesCell numberOfRowsForLikers:[self.post.likers count]]*minLikeheight;
         }
     }
 
@@ -285,14 +314,28 @@
 -(void)likeButtonPressedFromLikes
 {
     if (self.post.postId) {
+
+        // Add the like for the update
+        [self.post addLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
+        [self.tableView reloadData];
+
+        // Update Server
         TDPostAPI *api = [TDPostAPI sharedInstance];
         [api likePostWithId:self.post.postId];
     }
 }
 
--(void)unLikeButtonPressedLikes
+-(void)unLikeButtonPressedFromLikes
 {
+    NSLog(@"TDDetailViewController-unLikeButtonPressedLikes");
+
     if (self.post.postId) {
+
+        // Remove the like for the update
+        [self.post removeLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
+        [self.tableView reloadData];
+
+        // Update Server
         TDPostAPI *api = [TDPostAPI sharedInstance];
         [api unLikePostWithId:self.post.postId];
     }

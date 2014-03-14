@@ -40,6 +40,13 @@ typedef enum {
 
 @implementation TDPostView
 
+@synthesize delegate;
+
+- (void)dealloc
+{
+    delegate = nil;
+}
+
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];
 }
@@ -71,9 +78,9 @@ typedef enum {
     [self updateControlImage:ControlStateNone];
 
     // Likes & Comments
-    [self.likeCommentView setLike:post.liked];
-    [self.likeCommentView setLikesArray:post.likers];
-    [self.likeCommentView setCommentsArray:post.comments];
+    [self.likeView setLike:post.liked];
+    [self.likeView setLikesArray:post.likers];
+    [self.likeView setCommentsArray:post.comments];
 
     [[NSNotificationCenter defaultCenter] postNotificationName:@"TDDownloadPreviewImageNotification"
                                                         object:self
@@ -215,6 +222,15 @@ typedef enum {
 - (void)stopSpinner {
     [self.playerSpinner.layer removeAnimationForKey:kSpinningAnimation];
 }
+
+/*-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    if (delegate) {
+        if ([delegate respondsToSelector:@selector(postTouchedFromRow:)]) {
+            [delegate postTouchedFromRow:self.row];
+        }
+    }
+} */
 
 
 @end

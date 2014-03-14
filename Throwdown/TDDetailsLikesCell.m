@@ -42,13 +42,16 @@
 
 - (IBAction)likeButtonPressed:(UIButton *)sender
 {
+    NSLog(@"TDDetailsLikesCell-likeButtonPressed:%@", delegate);
     if (like) {
+        like = !like;
         if (delegate) {
             if ([delegate respondsToSelector:@selector(unLikeButtonPressedFromLikes)]) {
                 [delegate unLikeButtonPressedFromLikes];
             }
         }
     } else {
+        like = !like;
         if (delegate) {
             if ([delegate respondsToSelector:@selector(likeButtonPressedFromLikes)]) {
                 [delegate likeButtonPressedFromLikes];
@@ -59,6 +62,7 @@
 
 -(void)setLike:(BOOL)liked
 {
+    NSLog(@"TDDetailsLikesCell-setLike:%d", like);
     like = liked;
     if (liked) {
         UIImage *buttonImage = [UIImage imageNamed:@"like_button_on.png"];
@@ -88,6 +92,21 @@
 -(void)setLikesArray:(NSArray *)array
 {
     self.likers = array;
+
+    self.likeImageView.hidden = YES;
+    if ([self.likers count] > 0) {
+        self.likeImageView.hidden = NO;
+    }
+
+    // Remove any old buttons for cell reuse
+    UIView *buttonView = nil;
+    for (int i=800; i < 810; i++) {
+        buttonView = [self viewWithTag:i];
+        if (buttonView) {
+            [buttonView removeFromSuperview];
+        }
+        buttonView = nil;
+    }
 
     // Add image buttons
     NSInteger index = 0;

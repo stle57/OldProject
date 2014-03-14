@@ -211,8 +211,15 @@
             NSDictionary *returnDict = [NSDictionary dictionaryWithDictionary:responseObject];
             if ([returnDict objectForKey:@"success"]) {
                 if ([[returnDict objectForKey:@"success"] boolValue]) {
+
                     NSLog(@"New Comment Success!");
                     [self notifyPostsRefreshed];
+                    NSLog(@"New Comment Success!:%@", returnDict);
+
+                    // Notify any views to reload
+                    [[NSNotificationCenter defaultCenter] postNotificationName:NEW_COMMENT_INFO_NOTICIATION
+                                                                        object:self
+                                                                      userInfo:returnDict];
                 }
             }
         }

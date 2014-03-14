@@ -34,6 +34,7 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     [aCoder encodeObject:self.email forKey:@"email"];
     [aCoder encodeObject:self.authToken forKey:@"authentication_token"];
     [aCoder encodeObject:self.phoneNumber forKey:@"phone_number"];
+// not encoded    [aCoder encodeObject:self.picture forKey:@"picture"];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -46,6 +47,7 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
         _email       = [aDecoder decodeObjectForKey:@"email"];
         _authToken   = [aDecoder decodeObjectForKey:@"authentication_token"];
         _phoneNumber = [aDecoder decodeObjectForKey:@"phone_number"];
+// not decoded        _picture = [aDecoder decodeObjectForKey:@"picture"];
     }
     return self;
 }
@@ -58,6 +60,7 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     _email       = [dictionary objectForKey:@"email"];
     _authToken   = [dictionary objectForKey:@"authentication_token"];
     _phoneNumber = [dictionary objectForKey:@"phone_number"];
+    _picture     = [dictionary objectForKey:@"picture"];
 
     [self save];
 }
@@ -73,6 +76,7 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     _email = nil;
     _phoneNumber = nil;
     _authToken = nil;
+    _picture = nil;
     [self save];
 }
 
@@ -80,6 +84,22 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     NSString *filename = [NSHomeDirectory() stringByAppendingString:DATA_LOCATION];
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self];
     [data writeToFile:filename atomically:YES];
+}
+
+-(TDUser *)currentUserObject
+{
+    NSLog(@"currentUserObject");
+
+    if (!self.picture) {
+        _picture = @"default";
+    }
+
+    TDUser *user = [[TDUser alloc] init];
+    [user userId:self.userId
+        userName:self.username
+            name:self.name
+         picture:self.picture];
+    return user;
 }
 
 @end
