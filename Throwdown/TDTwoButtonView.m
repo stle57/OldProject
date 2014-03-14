@@ -38,7 +38,7 @@
 
 - (IBAction)likeButtonPressed:(UIButton *)sender
 {
-    NSLog(@"likeButtonPressed");
+    debug NSLog(@"likeButtonPressed");
     if (like) {
         if (delegate) {
             if ([delegate respondsToSelector:@selector(unLikeButtonPressedFromRow:)]) {
@@ -63,32 +63,20 @@
     }
 }
 
--(void)setLike:(BOOL)liked
-{
+- (void)setLike:(BOOL)liked {
     like = liked;
 
-   if (liked) {
-        UIImage *buttonImage = [UIImage imageNamed:@"but_liked_big.png"];
-        [self.likeButton setImage:buttonImage forState:UIControlStateNormal];
-        buttonImage = nil;
-        buttonImage = [UIImage imageNamed:@"but_liked_big_hit.png"];
-        [self.likeButton setImage:buttonImage forState:UIControlStateHighlighted];
-        buttonImage = nil;
+    if (liked) {
+        [self.likeButton setImage:[UIImage imageNamed:@"but_liked_big"] forState:UIControlStateNormal];
+        [self.likeButton setImage:[UIImage imageNamed:@"but_liked_big_hit"] forState:UIControlStateHighlighted];
     } else {
-        UIImage *buttonImage = [UIImage imageNamed:@"but_like_big.png"];
-        [self.likeButton setImage:buttonImage forState:UIControlStateNormal];
-        buttonImage = nil;
-        buttonImage = [UIImage imageNamed:@"but_like_big_hit.png"];
-        [self.likeButton setImage:buttonImage forState:UIControlStateHighlighted];
-        buttonImage = nil;
+        [self.likeButton setImage:[UIImage imageNamed:@"but_like_big"] forState:UIControlStateNormal];
+        [self.likeButton setImage:[UIImage imageNamed:@"but_like_big_hit"] forState:UIControlStateHighlighted];
     }
 }
 
--(void)setComment:(BOOL)commented
-{
-    UIImage *buttonImage = [UIImage imageNamed:@"but_comment_big.png"];
-    [self.commentButton setImage:buttonImage forState:UIControlStateNormal];
-    buttonImage = nil;
+- (void)setComment:(BOOL)commented {
+    [self.commentButton setImage:[UIImage imageNamed:@"but_comment_big"] forState:UIControlStateNormal];
 }
 
 /*- (UIView*)hitTest:(CGPoint)point withEvent:(UIEvent *)event
