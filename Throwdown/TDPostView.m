@@ -85,6 +85,8 @@ typedef enum {
     [self.likeView setLikesArray:post.likers];
     [self.likeView setCommentsArray:post.comments];
 
+    [self.previewImage setImage:nil];
+
     [[NSNotificationCenter defaultCenter] postNotificationName:@"TDDownloadPreviewImageNotification"
                                                         object:self
                                                       userInfo:@{@"imageView":self.previewImage, @"filename":self.filename}];
