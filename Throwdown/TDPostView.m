@@ -171,6 +171,9 @@ typedef enum {
                                                               object:self.playerItem];
                    self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
                    [self.playerLayer setPlayer:self.player];
+
+                   // Not sure why we have to specify this specifically, since this value is defined as default
+                   [[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategorySoloAmbient error: nil];
                } else {
                    // TODO: Put up an error state on the view
                    debug NSLog(@"The asset's tracks were not loaded:\n%@", [error localizedDescription]);
