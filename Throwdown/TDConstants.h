@@ -17,6 +17,8 @@ static NSString *const FTImage = @".jpg";
 static NSString *const CTVideo = @"video/mp4";
 static NSString *const CTImage = @"image/jpeg";
 
+static NSString *const TDNotificationStopPlayers = @"TDNotificationStopPlayers";
+
 @interface TDConstants : NSObject
 
 #define CELL_IDENTIFIER_POST_VIEW       @"TDPostView"

@@ -55,6 +55,9 @@
 {
     [super viewDidLoad];
 
+    // Stop any current playbacks
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
+
     // Title
     self.titleLabel.textColor = [TDConstants headerTextColor];
     [self.navigationItem setTitleView:self.titleLabel];

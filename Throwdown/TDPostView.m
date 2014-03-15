@@ -91,6 +91,10 @@ typedef enum {
 
     if (self.player != nil) {
         [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                        name:TDNotificationStopPlayers
+                                                      object:self];
+
+        [[NSNotificationCenter defaultCenter] removeObserver:self
                                                         name:AVPlayerItemDidPlayToEndTimeNotification
                                                       object:self.playerItem];
         [self.playerItem removeObserver:self forKeyPath:@"status" context:&ItemStatusContext];
@@ -128,18 +132,53 @@ typedef enum {
 - (void)singleTapGestureCaptured:(UITapGestureRecognizer *)gesture {
     if (!self.isLoading) {
         if (self.isPlaying) {
-            [self.player pause];
-            [self updateControlImage:ControlStatePaused];
+            [self stopVideo];
         } else {
             [self startVideo];
         }
-        self.isPlaying = !self.isPlaying;
+    }
+}
+
+- (void)stopVideoFromNotification:(NSNotification *)notification {
+    // Ignore if we're sending to ourselves
+    if (notification.object != self.filename) {
+        debug NSLog(@"TDNotificationStopPlayers ACCEPTED");
+        // setting didPlay prevents auto-play if this notification is received
+        // after tapping to start a video before video finishes buffering
+        self.didPlay = YES;
+        [self stopVideo];
+    } else {
+        debug NSLog(@"TDNotificationStopPlayers IGNORED");
+    }
+}
+
+- (void)sendStopNotification {
+    debug NSLog(@"TDNotificationStopPlayers SENT");
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:self.filename];
+}
+
+- (void)listenForStopNotification {
+    debug NSLog(@"TDNotificationStopPlayers LISTEN");
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(stopVideoFromNotification:)
+                                                 name:TDNotificationStopPlayers
+                                               object:nil];
+}
+
+- (void)stopVideo {
+    if (self.isPlaying) {
+        self.isPlaying = NO;
+        [self.player pause];
+        [self updateControlImage:ControlStatePaused];
     }
 }
 
 - (void)startVideo {
-    if (self.player == nil)  {
+    // Stop any previous players, then listen for the same command ourselves
+    [self sendStopNotification];
+    [self listenForStopNotification];
 
+    if (self.player == nil)  {
         self.isLoading = YES;
         NSURL *location = [TDConstants getStreamingUrlFor:self.filename];
         debug NSLog(@"Loading movie from: %@", location);
@@ -181,6 +220,7 @@ typedef enum {
            });
          }];
     } else {
+        self.isPlaying = YES;
         [self.player play];
         [self updateControlImage:ControlStateNone];
     }
@@ -191,13 +231,14 @@ typedef enum {
         dispatch_async(dispatch_get_main_queue(), ^{
             self.playerLayer.hidden = NO;
             // Only play once on status change (status change is called every time the player is reset)
-            if (!self.didPlay) {
+            if (self.isLoading) {
                 self.isLoading = NO;
-                self.didPlay = YES;
-                self.isPlaying = YES;
                 [self stopSpinner];
-                [self.player play];
                 [self updateControlImage:ControlStateNone];
+            }
+            if (!self.didPlay) {
+                self.didPlay = YES;
+                [self startVideo];
             }
         });
         return;
