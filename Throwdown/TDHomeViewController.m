@@ -103,9 +103,6 @@
     [self.tableView addSubview:self.refreshControl];
     [self.refreshControl setTintColor:[TDConstants brandingRedColor]];
 
-
-//    self.header = 
-//    self.progressIndicator = [[TDProgressIndicator alloc] initWithTableView:self.tableView postUpload:nil];
     self.headerView = [[TDHomeHeaderView alloc] initWithTableView:self.tableView];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadStarted:) name:@"TDPostUploadStarted" object:nil];
@@ -156,6 +153,8 @@
 #pragma mark - video upload indicator
 
 - (void)uploadStarted:(NSNotification *)notification {
+    [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
+
     TDPostUpload *upload = (TDPostUpload *)notification.object;
     [self.headerView addUpload:upload];
 }
