@@ -16,28 +16,29 @@ NSLocalizedStringFromTableInBundle(key, @"NSDateTimeAgo", [NSBundle bundleWithPa
     NSDate *now = [NSDate date];
     double deltaSeconds = fabs([self timeIntervalSinceDate:now]);
     double deltaMinutes = deltaSeconds / 60.0f;
-    
+
     int minutes;
-    
+
     if(deltaSeconds < 5)
     {
         return NSDateTimeAgoLocalizedStrings(@"Just now");
     }
     else if(deltaSeconds < 60)
     {
-        return [self stringFromFormat:@"%%d %@seconds ago" withValue:deltaSeconds];
+        return [self stringFromFormat:@"%%d %@secs ago" withValue:deltaSeconds];
+
     }
     else if(deltaSeconds < 120)
     {
-        return NSDateTimeAgoLocalizedStrings(@"A minute ago");
+        return NSDateTimeAgoLocalizedStrings(@"1 min ago");
     }
     else if (deltaMinutes < 60)
     {
-        return [self stringFromFormat:@"%%d %@minutes ago" withValue:deltaMinutes];
+        return [self stringFromFormat:@"%%d %@mins ago" withValue:deltaMinutes];
     }
     else if (deltaMinutes < 120)
     {
-        return NSDateTimeAgoLocalizedStrings(@"An hour ago");
+        return NSDateTimeAgoLocalizedStrings(@"1 hour ago");
     }
     else if (deltaMinutes < (24 * 60))
     {
@@ -75,7 +76,7 @@ NSLocalizedStringFromTableInBundle(key, @"NSDateTimeAgo", [NSBundle bundleWithPa
     {
         return NSDateTimeAgoLocalizedStrings(@"Last year");
     }
-    
+
     minutes = (int)floor(deltaMinutes/(60 * 24 * 365));
     return [self stringFromFormat:@"%%d %@years ago" withValue:minutes];
 }
