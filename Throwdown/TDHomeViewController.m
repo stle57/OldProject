@@ -28,6 +28,7 @@
     CGPoint origRecordButtonCenter;
     CGPoint origNotificationButtonCenter;
     CGPoint origProfileButtonCenter;
+    CGPoint origButtonViewCenter;
     UIDynamicAnimator *animator;
     CGFloat postViewHeight;
     CGFloat likeHeight;
@@ -39,6 +40,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *recordButton;
 @property (weak, nonatomic) IBOutlet UIButton *notificationButton;
 @property (weak, nonatomic) IBOutlet UIButton *profileButton;
+@property (weak, nonatomic) IBOutlet UIView *bottomButtonHolderView;
 @property (nonatomic, retain) UIRefreshControl *refreshControl;
 @property (nonatomic, retain) UIDynamicAnimator *animator;
 @property (strong, nonatomic) TDHomeHeaderView *headerView;
@@ -54,16 +56,20 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    [self.view insertSubview:self.recordButton aboveSubview:self.tableView];
-    [self.view insertSubview:self.notificationButton aboveSubview:self.tableView];
-    [self.view insertSubview:self.profileButton aboveSubview:self.tableView];
+    [self.view insertSubview:self.bottomButtonHolderView aboveSubview:self.tableView];
+//    [self.view insertSubview:self.notificationButton aboveSubview:self.tableView];
+//    [self.view insertSubview:self.profileButton aboveSubview:self.tableView];
     
     // Fix buttons for 3.5" screens
-    if ([UIScreen mainScreen].bounds.size.height == 480.0) {
+    self.bottomButtonHolderView.center = CGPointMake(self.bottomButtonHolderView.center.x,
+                                                     [UIScreen mainScreen].bounds.size.height-self.bottomButtonHolderView.frame.size.height/2.0);
+    origButtonViewCenter = self.bottomButtonHolderView.center;
+
+/*    if ([UIScreen mainScreen].bounds.size.height == 480.0) {
         self.recordButton.center = CGPointMake(self.recordButton.center.x, [UIScreen mainScreen].bounds.size.height-(568.0-528.0));
         self.notificationButton.center = CGPointMake(self.notificationButton.center.x, [UIScreen mainScreen].bounds.size.height-(568.0-538.0));
         self.profileButton.center = CGPointMake(self.profileButton.center.x, [UIScreen mainScreen].bounds.size.height-(568.0-538.0));
-    }
+    } */
     
     origRecordButtonCenter = self.recordButton.center;
     origNotificationButtonCenter = self.notificationButton.center;
@@ -164,51 +170,93 @@
 -(void)hideBottomButtons
 {
     // Place off screen
-    [self.recordButton setTranslatesAutoresizingMaskIntoConstraints:YES];
+    self.bottomButtonHolderView.center = CGPointMake(self.bottomButtonHolderView.center.x,
+                                                     [UIScreen mainScreen].bounds.size.height+(self.bottomButtonHolderView.frame.size.height/2.0)+1.0);
+
+/*    [self.recordButton setTranslatesAutoresizingMaskIntoConstraints:YES];
     [self.notificationButton setTranslatesAutoresizingMaskIntoConstraints:YES];
     [self.profileButton setTranslatesAutoresizingMaskIntoConstraints:YES];
     
     self.recordButton.center = CGPointMake(self.recordButton.center.x, origRecordButtonCenter.y+self.recordButton.frame.size.height*1.2);
     self.notificationButton.center = CGPointMake(self.notificationButton.center.x, origNotificationButtonCenter.y+self.recordButton.frame.size.height*1.2);
-    self.profileButton.center = CGPointMake(self.profileButton.center.x, origProfileButtonCenter.y+self.recordButton.frame.size.height*1.2);
+    self.profileButton.center = CGPointMake(self.profileButton.center.x, origProfileButtonCenter.y+self.recordButton.frame.size.height*1.2); */
+
+
 }
 
 -(void)animateButtonsOnToScreen
 {
+    // Hide 1st
+    [self hideBottomButtons];
+
+    // First position
+/*    CGPoint firstPosition = CGPointMake(origButtonViewCenter.x,
+                                        origButtonViewCenter.y-18.0);
+    CGPoint secondPosition = CGPointMake(origButtonViewCenter.x,
+                                         origButtonViewCenter.y+3.0);
+
+    // Animate on
+    [UIView animateWithDuration: 0.3
+                          delay: 0.0
+                        options: UIViewAnimationOptionCurveLinear
+                     animations:^{
+
+                         self.bottomButtonHolderView.center = firstPosition;
+                     }
+                     completion:^(BOOL springInFinished){
+
+                         if (springInFinished)
+                         {
+                             [UIView animateWithDuration: 0.2
+                                                   delay: 0.0
+                                                 options: UIViewAnimationOptionCurveLinear
+                                              animations:^{
+
+                                                  self.bottomButtonHolderView.center = secondPosition;
+                                              }
+                                              completion:^(BOOL springBackFinished){
+                                                  
+                                                  if (springBackFinished)
+                                                  {
+                                                      [UIView animateWithDuration: 0.1
+                                                                            delay: 0.0
+                                                                          options: UIViewAnimationOptionCurveLinear
+                                                                       animations:^{
+
+                                                                           self.bottomButtonHolderView.center = origButtonViewCenter;
+                                                                       }
+                                                                       completion:^(BOOL springDownFinished){
+
+                                                                           if (springDownFinished)
+                                                                           {
+                                                                           }
+                                                                       }];
+                                                  }
+                                              }];
+                         }
+                     }];
+ */
+
+
     UIDynamicAnimator* anAnimator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
     self.animator = anAnimator;
     //self.animator.delegate = self;
     
-    UIGravityBehavior* gravityBeahvior = [[UIGravityBehavior alloc] initWithItems:@[self.recordButton, self.notificationButton, self.profileButton]];
+    UIGravityBehavior* gravityBeahvior = [[UIGravityBehavior alloc] initWithItems:@[self.bottomButtonHolderView]];
     gravityBeahvior.magnitude = 4.0;
     gravityBeahvior.gravityDirection = CGVectorMake(0.0, -1.0);
-    UICollisionBehavior* collisionBehavior1 = [[UICollisionBehavior alloc] initWithItems:@[self.recordButton]];
+    UICollisionBehavior* collisionBehavior1 = [[UICollisionBehavior alloc] initWithItems:@[self.bottomButtonHolderView]];
     collisionBehavior1.translatesReferenceBoundsIntoBoundary = NO;
     [collisionBehavior1 addBoundaryWithIdentifier:@"middle"
                                         fromPoint:CGPointMake(0.0,
-                                                              origRecordButtonCenter.y-self.recordButton.frame.size.height/2.0)
+                                                              origButtonViewCenter.y-self.bottomButtonHolderView.frame.size.height/2.0)
                                           toPoint:CGPointMake(self.view.frame.size.width,
-                                                              origRecordButtonCenter.y-self.recordButton.frame.size.height/2.0)];
-    UICollisionBehavior* collisionBehavior2 = [[UICollisionBehavior alloc] initWithItems:@[self.notificationButton]];
-    collisionBehavior2.translatesReferenceBoundsIntoBoundary = NO;
-    [collisionBehavior2 addBoundaryWithIdentifier:@"middle"
-                                        fromPoint:CGPointMake(0.0,
-                                                              origNotificationButtonCenter.y-self.notificationButton.frame.size.height/2.0)
-                                          toPoint:CGPointMake(self.view.frame.size.width,
-                                                              origNotificationButtonCenter.y-self.notificationButton.frame.size.height/2.0)];
-    UICollisionBehavior* collisionBehavior3 = [[UICollisionBehavior alloc] initWithItems:@[self.profileButton]];
-    collisionBehavior3.translatesReferenceBoundsIntoBoundary = NO;
-    [collisionBehavior3 addBoundaryWithIdentifier:@"middle"
-                                        fromPoint:CGPointMake(0.0,
-                                                              origProfileButtonCenter.y-self.profileButton.frame.size.height/2.0)
-                                          toPoint:CGPointMake(self.view.frame.size.width,
-                                                              origProfileButtonCenter.y-self.profileButton.frame.size.height/2.0)];
-    UIDynamicItemBehavior* propertiesBehavior = [[UIDynamicItemBehavior alloc] initWithItems:@[self.recordButton, self.notificationButton, self.profileButton]];
-    propertiesBehavior.elasticity = 0.1;
+                                                              origButtonViewCenter.y-self.bottomButtonHolderView.frame.size.height/2.0)];
+    UIDynamicItemBehavior* propertiesBehavior = [[UIDynamicItemBehavior alloc] initWithItems:@[self.bottomButtonHolderView]];
+    propertiesBehavior.elasticity = 0.4;
+    propertiesBehavior.friction = 100.0;
     [self.animator addBehavior:gravityBeahvior];
     [self.animator addBehavior:collisionBehavior1];
-    [self.animator addBehavior:collisionBehavior2];
-    [self.animator addBehavior:collisionBehavior3];
     [self.animator addBehavior:propertiesBehavior];
     
 //    collisionBehavior.collisionDelegate = self;
