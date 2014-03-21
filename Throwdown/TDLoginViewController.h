@@ -14,6 +14,7 @@
 
 }
 
+@property (weak, nonatomic) IBOutlet UIImageView *backgroundImageView;
 @property (weak, nonatomic) IBOutlet UILabel *topLabel;
 @property (weak, nonatomic) IBOutlet TDTextField *userNameTextField;
 @property (weak, nonatomic) IBOutlet TDTextField *passwordTextField;

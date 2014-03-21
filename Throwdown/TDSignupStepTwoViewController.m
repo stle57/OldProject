@@ -74,6 +74,9 @@
                                                 self.privacyButton.center.y-14.0);
         self.signUpButton.center = CGPointMake(self.signUpButton.center.x,
                                                self.signUpButton.center.y-28.0);
+        UIImage *backgroundImage = [UIImage imageNamed:@"reg_bg3_480"];
+        self.backgroundImageView.image = backgroundImage;
+        backgroundImage = nil;
     }
 }
 

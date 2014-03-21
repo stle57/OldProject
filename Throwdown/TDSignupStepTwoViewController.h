@@ -14,6 +14,7 @@
     BOOL isSigningUp;
 }
 
+@property (weak, nonatomic) IBOutlet UIImageView *backgroundImageView;
 @property (weak, nonatomic) IBOutlet UILabel *topLabel;
 @property (weak, nonatomic) IBOutlet UILabel *privacyLabel1;
 @property (weak, nonatomic) IBOutlet UIButton *privacyButton;

@@ -74,6 +74,9 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
         // move up log in button slightly
         self.nextButton.center = CGPointMake(self.nextButton.center.x,
                                              self.nextButton.center.y-35.0);
+        UIImage *backgroundImage = [UIImage imageNamed:@"reg_bg2_480"];
+        self.backgroundImageView.image = backgroundImage;
+        backgroundImage = nil;
     }
 }
 

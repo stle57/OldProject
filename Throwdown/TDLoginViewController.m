@@ -46,6 +46,9 @@
         // move up log in button slightly
         self.loginButton.center = CGPointMake(self.loginButton.center.x,
                                                 self.loginButton.center.y-22.0);
+        UIImage *backgroundImage = [UIImage imageNamed:@"reg_bg2_480"];
+        self.backgroundImageView.image = backgroundImage;
+        backgroundImage = nil;
     }
 }
 
