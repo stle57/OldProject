@@ -50,10 +50,12 @@
     // Textfields
     [self.userNameTextField setUpWithIconImageNamed:@"reg_ico_username"
                                         placeHolder:@"User Name"
+                                       keyboardType:UIKeyboardTypeTwitter
                                                type:kTDTextFieldType_UserName
                                            delegate:self];
     [self.passwordTextField setUpWithIconImageNamed:@"reg_ico_pass"
                                         placeHolder:@"Password"
+                                       keyboardType:UIKeyboardTypeDefault
                                                type:kTDTextFieldType_Password
                                            delegate:self];
     [self.passwordTextField secure];
@@ -129,6 +131,7 @@
 
     self.progress.alpha = 0.0;
     self.signUpButton.hidden = YES;
+    self.signUpButton.enabled = NO;
     self.progress.hidden = NO;
     [self.progress startAnimating];
 
@@ -220,7 +223,7 @@
 - (BOOL)validateAllFields
 {
     BOOL valid = self.userNameTextField.valid && self.passwordTextField.valid;
-    self.signUpButton.hidden = !valid;
+    self.signUpButton.enabled = valid;
     return valid;
 }
 

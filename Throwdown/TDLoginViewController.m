@@ -30,10 +30,12 @@
     // Textfields
     [self.userNameTextField setUpWithIconImageNamed:@"reg_ico_email"
                                         placeHolder:@"Email Address"
+                                       keyboardType:UIKeyboardTypeEmailAddress
                                                type:kTDTextFieldType_Email
                                            delegate:self];
     [self.passwordTextField setUpWithIconImageNamed:@"reg_ico_pass"
                                         placeHolder:@"Password"
+                                       keyboardType:UIKeyboardTypeDefault
                                                type:kTDTextFieldType_Password
                                            delegate:self];
     [self.passwordTextField secure];
@@ -72,9 +74,9 @@
     }
 
     if ([TDViewControllerHelper validateEmail:self.userEmail] && [self.password length] > 5) {
-        self.loginButton.hidden = NO;
+        self.loginButton.enabled = YES;
     } else {
-        self.loginButton.hidden = YES;
+        self.loginButton.enabled = NO;
     }
 }
 
@@ -98,9 +100,9 @@
     }
 
     if ([TDViewControllerHelper validateEmail:self.userEmail] && [self.password length] > 5) {
-        self.loginButton.hidden = NO;
+        self.loginButton.enabled = YES;
     } else {
-        self.loginButton.hidden = YES;
+        self.loginButton.enabled = NO;
     }
 
     return NO;
@@ -119,6 +121,7 @@
 
     self.backButton.enabled = NO;
     self.loginButton.hidden = YES;
+    self.loginButton.enabled = NO;
 
     self.progress.alpha = 0.0;
     self.progress.hidden = NO;
@@ -142,6 +145,7 @@
                                  } else {
                                      [TDViewControllerHelper showAlertMessage:@"Email or password is wrong, try again." withTitle:nil];
                                      self.loginButton.enabled = YES;
+                                     self.loginButton.hidden = NO;
                                      self.backButton.enabled = YES;
                                      [self.progress stopAnimating];
                                      [self.userNameTextField becomeFirstResponder];

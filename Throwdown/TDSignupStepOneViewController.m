@@ -55,14 +55,17 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
     // Textfields
     [self.phoneNumberTextField setUpWithIconImageNamed:@"reg_ico_phone"
                                            placeHolder:@"Phone Number"
+                                          keyboardType:UIKeyboardTypePhonePad
                                                   type:kTDTextFieldType_Phone
                                               delegate:self];
     [self.emailTextField setUpWithIconImageNamed:@"reg_ico_email"
                                      placeHolder:@"Email Address"
+                                    keyboardType:UIKeyboardTypeEmailAddress
                                             type:kTDTextFieldType_Email
                                         delegate:self];
     [self.firstLastNameTextField setUpWithIconImageNamed:@"reg_ico_name"
                                              placeHolder:@"First and Last Name"
+                                            keyboardType:UIKeyboardTypeNamePhonePad
                                                     type:kTDTextFieldType_FirstLast
                                                 delegate:self];
 }
@@ -204,7 +207,7 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 - (BOOL)validateAllFields
 {
     BOOL valid = self.phoneNumberTextField.valid && self.emailTextField.valid && self.firstLastNameTextField.valid;
-    self.nextButton.hidden = !valid;
+    self.nextButton.enabled = valid;
     return valid;
 }
 

@@ -39,7 +39,7 @@ typedef NSUInteger kTDTextFieldType;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *spinner;
 @property (nonatomic, assign) BOOL valid;
 
--(void)setUpWithIconImageNamed:(NSString *)iconName placeHolder:(NSString *)placeHolder type:(kTDTextFieldType)aType delegate:(id)aDelegate;
+-(void)setUpWithIconImageNamed:(NSString *)iconName placeHolder:(NSString *)placeHolder keyboardType:(UIKeyboardType)keyboardType type:(kTDTextFieldType)aType delegate:(id)aDelegate;
 -(void)secure;
 -(void)textfieldText:(NSString *)text;
 -(void)status:(BOOL)status;

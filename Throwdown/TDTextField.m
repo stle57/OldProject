@@ -8,6 +8,8 @@
 
 #import "TDTextField.h"
 #import "TDAppDelegate.h"
+#import "NBPhoneNumber.h"
+#import "NBPhoneNumberUtil.h"
 
 @implementation TDTextField
 
@@ -39,7 +41,7 @@
 }
 
 // Pass nil for iconName to give entire width to placeholder and textfield
--(void)setUpWithIconImageNamed:(NSString *)iconName placeHolder:(NSString *)placeHolder type:(kTDTextFieldType)aType delegate:(id)aDelegate
+-(void)setUpWithIconImageNamed:(NSString *)iconName placeHolder:(NSString *)placeHolder keyboardType:(UIKeyboardType)keyboardType type:(kTDTextFieldType)aType delegate:(id)aDelegate
 {
     self.delegate = aDelegate;
     type = aType;
@@ -48,14 +50,25 @@
     self.placeholderLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:20.0];
     self.placeholderLabel.text = placeHolder;
     self.placeholderLabel.alpha = 0.8;
+
     self.textfield.font = [UIFont fontWithName:@"ProximaNova-Regular" size:20.0];
+    self.textfield.keyboardType = keyboardType;
+    if (keyboardType == UIKeyboardTypeEmailAddress || keyboardType == UIKeyboardTypeTwitter) {
+        self.textfield.autocapitalizationType = UITextAutocapitalizationTypeNone;
+        self.textfield.autocorrectionType = UITextAutocorrectionTypeNo;
+    }
+    if (type == kTDTextFieldType_Phone) {
+        NBPhoneNumberUtil *numberUtil = [NBPhoneNumberUtil sharedInstance];
+        NSString *numberPrefix = [[NSString alloc] initWithFormat:@"+%u", (unsigned int)[numberUtil getCountryCodeForRegion:[numberUtil countryCodeByCarrier]]];
+        self.textfield.text = numberPrefix;
+        self.placeholderLabel.hidden = YES;
+    }
 
     if (iconName) {
         UIImage *iconImage = [UIImage imageNamed:iconName];
         self.iconImageView.image = iconImage;
         iconImage = nil;
-    }
-    else {
+    } else {
         // redo frames
         CGRect newFrame = self.placeholderLabel.frame;
         newFrame.origin.x = self.iconImageView.frame.origin.x;
