@@ -282,11 +282,16 @@
 		self.counterLabel.textColor = [UIColor lightGrayColor];
 	}
 
+    // Post Button Frame
+    CGRect newFrame = self.postButton.frame;
+    newFrame.size.height = self.hpTextView.frame.size.height;
+
     [UIView animateWithDuration: 0.1
                           delay: 0.0
                         options: UIViewAnimationOptionCurveLinear
                      animations:^{
 
+                         self.postButton.frame = newFrame;
                          self.postButton.center = CGPointMake(self.postButton.center.x,
                                                               self.hpTextView.center.y);
                          self.counterLabel.center = CGPointMake(self.counterLabel.center.x,
