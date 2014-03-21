@@ -17,6 +17,7 @@
 #import "TDShareVideoViewController.h"
 #import "TDUnwindSlideLeftSegue.h"
 #import "TDConstants.h"
+#import "TDFileSystemHelper.h"
 
 #define TEMP_FILE_PATH @"Documents/WorkingMovieTemp.m4v"
 #define TEMP_IMG_PATH @"Documents/working_image.jpg"
@@ -306,15 +307,7 @@ static const NSString *ItemStatusContext;
 }
 
 -(void)deleteTmpFile {
-    NSFileManager *fm = [NSFileManager defaultManager];
-    BOOL exist = [fm fileExistsAtPath:self.editingVideoUrl.path];
-    NSError *err;
-    if (exist) {
-        [fm removeItemAtURL:self.editingVideoUrl error:&err];
-        if (err) {
-            debug NSLog(@"file remove error, %@", err.localizedDescription);
-        }
-    }
+    [TDFileSystemHelper removeFileAt:[self.editingVideoUrl path]];
 }
 
 @end

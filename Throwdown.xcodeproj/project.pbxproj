@@ -37,6 +37,7 @@
 		579149E08F7B4EE789901248 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E657ABE418B84EA68554F855 /* libPods.a */; };
 		A11999D618D90D5200C39ABF /* TDShareVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A11999D518D90D5200C39ABF /* TDShareVideoViewController.m */; };
 		A11999DA18D929E200C39ABF /* UIPlaceHolderTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A11999D918D929E200C39ABF /* UIPlaceHolderTextView.m */; };
+		A11999DD18DC0D4200C39ABF /* TDFileSystemHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = A11999DC18DC0D4200C39ABF /* TDFileSystemHelper.m */; };
 		A11E04DC1888CB79002F981A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11E04DB1888CB79002F981A /* Foundation.framework */; };
 		A11E04DE1888CB79002F981A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11E04DD1888CB79002F981A /* CoreGraphics.framework */; };
 		A11E04E01888CB79002F981A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11E04DF1888CB79002F981A /* UIKit.framework */; };
@@ -134,13 +135,15 @@
 		2DA73D7518BFCC2D00D87370 /* TDLikeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDLikeView.h; sourceTree = "<group>"; };
 		2DA73D7618BFCC2E00D87370 /* TDLikeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDLikeView.m; sourceTree = "<group>"; };
 		2DA73D7818BFCCD000D87370 /* TDLikeView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDLikeView.xib; sourceTree = "<group>"; };
+		2DBA42FE18DA455500366737 /* TDTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTextField.h; sourceTree = "<group>"; };
+		2DBA42FF18DA455500366737 /* TDTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTextField.m; sourceTree = "<group>"; };
+		2DBA430018DA455500366737 /* TDTextField.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDTextField.xib; sourceTree = "<group>"; };
 		A11999D418D90D5200C39ABF /* TDShareVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDShareVideoViewController.h; sourceTree = "<group>"; };
 		A11999D518D90D5200C39ABF /* TDShareVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDShareVideoViewController.m; sourceTree = "<group>"; };
 		A11999D818D929E200C39ABF /* UIPlaceHolderTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIPlaceHolderTextView.h; sourceTree = "<group>"; };
 		A11999D918D929E200C39ABF /* UIPlaceHolderTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIPlaceHolderTextView.m; sourceTree = "<group>"; };
-		2DBA42FE18DA455500366737 /* TDTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTextField.h; sourceTree = "<group>"; };
-		2DBA42FF18DA455500366737 /* TDTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTextField.m; sourceTree = "<group>"; };
-		2DBA430018DA455500366737 /* TDTextField.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDTextField.xib; sourceTree = "<group>"; };
+		A11999DB18DC0D4200C39ABF /* TDFileSystemHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDFileSystemHelper.h; sourceTree = "<group>"; };
+		A11999DC18DC0D4200C39ABF /* TDFileSystemHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDFileSystemHelper.m; sourceTree = "<group>"; };
 		A11E04D81888CB79002F981A /* Throwdown.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Throwdown.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A11E04DB1888CB79002F981A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A11E04DD1888CB79002F981A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -438,6 +441,8 @@
 			children = (
 				A1432D1E18AA02990073E492 /* TDViewControllerHelper.h */,
 				A1432D1F18AA02990073E492 /* TDViewControllerHelper.m */,
+				A11999DB18DC0D4200C39ABF /* TDFileSystemHelper.h */,
+				A11999DC18DC0D4200C39ABF /* TDFileSystemHelper.m */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -712,6 +717,7 @@
 				2D5714CC18BD9AB300AF0B4D /* VideoButtonSegue.m in Sources */,
 				A19FF60F18970BBB001A0AD0 /* RSContainer.m in Sources */,
 				2DA41A5618C7D89C00B21C74 /* TDDetailViewController.m in Sources */,
+				A11999DD18DC0D4200C39ABF /* TDFileSystemHelper.m in Sources */,
 				2D2E832E18CA579B00846B2E /* TDComment.m in Sources */,
 				A19FF60D18970BBB001A0AD0 /* RSCDNContainer.m in Sources */,
 				2DA41A5A18C7E31000B21C74 /* TDTypingView.m in Sources */,

@@ -15,5 +15,6 @@
 - (void)validateCredentials:(NSDictionary *)parameters callback:(void (^)(BOOL success))callback;
 - (void)signupUser:(NSDictionary *)userAttributes callback:(void (^)(BOOL success, NSDictionary *user))callback;
 - (void)loginUser:(NSString *)email withPassword:(NSString *)password callback:(void (^)(BOOL success, NSDictionary *user))callback;
+- (void)logoutUser;
 
 @end

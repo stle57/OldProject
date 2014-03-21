@@ -111,4 +111,11 @@
     }];
 }
 
+- (void)logoutUser {
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/users/sign_out.json"];
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [self.httpManager DELETE:url parameters:nil success:nil failure:nil];
+}
+
+
 @end

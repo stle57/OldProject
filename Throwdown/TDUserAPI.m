@@ -61,6 +61,7 @@
 
 - (void)logout {
     [self.currentUser logout];
+    [[TDAPIClient sharedInstance] logoutUser];
 }
 
 @end

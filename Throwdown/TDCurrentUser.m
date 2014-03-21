@@ -7,6 +7,7 @@
 //
 
 #import "TDCurrentUser.h"
+#import "TDFileSystemHelper.h"
 
 static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
 
@@ -77,19 +78,18 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     _phoneNumber = nil;
     _authToken = nil;
     _picture = nil;
-    [self save];
+    [TDFileSystemHelper removeFileAt:[NSHomeDirectory() stringByAppendingString:DATA_LOCATION]];
 }
 
 - (void)save {
     NSString *filename = [NSHomeDirectory() stringByAppendingString:DATA_LOCATION];
+    [TDFileSystemHelper removeFileAt:filename];
     NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self];
     [data writeToFile:filename atomically:YES];
 }
 
 -(TDUser *)currentUserObject
 {
-    NSLog(@"currentUserObject");
-
     if (!self.picture) {
         _picture = @"default";
     }

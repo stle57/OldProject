@@ -11,6 +11,7 @@
 #import "TDConstants.h"
 #import "RSClient.h"
 #import "TDProgressIndicator.h"
+#import "TDFileSystemHelper.h"
 
 typedef enum {
     UploadTypeVideo,
@@ -180,8 +181,8 @@ typedef enum {
     [self cleanup];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [[TDPostAPI sharedInstance] saveImage:[UIImage imageWithContentsOfFile:self.persistedPhotoPath] filename:self.finalPhotoName];
-        [self removeFileAt:self.persistedPhotoPath];
-        [self removeFileAt:self.persistedVideoPath];
+        [TDFileSystemHelper removeFileAt:self.persistedPhotoPath];
+        [TDFileSystemHelper removeFileAt:self.persistedVideoPath];
     });
 }
 
@@ -258,19 +259,8 @@ typedef enum {
     }];
 }
 
-- (void)removeFileAt:(NSString *)location {
-    NSFileManager *fm = [NSFileManager defaultManager];
-    if ([fm fileExistsAtPath:location]) {
-        NSError *err;
-        [fm removeItemAtPath:location error:&err];
-        if (err) {
-            debug NSLog(@"file remove error, %@", err.localizedDescription);
-        }
-    }
-}
-
 - (void)copyTempFile:(NSString *)originalLocation to:(NSString *)newLocation {
-    [self removeFileAt:newLocation];
+    [TDFileSystemHelper removeFileAt:newLocation];
     NSFileManager *fm = [NSFileManager defaultManager];
     NSError *error;
     if (![fm copyItemAtPath:originalLocation toPath:newLocation error:&error]) {
