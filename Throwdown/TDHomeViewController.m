@@ -64,12 +64,6 @@
     self.bottomButtonHolderView.center = CGPointMake(self.bottomButtonHolderView.center.x,
                                                      [UIScreen mainScreen].bounds.size.height-self.bottomButtonHolderView.frame.size.height/2.0);
     origButtonViewCenter = self.bottomButtonHolderView.center;
-
-/*    if ([UIScreen mainScreen].bounds.size.height == 480.0) {
-        self.recordButton.center = CGPointMake(self.recordButton.center.x, [UIScreen mainScreen].bounds.size.height-(568.0-528.0));
-        self.notificationButton.center = CGPointMake(self.notificationButton.center.x, [UIScreen mainScreen].bounds.size.height-(568.0-538.0));
-        self.profileButton.center = CGPointMake(self.profileButton.center.x, [UIScreen mainScreen].bounds.size.height-(568.0-538.0));
-    } */
     
     origRecordButtonCenter = self.recordButton.center;
     origNotificationButtonCenter = self.notificationButton.center;

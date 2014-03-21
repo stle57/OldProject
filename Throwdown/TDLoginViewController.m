@@ -22,8 +22,9 @@
 
 @implementation TDLoginViewController
 
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
+-(void)viewDidLoad
+{
+    [super viewDidLoad];
 
     self.topLabel.font = [UIFont fontWithName:@"ProximaNova-Light" size:20.0];
 
@@ -39,6 +40,17 @@
                                                type:kTDTextFieldType_Password
                                            delegate:self];
     [self.passwordTextField secure];
+
+    // Small fix if 3.5" screen
+    if ([UIScreen mainScreen].bounds.size.height == 480.0) {
+        // move up log in button slightly
+        self.loginButton.center = CGPointMake(self.loginButton.center.x,
+                                                self.loginButton.center.y-22.0);
+    }
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
 }
 
 - (void)viewDidAppear:(BOOL)animated {

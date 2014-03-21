@@ -134,6 +134,16 @@
     [self.spinner stopAnimating];
 }
 
+- (void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    if (delegate) {
+        if ([delegate respondsToSelector:@selector(textFieldDidBeginEditing:type:)]) {
+            [delegate textFieldDidBeginEditing:textField
+                                          type:type];
+        }
+    }
+}
+
 - (void)textFieldDidChange:(UITextField *)textField
 {
     self.valid = NO;    // Invalidated by change of text

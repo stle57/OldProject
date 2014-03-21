@@ -68,6 +68,13 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
                                             keyboardType:UIKeyboardTypeNamePhonePad
                                                     type:kTDTextFieldType_FirstLast
                                                 delegate:self];
+
+    // Small fix if 3.5" screen
+    if ([UIScreen mainScreen].bounds.size.height == 480.0) {
+        // move up log in button slightly
+        self.nextButton.center = CGPointMake(self.nextButton.center.x,
+                                             self.nextButton.center.y-35.0);
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -107,6 +114,11 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 }
 
 #pragma mark - TDTextField delegates
+-(void)textFieldDidBeginEditing:(UITextField *)textField type:(kTDTextFieldType)type
+{
+    [self validateAllFields];
+}
+
 -(void)textFieldDidChange:(UITextField *)textField type:(kTDTextFieldType)type
 {
     switch (type) {

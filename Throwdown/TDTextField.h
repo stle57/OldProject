@@ -21,6 +21,7 @@ typedef NSUInteger kTDTextFieldType;
 @optional
 -(void)textFieldDidChange:(UITextField *)textField type:(kTDTextFieldType)type;
 -(BOOL)textFieldShouldReturn:(UITextField *)textField type:(kTDTextFieldType)type;
+-(void)textFieldDidBeginEditing:(UITextField *)textField type:(kTDTextFieldType)type;
 @end
 
 @interface TDTextField : UIView <UITextFieldDelegate>

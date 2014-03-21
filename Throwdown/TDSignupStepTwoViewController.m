@@ -15,7 +15,6 @@
 
 @interface TDSignupStepTwoViewController ()<UITextFieldDelegate>
 
-//@property (weak, nonatomic) IBOutlet UITextField *usernameField;
 @property (weak, nonatomic) IBOutlet UIButton *signUpButton;
 @property (copy, nonatomic) NSDictionary *userParameters;
 @property (strong, nonatomic) NSRegularExpression *usernamePattern;
@@ -65,6 +64,17 @@
                                                         selector:@selector(validateUsernameField)
                                                         userInfo:nil
                                                          repeats:YES];
+
+    // Small fix if 3.5" screen
+    if ([UIScreen mainScreen].bounds.size.height == 480.0) {
+        // move up log in button slightly
+        self.privacyLabel1.center = CGPointMake(self.privacyLabel1.center.x,
+                                                self.privacyLabel1.center.y-12.0);
+        self.privacyButton.center = CGPointMake(self.privacyButton.center.x,
+                                                self.privacyButton.center.y-14.0);
+        self.signUpButton.center = CGPointMake(self.signUpButton.center.x,
+                                               self.signUpButton.center.y-28.0);
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -171,6 +181,11 @@
 }
 
 #pragma mark - TDTextField delegates
+-(void)textFieldDidBeginEditing:(UITextField *)textField type:(kTDTextFieldType)type
+{
+    [self validateAllFields];
+}
+
 -(void)textFieldDidChange:(UITextField *)textField type:(kTDTextFieldType)type
 {
     switch (type) {
