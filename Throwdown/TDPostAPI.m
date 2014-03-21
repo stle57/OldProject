@@ -52,10 +52,10 @@
 # pragma mark - posts get/add/remove
 
 
-- (void)addPost:(NSString *)filename success:(void (^)(void))success failure:(void (^)(void))failure {
+- (void)addPost:(NSString *)filename comment:(NSString *)comment success:(void (^)(void))success failure:(void (^)(void))failure {
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts.json"];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager POST:url parameters:@{ @"post": @{@"filename": filename}, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager POST:url parameters:@{ @"post": @{@"filename": filename, @"comment": comment}, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
         debug NSLog(@"JSON: %@", [responseObject class]);
         // Not the best way to do this but for now...
         [self fetchPostsUpstream];
@@ -289,8 +289,7 @@
 
 # pragma mark - uploads
 
-- (void)uploadVideo:(NSString *)localVideoPath withThumbnail:(NSString *)localPhotoPath {
-    NSString *newName = [TDPostAPI createUploadFileNameFor:[TDCurrentUser sharedInstance]];
+- (void)uploadVideo:(NSString *)localVideoPath withThumbnail:(NSString *)localPhotoPath withName:(NSString *)newName {
     TDPostUpload *upload = [[TDPostUpload alloc] initWithVideoPath:localVideoPath thumbnailPath:localPhotoPath newName:newName];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"TDPostUploadStarted" object:upload userInfo:nil];
 }

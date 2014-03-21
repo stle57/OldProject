@@ -18,6 +18,10 @@ static NSString *const CTVideo = @"video/mp4";
 static NSString *const CTImage = @"image/jpeg";
 
 static NSString *const TDNotificationStopPlayers = @"TDNotificationStopPlayers";
+static NSString *const TDNotificationUploadComments = @"TDNotificationUploadComments";
+static NSString *const TDNotificationUploadCancelled = @"TDNotificationUploadCancelled";
+
+static NSString *const TDFontProximaNovaRegular = @"ProximaNova-Regular";
 
 @interface TDConstants : NSObject
 

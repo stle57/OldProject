@@ -27,9 +27,11 @@ typedef enum {
 
 @interface TDPostUpload ()
 
-@property (nonatomic) NSString *fileName;
+@property (nonatomic) NSString *filename;
+@property (nonatomic) NSString *comment;
 @property (nonatomic) NSString *finalVideoName;
 @property (nonatomic) NSString *finalPhotoName;
+@property (nonatomic) BOOL hasReceivedComment;
 @property (nonatomic) float videoProgress;
 @property (nonatomic) float photoProgress;
 @property (nonatomic) UploadStatus videoStatus;
@@ -45,24 +47,34 @@ typedef enum {
 
 @implementation TDPostUpload
 
-- (id)initWithVideoPath:(NSString *)videoPath thumbnailPath:(NSString *)thumbnailPath newName:(NSString *)fileName {
+- (id)initWithVideoPath:(NSString *)videoPath thumbnailPath:(NSString *)thumbnailPath newName:(NSString *)filename {
     self = [super init];
     if (self) {
-        self.fileName = fileName;
+        self.filename = filename;
+        self.hasReceivedComment = NO;
 
         self.postStatus = UploadNotStarted;
 
         self.client = [[RSClient alloc] initWithProvider:RSProviderTypeRackspaceUS username:RSUsername apiKey:RSApiKey];
 
-        self.finalVideoName = [self.fileName stringByAppendingString:FTVideo];
+        self.finalVideoName = [self.filename stringByAppendingString:FTVideo];
         self.persistedVideoPath = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/%@", self.finalVideoName];
         self.videoProgress = 0.0;
         self.videoStatus = UploadNotStarted;
 
-        self.finalPhotoName = [self.fileName stringByAppendingString:FTImage];
+        self.finalPhotoName = [self.filename stringByAppendingString:FTImage];
         self.persistedPhotoPath = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/%@", self.finalPhotoName];
         self.photoProgress = 0.0;
         self.photoStatus = UploadNotStarted;
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(uploadCommentsReceived:)
+                                                     name:TDNotificationUploadComments
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(cancelUpload:)
+                                                     name:TDNotificationUploadCancelled
+                                                   object:nil];
 
         // Copy photo syncroniously b/c we use it for thumbnails
         [self copyTempFile:thumbnailPath to:self.persistedPhotoPath];
@@ -75,6 +87,41 @@ typedef enum {
     }
     return self;
 }
+
+- (void)dealloc {
+    [self cleanup];
+}
+
+- (void)cleanup {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    if ([self.delegate respondsToSelector:@selector(uploadComplete)]) {
+        [self.delegate uploadComplete];
+    }
+    _delegate = nil; // don't use self.delegate here, can throw exception for unknown reason (related to the start hack?)
+}
+
+# pragma mark - notification selectors
+
+- (void)uploadCommentsReceived:(NSNotification *)notification {
+    NSString *notificationFilename = (NSString *)[notification.userInfo objectForKey:@"filename"];
+    if ([self.filename isEqualToString:notificationFilename]) {
+        debug NSLog(@"Received correct comment notification");
+        self.hasReceivedComment = YES;
+        self.comment = [notification.userInfo objectForKey:@"comment"];
+        [self finalizeUpload];
+    }
+}
+
+- (void)cancelUpload:(NSNotification *)notification {
+    NSString *notificationFilename = (NSString *)[notification.userInfo objectForKey:@"filename"];
+    if ([self.filename isEqualToString:notificationFilename]) {
+        debug NSLog(@"Received cancel notification");
+        // TODO: Delete video and image from CDN
+        [self cleanup];
+    }
+}
+
+# pragma mark - progress updates, delegates
 
 - (CGFloat)totalProgress {
     // - 0.05 is for the application server post to register the post
@@ -95,7 +142,7 @@ typedef enum {
     }
 
     CGFloat totalProgress = [self totalProgress];
-    NSLog(@"Total progress for %@: %f", self.fileName, totalProgress);
+    NSLog(@"Total progress for %@: %f", self.filename, totalProgress);
     if ([self.delegate respondsToSelector:@selector(uploadDidUpdate:)]) {
         [self.delegate uploadDidUpdate:totalProgress];
     }
@@ -106,31 +153,36 @@ typedef enum {
     // TODO: This is hacky.
     // It won't start uploading until we have a delegate
     // b/c we assign the delegate async through NSNotification
-    [self startUploads];
+    if (delegate != nil) {
+        [self startUploads];
+    }
 }
 
 - (void)finalizeUpload {
-    if (self.photoStatus == UploadCompleted &&
+    if (self.hasReceivedComment &&
+        self.photoStatus == UploadCompleted &&
         self.videoStatus == UploadCompleted &&
         self.postStatus  != UploadCompleted) {
 
+        debug NSLog(@"FINALIZING %@", self.filename);
         self.postStatus = UploadStarted;
-        [[TDPostAPI sharedInstance] addPost:self.fileName success:^{
+        [[TDPostAPI sharedInstance] addPost:self.filename comment:self.comment success:^{
             self.postStatus = UploadCompleted;
-            if ([self.delegate respondsToSelector:@selector(uploadComplete)]) {
-                [self.delegate uploadComplete];
-            }
-            self.delegate = nil;
-            dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                [[TDPostAPI sharedInstance] saveImage:[UIImage imageWithContentsOfFile:self.persistedPhotoPath] filename:self.finalPhotoName];
-                [self removeFileAt:self.persistedPhotoPath];
-                [self removeFileAt:self.persistedVideoPath];
-            });
+            [self uploadComplete];
         } failure:^{
             self.postStatus = UploadFailed;
             [self uploadFailed];
         }];
     }
+}
+
+- (void)uploadComplete {
+    [self cleanup];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [[TDPostAPI sharedInstance] saveImage:[UIImage imageWithContentsOfFile:self.persistedPhotoPath] filename:self.finalPhotoName];
+        [self removeFileAt:self.persistedPhotoPath];
+        [self removeFileAt:self.persistedVideoPath];
+    });
 }
 
 - (void)uploadFailed:(UploadType)uploadType {

@@ -13,6 +13,10 @@
 #import "AVFoundation/AVFoundation.h"
 #import "AssetsLibrary/ALAssetsLibrary.h"
 #import "TDPostAPI.h"
+#import "TDSlideLeftSegue.h"
+#import "TDShareVideoViewController.h"
+#import "TDUnwindSlideLeftSegue.h"
+#import "TDConstants.h"
 
 #define TEMP_FILE_PATH @"Documents/WorkingMovieTemp.m4v"
 #define TEMP_IMG_PATH @"Documents/working_image.jpg"
@@ -28,6 +32,8 @@ static const NSString *ItemStatusContext;
 @property (strong, nonatomic) NSURL *recordedVideoUrl;
 @property (strong, nonatomic) NSURL *editingVideoUrl;
 @property (strong, nonatomic) AVAssetExportSession *exportSession;
+@property (strong, nonatomic) NSString *thumbnailPath;
+@property (strong, nonatomic) NSString *filename;
 @property (nonatomic) CGFloat startTime;
 @property (nonatomic) CGFloat stopTime;
 @property (nonatomic) BOOL playing;
@@ -37,6 +43,7 @@ static const NSString *ItemStatusContext;
 @property (weak, nonatomic) IBOutlet UIView *videoContainerView;
 @property (weak, nonatomic) IBOutlet UIView *controlsView;
 
+
 - (IBAction)playButtonPressed:(UIButton *)sender;
 - (IBAction)doneButtonPressed:(UIButton *)sender;
 
@@ -44,7 +51,7 @@ static const NSString *ItemStatusContext;
 
 @implementation TDEditVideoViewController
 
--(UIStatusBarStyle)preferredStatusBarStyle {
+- (UIStatusBarStyle)preferredStatusBarStyle {
     return UIStatusBarStyleLightContent;
 }
 
@@ -109,21 +116,22 @@ static const NSString *ItemStatusContext;
     }
 }
 
-
 # pragma mark - saving
 
 - (IBAction)doneButtonPressed:(UIButton *)sender {
     ALAssetsLibrary* library = [[ALAssetsLibrary alloc] init];
-
     [library writeVideoAtPathToSavedPhotosAlbum:(self.editingVideoUrl) completionBlock:nil];
+
+    self.filename = [TDPostAPI createUploadFileNameFor:[TDCurrentUser sharedInstance]];
+
+    self.thumbnailPath = [NSHomeDirectory() stringByAppendingPathComponent:TEMP_IMG_PATH];
+    [self saveThumbnailTo:self.thumbnailPath];
+
     TDPostAPI *api = [TDPostAPI sharedInstance];
+    [api uploadVideo:[self.editingVideoUrl path] withThumbnail:self.thumbnailPath withName:self.filename];
 
-    NSString *thumbnailPath = [NSHomeDirectory() stringByAppendingPathComponent:TEMP_IMG_PATH];
-    [self saveThumbnailTo:thumbnailPath];
-
-    [api uploadVideo:[self.editingVideoUrl path] withThumbnail:thumbnailPath];
-
-    [self performSegueWithIdentifier:@"VideoCloseSegue" sender:self];
+    [self togglePlay:NO];
+    [self performSegueWithIdentifier:@"ShareVideoSegue" sender:self];
 }
 
 - (void)saveThumbnailTo:(NSString *)filePath {
@@ -140,6 +148,30 @@ static const NSString *ItemStatusContext;
 
     unlink([filePath UTF8String]); // If a file already exists
     [UIImageJPEGRepresentation(thumb, .97f) writeToFile:filePath atomically:YES];
+}
+
+# pragma mark - segues
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue isKindOfClass:[TDSlideLeftSegue class]]) {
+        TDShareVideoViewController *vc = [segue destinationViewController];
+        [vc shareVideo:self.filename withThumbnail:self.thumbnailPath];
+    }
+}
+
+- (IBAction)unwindToEditVideo:(UIStoryboardSegue *)sender {
+    // Empty on purpose
+}
+
+- (UIStoryboardSegue *)segueForUnwindingToViewController:(UIViewController *)toViewController fromViewController:(UIViewController *)fromViewController identifier:(NSString *)identifier {
+
+    if ([@"UnwindSlideLeftSegue" isEqualToString:identifier]) {
+        return [[TDUnwindSlideLeftSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
+    } else {
+        return [super segueForUnwindingToViewController:toViewController
+                                     fromViewController:fromViewController
+                                             identifier:identifier];
+    }
 }
 
 #pragma mark - SAVideoRangeSliderDelegate
@@ -187,6 +219,14 @@ static const NSString *ItemStatusContext;
 - (void)trimVideo {
     [self togglePlay:NO];
     [self deleteTmpFile];
+
+    // Stop any current uploads if user edited the video after starting the upload
+    if (self.filename != nil) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUploadCancelled
+                                                            object:nil
+                                                          userInfo:@{ @"filename":[self.filename copy] }];
+        self.filename = nil;
+    }
 
     AVAsset *anAsset = [[AVURLAsset alloc] initWithURL:self.recordedVideoUrl options:nil];
     NSArray *compatiblePresets = [AVAssetExportSession exportPresetsCompatibleWithAsset:anAsset];
@@ -276,6 +316,5 @@ static const NSString *ItemStatusContext;
         }
     }
 }
-
 
 @end

@@ -33,6 +33,8 @@
 		2DA73D7718BFCC2E00D87370 /* TDLikeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA73D7618BFCC2E00D87370 /* TDLikeView.m */; };
 		2DA73D7918BFCCD000D87370 /* TDLikeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA73D7818BFCCD000D87370 /* TDLikeView.xib */; };
 		579149E08F7B4EE789901248 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E657ABE418B84EA68554F855 /* libPods.a */; };
+		A11999D618D90D5200C39ABF /* TDShareVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A11999D518D90D5200C39ABF /* TDShareVideoViewController.m */; };
+		A11999DA18D929E200C39ABF /* UIPlaceHolderTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A11999D918D929E200C39ABF /* UIPlaceHolderTextView.m */; };
 		A11E04DC1888CB79002F981A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11E04DB1888CB79002F981A /* Foundation.framework */; };
 		A11E04DE1888CB79002F981A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11E04DD1888CB79002F981A /* CoreGraphics.framework */; };
 		A11E04E01888CB79002F981A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11E04DF1888CB79002F981A /* UIKit.framework */; };
@@ -131,6 +133,10 @@
 		2DA73D7518BFCC2D00D87370 /* TDLikeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDLikeView.h; sourceTree = "<group>"; };
 		2DA73D7618BFCC2E00D87370 /* TDLikeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDLikeView.m; sourceTree = "<group>"; };
 		2DA73D7818BFCCD000D87370 /* TDLikeView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDLikeView.xib; sourceTree = "<group>"; };
+		A11999D418D90D5200C39ABF /* TDShareVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDShareVideoViewController.h; sourceTree = "<group>"; };
+		A11999D518D90D5200C39ABF /* TDShareVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDShareVideoViewController.m; sourceTree = "<group>"; };
+		A11999D818D929E200C39ABF /* UIPlaceHolderTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIPlaceHolderTextView.h; sourceTree = "<group>"; };
+		A11999D918D929E200C39ABF /* UIPlaceHolderTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIPlaceHolderTextView.m; sourceTree = "<group>"; };
 		A11E04D81888CB79002F981A /* Throwdown.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Throwdown.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A11E04DB1888CB79002F981A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A11E04DD1888CB79002F981A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -300,6 +306,28 @@
 			name = Fonts;
 			sourceTree = "<group>";
 		};
+		A11999D318D90D2E00C39ABF /* Recording */ = {
+			isa = PBXGroup;
+			children = (
+				A182D8241889E8D900F794A5 /* TDEditVideoViewController.h */,
+				A182D8251889E8D900F794A5 /* TDEditVideoViewController.m */,
+				A11E04F01888CB79002F981A /* TDRecordVideoViewController.h */,
+				A11E04F11888CB79002F981A /* TDRecordVideoViewController.m */,
+				A11999D418D90D5200C39ABF /* TDShareVideoViewController.h */,
+				A11999D518D90D5200C39ABF /* TDShareVideoViewController.m */,
+			);
+			name = Recording;
+			sourceTree = "<group>";
+		};
+		A11999D718D9290300C39ABF /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				A11999D818D929E200C39ABF /* UIPlaceHolderTextView.h */,
+				A11999D918D929E200C39ABF /* UIPlaceHolderTextView.m */,
+			);
+			name = Components;
+			sourceTree = "<group>";
+		};
 		A11E04CF1888CB79002F981A = {
 			isa = PBXGroup;
 			children = (
@@ -447,12 +475,9 @@
 		A182D836188F2C0100F794A5 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				A11999D318D90D2E00C39ABF /* Recording */,
 				A1432CDE18A99D500073E492 /* Onboarding */,
 				2DA41A5218C7D85F00B21C74 /* Detail */,
-				A182D8241889E8D900F794A5 /* TDEditVideoViewController.h */,
-				A182D8251889E8D900F794A5 /* TDEditVideoViewController.m */,
-				A11E04F01888CB79002F981A /* TDRecordVideoViewController.h */,
-				A11E04F11888CB79002F981A /* TDRecordVideoViewController.m */,
 				A182D837188F2C2D00F794A5 /* TDHomeViewController.h */,
 				A182D838188F2C2D00F794A5 /* TDHomeViewController.m */,
 				2D5714C718BD9A5800AF0B4D /* Segues */,
@@ -496,6 +521,7 @@
 		A1C1D0A5189ADAED00666D2A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A11999D718D9290300C39ABF /* Components */,
 				A1C1D0F218A02FAA00666D2A /* TDPostView.xib */,
 				A1C1D0F418A0387B00666D2A /* TDPostView.h */,
 				A1C1D0F518A0387B00666D2A /* TDPostView.m */,
@@ -691,8 +717,10 @@
 				A182D839188F2C2D00F794A5 /* TDHomeViewController.m in Sources */,
 				A180D4E518C33D26003B9378 /* TDUnwindSlideLeftSegue.m in Sources */,
 				A1432D2018AA02990073E492 /* TDViewControllerHelper.m in Sources */,
+				A11999D618D90D5200C39ABF /* TDShareVideoViewController.m in Sources */,
 				A19FF5E718932868001A0AD0 /* TDUserAPI.m in Sources */,
 				2D648A1618C9415D002FE0AD /* TDDetailsCommentsCell.m in Sources */,
+				A11999DA18D929E200C39ABF /* UIPlaceHolderTextView.m in Sources */,
 				2DA73D7718BFCC2E00D87370 /* TDLikeView.m in Sources */,
 				2DA41A6018C7E49D00B21C74 /* HPGrowingTextView.m in Sources */,
 				A11E04F21888CB79002F981A /* TDRecordVideoViewController.m in Sources */,

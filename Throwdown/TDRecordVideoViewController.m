@@ -307,6 +307,8 @@ static int const kMaxRecordingSeconds = 30;
     self.torchIsOn = !self.torchIsOn;
 }
 
+# pragma mark - segues
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue isKindOfClass:[TDSlideLeftSegue class]]) {
         TDEditVideoViewController *vc = [segue destinationViewController];
