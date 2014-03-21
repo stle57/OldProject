@@ -12,10 +12,12 @@
 
 @interface TDLoginViewController () <UITextFieldDelegate>
 
-@property (weak, nonatomic) IBOutlet UITextField *loginField;
-@property (weak, nonatomic) IBOutlet UITextField *passwordField;
 @property (weak, nonatomic) IBOutlet UIButton *loginButton;
+@property (weak, nonatomic) IBOutlet UIButton *backButton;
+@property (nonatomic, copy) NSString *userEmail;
+@property (nonatomic, copy) NSString *password;
 
+- (IBAction)backButtonPressed:(UIButton *)sender;
 @end
 
 @implementation TDLoginViewController
@@ -23,64 +25,130 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
-    UIButton *button = [TDViewControllerHelper navBackButton];
-    [button addTarget:self action:@selector(backButtonPressed) forControlEvents:UIControlEventTouchUpInside];
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
+    self.topLabel.font = [UIFont fontWithName:@"ProximaNova-Light" size:20.0];
 
-    self.loginField.layer.cornerRadius = 4.0f;
-    self.loginField.layer.borderWidth = 1.0f;
-    self.loginField.clipsToBounds = YES;
-    self.loginField.delegate = self;
-    [self.loginField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
-
-    self.passwordField.layer.cornerRadius = 4.0f;
-    self.passwordField.layer.borderWidth = 1.0f;
-    self.passwordField.clipsToBounds = YES;
-    self.passwordField.delegate = self;
-    [self.passwordField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
-
-    // button is hidden to start
-    self.loginButton.layer.cornerRadius = 4;
-    self.loginButton.clipsToBounds = YES;
+    // Textfields
+    [self.userNameTextField setUpWithIconImageNamed:@"reg_ico_email"
+                                        placeHolder:@"Email Address"
+                                               type:kTDTextFieldType_Email
+                                           delegate:self];
+    [self.passwordTextField setUpWithIconImageNamed:@"reg_ico_pass"
+                                        placeHolder:@"Password"
+                                               type:kTDTextFieldType_Password
+                                           delegate:self];
+    [self.passwordTextField secure];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    [self.loginField becomeFirstResponder];
+    [self.userNameTextField becomeFirstResponder];
 }
 
 - (void)dealloc {
-    [self.loginField removeTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
-    [self.passwordField removeTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+    self.userEmail = nil;
+    self.password = nil;
 }
 
-- (void)textFieldDidChange:(UITextField *)textField {
-    NSString *email = self.loginField.text;
-    if ([TDViewControllerHelper validateEmail:email] && [self.passwordField.text length] > 5) {
+- (BOOL)prefersStatusBarHidden {
+    return YES;
+}
+
+#pragma mark - TDTextField delegates
+-(void)textFieldDidChange:(UITextField *)textField type:(kTDTextFieldType)type
+{
+    switch (type) {
+        case kTDTextFieldType_Email:
+        {
+            self.userEmail = textField.text;
+        }
+        break;
+        case kTDTextFieldType_Password:
+        {
+            self.password = textField.text;
+        }
+        break;
+        default:
+        break;
+    }
+
+    if ([TDViewControllerHelper validateEmail:self.userEmail] && [self.password length] > 5) {
         self.loginButton.hidden = NO;
     } else {
         self.loginButton.hidden = YES;
     }
 }
 
-- (void)textFieldDidEndEditing:(UITextField *)textField {
-    [self textFieldDidChange:textField];
+-(BOOL)textFieldShouldReturn:(UITextField *)textField type:(kTDTextFieldType)type
+{
+    switch (type) {
+        case kTDTextFieldType_Email:
+        {
+            self.userEmail = textField.text;
+            [self.passwordTextField becomeFirstResponder];
+        }
+        break;
+        case kTDTextFieldType_Password:
+        {
+            self.password = textField.text;
+            [self.userNameTextField becomeFirstResponder];
+        }
+        break;
+        default:
+        break;
+    }
+
+    if ([TDViewControllerHelper validateEmail:self.userEmail] && [self.password length] > 5) {
+        self.loginButton.hidden = NO;
+    } else {
+        self.loginButton.hidden = YES;
+    }
+
+    return NO;
 }
 
-- (void)backButtonPressed {
+- (IBAction)backButtonPressed:(UIButton *)sender
+{
     [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (IBAction)loginButtonPressed:(id)sender {
-    self.loginButton.enabled = NO;
-    [[TDUserAPI sharedInstance] loginUser:self.loginField.text withPassword:self.passwordField.text callback:^(BOOL success) {
-        if (success) {
-            [TDViewControllerHelper navigateToHomeFrom:self];
-        } else {
-            [TDViewControllerHelper showAlertMessage:@"Email or password is wrong, try again." withTitle:nil];
-            self.loginButton.enabled = YES;
-        }
-    }];
+
+    // Resign
+    [self.userNameTextField resignFirst];
+    [self.passwordTextField resignFirst];
+
+    self.backButton.enabled = NO;
+    self.loginButton.hidden = YES;
+
+    self.progress.alpha = 0.0;
+    self.progress.hidden = NO;
+    [self.progress startAnimating];
+
+    [UIView animateWithDuration: 0.2
+                          delay: 0.0
+                        options: UIViewAnimationOptionCurveLinear
+                     animations:^{
+
+                         self.progress.alpha = 1.0;
+
+                     }
+                     completion:^(BOOL animDone){
+
+                         if (animDone)
+                         {
+                             [[TDUserAPI sharedInstance] loginUser:self.userEmail withPassword:self.password callback:^(BOOL success) {
+                                 if (success) {
+                                     [TDViewControllerHelper navigateToHomeFrom:self];
+                                 } else {
+                                     [TDViewControllerHelper showAlertMessage:@"Email or password is wrong, try again." withTitle:nil];
+                                     self.loginButton.enabled = YES;
+                                     self.backButton.enabled = YES;
+                                     [self.progress stopAnimating];
+                                     [self.userNameTextField becomeFirstResponder];
+                                 }
+                             }];
+                         }
+                     }];
 }
 
 @end

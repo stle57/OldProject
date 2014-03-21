@@ -9,6 +9,13 @@
 #import <UIKit/UIKit.h>
 
 @interface TDWelcomeViewController : UIViewController
+{
+
+}
+
+@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+@property (weak, nonatomic) IBOutlet UILabel *snippetLabel;
+
 
 - (void)showHomeController;
 

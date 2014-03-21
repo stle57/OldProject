@@ -7,7 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TDTextField.h"
 
-@interface TDLoginViewController : UIViewController
+@interface TDLoginViewController : UIViewController <TDTextFieldDelegate, UITextFieldDelegate>
+{
+
+}
+
+@property (weak, nonatomic) IBOutlet UILabel *topLabel;
+@property (weak, nonatomic) IBOutlet TDTextField *userNameTextField;
+@property (weak, nonatomic) IBOutlet TDTextField *passwordTextField;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *progress;
 
 @end

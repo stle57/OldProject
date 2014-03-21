@@ -32,6 +32,8 @@
 		2DA5F05E18D37C70003D2F99 /* BebasNeue Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5F05918D37C70003D2F99 /* BebasNeue Thin.otf */; };
 		2DA73D7718BFCC2E00D87370 /* TDLikeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA73D7618BFCC2E00D87370 /* TDLikeView.m */; };
 		2DA73D7918BFCCD000D87370 /* TDLikeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA73D7818BFCCD000D87370 /* TDLikeView.xib */; };
+		2DBA430118DA455500366737 /* TDTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DBA42FF18DA455500366737 /* TDTextField.m */; };
+		2DBA430218DA455500366737 /* TDTextField.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA430018DA455500366737 /* TDTextField.xib */; };
 		579149E08F7B4EE789901248 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E657ABE418B84EA68554F855 /* libPods.a */; };
 		A11999D618D90D5200C39ABF /* TDShareVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A11999D518D90D5200C39ABF /* TDShareVideoViewController.m */; };
 		A11999DA18D929E200C39ABF /* UIPlaceHolderTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A11999D918D929E200C39ABF /* UIPlaceHolderTextView.m */; };
@@ -55,7 +57,6 @@
 		A1432CE718A99DB30073E492 /* TDLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1432CE618A99DB30073E492 /* TDLoginViewController.m */; };
 		A1432D2018AA02990073E492 /* TDViewControllerHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = A1432D1F18AA02990073E492 /* TDViewControllerHelper.m */; };
 		A14B2B7F18B5308000980A31 /* TDAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A14B2B7E18B5308000980A31 /* TDAPIClient.m */; };
-		A14B2B8218B5DF9B00980A31 /* TDSignupStepThreeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A14B2B8118B5DF9B00980A31 /* TDSignupStepThreeViewController.m */; };
 		A14B2B8818B8351E00980A31 /* TDCurrentUser.m in Sources */ = {isa = PBXBuildFile; fileRef = A14B2B8718B8351E00980A31 /* TDCurrentUser.m */; };
 		A150F08A18A31B14009A72AD /* TDConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = A150F08918A31B14009A72AD /* TDConstants.m */; };
 		A151958B18BAE8FD0050A45B /* TDUser.m in Sources */ = {isa = PBXBuildFile; fileRef = A151958A18BAE8FD0050A45B /* TDUser.m */; };
@@ -137,6 +138,9 @@
 		A11999D518D90D5200C39ABF /* TDShareVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDShareVideoViewController.m; sourceTree = "<group>"; };
 		A11999D818D929E200C39ABF /* UIPlaceHolderTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIPlaceHolderTextView.h; sourceTree = "<group>"; };
 		A11999D918D929E200C39ABF /* UIPlaceHolderTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIPlaceHolderTextView.m; sourceTree = "<group>"; };
+		2DBA42FE18DA455500366737 /* TDTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTextField.h; sourceTree = "<group>"; };
+		2DBA42FF18DA455500366737 /* TDTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTextField.m; sourceTree = "<group>"; };
+		2DBA430018DA455500366737 /* TDTextField.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDTextField.xib; sourceTree = "<group>"; };
 		A11E04D81888CB79002F981A /* Throwdown.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Throwdown.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A11E04DB1888CB79002F981A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A11E04DD1888CB79002F981A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -167,8 +171,6 @@
 		A1432D1F18AA02990073E492 /* TDViewControllerHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDViewControllerHelper.m; sourceTree = "<group>"; };
 		A14B2B7D18B5308000980A31 /* TDAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDAPIClient.h; sourceTree = "<group>"; };
 		A14B2B7E18B5308000980A31 /* TDAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDAPIClient.m; sourceTree = "<group>"; };
-		A14B2B8018B5DF9B00980A31 /* TDSignupStepThreeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSignupStepThreeViewController.h; sourceTree = "<group>"; };
-		A14B2B8118B5DF9B00980A31 /* TDSignupStepThreeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSignupStepThreeViewController.m; sourceTree = "<group>"; };
 		A14B2B8618B8351D00980A31 /* TDCurrentUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDCurrentUser.h; sourceTree = "<group>"; };
 		A14B2B8718B8351E00980A31 /* TDCurrentUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDCurrentUser.m; sourceTree = "<group>"; };
 		A150F08818A31B14009A72AD /* TDConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDConstants.h; sourceTree = "<group>"; };
@@ -425,8 +427,6 @@
 				A1432CE318A99DA40073E492 /* TDSignupStepOneViewController.m */,
 				A1E90CDB18B445FC0046D281 /* TDSignupStepTwoViewController.h */,
 				A1E90CDC18B445FC0046D281 /* TDSignupStepTwoViewController.m */,
-				A14B2B8018B5DF9B00980A31 /* TDSignupStepThreeViewController.h */,
-				A14B2B8118B5DF9B00980A31 /* TDSignupStepThreeViewController.m */,
 				A1432CE518A99DB30073E492 /* TDLoginViewController.h */,
 				A1432CE618A99DB30073E492 /* TDLoginViewController.m */,
 			);
@@ -546,6 +546,9 @@
 				A1B9002C18CC316700012A1F /* TDHomeHeaderView.h */,
 				A1B9002D18CC316800012A1F /* TDHomeHeaderView.m */,
 				A1B9002F18CC43FC00012A1F /* TDHomeHeaderUploadDelegate.h */,
+				2DBA430018DA455500366737 /* TDTextField.xib */,
+				2DBA42FE18DA455500366737 /* TDTextField.h */,
+				2DBA42FF18DA455500366737 /* TDTextField.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -643,6 +646,7 @@
 				A11E04E61888CB79002F981A /* InfoPlist.strings in Resources */,
 				2DA5F05318D36745003D2F99 /* ProximaNova-Regular.otf in Resources */,
 				2D3F8DF718CFC81E00333F0B /* TDTwoButtonView.xib in Resources */,
+				2DBA430218DA455500366737 /* TDTextField.xib in Resources */,
 				2DA5F05218D36745003D2F99 /* ProximaNova-Light.otf in Resources */,
 				2D1AEE7118C937560055C315 /* TDDetailsLikesCell.xib in Resources */,
 				2D648A1718C9415D002FE0AD /* TDDetailsCommentsCell.xib in Resources */,
@@ -715,6 +719,7 @@
 				2D00148B18CFB57C0070DE16 /* TDTwoButtonView.m in Sources */,
 				A14B2B7F18B5308000980A31 /* TDAPIClient.m in Sources */,
 				A182D839188F2C2D00F794A5 /* TDHomeViewController.m in Sources */,
+				2DBA430118DA455500366737 /* TDTextField.m in Sources */,
 				A180D4E518C33D26003B9378 /* TDUnwindSlideLeftSegue.m in Sources */,
 				A1432D2018AA02990073E492 /* TDViewControllerHelper.m in Sources */,
 				A11999D618D90D5200C39ABF /* TDShareVideoViewController.m in Sources */,
@@ -727,7 +732,6 @@
 				A11E04EC1888CB79002F981A /* TDAppDelegate.m in Sources */,
 				2D1AEE7018C937560055C315 /* TDDetailsLikesCell.m in Sources */,
 				A1C1D0F618A0387B00666D2A /* TDPostView.m in Sources */,
-				A14B2B8218B5DF9B00980A31 /* TDSignupStepThreeViewController.m in Sources */,
 				A19FF60E18970BBB001A0AD0 /* RSClient.m in Sources */,
 				A182D833188B60CD00F794A5 /* SAVideoRangeSlider.m in Sources */,
 				A182D832188B60CD00F794A5 /* SASliderRight.m in Sources */,
