@@ -18,6 +18,7 @@ enum {
 typedef NSUInteger kTDTextFieldType;
 
 @protocol TDTextFieldDelegate <NSObject>
+
 @optional
 -(void)textFieldDidChange:(UITextField *)textField type:(kTDTextFieldType)type;
 -(BOOL)textFieldShouldReturn:(UITextField *)textField type:(kTDTextFieldType)type;

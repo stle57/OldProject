@@ -10,9 +10,6 @@
 #import "TDTextField.h"
 
 @interface TDSignupStepTwoViewController : UIViewController <TDTextFieldDelegate>
-{
-    BOOL isSigningUp;
-}
 
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImageView;
 @property (weak, nonatomic) IBOutlet UILabel *topLabel;

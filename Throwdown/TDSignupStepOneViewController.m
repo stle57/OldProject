@@ -16,17 +16,12 @@
 
 @interface TDSignupStepOneViewController ()<UITextFieldDelegate>
 
-//@property (nonatomic, weak) IBOutlet UITextField *phoneField;
-//@property (nonatomic, weak) IBOutlet UITextField *nameField;
-//@property (nonatomic, weak) IBOutlet UITextField *passwordField;
 @property (nonatomic, weak) IBOutlet UIButton *nextButton;
 @property (nonatomic, strong) NSRegularExpression *namePattern;
-@property (nonatomic, copy) NSString *verifiedPhoneNumber;
-@property (nonatomic, copy) NSString *validatingEmail;
-@property (nonatomic) BOOL phoneIsVerified;
 @property (nonatomic, copy) NSString *phoneNumber;
 @property (nonatomic, copy) NSString *emailAddress;
 @property (nonatomic, copy) NSString *firstLastName;
+@property (nonatomic, copy) NSString *username;
 
 - (IBAction)backButtonPressed:(UIButton *)sender;
 @end
@@ -42,10 +37,8 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.phoneIsVerified = NO;
-
     NSError *error = nil;
-    self.namePattern = [NSRegularExpression regularExpressionWithPattern:@"\\w+\\s+\\w+"
+    self.namePattern = [NSRegularExpression regularExpressionWithPattern:@"\\w+"
                                                                  options:0
                                                                    error:&error];
 
@@ -80,23 +73,18 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
     }
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:YES animated:animated];
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:NO];
     [super viewWillAppear:animated];
 }
 
-- (void)viewDidAppear:(BOOL)animated
-{
+- (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    [self.phoneNumberTextField becomeFirstResponder];
+    [self.firstLastNameTextField becomeFirstResponder];
 }
 
-- (void)dealloc
-{
-    self.verifiedPhoneNumber = nil;
-    self.validatingEmail = nil;
+- (void)dealloc {
     self.phoneNumber = nil;
     self.emailAddress = nil;
     self.firstLastName = nil;
@@ -108,91 +96,81 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 
 # pragma mark - lazy instantiation
 
-- (NSString *)verifiedPhoneNumber
-{
-    if (!_verifiedPhoneNumber) {
-        _verifiedPhoneNumber = @"";
+- (NSString *)firstLastName {
+    if (!_firstLastName) {
+        _firstLastName = @"";
     }
-    return _verifiedPhoneNumber;
+    return _firstLastName;
 }
+
+- (NSString *)emailAddress {
+    if (!_emailAddress) {
+        _emailAddress = @"";
+    }
+    return _emailAddress;
+}
+
+- (NSString *)phoneNumber {
+    if (!_phoneNumber) {
+        _phoneNumber = @"";
+    }
+    return _phoneNumber;
+}
+
+- (NSString *)username {
+    if (!_username) {
+        _username = @"";
+    }
+    return _username;
+}
+
+
 
 #pragma mark - TDTextField delegates
--(void)textFieldDidBeginEditing:(UITextField *)textField type:(kTDTextFieldType)type
-{
+- (void)textFieldDidBeginEditing:(UITextField *)textField type:(kTDTextFieldType)type {
     [self validateAllFields];
 }
 
--(void)textFieldDidChange:(UITextField *)textField type:(kTDTextFieldType)type
-{
+- (void)textFieldDidChange:(UITextField *)textField type:(kTDTextFieldType)type {
     switch (type) {
         case kTDTextFieldType_Phone:
-        {
             self.phoneNumber = textField.text;
             [self validatePhoneField];
-        }
         break;
         case kTDTextFieldType_Email:
-        {
             self.emailAddress = textField.text;
             [self validateEmailField];
-        }
         break;
         case kTDTextFieldType_FirstLast:
-        {
             self.firstLastName = textField.text;
             [self validateNameField];
-        }
-        break;
-
-        default:
         break;
     }
 
     [self validateAllFields];
 }
 
--(BOOL)textFieldShouldReturn:(UITextField *)textField type:(kTDTextFieldType)type
-{
+- (BOOL)textFieldShouldReturn:(UITextField *)textField type:(kTDTextFieldType)type {
+    [self textFieldDidChange:textField type:type];
     switch (type) {
         case kTDTextFieldType_Phone:
-        {
-            self.phoneNumber = textField.text;
-            [self validatePhoneField];
             [self.emailTextField becomeFirstResponder];
-        }
-        break;
-        case kTDTextFieldType_Email:
-        {
-            self.emailAddress = textField.text;
-            [self validateEmailField];
-            [self.firstLastNameTextField becomeFirstResponder];
-        }
-        break;
-        case kTDTextFieldType_FirstLast:
-        {
-            self.firstLastName = textField.text;
-            [self validateNameField];
-            [self.phoneNumberTextField becomeFirstResponder];
-            if ([self validateAllFields]) {
-                // TODO: might not trigger transition if the verification from server isn't complete
-                [self transitionToStepTwoController];
-            }
-        }
         break;
 
-        default:
+        case kTDTextFieldType_Email:
+            [self.firstLastNameTextField becomeFirstResponder];
+        break;
+
+        case kTDTextFieldType_FirstLast:
+            [self.phoneNumberTextField becomeFirstResponder];
         break;
     }
-
-    [self validateAllFields];
-
     return NO;
 }
 
 # pragma mark - delegates
 
-- (IBAction)backButtonPressed:(UIButton *)sender
-{
+- (IBAction)backButtonPressed:(UIButton *)sender {
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -204,100 +182,100 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 
 # pragma mark - navigation
 
-- (void)transitionToStepTwoController
-{
+- (void)transitionToStepTwoController {
     [self performSegueWithIdentifier:@"signupStepTwo" sender:nil];
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([[segue identifier] isEqualToString:@"signupStepTwo"]) {
         TDSignupStepTwoViewController *vc = [segue destinationViewController];
-        [vc userParameters:@{@"phone_number": self.verifiedPhoneNumber, @"name": self.firstLastName, @"email": self.emailAddress}];
+        [vc userParameters:[self userParameters]];
     }
 }
 
 # pragma mark - Validations
 
-- (BOOL)validateAllFields
-{
+- (BOOL)validateAllFields {
     BOOL valid = self.phoneNumberTextField.valid && self.emailTextField.valid && self.firstLastNameTextField.valid;
     self.nextButton.enabled = valid;
     return valid;
 }
 
-- (void)validatePhoneField
-{
-    if (!self.phoneNumber) {
-        return;
-    }
-
-    if (![self.phoneNumber isEqualToString:self.verifiedPhoneNumber]) {
-        self.phoneIsVerified = NO;
-
-        NSError *error = nil;
-        NBPhoneNumberUtil *phoneUtil = [NBPhoneNumberUtil sharedInstance];
-        NBPhoneNumber *aPhoneNumber = [phoneUtil parseWithPhoneCarrierRegion:self.phoneNumber error:&error];
-        if (!error && [phoneUtil isValidNumber:aPhoneNumber]) {
-            NSString *phoneNumberString = [phoneUtil format:aPhoneNumber numberFormat:NBEPhoneNumberFormatE164 error:&error];
-            self.verifiedPhoneNumber = phoneNumberString;
-            [self.phoneNumberTextField startSpinner];
-            [[TDAPIClient sharedInstance] validateCredentials:@{@"phone_number": phoneNumberString} callback:^(BOOL success) {
-                self.phoneIsVerified = success;
-                [self.phoneNumberTextField stopSpinner];
-                [self.phoneNumberTextField status:success];
-            }];
-        } else {
-            [self.phoneNumberTextField stopSpinner];
-            [self.phoneNumberTextField status:NO];
-            [self validateAllFields];
-        }
-
-        [self validateAllFields];
+- (void)validatePhoneField {
+    NSError *error = nil;
+    NBPhoneNumberUtil *phoneUtil = [NBPhoneNumberUtil sharedInstance];
+    NBPhoneNumber *parsedPhoneNumber = [phoneUtil parseWithPhoneCarrierRegion:self.phoneNumber error:&error];
+    self.phoneNumber = [[NBPhoneNumberUtil sharedInstance] format:parsedPhoneNumber numberFormat:NBEPhoneNumberFormatE164 error:&error];
+    if (!error && [phoneUtil isValidNumber:parsedPhoneNumber]) {
+        [self.phoneNumberTextField startSpinner];
+        [self validateField:kTDTextFieldType_Phone];
+    } else {
+        [self.phoneNumberTextField status:NO];
     }
 }
 
-- (BOOL)validateNameField
-{
-    if (!self.firstLastName) {
-        return NO;
-    }
-
+- (void)validateNameField {
     [self.firstLastNameTextField status:NO];
     NSString *name = self.firstLastName;
     NSRange match = [self.namePattern rangeOfFirstMatchInString:name
                                                         options:0
                                                           range:NSMakeRange(0, [name length])];
-    BOOL returnValue = [name length] > 4 && match.location != NSNotFound;
+    BOOL returnValue = [name length] >= 2 && match.location != NSNotFound;
     if (returnValue) {
         [self.firstLastNameTextField status:YES];
+    } else {
+        [self.firstLastNameTextField status:NO];
     }
-
     [self validateAllFields];
-
-    return returnValue;
 }
 
-- (BOOL)validateEmailField
-{
-    NSString *email = self.emailAddress;
-    if ([TDViewControllerHelper validateEmail:email] && ![email isEqualToString:self.validatingEmail]) {
-        self.validatingEmail = email;
-        [[TDAPIClient sharedInstance] validateCredentials:@{@"email": email} callback:^(BOOL valid) {
-
-            if (valid) {
-                [self.emailTextField status:valid];
-            } else {
-                [self.emailTextField status:NO];
-            }
-        }];
+- (void)validateEmailField {
+    if ([TDViewControllerHelper validateEmail:self.emailAddress]) {
+        [self.emailTextField startSpinner];
+        [self validateField:kTDTextFieldType_Email];
     } else {
         [self.emailTextField status:NO];
     }
+}
 
-    [self validateAllFields];
+- (NSDictionary *)userParameters {
+    return @{@"phone_number":self.phoneNumber, @"name":self.firstLastName, @"email":self.emailAddress, @"username":self.username};
+}
 
-    return self.emailTextField.valid;
+- (void)validateField:(kTDTextFieldType)field {
+    [[TDAPIClient sharedInstance] validateCredentials:[self userParameters] success:^(NSDictionary *response) {
+        switch (field) {
+            case kTDTextFieldType_Phone:
+                [self.phoneNumberTextField status:[[response objectForKey:@"phone_number"] boolValue]];
+                break;
+
+            case kTDTextFieldType_Email:
+                [self.emailTextField status:[[response objectForKey:@"email"] boolValue]];
+                break;
+
+            case kTDTextFieldType_FirstLast:
+                [self.firstLastNameTextField status:[[response objectForKey:@"name"] boolValue]];
+                break;
+        }
+        self.username = (NSString *)[response objectForKey:@"suggested_username"];
+        [self validateAllFields];
+
+    } failure:^{
+        switch (field) {
+            case kTDTextFieldType_Phone:
+                [self.phoneNumberTextField status:NO];
+                break;
+
+            case kTDTextFieldType_Email:
+                [self.emailTextField status:NO];
+                break;
+
+            case kTDTextFieldType_FirstLast:
+                [self.firstLastNameTextField status:NO];
+                break;
+        }
+        [self validateAllFields];
+    }];
 }
 
 @end

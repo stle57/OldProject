@@ -99,6 +99,7 @@
 
 -(void)status:(BOOL)status
 {
+    [self stopSpinner];
     if (status) {
         self.xmarkImageView.hidden = YES;
         self.checkmarkImageView.hidden = NO;

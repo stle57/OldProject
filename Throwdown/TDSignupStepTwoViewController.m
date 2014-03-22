@@ -16,12 +16,10 @@
 @interface TDSignupStepTwoViewController ()<UITextFieldDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *signUpButton;
-@property (copy, nonatomic) NSDictionary *userParameters;
+@property (strong, nonatomic) NSMutableDictionary *userParameters;
 @property (strong, nonatomic) NSRegularExpression *usernamePattern;
-@property (strong, nonatomic) NSString *validatingUsername;
 @property (nonatomic, copy) NSString *userName;
 @property (nonatomic, copy) NSString *password;
-@property (strong, nonatomic) NSTimer *userNameTimer;
 
 - (IBAction)backButtonPressed:(UIButton *)sender;
 @end
@@ -36,10 +34,7 @@
                                                                  options:0
                                                                    error:&error];
 
-    NSMutableString *username = [[self.userParameters objectForKey:@"name"] mutableCopy];
-    [self.usernamePattern replaceMatchesInString:username options:0 range:NSMakeRange(0, [username length]) withTemplate:@""];
-    [self.userNameTextField textfieldText:username];
-    self.userName = username;
+    [self.userNameTextField textfieldText:self.userName];
     [self validateUsernameField];
 
     self.topLabel.font = [UIFont fontWithName:@"ProximaNova-Light" size:20.0];
@@ -59,12 +54,6 @@
                                            delegate:self];
     [self.passwordTextField secure];
 
-    self.userNameTimer = [NSTimer scheduledTimerWithTimeInterval:0.5
-                                                          target:self
-                                                        selector:@selector(validateUsernameField)
-                                                        userInfo:nil
-                                                         repeats:YES];
-
     // Small fix if 3.5" screen
     if ([UIScreen mainScreen].bounds.size.height == 480.0) {
         // move up log in button slightly
@@ -80,39 +69,33 @@
     }
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:YES animated:animated];
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:NO];
     [super viewWillAppear:animated];
 }
 
-- (void)viewDidAppear:(BOOL)animated
-{
+- (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [self.userNameTextField becomeFirstResponder];
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     self.userName = nil;
     self.password = nil;
-    [self.userNameTimer invalidate];
-    self.userNameTimer = nil;
+    self.userParameters = nil;
 }
 
 - (BOOL)prefersStatusBarHidden {
     return YES;
 }
 
-- (void)backButtonPressed
-{
+- (void)backButtonPressed {
     // TODO: confirm navigating back if fields are edited.
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (IBAction)backButtonPressed:(UIButton *)sender
-{
+- (IBAction)backButtonPressed:(UIButton *)sender {
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -125,14 +108,9 @@
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://throwdown.us/tos"]];
 }
 
-- (void)signup
-{
-    if (isSigningUp) {
-        return;
-    }
+- (void)signup {
 
-    NSMutableDictionary *parameters = [self.userParameters mutableCopy];
-    [parameters addEntriesFromDictionary:@{@"password": self.password, @"username" : self.userName}];
+    [self.userParameters addEntriesFromDictionary:@{ @"password":self.password, @"username":self.userName }];
 
     // Resign
     [self.userNameTextField resignFirst];
@@ -140,7 +118,6 @@
 
     // No back or singup until we're back from server
     self.backButton.enabled = NO;
-    isSigningUp = YES;
 
     self.progress.alpha = 0.0;
     self.signUpButton.hidden = YES;
@@ -152,15 +129,11 @@
                           delay: 0.0
                         options: UIViewAnimationOptionCurveLinear
                      animations:^{
-
                          self.progress.alpha = 1.0;
-
                      }
                      completion:^(BOOL animDone){
-
-                         if (animDone)
-                         {
-                             [[TDUserAPI sharedInstance] signupUser:parameters callback:^(BOOL success) {
+                         if (animDone) {
+                             [[TDUserAPI sharedInstance] signupUser:self.userParameters callback:^(BOOL success) {
                                  if (success) {
                                      self.progress.hidden = YES;
                                      [TDViewControllerHelper navigateToHomeFrom:self];
@@ -170,7 +143,6 @@
                                      self.backButton.enabled = YES;
                                      self.progress.hidden = YES;
                                      self.signUpButton.hidden = NO;
-                                     isSigningUp = NO;
                                      [self.userNameTextField becomeFirstResponder];
                                  }
                              }];
@@ -178,82 +150,58 @@
                      }];
 }
 
-- (void)userParameters:(NSDictionary *)parameters
-{
-    self.userParameters = parameters;
+- (void)userParameters:(NSDictionary *)parameters {
+    self.userParameters = [parameters mutableCopy];
+    self.userName = [self.userParameters objectForKey:@"username"];
 }
 
 #pragma mark - TDTextField delegates
--(void)textFieldDidBeginEditing:(UITextField *)textField type:(kTDTextFieldType)type
-{
+- (void)textFieldDidBeginEditing:(UITextField *)textField type:(kTDTextFieldType)type {
     [self validateAllFields];
 }
 
--(void)textFieldDidChange:(UITextField *)textField type:(kTDTextFieldType)type
-{
+- (void)textFieldDidChange:(UITextField *)textField type:(kTDTextFieldType)type {
     switch (type) {
         case kTDTextFieldType_UserName:
-        {
             self.userName = textField.text;
             [self validateUsernameField];
-        }
         break;
+
         case kTDTextFieldType_Password:
-        {
             self.password = textField.text;
             [self validatePassword];
-        }
-        break;
-        default:
         break;
     }
 
     [self validateAllFields];
 }
 
--(BOOL)textFieldShouldReturn:(UITextField *)textField type:(kTDTextFieldType)type
-{
+- (BOOL)textFieldShouldReturn:(UITextField *)textField type:(kTDTextFieldType)type {
+    [self textFieldDidChange:textField type:type];
     switch (type) {
         case kTDTextFieldType_UserName:
-        {
-            self.userName = textField.text;
-            [self validateUsernameField];
             [self.passwordTextField becomeFirstResponder];
-        }
         break;
+
         case kTDTextFieldType_Password:
-        {
-            self.password = textField.text;
-            [self validatePassword];
             [self.userNameTextField becomeFirstResponder];
-        }
-        break;
-        default:
         break;
     }
-
-    [self validateAllFields];
 
     return NO;
 }
 
 #pragma mark - Validations
-- (BOOL)validateAllFields
-{
+
+- (BOOL)validateAllFields {
     BOOL valid = self.userNameTextField.valid && self.passwordTextField.valid;
     self.signUpButton.enabled = valid;
     return valid;
 }
 
-- (BOOL)validateUsernameField
-{
+- (void)validateUsernameField {
     if (!self.userName || [self.userName length] == 0) {
-        self.validatingUsername = nil;
-        return NO;
-    }
-
-    if ([self.userName isEqualToString:self.validatingUsername]) {
-        return self.userNameTextField.valid;
+        return;
     }
 
     NSString *username = self.userName;
@@ -262,32 +210,26 @@
                                                           range:NSMakeRange(0, [username length])];
 
     if (match.location == NSNotFound) {
-        self.validatingUsername = username;
-        [[TDAPIClient sharedInstance] validateCredentials:@{@"username": username} callback:^(BOOL valid) {
-
-            if (valid) {
-                [self.userNameTextField status:YES];
-            } else {
-                self.validatingUsername = nil;
-                [self.userNameTextField status:NO];
-            }
+        [[TDAPIClient sharedInstance] validateCredentials:@{ @"username":username } success:^(NSDictionary *response) {
+            [self.userNameTextField status:YES];
+            [self validateAllFields];
+        } failure:^{
+            [self.userNameTextField status:NO];
+            [self validateAllFields];
         }];
     } else {
-        self.validatingUsername = nil;
         [self.userNameTextField status:NO];
+        [self validateAllFields];
     }
-
-    return self.userNameTextField.valid;
 }
 
--(BOOL)validatePassword
-{
+- (void)validatePassword {
     if ([self.password length] < 6) {
         [self.passwordTextField status:NO];
     } else {
         [self.passwordTextField status:YES];
     }
-    return self.passwordTextField.valid;
+    [self validateAllFields];
 }
 
 @end

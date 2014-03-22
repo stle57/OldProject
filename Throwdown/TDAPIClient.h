@@ -12,7 +12,7 @@
 
 + (TDAPIClient *)sharedInstance;
 
-- (void)validateCredentials:(NSDictionary *)parameters callback:(void (^)(BOOL success))callback;
+- (void)validateCredentials:(NSDictionary *)parameters success:(void (^)(NSDictionary *response))success failure:(void (^)())failure;
 - (void)signupUser:(NSDictionary *)userAttributes callback:(void (^)(BOOL success, NSDictionary *user))callback;
 - (void)loginUser:(NSString *)email withPassword:(NSString *)password callback:(void (^)(BOOL success, NSDictionary *user))callback;
 - (void)logoutUser;

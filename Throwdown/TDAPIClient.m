@@ -19,8 +19,7 @@
 
 @implementation TDAPIClient
 
-+ (TDAPIClient *)sharedInstance
-{
++ (TDAPIClient *)sharedInstance {
     static TDAPIClient *_sharedInstance = nil;
     static dispatch_once_t oncePredicate;
     dispatch_once(&oncePredicate, ^{
@@ -29,8 +28,7 @@
     return _sharedInstance;
 }
 
-- (id)init
-{
+- (id)init {
     self = [super init];
     if (self) {
         self.httpManager = [AFHTTPRequestOperationManager manager];
@@ -38,30 +36,30 @@
     return self;
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     self.httpManager = nil;
     self.credentialsTask = nil;
 }
 
-- (void)validateCredentials:(NSDictionary *)parameters callback:(void (^)(BOOL success))callback
-{
+- (void)validateCredentials:(NSDictionary *)parameters success:(void (^)(NSDictionary *response))success failure:(void (^)())failure {
+
     // cancels any previous request
     [self.credentialsTask cancel];
+
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/validate.json"];
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
     self.credentialsTask = [self.httpManager POST:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            NSDictionary *response = (NSDictionary *)responseObject;
-            NSNumber *valid = (NSNumber *)[response objectForKey:@"valid"];
-            callback([valid boolValue]);
+            success((NSDictionary *)responseObject);
         } else {
-            debug NSLog(@"ERROR in validation response, got: %@", [responseObject class]);
-            callback(NO);
+            failure();
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"ERROR in validation call: %@", [error localizedDescription]);
-        callback(NO);
+        // -999 = ignore cancelled as we do that on purpose but don't want the callback to be called
+        if ([error code] != -999) {
+            failure();
+        }
     }];
 }
 
