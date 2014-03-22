@@ -37,6 +37,7 @@
 
 @implementation HPGrowingTextView
 @synthesize internalTextView;
+@synthesize singleLineTextLabel;
 @synthesize delegate;
 @synthesize maxHeight;
 @synthesize minHeight;
@@ -51,6 +52,13 @@
 @synthesize returnKeyType;
 @dynamic placeholder;
 @dynamic placeholderColor;
+@synthesize rememberText;
+
+- (void)dealloc
+{
+    self.singleLineTextLabel = nil;
+    self.rememberText = nil;
+}
 
 // having initwithcoder allows us to use HPGrowingTextView in a Nib. -- aob, 9/2011
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -102,7 +110,19 @@
     internalTextView.text = @"-";
     internalTextView.contentMode = UIViewContentModeRedraw;
     [self addSubview:internalTextView];
-    
+
+    // Single line label so we can remember the entry
+    self.singleLineTextLabel = [[UILabel alloc] initWithFrame:CGRectMake(r.origin.x+8.0,
+                                                                         r.origin.y,
+                                                                         r.size.width-16.0,
+                                                                         r.size.height)];
+    self.singleLineTextLabel.hidden = YES;
+    self.singleLineTextLabel.numberOfLines = 1;
+    self.singleLineTextLabel.adjustsFontSizeToFitWidth = NO;
+    self.singleLineTextLabel.font = [UIFont fontWithName:@"Helvetica" size:13];
+    self.singleLineTextLabel.backgroundColor = [UIColor clearColor];
+    [self addSubview:self.singleLineTextLabel];
+
     minHeight = internalTextView.frame.size.height;
     minNumberOfLines = 1;
     
@@ -292,7 +312,7 @@
                 
                 if ([UIView resolveClassMethod:@selector(animateWithDuration:animations:)]) {
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 40000
-                    [UIView animateWithDuration:animationDuration 
+                    [UIView animateWithDuration:animationDuration
                                           delay:0 
                                         options:(UIViewAnimationOptionAllowUserInteraction|
                                                  UIViewAnimationOptionBeginFromCurrentState)                                 
@@ -410,6 +430,7 @@
 -(BOOL)resignFirstResponder
 {
 	[super resignFirstResponder];
+
 	return [internalTextView resignFirstResponder];
 }
 
@@ -627,7 +648,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 - (void)textViewDidEndEditing:(UITextView *)textView {
-	if ([textView.text isEqualToString:@""]) {
+	if ([textView.text isEqualToString:@""] && self.singleLineTextLabel.hidden) {
         textView.text = @"Write a comment...";
         textView.font = [UIFont fontWithName:@"ProximaNova-Regular" size:18.0];
         textView.textColor = [TDConstants commentTimeTextColor];

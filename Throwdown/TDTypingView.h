@@ -33,6 +33,7 @@
     HPGrowingTextView *hpTextView;
 
     BOOL isUp;
+    NSString *rememberText;
 }
 
 @property (nonatomic,assign) id <TDTypingViewViewDelegate> __unsafe_unretained delegate;
@@ -44,9 +45,11 @@
 @property (nonatomic, assign) CGRect keybdUpFrame;
 @property (nonatomic, retain) HPGrowingTextView *hpTextView;
 @property (nonatomic, assign) BOOL isUp;
+@property (nonatomic, retain) NSString *rememberText;
 
 +(CGFloat)typingHeight;
 -(void)removeKeyboard;
 -(BOOL)showingKeyboard;
 -(void)postButtonPressed:(id)selector;
+-(void)reset;
 @end

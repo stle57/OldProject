@@ -90,7 +90,8 @@
 @property (nonatomic, strong) NSString *placeholder;
 @property (nonatomic, strong) UIColor *placeholderColor;
 @property (nonatomic, strong) UITextView *internalTextView;	
-
+@property (nonatomic, strong) UILabel *singleLineTextLabel;
+@property (nonatomic, strong) NSString *rememberText;
 
 //uitextview properties
 @property(unsafe_unretained) NSObject<HPGrowingTextViewDelegate> *delegate;

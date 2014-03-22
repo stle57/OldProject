@@ -21,6 +21,7 @@
 @synthesize keybdUpFrame;
 @synthesize hpTextView;
 @synthesize isUp;
+@synthesize rememberText;
 
 #define MAX_LENGTH      4000
 #define TYPING_HEIGHT   44.0
@@ -30,6 +31,7 @@
     delegate = nil;
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardDidShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 
     self.textView.delegate = nil;
@@ -39,6 +41,7 @@
     self.topLine = nil;
     self.bottomLine = nil;
     self.hpTextView = nil;
+    self.rememberText = nil;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -80,7 +83,8 @@
         // you can also set the maximum height in points with maxHeight
         // textView.maxHeight = 200.0f;
         self.hpTextView.returnKeyType = UIReturnKeyDefault;
-        self.hpTextView.font = [UIFont fontWithName:@"ProximaNova-Regular" size:18.0];;
+        self.hpTextView.font = [UIFont fontWithName:@"ProximaNova-Regular" size:18.0];
+        self.hpTextView.singleLineTextLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:18.0];
         self.hpTextView.delegate = self;
         self.hpTextView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(5, 0, 5, 0);
         self.hpTextView.placeholder = @"";
@@ -130,6 +134,11 @@
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(keyboardWillAppear:)
                                                      name:UIKeyboardWillShowNotification
+                                                   object:nil];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(keyboardDidAppear:)
+                                                     name:UIKeyboardDidShowNotification
                                                    object:nil];
 
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -330,7 +339,15 @@
 {
     NSLog(@"TDTyping-hideKeyboard");
 
-    self.hpTextView.text = @"";
+    if ([self.hpTextView.text length] > 0) {
+        rememberText = self.hpTextView.text;
+        self.hpTextView.singleLineTextLabel.text = rememberText;
+        self.hpTextView.singleLineTextLabel.hidden = NO;
+        self.hpTextView.text = @"";
+    } else {
+        self.hpTextView.singleLineTextLabel.hidden = YES;
+        self.hpTextView.singleLineTextLabel.text = @"";
+    }
 
     if ([self.hpTextView isFirstResponder]) {
         [self.hpTextView resignFirstResponder];
@@ -340,17 +357,28 @@
 -(void)keyboardWillAppear:(NSNotification*)aNotification
 {
     NSDictionary* info = [aNotification userInfo];
-
-    NSLog(@"KEYBD INFO:%@", info);
-
     CGFloat keybdHeight = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
-
-    debug NSLog(@"Keyboard Appearing:%@ HEIGHT:%f", info, keybdHeight);
 
     if (delegate ) {
         if ([delegate respondsToSelector:@selector(keyboardAppeared:curve:)]) {
             [delegate keyboardAppeared:keybdHeight curve:[[info objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue]];
         }
+    }
+
+    [self performSelector:@selector(restoreOldText) withObject:nil afterDelay:0.1];
+}
+
+-(void)keyboardDidAppear:(NSNotification*)aNotification
+{
+}
+
+-(void)restoreOldText
+{
+    if (rememberText) {
+        self.hpTextView.singleLineTextLabel.hidden = YES;
+        self.hpTextView.singleLineTextLabel.text = @"";
+        self.hpTextView.text = rememberText;
+        rememberText = nil;
     }
 }
 
@@ -369,6 +397,12 @@
             [delegate keyboardDisappeared:keybdHeight];
         }
     }
+}
+
+-(void)reset
+{
+    self.hpTextView.text = @"";
+    self.hpTextView.rememberText = @"";
 }
 
 #pragma mark buttons

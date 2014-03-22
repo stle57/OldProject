@@ -154,6 +154,7 @@
             [newComment user:[[TDCurrentUser sharedInstance] currentUserObject]
                         dict:[[commentDict objectForKey:@"comment"] objectForKey:@"comment"]];
             [self.post addComment:newComment];
+            [self.typingView reset];
             [self.tableView reloadData];
             [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:(2+[self.post.comments count])-1
                                                                       inSection:0]
@@ -244,11 +245,16 @@
 #pragma mark - TypingView delegates
 -(void)keyboardAppeared:(CGFloat)height curve:(NSInteger)curve
 {
-    debug NSLog(@"delegate-keyboardAppeared:%f curve:%ld", height, (long)curve);
+    NSLog(@"delegate-keyboardAppeared:%f curve:%ld", height, (long)curve);
 
     CGRect newFrame = self.frostedViewWhileTyping.frame;
-    newFrame.size.height = self.view.frame.size.height-height-[TDTypingView typingHeight]-1.0;
+    newFrame.size.height = self.view.frame.size.height-height-self.typingView.frame.size.height-1.0;
     self.frostedViewWhileTyping.frame = newFrame;
+    self.frostedViewWhileTyping.hidden = NO;
+    self.typingView.isUp = YES;
+
+    CGPoint newCenter = CGPointMake(origTypingViewCenter.x,
+                                    origTypingViewCenter.y-height);
 
     [UIView animateWithDuration:0.5
                           delay:0.0
@@ -256,22 +262,21 @@
           initialSpringVelocity:0.0
                         options:curve
                      animations:^{
-                         self.typingView.center = CGPointMake(origTypingViewCenter.x,
-                                                              origTypingViewCenter.y-height);
+                         self.typingView.center = newCenter;
                      }
                      completion:^(BOOL animDone){
 
                          if (animDone)
                          {
-                             self.frostedViewWhileTyping.hidden = NO;
                              self.typingView.keybdUpFrame = self.typingView.frame;
-                             self.typingView.isUp = YES;
                          }
                      }];
 }
 
 -(void)keyboardDisappeared:(CGFloat)height
 {
+    NSLog(@"delegate-keyboardDisappeared:%f", height);
+
     [UIView animateWithDuration: 0.25
                           delay: 0.0
                         options: UIViewAnimationOptionCurveLinear
