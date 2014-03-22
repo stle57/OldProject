@@ -411,6 +411,7 @@
     self.hpTextView.rememberText = @"";
     self.rememberText = @"";
     self.hpTextView.singleLineTextLabel.text = @"";
+    self.hpTextView.textColor = [TDConstants commentTimeTextColor];
 }
 
 #pragma mark buttons
