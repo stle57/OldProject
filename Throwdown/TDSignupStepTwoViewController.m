@@ -210,8 +210,9 @@
                                                           range:NSMakeRange(0, [username length])];
 
     if (match.location == NSNotFound) {
+        [self.userNameTextField startSpinner];
         [[TDAPIClient sharedInstance] validateCredentials:@{ @"username":username } success:^(NSDictionary *response) {
-            [self.userNameTextField status:YES];
+            [self.userNameTextField status:[[response objectForKey:@"username"] boolValue]];
             [self validateAllFields];
         } failure:^{
             [self.userNameTextField status:NO];
