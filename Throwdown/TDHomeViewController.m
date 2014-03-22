@@ -417,12 +417,15 @@
     if ([post.likers count] == 0) {
         lastRowDelta = 2;
     }
+
     if (indexPath.row == ((lastRowDelta+([post.comments count] > 2 ? 2 : [post.comments count]))-1))
     {
         return commentButtonsHeight;
     }
 
-    return commentRowHeight;
+    // Comments
+    TDComment *comment = [post.comments objectAtIndex:(indexPath.row-(lastRowDelta-1))];
+    return 40.0+comment.messageHeight;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

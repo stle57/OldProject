@@ -14,6 +14,7 @@
 -(void)keyboardAppeared:(CGFloat)height curve:(NSInteger)curve;
 -(void)keyboardDisappeared:(CGFloat)height;
 -(void)typingViewMessage:(NSString *)message;
+-(void)adjustFrostedView;
 @end
 
 @interface TDTypingView : UIView <UITextViewDelegate, HPGrowingTextViewDelegate>

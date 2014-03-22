@@ -327,6 +327,12 @@
     r.size.height -= diff;
     r.origin.y += diff;
 	self.frame = r;
+
+    if (delegate ) {
+        if ([delegate respondsToSelector:@selector(adjustFrostedView)]) {
+            [delegate adjustFrostedView];
+        }
+    }
 }
 
 #pragma mark keyboard

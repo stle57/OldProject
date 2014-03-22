@@ -247,10 +247,6 @@
 {
     NSLog(@"delegate-keyboardAppeared:%f curve:%ld", height, (long)curve);
 
-    CGRect newFrame = self.frostedViewWhileTyping.frame;
-    newFrame.size.height = self.view.frame.size.height-height-self.typingView.frame.size.height-1.0;
-    self.frostedViewWhileTyping.frame = newFrame;
-    self.frostedViewWhileTyping.hidden = NO;
     self.typingView.isUp = YES;
 
     CGPoint newCenter = CGPointMake(origTypingViewCenter.x,
@@ -269,8 +265,19 @@
                          if (animDone)
                          {
                              self.typingView.keybdUpFrame = self.typingView.frame;
+
+                             [self adjustFrostedView];
                          }
                      }];
+}
+
+-(void)adjustFrostedView
+{
+    CGRect newFrame = self.frostedViewWhileTyping.frame;
+    newFrame.origin.y = self.navigationController.navigationBar.frame.size.height;
+    newFrame.size.height = self.typingView.frame.origin.y-newFrame.origin.y;
+    self.frostedViewWhileTyping.frame = newFrame;
+    self.frostedViewWhileTyping.hidden = NO;
 }
 
 -(void)keyboardDisappeared:(CGFloat)height
