@@ -407,8 +407,10 @@
 
 -(void)reset
 {
-    self.hpTextView.text = @"";
+    self.hpTextView.text = @"Write a comment...";
     self.hpTextView.rememberText = @"";
+    self.rememberText = @"";
+    self.hpTextView.singleLineTextLabel.text = @"";
 }
 
 #pragma mark buttons
