@@ -82,7 +82,7 @@ typedef enum {
 
     // Likes & Comments
     [self.likeView setLike:post.liked];
-    [self.likeView setLikesArray:post.likers];
+    [self.likeView setLikesArray:post.likers totalLikersCount:888];
     [self.likeView setCommentsArray:post.comments];
 
     [self.previewImage setImage:nil];

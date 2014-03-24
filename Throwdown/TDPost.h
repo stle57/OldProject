@@ -19,6 +19,8 @@
 @property (nonatomic, assign) BOOL liked;
 @property (strong, nonatomic, readonly) NSArray *likers;
 @property (strong, nonatomic, readonly) NSArray *comments;
+@property (strong, nonatomic, readonly) NSNumber *commentsTotalCount;
+@property (strong, nonatomic, readonly) NSNumber *likersTotalCount;
 
 - (id)initWithDictionary:(NSDictionary *)dict;
 -(void)loadUpFromDict:(NSDictionary *)dict;

@@ -11,7 +11,8 @@
 #import "TDPostView.h"
 #import "TDTwoButtonView.h"
 #import "TDDetailsCommentsCell.h"
+#import "TDMoreComments.h"
 
-@interface TDHomeViewController : UIViewController <TDLikeViewDelegate, TDPostViewDelegate, TDTwoButtonViewDelegate, TDDetailsCommentsCellDelegate>
+@interface TDHomeViewController : UIViewController <TDLikeViewDelegate, TDPostViewDelegate, TDTwoButtonViewDelegate, TDDetailsCommentsCellDelegate, TDMoreCommentsDelegate>
 
 @end

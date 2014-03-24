@@ -23,6 +23,7 @@
     BOOL like;
     NSArray *likers;
     NSArray *comments;
+    CGRect origMoreLabelRect;
 }
 
 @property (nonatomic, assign) id <TDLikeViewDelegate> __unsafe_unretained delegate;
@@ -31,6 +32,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *commentButton;
 @property (weak, nonatomic) IBOutlet UIImageView *moreImageView;
 @property (weak, nonatomic) IBOutlet UIImageView *likeIconImageView;
+@property (weak, nonatomic) IBOutlet UILabel *moreLabel;
 @property (nonatomic, retain) NSArray *likers;
 @property (nonatomic, retain) NSArray *comments;
 @property (nonatomic, assign) BOOL like;
@@ -39,7 +41,7 @@
 - (IBAction)commentButtonPressed:(UIButton *)sender;
 -(void)setLike:(BOOL)liked;
 -(void)setComment:(BOOL)commented;
--(void)setLikesArray:(NSArray *)array;
+-(void)setLikesArray:(NSArray *)array totalLikersCount:(NSInteger)totalLikersCount;
 -(void)setCommentsArray:(NSArray *)array;
 
 @end

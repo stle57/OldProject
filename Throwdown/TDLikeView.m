@@ -41,6 +41,11 @@
     return self;
 }
 
+- (void)awakeFromNib {
+    origMoreLabelRect = self.moreLabel.frame;
+    self.moreLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:14.0];
+}
+
 - (IBAction)likeButtonPressed:(UIButton *)sender
 {
     NSLog(@"TDLikeView-likeButtonPressed:%d", like);
@@ -96,13 +101,38 @@
     buttonImage = nil;
 }
 
--(void)setLikesArray:(NSArray *)array
+-(void)setLikesArray:(NSArray *)array totalLikersCount:(NSInteger)totalLikersCount
 {
+    // Likers
     self.likers = array;
 
-    // Hide more for now
+/* for testing many likers
+    NSDictionary *likerDict = nil;
+    NSMutableArray *newArray = [NSMutableArray arrayWithCapacity:0];
+    for (int i=0; i < 10; i++) {
+         likerDict = [NSDictionary dictionaryWithObjectsAndKeys:@"default", @"picture", @"id", [NSString stringWithFormat:@"%d", i], nil];
+        [newArray addObject:likerDict];
+        likerDict = nil;
+    }
+    self.likers = newArray;
+*/
+    
+    // Hide / unhide more image and text
     self.moreImageView.hidden = YES;
-    if ([self.likers count] > 9) {
+    self.moreLabel.hidden = YES;
+    if ([self.likers count] > 8) {
+
+        // more label
+        self.moreLabel.frame = origMoreLabelRect;
+        self.moreLabel.text = [NSString stringWithFormat:@"%lu more", (long)(totalLikersCount-[array count])];
+        [TDAppDelegate fixWidthOfThisLabel:self.moreLabel];
+        self.moreLabel.center = CGPointMake([UIScreen mainScreen].bounds.size.width-self.moreLabel.frame.size.width/2.0-8.0,
+                                            self.moreLabel.center.y);
+        self.moreLabel.hidden = NO;
+
+        // more image
+        self.moreImageView.center = CGPointMake(self.moreLabel.frame.origin.x-self.moreImageView.frame.size.width/2.0-3.0,
+                                                self.moreImageView.center.y);
         self.moreImageView.hidden = NO;
     }
 
@@ -122,10 +152,15 @@
     }
 
     // Add image buttons
+    NSInteger index = 0;
     for (NSDictionary *likerDict in self.likers) {
         if ([likerDict objectForKey:@"picture"]) {
             [self addButtonWithPicture:[likerDict objectForKey:@"picture"]
                                  index:[self.likers indexOfObject:likerDict]];
+            index ++;   // double check no more than 8
+            if (index > 7) {
+                break;
+            }
         }
     }
 }
@@ -138,7 +173,11 @@
 -(CGRect)frameForButtonWithIndex:(NSInteger)index
 {
     CGFloat gap = 3.0;
-    CGFloat widthOfOne = ((self.moreImageView.frame.origin.x-CGRectGetMaxX(self.likeIconImageView.frame)-gap*12.0)/9.0);
+    CGFloat widthOfOne = ((self.moreImageView.frame.origin.x-CGRectGetMaxX(self.likeIconImageView.frame)-gap*10.0)/8.0);
+    // max width 24.0
+    if (widthOfOne > 24.0) {
+        widthOfOne = 24.0;
+    }
     return CGRectMake(((widthOfOne+gap)*index)+CGRectGetMaxX(self.likeIconImageView.frame)+gap*2.0,
                       0.0,
                       widthOfOne,

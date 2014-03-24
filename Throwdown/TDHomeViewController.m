@@ -34,6 +34,7 @@
     CGFloat likeHeight;
     CGFloat commentButtonsHeight;
     CGFloat commentRowHeight;
+    CGFloat moreCommentRowHeight;
 }
 @property (nonatomic, retain) NSArray *posts;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -87,6 +88,10 @@
     TDDetailsCommentsCell *commentDetailsCell = [topLevelObjects objectAtIndex:0];
     commentRowHeight = commentDetailsCell.frame.size.height;
     commentDetailsCell = nil;
+    topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_MORE_COMMENTS owner:self options:nil];
+    TDMoreComments *moreCommentsCell = [topLevelObjects objectAtIndex:0];
+    moreCommentRowHeight = moreCommentsCell.frame.size.height;
+    moreCommentsCell = nil;
 
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.delegate = self;
@@ -166,16 +171,6 @@
     // Place off screen
     self.bottomButtonHolderView.center = CGPointMake(self.bottomButtonHolderView.center.x,
                                                      [UIScreen mainScreen].bounds.size.height+(self.bottomButtonHolderView.frame.size.height/2.0)+1.0);
-
-/*    [self.recordButton setTranslatesAutoresizingMaskIntoConstraints:YES];
-    [self.notificationButton setTranslatesAutoresizingMaskIntoConstraints:YES];
-    [self.profileButton setTranslatesAutoresizingMaskIntoConstraints:YES];
-    
-    self.recordButton.center = CGPointMake(self.recordButton.center.x, origRecordButtonCenter.y+self.recordButton.frame.size.height*1.2);
-    self.notificationButton.center = CGPointMake(self.notificationButton.center.x, origNotificationButtonCenter.y+self.recordButton.frame.size.height*1.2);
-    self.profileButton.center = CGPointMake(self.profileButton.center.x, origProfileButtonCenter.y+self.recordButton.frame.size.height*1.2); */
-
-
 }
 
 -(void)animateButtonsOnToScreen
@@ -319,18 +314,28 @@
 
 // Rows is 1 (for the video) + 1 for likes row + # of comments + 1 for like/comment buttons
 // -1 if no likers
+// +1 if total comments count > 2
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     TDPost *post = (TDPost *)[self.posts objectAtIndex:section];
+    NSInteger count;
     if ([post.likers count] > 0) {
-        return 3+([post.comments count] > 2 ? 2 : [post.comments count]);//[posts count];
+        count = 3+([post.comments count] > 2 ? 2 : [post.comments count]);
+    } else {
+        count = 2+([post.comments count] > 2 ? 2 : [post.comments count]);
     }
-    return 2+([post.comments count] > 2 ? 2 : [post.comments count]);//[posts count];
+
+    // +1 if total comments count > 2
+    if ([post.commentsTotalCount intValue] > 2) {
+        count++;
+    }
+    return count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
     // The video
     TDPost *post = (TDPost *)[self.posts objectAtIndex:indexPath.section];
+
     if (indexPath.row == 0)
     {
         TDPostView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_POST_VIEW];
@@ -362,16 +367,15 @@
         TDPost *post = (TDPost *)[self.posts objectAtIndex:indexPath.section];
         cell.row = indexPath.section;
         [cell setLike:post.liked];
-        [cell setLikesArray:post.likers];
+        [cell setLikesArray:post.likers totalLikersCount:[post.likersTotalCount integerValue]];
         return cell;
     }
 
     // Like Comment Buttons - last row
-    NSInteger lastRowDelta = 3;
-    if ([post.likers count] == 0) {
-        lastRowDelta = 2;
-    }
-    if (indexPath.row == (lastRowDelta+([post.comments count] > 2 ? 2 : [post.comments count]))-1)
+    NSInteger totalRows = [self tableView:nil numberOfRowsInSection:indexPath.section];
+    NSInteger lastRow = totalRows-1;
+
+    if (indexPath.row == lastRow)
     {
         TDTwoButtonView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_COMMENT_VIEW];
         if (!cell) {
@@ -387,6 +391,23 @@
         return cell;
     }
 
+    // More Comments Row
+    if ([post.commentsTotalCount intValue] > 2 && indexPath.row == (lastRow-1))
+    {
+        TDMoreComments *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_MORE_COMMENTS];
+        if (!cell) {
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_MORE_COMMENTS owner:self options:nil];
+            cell = (TDMoreComments *)[topLevelObjects objectAtIndex:0];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.delegate = self;
+        }
+
+        [cell moreCount:[post.commentsTotalCount intValue]];
+
+        return cell;
+    }
+
+    // The comments are the remaining cells
     TDDetailsCommentsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDDetailsCommentsCell"];
     if (!cell) {
         NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDDetailsCommentsCell" owner:self options:nil];
@@ -396,7 +417,8 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 
-    TDComment *comment = [post.comments objectAtIndex:(indexPath.row-(lastRowDelta-1))];
+    NSInteger commentNumber = indexPath.row-1-([post.likers count] > 0 ? 1 : 0);
+    TDComment *comment = [post.comments objectAtIndex:commentNumber];
     [cell makeText:comment.body];
     [cell makeTime:comment.createdAt name:comment.user.username];
     return cell;
@@ -413,18 +435,19 @@
         return likeHeight;
     }
 
-    NSInteger lastRowDelta = 3;
-    if ([post.likers count] == 0) {
-        lastRowDelta = 2;
-    }
+    NSInteger lastRow = [self tableView:nil numberOfRowsInSection:indexPath.section]-1;
 
-    if (indexPath.row == ((lastRowDelta+([post.comments count] > 2 ? 2 : [post.comments count]))-1))
-    {
+    if (indexPath.row == lastRow) {
         return commentButtonsHeight;
     }
 
+    if (indexPath.row == (lastRow-1) && [post.commentsTotalCount intValue] > 2) {
+        return moreCommentRowHeight;
+    }
+
     // Comments
-    TDComment *comment = [post.comments objectAtIndex:(indexPath.row-(lastRowDelta-1))];
+    NSInteger commentNumber = indexPath.row-1-([post.likers count] > 0 ? 1 : 0);
+    TDComment *comment = [post.comments objectAtIndex:commentNumber];
     return 40.0+comment.messageHeight;
 }
 

@@ -49,6 +49,8 @@
     _createdAt = [TDPost dateForRFC3339DateTimeString:[dict objectForKey:@"created_at"]];
     _liked = [[dict objectForKey:@"liked"] boolValue];
     _likers = [dict objectForKey:@"likers"];
+    _commentsTotalCount = [dict objectForKey:@"comment_count"];
+    _likersTotalCount = [dict objectForKey:@"like_count"];
 
     TDComment *comment = nil;
     NSMutableArray *commentsArray = [NSMutableArray arrayWithCapacity:0];
@@ -116,6 +118,7 @@
     NSMutableArray *newArray = [NSMutableArray arrayWithArray:self.comments];
     [newArray addObject:newComment];
     _comments = newArray;
+    _commentsTotalCount = [NSNumber numberWithInt:[_commentsTotalCount intValue] + 1];
 }
 
 -(void)orderCommentsForHomeScreen
