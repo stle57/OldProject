@@ -247,8 +247,6 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 - (void)validateField:(kTDTextFieldType)field {
     [[TDAPIClient sharedInstance] validateCredentials:[self userParameters] success:^(NSDictionary *response) {
 
-        NSLog(@"RESPONSE:%@", response);
-
         switch (field) {
             case kTDTextFieldType_Phone:
                 [self.phoneNumberTextField status:[[response objectForKey:@"phone_number"] boolValue]];
