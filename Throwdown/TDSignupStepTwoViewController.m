@@ -31,8 +31,8 @@
 
     NSError *error = nil;
     self.usernamePattern = [NSRegularExpression regularExpressionWithPattern:@"[^\\w+\\d++_]"
-                                                                 options:0
-                                                                   error:&error];
+                                                                     options:0
+                                                                       error:&error];
 
     [self.userNameTextField textfieldText:self.userName];
     [self validateUsernameField];
@@ -151,6 +151,9 @@
 }
 
 - (void)userParameters:(NSDictionary *)parameters {
+
+    NSLog(@"param:%@", parameters);
+
     self.userParameters = [parameters mutableCopy];
     self.userName = [self.userParameters objectForKey:@"username"];
 }
@@ -163,13 +166,13 @@
 - (void)textFieldDidChange:(UITextField *)textField type:(kTDTextFieldType)type {
     switch (type) {
         case kTDTextFieldType_UserName:
-            self.userName = textField.text;
-            [self validateUsernameField];
+        self.userName = textField.text;
+        [self validateUsernameField];
         break;
 
         case kTDTextFieldType_Password:
-            self.password = textField.text;
-            [self validatePassword];
+        self.password = textField.text;
+        [self validatePassword];
         break;
     }
 
@@ -180,11 +183,11 @@
     [self textFieldDidChange:textField type:type];
     switch (type) {
         case kTDTextFieldType_UserName:
-            [self.passwordTextField becomeFirstResponder];
+        [self.passwordTextField becomeFirstResponder];
         break;
 
         case kTDTextFieldType_Password:
-            [self.userNameTextField becomeFirstResponder];
+        [self.userNameTextField becomeFirstResponder];
         break;
     }
 
@@ -206,8 +209,8 @@
 
     NSString *username = self.userName;
     NSRange match = [self.usernamePattern rangeOfFirstMatchInString:username
-                                                        options:0
-                                                          range:NSMakeRange(0, [username length])];
+                                                            options:0
+                                                              range:NSMakeRange(0, [username length])];
 
     if (match.location == NSNotFound) {
         [self.userNameTextField startSpinner];

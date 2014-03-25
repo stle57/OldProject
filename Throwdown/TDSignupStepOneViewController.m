@@ -226,6 +226,8 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
     } else {
         [self.firstLastNameTextField status:NO];
     }
+    [self.firstLastNameTextField startSpinner];
+    [self validateField:kTDTextFieldType_FirstLast];
     [self validateAllFields];
 }
 
@@ -244,6 +246,9 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 
 - (void)validateField:(kTDTextFieldType)field {
     [[TDAPIClient sharedInstance] validateCredentials:[self userParameters] success:^(NSDictionary *response) {
+
+        NSLog(@"RESPONSE:%@", response);
+
         switch (field) {
             case kTDTextFieldType_Phone:
                 [self.phoneNumberTextField status:[[response objectForKey:@"phone_number"] boolValue]];
@@ -255,6 +260,7 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 
             case kTDTextFieldType_FirstLast:
                 [self.firstLastNameTextField status:[[response objectForKey:@"name"] boolValue]];
+                [self.firstLastNameTextField stopSpinner];
                 break;
         }
         self.username = (NSString *)[response objectForKey:@"suggested_username"];
@@ -272,6 +278,7 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 
             case kTDTextFieldType_FirstLast:
                 [self.firstLastNameTextField status:NO];
+                [self.firstLastNameTextField stopSpinner];
                 break;
         }
         [self validateAllFields];
