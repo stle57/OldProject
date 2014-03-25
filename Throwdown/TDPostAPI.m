@@ -130,6 +130,8 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
 
         NSLog(@"LIKE Error: %@", error);
+
+        [self notifyPostsRefreshed];
     }];
 }
 
@@ -162,8 +164,11 @@
         }
 
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        
+
         NSLog(@"UNLIKE Error: %@", error);
+
+        [self notifyPostsRefreshed];
+
     }];
 }
 

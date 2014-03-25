@@ -58,6 +58,9 @@
             }
         }
     }
+
+    // Do it quick for speedy UI
+    [self setLike:like];
 }
 
 -(void)setLike:(BOOL)liked

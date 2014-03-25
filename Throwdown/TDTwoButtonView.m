@@ -43,12 +43,16 @@
         if (delegate) {
             if ([delegate respondsToSelector:@selector(unLikeButtonPressedFromRow:)]) {
                 [delegate unLikeButtonPressedFromRow:row];
+
+                [self setLike:NO];
             }
         }
     } else {
         if (delegate) {
             if ([delegate respondsToSelector:@selector(likeButtonPressedFromRow:)]) {
                 [delegate likeButtonPressedFromRow:row];
+
+                [self setLike:YES];
             }
         }
     }
