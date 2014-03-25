@@ -31,6 +31,7 @@ typedef enum {
 @property (strong, nonatomic) AVPlayer *player;
 @property (strong, nonatomic) AVPlayerItem *playerItem;
 @property (strong, nonatomic) AVPlayerLayer *playerLayer;
+@property (strong, nonatomic) TDPost *aPost;
 @property (nonatomic) BOOL isPlaying;
 @property (nonatomic) BOOL didPlay;
 @property (nonatomic) BOOL isLoading;
@@ -69,8 +70,18 @@ typedef enum {
     self.createdLabel.font = [UIFont fontWithName:@"ProximaNova-Light" size:14.0];
 }
 
+-(BOOL)playing
+{
+    return self.isPlaying;
+}
+
 - (void)setPost:(TDPost *)post {
 
+    if (self.isPlaying && [self.aPost isEqual:post]) {  // If it's the same ie table was refreshed, bail so that we don't stop video playback
+        return;
+    }
+
+    self.aPost = post;
     self.usernameLabel.text = post.user.username;
     self.createdLabel.text = [post.createdAt timeAgo];
 

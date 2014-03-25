@@ -155,4 +155,16 @@
     _comments = [NSArray arrayWithArray:sortingArray];
 }
 
+- (BOOL)isEqual:(id)other
+{
+    if (other == self) {
+        return YES;
+    } else if (![super isEqual:other]) {
+        return NO;
+    } else {
+        TDPost *otherPost = (TDPost *)other;
+        return [self.postId isEqualToNumber:otherPost.postId];
+    }
+}
+
 @end

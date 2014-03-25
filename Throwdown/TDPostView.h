@@ -32,5 +32,6 @@
 @property (strong, nonatomic) NSString *filename;
 
 - (void)setPost:(TDPost *)post;
+-(BOOL)playing;
 
 @end
