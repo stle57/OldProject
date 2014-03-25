@@ -94,13 +94,23 @@
 
 +(CGFloat)heightOfTextForString:(NSString *)aString andFont:(UIFont *)aFont maxSize:(CGSize)aSize
 {
-    CGSize sizeOfText = [aString boundingRectWithSize: aSize
-                                              options: (NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
-                                           attributes: [NSDictionary dictionaryWithObject:aFont
-                                                                                   forKey:NSFontAttributeName]
-                                              context: nil].size;
+    // iOS7
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
+    {
+        CGSize sizeOfText = [aString boundingRectWithSize: aSize
+                                                  options: (NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
+                                               attributes: [NSDictionary dictionaryWithObject:aFont
+                                                                                       forKey:NSFontAttributeName]
+                                                  context: nil].size;
 
-    return ceilf(sizeOfText.height);
+        return ceilf(sizeOfText.height);
+    }
+
+    // iOS6
+    CGSize textSize = [aString sizeWithFont:aFont
+                          constrainedToSize:aSize
+                              lineBreakMode:NSLineBreakByWordWrapping];
+    return textSize.height;
 }
 
 +(void)fixWidthOfThisLabel:(UILabel *)aLabel
@@ -115,13 +125,23 @@
 
 +(CGFloat)widthOfTextForString:(NSString *)aString andFont:(UIFont *)aFont maxSize:(CGSize)aSize
 {
-    CGSize sizeOfText = [aString boundingRectWithSize: aSize
-                                              options: (NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
-                                           attributes: [NSDictionary dictionaryWithObject:aFont
-                                                                                   forKey:NSFontAttributeName]
-                                              context: nil].size;
+    // iOS7
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
+    {
+        CGSize sizeOfText = [aString boundingRectWithSize: aSize
+                                                  options: (NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
+                                               attributes: [NSDictionary dictionaryWithObject:aFont
+                                                                                       forKey:NSFontAttributeName]
+                                                  context: nil].size;
 
-    return ceilf(sizeOfText.width);
+        return ceilf(sizeOfText.width);
+    }
+    
+    // iOS6
+    CGSize textSize = [aString sizeWithFont:aFont
+                          constrainedToSize:aSize
+                              lineBreakMode:NSLineBreakByWordWrapping];
+    return textSize.width;
 }
 
 @end
