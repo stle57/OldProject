@@ -71,6 +71,10 @@
 }
 
 - (void)fetchPostsUpstream {
+    [self fetchPostsUpstreamWithErrorHandler:nil];
+}
+
+- (void)fetchPostsUpstreamWithErrorHandler:(void (^)(void))errorHandler {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:[[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts.json"] parameters:@{@"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSArray class]]) {
@@ -84,6 +88,9 @@
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"HTTP Error: %@", error);
+        if (errorHandler) {
+            errorHandler();
+        }
     }];
 }
 

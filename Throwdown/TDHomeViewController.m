@@ -274,7 +274,17 @@
 
 - (void)refreshControlUsed {
     debug NSLog(@"refreshControlUsed");
-    [[TDPostAPI sharedInstance] fetchPostsUpstream];
+    [[TDPostAPI sharedInstance] fetchPostsUpstreamWithErrorHandler:^{
+        [self endRefreshControl];
+    }];
+}
+
+- (void)endRefreshControl {
+    // uirefreshcontrol should be attached to a uitableviewcontroller - this stops a slight jutter
+    [self.refreshControl performSelector:@selector(endRefreshing)
+                              withObject:nil
+                              afterDelay:0.1];
+
 }
 
 # pragma mark - Figure out what's on each row
@@ -287,10 +297,7 @@
 - (void)refreshPostsList {
     debug NSLog(@"refresh post list");
 
-    // uirefreshcontrol should be attached to a uitableviewcontroller - this stops a slight jutter
-    [self.refreshControl performSelector:@selector(endRefreshing)
-                              withObject:nil
-                              afterDelay:0.1];
+    [self endRefreshControl];
 
     posts = [[TDPostAPI sharedInstance] getPosts];
     [self.tableView reloadData];
