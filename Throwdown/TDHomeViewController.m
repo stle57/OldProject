@@ -554,7 +554,7 @@
 
         if (buttonIndex == 1)   // Feedback
         {
-
+            [self displayFeedbackEmail];
         }
 
         if (buttonIndex == 0)   // Log out
@@ -562,7 +562,6 @@
             [[TDUserAPI sharedInstance] logout];
             [self showWelcomeController];
         }
-
 
         self.logOutFeedbackButton.enabled = YES;
     }
@@ -580,5 +579,46 @@
     [self.navigationController popToRootViewControllerAnimated:NO];
 }
 
+#pragma mark - Email Feedback
+-(void)displayFeedbackEmail
+{
+    MFMailComposeViewController *picker = [[MFMailComposeViewController alloc] init];
+    picker.mailComposeDelegate = self;
+
+    [picker setSubject:@"Throwdown Feedback"];
+
+    // Set up the recipients.
+    NSArray *toRecipients = [NSArray arrayWithObjects:@"feedback@throwdown.us",
+                             nil];
+
+    [picker setToRecipients:toRecipients];
+
+    // Fill out the email body text.
+    NSMutableString *emailBody = [NSMutableString string];
+    [emailBody appendString:[NSString stringWithFormat:@"Thanks for using Throwdown! We appreciate any thoughts you have on making it better or if you found a bug, let us know here."]];
+
+    [emailBody appendString:[NSString stringWithFormat:@"\n\n\n\n\nApp Version:%@", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]]];
+    [emailBody appendString:[NSString stringWithFormat:@"\nApp Build #:%@", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"]]];
+    [emailBody appendString:[NSString stringWithFormat:@"\nOS:%@", [[UIDevice currentDevice] systemVersion]]];
+    [emailBody appendString:[NSString stringWithFormat:@"\nModel:%@", [UIDevice currentDevice].model]];
+    [emailBody appendString:[NSString stringWithFormat:@"\nID:%@", [TDCurrentUser sharedInstance].userId]];
+    [emailBody appendString:[NSString stringWithFormat:@"\nName:%@", [TDCurrentUser sharedInstance].username]];
+
+    [picker setMessageBody:emailBody isHTML:NO];
+    
+    // Present the mail composition interface.
+    [self presentViewController:picker
+                       animated:YES
+                     completion:nil];
+}
+
+// The mail compose view controller delegate method
+- (void)mailComposeController:(MFMailComposeViewController *)controller
+          didFinishWithResult:(MFMailComposeResult)result
+                        error:(NSError *)error
+{
+    [self dismissViewControllerAnimated:YES
+                             completion:nil];
+}
 
 @end

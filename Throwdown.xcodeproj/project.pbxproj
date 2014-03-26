@@ -12,6 +12,7 @@
 		2D1AEE7118C937560055C315 /* TDDetailsLikesCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D1AEE6F18C937560055C315 /* TDDetailsLikesCell.xib */; };
 		2D2E832E18CA579B00846B2E /* TDComment.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D2E832D18CA579B00846B2E /* TDComment.m */; };
 		2D3F8DF718CFC81E00333F0B /* TDTwoButtonView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D3F8DF618CFC81E00333F0B /* TDTwoButtonView.xib */; };
+		2D531ED918E38A47006CA088 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D531ED818E38A47006CA088 /* MessageUI.framework */; };
 		2D5714CC18BD9AB300AF0B4D /* VideoButtonSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5714C918BD9AB300AF0B4D /* VideoButtonSegue.m */; };
 		2D5714CD18BD9AB300AF0B4D /* VideoCloseSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5714CB18BD9AB300AF0B4D /* VideoCloseSegue.m */; };
 		2D648A1618C9415D002FE0AD /* TDDetailsCommentsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D648A1418C9415D002FE0AD /* TDDetailsCommentsCell.m */; };
@@ -109,6 +110,7 @@
 		2D2E832C18CA579B00846B2E /* TDComment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDComment.h; sourceTree = "<group>"; };
 		2D2E832D18CA579B00846B2E /* TDComment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDComment.m; sourceTree = "<group>"; };
 		2D3F8DF618CFC81E00333F0B /* TDTwoButtonView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDTwoButtonView.xib; sourceTree = "<group>"; };
+		2D531ED818E38A47006CA088 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		2D5714C818BD9AB300AF0B4D /* VideoButtonSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoButtonSegue.h; sourceTree = "<group>"; };
 		2D5714C918BD9AB300AF0B4D /* VideoButtonSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoButtonSegue.m; sourceTree = "<group>"; };
 		2D5714CA18BD9AB300AF0B4D /* VideoCloseSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoCloseSegue.h; sourceTree = "<group>"; };
@@ -243,6 +245,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D531ED918E38A47006CA088 /* MessageUI.framework in Frameworks */,
 				A11E05121889293C002F981A /* AssetsLibrary.framework in Frameworks */,
 				A11E04DE1888CB79002F981A /* CoreGraphics.framework in Frameworks */,
 				A11E04E01888CB79002F981A /* UIKit.framework in Frameworks */,
@@ -361,6 +364,7 @@
 		A11E04DA1888CB79002F981A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2D531ED818E38A47006CA088 /* MessageUI.framework */,
 				A19FF5FB18970BBA001A0AD0 /* RSCloudFiles */,
 				A182D827188B60CD00F794A5 /* SAVideoRangeSlider */,
 				A11E05111889293C002F981A /* AssetsLibrary.framework */,
