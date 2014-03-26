@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="13B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="DPQ-qf-8sb">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5053" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="DPQ-qf-8sb">
     <dependencies>
         <deployment defaultVersion="1536" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
     <scenes>
         <!--Record Video View Controller-->
@@ -629,7 +629,7 @@
                                             <segue destination="vXZ-lx-hvc" kind="custom" identifier="VideoButtonSegue" customClass="VideoButtonSegue" id="bvn-eu-4aP"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Uso-in-hkr" userLabel="Profile Button">
+                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Uso-in-hkr" userLabel="Profile Button">
                                         <rect key="frame" x="255" y="14" width="70" height="70"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="9"/>
@@ -640,6 +640,20 @@
                                         <state key="highlighted" image="nav_profile_hit"/>
                                         <connections>
                                             <action selector="profileButtonPressed:" destination="y50-ZI-obS" eventType="touchUpInside" id="Zt1-df-eW8"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="laX-KP-w1f" userLabel="Profile Button">
+                                        <rect key="frame" x="255" y="14" width="70" height="70"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="9"/>
+                                        <state key="normal" image="nav_notif">
+                                            <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="selected" image="nav_notif_hit"/>
+                                        <state key="highlighted" image="nav_notif_hit"/>
+                                        <connections>
+                                            <action selector="logOutFeedbackButtonPressed:" destination="y50-ZI-obS" eventType="touchUpInside" id="9Yj-XZ-nQR"/>
                                         </connections>
                                     </button>
                                     <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Tdo-gQ-7zF" userLabel="Notification Button">
@@ -668,6 +682,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="bottomButtonHolderView" destination="Sns-MZ-rSx" id="Ivv-IY-fOx"/>
+                        <outlet property="logOutFeedbackButton" destination="laX-KP-w1f" id="Va5-aY-WKl"/>
                         <outlet property="notificationButton" destination="Tdo-gQ-7zF" id="6A5-ER-Qrc"/>
                         <outlet property="profileButton" destination="Uso-in-hkr" id="Q4Y-XF-DPw"/>
                         <outlet property="recordButton" destination="0Pj-wg-KUs" id="FuF-mB-bbc"/>

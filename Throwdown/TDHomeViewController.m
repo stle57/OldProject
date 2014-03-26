@@ -41,6 +41,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *recordButton;
 @property (weak, nonatomic) IBOutlet UIButton *notificationButton;
 @property (weak, nonatomic) IBOutlet UIButton *profileButton;
+@property (weak, nonatomic) IBOutlet UIButton *logOutFeedbackButton;
 @property (weak, nonatomic) IBOutlet UIView *bottomButtonHolderView;
 @property (nonatomic, retain) UIRefreshControl *refreshControl;
 @property (nonatomic, retain) UIDynamicAnimator *animator;
@@ -527,8 +528,11 @@
 
 // HACK to get log out to work
 - (IBAction)profileButtonPressed:(id)sender {
+}
 
-    self.profileButton.enabled = NO;
+- (IBAction)logOutFeedbackButtonPressed:(id)sender {
+
+    self.logOutFeedbackButton.enabled = NO;
 
     // ActionSheet
     UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@""
@@ -560,7 +564,7 @@
         }
 
 
-        self.profileButton.enabled = YES;
+        self.logOutFeedbackButton.enabled = YES;
     }
 }
 
