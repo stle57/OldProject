@@ -158,7 +158,7 @@
                                  if (success) {
                                      [TDViewControllerHelper navigateToHomeFrom:self];
                                  } else {
-                                     [TDViewControllerHelper showAlertMessage:@"Email or password is wrong, try again." withTitle:nil];
+                                     [TDViewControllerHelper showAlertMessage:@"Incorrect login info provided. Please try again." withTitle:nil];
                                      self.loginButton.enabled = YES;
                                      self.loginButton.hidden = NO;
                                      self.backButton.enabled = YES;
