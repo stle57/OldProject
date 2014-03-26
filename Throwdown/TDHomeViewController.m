@@ -527,8 +527,41 @@
 
 // HACK to get log out to work
 - (IBAction)profileButtonPressed:(id)sender {
-    [[TDUserAPI sharedInstance] logout];
-    [self showWelcomeController];
+
+    self.profileButton.enabled = NO;
+
+    // ActionSheet
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@""
+                                                             delegate:self
+                                                    cancelButtonTitle:@"Cancel"
+                                               destructiveButtonTitle:@"Log Out"
+                                                    otherButtonTitles:@"Send Feedback", nil];
+    actionSheet.tag = 3546;
+    [actionSheet showInView:self.view];
+}
+
+-(void)actionSheet:(UIActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    // user clicked out / Cancel = 2
+    // Feedback = 1
+    // Log out = 0
+
+    if (actionSheet.tag == 3546) {
+
+        if (buttonIndex == 1)   // Feedback
+        {
+
+        }
+
+        if (buttonIndex == 0)   // Log out
+        {
+            [[TDUserAPI sharedInstance] logout];
+            [self showWelcomeController];
+        }
+
+
+        self.profileButton.enabled = YES;
+    }
 }
 
 - (void)showWelcomeController

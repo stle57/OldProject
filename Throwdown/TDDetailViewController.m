@@ -11,6 +11,7 @@
 #import "TDPostView.h"
 #import "TDConstants.h"
 #import "TDComment.h"
+#import "TDViewControllerHelper.h"
 
 @interface TDDetailViewController ()
 
@@ -32,6 +33,9 @@
                                                   object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:NEW_COMMENT_INFO_NOTICIATION
+                                                  object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:POST_DELETED_NOTIFICATION
                                                   object:nil];
 
     self.post = nil;
@@ -100,6 +104,26 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadPosts:) name:@"TDRefreshPostsNotification" object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fullPostReturn:) name:FULL_POST_INFO_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newCommentReturn:) name:NEW_COMMENT_INFO_NOTICIATION object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postDeleted:) name:POST_DELETED_NOTIFICATION object:nil];
+
+    // Delete Icon - have to use uibutton to give design's hit state correctly
+    UIButton *deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    UIImage *trashImage = [UIImage imageNamed:@"nav_trash"];
+    [deleteButton setImage:trashImage
+                  forState:UIControlStateNormal];
+    [deleteButton setFrame:CGRectMake(0.0,
+                                      0.0,
+                                      trashImage.size.width,
+                                      trashImage.size.height)];
+    trashImage = nil;
+    trashImage = [UIImage imageNamed:@"nav_trash_hit"];
+    [deleteButton setImage:trashImage
+                  forState:UIControlStateSelected];
+    trashImage = nil;
+    [deleteButton addTarget:self action:@selector(deleteButtonPressed:)
+           forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *deleteBarButton = [[UIBarButtonItem alloc] initWithCustomView:deleteButton];
+    self.navigationItem.rightBarButtonItem = deleteBarButton;
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -124,6 +148,30 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - Delete Post
+-(void)deleteButtonPressed:(id)selector
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Delete?"
+                                                    message:@"Are you sure you want to\ndelete this video?"
+                                                   delegate:self
+                                          cancelButtonTitle:@"Yes"
+                                          otherButtonTitles:@"No", nil];
+    alert.tag = 89890;
+    [alert show];
+}
+
+-(void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    // Delete Yes is index 0
+    if (alertView.tag == 89890 && buttonIndex == 0) {
+        self.navigationItem.rightBarButtonItem.enabled = NO;
+
+        // Delete from server Server
+        TDPostAPI *api = [TDPostAPI sharedInstance];
+        [api likePostWithId:self.post.postId];
+    }
 }
 
 #pragma mark - Notifications
@@ -162,6 +210,13 @@
                                           animated:NO];
         }
     }
+}
+
+-(void)postDeleted:(NSNotification*)notification
+{
+    NSLog(@"delete notification:%@", notification);
+
+    self.navigationItem.rightBarButtonItem.enabled = YES;
 }
 
 #pragma mark - TableView delegates

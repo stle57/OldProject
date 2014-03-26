@@ -12,7 +12,7 @@
 #import "TDDetailsLikesCell.h"
 #import "TDDetailsCommentsCell.h"
 
-@interface TDDetailViewController : UIViewController <TDTypingViewViewDelegate, UITableViewDataSource, UITableViewDelegate, TDDetailsLikesCellDelegate, TDDetailsCommentsCellDelegate>
+@interface TDDetailViewController : UIViewController <TDTypingViewViewDelegate, UITableViewDataSource, UITableViewDelegate, TDDetailsLikesCellDelegate, TDDetailsCommentsCellDelegate, UIAlertViewDelegate>
 {
     TDPost *post;
     TDTypingView *typingView;

@@ -33,6 +33,7 @@ static NSString *const TDFontProximaNovaRegular = @"ProximaNova-Regular";
 #define COMMENT_MESSAGE_FONT            [UIFont systemFontOfSize:14.0]
 #define FULL_POST_INFO_NOTIFICATION     @"TDFullPostInfoNotification"
 #define NEW_COMMENT_INFO_NOTICIATION    @"TDNewCommentPostInfoNoticifation"
+#define POST_DELETED_NOTIFICATION       @"TDPostDeletedNotification"
 
 + (NSString *)getBaseURL;
 + (NSURL *)getStreamingUrlFor:(NSString *)filename;

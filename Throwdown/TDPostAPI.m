@@ -91,6 +91,34 @@
     return [posts mutableCopy];
 }
 
+-(void)deletePostWithId:(NSNumber *)postId
+{
+    NSLog(@"API-delete post with id:%@", postId);
+
+    return;
+
+/*    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts/[POST_ID].json"];
+    url = [url stringByReplacingOccurrencesOfString:@"[POST_ID]"
+                                         withString:[postId stringValue]];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager DELETE:url parameters:@{ @"post": @{@"filename": filename, @"comment": comment}, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        debug NSLog(@"JSON: %@", [responseObject class]);
+
+        if (success) {
+
+            [[NSNotificationCenter defaultCenter] postNotificationName:POST_DELETED_NOTIFICATION
+                                                                object:responseObject
+                                                              userInfo:nil];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"Error: %@", error);
+
+        if (failure) {
+            failure();
+        }
+    }]; */
+}
+
 /* Notify any views to reload, does not update or fetch posts from server */
 - (void)notifyPostsRefreshed {
     [[NSNotificationCenter defaultCenter] postNotificationName:@"TDRefreshPostsNotification"

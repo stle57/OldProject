@@ -25,5 +25,6 @@
 -(void)getFullPostInfoForPostId:(NSNumber *)postId;
 -(void)postNewComment:(NSString *)messageBody forPost:(NSNumber *)postId;
 - (UIImage *)getImage:(NSString *)imageName;
+-(void)deletePostWithId:(NSNumber *)postId;
 
 @end
