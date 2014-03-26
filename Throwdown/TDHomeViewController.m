@@ -66,7 +66,7 @@
     self.bottomButtonHolderView.center = CGPointMake(self.bottomButtonHolderView.center.x,
                                                      [UIScreen mainScreen].bounds.size.height-self.bottomButtonHolderView.frame.size.height/2.0);
     origButtonViewCenter = self.bottomButtonHolderView.center;
-    
+
     origRecordButtonCenter = self.recordButton.center;
     origNotificationButtonCenter = self.notificationButton.center;
     origProfileButtonCenter = self.profileButton.center;
@@ -100,7 +100,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshPostsList:) name:@"TDRefreshPostsNotification" object:nil];
     [self refreshPostsList];
     [[TDPostAPI sharedInstance] fetchPostsUpstream];
-    
+
     // Add refresh control
     self.refreshControl = [[UIRefreshControl alloc] init];
     [self.refreshControl addTarget:self
@@ -255,6 +255,7 @@
 #pragma mark - seques
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
 
     if([segue isKindOfClass:[VideoButtonSegue class]]) {
         goneDownstream = YES;
@@ -526,11 +527,11 @@
 
 # pragma mark - navigation
 
-// HACK to get log out to work
 - (IBAction)profileButtonPressed:(id)sender {
 }
 
 - (IBAction)logOutFeedbackButtonPressed:(id)sender {
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
 
     self.logOutFeedbackButton.enabled = NO;
 
