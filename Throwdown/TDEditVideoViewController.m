@@ -120,6 +120,8 @@ static const NSString *ItemStatusContext;
 # pragma mark - saving
 
 - (IBAction)doneButtonPressed:(UIButton *)sender {
+    [self togglePlay:NO];
+
     ALAssetsLibrary* library = [[ALAssetsLibrary alloc] init];
     [library writeVideoAtPathToSavedPhotosAlbum:(self.editingVideoUrl) completionBlock:nil];
 
@@ -131,7 +133,6 @@ static const NSString *ItemStatusContext;
     TDPostAPI *api = [TDPostAPI sharedInstance];
     [api uploadVideo:[self.editingVideoUrl path] withThumbnail:self.thumbnailPath withName:self.filename];
 
-    [self togglePlay:NO];
     [self performSegueWithIdentifier:@"ShareVideoSegue" sender:self];
 }
 
