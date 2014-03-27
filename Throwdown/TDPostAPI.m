@@ -79,7 +79,7 @@
     [manager GET:[[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts.json"] parameters:@{@"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSArray class]]) {
             [posts removeAllObjects];
-            for (id postObject in (NSArray *)responseObject) {
+            for (id postObject in (NSArray *)[responseObject valueForKeyPath:@"posts"]) {
                 if ([postObject isKindOfClass:[NSDictionary class]]) {
                     [posts addObject:[[TDPost alloc]initWithDictionary:postObject]];
                 }
