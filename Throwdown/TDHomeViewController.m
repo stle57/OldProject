@@ -560,8 +560,8 @@
     UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@""
                                                              delegate:self
                                                     cancelButtonTitle:@"Cancel"
-                                               destructiveButtonTitle:@"Log Out"
-                                                    otherButtonTitles:@"Send Feedback", nil];
+                                               destructiveButtonTitle:@"Send Feedback"
+                                                    otherButtonTitles:@"Log Out", nil];
     actionSheet.tag = 3546;
     [actionSheet showInView:self.view];
 }
@@ -574,12 +574,12 @@
 
     if (actionSheet.tag == 3546) {
 
-        if (buttonIndex == 1)   // Feedback
+        if (buttonIndex == 0)   // Feedback
         {
             [self displayFeedbackEmail];
         }
 
-        if (buttonIndex == 0)   // Log out
+        if (buttonIndex == 1)   // Log out
         {
             [[TDUserAPI sharedInstance] logout];
             [self showWelcomeController];
