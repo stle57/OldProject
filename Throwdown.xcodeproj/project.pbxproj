@@ -24,6 +24,8 @@
 		2DA41A5A18C7E31000B21C74 /* TDTypingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA41A5918C7E31000B21C74 /* TDTypingView.m */; };
 		2DA41A6018C7E49D00B21C74 /* HPGrowingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA41A5D18C7E49D00B21C74 /* HPGrowingTextView.m */; };
 		2DA41A6118C7E49D00B21C74 /* HPTextViewInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA41A5F18C7E49D00B21C74 /* HPTextViewInternal.m */; };
+		2DA420DC18E63E1A006F4D9C /* TDActivityCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA420DA18E63E1A006F4D9C /* TDActivityCell.m */; };
+		2DA420DD18E63E1A006F4D9C /* TDActivityCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA420DB18E63E1A006F4D9C /* TDActivityCell.xib */; };
 		2DA5F05118D36745003D2F99 /* ProximaNova-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5F04D18D36745003D2F99 /* ProximaNova-Bold.otf */; };
 		2DA5F05218D36745003D2F99 /* ProximaNova-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5F04E18D36745003D2F99 /* ProximaNova-Light.otf */; };
 		2DA5F05318D36745003D2F99 /* ProximaNova-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5F04F18D36745003D2F99 /* ProximaNova-Regular.otf */; };
@@ -130,6 +132,9 @@
 		2DA41A5D18C7E49D00B21C74 /* HPGrowingTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPGrowingTextView.m; sourceTree = "<group>"; };
 		2DA41A5E18C7E49D00B21C74 /* HPTextViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HPTextViewInternal.h; sourceTree = "<group>"; };
 		2DA41A5F18C7E49D00B21C74 /* HPTextViewInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPTextViewInternal.m; sourceTree = "<group>"; };
+		2DA420D918E63E1A006F4D9C /* TDActivityCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDActivityCell.h; sourceTree = "<group>"; };
+		2DA420DA18E63E1A006F4D9C /* TDActivityCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDActivityCell.m; sourceTree = "<group>"; };
+		2DA420DB18E63E1A006F4D9C /* TDActivityCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDActivityCell.xib; sourceTree = "<group>"; };
 		2DA5F04D18D36745003D2F99 /* ProximaNova-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ProximaNova-Bold.otf"; path = "fonts/ProximaNova-Bold.otf"; sourceTree = "<group>"; };
 		2DA5F04E18D36745003D2F99 /* ProximaNova-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ProximaNova-Light.otf"; path = "fonts/ProximaNova-Light.otf"; sourceTree = "<group>"; };
 		2DA5F04F18D36745003D2F99 /* ProximaNova-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ProximaNova-Regular.otf"; path = "fonts/ProximaNova-Regular.otf"; sourceTree = "<group>"; };
@@ -566,6 +571,9 @@
 				2DBA430018DA455500366737 /* TDTextField.xib */,
 				2DBA42FE18DA455500366737 /* TDTextField.h */,
 				2DBA42FF18DA455500366737 /* TDTextField.m */,
+				2DA420DB18E63E1A006F4D9C /* TDActivityCell.xib */,
+				2DA420D918E63E1A006F4D9C /* TDActivityCell.h */,
+				2DA420DA18E63E1A006F4D9C /* TDActivityCell.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -655,6 +663,7 @@
 				2DA39FD718E0B2570004A9C7 /* TDMoreComments.xib in Resources */,
 				2DA5F05B18D37C70003D2F99 /* BebasNeue Book.otf in Resources */,
 				A1C1D0F318A02FAB00666D2A /* TDPostView.xib in Resources */,
+				2DA420DD18E63E1A006F4D9C /* TDActivityCell.xib in Resources */,
 				2DA5F05D18D37C70003D2F99 /* BebasNeue Regular.otf in Resources */,
 				A11E04F41888CB79002F981A /* Images.xcassets in Resources */,
 				2DA5F05E18D37C70003D2F99 /* BebasNeue Thin.otf in Resources */,
@@ -770,6 +779,7 @@
 				A1E90CDD18B445FC0046D281 /* TDSignupStepTwoViewController.m in Sources */,
 				A1432CE718A99DB30073E492 /* TDLoginViewController.m in Sources */,
 				A1432CE118A99D750073E492 /* TDWelcomeViewController.m in Sources */,
+				2DA420DC18E63E1A006F4D9C /* TDActivityCell.m in Sources */,
 				A1C2481418C7D4B000F187D9 /* URLConnection.m in Sources */,
 				A180D4DF18C14EA7003B9378 /* TDNavigationController.m in Sources */,
 				A1C2481118C6B9CA00F187D9 /* TDProgressIndicator.m in Sources */,

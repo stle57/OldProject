@@ -16,6 +16,7 @@
 #import "VideoCloseSegue.h"
 #import "TDLikeView.h"
 #import "TDHomeHeaderView.h"
+#import "TDActivityCell.h"
 
 #define CELL_IDENTIFIER @"TDPostView"
 
@@ -34,7 +35,9 @@
     CGFloat commentButtonsHeight;
     CGFloat commentRowHeight;
     CGFloat moreCommentRowHeight;
+    CGFloat activityRowHeight;
     BOOL updatingAtBottom;
+    BOOL showBottomSpinner;
 }
 @property (nonatomic, retain) NSArray *posts;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -46,7 +49,7 @@
 @property (nonatomic, retain) UIRefreshControl *refreshControl;
 @property (nonatomic, retain) UIDynamicAnimator *animator;
 @property (strong, nonatomic) TDHomeHeaderView *headerView;
-@property (strong, nonatomic) UIImageView *playerSpinner;
+@property (strong, nonatomic) UIActivityIndicatorView *playerSpinner;
 
 
 @end
@@ -95,6 +98,11 @@
     TDMoreComments *moreCommentsCell = [topLevelObjects objectAtIndex:0];
     moreCommentRowHeight = moreCommentsCell.frame.size.height;
     moreCommentsCell = nil;
+    topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_ACTIVITY owner:self options:nil];
+    TDActivityCell *activityCell = [topLevelObjects objectAtIndex:0];
+    activityRowHeight = activityCell.frame.size.height;
+    activityCell = nil;
+
 
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.delegate = self;
@@ -351,13 +359,19 @@
 // 1 section per post
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return [self.posts count];
+    return [self.posts count]+(showBottomSpinner ? 1 : 0);
 }
 
 // Rows is 1 (for the video) + 1 for likes row + # of comments + 1 for like/comment buttons
 // -1 if no likers
 // +1 if total comments count > 2
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+
+    // Last row with Activity
+    if (showBottomSpinner && section == [self.posts count]) {
+        return 1;
+    }
+
     TDPost *post = (TDPost *)[self.posts objectAtIndex:section];
     NSInteger count;
     if ([post.likers count] > 0) {
@@ -374,6 +388,20 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+
+    // Last row with Activity
+    if (showBottomSpinner && indexPath.section == [self.posts count]) {
+
+        TDActivityCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_ACTIVITY];
+        if (!cell) {
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_ACTIVITY owner:self options:nil];
+            cell = [topLevelObjects objectAtIndex:0];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        }
+
+        [cell startSpinner];
+        return cell;
+    }
 
     // The video
     TDPost *post = (TDPost *)[self.posts objectAtIndex:indexPath.section];
@@ -468,6 +496,11 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    // Last row with Activity
+    if (showBottomSpinner && indexPath.section == [self.posts count]) {
+        return activityRowHeight;
+    }
+
     if (indexPath.row == 0) {
         return postViewHeight;
     }
@@ -686,18 +719,30 @@
 }
 
 - (void)startLoadingSpinner {
-    if (!self.playerSpinner) {
-        self.playerSpinner = [[UIImageView alloc] initWithFrame:CGRectMake(16.0, 0.0, 20.0, 20.0)];
-        self.playerSpinner.center = CGPointMake(self.playerSpinner.center.x,
-                                                self.logOutFeedbackButton.center.y+1.0);
-        [self.playerSpinner setImage:[UIImage imageNamed:@"video_status_spinner"]];
-    }
-    if (![self.playerSpinner superview]) {
-        [self.bottomButtonHolderView addSubview:self.playerSpinner];
+
+    if (showBottomSpinner) {
+        return;
     }
 
+    showBottomSpinner = YES;
+
+    // Add a bottom row
+    [self.tableView reloadData];
+
+/*    if (!self.playerSpinner) {
+        self.playerSpinner = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(16.0, 0.0, 40.0, 40.0)];
+        self.playerSpinner.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhite;
+        self.playerSpinner.hidesWhenStopped = YES;
+        self.playerSpinner.center = CGPointMake(self.view.frame.size.width/2.0,
+                                                self.view.frame.size.height-80.0);
+    }
+    if (![self.playerSpinner superview]) {
+        [self.view addSubview:self.playerSpinner];
+    }
+
+    [self.playerSpinner startAnimating]; */
     // Stop any previous
-    [self.playerSpinner.layer removeAnimationForKey:kSpinningAnimation];
+/*    [self.playerSpinner.layer removeAnimationForKey:kSpinningAnimation];
 
     CABasicAnimation* rotationAnimation;
     rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
@@ -707,12 +752,19 @@
     rotationAnimation.repeatCount = HUGE_VALF;
     rotationAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
 
-    [self.playerSpinner.layer addAnimation:rotationAnimation forKey:kSpinningAnimation];
+    [self.playerSpinner.layer addAnimation:rotationAnimation forKey:kSpinningAnimation]; */
 }
 
 - (void)stopSpinner {
-    [self.playerSpinner.layer removeAnimationForKey:kSpinningAnimation];
-    [self.playerSpinner removeFromSuperview];
+
+    showBottomSpinner = NO;
+    [self.tableView reloadData];
+
+//    if (self.playerSpinner) {
+//        [self.playerSpinner stopAnimating];
+//    }
+//    [self.playerSpinner.layer removeAnimationForKey:kSpinningAnimation];
+//    [self.playerSpinner removeFromSuperview];
 }
 
 #pragma mark - DetailViewController Delegate
