@@ -19,7 +19,8 @@
 - (void)addPost:(NSString *)filename comment:(NSString *)comment success:(void (^)(void))success failure:(void (^)(void))failure;
 - (void)saveImage:(UIImage*)image filename:(NSString*)filename;
 - (void)fetchPostsUpstream;
-- (void)fetchPostsUpstreamWithErrorHandler:(void (^)(void))errorHandler;
+- (BOOL)fetchPostsDownstream;
+- (void)fetchPostsUpstreamWithErrorHandlerStart:(NSNumber *)start error:(void (^)(void))errorHandler;
 - (NSArray *)getPosts;
 -(void)likePostWithId:(NSNumber *)postId;
 -(void)unLikePostWithId:(NSNumber *)postId;

@@ -34,6 +34,7 @@
     CGFloat commentButtonsHeight;
     CGFloat commentRowHeight;
     CGFloat moreCommentRowHeight;
+    BOOL updatingAtBottom;
 }
 @property (nonatomic, retain) NSArray *posts;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -286,7 +287,7 @@
 
 - (void)refreshControlUsed {
     debug NSLog(@"refreshControlUsed");
-    [[TDPostAPI sharedInstance] fetchPostsUpstreamWithErrorHandler:^{
+    [[TDPostAPI sharedInstance] fetchPostsUpstreamWithErrorHandlerStart:nil error:^{
         [self endRefreshControl];
     }];
 }
@@ -309,6 +310,11 @@
 - (void)refreshPostsList {
     debug NSLog(@"refresh post list");
 
+    // if this was from a bottom scroll refresh
+    [self stopSpinner];
+    updatingAtBottom = NO;
+
+    // If from refresh control
     [self endRefreshControl];
 
     posts = [[TDPostAPI sharedInstance] getPosts];
@@ -316,6 +322,21 @@
 }
 
 # pragma mark - table view delegate
+-(void)updatePostsAtBottom
+{
+    if (updatingAtBottom) {
+        return;
+    }
+
+    updatingAtBottom = YES;
+    [self startLoadingSpinner];
+
+    if (![[TDPostAPI sharedInstance] fetchPostsDownstream]) {
+        updatingAtBottom = NO;
+        [self stopSpinner];
+    }
+}
+
 - (void)reloadPosts:(NSNotification*)notification
 {
     [self reloadPosts];
@@ -482,6 +503,16 @@
     vc.delegate = self;
     [self.navigationController pushViewController:vc
                                          animated:YES];
+}
+
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if (!self.posts || [self.posts count] == 0) {
+        return;
+    }
+    if ((scrollView.contentOffset.y+scrollView.frame.size.height) >= scrollView.contentSize.height-10.0) {
+        [self updatePostsAtBottom];
+    }
 }
 
 #pragma mark - TDPostView Delegate
@@ -656,13 +687,13 @@
 
 - (void)startLoadingSpinner {
     if (!self.playerSpinner) {
-        self.playerSpinner = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 20.0, 20.0, 20.0)];
-        self.playerSpinner.center = CGPointMake(self.view.center.x,
-                                                self.playerSpinner.center.y);
+        self.playerSpinner = [[UIImageView alloc] initWithFrame:CGRectMake(16.0, 0.0, 20.0, 20.0)];
+        self.playerSpinner.center = CGPointMake(self.playerSpinner.center.x,
+                                                self.logOutFeedbackButton.center.y+1.0);
         [self.playerSpinner setImage:[UIImage imageNamed:@"video_status_spinner"]];
     }
     if (![self.playerSpinner superview]) {
-        [self.view addSubview:self.playerSpinner];
+        [self.bottomButtonHolderView addSubview:self.playerSpinner];
     }
 
     // Stop any previous

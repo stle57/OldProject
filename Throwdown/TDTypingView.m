@@ -76,7 +76,7 @@
         self.hpTextView.backgroundColor = [UIColor whiteColor];
         self.hpTextView.contentInset = UIEdgeInsetsMake(0, 5, 0, 5);
         self.hpTextView.internalTextView.keyboardType = UIKeyboardAppearanceDefault;
-        self.hpTextView.internalTextView.keyboardAppearance = UIKeyboardAppearanceDark;
+        self.hpTextView.internalTextView.keyboardAppearance = UIKeyboardAppearanceLight;
 
         self.hpTextView.minNumberOfLines = 1;
         self.hpTextView.maxNumberOfLines = 6;

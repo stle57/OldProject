@@ -71,12 +71,26 @@
 }
 
 - (void)fetchPostsUpstream {
-    [self fetchPostsUpstreamWithErrorHandler:nil];
+    [self fetchPostsUpstreamWithErrorHandlerStart:nil error:nil];
 }
 
-- (void)fetchPostsUpstreamWithErrorHandler:(void (^)(void))errorHandler {
+- (BOOL)fetchPostsDownstream {
+    NSNumber *lowestId = [self lowestIdOfPosts];
+    if ([lowestId compare:[NSNumber numberWithInt:0]] == NSOrderedAscending ||
+        [lowestId compare:[NSNumber numberWithInt:0]] == NSOrderedSame) {
+        return NO;
+    }
+    [self fetchPostsUpstreamWithErrorHandlerStart:lowestId error:nil];
+    return YES;
+}
+
+- (void)fetchPostsUpstreamWithErrorHandlerStart:(NSNumber *)start error:(void (^)(void))errorHandler {
+    NSMutableString *url = [NSMutableString stringWithString:@"/api/v1/posts.json"];
+    if (start) {
+        [url appendString:[NSString stringWithFormat:@"?start=%@", start]];
+    }
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager GET:[[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts.json"] parameters:@{@"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:[[TDConstants getBaseURL] stringByAppendingString:url] parameters:@{@"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             [posts removeAllObjects];
             for (NSDictionary *postObject in [responseObject valueForKeyPath:@"posts"]) {
@@ -94,6 +108,19 @@
 
 - (NSArray *)getPosts {
     return [posts mutableCopy];
+}
+
+-(NSNumber *)lowestIdOfPosts
+{
+    NSNumber *lowestId = [NSNumber numberWithLongLong:LONG_LONG_MAX];
+    for (TDPost *post in posts) {
+        if ([lowestId compare:post.postId] == NSOrderedDescending) {
+            lowestId = post.postId;
+        }
+    }
+    long lowest = [lowestId longValue]-1;
+    lowestId = [NSNumber numberWithLong:lowest];
+    return lowestId;
 }
 
 -(void)deletePostWithId:(NSNumber *)postId
