@@ -12,7 +12,6 @@
 #import "NSDate+TimeAgo.h"
 
 static const NSString *ItemStatusContext;
-static NSString *const kSpinningAnimation = @"rotationAnimation";
 
 typedef enum {
     ControlStatePaused,

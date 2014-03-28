@@ -23,6 +23,8 @@ static NSString *const TDNotificationUploadCancelled = @"TDNotificationUploadCan
 
 static NSString *const TDFontProximaNovaRegular = @"ProximaNova-Regular";
 
+static NSString *const kSpinningAnimation = @"rotationAnimation";
+
 @interface TDConstants : NSObject
 
 #define CELL_IDENTIFIER_POST_VIEW       @"TDPostView"
@@ -34,6 +36,9 @@ static NSString *const TDFontProximaNovaRegular = @"ProximaNova-Regular";
 #define FULL_POST_INFO_NOTIFICATION     @"TDFullPostInfoNotification"
 #define NEW_COMMENT_INFO_NOTICIATION    @"TDNewCommentPostInfoNoticifation"
 #define POST_DELETED_NOTIFICATION       @"TDPostDeletedNotification"
+#define POST_DELETED_FAIL_NOTIFICATION  @"TDPostDeletedNotificationFail"
+#define START_MAIN_SPINNER_NOTIFICATION @"TDMainSpinnerStart"
+#define STOP_MAIN_SPINNER_NOTIFICATION  @"TDMainSpinnerStop"
 
 + (NSString *)getBaseURL;
 + (NSURL *)getStreamingUrlFor:(NSString *)filename;

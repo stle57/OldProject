@@ -12,6 +12,7 @@
 #import "TDConstants.h"
 #import "TDComment.h"
 #import "TDViewControllerHelper.h"
+#import "AFNetworking.h"
 
 @interface TDDetailViewController ()
 
@@ -19,12 +20,15 @@
 
 @implementation TDDetailViewController
 
+@synthesize delegate;
 @synthesize post;
 @synthesize typingView;
 @synthesize frostedViewWhileTyping;
 
 - (void)dealloc
 {
+    delegate = nil;
+
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:@"TDRefreshPostsNotification"
                                                   object:nil];
@@ -36,6 +40,9 @@
                                                   object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:POST_DELETED_NOTIFICATION
+                                                  object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:POST_DELETED_FAIL_NOTIFICATION
                                                   object:nil];
 
     self.post = nil;
@@ -105,6 +112,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fullPostReturn:) name:FULL_POST_INFO_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newCommentReturn:) name:NEW_COMMENT_INFO_NOTICIATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postDeleted:) name:POST_DELETED_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postDeleteFail:) name:POST_DELETED_FAIL_NOTIFICATION object:nil];
 
     // Delete Icon - have to use uibutton to give design's hit state correctly
     UIButton *deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -170,7 +178,7 @@
 
         // Delete from server Server
         TDPostAPI *api = [TDPostAPI sharedInstance];
-        [api likePostWithId:self.post.postId];
+        [api deletePostWithId:self.post.postId];
     }
 }
 
@@ -215,6 +223,40 @@
 -(void)postDeleted:(NSNotification*)notification
 {
     NSLog(@"delete notification:%@", notification);
+
+    // Post was deleted OK....tell the HomeViewController
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"TDRefreshPostsNotification"
+                                                        object:self
+                                                      userInfo:nil];
+
+    // Tell delegate
+    if (delegate) {
+        if ([delegate respondsToSelector:@selector(postDeleted:)]) {
+            [delegate postDeleted:self.post];
+        }
+    }
+
+    // And then go back
+    self.navigationItem.rightBarButtonItem.enabled = YES;
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+-(void)postDeleteFail:(NSNotification *)notification
+{
+    NSLog(@"postDeleteFail notification:%@ CLASS:%@", notification, [notification.object class]);
+
+    if ([notification.object isKindOfClass:[NSError class]]) {
+        NSError *error = (NSError*)notification.object;
+        if ([[error.userInfo objectForKey:AFNetworkingOperationFailingURLResponseErrorKey] isKindOfClass:[NSHTTPURLResponse class]]) {
+            NSHTTPURLResponse *response = (NSHTTPURLResponse *)[error.userInfo objectForKey:AFNetworkingOperationFailingURLResponseErrorKey];
+            if (response && response.statusCode == 403) {
+                [TDViewControllerHelper showAlertMessage:@"There was an error (403). You don’t have permission to delete this post." withTitle:@"Error"];
+            }
+            if (response && response.statusCode == 401) {
+                [TDViewControllerHelper showAlertMessage:@"There was an error (401).\nPlease try again." withTitle:@"Error"];
+            }
+        }
+    }
 
     self.navigationItem.rightBarButtonItem.enabled = YES;
 }

@@ -12,8 +12,15 @@
 #import "TDDetailsLikesCell.h"
 #import "TDDetailsCommentsCell.h"
 
+@protocol TDDetailViewControllerDelegate <NSObject>
+
+@optional
+-(void)postDeleted:(TDPost *)deletedPost;
+@end
+
 @interface TDDetailViewController : UIViewController <TDTypingViewViewDelegate, UITableViewDataSource, UITableViewDelegate, TDDetailsLikesCellDelegate, TDDetailsCommentsCellDelegate, UIAlertViewDelegate>
 {
+    id <TDDetailViewControllerDelegate> __unsafe_unretained delegate;
     TDPost *post;
     TDTypingView *typingView;
     CGPoint origTypingViewCenter;
@@ -23,6 +30,7 @@
     CGFloat minLikeheight;
 }
 
+@property (nonatomic, assign) id <TDDetailViewControllerDelegate> __unsafe_unretained delegate;
 @property (nonatomic, retain) TDPost *post;
 @property (nonatomic, retain) TDTypingView *typingView;
 @property (nonatomic, retain) UIView *frostedViewWhileTyping;

@@ -13,7 +13,8 @@
 #import "TDDetailsCommentsCell.h"
 #import "TDMoreComments.h"
 #import <MessageUI/MessageUI.h>
+#import "TDDetailViewController.h"
 
-@interface TDHomeViewController : UIViewController <TDLikeViewDelegate, TDPostViewDelegate, TDTwoButtonViewDelegate, TDDetailsCommentsCellDelegate, TDMoreCommentsDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate>
+@interface TDHomeViewController : UIViewController <TDLikeViewDelegate, TDPostViewDelegate, TDTwoButtonViewDelegate, TDDetailsCommentsCellDelegate, TDMoreCommentsDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate, TDDetailViewControllerDelegate>
 
 @end

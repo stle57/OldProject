@@ -18,7 +18,6 @@
 #import "TDHomeHeaderView.h"
 
 #define CELL_IDENTIFIER @"TDPostView"
-#import "TDDetailViewController.h"
 
 @interface TDHomeViewController () <UITableViewDataSource, UITableViewDelegate>
 {
@@ -46,6 +45,8 @@
 @property (nonatomic, retain) UIRefreshControl *refreshControl;
 @property (nonatomic, retain) UIDynamicAnimator *animator;
 @property (strong, nonatomic) TDHomeHeaderView *headerView;
+@property (strong, nonatomic) UIImageView *playerSpinner;
+
 
 @end
 
@@ -111,7 +112,18 @@
 
     self.headerView = [[TDHomeHeaderView alloc] initWithTableView:self.tableView];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadStarted:) name:@"TDPostUploadStarted" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(uploadStarted:)
+                                                 name:@"TDPostUploadStarted"
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(startSpinner:)
+                                                 name:START_MAIN_SPINNER_NOTIFICATION
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(stopSpinner:)
+                                                 name:STOP_MAIN_SPINNER_NOTIFICATION
+                                               object:nil];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -467,6 +479,7 @@
     TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
     TDPost *post = (TDPost *)[self.posts objectAtIndex:indexPath.section];
     vc.post = post;
+    vc.delegate = self;
     [self.navigationController pushViewController:vc
                                          animated:YES];
 }
@@ -477,6 +490,7 @@
     TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
     TDPost *post = (TDPost *)[self.posts objectAtIndex:row];
     vc.post = post;
+    vc.delegate = self;
     [self.navigationController pushViewController:vc
                                          animated:YES];
 }
@@ -628,5 +642,59 @@
     [self dismissViewControllerAnimated:YES
                              completion:nil];
 }
+
+#pragma mark - Loading Spinner
+-(void)startSpinner:(NSNotification *)notification
+{
+    [self startLoadingSpinner];
+}
+
+-(void)stopSpinner:(NSNotification *)notification
+{
+    [self stopSpinner];
+}
+
+- (void)startLoadingSpinner {
+    if (!self.playerSpinner) {
+        self.playerSpinner = [[UIImageView alloc] initWithFrame:CGRectMake(0.0, 20.0, 20.0, 20.0)];
+        self.playerSpinner.center = CGPointMake(self.view.center.x,
+                                                self.playerSpinner.center.y);
+        [self.playerSpinner setImage:[UIImage imageNamed:@"video_status_spinner"]];
+    }
+    if (![self.playerSpinner superview]) {
+        [self.view addSubview:self.playerSpinner];
+    }
+
+    // Stop any previous
+    [self.playerSpinner.layer removeAnimationForKey:kSpinningAnimation];
+
+    CABasicAnimation* rotationAnimation;
+    rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
+    rotationAnimation.toValue = [NSNumber numberWithFloat: M_PI * 2.0];
+    rotationAnimation.duration = 1.0;
+    rotationAnimation.cumulative = YES;
+    rotationAnimation.repeatCount = HUGE_VALF;
+    rotationAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
+
+    [self.playerSpinner.layer addAnimation:rotationAnimation forKey:kSpinningAnimation];
+}
+
+- (void)stopSpinner {
+    [self.playerSpinner.layer removeAnimationForKey:kSpinningAnimation];
+    [self.playerSpinner removeFromSuperview];
+}
+
+#pragma mark - DetailViewController Delegate
+-(void)postDeleted:(TDPost *)deletedPost
+{
+    // Remove the post from 'posts'
+    if ([posts indexOfObject:deletedPost]) {
+        NSMutableArray *mutablePosts = [NSMutableArray arrayWithArray:posts];
+        [mutablePosts removeObject:deletedPost];
+        posts = [NSArray arrayWithArray:mutablePosts];
+        [self.tableView reloadData];
+    }
+}
+
 
 @end

@@ -100,28 +100,34 @@
 {
     NSLog(@"API-delete post with id:%@", postId);
 
-    return;
-
-/*    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts/[POST_ID].json"];
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts/[POST_ID].json"];
     url = [url stringByReplacingOccurrencesOfString:@"[POST_ID]"
                                          withString:[postId stringValue]];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager DELETE:url parameters:@{ @"post": @{@"filename": filename, @"comment": comment}, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        debug NSLog(@"JSON: %@", [responseObject class]);
+    [manager DELETE:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken}
+            success:^(AFHTTPRequestOperation *operation, id responseObject) {
 
-        if (success) {
-
-            [[NSNotificationCenter defaultCenter] postNotificationName:POST_DELETED_NOTIFICATION
-                                                                object:responseObject
-                                                              userInfo:nil];
-        }
+                if ([responseObject isKindOfClass:[NSDictionary class]])
+                {
+                    NSDictionary *returnDict = [NSDictionary dictionaryWithDictionary:responseObject];
+                    if ([returnDict objectForKey:@"success"]) {
+                        if ([[returnDict objectForKey:@"success"] boolValue]) {
+                            // Success
+                            [[NSNotificationCenter defaultCenter] postNotificationName:POST_DELETED_NOTIFICATION
+                                                                                object:responseObject
+                                                                              userInfo:nil];
+                        } else {
+                            // Fail
+                        }
+                    }
+                }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"Error: %@", error);
 
-        if (failure) {
-            failure();
-        }
-    }]; */
+        [[NSNotificationCenter defaultCenter] postNotificationName:POST_DELETED_FAIL_NOTIFICATION
+                                                            object:error
+                                                          userInfo:nil];
+    }];
 }
 
 /* Notify any views to reload, does not update or fetch posts from server */
