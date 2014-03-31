@@ -38,6 +38,7 @@
     CGFloat activityRowHeight;
     BOOL updatingAtBottom;
     BOOL showBottomSpinner;
+    CGPoint tableOffset;
 }
 @property (nonatomic, retain) NSArray *posts;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -64,9 +65,9 @@
     [super viewDidLoad];
 
     [self.view insertSubview:self.bottomButtonHolderView aboveSubview:self.tableView];
-//    [self.view insertSubview:self.notificationButton aboveSubview:self.tableView];
-//    [self.view insertSubview:self.profileButton aboveSubview:self.tableView];
-    
+
+    tableOffset = CGPointZero;
+
     // Fix buttons for 3.5" screens
     self.bottomButtonHolderView.center = CGPointMake(self.bottomButtonHolderView.center.x,
                                                      [UIScreen mainScreen].bounds.size.height-self.bottomButtonHolderView.frame.size.height/2.0);
@@ -327,6 +328,14 @@
 
     posts = [[TDPostAPI sharedInstance] getPosts];
     [self.tableView reloadData];
+
+    // If we had an offset, then go there
+    if (!CGPointEqualToPoint(tableOffset, CGPointZero)) {
+        [self.tableView setContentOffset:tableOffset
+                                animated:NO];
+    }
+
+    tableOffset = CGPointZero;
 }
 
 # pragma mark - table view delegate
@@ -724,47 +733,18 @@
         return;
     }
 
+    tableOffset = self.tableView.contentOffset;
+
     showBottomSpinner = YES;
 
     // Add a bottom row
     [self.tableView reloadData];
-
-/*    if (!self.playerSpinner) {
-        self.playerSpinner = [[UIActivityIndicatorView alloc] initWithFrame:CGRectMake(16.0, 0.0, 40.0, 40.0)];
-        self.playerSpinner.activityIndicatorViewStyle = UIActivityIndicatorViewStyleWhite;
-        self.playerSpinner.hidesWhenStopped = YES;
-        self.playerSpinner.center = CGPointMake(self.view.frame.size.width/2.0,
-                                                self.view.frame.size.height-80.0);
-    }
-    if (![self.playerSpinner superview]) {
-        [self.view addSubview:self.playerSpinner];
-    }
-
-    [self.playerSpinner startAnimating]; */
-    // Stop any previous
-/*    [self.playerSpinner.layer removeAnimationForKey:kSpinningAnimation];
-
-    CABasicAnimation* rotationAnimation;
-    rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
-    rotationAnimation.toValue = [NSNumber numberWithFloat: M_PI * 2.0];
-    rotationAnimation.duration = 1.0;
-    rotationAnimation.cumulative = YES;
-    rotationAnimation.repeatCount = HUGE_VALF;
-    rotationAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
-
-    [self.playerSpinner.layer addAnimation:rotationAnimation forKey:kSpinningAnimation]; */
 }
 
 - (void)stopSpinner {
 
     showBottomSpinner = NO;
     [self.tableView reloadData];
-
-//    if (self.playerSpinner) {
-//        [self.playerSpinner stopAnimating];
-//    }
-//    [self.playerSpinner.layer removeAnimationForKey:kSpinningAnimation];
-//    [self.playerSpinner removeFromSuperview];
 }
 
 #pragma mark - DetailViewController Delegate

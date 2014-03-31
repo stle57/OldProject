@@ -92,7 +92,10 @@
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:[[TDConstants getBaseURL] stringByAppendingString:url] parameters:@{@"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            [posts removeAllObjects];
+
+            if (!start) {
+                [posts removeAllObjects];
+            }
             for (NSDictionary *postObject in [responseObject valueForKeyPath:@"posts"]) {
                 [posts addObject:[[TDPost alloc]initWithDictionary:postObject]];
             }
