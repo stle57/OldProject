@@ -118,7 +118,8 @@
                             action:@selector(refreshControlUsed)
                   forControlEvents:UIControlEventValueChanged];
     [self.tableView addSubview:self.refreshControl];
-    [self.refreshControl setTintColor:[TDConstants brandingRedColor]];
+//    [self.refreshControl setTintColor:[TDConstants brandingRedColor]];
+    [self.refreshControl setTintColor:[UIColor blackColor]];
 
     self.headerView = [[TDHomeHeaderView alloc] initWithTableView:self.tableView];
 
