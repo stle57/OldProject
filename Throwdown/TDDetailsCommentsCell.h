@@ -24,7 +24,6 @@
 @property (nonatomic, assign) id <TDDetailsCommentsCellDelegate> __unsafe_unretained delegate;
 @property (nonatomic, assign) NSInteger row;
 @property (nonatomic, retain) TDComment *comment;
-@property (weak, nonatomic) IBOutlet UIImageView *profileImage;
 @property (weak, nonatomic) IBOutlet UILabel *usernameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 @property (weak, nonatomic) IBOutlet UILabel *messageLabel;

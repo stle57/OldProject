@@ -22,7 +22,6 @@
 }
 
 @property (nonatomic, assign) id <TDPostViewDelegate> __unsafe_unretained delegate;
-@property (weak, nonatomic) IBOutlet UIImageView *profileImage;
 @property (weak, nonatomic) IBOutlet UILabel *usernameLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *previewImage;
 @property (weak, nonatomic) IBOutlet UILabel *createdLabel;

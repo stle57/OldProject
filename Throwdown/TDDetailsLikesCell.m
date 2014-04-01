@@ -8,6 +8,7 @@
 
 #import "TDDetailsLikesCell.h"
 #import "TDAppDelegate.h"
+#import "TDConstants.h"
 
 @implementation TDDetailsLikesCell
 
@@ -16,32 +17,13 @@
 @synthesize likers;
 @synthesize comments;
 
-- (void)dealloc
-{
+- (void)dealloc {
     delegate = nil;
     self.likers = nil;
     self.comments = nil;
 }
 
-- (id)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code
-    }
-    return self;
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    if (self) {
-    }
-    return self;
-}
-
-- (IBAction)likeButtonPressed:(UIButton *)sender
-{
+- (IBAction)likeButtonPressed:(UIButton *)sender {
     NSLog(@"TDDetailsLikesCell-likeButtonPressed:%@", delegate);
     if (like) {
         like = !like;
@@ -63,8 +45,7 @@
     [self setLike:like];
 }
 
--(void)setLike:(BOOL)liked
-{
+-(void)setLike:(BOOL)liked {
     NSLog(@"TDDetailsLikesCell-setLike:%d", like);
     like = liked;
     if (liked) {
@@ -84,16 +65,7 @@
     }
 }
 
--(void)setComment:(BOOL)commented
-{
-/*    UIImage *buttonImage = [UIImage imageNamed:@"but_comment_big.png"];
-    [self.commentButton setImage:buttonImage forState:UIControlStateNormal];
-    buttonImage = nil;
- */
-}
-
--(void)setLikesArray:(NSArray *)array
-{
+-(void)setLikesArray:(NSArray *)array {
     self.likers = array;
 
     self.likeImageView.hidden = YES;
@@ -102,36 +74,50 @@
     }
 
     // Remove any old buttons for cell reuse
-    UIView *buttonView = nil;
-    for (int i=800; i < 810; i++) {
-        buttonView = [self viewWithTag:i];
-        if (buttonView) {
-            [buttonView removeFromSuperview];
-        }
-        buttonView = nil;
-    }
+//    UIView *buttonView = nil;
+//    for (int i=800; i < 810; i++) {
+//        buttonView = [self viewWithTag:i];
+//        if (buttonView) {
+//            [buttonView removeFromSuperview];
+//        }
+//        buttonView = nil;
+//    }
 
-    // Add image buttons
-    NSInteger index = 0;
-    for (NSDictionary *likerDict in self.likers) {
-        if ([likerDict objectForKey:@"picture"]) {
-            [self addButtonWithPicture:[likerDict objectForKey:@"picture"]
-                                 index:index];
-            index++;
-        }
-    }
+
+
+//    NSMutableAttributedString *text =
+    // Add likers label
+
+    NSString *text = [[self.likers valueForKeyPath:@"username"] componentsJoinedByString:@", "];
+    NSMutableAttributedString *mutableAttributedString = [[NSMutableAttributedString alloc] initWithString:text];
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"(,)" options:kNilOptions error:nil];
+    NSRange range = NSMakeRange(0, text.length);
+    [regex enumerateMatchesInString:text options:kNilOptions range:range usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
+        NSRange subStringRange = [result rangeAtIndex:1];
+        [mutableAttributedString addAttribute:NSForegroundColorAttributeName value:[UIColor darkGrayColor] range:subStringRange];
+    }];
+
+    self.likersNamesLabel.font = [UIFont fontWithName:TDFontProximaNovaSemibold size:16.0];
+    self.likersNamesLabel.attributedText = mutableAttributedString;
+
+    [TDAppDelegate fixHeightOfThisLabel:self.likersNamesLabel];
 }
 
-+(NSInteger)numberOfRowsForLikers:(NSInteger)count
-{
-    // 9 per row
-    return ceil((float)count/9.0);
++ (NSInteger)heightOfLikersLabel:(NSArray *)likers {
+    NSString *text = [[likers valueForKeyPath:@"username"] componentsJoinedByString:@", "];
+    return [TDAppDelegate heightOfTextForString:text
+                                 andFont:[UIFont fontWithName:TDFontProximaNovaSemibold size:16.0]
+                                 maxSize:CGSizeMake(217.0, MAXFLOAT)];
 }
 
-+(NSInteger)rowNumberForLiker:(NSInteger)index
-{
++(NSInteger)numberOfRowsForLikers:(NSInteger)count {
     // 9 per row
-    return floor((float)index/9.0);
+    return ceil((float)count / 9.0);
+}
+
++(NSInteger)rowNumberForLiker:(NSInteger)index {
+    // 9 per row
+    return floor((float)index / 9.0);
 }
 
 -(void)addButtonWithPicture:(NSString *)picture index:(NSInteger)index
@@ -177,10 +163,9 @@
     } 
 }
 
--(void)buttonPressed:(id)selector
-{
+-(void)buttonPressed:(id)selector {
     UIButton *button = (UIButton *)selector;
-    NSInteger index = button.tag-800;
+    NSInteger index = button.tag - 800;
 
     if (delegate) {
         if ([delegate respondsToSelector:@selector(miniAvatarButtonPressedForLiker:)]) {

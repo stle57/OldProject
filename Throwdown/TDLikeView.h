@@ -23,14 +23,12 @@
     BOOL like;
     NSArray *likers;
     NSArray *comments;
-    CGRect origMoreLabelRect;
 }
 
 @property (nonatomic, assign) id <TDLikeViewDelegate> __unsafe_unretained delegate;
 @property (nonatomic, assign) NSInteger row;
 @property (weak, nonatomic) IBOutlet UIButton *likeButton;
 @property (weak, nonatomic) IBOutlet UIButton *commentButton;
-@property (weak, nonatomic) IBOutlet UIImageView *moreImageView;
 @property (weak, nonatomic) IBOutlet UIImageView *likeIconImageView;
 @property (weak, nonatomic) IBOutlet UILabel *moreLabel;
 @property (nonatomic, retain) NSArray *likers;

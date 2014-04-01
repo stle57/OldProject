@@ -84,12 +84,13 @@
 
 +(void)fixHeightOfThisLabel:(UILabel *)aLabel
 {
+    CGFloat height = [TDAppDelegate heightOfTextForString:aLabel.text
+                                 andFont:aLabel.font
+                                 maxSize:CGSizeMake(aLabel.frame.size.width, MAXFLOAT)];
     aLabel.frame = CGRectMake(aLabel.frame.origin.x,
                               aLabel.frame.origin.y,
                               aLabel.frame.size.width,
-                              [TDAppDelegate heightOfTextForString:aLabel.text
-                                                           andFont:aLabel.font
-                                                           maxSize:CGSizeMake(aLabel.frame.size.width, MAXFLOAT)]);
+                              height);
 }
 
 +(CGFloat)heightOfTextForString:(NSString *)aString andFont:(UIFont *)aFont maxSize:(CGSize)aSize

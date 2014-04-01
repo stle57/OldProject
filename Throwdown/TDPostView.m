@@ -53,11 +53,6 @@ typedef enum {
 
 - (void)awakeFromNib {
 
-    self.profileImage.layer.cornerRadius = 16.0;
-    self.profileImage.layer.masksToBounds = YES;
-    self.profileImage.layer.borderColor = [UIColor lightGrayColor].CGColor;
-    self.profileImage.layer.borderWidth = 1.0;
-
     UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapGestureCaptured:)];
     [self.controlView addGestureRecognizer:singleTap];
 

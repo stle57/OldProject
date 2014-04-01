@@ -18,35 +18,12 @@
 @synthesize comment;
 @synthesize origTimeFrame;
 
-- (void)dealloc
-{
+- (void)dealloc {
     delegate = nil;
     self.comment = nil;
 }
 
-- (id)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-    }
-    return self;
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    if (self) {
-    }
-    return self;
-}
-
 - (void)awakeFromNib {
-
-    // Round off profile pic
-    self.profileImage.layer.cornerRadius = 16.0;
-    self.profileImage.layer.masksToBounds = YES;
-    self.profileImage.layer.borderColor = [UIColor lightGrayColor].CGColor;
-    self.profileImage.layer.borderWidth = 1.0;
 
     // Colors
     self.messageLabel.textColor = [TDConstants commentTextColor];

@@ -30,12 +30,15 @@
 @property (nonatomic, retain) NSArray *comments;
 @property (weak, nonatomic) IBOutlet UIImageView *likeImageView;
 @property (weak, nonatomic) IBOutlet UIButton *likeButton;
+@property (weak, nonatomic) IBOutlet UILabel *likersNamesLabel;
+@property (nonatomic) CGFloat namesLabelHeight;
 
 - (IBAction)likeButtonPressed:(UIButton *)sender;
--(void)setLike:(BOOL)liked;
--(void)setComment:(BOOL)commented;
--(void)setLikesArray:(NSArray *)array;
-+(NSInteger)numberOfRowsForLikers:(NSInteger)count;
-+(NSInteger)rowNumberForLiker:(NSInteger)index;
+- (void)setLike:(BOOL)liked;
+- (void)setLikesArray:(NSArray *)array;
+
++ (NSInteger)heightOfLikersLabel:(NSArray *)likers;
++ (NSInteger)numberOfRowsForLikers:(NSInteger)count;
++ (NSInteger)rowNumberForLiker:(NSInteger)index;
 
 @end

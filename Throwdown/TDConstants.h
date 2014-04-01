@@ -20,8 +20,11 @@ static NSString *const CTImage = @"image/jpeg";
 static NSString *const TDNotificationStopPlayers = @"TDNotificationStopPlayers";
 static NSString *const TDNotificationUploadComments = @"TDNotificationUploadComments";
 static NSString *const TDNotificationUploadCancelled = @"TDNotificationUploadCancelled";
+static NSString *const TDRefreshPostsNotification = @"TDRefreshPostsNotification";
 
 static NSString *const TDFontProximaNovaRegular = @"ProximaNova-Regular";
+static NSString *const TDFontProximaNovaSemibold = @"ProximaNova-Semibold";
+static CGFloat const TDCommentCellProfileHeight = 18.0;
 
 static NSString *const kSpinningAnimation = @"rotationAnimation";
 
@@ -32,7 +35,7 @@ static NSString *const kSpinningAnimation = @"rotationAnimation";
 #define CELL_IDENTIFIER_COMMENT_VIEW    @"TDTwoButtonView"
 #define CELL_IDENTIFIER_MORE_COMMENTS   @"TDMoreComments"
 #define CELL_IDENTIFIER_ACTIVITY        @"TDActivityCell"
-#define COMMENT_MESSAGE_WIDTH           268.0
+#define COMMENT_MESSAGE_WIDTH           306.0
 #define COMMENT_MESSAGE_FONT            [UIFont systemFontOfSize:14.0]
 #define FULL_POST_INFO_NOTIFICATION     @"TDFullPostInfoNotification"
 #define NEW_COMMENT_INFO_NOTICIATION    @"TDNewCommentPostInfoNoticifation"

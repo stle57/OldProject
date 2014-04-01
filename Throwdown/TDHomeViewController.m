@@ -108,7 +108,7 @@
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshPostsList:) name:@"TDRefreshPostsNotification" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshPostsList:) name:TDRefreshPostsNotification object:nil];
     [self refreshPostsList];
     [[TDPostAPI sharedInstance] fetchPostsUpstream];
 
@@ -457,8 +457,7 @@
     // The video
     TDPost *post = (TDPost *)[self.posts objectAtIndex:indexPath.section];
 
-    if (indexPath.row == 0)
-    {
+    if (indexPath.row == 0) {
         TDPostView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_POST_VIEW];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_POST_VIEW owner:self options:nil];
@@ -475,8 +474,7 @@
     }
 
     // Likes
-    if ([post.likers count] > 0 && indexPath.row == 1)
-    {
+    if ([post.likers count] > 0 && indexPath.row == 1) {
         TDLikeView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_LIKE_VIEW];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_LIKE_VIEW owner:self options:nil];
@@ -538,7 +536,7 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 
-    NSInteger commentNumber = indexPath.row-1-([post.likers count] > 0 ? 1 : 0);
+    NSInteger commentNumber = indexPath.row - 1 - ([post.likers count] > 0 ? 1 : 0);
     TDComment *comment = [post.comments objectAtIndex:commentNumber];
     [cell makeText:comment.body];
     [cell makeTime:comment.createdAt name:comment.user.username];
@@ -567,14 +565,14 @@
         return commentButtonsHeight;
     }
 
-    if (indexPath.row == (lastRow-1) && [post.commentsTotalCount intValue] > 2) {
+    if (indexPath.row == (lastRow - 1) && [post.commentsTotalCount intValue] > 2) {
         return moreCommentRowHeight;
     }
 
     // Comments
-    NSInteger commentNumber = indexPath.row-1-([post.likers count] > 0 ? 1 : 0);
+    NSInteger commentNumber = indexPath.row - 1 - ([post.likers count] > 0 ? 1 : 0);
     TDComment *comment = [post.comments objectAtIndex:commentNumber];
-    return 40.0+comment.messageHeight;
+    return TDCommentCellProfileHeight + comment.messageHeight;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

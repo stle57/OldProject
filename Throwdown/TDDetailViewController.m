@@ -30,7 +30,7 @@
     delegate = nil;
 
     [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:@"TDRefreshPostsNotification"
+                                                    name:TDRefreshPostsNotification
                                                   object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:FULL_POST_INFO_NOTIFICATION
@@ -108,7 +108,7 @@
     frame.size.height -= [TDTypingView typingHeight];
     self.tableView.frame = frame;
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadPosts:) name:@"TDRefreshPostsNotification" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadPosts:) name:TDRefreshPostsNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fullPostReturn:) name:FULL_POST_INFO_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newCommentReturn:) name:NEW_COMMENT_INFO_NOTICIATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postDeleted:) name:POST_DELETED_NOTIFICATION object:nil];
@@ -314,11 +314,10 @@
     return cell;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     // Post
     if (indexPath.row == 0) {
-        return postViewHeight-postCommentViewHeight;
+        return postViewHeight - postCommentViewHeight;
     }
 
     // Likes row
@@ -326,14 +325,15 @@
         if ([self.post.likers count] == 0) {
             return minLikeheight;    // at least one row to show 'like' button
         } else {
-            return [TDDetailsLikesCell numberOfRowsForLikers:[self.post.likers count]]*minLikeheight;
+            NSUInteger textHeight = [TDDetailsLikesCell heightOfLikersLabel:self.post.likers];
+            return (textHeight < minLikeheight ? minLikeheight : textHeight + 7.0); // 7 = label's margin from top
         }
     }
 
     // Comments
     // A comment is at least 40+height for the message text
     TDComment *comment = [self.post.comments objectAtIndex:(indexPath.row-2)];
-    return 40.0+comment.messageHeight;
+    return TDCommentCellProfileHeight + comment.messageHeight;
 }
 
 #pragma mark - TypingView delegates
@@ -424,9 +424,10 @@
 {
     if (self.post.postId) {
 
+        // TODO: Change this. We shouldn't reload on server reply, this causes a flash and refresh of likers list.
         // Add the like for the update
-        [self.post addLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
-        [self.tableView reloadData];
+//        [self.post addLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
+//        [self.tableView reloadData];
 
         // Update Server
         TDPostAPI *api = [TDPostAPI sharedInstance];
@@ -450,8 +451,7 @@
     }
 }
 
--(void)miniAvatarButtonPressedForLiker:(NSDictionary *)liker
-{
+-(void)miniAvatarButtonPressedForLiker:(NSDictionary *)liker {
     NSLog(@"delegate-miniAvatarButtonPressedForLiker:%@", liker);
 }
 
