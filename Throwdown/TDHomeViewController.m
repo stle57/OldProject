@@ -137,7 +137,7 @@
                                                object:nil];
 
     // Frosted behind status bar
-    [self addFrostedBehindForStatusBar];
+   [self addFrostedBehindForStatusBar];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -169,14 +169,17 @@
     }
 }
 
+-(UIStatusBarStyle)preferredStatusBarStyle
+{
+    return UIStatusBarStyleDefault;
+}
+
 -(void)addFrostedBehindForStatusBar
 {
     CGRect statusBarFrame = [self.view convertRect: [UIApplication sharedApplication].statusBarFrame fromView: nil];
-    NSLog(@"STATUS:%@", NSStringFromCGRect(statusBarFrame));
-    UIToolbar *statusBarBackground = [[UIToolbar alloc] initWithFrame: statusBarFrame];
+    UINavigationBar *statusBarBackground = [[UINavigationBar alloc] initWithFrame:statusBarFrame];
+    statusBarBackground.barStyle = UIBarStyleDefault;
     statusBarBackground.translucent = YES;
-    statusBarBackground.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
-    statusBarBackground.tintColor = [UIColor redColor];
     [self.view insertSubview:statusBarBackground aboveSubview:self.tableView];
 }
 
