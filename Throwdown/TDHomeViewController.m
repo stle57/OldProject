@@ -135,6 +135,9 @@
                                              selector:@selector(stopSpinner:)
                                                  name:STOP_MAIN_SPINNER_NOTIFICATION
                                                object:nil];
+
+    // Frosted behind status bar
+    [self addFrostedBehindForStatusBar];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -164,6 +167,17 @@
     if (goneDownstream) {
         [self hideBottomButtons];
     }
+}
+
+-(void)addFrostedBehindForStatusBar
+{
+    CGRect statusBarFrame = [self.view convertRect: [UIApplication sharedApplication].statusBarFrame fromView: nil];
+    NSLog(@"STATUS:%@", NSStringFromCGRect(statusBarFrame));
+    UIToolbar *statusBarBackground = [[UIToolbar alloc] initWithFrame: statusBarFrame];
+    statusBarBackground.translucent = YES;
+    statusBarBackground.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleWidth;
+    statusBarBackground.tintColor = [UIColor redColor];
+    [self.view insertSubview:statusBarBackground aboveSubview:self.tableView];
 }
 
 - (void)didReceiveMemoryWarning {
