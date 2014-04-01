@@ -45,7 +45,9 @@
     if ([UIScreen mainScreen].bounds.size.height == 480.0) {
         // move up log in button slightly
         self.loginButton.center = CGPointMake(self.loginButton.center.x,
-                                                self.loginButton.center.y-22.0);
+                                                self.loginButton.center.y+2.0);
+        self.passwordTextField.center = CGPointMake(self.passwordTextField.center.x,
+                                                    self.passwordTextField.center.y+2.0);
         UIImage *backgroundImage = [UIImage imageNamed:@"reg_bg2_480"];
         self.backgroundImageView.image = backgroundImage;
         backgroundImage = nil;
