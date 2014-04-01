@@ -359,9 +359,10 @@
 
 /* Refreshes the list with currently downloaded posts */
 - (void)refreshPostsList {
-    debug NSLog(@"refresh post list");
+    NSLog(@"refresh post list");
 
     // if this was from a bottom scroll refresh
+    NSArray *visibleCells = [self.tableView visibleCells];
     [self stopSpinner];
     updatingAtBottom = NO;
 
@@ -373,8 +374,16 @@
 
     // If we had an offset, then go there
     if (!CGPointEqualToPoint(tableOffset, CGPointZero)) {
-        [self.tableView setContentOffset:tableOffset
-                                animated:NO];
+
+        // Double check that we're still at the bottom of the table
+        // ie is a visible cell the bottom spinner?
+        for (id cell in visibleCells) {
+            if ([cell isKindOfClass:[TDActivityCell class]]) {
+                [self.tableView setContentOffset:tableOffset
+                                        animated:NO];
+                break;
+            }
+        }
     }
 
     tableOffset = CGPointZero;
@@ -386,6 +395,8 @@
     if (updatingAtBottom) {
         return;
     }
+
+    NSLog(@"updatePostsAtBottom");
 
     updatingAtBottom = YES;
     [self startLoadingSpinner];
