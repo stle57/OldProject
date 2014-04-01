@@ -123,6 +123,7 @@
                                       0.0,
                                       trashImage.size.width,
                                       trashImage.size.height)];
+    deleteButton.hidden = YES;
     trashImage = nil;
     trashImage = [UIImage imageNamed:@"nav_trash_hit"];
     [deleteButton setImage:trashImage
@@ -196,6 +197,14 @@
         if ([newPost.postId isEqualToNumber:self.post.postId]) {
             [self.post loadUpFromDict:notification.userInfo];
             [self.tableView reloadData];
+
+            // Delete button
+            if ([self.post.user.userId isEqualToNumber:[[TDCurrentUser sharedInstance] currentUserObject].userId]) {
+                // Same User as current
+                self.navigationItem.rightBarButtonItem.customView.hidden = NO;
+            } else {
+                self.navigationItem.rightBarButtonItem.customView.hidden = YES;
+            }
         }
     }
 }
