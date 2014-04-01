@@ -139,13 +139,13 @@
                                              selector:@selector(postDeleted:)
                                                  name:POST_DELETED_NOTIFICATION
                                                object:nil];
-
-    // Frosted behind status bar
-   [self addFrostedBehindForStatusBar];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+
+    // Frosted behind status bar
+    [self addFrostedBehindForStatusBar];
 
     // If we're coming back from the details screen, we need to
     // order the comments to only the most recent 2
@@ -167,6 +167,13 @@
     goneDownstream = NO;
 }
 
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+
+    [self removeFrostedView];
+}
+
 -(void)viewDidLayoutSubviews {
     if (goneDownstream) {
         [self hideBottomButtons];
@@ -176,15 +183,6 @@
 -(UIStatusBarStyle)preferredStatusBarStyle
 {
     return UIStatusBarStyleDefault;
-}
-
--(void)addFrostedBehindForStatusBar
-{
-    CGRect statusBarFrame = [self.view convertRect: [UIApplication sharedApplication].statusBarFrame fromView: nil];
-    UINavigationBar *statusBarBackground = [[UINavigationBar alloc] initWithFrame:statusBarFrame];
-    statusBarBackground.barStyle = UIBarStyleDefault;
-    statusBarBackground.translucent = YES;
-    [self.view insertSubview:statusBarBackground aboveSubview:self.tableView];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -198,6 +196,28 @@
     self.posts = nil;
     self.refreshControl = nil;
     self.animator = nil;
+}
+
+#pragma mark - Frosted View behind Status bar
+-(void)addFrostedBehindForStatusBar
+{
+    CGRect statusBarFrame = [self.view convertRect: [UIApplication sharedApplication].statusBarFrame fromView: nil];
+    UINavigationBar *statusBarBackground = [[UINavigationBar alloc] initWithFrame:statusBarFrame];
+    statusBarBackground.barStyle = UIBarStyleDefault;
+    statusBarBackground.translucent = YES;
+    statusBarBackground.tag = 9920;
+    [self.view insertSubview:statusBarBackground aboveSubview:self.tableView];
+}
+
+-(void)removeFrostedView
+{
+    // Need to remove it on viewWillDisappear to stop a flash at the screen top
+    for (UIView *view in [NSArray arrayWithArray:self.view.subviews]) {
+        if (view.tag == 9920) {
+            [view removeFromSuperview];
+            break;
+        }
+    }
 }
 
 #pragma mark - video upload indicator

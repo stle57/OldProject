@@ -360,7 +360,6 @@
     }
 }
 
-
 # pragma mark - uploads
 
 - (void)uploadVideo:(NSString *)localVideoPath withThumbnail:(NSString *)localPhotoPath withName:(NSString *)newName {
