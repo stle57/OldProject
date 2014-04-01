@@ -17,6 +17,8 @@
 #import "TDLikeView.h"
 #import "TDHomeHeaderView.h"
 #import "TDActivityCell.h"
+#include <sys/types.h>
+#include <sys/sysctl.h>
 
 #define CELL_IDENTIFIER @"TDPostView"
 
@@ -684,8 +686,8 @@
     UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@""
                                                              delegate:self
                                                     cancelButtonTitle:@"Cancel"
-                                               destructiveButtonTitle:@"Send Feedback"
-                                                    otherButtonTitles:@"Log Out", nil];
+                                               destructiveButtonTitle:nil
+                                                    otherButtonTitles:@"Send Feedback", @"Log Out", nil];
     actionSheet.tag = 3546;
     [actionSheet showInView:self.view];
 }
@@ -726,6 +728,16 @@
 }
 
 #pragma mark - Email Feedback
+- (NSString *) platform{
+	size_t size;
+	sysctlbyname("hw.machine", NULL, &size, NULL, 0);
+	char *machine = malloc(size);
+	sysctlbyname("hw.machine", machine, &size, NULL, 0);
+	NSString *platform = [NSString stringWithCString:machine encoding:NSUTF8StringEncoding];
+	free(machine);
+	return platform;
+}
+
 -(void)displayFeedbackEmail
 {
     MFMailComposeViewController *picker = [[MFMailComposeViewController alloc] init];
@@ -746,7 +758,7 @@
     [emailBody appendString:[NSString stringWithFormat:@"\n\n\n\n\nApp Version:%@", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]]];
     [emailBody appendString:[NSString stringWithFormat:@"\nApp Build #:%@", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"]]];
     [emailBody appendString:[NSString stringWithFormat:@"\nOS:%@", [[UIDevice currentDevice] systemVersion]]];
-    [emailBody appendString:[NSString stringWithFormat:@"\nModel:%@", [UIDevice currentDevice].model]];
+    [emailBody appendString:[NSString stringWithFormat:@"\nModel:%@", [self platform]]];
     [emailBody appendString:[NSString stringWithFormat:@"\nID:%@", [TDCurrentUser sharedInstance].userId]];
     [emailBody appendString:[NSString stringWithFormat:@"\nName:%@", [TDCurrentUser sharedInstance].username]];
 
