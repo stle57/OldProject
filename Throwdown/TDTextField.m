@@ -33,6 +33,12 @@
         self.backgroundColor = [UIColor clearColor];
         [self addSubview:[nibContents lastObject]];
 
+        // Make bottom line 0.5 pixels
+        CGRect bottomLineFrame = self.bottomLine.frame;
+        bottomLineFrame.size.height = 0.5;
+        bottomLineFrame.origin.x += 0.5;
+        self.bottomLine.frame = bottomLineFrame;
+
         [self.textfield addTarget:self
                            action:@selector(textFieldDidChange:)
                  forControlEvents:UIControlEventEditingChanged];
@@ -47,11 +53,11 @@
     type = aType;
     self.spinner.hidden = YES;
     
-    self.placeholderLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:20.0];
+    self.placeholderLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:19.0];
     self.placeholderLabel.text = placeHolder;
     self.placeholderLabel.alpha = 0.8;
 
-    self.textfield.font = [UIFont fontWithName:@"ProximaNova-Regular" size:20.0];
+    self.textfield.font = [UIFont fontWithName:@"ProximaNova-Regular" size:19.0];
     self.textfield.keyboardType = keyboardType;
     if (keyboardType == UIKeyboardTypeEmailAddress || keyboardType == UIKeyboardTypeTwitter) {
         self.textfield.autocapitalizationType = UITextAutocapitalizationTypeNone;

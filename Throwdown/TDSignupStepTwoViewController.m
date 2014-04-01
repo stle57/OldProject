@@ -58,11 +58,11 @@
     if ([UIScreen mainScreen].bounds.size.height == 480.0) {
         // move up log in button slightly
         self.privacyLabel1.center = CGPointMake(self.privacyLabel1.center.x,
-                                                self.privacyLabel1.center.y-12.0);
+                                                self.privacyLabel1.center.y-1.0);
         self.privacyButton.center = CGPointMake(self.privacyButton.center.x,
-                                                self.privacyButton.center.y-14.0);
+                                                self.privacyButton.center.y-1.0);
         self.signUpButton.center = CGPointMake(self.signUpButton.center.x,
-                                               self.signUpButton.center.y-28.0);
+                                               self.signUpButton.center.y-2.0);
         UIImage *backgroundImage = [UIImage imageNamed:@"reg_bg3_480"];
         self.backgroundImageView.image = backgroundImage;
         backgroundImage = nil;
