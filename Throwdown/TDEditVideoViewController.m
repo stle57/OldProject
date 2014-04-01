@@ -113,6 +113,7 @@ static const NSString *ItemStatusContext;
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == alertView.cancelButtonIndex) {
+        [self stopExistingUploads];
         [self performSegueWithIdentifier:@"UnwindSlideLeftSegue" sender:self];
     }
 }
@@ -189,6 +190,16 @@ static const NSString *ItemStatusContext;
 
 #pragma mark - video handling / trimming
 
+- (void)stopExistingUploads {
+    // Stop any current uploads if user edited the video after starting the upload
+    if (self.filename != nil) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUploadCancelled
+                                                            object:nil
+                                                          userInfo:@{ @"filename":[self.filename copy] }];
+        self.filename = nil;
+    }
+}
+
 - (void)editVideoAt:(NSString *)videoPath {
     self.recordedVideoUrl = [NSURL fileURLWithPath:videoPath];
     self.editingVideoUrl = [NSURL fileURLWithPath:[NSHomeDirectory() stringByAppendingPathComponent:TEMP_FILE_PATH]];
@@ -222,13 +233,7 @@ static const NSString *ItemStatusContext;
     [self togglePlay:NO];
     [self deleteTmpFile];
 
-    // Stop any current uploads if user edited the video after starting the upload
-    if (self.filename != nil) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUploadCancelled
-                                                            object:nil
-                                                          userInfo:@{ @"filename":[self.filename copy] }];
-        self.filename = nil;
-    }
+    [self stopExistingUploads];
 
     AVAsset *anAsset = [[AVURLAsset alloc] initWithURL:self.recordedVideoUrl options:nil];
     NSArray *compatiblePresets = [AVAssetExportSession exportPresetsCompatibleWithAsset:anAsset];
