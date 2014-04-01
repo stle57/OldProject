@@ -130,16 +130,9 @@
                                                                ascending:YES];
     [sortingArray sortUsingDescriptors:[NSArray arrayWithObjects:descriptor,nil]];
 
-    // Now only need the last 2, but original comment on top
-    // original posts comment ID is NSNull so we reorder it
-    if ([sortingArray count] > 1 && [((TDComment *)[sortingArray objectAtIndex:0]).commentId isEqual:[NSNull null]]) {
-        // Remove the comment and put it second last to have it display first in the home feed
-        TDComment *comment = [sortingArray objectAtIndex:0];
-        [sortingArray removeObjectAtIndex:0];
-        [sortingArray insertObject:comment atIndex:[sortingArray count] - 1];
-    }
+    // Only need the FIRST 2, including original comment on top
     if ([sortingArray count] > 2) {
-        [sortingArray removeObjectsInRange:NSMakeRange(0, [sortingArray count]-2)];
+        [sortingArray removeObjectsInRange:NSMakeRange(2, [sortingArray count]-2)];
     }
     _comments = [NSArray arrayWithArray:sortingArray];
 }
