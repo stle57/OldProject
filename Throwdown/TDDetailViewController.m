@@ -233,18 +233,6 @@
 {
     NSLog(@"delete notification:%@", notification);
 
-    // Post was deleted OK....tell the HomeViewController
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"TDRefreshPostsNotification"
-                                                        object:self
-                                                      userInfo:nil];
-
-    // Tell delegate
-    if (delegate) {
-        if ([delegate respondsToSelector:@selector(postDeleted:)]) {
-            [delegate postDeleted:self.post];
-        }
-    }
-
     // And then go back
     self.navigationItem.rightBarButtonItem.enabled = YES;
     [self.navigationController popViewControllerAnimated:YES];

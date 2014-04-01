@@ -135,6 +135,10 @@
                                              selector:@selector(stopSpinner:)
                                                  name:STOP_MAIN_SPINNER_NOTIFICATION
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(postDeleted:)
+                                                 name:POST_DELETED_NOTIFICATION
+                                               object:nil];
 
     // Frosted behind status bar
    [self addFrostedBehindForStatusBar];
@@ -751,7 +755,8 @@
         return;
     }
 
-    tableOffset = self.tableView.contentOffset;
+    tableOffset = CGPointMake(self.tableView.contentOffset.x,
+                              self.tableView.contentOffset.y+activityRowHeight);
 
     showBottomSpinner = YES;
 
@@ -765,8 +770,8 @@
     [self.tableView reloadData];
 }
 
-#pragma mark - DetailViewController Delegate
--(void)postDeleted:(TDPost *)deletedPost
+#pragma mark - Delete Post
+/*-(void)postDeleted:(TDPost *)deletedPost
 {
     // Remove the post from 'posts'
     if ([posts indexOfObject:deletedPost]) {
@@ -775,7 +780,31 @@
         posts = [NSArray arrayWithArray:mutablePosts];
         [self.tableView reloadData];
     }
+} */
+
+-(void)postDeleted:(NSNotification*)notification
+{
+    NSLog(@"Home-delete notification:%@", notification);
+
+    NSNumber *deletedPostId = [notification object];
+
+    NSLog(@"DELETE:%@", deletedPostId);
+
+    NSLog(@"COUNT BEFORE:%lu", (unsigned long)[posts count]);
+
+    // Remove the post from 'posts'
+    NSMutableArray *mutablePosts = [NSMutableArray arrayWithCapacity:0];
+    for (TDPost *post in posts) {
+        if (![post.postId isEqualToNumber:deletedPostId]) {
+            [mutablePosts addObject:post];
+        }
+    }
+    self.posts = [NSArray arrayWithArray:mutablePosts];
+
+    NSLog(@"COUNT AFTER:%lu", (unsigned long)[posts count]);
+    [self.tableView reloadData];
 }
+
 
 
 @end

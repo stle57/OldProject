@@ -144,7 +144,7 @@
                         if ([[returnDict objectForKey:@"success"] boolValue]) {
                             // Success
                             [[NSNotificationCenter defaultCenter] postNotificationName:POST_DELETED_NOTIFICATION
-                                                                                object:responseObject
+                                                                                object:postId
                                                                               userInfo:nil];
                         } else {
                             // Fail
