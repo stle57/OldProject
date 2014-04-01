@@ -89,6 +89,7 @@
 		A1C1D0F618A0387B00666D2A /* TDPostView.m in Sources */ = {isa = PBXBuildFile; fileRef = A1C1D0F518A0387B00666D2A /* TDPostView.m */; };
 		A1C2481118C6B9CA00F187D9 /* TDProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = A1C2481018C6B9CA00F187D9 /* TDProgressIndicator.m */; };
 		A1C2481418C7D4B000F187D9 /* URLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = A1C2481318C7D4B000F187D9 /* URLConnection.m */; };
+		A1DAEEB318EB79FA00742949 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1DAEEB218EB79FA00742949 /* Crashlytics.framework */; };
 		A1E90CDD18B445FC0046D281 /* TDSignupStepTwoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E90CDC18B445FC0046D281 /* TDSignupStepTwoViewController.m */; };
 		A1F02FD418C92277002FEB2F /* TDPostUpload.m in Sources */ = {isa = PBXBuildFile; fileRef = A1F02FD318C92277002FEB2F /* TDPostUpload.m */; };
 /* End PBXBuildFile section */
@@ -237,6 +238,7 @@
 		A1C2481018C6B9CA00F187D9 /* TDProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDProgressIndicator.m; sourceTree = "<group>"; };
 		A1C2481218C7D4B000F187D9 /* URLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLConnection.h; sourceTree = "<group>"; };
 		A1C2481318C7D4B000F187D9 /* URLConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = URLConnection.m; sourceTree = "<group>"; };
+		A1DAEEB218EB79FA00742949 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		A1E90CDB18B445FC0046D281 /* TDSignupStepTwoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSignupStepTwoViewController.h; sourceTree = "<group>"; };
 		A1E90CDC18B445FC0046D281 /* TDSignupStepTwoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSignupStepTwoViewController.m; sourceTree = "<group>"; };
 		A1F02FD218C92277002FEB2F /* TDPostUpload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDPostUpload.h; sourceTree = "<group>"; };
@@ -256,6 +258,7 @@
 				A11E04E01888CB79002F981A /* UIKit.framework in Frameworks */,
 				A11E04DC1888CB79002F981A /* Foundation.framework in Frameworks */,
 				579149E08F7B4EE789901248 /* libPods.a in Frameworks */,
+				A1DAEEB318EB79FA00742949 /* Crashlytics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -369,6 +372,7 @@
 		A11E04DA1888CB79002F981A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A1DAEEB218EB79FA00742949 /* Crashlytics.framework */,
 				2D531ED818E38A47006CA088 /* MessageUI.framework */,
 				A19FF5FB18970BBA001A0AD0 /* RSCloudFiles */,
 				A182D827188B60CD00F794A5 /* SAVideoRangeSlider */,
@@ -590,6 +594,7 @@
 				A11E04D51888CB79002F981A /* Frameworks */,
 				A11E04D61888CB79002F981A /* Resources */,
 				5704A326440946FABFBA8659 /* Copy Pods Resources */,
+				A1DAEEB118EB79A300742949 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -724,6 +729,19 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
+		};
+		A1DAEEB118EB79A300742949 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Crashlytics.framework/run 52059d9d37002218b9f7913616f80b1294e806c2 999104e51bd4c1db75573da66b0f124087bcd82c76cf5a3ff94b47a46854664a";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -914,6 +932,10 @@
 				BUNDLE_DISPLAY_NAME_SUFFIX = "-α";
 				BUNDLE_ID_SUFFIX = .dev;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Throwdown/Throwdown-Prefix.pch";
 				INFOPLIST_FILE = "Throwdown/Throwdown-Info.plist";
@@ -934,6 +956,10 @@
 				BUNDLE_DISPLAY_NAME_SUFFIX = "";
 				BUNDLE_ID_SUFFIX = "";
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Throwdown/Throwdown-Prefix.pch";
 				INFOPLIST_FILE = "Throwdown/Throwdown-Info.plist";
@@ -1031,6 +1057,10 @@
 				BUNDLE_DISPLAY_NAME_SUFFIX = "-ß";
 				BUNDLE_ID_SUFFIX = .staging;
 				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Throwdown/Throwdown-Prefix.pch";
 				INFOPLIST_FILE = "Throwdown/Throwdown-Info.plist";
