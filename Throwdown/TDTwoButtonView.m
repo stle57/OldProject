@@ -73,11 +73,9 @@
     if (liked) {
         [self.likeButton setImage:[UIImage imageNamed:@"but_liked_big"] forState:UIControlStateNormal];
         [self.likeButton setImage:[UIImage imageNamed:@"but_liked_big_hit"] forState:UIControlStateHighlighted];
-        [self.likeButton setImage:[UIImage imageNamed:@"but_liked_big_hit"] forState:UIControlStateSelected];
     } else {
         [self.likeButton setImage:[UIImage imageNamed:@"but_like_big"] forState:UIControlStateNormal];
         [self.likeButton setImage:[UIImage imageNamed:@"but_like_big_hit"] forState:UIControlStateHighlighted];
-        [self.likeButton setImage:[UIImage imageNamed:@"but_like_big_hit"] forState:UIControlStateSelected];
     }
 }
 
