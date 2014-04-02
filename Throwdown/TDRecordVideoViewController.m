@@ -139,12 +139,12 @@ static int const kMaxRecordingSeconds = 30;
                                cameraPosition:AVCaptureDevicePositionBack];
     self.videoCamera.outputImageOrientation = UIInterfaceOrientationPortrait;
 
-    if ([self.videoCamera isBackFacingCameraPresent] && [self.videoCamera isFrontFacingCameraPresent]) {
-        [self updateSwitchCameraButton:YES];
-    } else {
-        [self updateSwitchCameraButton:NO];
-    }
-    [self updateFlashButton:[self.videoCamera.inputCamera hasTorch]];
+//    if ([self.videoCamera isBackFacingCameraPresent] && [self.videoCamera isFrontFacingCameraPresent]) {
+//        [self updateSwitchCameraButton:YES];
+//    } else {
+//        [self updateSwitchCameraButton:NO];
+//    }
+//    [self updateFlashButton:[self.videoCamera.inputCamera hasTorch]];
 
     self.filter = [[GPUImageCropFilter alloc] initWithCropRegion:CGRectMake(0.f, 0.125f, 1.f, .75f)];
     [self.filter addTarget:self.previewLayer];
@@ -314,8 +314,8 @@ static int const kMaxRecordingSeconds = 30;
     [self.recordButton setImage:[UIImage imageNamed:@"v_stoprecbutton"] forState:UIControlStateNormal];
     [self.recordButton setImage:[UIImage imageNamed:@"v_stoprecbutton_hit"] forState:UIControlStateHighlighted];
 
-    [self updateFlashButton:NO];
-    [self updateSwitchCameraButton:NO];
+//    [self updateFlashButton:NO];
+//    [self updateSwitchCameraButton:NO];
 
     [self.movieWriter startRecording];
 
