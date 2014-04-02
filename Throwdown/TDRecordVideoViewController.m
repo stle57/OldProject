@@ -106,6 +106,9 @@ static int const kMaxRecordingSeconds = 30;
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
+    self.closeButton.enabled = YES;
+    self.closeButton.hidden = NO;
+
     self.timeLabel.text = @"00:00";
     CGRect progressBarFrame = self.progressBarView.frame;
     progressBarFrame.origin.x = -320;
@@ -347,6 +350,8 @@ static int const kMaxRecordingSeconds = 30;
         [self stopRecording];
     } else {
         [self startRecording];
+        self.closeButton.enabled = NO;
+        self.closeButton.hidden = YES;
     }
 }
 
