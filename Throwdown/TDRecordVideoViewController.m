@@ -86,12 +86,14 @@ static int const kMaxRecordingSeconds = 30;
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setNeedsStatusBarAppearanceUpdate];
+
     self.recordButton.enabled = NO;
 
     // Fix buttons for 3.5" screens
     if ([UIScreen mainScreen].bounds.size.height == 480.0) {
         self.controlsView.center = CGPointMake(self.controlsView.center.x, 430);
         self.videoContainerView.center = CGPointMake(self.videoContainerView.center.x, 212);
+        self.coverView.center = CGPointMake(self.coverView.center.x, 212);
     }
     [[UIApplication sharedApplication] setStatusBarHidden:YES
                                             withAnimation:UIStatusBarAnimationFade];
@@ -123,7 +125,6 @@ static int const kMaxRecordingSeconds = 30;
                                                 selector:@selector(applicationDidBecomeActive:)
                                                     name:UIApplicationDidBecomeActiveNotification
                                                   object:nil];
-        self.recordButton.enabled = YES;
     });
 }
 
@@ -207,12 +208,12 @@ static int const kMaxRecordingSeconds = 30;
         self.coverView.alpha = 0.0;
     } completion:^(BOOL finished) {
         self.coverView.hidden = YES;
+        self.recordButton.enabled = YES;
     }];
 }
 
 - (void)stopCamera {
     if (self.videoCamera) {
-        self.recordButton.enabled = NO;
         [self.previewLayer removeGestureRecognizer:self.tapToFocusGesture];
         [self removeObservers];
         [self.videoCamera stopCameraCapture];
@@ -226,6 +227,7 @@ static int const kMaxRecordingSeconds = 30;
 }
 
 - (void)hidePreviewCover {
+    self.recordButton.enabled = NO;
     self.coverView.alpha = 0.0;
     self.coverView.hidden = NO;
     [UIView animateWithDuration:0.2 delay:0.0 options:UIViewAnimationOptionCurveLinear animations:^{
@@ -279,7 +281,6 @@ static int const kMaxRecordingSeconds = 30;
             self.exportSession.outputFileType = AVFileTypeQuickTimeMovie;
 
             CMTime start = CMTimeMakeWithSeconds(0.01, asset.duration.timescale);
-//            CGFloat length = (asset.duration.value / asset.duration.timescale) - 0.01;
             CMTime duration = CMTimeMakeWithSeconds(0.99, asset.duration.timescale);
             CMTimeRange range = CMTimeRangeMake(start, duration);
             self.exportSession.timeRange = range;

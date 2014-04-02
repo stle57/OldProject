@@ -150,6 +150,11 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
+                            <view contentMode="scaleToFill" id="a3R-mv-ker" userLabel="Black Cover View">
+                                <rect key="frame" x="0.0" y="96" width="320" height="320"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                            </view>
                             <view contentMode="scaleToFill" id="8fL-Se-Rbe" userLabel="Edit controls">
                                 <rect key="frame" x="0.0" y="468" width="320" height="100"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -206,6 +211,7 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
                         <outlet property="controlsView" destination="8fL-Se-Rbe" id="NNZ-Ns-uai"/>
+                        <outlet property="coverView" destination="a3R-mv-ker" id="WQc-ad-hd9"/>
                         <outlet property="doneButton" destination="Njs-Cf-zmw" id="G2z-1M-X0y"/>
                         <outlet property="playButton" destination="jCp-Qn-DFT" id="JSd-wq-CUZ"/>
                         <outlet property="videoContainerView" destination="2rR-iH-dDM" id="UTV-I6-zxD"/>

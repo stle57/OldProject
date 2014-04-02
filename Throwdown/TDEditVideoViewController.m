@@ -43,6 +43,7 @@ static const NSString *ItemStatusContext;
 @property (weak, nonatomic) IBOutlet UIButton *doneButton;
 @property (weak, nonatomic) IBOutlet UIView *videoContainerView;
 @property (weak, nonatomic) IBOutlet UIView *controlsView;
+@property (weak, nonatomic) IBOutlet UIView *coverView;
 
 
 - (IBAction)playButtonPressed:(UIButton *)sender;
@@ -74,10 +75,37 @@ static const NSString *ItemStatusContext;
     if ([UIScreen mainScreen].bounds.size.height == 480.0) {
         self.controlsView.center = CGPointMake(self.controlsView.center.x, 430);
         self.videoContainerView.center = CGPointMake(self.controlsView.center.x, 212);
+        self.coverView.center = CGPointMake(self.coverView.center.x, 212);
     }
 
     [[UIApplication sharedApplication] setStatusBarHidden:YES
                                             withAnimation:UIStatusBarAnimationFade];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+
+    self.slider = [[SAVideoRangeSlider alloc] initWithFrame:CGRectMake(0, 0, 320, 44) videoUrl:self.recordedVideoUrl];
+    self.slider.delegate = self;
+    [self.slider setMinGap:.1f];
+    [self.slider setMaxGap:30];
+    [self.view addSubview:self.slider];
+
+    self.playerLayer = [AVPlayerLayer layer];
+    [self.playerLayer setPlayer:self.player];
+    [self.playerLayer setFrame:CGRectMake(0, 0, 320, 320)];
+    [self.playerLayer setBackgroundColor:[UIColor blackColor].CGColor];
+    [self.playerLayer setVideoGravity:AVLayerVideoGravityResize];
+    [self.videoContainerView.layer addSublayer:self.playerLayer];
+
+    [self setPlayerAssetFromUrl:self.recordedVideoUrl];
+
+    self.coverView.alpha = 1.0;
+    [UIView animateWithDuration:0.2 delay:0.5 options:UIViewAnimationOptionCurveLinear animations:^{
+        self.coverView.alpha = 0.0;
+    } completion:^(BOOL finished) {
+        self.coverView.hidden = YES;
+    }];
 }
 
 #pragma mark - view actions
@@ -212,21 +240,6 @@ static const NSString *ItemStatusContext;
     }
 
     debug NSLog(@"edit video at %@", videoPath);
-
-    self.slider = [[SAVideoRangeSlider alloc] initWithFrame:CGRectMake(0, 0, 320, 44) videoUrl:self.recordedVideoUrl];
-    self.slider.delegate = self;
-    [self.slider setMinGap:.1f];
-    [self.slider setMaxGap:30];
-    [self.view addSubview:self.slider];
-
-    self.playerLayer = [AVPlayerLayer layer];
-    [self.playerLayer setPlayer:self.player];
-    [self.playerLayer setFrame:CGRectMake(0, 0, 320, 320)];
-    [self.playerLayer setBackgroundColor:[UIColor blackColor].CGColor];
-    [self.playerLayer setVideoGravity:AVLayerVideoGravityResize];
-    [self.videoContainerView.layer addSublayer:self.playerLayer];
-
-    [self setPlayerAssetFromUrl:self.recordedVideoUrl];
 }
 
 - (void)trimVideo {
