@@ -26,8 +26,10 @@
         self.table = tableView;
         self.currentUploads = [[NSMutableArray alloc] init];
 
+        self.backgroundColor = [UIColor whiteColor];
+
         UIColor *lightGrayColor = [UIColor colorWithRed:0.93 green:0.93 blue:0.93 alpha:1.0];
-        UIColor *grayColor = [UIColor colorWithRed:0.78 green:0.78 blue:0.78 alpha:1.0];
+        UIColor *grayColor = [UIColor colorWithRed:0.78 green:0.78 blue:0.78 alpha:1.0];    // c8c8c8
 
         UIView *topPadding = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, 320.0, 5.0)];
         topPadding.backgroundColor = lightGrayColor;

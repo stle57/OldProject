@@ -64,8 +64,15 @@
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"Error: %@", error);
-        if (failure) {
-            failure();
+
+        if (error) {
+            if (error.code == 401) {
+                [self logOutUser];
+            }
+        } else {
+            if (failure) {
+                failure();
+            }
         }
     }];
 }
@@ -103,8 +110,15 @@
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"HTTP Error: %@", error);
-        if (errorHandler) {
-            errorHandler();
+
+        if (error) {
+            if (error.code == 401) {
+                [self logOutUser];
+            }
+        } else {
+            if (errorHandler) {
+                errorHandler();
+            }
         }
     }];
 }
@@ -200,7 +214,13 @@
 
         NSLog(@"LIKE Error: %@", error);
 
-        [self notifyPostsRefreshed];
+        if (error) {
+            if (error.code == 401) {
+                [self logOutUser];
+            }
+        } else {
+            [self notifyPostsRefreshed];
+        }
     }];
 }
 
@@ -236,8 +256,13 @@
 
         NSLog(@"UNLIKE Error: %@", error);
 
-        [self notifyPostsRefreshed];
-
+        if (error) {
+            if (error.code == 401) {
+                [self logOutUser];
+            }
+        } else {
+            [self notifyPostsRefreshed];
+        }
     }];
 }
 
@@ -261,6 +286,12 @@
 
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"Get full HTTP Error: %@", error);
+
+        if (error) {
+            if (error.code == 401) {
+                [self logOutUser];
+            }
+        }
     }];
 }
 
@@ -301,6 +332,12 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
         NSLog(@"New Comment Error: %@", error);
+
+        if (error) {
+            if (error.code == 401) {
+                [self logOutUser];
+            }
+        }
     }];
 }
 
@@ -365,6 +402,14 @@
 - (void)uploadVideo:(NSString *)localVideoPath withThumbnail:(NSString *)localPhotoPath withName:(NSString *)newName {
     TDPostUpload *upload = [[TDPostUpload alloc] initWithVideoPath:localVideoPath thumbnailPath:localPhotoPath newName:newName];
     [[NSNotificationCenter defaultCenter] postNotificationName:@"TDPostUploadStarted" object:upload userInfo:nil];
+}
+
+#pragma mark - Failures
+-(void)logOutUser
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:LOG_OUT_NOTIFICATION
+                                                        object:nil
+                                                      userInfo:nil];
 }
 
 @end

@@ -43,6 +43,7 @@ static NSString *const kSpinningAnimation = @"rotationAnimation";
 #define POST_DELETED_FAIL_NOTIFICATION  @"TDPostDeletedNotificationFail"
 #define START_MAIN_SPINNER_NOTIFICATION @"TDMainSpinnerStart"
 #define STOP_MAIN_SPINNER_NOTIFICATION  @"TDMainSpinnerStop"
+#define LOG_OUT_NOTIFICATION            @"TDLogOutNotification"
 
 + (NSString *)getBaseURL;
 + (NSURL *)getStreamingUrlFor:(NSString *)filename;

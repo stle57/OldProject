@@ -141,6 +141,10 @@
                                              selector:@selector(postDeleted:)
                                                  name:POST_DELETED_NOTIFICATION
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(logOutUser:)
+                                                 name:LOG_OUT_NOTIFICATION
+                                               object:nil];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -829,10 +833,6 @@
 
     NSNumber *deletedPostId = [notification object];
 
-    NSLog(@"DELETE:%@", deletedPostId);
-
-    NSLog(@"COUNT BEFORE:%lu", (unsigned long)[posts count]);
-
     // Remove the post from 'posts'
     NSMutableArray *mutablePosts = [NSMutableArray arrayWithCapacity:0];
     for (TDPost *post in posts) {
@@ -841,11 +841,16 @@
         }
     }
     self.posts = [NSArray arrayWithArray:mutablePosts];
-
-    NSLog(@"COUNT AFTER:%lu", (unsigned long)[posts count]);
     [self.tableView reloadData];
 }
 
+#pragma mark - Log Out User Notification
+-(void)logOutUser:(NSNotification *)notification
+{
+    NSLog(@"Home-logOutUser notification:%@", notification);
 
+    [[TDUserAPI sharedInstance] logout];
+    [self showWelcomeController];
+}
 
 @end
