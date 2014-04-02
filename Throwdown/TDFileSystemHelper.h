@@ -11,5 +11,9 @@
 @interface TDFileSystemHelper : NSObject
 
 + (void)removeFileAt:(NSString *)path;
++ (uint64_t)getFreeDiskspace;
++ (uint64_t)getTotalDiskspace;
++ (BOOL)fileExistsAtPath:(NSString *)path;
++ (BOOL)directoryExistsAtPath:(NSString *)path;
 
 @end
