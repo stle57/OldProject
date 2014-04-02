@@ -36,6 +36,7 @@ static int const kMaxRecordingSeconds = 30;
 @property (weak, nonatomic) IBOutlet UIView *progressBarView;
 @property (weak, nonatomic) IBOutlet UIView *controlsView;
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
+@property (nonatomic) UITapGestureRecognizer *tapToFocusGesture;
 - (IBAction)recordButtonPressed:(UIButton *)sender;
 
 @end
@@ -133,6 +134,9 @@ static int const kMaxRecordingSeconds = 30;
     self.filter = [[GPUImageCropFilter alloc] initWithCropRegion:CGRectMake(0.f, 0.125f, 1.f, .75f)];
     [self.filter addTarget:self.previewLayer];
 
+    self.tapToFocusGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapToFocus:)];
+    [self.previewLayer addGestureRecognizer:self.tapToFocusGesture];
+
     NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:kMovieFilePath];
     unlink([pathToMovie UTF8String]); // If a file already exists, AVAssetWriter won't let you record new frames, so delete the old movie
     NSURL *movieURL = [NSURL fileURLWithPath:pathToMovie];
@@ -189,6 +193,7 @@ static int const kMaxRecordingSeconds = 30;
 
 - (void)stopCamera {
     if (self.videoCamera) {
+        [self.previewLayer removeGestureRecognizer:self.tapToFocusGesture];
         [self removeObservers];
         [self.videoCamera stopCameraCapture];
         [self.filter removeTarget:self.movieWriter];
@@ -200,15 +205,14 @@ static int const kMaxRecordingSeconds = 30;
     }
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+- (void)tapToFocus:(UITapGestureRecognizer *)sender {
     AVCaptureDevice *camera = self.videoCamera.inputCamera;
-    UITouch *touch = [touches anyObject];
-    CGPoint touchPoint = [touch locationInView:self.view];
+    CGPoint touchPoint = [sender locationInView:self.previewLayer];
     CGPoint focusTo = CGPointMake(touchPoint.x / 320.0, touchPoint.y / 320.0);
+
     debug NSLog(@"focus at %f x %f", focusTo.x, focusTo.y);
 
-    if (touch.view == self.previewLayer &&
-        [camera isFocusPointOfInterestSupported] &&
+    if ([camera isFocusPointOfInterestSupported] &&
         [camera isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
 
         if ([camera lockForConfiguration:nil]) {
