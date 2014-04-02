@@ -13,8 +13,10 @@
 #import "GPUImage.h"
 #import "VideoCloseSegue.h"
 #import <QuartzCore/QuartzCore.h>
+#import "TDFileSystemHelper.h"
 
-static NSString *const kMovieFilePath = @"Documents/WorkingMovie.m4v";
+static NSString *const kRecordedMovieFilePath = @"Documents/RecordedMovie.m4v";
+static NSString *const kCroppedMovieFilePath = @"Documents/CroppedMovie.m4v";
 static int const kMaxRecordingSeconds = 30;
 
 @interface TDRecordVideoViewController ()
@@ -26,17 +28,21 @@ static int const kMaxRecordingSeconds = 30;
 @property BOOL torchIsOn;
 @property int secondsRecorded;
 @property NSTimer *timeLabelTimer;
+@property (nonatomic) UITapGestureRecognizer *tapToFocusGesture;
+@property (nonatomic) NSURL *recordedURL;
+@property (nonatomic) NSURL *croppedURL;
+@property (nonatomic) AVAssetExportSession *exportSession;
 
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
 @property (weak, nonatomic) IBOutlet UIButton *recordButton;
 @property (weak, nonatomic) IBOutlet GPUImageView *previewLayer;
 @property (weak, nonatomic) IBOutlet UIView *videoContainerView;
+@property (weak, nonatomic) IBOutlet UIView *coverView;
 @property (weak, nonatomic) IBOutlet UIButton *switchCamerabutton;
 @property (weak, nonatomic) IBOutlet UIButton *flashButton;
 @property (weak, nonatomic) IBOutlet UIView *progressBarView;
 @property (weak, nonatomic) IBOutlet UIView *controlsView;
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
-@property (nonatomic) UITapGestureRecognizer *tapToFocusGesture;
 - (IBAction)recordButtonPressed:(UIButton *)sender;
 
 @end
@@ -70,13 +76,17 @@ static int const kMaxRecordingSeconds = 30;
 }
 
 - (void)applicationDidEnterBackground:(NSNotification *)notification {
-    [self.videoCamera pauseCameraCapture];
-    // TODO: stop recording if active
+    if (self.isRecording) {
+        [self stopRecording];
+    } else {
+        [self.videoCamera pauseCameraCapture];
+    }
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setNeedsStatusBarAppearanceUpdate];
+    self.recordButton.enabled = NO;
 
     // Fix buttons for 3.5" screens
     if ([UIScreen mainScreen].bounds.size.height == 480.0) {
@@ -113,6 +123,7 @@ static int const kMaxRecordingSeconds = 30;
                                                 selector:@selector(applicationDidBecomeActive:)
                                                     name:UIApplicationDidBecomeActiveNotification
                                                   object:nil];
+        self.recordButton.enabled = YES;
     });
 }
 
@@ -137,9 +148,9 @@ static int const kMaxRecordingSeconds = 30;
     self.tapToFocusGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapToFocus:)];
     [self.previewLayer addGestureRecognizer:self.tapToFocusGesture];
 
-    NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:kMovieFilePath];
+    NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:kRecordedMovieFilePath];
     unlink([pathToMovie UTF8String]); // If a file already exists, AVAssetWriter won't let you record new frames, so delete the old movie
-    NSURL *movieURL = [NSURL fileURLWithPath:pathToMovie];
+    self.recordedURL = [NSURL fileURLWithPath:pathToMovie];
 
     int videoSize = 640;
 
@@ -169,7 +180,8 @@ static int const kMaxRecordingSeconds = 30;
 
     [settings setObject:compressionProperties forKey:AVVideoCompressionPropertiesKey];
 
-    self.movieWriter = [[GPUImageMovieWriter alloc] initWithMovieURL:movieURL size:CGSizeMake(videoSize, videoSize) fileType:AVFileTypeMPEG4 outputSettings:settings];
+    self.movieWriter = [[GPUImageMovieWriter alloc] initWithMovieURL:self.recordedURL size:CGSizeMake(videoSize, videoSize) fileType:AVFileTypeMPEG4 outputSettings:settings];
+    self.movieWriter.encodingLiveVideo = YES;
 
     [self.filter addTarget:self.movieWriter];
     self.videoCamera.audioEncodingTarget = self.movieWriter;
@@ -189,10 +201,18 @@ static int const kMaxRecordingSeconds = 30;
         }
         [camera unlockForConfiguration];
     }
+
+    self.coverView.alpha = 1.0;
+    [UIView animateWithDuration:0.2 delay:0.0 options:UIViewAnimationOptionCurveLinear animations:^{
+        self.coverView.alpha = 0.0;
+    } completion:^(BOOL finished) {
+        self.coverView.hidden = YES;
+    }];
 }
 
 - (void)stopCamera {
     if (self.videoCamera) {
+        self.recordButton.enabled = NO;
         [self.previewLayer removeGestureRecognizer:self.tapToFocusGesture];
         [self removeObservers];
         [self.videoCamera stopCameraCapture];
@@ -203,6 +223,14 @@ static int const kMaxRecordingSeconds = 30;
         self.filter = nil;
         self.videoCamera = nil;
     }
+}
+
+- (void)hidePreviewCover {
+    self.coverView.alpha = 0.0;
+    self.coverView.hidden = NO;
+    [UIView animateWithDuration:0.2 delay:0.0 options:UIViewAnimationOptionCurveLinear animations:^{
+        self.coverView.alpha = 1.0;
+    } completion:nil];
 }
 
 - (void)tapToFocus:(UITapGestureRecognizer *)sender {
@@ -224,6 +252,8 @@ static int const kMaxRecordingSeconds = 30;
 }
 
 - (void)stopRecording {
+    [self hidePreviewCover];
+    self.isRecording = NO;
     [self.recordButton setImage:[UIImage imageNamed:@"v_recstartbutton"] forState:UIControlStateNormal];
     [self.recordButton setImage:[UIImage imageNamed:@"v_recstartbutton_hit"] forState:UIControlStateHighlighted];
 
@@ -235,17 +265,48 @@ static int const kMaxRecordingSeconds = 30;
 
     [self.movieWriter finishRecordingWithCompletionHandler:^{
         [self stopCamera];
-        // This is to allow camera to stop properly before running animations
-        // Especially lets the microphone usage warning go away in time.
-        double delayInSeconds = 0.5;
-        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
-        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-            [self performSegueWithIdentifier:@"EditVideoSegue" sender:nil];
+        [self.movieWriter endProcessing];
+
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            // Crop out black frames at start of recording
+            NSString *assetPath = [NSHomeDirectory() stringByAppendingPathComponent:kCroppedMovieFilePath];
+            unlink([assetPath UTF8String]); // remove file
+            self.croppedURL = [NSURL fileURLWithPath:assetPath];
+
+            AVAsset *asset = [[AVURLAsset alloc] initWithURL:self.recordedURL options:nil];
+            self.exportSession = [[AVAssetExportSession alloc] initWithAsset:asset presetName:AVAssetExportPresetPassthrough];
+            self.exportSession.outputURL = self.croppedURL;
+            self.exportSession.outputFileType = AVFileTypeQuickTimeMovie;
+
+            CMTime start = CMTimeMakeWithSeconds(0.01, asset.duration.timescale);
+//            CGFloat length = (asset.duration.value / asset.duration.timescale) - 0.01;
+            CMTime duration = CMTimeMakeWithSeconds(0.99, asset.duration.timescale);
+            CMTimeRange range = CMTimeRangeMake(start, duration);
+            self.exportSession.timeRange = range;
+
+            [self.exportSession exportAsynchronouslyWithCompletionHandler:^{
+                // This is to allow camera to stop properly before running animations
+                // Especially lets the microphone usage warning go away in time.
+                switch ([self.exportSession status]) {
+                    case AVAssetExportSessionStatusFailed:
+                    case AVAssetExportSessionStatusCancelled:
+                    case AVAssetExportSessionStatusExporting:
+                    case AVAssetExportSessionStatusUnknown:
+                        debug NSLog(@"Export failed: %@", [[self.exportSession error] localizedDescription]);
+                        break;
+                    case AVAssetExportSessionStatusCompleted:
+                        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void){
+                            [self performSegueWithIdentifier:@"EditVideoSegue" sender:nil];
+                        });
+                        break;
+                }
+            }];
         });
     }];
 }
 
 - (void)startRecording {
+    self.isRecording = YES;
     [self.recordButton setImage:[UIImage imageNamed:@"v_stoprecbutton"] forState:UIControlStateNormal];
     [self.recordButton setImage:[UIImage imageNamed:@"v_stoprecbutton_hit"] forState:UIControlStateHighlighted];
 
@@ -286,7 +347,6 @@ static int const kMaxRecordingSeconds = 30;
     } else {
         [self startRecording];
     }
-    self.isRecording = !self.isRecording;
 }
 
 - (IBAction)switchCameraButtonPressed:(id)sender {
@@ -313,11 +373,17 @@ static int const kMaxRecordingSeconds = 30;
 
 # pragma mark - segues
 
+- (IBAction)cancelButtonPressed:(id)sender {
+    [self hidePreviewCover];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void){
+        [self performSegueWithIdentifier:@"VideoCloseSegue" sender:nil];
+    });
+}
+
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue isKindOfClass:[TDSlideLeftSegue class]]) {
         TDEditVideoViewController *vc = [segue destinationViewController];
-        NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:kMovieFilePath];
-        [vc editVideoAt:pathToMovie];
+        [vc editVideoAt:[self.croppedURL path]];
     }
 }
 
