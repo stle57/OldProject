@@ -283,22 +283,24 @@ static int const kMaxRecordingSeconds = 30;
             self.exportSession.outputURL = self.croppedURL;
             self.exportSession.outputFileType = AVFileTypeQuickTimeMovie;
 
-            CMTime start = CMTimeMakeWithSeconds(0.01, asset.duration.timescale);
-            CMTime duration = CMTimeMakeWithSeconds(0.99, asset.duration.timescale);
+            CGFloat durationSeconds = CMTimeGetSeconds([asset duration]);
+            CMTime start = CMTimeMakeWithSeconds(0.05, asset.duration.timescale);
+            CMTime duration = CMTimeMakeWithSeconds(durationSeconds - 0.05, asset.duration.timescale);
             CMTimeRange range = CMTimeRangeMake(start, duration);
             self.exportSession.timeRange = range;
 
             [self.exportSession exportAsynchronouslyWithCompletionHandler:^{
-                // This is to allow camera to stop properly before running animations
-                // Especially lets the microphone usage warning go away in time.
                 switch ([self.exportSession status]) {
                     case AVAssetExportSessionStatusFailed:
                     case AVAssetExportSessionStatusCancelled:
                     case AVAssetExportSessionStatusExporting:
                     case AVAssetExportSessionStatusUnknown:
                         debug NSLog(@"Export failed: %@", [[self.exportSession error] localizedDescription]);
+                        // TODO: show error message here?
                         break;
                     case AVAssetExportSessionStatusCompleted:
+                        // This is to allow camera to stop properly before running animations
+                        // Especially lets the microphone usage warning go away in time.
                         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void){
                             [self performSegueWithIdentifier:@"EditVideoSegue" sender:nil];
                         });
@@ -381,6 +383,8 @@ static int const kMaxRecordingSeconds = 30;
 
 - (IBAction)cancelButtonPressed:(id)sender {
     [self hidePreviewCover];
+    // This is to allow camera to stop properly before running animations
+    // Especially lets the microphone usage warning go away in time.
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void){
         [self performSegueWithIdentifier:@"VideoCloseSegue" sender:nil];
     });
