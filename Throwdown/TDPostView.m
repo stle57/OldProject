@@ -35,6 +35,7 @@ typedef enum {
 @property (nonatomic) BOOL isPlaying;
 @property (nonatomic) BOOL didPlay;
 @property (nonatomic) BOOL isLoading;
+@property (nonatomic) BOOL reachedEnd;
 
 @end
 
@@ -43,9 +44,15 @@ typedef enum {
 
 @synthesize delegate;
 
-- (void)dealloc
-{
+- (void)dealloc {
     delegate = nil;
+}
+
+- (BOOL)reachedEnd {
+    if (!_reachedEnd) {
+        _reachedEnd = NO;
+    }
+    return _reachedEnd;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -70,14 +77,10 @@ typedef enum {
     self.topLine.frame = topLineRect;
 }
 
--(BOOL)playing
-{
-    return self.isPlaying;
-}
-
 - (void)setPost:(TDPost *)post {
 
-    if (self.isPlaying && [self.aPost isEqual:post]) {  // If it's the same ie table was refreshed, bail so that we don't stop video playback
+    // If it's the same (eg table was refreshed), bail so that we don't stop video playback
+    if (self.isPlaying && [self.aPost isEqual:post]) {
         return;
     }
 
@@ -234,6 +237,10 @@ typedef enum {
          }];
     } else {
         self.isPlaying = YES;
+        if (self.reachedEnd) {
+            [self.player seekToTime:kCMTimeZero];
+            self.reachedEnd = NO;
+        }
         [self.player play];
         [self updateControlImage:ControlStateNone];
     }
@@ -263,7 +270,7 @@ typedef enum {
 
 - (void)playerItemDidReachEnd:(NSNotification *)notification {
     self.isPlaying = NO;
-    [self.player seekToTime:kCMTimeZero];
+    self.reachedEnd = YES;
     [self updateControlImage:ControlStatePlay];
 }
 

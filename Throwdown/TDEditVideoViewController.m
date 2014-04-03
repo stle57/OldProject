@@ -38,6 +38,7 @@ static const NSString *ItemStatusContext;
 @property (nonatomic) CGFloat startTime;
 @property (nonatomic) CGFloat stopTime;
 @property (nonatomic) BOOL playing;
+@property (nonatomic) BOOL reachedEnd;
 
 @property (weak, nonatomic) IBOutlet UIButton *playButton;
 @property (weak, nonatomic) IBOutlet UIButton *doneButton;
@@ -63,6 +64,13 @@ static const NSString *ItemStatusContext;
 
 - (void)dealloc {
     [self removePlayerItemObserver];
+}
+
+- (BOOL)reachedEnd {
+    if (!_reachedEnd) {
+        _reachedEnd = NO;
+    }
+    return _reachedEnd;
 }
 
 #pragma mark - view lifecycle
@@ -116,6 +124,10 @@ static const NSString *ItemStatusContext;
 
 - (void)togglePlay:(BOOL)play {
     if (play) {
+        if (self.reachedEnd) {
+            [self.player seekToTime:kCMTimeZero];
+            self.reachedEnd = NO;
+        }
         [self.player play];
     } else {
         [self.player pause];
@@ -321,11 +333,11 @@ static const NSString *ItemStatusContext;
 }
 
 - (void)playerItemDidReachEnd:(NSNotification *)notification {
-    [self.player seekToTime:kCMTimeZero];
+    self.reachedEnd = YES;
     [self togglePlay:NO];
 }
 
--(void)deleteTmpFile {
+- (void)deleteTmpFile {
     [TDFileSystemHelper removeFileAt:[self.editingVideoUrl path]];
 }
 
