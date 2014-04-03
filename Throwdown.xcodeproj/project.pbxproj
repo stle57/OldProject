@@ -40,6 +40,7 @@
 		2DBA430118DA455500366737 /* TDTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DBA42FF18DA455500366737 /* TDTextField.m */; };
 		2DBA430218DA455500366737 /* TDTextField.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA430018DA455500366737 /* TDTextField.xib */; };
 		579149E08F7B4EE789901248 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E657ABE418B84EA68554F855 /* libPods.a */; };
+		A102FEA118ECF43C00139606 /* libFlurry_4.4.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A102FEA018ECF43C00139606 /* libFlurry_4.4.0.a */; };
 		A11999D618D90D5200C39ABF /* TDShareVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A11999D518D90D5200C39ABF /* TDShareVideoViewController.m */; };
 		A11999DA18D929E200C39ABF /* UIPlaceHolderTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A11999D918D929E200C39ABF /* UIPlaceHolderTextView.m */; };
 		A11999DD18DC0D4200C39ABF /* TDFileSystemHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = A11999DC18DC0D4200C39ABF /* TDFileSystemHelper.m */; };
@@ -151,6 +152,8 @@
 		2DBA42FE18DA455500366737 /* TDTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTextField.h; sourceTree = "<group>"; };
 		2DBA42FF18DA455500366737 /* TDTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTextField.m; sourceTree = "<group>"; };
 		2DBA430018DA455500366737 /* TDTextField.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDTextField.xib; sourceTree = "<group>"; };
+		A102FE9F18ECF43C00139606 /* Flurry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flurry.h; sourceTree = "<group>"; };
+		A102FEA018ECF43C00139606 /* libFlurry_4.4.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry_4.4.0.a; sourceTree = "<group>"; };
 		A11999D418D90D5200C39ABF /* TDShareVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDShareVideoViewController.h; sourceTree = "<group>"; };
 		A11999D518D90D5200C39ABF /* TDShareVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDShareVideoViewController.m; sourceTree = "<group>"; };
 		A11999D818D929E200C39ABF /* UIPlaceHolderTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIPlaceHolderTextView.h; sourceTree = "<group>"; };
@@ -258,6 +261,7 @@
 				A11E04E01888CB79002F981A /* UIKit.framework in Frameworks */,
 				A11E04DC1888CB79002F981A /* Foundation.framework in Frameworks */,
 				579149E08F7B4EE789901248 /* libPods.a in Frameworks */,
+				A102FEA118ECF43C00139606 /* libFlurry_4.4.0.a in Frameworks */,
 				A1DAEEB318EB79FA00742949 /* Crashlytics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -327,6 +331,15 @@
 			name = Fonts;
 			sourceTree = "<group>";
 		};
+		A102FE9E18ECF43C00139606 /* Flurry */ = {
+			isa = PBXGroup;
+			children = (
+				A102FE9F18ECF43C00139606 /* Flurry.h */,
+				A102FEA018ECF43C00139606 /* libFlurry_4.4.0.a */,
+			);
+			path = Flurry;
+			sourceTree = "<group>";
+		};
 		A11999D318D90D2E00C39ABF /* Recording */ = {
 			isa = PBXGroup;
 			children = (
@@ -372,6 +385,7 @@
 		A11E04DA1888CB79002F981A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A102FE9E18ECF43C00139606 /* Flurry */,
 				A1DAEEB218EB79FA00742949 /* Crashlytics.framework */,
 				2D531ED818E38A47006CA088 /* MessageUI.framework */,
 				A19FF5FB18970BBA001A0AD0 /* RSCloudFiles */,
@@ -940,6 +954,10 @@
 				GCC_PREFIX_HEADER = "Throwdown/Throwdown-Prefix.pch";
 				INFOPLIST_FILE = "Throwdown/Throwdown-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flurry",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SCHEME_SUFFIX = "-development";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -964,6 +982,10 @@
 				GCC_PREFIX_HEADER = "Throwdown/Throwdown-Prefix.pch";
 				INFOPLIST_FILE = "Throwdown/Throwdown-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flurry",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SCHEME_SUFFIX = "";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -1065,6 +1087,10 @@
 				GCC_PREFIX_HEADER = "Throwdown/Throwdown-Prefix.pch";
 				INFOPLIST_FILE = "Throwdown/Throwdown-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Flurry",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "2C527582-9AF0-4036-B14E-CD471E5EB85D";
 				SCHEME_SUFFIX = "-staging";
