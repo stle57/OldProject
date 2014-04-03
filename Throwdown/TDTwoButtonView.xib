@@ -50,10 +50,17 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" red="0.92941176470588238" green="0.92941176470588238" blue="0.92941176470588238" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
+                    <view contentMode="scaleToFill" id="Dfw-Rb-JOW">
+                        <rect key="frame" x="0.0" y="38" width="320" height="1"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" red="0.7843137255" green="0.7843137255" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
+                        <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                    </view>
                 </subviews>
                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             </tableViewCellContentView>
             <connections>
+                <outlet property="bottomPaddingLine" destination="Dfw-Rb-JOW" id="B9L-6E-DH1"/>
                 <outlet property="commentButton" destination="qwf-OV-bxE" id="dFv-vK-sO2"/>
                 <outlet property="likeButton" destination="S0Z-CD-zMn" id="APi-YF-fVF"/>
             </connections>

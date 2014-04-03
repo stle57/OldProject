@@ -36,6 +36,13 @@
     return self;
 }
 
+-(void)awakeFromNib {
+    CGRect bottomLineRect = self.bottomPaddingLine.frame;
+    bottomLineRect.size.height = 0.5;
+    bottomLineRect.origin.y += 0.5;
+    self.bottomPaddingLine.frame = bottomLineRect;
+}
+
 - (IBAction)likeButtonPressed:(UIButton *)sender
 {
     debug NSLog(@"likeButtonPressed");
@@ -82,30 +89,5 @@
 - (void)setComment:(BOOL)commented {
     [self.commentButton setImage:[UIImage imageNamed:@"but_comment_big"] forState:UIControlStateNormal];
 }
-
-/*- (UIView*)hitTest:(CGPoint)point withEvent:(UIEvent *)event
-{
-    NSLog(@"HIT:%@", NSStringFromCGPoint(point) );
-
-    return self;
-} */
-
-/*- (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event
-{
-    NSLog(@"point inside");
-
-    return YES;
-} */
-
-/*-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    NSLog(@"touches");
-} */
-
-/*- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-
-    NSLog(@"selected");
-    [super setSelected:selected animated:animated];
-} */
 
 @end

@@ -27,6 +27,7 @@ typedef enum {
 
 @property (strong, nonatomic) UIImageView *controlImage;
 @property (strong, nonatomic) UIImageView *playerSpinner;
+@property (weak, nonatomic) IBOutlet UIView *topLine;
 @property (strong, nonatomic) AVPlayer *player;
 @property (strong, nonatomic) AVPlayerItem *playerItem;
 @property (strong, nonatomic) AVPlayerLayer *playerLayer;
@@ -62,6 +63,11 @@ typedef enum {
 
     self.usernameLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:17.0];
     self.createdLabel.font = [UIFont fontWithName:@"ProximaNova-Light" size:14.0];
+
+    // top line to 0.5 high
+    CGRect topLineRect = self.topLine.frame;
+    topLineRect.size.height = 0.5;
+    self.topLine.frame = topLineRect;
 }
 
 -(BOOL)playing

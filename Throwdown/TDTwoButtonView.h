@@ -27,6 +27,7 @@
 @property (nonatomic, assign) NSInteger row;
 @property (weak, nonatomic) IBOutlet UIButton *likeButton;
 @property (weak, nonatomic) IBOutlet UIButton *commentButton;
+@property (weak, nonatomic) IBOutlet UIView *bottomPaddingLine;
 
 - (IBAction)likeButtonPressed:(UIButton *)sender;
 - (IBAction)commentButtonPressed:(UIButton *)sender;
