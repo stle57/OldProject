@@ -41,6 +41,7 @@
     BOOL updatingAtBottom;
     BOOL showBottomSpinner;
     CGPoint tableOffset;
+    CGRect statusBarFrame;
 }
 @property (nonatomic, retain) NSArray *posts;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -145,6 +146,9 @@
                                              selector:@selector(logOutUser:)
                                                  name:LOG_OUT_NOTIFICATION
                                                object:nil];
+
+    // Remember here so we don't lose this during statusBar animations
+    statusBarFrame = [self.view convertRect: [UIApplication sharedApplication].statusBarFrame fromView: nil];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -207,7 +211,6 @@
 #pragma mark - Frosted View behind Status bar
 -(void)addFrostedBehindForStatusBar
 {
-    CGRect statusBarFrame = [self.view convertRect: [UIApplication sharedApplication].statusBarFrame fromView: nil];
     UINavigationBar *statusBarBackground = [[UINavigationBar alloc] initWithFrame:statusBarFrame];
     statusBarBackground.barStyle = UIBarStyleDefault;
     statusBarBackground.translucent = YES;
