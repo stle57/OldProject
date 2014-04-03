@@ -66,7 +66,7 @@
         debug NSLog(@"Error: %@", error);
 
         if (error) {
-            if (error.code == 401) {
+            if ([operation.response statusCode] == 401) {
                 [self logOutUser];
             }
         } else {
@@ -112,7 +112,7 @@
         debug NSLog(@"HTTP Error: %@", error);
 
         if (error) {
-            if (error.code == 401) {
+            if ([operation.response statusCode] == 401) {
                 [self logOutUser];
             }
         } else {
@@ -215,7 +215,7 @@
         NSLog(@"LIKE Error: %@", error);
 
         if (error) {
-            if (error.code == 401) {
+            if ([operation.response statusCode] == 401) {
                 [self logOutUser];
             }
         } else {
@@ -257,7 +257,7 @@
         NSLog(@"UNLIKE Error: %@", error);
 
         if (error) {
-            if (error.code == 401) {
+            if ([operation.response statusCode] == 401) {
                 [self logOutUser];
             }
         } else {
@@ -288,7 +288,7 @@
         debug NSLog(@"Get full HTTP Error: %@", error);
 
         if (error) {
-            if (error.code == 401) {
+            if ([operation.response statusCode] == 401) {
                 [self logOutUser];
             }
         }
@@ -334,7 +334,7 @@
         NSLog(@"New Comment Error: %@", error);
 
         if (error) {
-            if (error.code == 401) {
+            if ([operation.response statusCode] == 401) {
                 [self logOutUser];
             }
         }
