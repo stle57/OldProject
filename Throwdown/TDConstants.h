@@ -8,6 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+const typedef NS_ENUM(NSInteger, TDEnvironment) {
+    TDEnvProduction,
+    TDEnvStaging,
+    TDEnvDevelopment
+};
+
 static NSString *const RSUsername = @"throwdown";
 static NSString *const RSApiKey = @"c93395c50887cf4926d2d24e1d9ed4e7";
 static NSString *const RSHost = @"http://tdstore2.throwdown.us";
@@ -45,7 +51,9 @@ static NSString *const kSpinningAnimation = @"rotationAnimation";
 #define STOP_MAIN_SPINNER_NOTIFICATION  @"TDMainSpinnerStop"
 #define LOG_OUT_NOTIFICATION            @"TDLogOutNotification"
 
++ (TDEnvironment)environment;
 + (NSString *)getBaseURL;
++ (NSString *)flurryKey;
 + (NSURL *)getStreamingUrlFor:(NSString *)filename;
 + (UIColor *)brandingRedColor;
 + (UIColor *)headerTextColor;

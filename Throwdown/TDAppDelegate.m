@@ -7,9 +7,10 @@
 //
 
 #import "TDAppDelegate.h"
-#import "TestFlight.h"
+#import "TDConstants.h"
 #import "TDUserAPI.h"
 #import "TDPostAPI.h"
+#import "TestFlight.h"
 #import "Flurry.h"
 #import <Crashlytics/Crashlytics.h>
 
@@ -17,8 +18,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [Flurry setCrashReportingEnabled:NO];
-    [Flurry startSession:@"3JFF5PK4XDMTVPQQNZKN"];
+    if ([TDConstants flurryKey]) {
+        [Flurry setCrashReportingEnabled:NO];
+        [Flurry startSession:[TDConstants flurryKey]];
+    }
     [TestFlight takeOff:@"6fef227c-c5cb-4505-9502-9052e2819f45"];
     [Crashlytics startWithAPIKey:@"52059d9d37002218b9f7913616f80b1294e806c2"];
 

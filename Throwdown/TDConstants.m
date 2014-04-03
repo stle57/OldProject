@@ -14,18 +14,52 @@
 
 #define DEV_SERVER @"http://caoos.local:3000"
 #define STAGING_SERVER @"http://staging.throwdown.us"
+#define PRODUCTION_SERVER @"http://throwdown.us"
 
 @implementation TDConstants
+
++ (TDEnvironment)environment {
+    NSArray *parts = [[[NSBundle mainBundle] bundleIdentifier] componentsSeparatedByString:@"."];
+    NSString *lastPart = [parts objectAtIndex:[parts count] - 1];
+    if ([@"dev" isEqualToString:lastPart]) {
+        return TDEnvDevelopment;
+    } else if ([@"staging" isEqualToString:lastPart]) {
+        return TDEnvStaging;
+    } else {
+        return TDEnvProduction;
+    }
+}
 
 + (NSString*)getBaseURL
 {
    // Andrew B return STAGING_SERVER;
-    #ifdef DEBUG
-        return DEV_SERVER;
-    #else
-        return STAGING_SERVER;
-    #endif
+
+    switch ([self environment]) {
+        case TDEnvDevelopment:
+            return DEV_SERVER;
+            break;
+        case TDEnvStaging:
+            return STAGING_SERVER;
+            break;
+        case TDEnvProduction:
+            return PRODUCTION_SERVER;
+            break;
+    }
 }
+
++ (NSString *)flurryKey {
+    switch ([self environment]) {
+        case TDEnvDevelopment:
+        case TDEnvStaging:
+            return nil;
+            break;
+
+        case TDEnvProduction:
+            return @"3JFF5PK4XDMTVPQQNZKN";
+            break;
+    }
+}
+
 + (NSURL *)getStreamingUrlFor:(NSString *)filename
 {
     NSString *location = [NSString stringWithFormat:@"%@/%@.mp4", CDN_BASE_URL, filename];
