@@ -214,7 +214,8 @@
 
     if (match.location == NSNotFound) {
         [self.userNameTextField startSpinner];
-        [[TDAPIClient sharedInstance] validateCredentials:@{ @"username":username } success:^(NSDictionary *response) {
+        [self.userParameters addEntriesFromDictionary:@{ @"username":username }];
+        [[TDAPIClient sharedInstance] validateCredentials:self.userParameters success:^(NSDictionary *response) {
             [self.userNameTextField status:[[response objectForKey:@"username"] boolValue]];
             [self validateAllFields];
         } failure:^{

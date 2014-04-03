@@ -205,7 +205,7 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
     NSError *error = nil;
     NBPhoneNumberUtil *phoneUtil = [NBPhoneNumberUtil sharedInstance];
     NBPhoneNumber *parsedPhoneNumber = [phoneUtil parseWithPhoneCarrierRegion:self.phoneNumber error:&error];
-    self.phoneNumber = [[NBPhoneNumberUtil sharedInstance] format:parsedPhoneNumber numberFormat:NBEPhoneNumberFormatE164 error:&error];
+    self.phoneNumber = [phoneUtil format:parsedPhoneNumber numberFormat:NBEPhoneNumberFormatE164 error:&error];
     if (!error && [phoneUtil isValidNumber:parsedPhoneNumber]) {
         [self.phoneNumberTextField startSpinner];
         [self validateField:kTDTextFieldType_Phone];
