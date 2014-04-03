@@ -156,6 +156,17 @@
                     NSDictionary *returnDict = [NSDictionary dictionaryWithDictionary:responseObject];
                     if ([returnDict objectForKey:@"success"]) {
                         if ([[returnDict objectForKey:@"success"] boolValue]) {
+
+                            // Remove the post from 'posts'
+                            NSMutableArray *mutablePosts = [NSMutableArray arrayWithCapacity:0];
+                            for (TDPost *post in posts) {
+                                if (![post.postId isEqualToNumber:postId]) {
+                                    [mutablePosts addObject:post];
+                                }
+                            }
+                            [posts removeAllObjects];
+                            [posts addObjectsFromArray:mutablePosts];
+
                             // Success
                             [[NSNotificationCenter defaultCenter] postNotificationName:POST_DELETED_NOTIFICATION
                                                                                 object:postId

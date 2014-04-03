@@ -831,16 +831,7 @@
 {
     NSLog(@"Home-delete notification:%@", notification);
 
-    NSNumber *deletedPostId = [notification object];
-
-    // Remove the post from 'posts'
-    NSMutableArray *mutablePosts = [NSMutableArray arrayWithCapacity:0];
-    for (TDPost *post in posts) {
-        if (![post.postId isEqualToNumber:deletedPostId]) {
-            [mutablePosts addObject:post];
-        }
-    }
-    self.posts = [NSArray arrayWithArray:mutablePosts];
+    posts = [[TDPostAPI sharedInstance] getPosts];
     [self.tableView reloadData];
 }
 
