@@ -38,8 +38,8 @@
 
 -(void)awakeFromNib {
     CGRect bottomLineRect = self.bottomPaddingLine.frame;
-    bottomLineRect.size.height = 0.5;
-    bottomLineRect.origin.y += 0.5;
+    bottomLineRect.size.height = 1 / [[UIScreen mainScreen] scale];
+    bottomLineRect.origin.y += 1 / [[UIScreen mainScreen] scale];
     self.bottomPaddingLine.frame = bottomLineRect;
 }
 

@@ -7,6 +7,7 @@
 //
 
 #import "TDHomeHeaderView.h"
+#import "TDConstants.h"
 #import "TDProgressIndicator.h"
 #import "TDHomeHeaderUploadDelegate.h"
 
@@ -28,19 +29,16 @@
 
         self.backgroundColor = [UIColor whiteColor];
 
-        UIColor *lightGrayColor = [UIColor colorWithRed:0.93 green:0.93 blue:0.93 alpha:1.0];
-        UIColor *grayColor = [UIColor colorWithRed:0.78 green:0.78 blue:0.78 alpha:1.0];    // c8c8c8
-
         UIView *topPadding = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, 320.0, 5.0)];
-        topPadding.backgroundColor = lightGrayColor;
+        topPadding.backgroundColor = [TDConstants backgroundColor];
         [self addSubview:topPadding];
 
-        UIView *topBorder = [[UIView alloc] initWithFrame:CGRectMake(0.0, 5.0, 320.0, 1.0)];
-        topBorder.backgroundColor = grayColor;
+        UIView *topBorder = [[UIView alloc] initWithFrame:CGRectMake(0.0, 5.0, 320.0, 1 / [[UIScreen mainScreen] scale])];
+        topBorder.backgroundColor = [TDConstants borderColor];
         [self addSubview:topBorder];
 
         self.bottomPadding = [[UIView alloc] initWithFrame:CGRectMake(0.0, 50.0, 320.0, 5.0)];
-        self.bottomPadding.backgroundColor = lightGrayColor;
+        self.bottomPadding.backgroundColor = [TDConstants backgroundColor];
         [self addSubview:self.bottomPadding];
 
     }

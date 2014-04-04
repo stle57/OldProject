@@ -69,9 +69,9 @@ typedef enum {
     self.usernameLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:17.0];
     self.createdLabel.font = [UIFont fontWithName:@"ProximaNova-Light" size:14.0];
 
-    // top line to 0.5 high
+    // top line to 0.5 high on retina
     CGRect topLineRect = self.topLine.frame;
-    topLineRect.size.height = 0.5;
+    topLineRect.size.height = 1 / [[UIScreen mainScreen] scale];
     self.topLine.frame = topLineRect;
 }
 

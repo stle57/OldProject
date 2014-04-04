@@ -55,7 +55,10 @@ static NSString *const kSpinningAnimation = @"rotationAnimation";
 + (NSString *)getBaseURL;
 + (NSString *)flurryKey;
 + (NSURL *)getStreamingUrlFor:(NSString *)filename;
+
 + (UIColor *)brandingRedColor;
++ (UIColor *)backgroundColor;
++ (UIColor *)borderColor;
 + (UIColor *)headerTextColor;
 + (UIColor *)commentTextColor;
 + (UIColor *)commentTimeTextColor;

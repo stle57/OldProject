@@ -33,17 +33,15 @@
 
         self.delegate = delegate;
 
-        UIColor *grayColor = [UIColor colorWithRed:0.78 green:0.78 blue:0.78 alpha:1.0];
-
         self.thumbnailView = [[UIImageView alloc] initWithFrame:CGRectMake(7.0, 5.0, 40.0, 40.0)];
         self.thumbnailView.contentMode = UIViewContentModeScaleToFill;
-        self.thumbnailView.backgroundColor = grayColor;
+        self.thumbnailView.backgroundColor = [TDConstants borderColor];
         self.thumbnailView.clipsToBounds = YES;
         self.thumbnailView.image = [UIImage imageWithContentsOfFile:upload.persistedPhotoPath];
         [self addSubview:self.thumbnailView];
 
         self.progressBackgroundView = [[UIView alloc] initWithFrame:CGRectMake(63.0, 20.0, 200.0, 10.0)];
-        self.progressBackgroundView.backgroundColor = grayColor;
+        self.progressBackgroundView.backgroundColor = [TDConstants borderColor];
         self.progressBackgroundView.layer.cornerRadius = 5;
         self.progressBackgroundView.layer.masksToBounds = YES;
         [self addSubview:self.progressBackgroundView];
@@ -54,8 +52,8 @@
         self.progressBarView.layer.masksToBounds = YES;
         [self addSubview:self.progressBarView];
 
-        UIView *bottomBorder = [[UIView alloc] initWithFrame:CGRectMake(0.0, 49.0, 320.0, 1.0)];
-        bottomBorder.backgroundColor = grayColor;
+        UIView *bottomBorder = [[UIView alloc] initWithFrame:CGRectMake(0.0, 49.0 + (1 / [[UIScreen mainScreen] scale]), 320.0, 1 / [[UIScreen mainScreen] scale])];
+        bottomBorder.backgroundColor = [TDConstants borderColor];
         [self addSubview:bottomBorder];
     }
     return self;
