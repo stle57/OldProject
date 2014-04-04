@@ -88,7 +88,7 @@
         self.hpTextView.delegate = self;
         self.hpTextView.internalTextView.scrollIndicatorInsets = UIEdgeInsetsMake(5, 0, 5, 0);
         self.hpTextView.placeholder = @"";
-        self.hpTextView.text = @"Write a comment...";
+        self.hpTextView.text = kCommentDefaultText;
         self.hpTextView.layer.cornerRadius = 4.0;
         self.hpTextView.layer.borderColor = [UIColor colorWithRed:(178.0/255.0) green:(178.0/255.0) blue:(178.0/255.0) alpha:1.0].CGColor;
         self.hpTextView.layer.borderWidth = 0.5;
@@ -228,7 +228,7 @@
 
     lastNumberOfLines = numLines;
 
-    if ([self.textView.text length] > 0)
+    if ([self.textView.text length] > 0 && ![self.textView.text isEqualToString:kCommentDefaultText])
     {
         self.postButton.enabled = YES;
     }
@@ -271,7 +271,7 @@
 
     lastNumberOfLines = numLines;
 
-    if ([self.hpTextView.text length] > 0)
+    if ([self.hpTextView.text length] > 0 && ![self.hpTextView.text isEqualToString:kCommentDefaultText])
     {
         self.postButton.enabled = YES;
     }
@@ -407,7 +407,7 @@
 
 -(void)reset
 {
-    self.hpTextView.text = @"Write a comment...";
+    self.hpTextView.text = kCommentDefaultText;
     self.hpTextView.rememberText = @"";
     self.rememberText = @"";
     self.hpTextView.singleLineTextLabel.text = @"";

@@ -635,7 +635,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 - (void)textViewDidBeginEditing:(UITextView *)textView {
-    if ([textView.text isEqualToString:@"Write a comment..."]) {
+    if ([textView.text isEqualToString:kCommentDefaultText]) {
         textView.text = @"";
         textView.textColor = [TDConstants headerTextColor];
         textView.font = [UIFont fontWithName:@"ProximaNova-Regular" size:18.0];
@@ -649,7 +649,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 - (void)textViewDidEndEditing:(UITextView *)textView {
 	if ([textView.text isEqualToString:@""] && self.singleLineTextLabel.hidden) {
-        textView.text = @"Write a comment...";
+        textView.text = kCommentDefaultText;
         textView.font = [UIFont fontWithName:@"ProximaNova-Regular" size:18.0];
         textView.textColor = [TDConstants commentTimeTextColor];
     }

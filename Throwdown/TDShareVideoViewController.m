@@ -35,7 +35,7 @@
 
     [self.navigationBar setTitleTextAttributes:@{ UITextAttributeFont:[UIFont fontWithName:TDFontProximaNovaRegular size:17.0] }];
 
-    [self.commentTextView setPlaceholder:@"Write a comment..."];
+    [self.commentTextView setPlaceholder:kCommentDefaultText];
     [self.commentTextView setFont:[UIFont fontWithName:TDFontProximaNovaRegular size:17.0]];
 
     [self.previewImage setImage:[UIImage imageWithContentsOfFile:self.thumbnailPath]];
