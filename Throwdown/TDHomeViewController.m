@@ -363,7 +363,7 @@
 # pragma mark - Figure out what's on each row
 
 - (void)refreshPostsList:(NSNotification*)notification {
-    [self refreshPostsList];
+        [self refreshPostsList];
 }
 
 /* Refreshes the list with currently downloaded posts */
@@ -591,6 +591,11 @@
     }
 
     NSInteger lastRow = [self tableView:nil numberOfRowsInSection:indexPath.section]-1;
+
+    // last row has to be 100 higher to allow press on Like / Comment
+    if (indexPath.row == lastRow && indexPath.section == ([self.posts count]-1)) {
+        return 100.0+commentButtonsHeight;
+    }
 
     if (indexPath.row == lastRow) {
         return commentButtonsHeight;

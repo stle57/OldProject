@@ -41,6 +41,11 @@
     return self;
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"Post id:%@\ncomments:%@\nlikers:%@\nLiked:%d", self.postId, self.comments, self.likers, self.liked];
+}
+
 -(void)loadUpFromDict:(NSDictionary *)dict
 {
     _postId   = [dict objectForKey:@"id"];
@@ -92,6 +97,7 @@
     NSMutableArray *newArray = [NSMutableArray arrayWithArray:self.likers];
     [newArray addObject:likerDict];
     _likers = newArray;
+    _likersTotalCount = [NSNumber numberWithInteger:[newArray count]];
 
     // Assume it's current user
     _liked = YES;
@@ -105,6 +111,7 @@
             NSMutableArray *newArray = [NSMutableArray arrayWithArray:self.likers];
             [newArray removeObject:likerDict];
             _likers = newArray;
+            _likersTotalCount = [NSNumber numberWithInteger:[newArray count]];
             break;
         }
     }
