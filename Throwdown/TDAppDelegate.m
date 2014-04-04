@@ -18,12 +18,13 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    [Crashlytics startWithAPIKey:@"52059d9d37002218b9f7913616f80b1294e806c2"];
+
     if ([TDConstants flurryKey]) {
         [Flurry setCrashReportingEnabled:NO];
         [Flurry startSession:[TDConstants flurryKey]];
     }
     [TestFlight takeOff:@"6fef227c-c5cb-4505-9502-9052e2819f45"];
-    [Crashlytics startWithAPIKey:@"52059d9d37002218b9f7913616f80b1294e806c2"];
 
     NSString *storyboardId = [[TDUserAPI sharedInstance] isLoggedIn] ? @"HomeViewController" : @"WelcomeViewController";
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
