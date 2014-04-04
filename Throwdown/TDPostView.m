@@ -11,8 +11,6 @@
 #import "AVFoundation/AVFoundation.h"
 #import "NSDate+TimeAgo.h"
 
-static const NSString *ItemStatusContext;
-
 typedef enum {
     ControlStatePaused,
     ControlStatePlay,
@@ -109,11 +107,13 @@ typedef enum {
         [[NSNotificationCenter defaultCenter] removeObserver:self
                                                         name:TDNotificationStopPlayers
                                                       object:self];
-
         [[NSNotificationCenter defaultCenter] removeObserver:self
                                                         name:AVPlayerItemDidPlayToEndTimeNotification
                                                       object:self.playerItem];
-        [self.playerItem removeObserver:self forKeyPath:@"status" context:&ItemStatusContext];
+
+        [self.playerItem removeObserver:self forKeyPath:@"status" context:nil];
+        [self.playerItem removeObserver:self forKeyPath:@"playbackBufferEmpty" context:nil];
+        [self.playerItem removeObserver:self forKeyPath:@"playbackLikelyToKeepUp" context:nil];
 
         [self.playerLayer removeFromSuperlayer];
         self.player = nil;
@@ -127,6 +127,7 @@ typedef enum {
         self.playerSpinner = [[UIImageView alloc] initWithFrame:CGRectMake(290.0, 332.0, 20.0, 20.0)];
         [self addSubview:self.playerSpinner];
     }
+    [self stopSpinner];
     switch (controlState) {
         case ControlStatePlay:
             [self.playerSpinner setImage:[UIImage imageNamed:@"video_status_play"]];
@@ -140,7 +141,6 @@ typedef enum {
             break;
         case ControlStateNone:
             [self.playerSpinner setImage:nil];
-            [self stopSpinner];
             break;
     }
 }
@@ -168,19 +168,6 @@ typedef enum {
     }
 }
 
-- (void)sendStopNotification {
-    debug NSLog(@"TDNotificationStopPlayers SENT");
-    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:self.filename];
-}
-
-- (void)listenForStopNotification {
-    debug NSLog(@"TDNotificationStopPlayers LISTEN");
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(stopVideoFromNotification:)
-                                                 name:TDNotificationStopPlayers
-                                               object:nil];
-}
-
 - (void)stopVideo {
     if (self.isPlaying) {
         self.isPlaying = NO;
@@ -190,9 +177,8 @@ typedef enum {
 }
 
 - (void)startVideo {
-    // Stop any previous players, then listen for the same command ourselves
-    [self sendStopNotification];
-    [self listenForStopNotification];
+    // Stop any previous players
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:self.filename];
 
     if (self.player == nil)  {
         self.isLoading = YES;
@@ -218,12 +204,19 @@ typedef enum {
 
                if (status == AVKeyValueStatusLoaded) {
                    self.playerItem = [AVPlayerItem playerItemWithAsset:asset];
-                   [self.playerItem addObserver:self forKeyPath:@"status"
-                                        options:0 context:&ItemStatusContext];
+                   [self.playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
+                   [self.playerItem addObserver:self forKeyPath:@"playbackBufferEmpty" options:NSKeyValueObservingOptionNew context:nil];
+                   [self.playerItem addObserver:self forKeyPath:@"playbackLikelyToKeepUp" options:NSKeyValueObservingOptionNew context:nil];
+
+                   [[NSNotificationCenter defaultCenter] addObserver:self
+                                                            selector:@selector(stopVideoFromNotification:)
+                                                                name:TDNotificationStopPlayers
+                                                              object:nil];
                    [[NSNotificationCenter defaultCenter] addObserver:self
                                                             selector:@selector(playerItemDidReachEnd:)
                                                                 name:AVPlayerItemDidPlayToEndTimeNotification
                                                               object:self.playerItem];
+
                    self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
                    [self.playerLayer setPlayer:self.player];
 
@@ -247,24 +240,32 @@ typedef enum {
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if (context == &ItemStatusContext && self.playerItem.status == AVPlayerItemStatusReadyToPlay) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            self.playerLayer.hidden = NO;
-            // Only play once on status change (status change is called every time the player is reset)
-            if (self.isLoading) {
-                self.isLoading = NO;
-                [self stopSpinner];
-                [self updateControlImage:ControlStateNone];
-            }
-            if (!self.didPlay) {
-                self.didPlay = YES;
-                [self startVideo];
-            }
-        });
+    if (object == self.playerItem && [keyPath isEqualToString:@"playbackBufferEmpty"]) {
+        [self updateControlImage:ControlStateLoading];
+        return;
+    } else if (object == self.playerItem && [keyPath isEqualToString:@"playbackLikelyToKeepUp"]) {
+        [self updateControlImage:ControlStateNone];
+        return;
+    } else if (object == self.playerItem && [keyPath isEqualToString:@"status"]) {
+
+        if (self.playerItem.status == AVPlayerItemStatusReadyToPlay) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.playerLayer.hidden = NO;
+                // Only play once on status change (status change is called every time the player is reset)
+                if (self.isLoading) {
+                    self.isLoading = NO;
+                    [self stopSpinner];
+                    [self updateControlImage:ControlStateNone];
+                }
+                if (!self.didPlay) {
+                    self.didPlay = YES;
+                    [self startVideo];
+                }
+            });
+        }
         return;
     }
-    [super observeValueForKeyPath:keyPath ofObject:object
-                           change:change context:context];
+    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     return;
 }
 
