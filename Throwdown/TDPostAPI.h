@@ -20,6 +20,7 @@
 - (void)saveImage:(UIImage*)image filename:(NSString*)filename;
 - (void)fetchPostsUpstream;
 - (BOOL)fetchPostsDownstream;
+-(NSNumber *)lowestIdOfPosts;
 - (void)fetchPostsUpstreamWithErrorHandlerStart:(NSNumber *)start error:(void (^)(void))errorHandler;
 - (NSArray *)getPosts;
 -(void)likePostWithId:(NSNumber *)postId;

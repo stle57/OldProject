@@ -405,7 +405,13 @@
         return;
     }
 
-    NSLog(@"updatePostsAtBottom");
+    // Don't do if we're already at the bottom
+    NSNumber *lowestId = [[TDPostAPI sharedInstance] lowestIdOfPosts];
+    if ([lowestId isEqualToNumber:[NSNumber numberWithInt:1]]) {
+        return;
+    }
+
+    NSLog(@"updatePostsAtBottom-lowest:%@", lowestId);
 
     updatingAtBottom = YES;
     [self startLoadingSpinner];
