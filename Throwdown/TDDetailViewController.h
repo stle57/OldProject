@@ -28,6 +28,7 @@
     CGFloat postViewHeight;
     CGFloat postCommentViewHeight;
     CGFloat minLikeheight;
+    BOOL liking;
 }
 
 @property (nonatomic, assign) id <TDDetailViewControllerDelegate> __unsafe_unretained delegate;

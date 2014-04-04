@@ -186,8 +186,11 @@
 #pragma mark - Notifications
 - (void)reloadPosts:(NSNotification*)notification
 {
-    TDPostAPI *api = [TDPostAPI sharedInstance];
-    [api getFullPostInfoForPostId:self.post.postId];
+    if (!liking) {
+        TDPostAPI *api = [TDPostAPI sharedInstance];
+        [api getFullPostInfoForPostId:self.post.postId];
+    }
+    liking = NO;
 }
 
 -(void)fullPostReturn:(NSNotification*)notification
@@ -428,10 +431,11 @@
 {
     if (self.post.postId) {
 
-        // TODO: Change this. We shouldn't reload on server reply, this causes a flash and refresh of likers list.
         // Add the like for the update
-//        [self.post addLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
-//        [self.tableView reloadData];
+        [self.post addLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
+        [self.tableView reloadData];
+
+        liking = YES;
 
         // Update Server
         TDPostAPI *api = [TDPostAPI sharedInstance];
@@ -448,6 +452,8 @@
         // Remove the like for the update
         [self.post removeLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
         [self.tableView reloadData];
+
+        liking = YES;
 
         // Update Server
         TDPostAPI *api = [TDPostAPI sharedInstance];

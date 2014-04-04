@@ -368,8 +368,8 @@
 
 /* Refreshes the list with currently downloaded posts */
 - (void)refreshPostsList {
-    NSLog(@"refresh post list");
 
+    NSLog(@"home-refreshPostsList");
     // if this was from a bottom scroll refresh
     NSArray *visibleCells = [self.tableView visibleCells];
     [self stopSpinner];
@@ -640,6 +640,9 @@
         // Add the like for the update
         [post addLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
 
+        // reload row
+        [self.tableView reloadData];
+
         // Send to server
         TDPostAPI *api = [TDPostAPI sharedInstance];
         [api likePostWithId:post.postId];
@@ -656,6 +659,9 @@
 
         // Remove the like for the update
         [post removeLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
+
+        // reload row
+        [self.tableView reloadData];
 
         TDPostAPI *api = [TDPostAPI sharedInstance];
         [api unLikePostWithId:post.postId];

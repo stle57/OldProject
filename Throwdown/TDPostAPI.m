@@ -215,7 +215,7 @@
 
                     if (post) {
                         post.liked = YES;
-                        [self notifyPostsRefreshed];
+                       // [self notifyPostsRefreshed];
                     }
                 }
             }
@@ -257,7 +257,7 @@
 
                     if (post) {
                         post.liked = NO;
-                        [self notifyPostsRefreshed];
+                      //  [self notifyPostsRefreshed];
                     }
                 }
             }
