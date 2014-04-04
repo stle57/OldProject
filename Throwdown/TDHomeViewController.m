@@ -411,7 +411,12 @@
         return;
     }
 
-    NSLog(@"updatePostsAtBottom-lowest:%@", lowestId);
+    NSLog(@"updatePostsAtBottom-lowest:%@ count:%ld", lowestId, (long)[self.posts count]);
+
+    // Don't do the bottom if the list is very short
+    if ([self.posts count] < 2) {
+        return;
+    }
 
     updatingAtBottom = YES;
     [self startLoadingSpinner];
