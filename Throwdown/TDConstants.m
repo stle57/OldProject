@@ -12,7 +12,7 @@
 
 #define CDN_BASE_URL @"http://139bc8fb83b0918931ad-a6f5654f38394ba560d9625746ae5e96.iosr.cf5.rackcdn.com"
 
-#define DEV_SERVER @"http://caoos.local:3000"
+#define DEV_SERVER @"http://amber.local:3000"
 #define STAGING_SERVER @"http://staging.throwdown.us"
 #define PRODUCTION_SERVER @"http://throwdown.us"
 
