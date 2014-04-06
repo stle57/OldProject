@@ -98,7 +98,10 @@
 
         // TODO: make sure you're using the appropriate NSOperationQueue
 
-        [URLConnection asyncConnectionWithRequest:objc_msgSend(sender, requestSelector, object)
+        id (*response)(id, SEL, id) = (id (*)(id, SEL, id)) objc_msgSend;
+        NSURLRequest *request = response(sender, requestSelector, object);
+
+        [URLConnection asyncConnectionWithRequest:request
                                   completionBlock:^(NSData *data, NSURLResponse *urlResponse) {
 
                                           NSHTTPURLResponse *response = (NSHTTPURLResponse *)urlResponse;
@@ -144,7 +147,10 @@
     if (self.authenticated) {
 
         // TODO: make sure you're using the appropriate NSOperationQueue
-        [NSURLConnection sendAsynchronousRequest:objc_msgSend(sender, requestSelector, object) queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *urlResponse, NSData *data, NSError *error) {    
+        id (*response)(id, SEL, id) = (id (*)(id, SEL, id)) objc_msgSend;
+        NSURLRequest *request = response(sender, requestSelector, object);
+
+        [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *urlResponse, NSData *data, NSError *error) {
 
             NSHTTPURLResponse *response = (NSHTTPURLResponse *)urlResponse;
             
