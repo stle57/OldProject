@@ -31,4 +31,5 @@
 -(void)addComment:(TDComment *)newComment;
 -(void)orderCommentsForHomeScreen;
 -(void)orderCommentsForDetailsScreen;
+-(void)replaceUser:(TDUser *)newUser;
 @end

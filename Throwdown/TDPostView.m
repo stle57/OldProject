@@ -300,5 +300,16 @@ typedef enum {
     }
 } */
 
+#pragma mark - User Name Button
+- (IBAction)userButtonPressed:(UIButton *)sender
+{
+    NSLog(@"userButtonPressed");
+
+    if (delegate) {
+        if ([delegate respondsToSelector:@selector(userButtonPressedFromRow:)]) {
+            [delegate userButtonPressedFromRow:self.row];
+        }
+    }
+}
 
 @end

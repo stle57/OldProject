@@ -41,6 +41,7 @@ static NSString *const kSpinningAnimation = @"rotationAnimation";
 #define CELL_IDENTIFIER_COMMENT_VIEW    @"TDTwoButtonView"
 #define CELL_IDENTIFIER_MORE_COMMENTS   @"TDMoreComments"
 #define CELL_IDENTIFIER_ACTIVITY        @"TDActivityCell"
+#define CELL_IDENTIFIER_PROFILE         @"TDUserProfileCell"
 #define COMMENT_MESSAGE_WIDTH           306.0
 #define COMMENT_MESSAGE_FONT            [UIFont systemFontOfSize:14.0]
 #define kCommentDefaultText             @"Write a comment..."

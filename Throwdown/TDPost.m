@@ -167,4 +167,9 @@
     }
 }
 
+-(void)replaceUser:(TDUser *)newUser
+{
+    _user = newUser;
+}
+
 @end

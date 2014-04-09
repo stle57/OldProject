@@ -26,6 +26,9 @@
 		2DA41A6118C7E49D00B21C74 /* HPTextViewInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA41A5F18C7E49D00B21C74 /* HPTextViewInternal.m */; };
 		2DA420DC18E63E1A006F4D9C /* TDActivityCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA420DA18E63E1A006F4D9C /* TDActivityCell.m */; };
 		2DA420DD18E63E1A006F4D9C /* TDActivityCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA420DB18E63E1A006F4D9C /* TDActivityCell.xib */; };
+		2DA5354418F35E4300031128 /* TDUserProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5354218F35E4300031128 /* TDUserProfileViewController.m */; };
+		2DA5354518F35E4300031128 /* TDUserProfileViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5354318F35E4300031128 /* TDUserProfileViewController.xib */; };
+		2DA5354818F36EF800031128 /* TDPostsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5354718F36EF800031128 /* TDPostsViewController.m */; };
 		2DA5F05118D36745003D2F99 /* ProximaNova-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5F04D18D36745003D2F99 /* ProximaNova-Bold.otf */; };
 		2DA5F05218D36745003D2F99 /* ProximaNova-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5F04E18D36745003D2F99 /* ProximaNova-Light.otf */; };
 		2DA5F05318D36745003D2F99 /* ProximaNova-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5F04F18D36745003D2F99 /* ProximaNova-Regular.otf */; };
@@ -37,6 +40,8 @@
 		2DA5F05E18D37C70003D2F99 /* BebasNeue Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5F05918D37C70003D2F99 /* BebasNeue Thin.otf */; };
 		2DA73D7718BFCC2E00D87370 /* TDLikeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA73D7618BFCC2E00D87370 /* TDLikeView.m */; };
 		2DA73D7918BFCCD000D87370 /* TDLikeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA73D7818BFCCD000D87370 /* TDLikeView.xib */; };
+		2DA8639318F49D190089B048 /* TDUserProfileCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA8639118F49D190089B048 /* TDUserProfileCell.m */; };
+		2DA8639418F49D190089B048 /* TDUserProfileCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA8639218F49D190089B048 /* TDUserProfileCell.xib */; };
 		2DBA430118DA455500366737 /* TDTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DBA42FF18DA455500366737 /* TDTextField.m */; };
 		2DBA430218DA455500366737 /* TDTextField.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA430018DA455500366737 /* TDTextField.xib */; };
 		579149E08F7B4EE789901248 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E657ABE418B84EA68554F855 /* libPods.a */; };
@@ -137,6 +142,11 @@
 		2DA420D918E63E1A006F4D9C /* TDActivityCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDActivityCell.h; sourceTree = "<group>"; };
 		2DA420DA18E63E1A006F4D9C /* TDActivityCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDActivityCell.m; sourceTree = "<group>"; };
 		2DA420DB18E63E1A006F4D9C /* TDActivityCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDActivityCell.xib; sourceTree = "<group>"; };
+		2DA5354118F35E4300031128 /* TDUserProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserProfileViewController.h; sourceTree = "<group>"; };
+		2DA5354218F35E4300031128 /* TDUserProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUserProfileViewController.m; sourceTree = "<group>"; };
+		2DA5354318F35E4300031128 /* TDUserProfileViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDUserProfileViewController.xib; sourceTree = "<group>"; };
+		2DA5354618F36EF800031128 /* TDPostsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDPostsViewController.h; sourceTree = "<group>"; };
+		2DA5354718F36EF800031128 /* TDPostsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDPostsViewController.m; sourceTree = "<group>"; };
 		2DA5F04D18D36745003D2F99 /* ProximaNova-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ProximaNova-Bold.otf"; path = "fonts/ProximaNova-Bold.otf"; sourceTree = "<group>"; };
 		2DA5F04E18D36745003D2F99 /* ProximaNova-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ProximaNova-Light.otf"; path = "fonts/ProximaNova-Light.otf"; sourceTree = "<group>"; };
 		2DA5F04F18D36745003D2F99 /* ProximaNova-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ProximaNova-Regular.otf"; path = "fonts/ProximaNova-Regular.otf"; sourceTree = "<group>"; };
@@ -149,6 +159,9 @@
 		2DA73D7518BFCC2D00D87370 /* TDLikeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDLikeView.h; sourceTree = "<group>"; };
 		2DA73D7618BFCC2E00D87370 /* TDLikeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDLikeView.m; sourceTree = "<group>"; };
 		2DA73D7818BFCCD000D87370 /* TDLikeView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDLikeView.xib; sourceTree = "<group>"; };
+		2DA8639018F49D190089B048 /* TDUserProfileCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserProfileCell.h; sourceTree = "<group>"; };
+		2DA8639118F49D190089B048 /* TDUserProfileCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUserProfileCell.m; sourceTree = "<group>"; };
+		2DA8639218F49D190089B048 /* TDUserProfileCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDUserProfileCell.xib; sourceTree = "<group>"; };
 		2DBA42FE18DA455500366737 /* TDTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTextField.h; sourceTree = "<group>"; };
 		2DBA42FF18DA455500366737 /* TDTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTextField.m; sourceTree = "<group>"; };
 		2DBA430018DA455500366737 /* TDTextField.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDTextField.xib; sourceTree = "<group>"; };
@@ -313,6 +326,16 @@
 				2DA41A5F18C7E49D00B21C74 /* HPTextViewInternal.m */,
 			);
 			name = HPTypingView;
+			sourceTree = "<group>";
+		};
+		2DA5354018F35E0D00031128 /* UserProfile */ = {
+			isa = PBXGroup;
+			children = (
+				2DA5354318F35E4300031128 /* TDUserProfileViewController.xib */,
+				2DA5354118F35E4300031128 /* TDUserProfileViewController.h */,
+				2DA5354218F35E4300031128 /* TDUserProfileViewController.m */,
+			);
+			name = UserProfile;
 			sourceTree = "<group>";
 		};
 		2DA5F04C18D36736003D2F99 /* Fonts */ = {
@@ -512,9 +535,12 @@
 		A182D836188F2C0100F794A5 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				2DA5354018F35E0D00031128 /* UserProfile */,
 				A11999D318D90D2E00C39ABF /* Recording */,
 				A1432CDE18A99D500073E492 /* Onboarding */,
 				2DA41A5218C7D85F00B21C74 /* Detail */,
+				2DA5354618F36EF800031128 /* TDPostsViewController.h */,
+				2DA5354718F36EF800031128 /* TDPostsViewController.m */,
 				A182D837188F2C2D00F794A5 /* TDHomeViewController.h */,
 				A182D838188F2C2D00F794A5 /* TDHomeViewController.m */,
 				2D5714C718BD9A5800AF0B4D /* Segues */,
@@ -581,6 +607,9 @@
 				2DA39FD518E0B2570004A9C7 /* TDMoreComments.xib */,
 				2DA39FD318E0B2570004A9C7 /* TDMoreComments.h */,
 				2DA39FD418E0B2570004A9C7 /* TDMoreComments.m */,
+				2DA8639218F49D190089B048 /* TDUserProfileCell.xib */,
+				2DA8639018F49D190089B048 /* TDUserProfileCell.h */,
+				2DA8639118F49D190089B048 /* TDUserProfileCell.m */,
 				2DA41A5B18C7E3EA00B21C74 /* HPTypingView */,
 				A1B9002B18CBDCC800012A1F /* TDUploadProgressDelegate.h */,
 				A1B9002C18CC316700012A1F /* TDHomeHeaderView.h */,
@@ -691,11 +720,13 @@
 				2DA5F05418D36745003D2F99 /* ProximaNova-Semibold.otf in Resources */,
 				A11E04E61888CB79002F981A /* InfoPlist.strings in Resources */,
 				2DA5F05318D36745003D2F99 /* ProximaNova-Regular.otf in Resources */,
+				2DA8639418F49D190089B048 /* TDUserProfileCell.xib in Resources */,
 				2D3F8DF718CFC81E00333F0B /* TDTwoButtonView.xib in Resources */,
 				2DBA430218DA455500366737 /* TDTextField.xib in Resources */,
 				2DA5F05218D36745003D2F99 /* ProximaNova-Light.otf in Resources */,
 				2D1AEE7118C937560055C315 /* TDDetailsLikesCell.xib in Resources */,
 				2D648A1718C9415D002FE0AD /* TDDetailsCommentsCell.xib in Resources */,
+				2DA5354518F35E4300031128 /* TDUserProfileViewController.xib in Resources */,
 				2DA5F05C18D37C70003D2F99 /* BebasNeue Light.otf in Resources */,
 				A11E04EF1888CB79002F981A /* Main.storyboard in Resources */,
 				2DA5F05A18D37C70003D2F99 /* BebasNeue Bold.otf in Resources */,
@@ -775,6 +806,7 @@
 				A11999DD18DC0D4200C39ABF /* TDFileSystemHelper.m in Sources */,
 				2D2E832E18CA579B00846B2E /* TDComment.m in Sources */,
 				A19FF60D18970BBB001A0AD0 /* RSCDNContainer.m in Sources */,
+				2DA5354418F35E4300031128 /* TDUserProfileViewController.m in Sources */,
 				2DA41A5A18C7E31000B21C74 /* TDTypingView.m in Sources */,
 				A1BC0B3F18BE825200F507B3 /* TDSlideLeftSegue.m in Sources */,
 				2D00148B18CFB57C0070DE16 /* TDTwoButtonView.m in Sources */,
@@ -791,6 +823,7 @@
 				2DA41A6018C7E49D00B21C74 /* HPGrowingTextView.m in Sources */,
 				A11E04F21888CB79002F981A /* TDRecordVideoViewController.m in Sources */,
 				A11E04EC1888CB79002F981A /* TDAppDelegate.m in Sources */,
+				2DA8639318F49D190089B048 /* TDUserProfileCell.m in Sources */,
 				2D1AEE7018C937560055C315 /* TDDetailsLikesCell.m in Sources */,
 				A1C1D0F618A0387B00666D2A /* TDPostView.m in Sources */,
 				A19FF60E18970BBB001A0AD0 /* RSClient.m in Sources */,
@@ -806,6 +839,7 @@
 				A17567901891C7F20034AD05 /* TDPostAPI.m in Sources */,
 				A182D831188B60CD00F794A5 /* SASliderLeft.m in Sources */,
 				2DA41A6118C7E49D00B21C74 /* HPTextViewInternal.m in Sources */,
+				2DA5354818F36EF800031128 /* TDPostsViewController.m in Sources */,
 				A1B9002E18CC316800012A1F /* TDHomeHeaderView.m in Sources */,
 				2D5714CD18BD9AB300AF0B4D /* VideoCloseSegue.m in Sources */,
 				A1E90CDD18B445FC0046D281 /* TDSignupStepTwoViewController.m in Sources */,

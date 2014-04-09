@@ -14,6 +14,7 @@
 @protocol TDPostViewDelegate <NSObject>
 @optional
 -(void)postTouchedFromRow:(NSInteger)row;
+-(void)userButtonPressedFromRow:(NSInteger)row;
 @end
 
 @interface TDPostView : UITableViewCell
@@ -27,9 +28,11 @@
 @property (weak, nonatomic) IBOutlet UILabel *createdLabel;
 @property (weak, nonatomic) IBOutlet TDLikeView *likeView;
 @property (weak, nonatomic) IBOutlet UIView *bottomPaddingLine;
+@property (weak, nonatomic) IBOutlet UIButton *userNameButton;
 @property (nonatomic, assign) NSInteger row;
 @property (strong, nonatomic) NSString *filename;
 
 - (void)setPost:(TDPost *)post;
+- (IBAction)userButtonPressed:(UIButton *)sender;
 
 @end

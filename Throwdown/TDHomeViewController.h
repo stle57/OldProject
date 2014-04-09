@@ -14,7 +14,9 @@
 #import "TDMoreComments.h"
 #import <MessageUI/MessageUI.h>
 #import "TDDetailViewController.h"
+#import "TDUserProfileViewController.h"
+#import "TDPostsViewController.h"
 
-@interface TDHomeViewController : UIViewController <TDLikeViewDelegate, TDPostViewDelegate, TDTwoButtonViewDelegate, TDDetailsCommentsCellDelegate, TDMoreCommentsDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate, TDDetailViewControllerDelegate, UIScrollViewDelegate>
+@interface TDHomeViewController : TDPostsViewController
 
 @end
