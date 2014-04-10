@@ -16,6 +16,8 @@
 
 @implementation TDAppDelegate
 
+#pragma mark - Application lifecycle
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [Crashlytics startWithAPIKey:@"52059d9d37002218b9f7913616f80b1294e806c2"];
@@ -34,9 +36,11 @@
     self.window.rootViewController = initViewController;
     [self.window makeKeyAndVisible];
 
+//    [[UIApplication sharedApplication] unregisterForRemoteNotifications];
+    debug NSLog(@"app launched with options: %@", launchOptions);
     return YES;
 }
-							
+
 - (void)applicationWillResignActive:(UIApplication *)application
 {
     // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
@@ -45,7 +49,7 @@
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
-    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
+    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
 }
 
@@ -63,6 +67,30 @@
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
+
+
+#pragma mark - Push notifications
+
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
+{
+    debug NSLog(@"application:didRegisterForRemoteNotificationsWithDeviceToken: %@", deviceToken);
+    [[TDCurrentUser sharedInstance] registerDeviceToken:[deviceToken description]];
+}
+
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
+{
+    NSLog(@"Failed device token error: %@", error);
+}
+
+- (void)application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary*)userInfo
+{
+	// debug NSLog(@"Received notification: %@", userInfo);
+    // TODO: notify home view controller of new push notification (probably with NSNotification or:
+    // UINavigationController *navigationController = (UINavigationController*)_window.rootViewController;
+    // TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
+}
+
+#pragma mark - app delegate
 
 + (TDAppDelegate*)appDelegate
 {

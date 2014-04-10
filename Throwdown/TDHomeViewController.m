@@ -24,9 +24,7 @@
 #define CELL_IDENTIFIER @"TDPostView"
 
 @interface TDHomeViewController ()
-{
-
-}
+@property (nonatomic) BOOL didUpload;
 
 @end
 
@@ -59,6 +57,11 @@
         [self animateButtonsOnToScreen];
     }
     goneDownstream = NO;
+
+    if (self.didUpload) {
+        self.didUpload = NO;
+        [[TDCurrentUser sharedInstance] registerForPushNotifications:@"Would you like to be notified of feedback?"];
+    }
 }
 
 -(void)viewWillDisappear:(BOOL)animated
@@ -132,6 +135,10 @@
 
 - (void)uploadStarted:(NSNotification *)notification {
     [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
+
+    if (![[TDCurrentUser sharedInstance] isRegisteredForPush]) {
+        self.didUpload = YES;
+    }
 
     TDPostUpload *upload = (TDPostUpload *)notification.object;
     [self.headerView addUpload:upload];

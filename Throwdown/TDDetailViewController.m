@@ -228,6 +228,7 @@
                                                                       inSection:0]
                                   atScrollPosition:UITableViewScrollPositionBottom
                                           animated:NO];
+            [[TDCurrentUser sharedInstance] registerForPushNotifications:@"Would you like to be notified of future replies?"];
         }
     }
 }

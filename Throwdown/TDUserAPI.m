@@ -60,8 +60,8 @@
 }
 
 - (void)logout {
+    [[TDAPIClient sharedInstance] logoutUserWithDeviceToken:self.currentUser.deviceToken];
     [self.currentUser logout];
-    [[TDAPIClient sharedInstance] logoutUser];
 }
 
 @end

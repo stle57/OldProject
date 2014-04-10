@@ -17,12 +17,16 @@
 @property (nonatomic, copy, readonly) NSString *email;
 @property (nonatomic, copy, readonly) NSString *phoneNumber;
 @property (nonatomic, copy, readonly) NSString *authToken;
+@property (nonatomic, copy, readonly) NSString *deviceToken;
 @property (strong, nonatomic, readonly) NSString *picture;
 
 + (TDCurrentUser *)sharedInstance;
 - (void)updateFromDictionary:(NSDictionary *)dictionary;
+- (BOOL)isRegisteredForPush;
 - (BOOL)isLoggedIn;
 - (void)logout;
+- (void)registerForPushNotifications:(NSString *)message;
+- (void)registerDeviceToken:(NSString *)token;
 -(TDUser *)currentUserObject;
 
 @end

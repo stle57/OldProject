@@ -8,6 +8,8 @@
 
 #import "TDCurrentUser.h"
 #import "TDFileSystemHelper.h"
+#import "TDAPIClient.h"
+#import "UIAlertView+TDBlockAlert.h"
 
 static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
 
@@ -34,6 +36,7 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     [aCoder encodeObject:self.name forKey:@"name"];
     [aCoder encodeObject:self.email forKey:@"email"];
     [aCoder encodeObject:self.authToken forKey:@"authentication_token"];
+    [aCoder encodeObject:self.deviceToken forKey:@"device_token"];
     [aCoder encodeObject:self.phoneNumber forKey:@"phone_number"];
 // not encoded    [aCoder encodeObject:self.picture forKey:@"picture"];
 }
@@ -47,6 +50,7 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
         _name        = [aDecoder decodeObjectForKey:@"name"];
         _email       = [aDecoder decodeObjectForKey:@"email"];
         _authToken   = [aDecoder decodeObjectForKey:@"authentication_token"];
+        _deviceToken = [aDecoder decodeObjectForKey:@"device_token"];
         _phoneNumber = [aDecoder decodeObjectForKey:@"phone_number"];
 // not decoded        _picture = [aDecoder decodeObjectForKey:@"picture"];
     }
@@ -62,8 +66,13 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     _authToken   = [dictionary objectForKey:@"authentication_token"];
     _phoneNumber = [dictionary objectForKey:@"phone_number"];
     _picture     = [dictionary objectForKey:@"picture"];
+    // _deviceToken not part of dictionary
 
     [self save];
+
+    if ([self isLoggedIn] && [self didAskForPush]) {
+        [self registerForRemoteNotificationTypes];
+    }
 }
 
 - (BOOL)isLoggedIn {
@@ -77,6 +86,7 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     _email = nil;
     _phoneNumber = nil;
     _authToken = nil;
+    _deviceToken = nil;
     _picture = nil;
     [TDFileSystemHelper removeFileAt:[NSHomeDirectory() stringByAppendingString:DATA_LOCATION]];
 }
@@ -88,8 +98,7 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     [data writeToFile:filename atomically:YES];
 }
 
--(TDUser *)currentUserObject
-{
+- (TDUser *)currentUserObject {
     if (!self.picture) {
         _picture = @"default";
     }
@@ -101,5 +110,59 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
          picture:self.picture];
     return user;
 }
+
+#pragma mark - push notification device token
+
+- (BOOL)isRegisteredForPush {
+    return self.deviceToken != nil;
+}
+
+- (BOOL)didAskForPush {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    return [defaults boolForKey:@"hasAskedPushNotification"];
+}
+
+- (void)didAskForPush:(BOOL)yes {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:yes forKey:@"hasAskedPushNotification"];
+    [defaults synchronize];
+}
+
+- (void)registerForPushNotifications:(NSString *)message {
+    if ([[TDCurrentUser sharedInstance] isLoggedIn] && ![self isRegisteredForPush]) {
+        // for some reason we don't have the device token stored, so we'll either ask for it if never asked before or register it
+        if ([self didAskForPush]) {
+            [self registerForRemoteNotificationTypes];
+        } else {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Turn on Notifications?" message:message delegate:nil cancelButtonTitle:@"Not now" otherButtonTitles:@"YES", nil];
+            [alert showWithCompletionBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
+                if (buttonIndex != alertView.cancelButtonIndex) {
+                    [self registerForRemoteNotificationTypes];
+                }
+            }];
+        }
+    }
+}
+
+- (void)registerDeviceToken:(NSString *)token {
+	token = [token stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
+	token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
+    if (![token isEqualToString:self.deviceToken]) {
+        _deviceToken = token;
+        [self save];
+        [[TDAPIClient sharedInstance] registerDeviceToken:token forUserToken:self.authToken];
+
+        // store this for future knowledge
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setBool:YES forKey:@"approvedPushNotification"];
+        [defaults synchronize];
+    }
+}
+
+- (void)registerForRemoteNotificationTypes {
+    [self didAskForPush:YES];
+    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound)];
+}
+
 
 @end

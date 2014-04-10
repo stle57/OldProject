@@ -9,6 +9,7 @@
 #import "TDAPIClient.h"
 #import "AFNetworking.h"
 #import "TDConstants.h"
+#import "TDCurrentUser.h"
 
 @interface TDAPIClient ()
 
@@ -18,6 +19,8 @@
 @end
 
 @implementation TDAPIClient
+
+#pragma mark - init
 
 + (TDAPIClient *)sharedInstance {
     static TDAPIClient *_sharedInstance = nil;
@@ -40,6 +43,8 @@
     self.httpManager = nil;
     self.credentialsTask = nil;
 }
+
+#pragma mark - api calls
 
 - (void)validateCredentials:(NSDictionary *)parameters success:(void (^)(NSDictionary *response))success failure:(void (^)())failure {
 
@@ -90,6 +95,7 @@
 {
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/users/sign_in.json"];
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+
     [self.httpManager POST:url parameters:@{@"user": @{ @"email": email, @"password": password }} success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             NSDictionary *response = (NSDictionary *)responseObject;
@@ -110,10 +116,24 @@
 }
 
 - (void)logoutUser {
-    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/users/sign_out.json"];
-    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
-    [self.httpManager DELETE:url parameters:nil success:nil failure:nil];
+    [self logoutUserWithDeviceToken:nil];
 }
 
+- (void)logoutUserWithDeviceToken:(NSString *)token {
+    NSDictionary *params = token != nil ? @{ @"device_token": token } : nil;
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/users/sign_out.json"];
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [self.httpManager DELETE:url parameters:params success:nil failure:nil];
+}
+
+- (void)registerDeviceToken:(NSString *)token forUserToken:(NSString *)userToken {
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/device_tokens.json"];
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [self.httpManager POST:url parameters:@{@"user_token": userToken, @"device_token": token} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"device token registered");
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"device token failed registration");
+    }];
+}
 
 @end

@@ -16,5 +16,7 @@
 - (void)signupUser:(NSDictionary *)userAttributes callback:(void (^)(BOOL success, NSDictionary *user))callback;
 - (void)loginUser:(NSString *)email withPassword:(NSString *)password callback:(void (^)(BOOL success, NSDictionary *user))callback;
 - (void)logoutUser;
+- (void)logoutUserWithDeviceToken:(NSString *)token;
+- (void)registerDeviceToken:(NSString *)token forUserToken:(NSString *)userToken;
 
 @end
