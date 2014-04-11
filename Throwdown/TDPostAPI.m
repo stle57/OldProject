@@ -149,7 +149,7 @@
 }
 
 - (BOOL)fetchPostsDownstreamForUser:(NSNumber *)userId {
-    NSNumber *lowestId = [self lowestIdOfPosts];
+    NSNumber *lowestId = [self lowestIdOfPostsForUser];
     if ([lowestId compare:[NSNumber numberWithInt:0]] == NSOrderedAscending ||
         [lowestId compare:[NSNumber numberWithInt:0]] == NSOrderedSame) {
         return NO;
@@ -162,11 +162,15 @@
     NSMutableString *url = [NSMutableString stringWithFormat:@"/api/v1/users/%@.json?user_token=%@", [userId stringValue], [TDCurrentUser sharedInstance].authToken];
 
     if (start) {
-        [url appendString:[NSString stringWithFormat:@"?start=%@", start]];
+        [url appendString:[NSString stringWithFormat:@"&start=%@", start]];
     }
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:[[TDConstants getBaseURL] stringByAppendingString:url] parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
+
+            if (!postsForUser) {
+                postsForUser = [[NSMutableArray alloc] init];
+            }
 
             if (!start) {
                 [postsForUser removeAllObjects];
@@ -174,7 +178,7 @@
             for (NSDictionary *postObject in [responseObject valueForKeyPath:@"posts"]) {
                 [postsForUser addObject:[[TDPost alloc]initWithDictionary:postObject]];
             }
-            [self notifyPostsRefreshed];
+            [self notifyPostsRefreshedWithInfo:userId];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"HTTP Error: %@", error);
@@ -206,6 +210,12 @@
     long lowest = [lowestId longValue]-1;
     lowestId = [NSNumber numberWithLong:lowest];
     return lowestId;
+}
+
+-(void)clearPostsForUser
+{
+    [postsForUser removeAllObjects];
+    postsForUser = nil;
 }
 
 #pragma delete post
@@ -259,6 +269,12 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:@"TDRefreshPostsNotification"
                                                         object:self
                                                       userInfo:nil];
+}
+
+- (void)notifyPostsRefreshedWithInfo:(id)info {
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"TDRefreshPostsNotification"
+                                                        object:self
+                                                      userInfo:info];
 }
 
 #pragma mark - like & comment

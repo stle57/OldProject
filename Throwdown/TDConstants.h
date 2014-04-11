@@ -14,6 +14,13 @@ const typedef NS_ENUM(NSInteger, TDEnvironment) {
     TDEnvDevelopment
 };
 
+enum {
+    kFromProfileScreenType_OwnProfileButton,
+    kFromProfileScreenType_OwnProfile,
+    kFromProfileScreenType_OtherUser
+};
+typedef NSUInteger kFromProfileScreenType;
+
 static NSString *const RSUsername = @"throwdown";
 static NSString *const RSApiKey = @"c93395c50887cf4926d2d24e1d9ed4e7";
 static NSString *const RSHost = @"http://tdstore2.throwdown.us";
@@ -42,6 +49,7 @@ static NSString *const kSpinningAnimation = @"rotationAnimation";
 #define CELL_IDENTIFIER_MORE_COMMENTS   @"TDMoreComments"
 #define CELL_IDENTIFIER_ACTIVITY        @"TDActivityCell"
 #define CELL_IDENTIFIER_PROFILE         @"TDUserProfileCell"
+#define CELL_IDENTIFIER_EDITPROFILE     @"TDUserEditCell"
 #define COMMENT_MESSAGE_WIDTH           306.0
 #define COMMENT_MESSAGE_FONT            [UIFont systemFontOfSize:14.0]
 #define kCommentDefaultText             @"Write a comment..."

@@ -43,7 +43,7 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"Post id:%@\ncomments:%@\nlikers:%@\nLiked:%d", self.postId, self.comments, self.likers, self.liked];
+    return [NSString stringWithFormat:@"Post id:%@\nUser:%@\ncomments:%@\nlikers:%@\nLiked:%d", self.postId, self.user, self.comments, self.likers, self.liked];
 }
 
 -(void)loadUpFromDict:(NSDictionary *)dict

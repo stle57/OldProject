@@ -7,6 +7,7 @@
 //
 
 #import "TDPostsViewController.h"
+#import "TDUserProfileViewController.h"
 
 @interface TDPostsViewController () <UITableViewDataSource, UITableViewDelegate>
 {
@@ -23,6 +24,7 @@
 @synthesize refreshControl;
 @synthesize animator;
 @synthesize profilePost;
+@synthesize profileUser;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -151,12 +153,17 @@
 }
 
 - (void)dealloc {
+
+    NSLog(@"dealloc:%@", [self class]);
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
+    self.tableView.delegate = nil;
+    self.tableView.dataSource = nil;
     self.posts = nil;
     self.refreshControl = nil;
     self.animator = nil;
     self.profilePost = nil;
+    self.profileUser = nil;
 }
 
 # pragma mark - Figure out what's on each row
@@ -180,13 +187,24 @@
 }
 
 - (void)refreshPostsList:(NSNotification*)notification {
+
+    // If it's not our user, we don't want it
+    // because we're sharing the user array for profile users
+    if (notification.userInfo && self.profileUser.userId) {
+        if ([notification.userInfo isKindOfClass:[NSNumber class]]) {
+            NSNumber *userId = (NSNumber *)notification.userInfo;
+            if (![userId isEqualToNumber:self.profileUser.userId]) {
+                return;
+            }
+        }
+    }
+
     [self refreshPostsList];
 }
 
 /* Refreshes the list with currently downloaded posts */
 - (void)refreshPostsList {
 
-    NSLog(@"refreshPostsList");
     // if this was from a bottom scroll refresh
     NSArray *visibleCells = [self.tableView visibleCells];
     [self stopSpinner];
@@ -231,6 +249,8 @@
 # pragma mark - table view delegate
 -(void)updatePostsAtBottom
 {
+    NSLog(@"updatePostsAtBottom");
+
     if (updatingAtBottom) {
         return;
     }
@@ -324,15 +344,15 @@
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
         }
 
-        if (self.profilePost) {
-            cell.userNameLabel.text = self.profilePost.user.name;
+        if (self.profileUser) {
+            cell.userNameLabel.text = self.profileUser.name;
         }
 
         return cell;
     }
 
     // Last row with Activity
-    if (showBottomSpinner && indexPath.section == [self.posts count]) {
+    if (showBottomSpinner && indexPath.section == ([self.posts count]+(needsProfileHeader ? 1 : 0))) {
 
         TDActivityCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_ACTIVITY];
         if (!cell) {
@@ -428,6 +448,7 @@
     }
 
     NSInteger commentNumber = indexPath.row - 1 - ([post.likers count] > 0 ? 1 : 0);
+    cell.commentNumber = commentNumber;
     TDComment *comment = [post.comments objectAtIndex:commentNumber];
     [cell makeText:comment.body];
     [cell makeTime:comment.createdAt name:comment.user.username];
@@ -573,6 +594,18 @@
 # pragma mark - navigation
 
 - (IBAction)profileButtonPressed:(id)sender {
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
+
+    self.profileButton.enabled = NO;
+
+    // ActionSheet
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@""
+                                                             delegate:self
+                                                    cancelButtonTitle:@"Cancel"
+                                               destructiveButtonTitle:nil
+                                                    otherButtonTitles:@"Send Feedback", @"Your Profile", nil];
+    actionSheet.tag = 3546;
+    [actionSheet showInView:self.view];
 }
 
 - (IBAction)logOutFeedbackButtonPressed:(id)sender {
@@ -592,10 +625,6 @@
 
 -(void)actionSheet:(UIActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    // user clicked out / Cancel = 2
-    // Feedback = 1
-    // Log out = 0
-
     if (actionSheet.tag == 3546) {
 
         if (buttonIndex == 0)   // Feedback
@@ -603,13 +632,23 @@
             [self displayFeedbackEmail];
         }
 
-        if (buttonIndex == 1)   // Log out
+        if (buttonIndex == 1)   // Your Profile
         {
-            [[TDUserAPI sharedInstance] logout];
-            [self showWelcomeController];
+            TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
+            vc.profilePost = nil;
+            vc.profileUser = [[TDCurrentUser sharedInstance] currentUserObject];
+
+            vc.fromFrofileType = kFromProfileScreenType_OwnProfileButton;
+            vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+            UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
+            navController.navigationBar.barStyle = UIBarStyleDefault;
+            navController.navigationBar.translucent = YES;
+            [self.navigationController presentViewController:navController
+                                                    animated:YES
+                                                  completion:nil];
         }
 
-        self.logOutFeedbackButton.enabled = YES;
+        self.profileButton.enabled = YES;
     }
 }
 
@@ -704,7 +743,7 @@
     }
 
     tableOffset = CGPointMake(self.tableView.contentOffset.x,
-                              self.tableView.contentOffset.y+activityRowHeight);
+                              self.tableView.contentOffset.y);//+activityRowHeight);
 
     showBottomSpinner = YES;
 

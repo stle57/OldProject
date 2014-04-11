@@ -16,6 +16,7 @@
 @synthesize delegate;
 @synthesize row;
 @synthesize comment;
+@synthesize commentNumber;
 @synthesize origTimeFrame;
 
 - (void)dealloc {
@@ -58,6 +59,17 @@
     nameFrame.size.width = CGRectGetMaxX(self.timeLabel.frame)-nameFrame.origin.x-self.timeLabel.frame.size.width-1.0;
     self.usernameLabel.frame = nameFrame;
     self.usernameLabel.text = name;
+}
+
+-(IBAction)userButtonPressed:(id)sender
+{
+    NSLog(@"commentsCell-userButtonPressed");
+
+    if (delegate) {
+        if ([delegate respondsToSelector:@selector(userButtonPressedFromRow:commentNumber:)]) {
+            [delegate userButtonPressedFromRow:self.row commentNumber:self.commentNumber];
+        }
+    }
 }
 
 @end

@@ -14,7 +14,6 @@
 #import "TDMoreComments.h"
 #import <MessageUI/MessageUI.h>
 #import "TDDetailViewController.h"
-#import "TDPostsViewController.h"
 #import "TDAppDelegate.h"
 #import "TDPostAPI.h"
 #import "TDPostUpload.h"
@@ -52,6 +51,7 @@
     CGRect statusBarFrame;
     BOOL needsProfileHeader;
     TDPost *profilePost;
+    TDUser *profileUser;
 }
 
 @property (nonatomic, retain) NSArray *posts;
@@ -66,8 +66,11 @@
 @property (strong, nonatomic) TDHomeHeaderView *headerView;
 @property (strong, nonatomic) UIActivityIndicatorView *playerSpinner;
 @property (nonatomic, retain) TDPost *profilePost;
+@property (nonatomic, retain) TDUser *profileUser;
 
 -(NSArray *)postsForThisScreen;
+-(void)reloadPosts;
+- (void)refreshPostsList;
 - (void)refreshControlUsed;
 - (void)endRefreshControl;
 - (void)showWelcomeController;

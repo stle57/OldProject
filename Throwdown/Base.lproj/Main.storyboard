@@ -637,7 +637,7 @@
                                             <segue destination="vXZ-lx-hvc" kind="custom" identifier="VideoButtonSegue" customClass="VideoButtonSegue" id="bvn-eu-4aP"/>
                                         </connections>
                                     </button>
-                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Uso-in-hkr" userLabel="Profile Button">
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Uso-in-hkr" userLabel="Profile Button">
                                         <rect key="frame" x="255" y="14" width="70" height="70"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="9"/>
@@ -650,7 +650,7 @@
                                             <action selector="profileButtonPressed:" destination="y50-ZI-obS" eventType="touchUpInside" id="Zt1-df-eW8"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="laX-KP-w1f" userLabel="Menu Button">
+                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="laX-KP-w1f" userLabel="Menu Button">
                                         <rect key="frame" x="255" y="14" width="70" height="70"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="9"/>

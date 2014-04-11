@@ -32,4 +32,9 @@
     }
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"TDUser-user:%@", _name];
+}
+
 @end

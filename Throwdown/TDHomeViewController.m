@@ -19,7 +19,7 @@
 #import "TDActivityCell.h"
 #include <sys/types.h>
 #include <sys/sysctl.h>
-#include "TDUserProfileViewController.h"
+#import "TDUserProfileViewController.h"
 
 #define CELL_IDENTIFIER @"TDPostView"
 
@@ -31,8 +31,6 @@
 @end
 
 @implementation TDHomeViewController
-
-
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -47,6 +45,8 @@
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+
+    [self.navigationController setNavigationBarHidden:YES animated:NO];
 
     // Frosted behind status bar
     [self addFrostedBehindForStatusBar];
@@ -147,6 +147,8 @@
 
 -(void)animateButtonsOnToScreen
 {
+    NSLog(@"home-animateButtonsOnToScreen");
+
     // Hide 1st
     [self hideBottomButtons];
 
@@ -192,16 +194,35 @@
 #pragma mark - Post Delegate
 -(void)userButtonPressedFromRow:(NSInteger)row
 {
-    TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
-    vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     TDPost *post = (TDPost *)[self.posts objectAtIndex:row];
-    vc.profilePost = post;
+    [self gotoProfileForUser:post.user post:post];
+}
 
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
-    navController.navigationBar.barStyle = UIBarStyleDefault;
-    [self.navigationController presentViewController:navController
-                                            animated:YES
-                                          completion:nil];
+-(void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber
+{
+    TDPost *post = (TDPost *)[self.posts objectAtIndex:row];
+    TDComment *comment = [post.comments objectAtIndex:commentNumber];
+    TDUser *user = comment.user;
+
+    [self gotoProfileForUser:user post:post];
+}
+
+-(void)gotoProfileForUser:(TDUser *)user post:(TDPost *)post
+{
+    NSLog(@"gotoProfileForUser:%@", user);
+
+    TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
+    vc.profilePost = post;
+    vc.profileUser = user;
+
+    // Slightly different if current user
+    if ([user.userId isEqualToNumber:[[TDCurrentUser sharedInstance] currentUserObject].userId]) {
+        vc.fromFrofileType = kFromProfileScreenType_OwnProfile;
+    } else {
+        vc.fromFrofileType = kFromProfileScreenType_OtherUser;
+    }
+    [self.navigationController pushViewController:vc
+                                         animated:YES];
 }
 
 @end

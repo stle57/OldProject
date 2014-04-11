@@ -35,5 +35,6 @@
 - (void)fetchPostsForUserUpstreamWithErrorHandlerStart:(NSNumber *)start userId:(NSNumber *)userId error:(void (^)(void))errorHandler;
 - (NSArray *)getPostsForUser;
 -(NSNumber *)lowestIdOfPostsForUser;
+-(void)clearPostsForUser;
 
 @end
