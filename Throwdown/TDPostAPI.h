@@ -20,21 +20,21 @@
 - (void)saveImage:(UIImage*)image filename:(NSString*)filename;
 - (void)fetchPostsUpstream;
 - (BOOL)fetchPostsDownstream;
--(NSNumber *)lowestIdOfPosts;
+- (NSNumber *)lowestIdOfPosts;
 - (void)fetchPostsUpstreamWithErrorHandlerStart:(NSNumber *)start error:(void (^)(void))errorHandler;
 - (NSArray *)getPosts;
--(void)likePostWithId:(NSNumber *)postId;
--(void)unLikePostWithId:(NSNumber *)postId;
--(void)getFullPostInfoForPostId:(NSNumber *)postId;
--(void)postNewComment:(NSString *)messageBody forPost:(NSNumber *)postId;
+- (void)likePostWithId:(NSNumber *)postId;
+- (void)unLikePostWithId:(NSNumber *)postId;
+- (void)getFullPostInfoForPostId:(NSNumber *)postId;
+- (void)postNewComment:(NSString *)messageBody forPost:(NSNumber *)postId;
 - (UIImage *)getImage:(NSString *)imageName;
--(void)deletePostWithId:(NSNumber *)postId;
+- (void)deletePostWithId:(NSNumber *)postId;
 
 - (void)fetchPostsUpstreamForUser:(NSNumber *)userId;
 - (BOOL)fetchPostsDownstreamForUser:(NSNumber *)userId;
 - (void)fetchPostsForUserUpstreamWithErrorHandlerStart:(NSNumber *)start userId:(NSNumber *)userId error:(void (^)(void))errorHandler;
 - (NSArray *)getPostsForUser;
--(NSNumber *)lowestIdOfPostsForUser;
--(void)clearPostsForUser;
+- (NSNumber *)lowestIdOfPostsForUser;
+- (void)clearPostsForUser;
 
 @end
