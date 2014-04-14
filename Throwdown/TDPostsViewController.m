@@ -596,7 +596,20 @@
 - (IBAction)profileButtonPressed:(id)sender {
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
 
-    self.profileButton.enabled = NO;
+    TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
+    vc.profilePost = nil;
+    vc.profileUser = [[TDCurrentUser sharedInstance] currentUserObject];
+
+    vc.fromFrofileType = kFromProfileScreenType_OwnProfileButton;
+    vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
+    navController.navigationBar.barStyle = UIBarStyleDefault;
+    navController.navigationBar.translucent = YES;
+    [self.navigationController presentViewController:navController
+                                            animated:YES
+                                          completion:nil];
+
+/*    self.profileButton.enabled = NO;
 
     // ActionSheet
     UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@""
@@ -605,7 +618,7 @@
                                                destructiveButtonTitle:nil
                                                     otherButtonTitles:@"Send Feedback", @"Your Profile", nil];
     actionSheet.tag = 3546;
-    [actionSheet showInView:self.view];
+    [actionSheet showInView:self.view]; */
 }
 
 - (IBAction)logOutFeedbackButtonPressed:(id)sender {
