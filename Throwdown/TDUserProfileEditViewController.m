@@ -292,8 +292,16 @@
 {
     if (alertView.tag == 89892 && buttonIndex == 0) // Leave
     {
-        [self.navigationController dismissViewControllerAnimated:YES
-                                                      completion:nil];
+        switch (fromFrofileType) {
+            case kFromProfileScreenType_OwnProfile:
+            {
+                [self.navigationController popViewControllerAnimated:YES];
+            }
+            break;
+            
+            default:
+            break;
+        }
     }
 }
 
