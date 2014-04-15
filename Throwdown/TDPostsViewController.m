@@ -594,7 +594,7 @@
 # pragma mark - navigation
 
 - (IBAction)profileButtonPressed:(id)sender {
-    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
+/*    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
 
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
     vc.profilePost = nil;
@@ -607,9 +607,9 @@
     navController.navigationBar.translucent = YES;
     [self.navigationController presentViewController:navController
                                             animated:YES
-                                          completion:nil];
+                                          completion:nil]; */
 
-/*    self.profileButton.enabled = NO;
+    self.profileButton.enabled = NO;
 
     // ActionSheet
     UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@""
@@ -618,7 +618,7 @@
                                                destructiveButtonTitle:nil
                                                     otherButtonTitles:@"Send Feedback", @"Your Profile", nil];
     actionSheet.tag = 3546;
-    [actionSheet showInView:self.view]; */
+    [actionSheet showInView:self.view];
 }
 
 - (IBAction)logOutFeedbackButtonPressed:(id)sender {

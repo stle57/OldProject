@@ -359,7 +359,7 @@
         break;
         case 1:
         {
-            return 3;
+            return 2;
         }
         break;
         case 2:
@@ -460,7 +460,7 @@
                     cell.textField.text = self.email;
                 }
                 break;
-                case 2:
+/*                case 2:
                 {
                     cell.titleLabel.hidden = NO;
                     cell.textField.hidden = NO;
@@ -470,7 +470,7 @@
                     cell.titleLabel.text = @"Password";
                     cell.textField.text = self.password;
                 }
-                break;
+                break; */
 
                 default:
                 break;
