@@ -18,5 +18,6 @@
 - (void)logoutUser;
 - (void)logoutUserWithDeviceToken:(NSString *)token;
 - (void)registerDeviceToken:(NSString *)token forUserToken:(NSString *)userToken;
+- (void)getActivityForUserToken:(NSString *)userToken success:(void (^)(NSArray *activities))success failure:(void (^)(void))failure;
 
 @end

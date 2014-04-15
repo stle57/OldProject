@@ -10,6 +10,7 @@
 #import "TDAppDelegate.h"
 #import "TDConstants.h"
 #import "TDPost.h"
+#import "TDViewControllerHelper.h"
 
 @implementation TDComment
 
@@ -20,7 +21,7 @@
     {
         _commentId = [dict objectForKey:@"id"];
         _body = [dict objectForKey:@"body"];
-        _createdAt = [TDPost dateForRFC3339DateTimeString:[dict objectForKey:@"created_at"]];
+        _createdAt = [TDViewControllerHelper dateForRFC3339DateTimeString:[dict objectForKey:@"created_at"]];
         _user = [[TDUser alloc] initWithDictionary:[dict objectForKey:@"user"]];
         [self figureOutMessageLabelHeightForThisMessage:_body];
     }
@@ -33,7 +34,7 @@
 
     _commentId = [commentDict objectForKey:@"id"];
     _body = [commentDict objectForKey:@"body"];
-    _createdAt = [TDPost dateForRFC3339DateTimeString:[commentDict objectForKey:@"created_at"]];
+    _createdAt = [TDViewControllerHelper dateForRFC3339DateTimeString:[commentDict objectForKey:@"created_at"]];
     [self figureOutMessageLabelHeightForThisMessage:_body];
 }
 

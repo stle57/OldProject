@@ -7,6 +7,7 @@
 //
 
 #import "TDPost.h"
+#import "TDViewControllerHelper.h"
 
 @implementation TDPost
 
@@ -51,7 +52,7 @@
     _postId   = [dict objectForKey:@"id"];
     _user = [[TDUser alloc] initWithDictionary:[dict objectForKey:@"user"]];
     _filename = [dict objectForKey:@"filename"];
-    _createdAt = [TDPost dateForRFC3339DateTimeString:[dict objectForKey:@"created_at"]];
+    _createdAt = [TDViewControllerHelper dateForRFC3339DateTimeString:[dict objectForKey:@"created_at"]];
     _liked = [[dict objectForKey:@"liked"] boolValue];
     _likers = [dict objectForKey:@"likers"];
     _commentsTotalCount = [dict objectForKey:@"comment_count"];
@@ -71,18 +72,6 @@
 - (NSDictionary *)jsonRepresentation
 {
     return @{ @"filename": self.filename };
-}
-
-+ (NSDate *)dateForRFC3339DateTimeString:(NSString *)rfc3339DateTimeString {
-
-	NSDateFormatter *rfc3339DateFormatter = [[NSDateFormatter alloc] init];
-
-	[rfc3339DateFormatter setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'"];
-	[rfc3339DateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
-
-	// Convert the RFC 3339 date time string to an NSDate.
-	NSDate *result = [rfc3339DateFormatter dateFromString:rfc3339DateTimeString];
-	return result;
 }
 
 -(void)addLikerUser:(TDUser *)likerUser

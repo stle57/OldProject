@@ -14,5 +14,6 @@
 + (void)showAlertMessage:(NSString *)message withTitle:(NSString *)title;
 + (void)navigateToHomeFrom:(UIViewController *)fromController;
 + (BOOL)validateEmail:(NSString *)email;
++ (NSDate *)dateForRFC3339DateTimeString:(NSString *)rfc3339DateTimeString;
 
 @end

@@ -43,4 +43,16 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     return [emailTest evaluateWithObject:email];
 }
 
++ (NSDate *)dateForRFC3339DateTimeString:(NSString *)rfc3339DateTimeString {
+
+	NSDateFormatter *rfc3339DateFormatter = [[NSDateFormatter alloc] init];
+
+	[rfc3339DateFormatter setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'"];
+	[rfc3339DateFormatter setTimeZone:[NSTimeZone timeZoneForSecondsFromGMT:0]];
+
+	// Convert the RFC 3339 date time string to an NSDate.
+	NSDate *result = [rfc3339DateFormatter dateFromString:rfc3339DateTimeString];
+	return result;
+}
+
 @end

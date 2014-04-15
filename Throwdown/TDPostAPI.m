@@ -40,7 +40,7 @@
     if (self) {
         posts = [[NSMutableArray alloc] init];
         postsForUser = [[NSMutableArray alloc] init];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadImage:) name:@"TDDownloadPreviewImageNotification" object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadImage:) name:TDDownloadPreviewImageNotification object:nil];
     }
     return self;
 }

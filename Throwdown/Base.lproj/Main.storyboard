@@ -137,6 +137,62 @@
             </objects>
             <point key="canvasLocation" x="-805" y="1113"/>
         </scene>
+        <!--Activity View Controller - Notifications-->
+        <scene sceneID="ELI-Xr-1Rm">
+            <objects>
+                <tableViewController id="afL-I4-sWD" customClass="TDActivityViewController" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Uk6-5c-MYf">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="separatorColor" red="0.82745098039999998" green="0.82745098039999998" blue="0.82745098039999998" alpha="1" colorSpace="calibratedRGB"/>
+                        <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                        <connections>
+                            <outlet property="dataSource" destination="afL-I4-sWD" id="1tq-4m-jSU"/>
+                            <outlet property="delegate" destination="afL-I4-sWD" id="tnB-jA-Xsa"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Notifications" id="Dit-ar-fJL">
+                        <barButtonItem key="leftBarButtonItem" style="plain" id="QJh-HR-Nce">
+                            <button key="customView" opaque="NO" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Noc-Au-mtk">
+                                <rect key="frame" x="16" y="11" width="20" height="22"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="nav_close">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted" image="nav_close_hit"/>
+                                <connections>
+                                    <segue destination="kzH-DV-6xj" kind="unwind" unwindAction="unwindToHome:" id="KR1-MQ-ldR"/>
+                                </connections>
+                            </button>
+                        </barButtonItem>
+                    </navigationItem>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="vmS-lS-Hnj" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="kzH-DV-6xj" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="-297" y="1870"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="AV1-mt-In7">
+            <objects>
+                <navigationController definesPresentationContext="YES" id="dHr-hy-dHW" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="KdZ-zF-1sg">
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <toolbar key="toolbar" opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="1JB-sW-F1F">
+                        <rect key="frame" x="0.0" y="524" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <color key="tintColor" red="0.92941176469999998" green="0.92941176469999998" blue="0.92941176469999998" alpha="1" colorSpace="calibratedRGB"/>
+                    </toolbar>
+                    <connections>
+                        <segue destination="afL-I4-sWD" kind="relationship" relationship="rootViewController" id="ITG-WE-IuL"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="oxl-4h-URK" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-805" y="1870"/>
+        </scene>
         <!--Edit Video View Controller-->
         <scene sceneID="ZSd-xw-mlv">
             <objects>
@@ -663,14 +719,17 @@
                                             <action selector="logOutFeedbackButtonPressed:" destination="y50-ZI-obS" eventType="touchUpInside" id="9Yj-XZ-nQR"/>
                                         </connections>
                                     </button>
-                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Tdo-gQ-7zF" userLabel="Notification Button">
-                                        <rect key="frame" x="0.0" y="29" width="40" height="40"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Tdo-gQ-7zF" userLabel="Notification Button">
+                                        <rect key="frame" x="-5" y="14" width="70" height="70"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="10"/>
                                         <state key="normal" image="nav_notif">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <state key="highlighted" image="nav_notif_hit"/>
+                                        <connections>
+                                            <segue destination="dHr-hy-dHW" kind="modal" id="fY2-yp-aHM"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -789,6 +848,8 @@
     </scenes>
     <resources>
         <image name="nav_camera" width="61" height="61"/>
+        <image name="nav_close" width="20" height="21"/>
+        <image name="nav_close_hit" width="20" height="21"/>
         <image name="nav_menu_button" width="40" height="40"/>
         <image name="nav_menu_button_hit" width="40" height="40"/>
         <image name="nav_notif" width="40" height="40"/>
@@ -826,7 +887,7 @@
         <image name="v_rotatecam" width="25" height="18"/>
         <image name="v_rotatecam_hit" width="25" height="18"/>
     </resources>
-    <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+    <color key="tintColor" red="0.92941176469999998" green="0.92941176469999998" blue="0.92941176469999998" alpha="1" colorSpace="calibratedRGB"/>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>

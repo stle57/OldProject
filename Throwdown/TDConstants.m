@@ -64,6 +64,9 @@
     return [NSURL URLWithString:location];
 }
 
+
+#pragma mark - Colors
+
 + (UIColor *)brandingRedColor {
     return [UIColor colorWithRed:.929411765 green:.294117647 blue:.243137255 alpha:1.0];
 }
@@ -86,6 +89,24 @@
 
 + (UIColor *)commentTimeTextColor {
     return [UIColor colorWithRed:(162.0/255.0) green:(162.0/255.0) blue:(162.0/255.0) alpha:1.0];  // a2a2a2
+}
+
+#pragma mark - Fonts
+
++ (UIFont *)fontLightSized:(NSUInteger)size {
+    return [UIFont fontWithName:@"ProximaNova-Light" size:size];
+}
+
++ (UIFont *)fontRegularSized:(NSUInteger)size {
+    return [UIFont fontWithName:@"ProximaNova-Regular" size:size];
+}
+
++ (UIFont *)fontSemiBoldSized:(NSUInteger)size {
+    return [UIFont fontWithName:@"ProximaNova-SemiBold" size:size];
+}
+
++ (UIFont *)fontBoldSized:(NSUInteger)size {
+    return [UIFont fontWithName:@"ProximaNova-Bold" size:size];
 }
 
 @end

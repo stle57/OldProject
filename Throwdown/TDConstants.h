@@ -34,6 +34,7 @@ static NSString *const TDNotificationStopPlayers = @"TDNotificationStopPlayers";
 static NSString *const TDNotificationUploadComments = @"TDNotificationUploadComments";
 static NSString *const TDNotificationUploadCancelled = @"TDNotificationUploadCancelled";
 static NSString *const TDRefreshPostsNotification = @"TDRefreshPostsNotification";
+static NSString *const TDDownloadPreviewImageNotification = @"TDDownloadPreviewImageNotification";
 
 static NSString *const TDFontProximaNovaRegular = @"ProximaNova-Regular";
 static NSString *const TDFontProximaNovaSemibold = @"ProximaNova-Semibold";
@@ -72,5 +73,11 @@ static NSString *const kSpinningAnimation = @"rotationAnimation";
 + (UIColor *)headerTextColor;
 + (UIColor *)commentTextColor;
 + (UIColor *)commentTimeTextColor;
+
++ (UIFont *)fontLightSized:(NSUInteger)size;
++ (UIFont *)fontRegularSized:(NSUInteger)size;
++ (UIFont *)fontSemiBoldSized:(NSUInteger)size;
++ (UIFont *)fontBoldSized:(NSUInteger)size;
+
 
 @end

@@ -95,12 +95,15 @@
 		A19FF61118970BBB001A0AD0 /* RSStorageObject.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF60518970BBB001A0AD0 /* RSStorageObject.m */; };
 		A1B9002E18CC316800012A1F /* TDHomeHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = A1B9002D18CC316800012A1F /* TDHomeHeaderView.m */; };
 		A1BB463018F5FDD700BD9527 /* UIAlertView+TDBlockAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = A1BB462F18F5FDD700BD9527 /* UIAlertView+TDBlockAlert.m */; };
+		A1BB463318F7767200BD9527 /* TDActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1BB463218F7767200BD9527 /* TDActivityViewController.m */; };
 		A1BC0B3F18BE825200F507B3 /* TDSlideLeftSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = A1BC0B3E18BE825200F507B3 /* TDSlideLeftSegue.m */; };
 		A1C1D0F318A02FAB00666D2A /* TDPostView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A1C1D0F218A02FAA00666D2A /* TDPostView.xib */; };
 		A1C1D0F618A0387B00666D2A /* TDPostView.m in Sources */ = {isa = PBXBuildFile; fileRef = A1C1D0F518A0387B00666D2A /* TDPostView.m */; };
 		A1C2481118C6B9CA00F187D9 /* TDProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = A1C2481018C6B9CA00F187D9 /* TDProgressIndicator.m */; };
 		A1C2481418C7D4B000F187D9 /* URLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = A1C2481318C7D4B000F187D9 /* URLConnection.m */; };
 		A1DAEEB318EB79FA00742949 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1DAEEB218EB79FA00742949 /* Crashlytics.framework */; };
+		A1E3A16D18FCC8630038A8A4 /* TDActivitiesCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A1E3A16C18FCC8630038A8A4 /* TDActivitiesCell.xib */; };
+		A1E3A17018FCCF2B0038A8A4 /* TDActivitiesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E3A16F18FCCF2B0038A8A4 /* TDActivitiesCell.m */; };
 		A1E90CDD18B445FC0046D281 /* TDSignupStepTwoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E90CDC18B445FC0046D281 /* TDSignupStepTwoViewController.m */; };
 		A1F02FD418C92277002FEB2F /* TDPostUpload.m in Sources */ = {isa = PBXBuildFile; fileRef = A1F02FD318C92277002FEB2F /* TDPostUpload.m */; };
 /* End PBXBuildFile section */
@@ -258,6 +261,8 @@
 		A1B9002F18CC43FC00012A1F /* TDHomeHeaderUploadDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TDHomeHeaderUploadDelegate.h; sourceTree = "<group>"; };
 		A1BB462E18F5FDD700BD9527 /* UIAlertView+TDBlockAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIAlertView+TDBlockAlert.h"; sourceTree = "<group>"; };
 		A1BB462F18F5FDD700BD9527 /* UIAlertView+TDBlockAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIAlertView+TDBlockAlert.m"; sourceTree = "<group>"; };
+		A1BB463118F7767200BD9527 /* TDActivityViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDActivityViewController.h; sourceTree = "<group>"; };
+		A1BB463218F7767200BD9527 /* TDActivityViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDActivityViewController.m; sourceTree = "<group>"; };
 		A1BC0B3D18BE825200F507B3 /* TDSlideLeftSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSlideLeftSegue.h; sourceTree = "<group>"; };
 		A1BC0B3E18BE825200F507B3 /* TDSlideLeftSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSlideLeftSegue.m; sourceTree = "<group>"; };
 		A1C1D0F218A02FAA00666D2A /* TDPostView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDPostView.xib; sourceTree = "<group>"; };
@@ -268,6 +273,9 @@
 		A1C2481218C7D4B000F187D9 /* URLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLConnection.h; sourceTree = "<group>"; };
 		A1C2481318C7D4B000F187D9 /* URLConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = URLConnection.m; sourceTree = "<group>"; };
 		A1DAEEB218EB79FA00742949 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
+		A1E3A16C18FCC8630038A8A4 /* TDActivitiesCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDActivitiesCell.xib; sourceTree = "<group>"; };
+		A1E3A16E18FCCF2B0038A8A4 /* TDActivitiesCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDActivitiesCell.h; sourceTree = "<group>"; };
+		A1E3A16F18FCCF2B0038A8A4 /* TDActivitiesCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDActivitiesCell.m; sourceTree = "<group>"; };
 		A1E90CDB18B445FC0046D281 /* TDSignupStepTwoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSignupStepTwoViewController.h; sourceTree = "<group>"; };
 		A1E90CDC18B445FC0046D281 /* TDSignupStepTwoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSignupStepTwoViewController.m; sourceTree = "<group>"; };
 		A1F02FD218C92277002FEB2F /* TDPostUpload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDPostUpload.h; sourceTree = "<group>"; };
@@ -561,6 +569,8 @@
 				2DA5354718F36EF800031128 /* TDPostsViewController.m */,
 				A182D837188F2C2D00F794A5 /* TDHomeViewController.h */,
 				A182D838188F2C2D00F794A5 /* TDHomeViewController.m */,
+				A1BB463118F7767200BD9527 /* TDActivityViewController.h */,
+				A1BB463218F7767200BD9527 /* TDActivityViewController.m */,
 				2D5714C718BD9A5800AF0B4D /* Segues */,
 			);
 			name = Controllers;
@@ -602,6 +612,7 @@
 		A1C1D0A5189ADAED00666D2A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A1E3A16B18FCC7F40038A8A4 /* Activities */,
 				A11999D718D9290300C39ABF /* Components */,
 				A1C1D0F218A02FAA00666D2A /* TDPostView.xib */,
 				A1C1D0F418A0387B00666D2A /* TDPostView.h */,
@@ -644,6 +655,16 @@
 				2DA420DA18E63E1A006F4D9C /* TDActivityCell.m */,
 			);
 			name = Views;
+			sourceTree = "<group>";
+		};
+		A1E3A16B18FCC7F40038A8A4 /* Activities */ = {
+			isa = PBXGroup;
+			children = (
+				A1E3A16C18FCC8630038A8A4 /* TDActivitiesCell.xib */,
+				A1E3A16E18FCCF2B0038A8A4 /* TDActivitiesCell.h */,
+				A1E3A16F18FCCF2B0038A8A4 /* TDActivitiesCell.m */,
+			);
+			name = Activities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -741,6 +762,7 @@
 				2DE4653318F605DC0042D81C /* TDUserProfileEditViewController.xib in Resources */,
 				2DE4653818F614150042D81C /* TDUserEditCell.xib in Resources */,
 				2DA5F05418D36745003D2F99 /* ProximaNova-Semibold.otf in Resources */,
+				A1E3A16D18FCC8630038A8A4 /* TDActivitiesCell.xib in Resources */,
 				A11E04E61888CB79002F981A /* InfoPlist.strings in Resources */,
 				2DA5F05318D36745003D2F99 /* ProximaNova-Regular.otf in Resources */,
 				2DA8639418F49D190089B048 /* TDUserProfileCell.xib in Resources */,
@@ -827,6 +849,7 @@
 				A19FF60F18970BBB001A0AD0 /* RSContainer.m in Sources */,
 				2DA41A5618C7D89C00B21C74 /* TDDetailViewController.m in Sources */,
 				A11999DD18DC0D4200C39ABF /* TDFileSystemHelper.m in Sources */,
+				A1BB463318F7767200BD9527 /* TDActivityViewController.m in Sources */,
 				2D2E832E18CA579B00846B2E /* TDComment.m in Sources */,
 				A19FF60D18970BBB001A0AD0 /* RSCDNContainer.m in Sources */,
 				2DE4653218F605DC0042D81C /* TDUserProfileEditViewController.m in Sources */,
@@ -874,6 +897,7 @@
 				2DA420DC18E63E1A006F4D9C /* TDActivityCell.m in Sources */,
 				A1C2481418C7D4B000F187D9 /* URLConnection.m in Sources */,
 				A180D4DF18C14EA7003B9378 /* TDNavigationController.m in Sources */,
+				A1E3A17018FCCF2B0038A8A4 /* TDActivitiesCell.m in Sources */,
 				A1C2481118C6B9CA00F187D9 /* TDProgressIndicator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
