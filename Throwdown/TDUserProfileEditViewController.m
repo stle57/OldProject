@@ -59,7 +59,6 @@
 
     NSLog(@"UserProfile:%@", self.profileUser);
 
-    origTableViewFrame = self.tableView.frame;
     statusBarFrame = [self.view convertRect: [UIApplication sharedApplication].statusBarFrame fromView: nil];
 
     // Title
@@ -83,11 +82,19 @@
                                              selector:@selector(keyboardWillHide:)
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
+
+    // Preload
+    self.name = [TDCurrentUser sharedInstance].name;
+    self.username = [TDCurrentUser sharedInstance].username;
+    self.phone = [TDCurrentUser sharedInstance].phoneNumber;
+    self.email = [TDCurrentUser sharedInstance].email;
 }
 
 -(void)viewWillAppear:(BOOL)animated
 {
     [self.navigationController setNavigationBarHidden:NO animated:NO];
+
+    origTableViewFrame = self.tableView.frame;
 
     UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.saveButton];
     self.navigationItem.rightBarButtonItem = rightBarButton;
@@ -107,10 +114,18 @@
 -(IBAction)saveButtonHit:(id)sender
 {
     NSLog(@"saveButtonHit");
+
+    self.saveButton.enabled = NO;
+
+    
 }
 
 -(IBAction)closeButtonHit:(id)sender
 {
+    NSLog(@"closeButton");
+
+    [self hideKeyboard];
+
     if ([self checkIfChanged]) {
 
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Edit"
@@ -122,8 +137,16 @@
         [alert show];
 
     } else {
-        [self.navigationController dismissViewControllerAnimated:YES
-                                                      completion:nil];
+        switch (fromFrofileType) {
+            case kFromProfileScreenType_OwnProfile:
+            {
+                [self.navigationController popViewControllerAnimated:YES];
+            }
+            break;
+
+            default:
+            break;
+        }
     }
 }
 
@@ -162,8 +185,6 @@
         break;
     }
 
-    NSLog(@"%@ %@ %@ %@ %@", self.name, self.username, self.phone, self.email, self.password);
-
     [self checkForSaveButton];
 }
 
@@ -190,21 +211,22 @@
 
 -(BOOL)checkIfChanged
 {
-    return YES; // temp
+    if (([self.name length] > 0 && ![self.name isEqualToString:[TDCurrentUser sharedInstance].name]) ||
+        ([self.username length] > 0 && ![self.username isEqualToString:[TDCurrentUser sharedInstance].username]) ||
+        ([self.phone length] > 0 && ![self.phone isEqualToString:[TDCurrentUser sharedInstance].phoneNumber]) ||
+        ([self.email length] > 0 && ![self.email isEqualToString:[TDCurrentUser sharedInstance].email]))
+    {
+        return YES;
+    }
+
+    return NO;
 }
 
 -(void)checkForSaveButton
 {
-    if ([self.name length] > 0 &&
-        [self.username length] > 0 &&
-        [self.phone length] > 0 &&
-        [self.email length] > 0 &&
-        [self.password length] > 0)
-    {
+    if ([self checkIfChanged]) {
         self.saveButton.enabled = YES;
-    }
-    else
-    {
+    } else {
         self.saveButton.enabled = NO;
     }
 }
@@ -283,6 +305,8 @@
     for (TDUserEditCell *cell in self.tableView.visibleCells) {
         if ([cell.textField isFirstResponder]) {
             [cell.textField resignFirstResponder];
+            self.tableView.frame = origTableViewFrame;
+            keybdUp = NO;
         }
     }
 }
@@ -511,7 +535,70 @@
 {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
 
+    switch (indexPath.section) {
+        case 0:
+        {
+            switch (indexPath.row) {
+                case 0:
+                {
+                    // PHOTO
+                }
+                break;
+                case 1:
+                {
+                }
+                break;
+                case 2:
+                {
+                }
+                break;
 
+                default:
+                break;
+            }
+        }
+        break;
+        case 1:
+        {
+            switch (indexPath.row) {
+                case 0:
+                {
+                }
+                break;
+                case 1:
+                {
+                }
+                break;
+
+                default:
+                break;
+            }
+        }
+        break;
+        case 2:
+        {
+            // Log Out
+            [[TDUserAPI sharedInstance] logout];
+            [self showWelcomeController];
+        }
+        break;
+
+        default:
+        break;
+    }
+}
+
+#pragma mark - Log Out
+- (void)showWelcomeController
+{
+    [self dismissViewControllerAnimated:NO completion:nil];
+
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *welcomeViewController = [storyboard instantiateViewControllerWithIdentifier:@"WelcomeViewController"];
+
+    TDAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
+    delegate.window.rootViewController = welcomeViewController;
+    [self.navigationController popToRootViewControllerAnimated:NO];
 }
 
 @end
