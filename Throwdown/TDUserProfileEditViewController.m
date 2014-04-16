@@ -122,8 +122,6 @@
 
 -(IBAction)closeButtonHit:(id)sender
 {
-    NSLog(@"closeButton");
-
     [self hideKeyboard];
 
     if ([self checkIfChanged]) {
@@ -139,6 +137,11 @@
     } else {
         switch (fromFrofileType) {
             case kFromProfileScreenType_OwnProfile:
+            {
+                [self.navigationController popViewControllerAnimated:YES];
+            }
+            break;
+            case kFromProfileScreenType_OwnProfileButton:
             {
                 [self.navigationController popViewControllerAnimated:YES];
             }
@@ -541,7 +544,10 @@
             switch (indexPath.row) {
                 case 0:
                 {
+                    [self hideKeyboard];
+
                     // PHOTO
+                    [self showPhotoActionSheet];
                 }
                 break;
                 case 1:
@@ -577,6 +583,8 @@
         break;
         case 2:
         {
+            [self hideKeyboard];
+
             // Log Out
             [[TDUserAPI sharedInstance] logout];
             [self showWelcomeController];
@@ -599,6 +607,107 @@
     TDAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
     delegate.window.rootViewController = welcomeViewController;
     [self.navigationController popToRootViewControllerAnimated:NO];
+}
+
+#pragma mark - Photo
+-(void)showPhotoActionSheet
+{
+    // ActionSheet
+    if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
+    {
+        UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@""
+                                                                 delegate:self
+                                                        cancelButtonTitle:@"Cancel"
+                                                   destructiveButtonTitle:nil
+                                                        otherButtonTitles:@"Choose Photo", nil];
+        actionSheet.tag = 3556;
+        [actionSheet showInView:self.view];
+    }
+    else
+    {
+        UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@""
+                                                                 delegate:self
+                                                        cancelButtonTitle:@"Cancel"
+                                                   destructiveButtonTitle:nil
+                                                        otherButtonTitles:@"Take Photo", @"Choose Photo", nil];
+        actionSheet.tag = 3557;
+        [actionSheet showInView:self.view];
+    }
+}
+
+-(void)actionSheet:(UIActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    if (actionSheet.tag == 3556) {
+
+        switch (buttonIndex) {
+            case 0:
+            {
+                // Choose Photo
+                [self showImagePickerForSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
+            }
+            break;
+
+            default:
+            break;
+        }
+    }
+
+    if (actionSheet.tag == 3557) {
+
+        switch (buttonIndex) {
+            case 0:
+            {
+                // Take Photo
+                [self showImagePickerForSourceType:UIImagePickerControllerSourceTypeCamera];
+            }
+            break;
+            case 1:
+            {
+                // Choose Photo
+                [self showImagePickerForSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
+            }
+            break;
+
+            default:
+            break;
+        }
+    }
+}
+
+- (void)showImagePickerForSourceType:(UIImagePickerControllerSourceType)sourceType
+{
+    UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+    imagePickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
+    imagePickerController.sourceType = sourceType;
+    imagePickerController.delegate = self;
+
+    if (sourceType == UIImagePickerControllerSourceTypeCamera)
+    {
+        imagePickerController.showsCameraControls = YES;
+    }
+
+    [self presentViewController:imagePickerController
+                       animated:YES
+                     completion:nil];
+}
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
+{
+    NSLog(@"didFinishPickingMediaWithInfo:%@", info);
+    UIImage *image = [info valueForKey:UIImagePickerControllerOriginalImage];
+
+
+
+
+    image = nil;
+
+     [self dismissViewControllerAnimated:YES completion:NULL];
+}
+
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+    [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 @end
