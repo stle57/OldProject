@@ -115,6 +115,31 @@
     }];
 }
 
+-(void)editUserWithName:(NSString *)name email:(NSString *)email username:(NSString *)username phone:(NSString *)phone callback:(void (^)(BOOL success, NSDictionary *user))callback
+{
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/users/%@.json", [TDCurrentUser sharedInstance].userId]];
+
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+
+    [self.httpManager PUT:url parameters:@{@"user": @{ @"name": name, @"username": username, @"phone_number": phone, @"email": email }, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *response = (NSDictionary *)responseObject;
+            NSNumber *success = [response objectForKey:@"success"];
+            if (success && [success boolValue]) {
+                callback([success boolValue], [response objectForKey:@"user"]);
+            } else {
+                callback(NO, nil);
+            }
+        } else {
+            debug NSLog(@"ERROR in edit user response, got: %@", [responseObject class]);
+            callback(NO, nil);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"ERROR in edit user call: %@", [error localizedDescription]);
+        callback(NO, nil);
+    }];
+}
+
 - (void)logoutUser {
     [self logoutUserWithDeviceToken:nil];
 }

@@ -13,6 +13,7 @@
 #import "TDComment.h"
 #import "TDViewControllerHelper.h"
 #import "AFNetworking.h"
+#import "TDUserAPI.h"
 
 @interface TDUserProfileEditViewController ()
 
@@ -117,7 +118,20 @@
 
     self.saveButton.enabled = NO;
 
-    
+    [[TDUserAPI sharedInstance] editUserWithName:self.name
+                                           email:self.email
+                                        username:self.username
+                                           phone:self.phone
+                                        callback:^(BOOL success) {
+                                            if (success) {
+                                                NSLog(@"EDIT SUCCESS");
+                                                [TDViewControllerHelper navigateToHomeFrom:self];
+                                            } else {
+                                                NSLog(@"EDIT FAILURE");
+                                            }
+                                            
+                                            self.saveButton.enabled = YES;
+                                        }];
 }
 
 -(IBAction)closeButtonHit:(id)sender
