@@ -481,7 +481,7 @@
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
 
     TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
-    TDPost *post = (TDPost *)[self.posts objectAtIndex:indexPath.section];
+    TDPost *post = (TDPost *)[self.posts objectAtIndex:(needsProfileHeader ? indexPath.section - 1 : indexPath.section)];
     vc.post = post;
     vc.delegate = self;
     [self.navigationController pushViewController:vc
