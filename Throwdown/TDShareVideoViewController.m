@@ -33,7 +33,7 @@
     [button addTarget:self action:@selector(backButtonPressed) forControlEvents:UIControlEventTouchUpInside];
     self.navigationBarItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
 
-    [self.navigationBar setTitleTextAttributes:@{ UITextAttributeFont:[UIFont fontWithName:TDFontProximaNovaRegular size:17.0] }];
+    [self.navigationBar setTitleTextAttributes:@{ NSFontAttributeName:[UIFont fontWithName:TDFontProximaNovaRegular size:17.0] }];
 
     [self.commentTextView setPlaceholder:kCommentDefaultText];
     [self.commentTextView setFont:[UIFont fontWithName:TDFontProximaNovaRegular size:17.0]];
@@ -41,8 +41,8 @@
     [self.previewImage setImage:[UIImage imageWithContentsOfFile:self.thumbnailPath]];
 
     // Set font for "Done" button and sneacky way to hide the button when keyboard is down (same color as background)
-    [self.closeKeyboardButton setTitleTextAttributes:@{ UITextAttributeFont:[UIFont fontWithName:TDFontProximaNovaRegular size:15.0] } forState:UIControlStateNormal];
-    [self.closeKeyboardButton setTitleTextAttributes:@{ UITextAttributeTextColor:[UIColor colorWithRed:0.93 green:0.93 blue:0.93 alpha:1.0] } forState:UIControlStateDisabled];
+    [self.closeKeyboardButton setTitleTextAttributes:@{ NSFontAttributeName:[UIFont fontWithName:TDFontProximaNovaRegular size:15.0] } forState:UIControlStateNormal];
+    [self.closeKeyboardButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[UIColor colorWithRed:0.93 green:0.93 blue:0.93 alpha:1.0] } forState:UIControlStateDisabled];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(willShowKeyboard:)

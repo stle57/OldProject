@@ -13,10 +13,7 @@
 #import "TDComment.h"
 #import "TDViewControllerHelper.h"
 #import "AFNetworking.h"
-
-@interface TDDetailViewController ()
-
-@end
+#import "TDUserProfileViewController.h"
 
 @implementation TDDetailViewController
 
@@ -53,15 +50,6 @@
     self.tableView = nil;
 }
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -81,6 +69,12 @@
     self.frostedViewWhileTyping.backgroundColor = [UIColor clearColor];
     [self.view addSubview:self.frostedViewWhileTyping];
     self.frostedViewWhileTyping.hidden = YES;
+
+    UIButton *backButton = [TDViewControllerHelper navBackButton];
+    [backButton addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *barButton = [[UIBarButtonItem alloc] initWithCustomView:backButton];
+    self.navigationItem.leftBarButtonItem = barButton;
+    self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
 
     // Cell heights
     NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_POST_VIEW owner:self options:nil];
@@ -135,8 +129,7 @@
     self.navigationItem.rightBarButtonItem = deleteBarButton;
 }
 
--(void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
     [self.navigationController setNavigationBarHidden:NO animated:NO];
@@ -148,20 +141,16 @@
     }
 }
 
--(void)viewWillDisappear:(BOOL)animated
-{
+- (void)viewWillDisappear:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:YES animated:YES];
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void)back {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark - Delete Post
--(void)deleteButtonPressed:(id)selector
-{
+- (void)deleteButtonPressed:(id)selector {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Delete?"
                                                     message:@"Are you sure you want to\ndelete this video?"
                                                    delegate:self
@@ -171,8 +160,7 @@
     [alert show];
 }
 
--(void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex
-{
+- (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex {
     // Delete Yes is index 0
     if (alertView.tag == 89890 && buttonIndex == 0) {
         self.navigationItem.rightBarButtonItem.enabled = NO;
@@ -184,8 +172,7 @@
 }
 
 #pragma mark - Notifications
-- (void)reloadPosts:(NSNotification*)notification
-{
+- (void)reloadPosts:(NSNotification*)notification {
     if (!liking) {
         TDPostAPI *api = [TDPostAPI sharedInstance];
         [api getFullPostInfoForPostId:self.post.postId];
@@ -193,8 +180,7 @@
     liking = NO;
 }
 
--(void)fullPostReturn:(NSNotification*)notification
-{
+- (void)fullPostReturn:(NSNotification*)notification {
     if ([notification.userInfo isKindOfClass:[NSDictionary class]]) {
         TDPost *newPost = [[TDPost alloc] initWithDictionary:notification.userInfo];
         if ([newPost.postId isEqualToNumber:self.post.postId]) {
@@ -212,8 +198,7 @@
     }
 }
 
--(void)newCommentReturn:(NSNotification*)notification
-{
+- (void)newCommentReturn:(NSNotification*)notification {
     if ([notification.userInfo isKindOfClass:[NSDictionary class]]) {
 
         NSDictionary *commentDict = (NSDictionary *)notification.userInfo;
@@ -233,8 +218,7 @@
     }
 }
 
--(void)postDeleted:(NSNotification*)notification
-{
+- (void)postDeleted:(NSNotification*)notification {
     NSLog(@"delete notification:%@", notification);
 
     // And then go back
@@ -242,8 +226,7 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
--(void)postDeleteFail:(NSNotification *)notification
-{
+- (void)postDeleteFail:(NSNotification *)notification {
     NSLog(@"postDeleteFail notification:%@ CLASS:%@", notification, [notification.object class]);
 
     if ([notification.object isKindOfClass:[NSError class]]) {
@@ -278,6 +261,7 @@
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             cell.bottomPaddingLine.hidden = YES;
             cell.likeView.hidden = YES;
+            cell.delegate = self;
         }
 
         [cell setPost:self.post];
@@ -311,7 +295,9 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 
-    TDComment *comment = [self.post.comments objectAtIndex:(indexPath.row-2)];
+    NSInteger commentNumber = (indexPath.row - 2);
+    TDComment *comment = [self.post.comments objectAtIndex:commentNumber];
+    cell.commentNumber = commentNumber;
     [cell makeText:comment.body];
     [cell makeTime:comment.createdAt name:comment.user.username];
 
@@ -345,8 +331,8 @@
 }
 
 #pragma mark - TypingView delegates
--(void)keyboardAppeared:(CGFloat)height curve:(NSInteger)curve
-{
+
+- (void)keyboardAppeared:(CGFloat)height curve:(NSInteger)curve {
     NSLog(@"delegate-keyboardAppeared:%f curve:%ld", height, (long)curve);
 
     self.typingView.isUp = YES;
@@ -373,8 +359,7 @@
                      }];
 }
 
--(void)adjustFrostedView
-{
+- (void)adjustFrostedView {
     CGRect newFrame = self.frostedViewWhileTyping.frame;
     newFrame.origin.y = self.navigationController.navigationBar.frame.size.height;
     newFrame.size.height = self.typingView.frame.origin.y-newFrame.origin.y;
@@ -382,8 +367,7 @@
     self.frostedViewWhileTyping.hidden = NO;
 }
 
--(void)keyboardDisappeared:(CGFloat)height
-{
+- (void)keyboardDisappeared:(CGFloat)height {
     NSLog(@"delegate-keyboardDisappeared:%f", height);
 
     [UIView animateWithDuration: 0.25
@@ -404,8 +388,7 @@
                      }];
 }
 
--(void)typingViewMessage:(NSString *)message
-{
+- (void)typingViewMessage:(NSString *)message {
     NSLog(@"chat-typingViewMessage:%@", message);
 
     if (self.typingView.isUp) {
@@ -418,8 +401,7 @@
                 forPost:self.post.postId];
 }
 
--(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     NSLog(@"TDDetailViewController-touches");
 
     if (self.typingView.isUp) {
@@ -428,8 +410,7 @@
 }
 
 #pragma mark - TDDetailsLikesCell Delegates
--(void)likeButtonPressedFromLikes
-{
+- (void)likeButtonPressedFromLikes {
     if (self.post.postId) {
 
         // Add the like for the update
@@ -444,8 +425,7 @@
     }
 }
 
--(void)unLikeButtonPressedFromLikes
-{
+- (void)unLikeButtonPressedFromLikes {
     NSLog(@"TDDetailViewController-unLikeButtonPressedLikes");
 
     if (self.post.postId) {
@@ -462,8 +442,34 @@
     }
 }
 
--(void)miniAvatarButtonPressedForLiker:(NSDictionary *)liker {
+- (void)miniAvatarButtonPressedForLiker:(NSDictionary *)liker {
     NSLog(@"delegate-miniAvatarButtonPressedForLiker:%@", liker);
+}
+
+
+#pragma mark - TDPostViewDelegate
+
+- (void)userButtonPressedFromRow:(NSInteger)row {
+    // Because we're on the detail page the only user available is the post's user
+    [self showUserProfile:self.post.user];
+}
+
+#pragma mark - TDDetailsCommentsCellDelegate
+
+- (void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber {
+    debug NSLog(@"detail-userButtonPressedFromRow:%ld commentNumber:%ld, %@ %@", (long)row, (long)commentNumber, self.post.user.userId, [[TDCurrentUser sharedInstance] currentUserObject].userId);
+
+    if (self.post.comments && [post.comments count] > row) {
+        TDComment *comment = [post.comments objectAtIndex:commentNumber];
+        [self showUserProfile:comment.user];
+    }
+}
+
+- (void)showUserProfile:(TDUser *)user {
+    TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
+    vc.profileUser = user;
+    vc.fromProfileType = kFromProfileScreenType_OtherUser;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 

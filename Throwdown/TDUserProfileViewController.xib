@@ -6,6 +6,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TDUserProfileViewController">
             <connections>
+                <outlet property="backButton" destination="2Ug-yt-1rT" id="nTU-2h-tRE"/>
                 <outlet property="closeButton" destination="7HI-mt-sX5" id="GOV-oW-k4P"/>
                 <outlet property="settingsButton" destination="coR-no-kTu" id="6s3-HI-tNm"/>
                 <outlet property="tableView" destination="ypO-Yh-C3o" id="wiK-0Q-yvA"/>
@@ -40,30 +41,46 @@
             <color key="textColor" red="0.29803921568627451" green="0.29803921568627451" blue="0.29803921568627451" alpha="1" colorSpace="calibratedRGB"/>
             <nil key="highlightedColor"/>
         </label>
-        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="coR-no-kTu">
+        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="coR-no-kTu" userLabel="Settings Button">
             <rect key="frame" x="0.0" y="0.0" width="20" height="22"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <state key="normal" image="nav_settings">
                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
             </state>
             <state key="selected" image="nav_settings_hit"/>
+            <state key="highlighted" image="nav_settings_hit"/>
             <connections>
                 <action selector="settingsButtonHit:" destination="-1" eventType="touchUpInside" id="IT3-IE-8S7"/>
             </connections>
         </button>
-        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="7HI-mt-sX5">
+        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="7HI-mt-sX5" userLabel="Close Button">
             <rect key="frame" x="0.0" y="0.0" width="20" height="22"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <state key="normal" image="nav_close">
                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
             </state>
             <state key="selected" image="nav_close_hit"/>
+            <state key="highlighted" image="nav_close_hit"/>
             <connections>
                 <action selector="closeButtonHit:" destination="-1" eventType="touchUpInside" id="utC-lj-l7j"/>
             </connections>
         </button>
+        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="2Ug-yt-1rT" userLabel="Back Button">
+            <rect key="frame" x="0.0" y="0.0" width="20" height="22"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <state key="normal" image="nav_back">
+                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+            </state>
+            <state key="selected" image="nav_close_hit"/>
+            <state key="highlighted" image="nav_back_hit"/>
+            <connections>
+                <action selector="backButtonHit:" destination="-1" eventType="touchUpInside" id="fcv-jc-DEt"/>
+            </connections>
+        </button>
     </objects>
     <resources>
+        <image name="nav_back" width="20" height="21"/>
+        <image name="nav_back_hit" width="20" height="21"/>
         <image name="nav_close" width="20" height="21"/>
         <image name="nav_close_hit" width="20" height="21"/>
         <image name="nav_settings" width="20" height="21"/>

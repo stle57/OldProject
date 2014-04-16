@@ -10,12 +10,6 @@
 #import "TDUserProfileViewController.h"
 
 @interface TDPostsViewController () <UITableViewDataSource, UITableViewDelegate>
-{
-    
-}
-
-
-
 @end
 
 @implementation TDPostsViewController
@@ -23,20 +17,9 @@
 @synthesize posts;
 @synthesize refreshControl;
 @synthesize animator;
-@synthesize profilePost;
 @synthesize profileUser;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
 
     tableOffset = CGPointZero;
@@ -122,8 +105,7 @@
                                                object:nil];
 }
 
--(void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
     // If we're coming back from the details screen, we need to
@@ -137,13 +119,11 @@
     [self.tableView reloadData];
 }
 
--(void)viewWillDisappear:(BOOL)animated
-{
+- (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
 }
 
--(UIStatusBarStyle)preferredStatusBarStyle
-{
+- (UIStatusBarStyle)preferredStatusBarStyle {
     return UIStatusBarStyleDefault;
 }
 
@@ -162,27 +142,22 @@
     self.posts = nil;
     self.refreshControl = nil;
     self.animator = nil;
-    self.profilePost = nil;
     self.profileUser = nil;
 }
 
 # pragma mark - Figure out what's on each row
--(void)fetchPostsUpStream
-{
+- (void)fetchPostsUpStream {
 }
 
--(BOOL)fetchPostsDownStream
-{
+- (BOOL)fetchPostsDownStream {
     return NO;
 }
 
--(NSArray *)postsForThisScreen
-{
+- (NSArray *)postsForThisScreen {
     return nil;
 }
 
--(NSNumber *)lowestIdOfPosts
-{
+- (NSNumber *)lowestIdOfPosts {
     return nil;
 }
 
@@ -497,8 +472,12 @@
     return TDCommentCellProfileHeight + comment.messageHeight;
 }
 
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (!self.posts || [self.posts count] == 0 || (needsProfileHeader && indexPath.section == 0)) {
+        return;
+    }
+
+
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
 
     TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
@@ -509,8 +488,7 @@
                                          animated:YES];
 }
 
--(void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     if (!self.posts || [self.posts count] == 0) {
         return;
     }
@@ -597,7 +575,6 @@
 /*    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
 
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
-    vc.profilePost = nil;
     vc.profileUser = [[TDCurrentUser sharedInstance] currentUserObject];
 
     vc.fromFrofileType = kFromProfileScreenType_OwnProfileButton;
@@ -648,10 +625,9 @@
         if (buttonIndex == 1)   // Your Profile
         {
             TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
-            vc.profilePost = nil;
             vc.profileUser = [[TDCurrentUser sharedInstance] currentUserObject];
 
-            vc.fromFrofileType = kFromProfileScreenType_OwnProfileButton;
+            vc.fromProfileType = kFromProfileScreenType_OwnProfileButton;
             vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
             UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
             navController.navigationBar.barStyle = UIBarStyleDefault;

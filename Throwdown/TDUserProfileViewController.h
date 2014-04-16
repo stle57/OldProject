@@ -12,14 +12,12 @@
 #import "TDConstants.h"
 
 @interface TDUserProfileViewController : TDPostsViewController
-{
-    kFromProfileScreenType fromFrofileType;
-}
 
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UIButton *settingsButton;
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
-@property (nonatomic, assign) kFromProfileScreenType fromFrofileType;
+@property (strong, nonatomic) IBOutlet UIButton *backButton;
+@property (nonatomic, assign) kFromProfileScreenType fromProfileType;
 
 -(IBAction)settingsButtonHit:(id)sender;
 -(IBAction)closeButtonHit:(id)sender;

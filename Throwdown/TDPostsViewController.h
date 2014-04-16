@@ -50,7 +50,6 @@
     CGPoint tableOffset;
     CGRect statusBarFrame;
     BOOL needsProfileHeader;
-    TDPost *profilePost;
     TDUser *profileUser;
 }
 
@@ -65,7 +64,6 @@
 @property (nonatomic, retain) UIDynamicAnimator *animator;
 @property (strong, nonatomic) TDHomeHeaderView *headerView;
 @property (strong, nonatomic) UIActivityIndicatorView *playerSpinner;
-@property (nonatomic, retain) TDPost *profilePost;
 @property (nonatomic, retain) TDUser *profileUser;
 
 -(NSArray *)postsForThisScreen;

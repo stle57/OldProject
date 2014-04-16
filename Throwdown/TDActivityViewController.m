@@ -11,10 +11,13 @@
 #import "TDCurrentUser.h"
 #import "TDActivitiesCell.h"
 #import "TDConstants.h"
+#import "TDUserProfileViewController.h"
+#import "TDUser.h"
+#import "TDPost.h"
 
 static NSString *const kActivityCell = @"TDActivitiesCell";
 
-@interface TDActivityViewController () <UITableViewDataSource, UITableViewDelegate>
+@interface TDActivityViewController () <UITableViewDataSource, TDActivitiesCellDelegate>
 
 @property (nonatomic) NSArray *activities;
 @property (nonatomic, retain) UIRefreshControl *refreshControl;
@@ -56,8 +59,10 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
         NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:kActivityCell owner:self options:nil];
         cell = (TDActivitiesCell *)[topLevelObjects objectAtIndex:0];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.delegate = self;
     }
     cell.activity = [self.activities objectAtIndex:[indexPath row]];
+    cell.row = indexPath.row;
 
     return cell;
 }
@@ -82,6 +87,28 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
         debug NSLog(@"error on activity");
         [self.refreshControl endRefreshing];
     }];
+}
+
+#pragma mark - TDActivitiesCellDelegate
+
+- (void)userProfilePressedFromRow:(NSInteger)row {
+    NSDictionary *userData = [[self.activities objectAtIndex:row] objectForKey:@"user"];
+    TDUser *user = [[TDUser alloc] initWithDictionary:userData];
+
+    TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
+    vc.profileUser = user;
+    vc.fromProfileType = kFromProfileScreenType_OtherUser;
+
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+-(void)postPressedFromRow:(NSInteger)row {
+    NSDictionary *postData = [[self.activities objectAtIndex:row] objectForKey:@"post"];
+    TDPost *post = [[TDPost alloc] initWithDictionary:postData];
+
+    TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
+    vc.post = post;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 @end

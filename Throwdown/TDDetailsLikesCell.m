@@ -68,6 +68,10 @@
 -(void)setLikesArray:(NSArray *)array {
     self.likers = array;
 
+    if (!array) {
+        return;
+    }
+
     self.likeImageView.hidden = YES;
     if ([self.likers count] > 0) {
         self.likeImageView.hidden = NO;
@@ -85,9 +89,7 @@
 
 
 
-//    NSMutableAttributedString *text =
     // Add likers label
-
     NSString *text = [[self.likers valueForKeyPath:@"username"] componentsJoinedByString:@", "];
     NSMutableAttributedString *mutableAttributedString = [[NSMutableAttributedString alloc] initWithString:text];
     NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"(,)" options:kNilOptions error:nil];
@@ -97,7 +99,7 @@
         [mutableAttributedString addAttribute:NSForegroundColorAttributeName value:[UIColor darkGrayColor] range:subStringRange];
     }];
 
-    self.likersNamesLabel.font = [UIFont fontWithName:TDFontProximaNovaSemibold size:16.0];
+    self.likersNamesLabel.font = [TDConstants fontSemiBoldSized:16.0];
     self.likersNamesLabel.attributedText = mutableAttributedString;
 
     [TDAppDelegate fixHeightOfThisLabel:self.likersNamesLabel];
@@ -106,7 +108,7 @@
 + (NSInteger)heightOfLikersLabel:(NSArray *)likers {
     NSString *text = [[likers valueForKeyPath:@"username"] componentsJoinedByString:@", "];
     return [TDAppDelegate heightOfTextForString:text
-                                 andFont:[UIFont fontWithName:TDFontProximaNovaSemibold size:16.0]
+                                 andFont:[TDConstants fontSemiBoldSized:16.0]
                                  maxSize:CGSizeMake(217.0, MAXFLOAT)];
 }
 

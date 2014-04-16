@@ -31,13 +31,12 @@
     self.timeLabel.textColor = [TDConstants commentTimeTextColor];
 
     // Fonts
-    self.usernameLabel.font = [UIFont fontWithName:@"ProximaNova-Bold" size:16.0];
-    self.timeLabel.font = [UIFont fontWithName:@"ProximaNova-Light" size:13.0];
-    self.messageLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:16.0];
+    self.usernameLabel.font = [TDConstants fontBoldSized:16.0];
+    self.timeLabel.font     = [TDConstants fontLightSized:13.0];
+    self.messageLabel.font  = [TDConstants fontRegularSized:16.0];
 }
 
--(void)makeText:(NSString *)text
-{
+- (void)makeText:(NSString *)text {
     CGRect messagesFrame = self.messageLabel.frame;
     messagesFrame.size.width = COMMENT_MESSAGE_WIDTH;
     self.messageLabel.frame = messagesFrame;
@@ -46,8 +45,7 @@
     [TDAppDelegate fixHeightOfThisLabel:self.messageLabel];
 }
 
--(void)makeTime:(NSDate *)time name:(NSString *)name
-{
+- (void)makeTime:(NSDate *)time name:(NSString *)name {
     self.timeLabel.text = [time timeAgo];
 
     // Fix widths for name and time
@@ -61,10 +59,7 @@
     self.usernameLabel.text = name;
 }
 
--(IBAction)userButtonPressed:(id)sender
-{
-    NSLog(@"commentsCell-userButtonPressed");
-
+- (IBAction)userButtonPressed:(id)sender {
     if (delegate) {
         if ([delegate respondsToSelector:@selector(userButtonPressedFromRow:commentNumber:)]) {
             [delegate userButtonPressedFromRow:self.row commentNumber:self.commentNumber];

@@ -14,25 +14,7 @@
 #import "TDViewControllerHelper.h"
 #import "AFNetworking.h"
 
-@interface TDUserProfileViewController ()
-
-@end
-
 @implementation TDUserProfileViewController
-
-@synthesize fromFrofileType;
-
-- (void)dealloc
-{
-}
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-    }
-    return self;
-}
 
 - (void)viewDidLoad
 {
@@ -47,7 +29,7 @@
     [self.navigationItem setTitleView:self.titleLabel];
 
     // Bar Button Items
-    switch (fromFrofileType) {
+    switch (self.fromProfileType) {
         case kFromProfileScreenType_OwnProfileButton:
         {
             UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.closeButton];     // 'X'
@@ -58,13 +40,19 @@
         break;
         case kFromProfileScreenType_OwnProfile:
         {
+            UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];    // <
+            self.navigationItem.leftBarButtonItem = leftBarButton;
+            self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
+
             UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.settingsButton]; // Settings
             self.navigationItem.rightBarButtonItem = rightBarButton;
         }
         break;
         case kFromProfileScreenType_OtherUser:
         {
-            // Just iOS back and no right button
+            UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];    // <
+            self.navigationItem.leftBarButtonItem = leftBarButton;
+            self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
         }
         break;
 
@@ -90,8 +78,8 @@
 {
     [super viewWillDisappear:animated];
 
-    [[TDPostAPI sharedInstance] clearPostsForUser]; // Clear so that we can use this display again
-    self.posts = nil;
+//    [[TDPostAPI sharedInstance] clearPostsForUser]; // Clear so that we can use this display again
+//    self.posts = nil;
 }
 
 - (void)didReceiveMemoryWarning
@@ -106,12 +94,17 @@
 
     TDUserProfileEditViewController *vc = [[TDUserProfileEditViewController alloc] initWithNibName:@"TDUserProfileEditViewController" bundle:nil ];
     vc.profileUser = self.profileUser;
-    vc.fromFrofileType = self.fromFrofileType;
+    vc.fromFrofileType = self.fromProfileType;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
--(IBAction)closeButtonHit:(id)sender
-{
+- (IBAction)backButtonHit:(id)sender {
+//    [self.navigationController dismis]
+    NSLog(@"back");
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+-(IBAction)closeButtonHit:(id)sender {
     [self.navigationController dismissViewControllerAnimated:YES
                                                   completion:nil];
 }
@@ -141,8 +134,7 @@
     return postsWithUsers;
 }
 
--(NSNumber *)lowestIdOfPosts
-{
+- (NSNumber *)lowestIdOfPosts {
     return [[TDPostAPI sharedInstance] lowestIdOfPostsForUser];
 }
 
@@ -155,12 +147,29 @@
 }
 
 #pragma mark - Post Delegate
--(void)userButtonPressedFromRow:(NSInteger)row
-{
-    NSLog(@"profile-userButtonPressedFromRow:%ld %@ %@", (long)row, self.profilePost.user.userId, [[TDCurrentUser sharedInstance] currentUserObject].userId);
+- (void)userButtonPressedFromRow:(NSInteger)row {
+    debug NSLog(@"profile-userButtonPressedFromRow:%ld %@ %@", (long)row, self.profileUser.userId, [[TDCurrentUser sharedInstance] currentUserObject].userId);
 
-    TDPost *post = (TDPost *)[self.posts objectAtIndex:row];
-    if ([self.profileUser.userId isEqualToNumber:post.user.userId]) {
+    if (self.posts && [self.posts count] > row) {
+        TDPost *post = (TDPost *)[self.posts objectAtIndex:row];
+        [self showUserProfile:post.user];
+    }
+}
+
+- (void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber {
+    debug NSLog(@"profile-userButtonPressedFromRow:%ld commentNumber:%ld, %@ %@", (long)row, (long)commentNumber, self.profileUser.userId, [[TDCurrentUser sharedInstance] currentUserObject].userId);
+
+    if (self.posts && [self.posts count] > row) {
+        TDPost *post = (TDPost *)[self.posts objectAtIndex:row];
+        if (post.comments && [post.comments count] > row) {
+            TDComment *comment = [post.comments objectAtIndex:commentNumber];
+            [self showUserProfile:comment.user];
+        }
+    }
+}
+
+- (void)showUserProfile:(TDUser *)user {
+    if ([self.profileUser.userId isEqualToNumber:user.userId]) {
         // Same user - do nothing
         return;
     }
@@ -168,24 +177,8 @@
     goneDownstream = YES;
 
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
-    vc.profilePost = post;
-    vc.profileUser = post.user;
-    vc.fromFrofileType = kFromProfileScreenType_OtherUser;
-    [self.navigationController pushViewController:vc animated:YES];
-}
-
--(void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber
-{
-    TDPost *post = (TDPost *)[self.posts objectAtIndex:row];
-    TDComment *comment = [post.comments objectAtIndex:commentNumber];
-    TDUser *user = comment.user;
-
-    goneDownstream = YES;
-
-    TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
-    vc.profilePost = post;
     vc.profileUser = user;
-    vc.fromFrofileType = kFromProfileScreenType_OtherUser;
+    vc.fromProfileType = kFromProfileScreenType_OtherUser;
     [self.navigationController pushViewController:vc animated:YES];
 }
 

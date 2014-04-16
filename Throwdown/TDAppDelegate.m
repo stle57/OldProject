@@ -111,16 +111,14 @@
 }
 
 #pragma mark - Helpers
-+(UIColor *)randomColor
-{
++ (UIColor *)randomColor {
     CGFloat red =  (CGFloat)random()/(CGFloat)RAND_MAX;
     CGFloat blue = (CGFloat)random()/(CGFloat)RAND_MAX;
     CGFloat green = (CGFloat)random()/(CGFloat)RAND_MAX;
     return [UIColor colorWithRed:red green:green blue:blue alpha:1.0];
 }
 
-+(void)fixHeightOfThisLabel:(UILabel *)aLabel
-{
++ (void)fixHeightOfThisLabel:(UILabel *)aLabel {
     CGFloat height = [TDAppDelegate heightOfTextForString:aLabel.text
                                  andFont:aLabel.font
                                  maxSize:CGSizeMake(aLabel.frame.size.width, MAXFLOAT)];
@@ -130,11 +128,9 @@
                               height);
 }
 
-+(CGFloat)heightOfTextForString:(NSString *)aString andFont:(UIFont *)aFont maxSize:(CGSize)aSize
-{
++ (CGFloat)heightOfTextForString:(NSString *)aString andFont:(UIFont *)aFont maxSize:(CGSize)aSize {
     // iOS7
-    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
-    {
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0) {
         CGSize sizeOfText = [aString boundingRectWithSize: aSize
                                                   options: (NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
                                                attributes: [NSDictionary dictionaryWithObject:aFont
@@ -144,11 +140,15 @@
         return ceilf(sizeOfText.height);
     }
 
-    // iOS6
+// iOS6
+// to remove deprecation warning (we already handled that!)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CGSize textSize = [aString sizeWithFont:aFont
                           constrainedToSize:aSize
                               lineBreakMode:NSLineBreakByWordWrapping];
     return textSize.height;
+#pragma clang diagnostic pop
 }
 
 +(void)fixWidthOfThisLabel:(UILabel *)aLabel
@@ -176,10 +176,14 @@
     }
     
     // iOS6
+    // to remove deprecation warning (we already handled that!)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     CGSize textSize = [aString sizeWithFont:aFont
                           constrainedToSize:aSize
                               lineBreakMode:NSLineBreakByWordWrapping];
     return textSize.width;
+#pragma clang diagnostic pop
 }
 
 @end

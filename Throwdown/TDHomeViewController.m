@@ -219,14 +219,13 @@
     NSLog(@"gotoProfileForUser:%@", user);
 
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
-    vc.profilePost = post;
     vc.profileUser = user;
 
     // Slightly different if current user
     if ([user.userId isEqualToNumber:[[TDCurrentUser sharedInstance] currentUserObject].userId]) {
-        vc.fromFrofileType = kFromProfileScreenType_OwnProfile;
+        vc.fromProfileType = kFromProfileScreenType_OwnProfile;
     } else {
-        vc.fromFrofileType = kFromProfileScreenType_OtherUser;
+        vc.fromProfileType = kFromProfileScreenType_OtherUser;
     }
     [self.navigationController pushViewController:vc
                                          animated:YES];

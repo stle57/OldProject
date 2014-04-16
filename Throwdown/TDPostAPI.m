@@ -370,19 +370,14 @@
                                          withString:[postId stringValue]];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:url parameters:@{@"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
-
-        NSLog(@"Full response:%@", responseObject);
-
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             // Notify any views to reload
             [[NSNotificationCenter defaultCenter] postNotificationName:FULL_POST_INFO_NOTIFICATION
                                                                 object:self
                                                               userInfo:responseObject];
         }
-
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"Get full HTTP Error: %@", error);
-
         if (error) {
             if ([operation.response statusCode] == 401) {
                 [self logOutUser];

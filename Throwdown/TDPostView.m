@@ -77,6 +77,10 @@ typedef enum {
 
 - (void)setPost:(TDPost *)post {
 
+    if (post == nil) {
+        return;
+    }
+
     // If it's the same (eg table was refreshed), bail so that we don't stop video playback
     if (self.isPlaying && [self.aPost isEqual:post]) {
         return;
@@ -303,7 +307,7 @@ typedef enum {
 #pragma mark - User Name Button
 - (IBAction)userButtonPressed:(UIButton *)sender
 {
-    NSLog(@"userButtonPressed");
+    debug NSLog(@"userButtonPressed");
 
     if (delegate) {
         if ([delegate respondsToSelector:@selector(userButtonPressedFromRow:)]) {

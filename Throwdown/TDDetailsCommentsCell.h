@@ -11,7 +11,7 @@
 
 @protocol TDDetailsCommentsCellDelegate <NSObject>
 @optional
--(void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber;
+- (void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber;
 @end
 
 @interface TDDetailsCommentsCell : UITableViewCell
