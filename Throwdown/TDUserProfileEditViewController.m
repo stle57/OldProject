@@ -125,12 +125,13 @@
                                         callback:^(BOOL success) {
                                             if (success) {
                                                 NSLog(@"EDIT SUCCESS");
-                                                [TDViewControllerHelper navigateToHomeFrom:self];
+                                                self.saveButton.enabled = NO;
+                                                [self leave];
                                             } else {
                                                 NSLog(@"EDIT FAILURE");
+                                                self.saveButton.enabled = YES;
                                             }
                                             
-                                            self.saveButton.enabled = YES;
                                         }];
 }
 
@@ -149,21 +150,26 @@
         [alert show];
 
     } else {
-        switch (fromFrofileType) {
-            case kFromProfileScreenType_OwnProfile:
-            {
-                [self.navigationController popViewControllerAnimated:YES];
-            }
-            break;
-            case kFromProfileScreenType_OwnProfileButton:
-            {
-                [self.navigationController popViewControllerAnimated:YES];
-            }
-            break;
+        [self leave];
+    }
+}
 
-            default:
-            break;
+-(void)leave
+{
+    switch (fromFrofileType) {
+        case kFromProfileScreenType_OwnProfile:
+        {
+            [self.navigationController popViewControllerAnimated:YES];
         }
+        break;
+        case kFromProfileScreenType_OwnProfileButton:
+        {
+            [self.navigationController popViewControllerAnimated:YES];
+        }
+        break;
+
+        default:
+        break;
     }
 }
 

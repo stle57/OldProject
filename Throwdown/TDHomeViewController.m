@@ -198,6 +198,11 @@
     debug NSLog(@"home view unwindToHome with identifier %@", sender.identifier);
 }
 
+- (void)showHomeController
+{
+    // stub to stop crash bug from segue: navigateToHomeFrom
+}
+
 #pragma mark - Post Delegate
 -(void)userButtonPressedFromRow:(NSInteger)row
 {
