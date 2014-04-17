@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "TDPost.h"
+#import "TDConstants.h"
+#import "TDToastView.h"
 
 @interface TDAppDelegate : UIResponder <UIApplicationDelegate>
 
@@ -19,5 +21,5 @@
 +(void)fixHeightOfThisLabel:(UILabel *)aLabel;
 +(void)fixWidthOfThisLabel:(UILabel *)aLabel;
 +(CGFloat)heightOfTextForString:(NSString *)aString andFont:(UIFont *)aFont maxSize:(CGSize)aSize;
-
+-(void)showToastWithText:(NSString *)text type:(kToastIconType)type gotoPosition:(NSNumber *)positionInApp;
 @end

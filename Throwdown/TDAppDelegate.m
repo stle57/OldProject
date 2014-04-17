@@ -7,7 +7,6 @@
 //
 
 #import "TDAppDelegate.h"
-#import "TDConstants.h"
 #import "TDUserAPI.h"
 #import "TDPostAPI.h"
 #import "TestFlight.h"
@@ -184,6 +183,22 @@
                               lineBreakMode:NSLineBreakByWordWrapping];
     return textSize.width;
 #pragma clang diagnostic pop
+}
+
+#pragma mark - Toast
+-(void)showToastWithText:(NSString *)text type:(kToastIconType)type gotoPosition:(NSNumber *)positionInApp
+{
+    // Remove old ones
+    [TDToastView removeOldToasts];
+
+    // Build new one
+    TDToastView *toastView = [TDToastView toastView];
+    [self.window addSubview:toastView];
+
+    [toastView text:text
+               icon:kToastIconType_Warning
+       gotoPosition:positionInApp];
+    [toastView showToast];
 }
 
 @end

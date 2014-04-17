@@ -100,7 +100,6 @@
 
 - (IBAction)backButtonHit:(id)sender {
 //    [self.navigationController dismis]
-    NSLog(@"back");
     [self.navigationController popViewControllerAnimated:YES];
 }
 
