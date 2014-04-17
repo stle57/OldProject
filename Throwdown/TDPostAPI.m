@@ -167,7 +167,7 @@
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:[[TDConstants getBaseURL] stringByAppendingString:url] parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-
+            debug NSLog(@"%@", responseObject);
             if (!postsForUser) {
                 postsForUser = [[NSMutableArray alloc] init];
             }
@@ -199,8 +199,7 @@
     return [postsForUser mutableCopy];
 }
 
--(NSNumber *)lowestIdOfPostsForUser
-{
+-(NSNumber *)lowestIdOfPostsForUser {
     NSNumber *lowestId = [NSNumber numberWithLongLong:LONG_LONG_MAX];
     for (TDPost *post in postsForUser) {
         if ([lowestId compare:post.postId] == NSOrderedDescending) {

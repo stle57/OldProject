@@ -222,8 +222,7 @@
 }
 
 # pragma mark - table view delegate
--(void)updatePostsAtBottom
-{
+- (void)updatePostsAtBottom {
     NSLog(@"updatePostsAtBottom");
 
     if (updatingAtBottom) {
@@ -424,6 +423,7 @@
 
     NSInteger commentNumber = indexPath.row - 1 - ([post.likers count] > 0 ? 1 : 0);
     cell.commentNumber = commentNumber;
+    cell.row = indexPath.section;
     TDComment *comment = [post.comments objectAtIndex:commentNumber];
     [cell makeText:comment.body];
     [cell makeTime:comment.createdAt name:comment.user.username];
@@ -437,8 +437,10 @@
         return profileHeaderHeight;
     }
 
+    NSInteger realRow = indexPath.section - (needsProfileHeader ? 1 : 0);
+
     // Last row with Activity
-    if (showBottomSpinner && indexPath.section == [self.posts count]) {
+    if (showBottomSpinner && realRow == [self.posts count]) {
         return activityRowHeight;
     }
 
@@ -446,16 +448,16 @@
         return postViewHeight;
     }
 
-    TDPost *post = (TDPost *)[self.posts objectAtIndex:(indexPath.section-(needsProfileHeader ? 1 : 0))];
+    TDPost *post = (TDPost *)[self.posts objectAtIndex:realRow];
     if ([post.likers count] > 0 && indexPath.row == 1) {
         return likeHeight;
     }
 
-    NSInteger lastRow = [self tableView:nil numberOfRowsInSection:indexPath.section]-1;
+    NSInteger lastRow = [self tableView:nil numberOfRowsInSection:indexPath.section] - 1;
 
-    // last row has to be 100 higher to allow press on Like / Comment
-    if (indexPath.row == lastRow && indexPath.section == ([self.posts count]-1)) {
-        return 100.0+commentButtonsHeight;
+    // last row has to be 100 higher except on profile view to allow press on Like / Comment
+    if (indexPath.row == lastRow && realRow == ([self.posts count] - 1)) {
+        return (needsProfileHeader ? 0 : 100.0) + commentButtonsHeight;
     }
 
     if (indexPath.row == lastRow) {
@@ -477,7 +479,6 @@
         return;
     }
 
-
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
 
     TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
@@ -492,14 +493,14 @@
     if (!self.posts || [self.posts count] == 0) {
         return;
     }
-    if ((scrollView.contentOffset.y+scrollView.frame.size.height) >= scrollView.contentSize.height-10.0) {
+    if ((scrollView.contentOffset.y + scrollView.frame.size.height) >= scrollView.contentSize.height - 10.0) {
         [self updatePostsAtBottom];
     }
 }
 
 #pragma mark - TDPostView Delegate
--(void)postTouchedFromRow:(NSInteger)row
-{
+
+- (void)postTouchedFromRow:(NSInteger)row {
     TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
     TDPost *post = (TDPost *)[self.posts objectAtIndex:row-(needsProfileHeader ? 1 : 0)];
     vc.post = post;
@@ -508,13 +509,12 @@
                                          animated:YES];
 }
 
--(void)userButtonPressedFromRow:(NSInteger)row
-{
+- (void)userButtonPressedFromRow:(NSInteger)row {
 }
 
 #pragma mark - TDLikeCommentViewDelegates
--(void)likeButtonPressedFromRow:(NSInteger)row
-{
+
+- (void)likeButtonPressedFromRow:(NSInteger)row {
     NSLog(@"Home-likeButtonPressedFromRow:%ld", (long)row);
 
     TDPost *post = (TDPost *)[self.posts objectAtIndex:row-(needsProfileHeader ? 1 : 0)];

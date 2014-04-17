@@ -99,7 +99,6 @@
 }
 
 - (IBAction)backButtonHit:(id)sender {
-//    [self.navigationController dismis]
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -111,19 +110,19 @@
 #pragma mark - Posts
 -(void)fetchPostsUpStream
 {
-    NSLog(@"userprofile-fetchPostsUpStream");
+    debug NSLog(@"userprofile-fetchPostsUpStream");
     [[TDPostAPI sharedInstance] fetchPostsUpstreamForUser:self.profileUser.userId];
 }
 
 -(BOOL)fetchPostsDownStream
 {
-    NSLog(@"userprofile-fetchPostsDownStream");
+    debug NSLog(@"userprofile-fetchPostsDownStream");
     return [[TDPostAPI sharedInstance] fetchPostsDownstreamForUser:self.profileUser.userId];
 }
 
 -(NSArray *)postsForThisScreen
 {
-    NSLog(@"userprofile-postsForThisScreen");
+    debug NSLog(@"userprofile-postsForThisScreen");
     NSMutableArray *postsWithUsers = [NSMutableArray array];
     for (TDPost *aPost in [[TDPostAPI sharedInstance] getPostsForUser]) {
         [aPost replaceUser:self.profileUser];
@@ -158,9 +157,10 @@
 - (void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber {
     debug NSLog(@"profile-userButtonPressedFromRow:%ld commentNumber:%ld, %@ %@", (long)row, (long)commentNumber, self.profileUser.userId, [[TDCurrentUser sharedInstance] currentUserObject].userId);
 
-    if (self.posts && [self.posts count] > row) {
-        TDPost *post = (TDPost *)[self.posts objectAtIndex:row];
-        if (post.comments && [post.comments count] > row) {
+    // row - 1 because we have a profile header at row 0
+    if (self.posts && [self.posts count] > row - 1) {
+        TDPost *post = (TDPost *)[self.posts objectAtIndex:row - 1];
+        if (post.comments && [post.comments count] > commentNumber) {
             TDComment *comment = [post.comments objectAtIndex:commentNumber];
             [self showUserProfile:comment.user];
         }
