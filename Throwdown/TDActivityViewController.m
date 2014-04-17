@@ -29,6 +29,14 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    // Reset app badge count
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    // Reset feed button count
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUpdate
+                                                        object:self
+                                                      userInfo:@{@"notificationCount": @0}];
+
+
     self.tableView.dataSource = self;
     self.activities = @[];
     self.navigationController.navigationBar.titleTextAttributes = @{

@@ -72,7 +72,6 @@
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
-    debug NSLog(@"application:didRegisterForRemoteNotificationsWithDeviceToken: %@", deviceToken);
     [[TDCurrentUser sharedInstance] registerDeviceToken:[deviceToken description]];
 }
 
@@ -97,8 +96,7 @@
 }
 
 #pragma mark - Post Operations
--(TDPost *)postWithPostId:(NSNumber *)postId
-{
+-(TDPost *)postWithPostId:(NSNumber *)postId {
     NSArray *posts = [[TDPostAPI sharedInstance] getPosts];
     for (TDPost *post in posts) {
         if (post.postId == postId) {

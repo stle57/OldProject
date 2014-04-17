@@ -33,6 +33,7 @@ static NSString *const CTImage = @"image/jpeg";
 static NSString *const TDNotificationStopPlayers = @"TDNotificationStopPlayers";
 static NSString *const TDNotificationUploadComments = @"TDNotificationUploadComments";
 static NSString *const TDNotificationUploadCancelled = @"TDNotificationUploadCancelled";
+static NSString *const TDNotificationUpdate = @"TDNotificationUpdate";
 static NSString *const TDRefreshPostsNotification = @"TDRefreshPostsNotification";
 static NSString *const TDDownloadPreviewImageNotification = @"TDDownloadPreviewImageNotification";
 static NSString *const TDUpdateWithUserChangeNotification = @"TDUpdateWithUserChangeNotification";

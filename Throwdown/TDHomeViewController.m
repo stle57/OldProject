@@ -20,10 +20,13 @@
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #import "TDUserProfileViewController.h"
+#import <QuartzCore/QuartzCore.h>
 
 #define CELL_IDENTIFIER @"TDPostView"
 
 @interface TDHomeViewController ()
+@property (weak, nonatomic) IBOutlet UILabel *badgeCountLabel;
+
 @property (nonatomic) BOOL didUpload;
 
 @end
@@ -39,6 +42,17 @@
                                              selector:@selector(uploadStarted:)
                                                  name:@"TDPostUploadStarted"
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(refreshPostsNotification:)
+                                                 name:TDNotificationUpdate
+                                               object:nil];
+
+    [self.badgeCountLabel setFont:[TDConstants fontLightSized:10]];
+    [self.badgeCountLabel.layer setCornerRadius:7.0];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -234,6 +248,31 @@
     }
     [self.navigationController pushViewController:vc
                                          animated:YES];
+}
+
+#pragma mark - Notification Badge Count
+
+- (void)refreshPostsNotification:(NSNotification *)notification {
+    if (notification.userInfo && [notification.userInfo objectForKey:@"notificationCount"]) {
+        NSNumber *count = [notification.userInfo objectForKey:@"notificationCount"];
+        if ([count integerValue] > 0) {
+            self.badgeCountLabel.hidden = NO;
+            self.badgeCountLabel.text = [NSString stringWithFormat:@"%@", count];
+            CGRect frame = self.badgeCountLabel.frame;
+            if ([count integerValue] < 10) {
+                frame.size.width = 14;
+            } else if ([count integerValue] < 100) {
+                frame.size.width = 20;
+            } else if ([count integerValue] < 1000) {
+                frame.size.width = 25;
+            } else {
+                frame.size.width = 30;
+            }
+            self.badgeCountLabel.frame = frame;
+        } else {
+            self.badgeCountLabel.hidden = YES;
+        }
+    }
 }
 
 @end

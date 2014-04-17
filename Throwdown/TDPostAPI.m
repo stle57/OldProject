@@ -95,12 +95,15 @@
 }
 
 - (void)fetchPostsUpstreamWithErrorHandlerStart:(NSNumber *)start error:(void (^)(void))errorHandler {
-    NSMutableString *url = [NSMutableString stringWithString:@"/api/v1/posts.json"];
+    NSMutableDictionary *params = [@{@"user_token": [TDCurrentUser sharedInstance].authToken} mutableCopy];
     if (start) {
-        [url appendString:[NSString stringWithFormat:@"?start=%@", start]];
+        [params addEntriesFromDictionary:@{@"start": start}];
+    }
+    if ([TDCurrentUser sharedInstance].deviceToken) {
+        [params addEntriesFromDictionary:@{@"device_token": [TDCurrentUser sharedInstance].deviceToken}];
     }
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager GET:[[TDConstants getBaseURL] stringByAppendingString:url] parameters:@{@"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager GET:[[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts.json"] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
 
             if (!start) {
@@ -108,6 +111,9 @@
             }
             for (NSDictionary *postObject in [responseObject valueForKeyPath:@"posts"]) {
                 [posts addObject:[[TDPost alloc]initWithDictionary:postObject]];
+            }
+            if ([responseObject valueForKey:@"notification_count"]) {
+                [self notifyNotificationCount:[responseObject valueForKey:@"notification_count"]];
             }
             [self notifyPostsRefreshed];
         }
@@ -178,7 +184,7 @@
             for (NSDictionary *postObject in [responseObject valueForKeyPath:@"posts"]) {
                 [postsForUser addObject:[[TDPost alloc]initWithDictionary:postObject]];
             }
-            [self notifyPostsRefreshedWithInfo:userId];
+            [self notifyPostsRefreshedWithUserId:userId];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"HTTP Error: %@", error);
@@ -265,15 +271,21 @@
 
 /* Notify any views to reload, does not update or fetch posts from server */
 - (void)notifyPostsRefreshed {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"TDRefreshPostsNotification"
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDRefreshPostsNotification
                                                         object:self
                                                       userInfo:nil];
 }
 
-- (void)notifyPostsRefreshedWithInfo:(id)info {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"TDRefreshPostsNotification"
+- (void)notifyNotificationCount:(NSNumber *)count {
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUpdate
                                                         object:self
-                                                      userInfo:info];
+                                                      userInfo:@{@"notificationCount": count}];
+}
+
+- (void)notifyPostsRefreshedWithUserId:(NSNumber *)userId {
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDRefreshPostsNotification
+                                                        object:self
+                                                      userInfo:@{@"userId": userId}];
 }
 
 #pragma mark - like & comment

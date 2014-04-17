@@ -175,12 +175,10 @@
 
     // If it's not our user, we don't want it
     // because we're sharing the user array for profile users
-    if (notification.userInfo && self.profileUser.userId) {
-        if ([notification.userInfo isKindOfClass:[NSNumber class]]) {
-            NSNumber *userId = (NSNumber *)notification.userInfo;
-            if (![userId isEqualToNumber:self.profileUser.userId]) {
-                return;
-            }
+    if (self.profileUser.userId && notification.userInfo && [notification.userInfo objectForKey:@"userId"]) {
+        NSNumber *userId = (NSNumber *)[notification.userInfo objectForKey:@"userId"];
+        if (![userId isEqualToNumber:self.profileUser.userId]) {
+            return;
         }
     }
 
