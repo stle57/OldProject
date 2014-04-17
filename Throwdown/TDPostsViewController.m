@@ -103,6 +103,10 @@
                                              selector:@selector(logOutUser:)
                                                  name:LOG_OUT_NOTIFICATION
                                                object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updatePostsAfterUserUpdate:)
+                                                 name:TDUpdateWithUserChangeNotification
+                                               object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -712,6 +716,22 @@
     TDAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
     delegate.window.rootViewController = welcomeViewController;
     [self.navigationController popToRootViewControllerAnimated:NO];
+}
+
+#pragma mark - Update Posts After User Change Notification
+-(void)updatePostsAfterUserUpdate:(NSNotification *)notification
+{
+    NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
+
+    for (TDPost *aPost in self.posts)
+    {
+        if ([[[TDCurrentUser sharedInstance] currentUserObject].userId isEqualToNumber:aPost.user.userId])
+        {
+            [aPost replaceUserAndLikesAndCommentsWithUser:[[TDCurrentUser sharedInstance] currentUserObject]];
+        }
+    }
+
+    [self.tableView reloadData];
 }
 
 #pragma mark - Loading Spinner

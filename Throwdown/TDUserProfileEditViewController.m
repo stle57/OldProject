@@ -126,6 +126,10 @@
                                             if (success) {
                                                 NSLog(@"EDIT SUCCESS");
                                                 self.saveButton.enabled = NO;
+                                                
+                                                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateWithUserChangeNotification
+                                                                                                    object:nil
+                                                                                                  userInfo:nil];
                                                 [self leave];
                                             } else {
                                                 NSLog(@"EDIT FAILURE");

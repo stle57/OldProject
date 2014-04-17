@@ -161,4 +161,65 @@
     _user = newUser;
 }
 
+-(void)replaceLikers:(NSArray *)newLikers
+{
+    _likers = newLikers;
+}
+
+-(void)replaceComments:(NSArray *)newComments
+{
+    _comments = newComments;
+}
+
+-(void)replaceUserAndLikesAndCommentsWithUser:(TDUser *)newUser
+{
+    // User
+    [self replaceUser:newUser];
+
+    // Likers
+    NSMutableArray *newLikers = [NSMutableArray arrayWithArray:self.likers];
+    for (NSDictionary *liker in [NSArray arrayWithArray:self.likers])
+    {
+        if ([liker objectForKey:@"id"] && [[liker objectForKey:@"id"] isEqualToNumber:newUser.userId])
+        {
+            NSMutableDictionary *newLiker = [NSMutableDictionary dictionaryWithDictionary:liker];
+            if (newUser.bio) {
+                [newLiker setObject:newUser.bio forKey:@"bio"];
+            } else {
+                [newLiker setObject:@"" forKey:@"bio"];
+            }
+            if (newUser.name) {
+                [newLiker setObject:newUser.name forKey:@"name"];
+            } else {
+                [newLiker setObject:@"" forKey:@"name"];
+            }
+            if (newUser.picture) {
+                [newLiker setObject:newUser.picture forKey:@"picture"];
+            } else {
+                [newLiker setObject:@"" forKey:@"picture"];
+            }
+            if (newUser.username) {
+                [newLiker setObject:newUser.username forKey:@"username"];
+            } else {
+                [newLiker setObject:@"" forKey:@"username"];
+            }
+            [newLikers replaceObjectAtIndex:[newLikers indexOfObject:liker] withObject:newLiker];
+            newLiker = nil;
+        }
+    }
+    [self replaceLikers:newLikers];
+    newLikers = nil;
+
+    // Comments
+    for (TDComment *comment in [NSArray arrayWithArray:self.comments])
+    {
+        if ([comment.user.userId isEqualToNumber:newUser.userId])
+        {
+            // User
+            [comment replaceUser:newUser];
+        }
+    }
+
+}
+
 @end

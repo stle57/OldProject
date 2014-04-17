@@ -35,6 +35,7 @@ static NSString *const TDNotificationUploadComments = @"TDNotificationUploadComm
 static NSString *const TDNotificationUploadCancelled = @"TDNotificationUploadCancelled";
 static NSString *const TDRefreshPostsNotification = @"TDRefreshPostsNotification";
 static NSString *const TDDownloadPreviewImageNotification = @"TDDownloadPreviewImageNotification";
+static NSString *const TDUpdateWithUserChangeNotification = @"TDUpdateWithUserChangeNotification";
 
 static NSString *const TDFontProximaNovaRegular = @"ProximaNova-Regular";
 static NSString *const TDFontProximaNovaSemibold = @"ProximaNova-Semibold";

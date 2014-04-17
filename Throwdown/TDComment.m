@@ -45,4 +45,9 @@
                                                   maxSize:CGSizeMake(COMMENT_MESSAGE_WIDTH, MAXFLOAT)];
 }
 
+-(void)replaceUser:(TDUser *)newUser
+{
+    _user = newUser;
+}
+
 @end

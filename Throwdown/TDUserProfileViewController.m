@@ -16,6 +16,13 @@
 
 @implementation TDUserProfileViewController
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:TDUpdateWithUserChangeNotification
+                                                  object:nil];
+}
+
 - (void)viewDidLoad
 {
     needsProfileHeader = YES;
@@ -59,6 +66,8 @@
         default:
         break;
     }
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -179,6 +188,18 @@
     vc.profileUser = user;
     vc.fromProfileType = kFromProfileScreenType_OtherUser;
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+-(void)updatePostsAfterUserUpdate:(NSNotification *)notification
+{
+    NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
+
+    if ([[[TDCurrentUser sharedInstance] currentUserObject].userId isEqualToNumber:self.profileUser.userId])
+    {
+        self.profileUser = [[TDCurrentUser sharedInstance] currentUserObject];
+    }
+
+    [self.tableView reloadData];
 }
 
 @end

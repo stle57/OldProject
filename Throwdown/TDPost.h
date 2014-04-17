@@ -31,4 +31,7 @@
 -(void)orderCommentsForHomeScreen;
 -(void)orderCommentsForDetailsScreen;
 -(void)replaceUser:(TDUser *)newUser;
+-(void)replaceLikers:(NSArray *)newLikers;
+-(void)replaceComments:(NSArray *)newComments;
+-(void)replaceUserAndLikesAndCommentsWithUser:(TDUser *)newUser;
 @end

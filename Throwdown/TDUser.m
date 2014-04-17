@@ -18,6 +18,7 @@
         _username = [dict objectForKey:@"username"];
         _name     = [dict objectForKey:@"name"];
         _picture  = [dict objectForKey:@"picture"];
+        _bio  = [dict objectForKey:@"bio"];
     }
     return self;
 }
@@ -34,7 +35,7 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"TDUser-user:%@", _name];
+    return [NSString stringWithFormat:@"TDUser-user:%@ %@ %@ %@ %@", _userId, _name, _username, _picture, _bio];
 }
 
 @end

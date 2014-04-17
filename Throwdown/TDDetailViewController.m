@@ -8,7 +8,6 @@
 
 #import "TDDetailViewController.h"
 #import "TDPostAPI.h"
-#import "TDPostView.h"
 #import "TDConstants.h"
 #import "TDComment.h"
 #import "TDViewControllerHelper.h"
@@ -40,6 +39,9 @@
                                                   object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:POST_DELETED_FAIL_NOTIFICATION
+                                                  object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:TDUpdateWithUserChangeNotification
                                                   object:nil];
 
     self.post = nil;
@@ -107,6 +109,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newCommentReturn:) name:NEW_COMMENT_INFO_NOTICIATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postDeleted:) name:POST_DELETED_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postDeleteFail:) name:POST_DELETED_FAIL_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
 
     // Delete Icon - have to use uibutton to give design's hit state correctly
     UIButton *deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -470,6 +473,19 @@
     vc.profileUser = user;
     vc.fromProfileType = kFromProfileScreenType_OtherUser;
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+#pragma mark - Update Posts After User Change Notification
+-(void)updatePostsAfterUserUpdate:(NSNotification *)notification
+{
+    NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
+
+    if ([[[TDCurrentUser sharedInstance] currentUserObject].userId isEqualToNumber:self.post.user.userId])
+    {
+        [self.post replaceUserAndLikesAndCommentsWithUser:[[TDCurrentUser sharedInstance] currentUserObject]];
+    }
+
+    [self.tableView reloadData];
 }
 
 

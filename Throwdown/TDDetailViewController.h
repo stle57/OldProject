@@ -11,6 +11,7 @@
 #import "TDTypingView.h"
 #import "TDDetailsLikesCell.h"
 #import "TDDetailsCommentsCell.h"
+#import "TDPostView.h"
 
 @protocol TDDetailViewControllerDelegate <NSObject>
 
@@ -18,7 +19,7 @@
 -(void)postDeleted:(TDPost *)deletedPost;
 @end
 
-@interface TDDetailViewController : UIViewController <TDTypingViewViewDelegate, UITableViewDataSource, UITableViewDelegate, TDDetailsLikesCellDelegate, TDDetailsCommentsCellDelegate, UIAlertViewDelegate>
+@interface TDDetailViewController : UIViewController <TDTypingViewViewDelegate, UITableViewDataSource, UITableViewDelegate, TDDetailsLikesCellDelegate, TDDetailsCommentsCellDelegate, UIAlertViewDelegate, TDPostViewDelegate>
 {
     id <TDDetailViewControllerDelegate> __unsafe_unretained delegate;
     TDPost *post;
