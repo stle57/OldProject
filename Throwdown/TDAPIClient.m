@@ -131,12 +131,12 @@
                 callback(NO, nil);
             }
         } else {
-            debug NSLog(@"ERROR in edit user response, got: %@", [responseObject class]);
+            NSLog(@"ERROR in edit user response, got: %@", [responseObject class]);
             callback(NO, nil);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        debug NSLog(@"ERROR in edit user call: %@", [error localizedDescription]);
-        callback(NO, nil);
+        NSLog(@"ERROR in edit user call: %@", [error localizedDescription]);
+        callback(NO, error.userInfo);
     }];
 }
 

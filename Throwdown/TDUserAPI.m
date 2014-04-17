@@ -55,7 +55,7 @@
     }];
 }
 
-- (void)editUserWithName:(NSString *)name email:(NSString *)email username:(NSString *)username phone:(NSString *)phone callback:(void (^)(BOOL))callback
+- (void)editUserWithName:(NSString *)name email:(NSString *)email username:(NSString *)username phone:(NSString *)phone callback:(void (^)(BOOL success, NSDictionary *dict))callback
 {
     [[TDAPIClient sharedInstance] editUserWithName:name email:email username:username phone:phone callback:^(BOOL success, NSDictionary *user) {
         if (success) {
@@ -64,7 +64,7 @@
                 [self.currentUser updateFromDictionary:user];
             }
         }
-        callback(success);
+        callback(success, user);
     }];
 }
 

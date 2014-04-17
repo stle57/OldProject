@@ -118,13 +118,15 @@
 
     self.saveButton.enabled = NO;
 
+    [self hideKeyboard];
+
     [[TDUserAPI sharedInstance] editUserWithName:self.name
                                            email:self.email
                                         username:self.username
                                            phone:self.phone
-                                        callback:^(BOOL success) {
+                                        callback:^(BOOL success, NSDictionary *dict) {
                                             if (success) {
-                                                NSLog(@"EDIT SUCCESS");
+                                                NSLog(@"EDIT SUCCESS:%@", dict);
                                                 self.saveButton.enabled = NO;
                                                 
                                                 [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateWithUserChangeNotification
@@ -132,7 +134,15 @@
                                                                                                   userInfo:nil];
                                                 [self leave];
                                             } else {
-                                                NSLog(@"EDIT FAILURE");
+                                                NSLog(@"EDIT FAILURE:%@", dict);
+
+                                                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Edit"
+                                                                                                message:@"These changes aren't valid."
+                                                                                               delegate:nil
+                                                                                      cancelButtonTitle:@"OK"
+                                                                                      otherButtonTitles:nil];
+                                                [alert show];
+
                                                 self.saveButton.enabled = YES;
                                             }
                                             

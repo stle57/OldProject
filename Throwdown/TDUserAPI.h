@@ -17,7 +17,7 @@
 
 - (void)signupUser:(NSDictionary *)userAttributes callback:(void (^)(BOOL success))callback;
 - (void)loginUser:(NSString *)email withPassword:(NSString *)password callback:(void (^)(BOOL success))callback;
-- (void)editUserWithName:(NSString *)name email:(NSString *)email username:(NSString *)username phone:(NSString *)phone callback:(void (^)(BOOL))callback;
+- (void)editUserWithName:(NSString *)name email:(NSString *)email username:(NSString *)username phone:(NSString *)phone callback:(void (^)(BOOL success, NSDictionary *dict))callback;
 - (BOOL)isLoggedIn;
 - (void)logout;
 
