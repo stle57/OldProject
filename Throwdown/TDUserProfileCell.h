@@ -20,5 +20,7 @@
 @property (nonatomic, assign) id <TDUserProfileCellDelegate> __unsafe_unretained delegate;
 @property (weak, nonatomic) IBOutlet UIImageView *userImageView;
 @property (weak, nonatomic) IBOutlet UILabel *userNameLabel;
+@property (weak, nonatomic) IBOutlet UILabel *bioLabel;
+@property (nonatomic, assign) CGRect origBioLabelRect;
 
 @end

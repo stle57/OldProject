@@ -7,6 +7,8 @@
 //
 
 #import "TDUser.h"
+#import "TDAppDelegate.h"
+#import "TDConstants.h"
 
 @implementation TDUser
 
@@ -18,7 +20,8 @@
         _username = [dict objectForKey:@"username"];
         _name     = [dict objectForKey:@"name"];
         _picture  = [dict objectForKey:@"picture"];
-        _bio  = [dict objectForKey:@"bio"];
+        _bio      = [dict objectForKey:@"bio"];
+        [self figureOutBioLabelHeightForThisMessage:_bio];
     }
     return self;
 }
@@ -32,11 +35,22 @@
         _picture = picture;
     }
     _bio = bio;
+    [self figureOutBioLabelHeightForThisMessage:_bio];
 }
 
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"TDUser-user:%@ %@ %@ %@ %@", _userId, _name, _username, _picture, _bio];
+}
+
+-(void)figureOutBioLabelHeightForThisMessage:(NSString *)text
+{
+    _bioHeight = 0.0;
+    if (text && ![text isKindOfClass:[NSNull class]] && [text length] > 0) {
+        _bioHeight = [TDAppDelegate heightOfTextForString:text
+                                                  andFont:BIO_FONT
+                                                  maxSize:CGSizeMake(COMMENT_MESSAGE_WIDTH, MAXFLOAT)];
+    }
 }
 
 @end

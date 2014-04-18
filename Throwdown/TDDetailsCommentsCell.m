@@ -33,7 +33,7 @@
     // Fonts
     self.usernameLabel.font = [TDConstants fontBoldSized:16.0];
     self.timeLabel.font     = [TDConstants fontLightSized:13.0];
-    self.messageLabel.font  = [TDConstants fontRegularSized:16.0];
+    self.messageLabel.font  = COMMENT_MESSAGE_FONT;
 }
 
 - (void)makeText:(NSString *)text {

@@ -51,6 +51,7 @@
     CGRect statusBarFrame;
     BOOL needsProfileHeader;
     TDUser *profileUser;
+    CGFloat topOfBioLabelInProfileHeader;
 }
 
 @property (nonatomic, retain) NSArray *posts;

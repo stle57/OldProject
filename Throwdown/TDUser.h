@@ -15,6 +15,7 @@
 @property (strong, nonatomic, readonly) NSString *name;
 @property (strong, nonatomic, readonly) NSString *picture;
 @property (strong, nonatomic, readonly) NSString *bio;
+@property (nonatomic, assign) CGFloat bioHeight;
 
 - (id)initWithDictionary:(NSDictionary *)dict;
 -(void)userId:(NSNumber *)userId userName:(NSString *)userName name:(NSString *)name picture:(NSString *)picture bio:(NSString *)bio;

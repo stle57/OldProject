@@ -21,5 +21,6 @@
 +(void)fixHeightOfThisLabel:(UILabel *)aLabel;
 +(void)fixWidthOfThisLabel:(UILabel *)aLabel;
 +(CGFloat)heightOfTextForString:(NSString *)aString andFont:(UIFont *)aFont maxSize:(CGSize)aSize;
++ (UIImage *)squareImageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize;
 -(void)showToastWithText:(NSString *)text type:(kToastIconType)type gotoPosition:(NSNumber *)positionInApp;
 @end

@@ -29,6 +29,8 @@
 @synthesize password;
 @synthesize bio;
 @synthesize fromFrofileType;
+@synthesize editedProfileImage90x90;
+@synthesize tempFlyInImageView;
 
 - (void)dealloc
 {
@@ -45,6 +47,8 @@
     self.email = nil;
     self.password = nil;
     self.bio = nil;
+    self.editedProfileImage90x90 = nil;
+    self.tempFlyInImageView = nil;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -566,6 +570,7 @@
                 case 0:
                 {
                     cell.userImageView.hidden = NO;
+                    cell.userImageView.image = self.editedProfileImage90x90;
                     cell.topLine.hidden = NO;
                     cell.leftMiddleLabel.hidden = NO;
                     cell.leftMiddleLabel.text = @"Edit Photo";
@@ -840,15 +845,57 @@
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
-    NSLog(@"didFinishPickingMediaWithInfo:%@", info);
+    if (self.tempFlyInImageView && [self.tempFlyInImageView superview]) {
+        [self.tempFlyInImageView removeFromSuperview];
+    }
+
     UIImage *image = [info valueForKey:UIImagePickerControllerOriginalImage];
 
+    // Scale to 90x90
+    self.editedProfileImage90x90 = [TDAppDelegate squareImageWithImage:image
+                                                          scaledToSize:CGSizeMake(90.0,
+                                                                                  90.0)];
 
+    // Need to figure out where the avatar image is on the screen
+    TDUserEditCell *cell = (TDUserEditCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0
+                                                                                     inSection:0]];
+    CGRect avatarImageFrame = CGRectMake(cell.frame.origin.x+cell.userImageView.frame.origin.x,
+                                         cell.frame.origin.y+cell.userImageView.frame.origin.y+self.navigationController.navigationBar.frame.size.height+[UIApplication sharedApplication].statusBarFrame.size.height,
+                                         cell.userImageView.frame.size.width,
+                                         cell.userImageView.frame.size.height);
 
+    // Get rid of photo picker
+    [self dismissViewControllerAnimated:NO
+                             completion:^{
 
-    image = nil;
+                                 // Add big in center
+                                 self.tempFlyInImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0.0,
+                                                                                                         0.0,
+                                                                                                         image.size.width,
+                                                                                                         image.size.height)];
+                                 self.tempFlyInImageView.image = image;
+                                 self.tempFlyInImageView.center = self.view.center;
+                                 [self.view addSubview:self.tempFlyInImageView];
 
-     [self dismissViewControllerAnimated:YES completion:NULL];
+                                 [UIView animateWithDuration: 0.3
+                                                       delay: 0.0
+                                                     options: UIViewAnimationOptionCurveEaseOut
+                                                  animations:^{
+
+                                                      self.tempFlyInImageView.frame = avatarImageFrame;
+
+                                                  }
+                                                  completion:^(BOOL animDone){
+                                                      
+                                                      if (animDone)
+                                                      {
+                                                          [self.tempFlyInImageView removeFromSuperview];
+                                                          self.tempFlyInImageView = nil;
+                                                          [self.tableView reloadData];
+                                                      }
+                                                  }];
+
+    }];
 }
 
 

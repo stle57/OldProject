@@ -60,8 +60,9 @@
     activityRowHeight = activityCell.frame.size.height;
     activityCell = nil;
     topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_PROFILE owner:self options:nil];
-    TDActivityCell *profileCell = [topLevelObjects objectAtIndex:0];
+    TDUserProfileCell *profileCell = [topLevelObjects objectAtIndex:0];
     profileHeaderHeight = profileCell.frame.size.height;
+    topOfBioLabelInProfileHeader = profileCell.bioLabel.frame.origin.y;
     profileCell = nil;
 
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -320,10 +321,21 @@
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_PROFILE owner:self options:nil];
             cell = [topLevelObjects objectAtIndex:0];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.origBioLabelRect = cell.bioLabel.frame;
         }
 
+        cell.bioLabel.hidden = YES;
+        cell.userImageView.hidden = YES;
+        cell.bioLabel.frame = cell.origBioLabelRect;
+        
         if (self.profileUser) {
             cell.userNameLabel.text = self.profileUser.name;
+
+            if (self.profileUser.bio) {
+                cell.bioLabel.text = self.profileUser.bio;
+                [TDAppDelegate fixHeightOfThisLabel:cell.bioLabel];
+                cell.bioLabel.hidden = NO;
+            }
         }
 
         return cell;
@@ -438,7 +450,10 @@
 {
     // 1st row is Profile Header
     if (needsProfileHeader && indexPath.section == 0) {
-        return profileHeaderHeight;
+
+        // min height is profileHeaderHeight
+        CGFloat cellHeight = topOfBioLabelInProfileHeader+self.profileUser.bioHeight+4.0;
+        return fmaxf(profileHeaderHeight, cellHeight);
     }
 
     NSInteger realRow = indexPath.section - (needsProfileHeader ? 1 : 0);

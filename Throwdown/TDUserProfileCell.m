@@ -37,6 +37,7 @@
 
 - (void)awakeFromNib {
     self.userNameLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:19.0];
+    self.bioLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:14.0];
 }
 
 @end

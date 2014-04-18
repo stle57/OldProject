@@ -30,6 +30,8 @@
     CGRect statusBarFrame;
     BOOL keybdUp;
     kFromProfileScreenType fromFrofileType;
+    UIImage *editedProfileImage90x90;
+    UIImageView *tempFlyInImageView;
 }
 
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
@@ -45,6 +47,8 @@
 @property (nonatomic, retain) NSString *password;
 @property (nonatomic, retain) TDUser *profileUser;
 @property (nonatomic, assign) kFromProfileScreenType fromFrofileType;
+@property (nonatomic, retain) UIImage *editedProfileImage90x90;
+@property (nonatomic, retain) UIImageView *tempFlyInImageView;
 
 -(IBAction)closeButtonHit:(id)sender;
 -(IBAction)saveButtonHit:(id)sender;
