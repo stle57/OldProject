@@ -15,6 +15,8 @@
 @interface TDUserEditCell : UITableViewCell
 {
     id <TDUserEditCellDelegate> __unsafe_unretained delegate;
+    CGRect textViewdOrigRect;
+    CGFloat bottomLineOrigY;
 }
 
 @property (nonatomic, assign) id <TDUserEditCellDelegate> __unsafe_unretained delegate;
@@ -25,5 +27,9 @@
 @property (weak, nonatomic) IBOutlet UIView *bottomLine;
 @property (weak, nonatomic) IBOutlet UIView *topLine;
 @property (weak, nonatomic) IBOutlet UITextField *textField;
+@property (weak, nonatomic) IBOutlet UITextView *textView;
+@property (nonatomic, assign) CGRect textViewdOrigRect;
+@property (nonatomic, assign) CGFloat bottomLineOrigY;
+
 
 @end

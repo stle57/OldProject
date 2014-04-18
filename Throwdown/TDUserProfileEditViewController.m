@@ -27,6 +27,7 @@
 @synthesize phone;
 @synthesize email;
 @synthesize password;
+@synthesize bio;
 @synthesize fromFrofileType;
 
 - (void)dealloc
@@ -43,6 +44,7 @@
     self.phone = nil;
     self.email = nil;
     self.password = nil;
+    self.bio = nil;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -89,6 +91,11 @@
     self.username = [TDCurrentUser sharedInstance].username;
     self.phone = [TDCurrentUser sharedInstance].phoneNumber;
     self.email = [TDCurrentUser sharedInstance].email;
+    if ([TDCurrentUser sharedInstance].bio) {
+        self.bio = [TDCurrentUser sharedInstance].bio;
+    } else {
+        self.bio = @"";
+    }
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -124,6 +131,7 @@
                                            email:self.email
                                         username:self.username
                                            phone:self.phone
+                                             bio:self.bio
                                         callback:^(BOOL success, NSDictionary *dict) {
                                             if (success) {
                                                 NSLog(@"EDIT SUCCESS:%@", dict);
@@ -136,17 +144,62 @@
                                             } else {
                                                 NSLog(@"EDIT FAILURE:%@", dict);
 
-                                                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Edit"
-                                                                                                message:@"These changes aren't valid."
+                                                NSMutableString *message = [NSMutableString string];
+
+                                                if ([dict objectForKey:@"name"]) {
+                                                    [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"name"] baseString:[NSString stringWithFormat:@"Name (%@)", self.name]]];
+                                                    self.name = [TDCurrentUser sharedInstance].name;
+                                                }
+                                                if ([dict objectForKey:@"username"]) {
+                                                    [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"username"] baseString:[NSString stringWithFormat:@"Username (%@)", self.username]]];
+                                                    self.username = [TDCurrentUser sharedInstance].username;
+                                                }
+                                                if ([dict objectForKey:@"phone_number"]) {
+                                                    [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"phone_number"] baseString:[NSString stringWithFormat:@"Phone (%@)", self.phone]]];
+                                                    self.phone = [TDCurrentUser sharedInstance].phoneNumber;
+                                                }
+                                                if ([dict objectForKey:@"email"]) {
+                                                    [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"email"] baseString:[NSString stringWithFormat:@"Email (%@)", self.email]]];
+                                                    self.email = [TDCurrentUser sharedInstance].email;
+                                                }
+                                                if ([dict objectForKey:@"bio"]) {
+
+                                                    if (self.bio && [self.bio length] > 8) {    // make sure it's not too long for the alert
+                                                        self.bio = [NSString stringWithFormat:@"%@...", [self.bio substringToIndex:7]];
+                                                    }
+                                                    [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"bio"] baseString:[NSString stringWithFormat:@"Bio (%@)", self.bio]]];
+                                                    if ([TDCurrentUser sharedInstance].bio) {
+                                                        self.bio = [TDCurrentUser sharedInstance].bio;
+                                                    } else {
+                                                        self.bio = @"";
+                                                    }
+                                                }
+
+                                                message = [[message stringByReplacingOccurrencesOfString:@" ."
+                                                                                              withString:@"."] mutableCopy];
+
+                                                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Edit Error"
+                                                                                                message:message
                                                                                                delegate:nil
                                                                                       cancelButtonTitle:@"OK"
                                                                                       otherButtonTitles:nil];
                                                 [alert show];
 
                                                 self.saveButton.enabled = YES;
+
+                                                [self.tableView reloadData];
                                             }
                                             
                                         }];
+}
+
+-(NSString *)buildStringFromErrors:(NSArray *)array baseString:(NSString *)baseString
+{
+    NSMutableString *returnString = [NSMutableString string];
+    for (NSString *string in array) {
+        [returnString appendFormat:@"%@ %@. ", baseString, string];
+    }
+    return returnString;
 }
 
 -(IBAction)closeButtonHit:(id)sender
@@ -246,28 +299,6 @@
     [self checkForSaveButton];
 }
 
--(BOOL)checkIfChanged
-{
-    if (([self.name length] > 0 && ![self.name isEqualToString:[TDCurrentUser sharedInstance].name]) ||
-        ([self.username length] > 0 && ![self.username isEqualToString:[TDCurrentUser sharedInstance].username]) ||
-        ([self.phone length] > 0 && ![self.phone isEqualToString:[TDCurrentUser sharedInstance].phoneNumber]) ||
-        ([self.email length] > 0 && ![self.email isEqualToString:[TDCurrentUser sharedInstance].email]))
-    {
-        return YES;
-    }
-
-    return NO;
-}
-
--(void)checkForSaveButton
-{
-    if ([self checkIfChanged]) {
-        self.saveButton.enabled = YES;
-    } else {
-        self.saveButton.enabled = NO;
-    }
-}
-
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
 
     if (self.saveButton.enabled)
@@ -348,6 +379,61 @@
     }
 }
 
+#pragma mark - Check Save Button
+-(BOOL)checkIfChanged
+{
+    if (([self.name length] > 0 && ![self.name isEqualToString:[TDCurrentUser sharedInstance].name]) ||
+        ([self.username length] > 0 && ![self.username isEqualToString:[TDCurrentUser sharedInstance].username]) ||
+        ([self.phone length] > 0 && ![self.phone isEqualToString:[TDCurrentUser sharedInstance].phoneNumber]) ||
+        ([self.bio length] > 0 && ![self.bio isEqualToString:[TDCurrentUser sharedInstance].bio]) ||
+        ([self.email length] > 0 && ![self.email isEqualToString:[TDCurrentUser sharedInstance].email]))
+    {
+        return YES;
+    }
+
+    return NO;
+}
+
+-(void)checkForSaveButton
+{
+    if ([self checkIfChanged]) {
+        self.saveButton.enabled = YES;
+    } else {
+        self.saveButton.enabled = NO;
+    }
+}
+
+#pragma mark - TextView
+- (void)textViewDidBeginEditing:(UITextView *)textView
+{
+    self.bio = textView.text;
+    [self checkForSaveButton];
+}
+
+- (void)textViewDidChange:(UITextView *)textView
+{
+    self.bio = textView.text;
+    [self checkForSaveButton];
+}
+
+- (void)textViewDidEndEditing:(UITextView *)textView
+{
+    self.bio = textView.text;
+    [self checkForSaveButton];
+}
+
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+{
+    // Too long?
+    if ([[textView.text stringByReplacingCharactersInRange:range withString:text] length] > 200) {
+        return NO;
+    }
+
+    self.bio = [textView.text stringByReplacingCharactersInRange:range withString:text];
+    [self checkForSaveButton];
+    return YES;
+}
+
 #pragma mark - AlertView
 -(void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
@@ -423,7 +509,7 @@
     switch (section) {
         case 0:
         {
-            return 3;
+            return 4;
         }
         break;
         case 1:
@@ -454,6 +540,7 @@
         cell = [topLevelObjects objectAtIndex:0];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.textField.delegate = self;
+        cell.textView.delegate = self;
     }
 
     cell.titleLabel.hidden = YES;
@@ -463,8 +550,14 @@
     cell.textField.hidden = YES;
     cell.textField.secureTextEntry = NO;
     cell.leftMiddleLabel.hidden = YES;
+    cell.textView.hidden = YES;
     cell.textField.tag = 800+(10*indexPath.section)+indexPath.row;
-    UIColor *textFieldPlaceHolderColor = [UIColor colorWithRed:(189.0/255.0) green:(189.0/255.0) blue:(189.0/255.0) alpha:1.0];;
+    UIColor *textFieldPlaceHolderColor = [UIColor colorWithRed:(189.0/255.0) green:(189.0/255.0) blue:(189.0/255.0) alpha:1.0];
+    cell.textView.frame = cell.textViewdOrigRect;
+    cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
+                                       cell.bottomLineOrigY,
+                                       cell.bottomLine.frame.size.width,
+                                       cell.bottomLine.frame.size.height);
 
     switch (indexPath.section) {
         case 0:
@@ -499,7 +592,23 @@
                     cell.textField.text = self.username;
                 }
                 break;
-                
+                case 3:
+                {
+                    cell.titleLabel.hidden = NO;
+                    cell.textView.hidden = NO;
+                    cell.titleLabel.text = @"Bio";
+                    cell.textView.text = self.bio;
+                    CGRect newTextFrame = cell.textView.frame;
+                    newTextFrame.size.height = [self tableView:tableView heightForRowAtIndexPath:indexPath];
+                    cell.textView.frame = newTextFrame;
+                    cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
+                                                       CGRectGetMaxY(newTextFrame),
+                                                       cell.bottomLine.frame.size.width,
+                                                       cell.bottomLine.frame.size.height);
+
+                }
+                break;
+
                 default:
                 break;
             }
@@ -565,6 +674,10 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if (indexPath.section == 0 && indexPath.row == 3) {   // Bio
+        return 90.0;
+    }
+
     return 44.0;
 }
 

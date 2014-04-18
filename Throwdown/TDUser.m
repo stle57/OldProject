@@ -23,7 +23,7 @@
     return self;
 }
 
--(void)userId:(NSNumber *)userId userName:(NSString *)userName name:(NSString *)name picture:(NSString *)picture
+-(void)userId:(NSNumber *)userId userName:(NSString *)userName name:(NSString *)name picture:(NSString *)picture bio:(NSString *)bio;
 {
     _userId = userId;
     _username = userName;
@@ -31,6 +31,7 @@
     if (picture) {
         _picture = picture;
     }
+    _bio = bio;
 }
 
 - (NSString *)description

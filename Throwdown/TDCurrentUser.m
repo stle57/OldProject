@@ -38,6 +38,7 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     [aCoder encodeObject:self.authToken forKey:@"authentication_token"];
     [aCoder encodeObject:self.deviceToken forKey:@"device_token"];
     [aCoder encodeObject:self.phoneNumber forKey:@"phone_number"];
+    [aCoder encodeObject:self.bio forKey:@"bio"];
 // not encoded    [aCoder encodeObject:self.picture forKey:@"picture"];
 }
 
@@ -52,6 +53,7 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
         _authToken   = [aDecoder decodeObjectForKey:@"authentication_token"];
         _deviceToken = [aDecoder decodeObjectForKey:@"device_token"];
         _phoneNumber = [aDecoder decodeObjectForKey:@"phone_number"];
+        _bio         = [aDecoder decodeObjectForKey:@"bio"];
 // not decoded        _picture = [aDecoder decodeObjectForKey:@"picture"];
     }
     return self;
@@ -66,6 +68,7 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     _authToken   = [dictionary objectForKey:@"authentication_token"];
     _phoneNumber = [dictionary objectForKey:@"phone_number"];
     _picture     = [dictionary objectForKey:@"picture"];
+    _bio         = [dictionary objectForKey:@"bio"];
     // _deviceToken not part of dictionary
 
     [self save];
@@ -88,6 +91,7 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     _authToken = nil;
     _deviceToken = nil;
     _picture = nil;
+    _bio = nil;
     [TDFileSystemHelper removeFileAt:[NSHomeDirectory() stringByAppendingString:DATA_LOCATION]];
 }
 
@@ -107,7 +111,8 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     [user userId:self.userId
         userName:self.username
             name:self.name
-         picture:self.picture];
+         picture:self.picture
+             bio:self.bio];
     return user;
 }
 

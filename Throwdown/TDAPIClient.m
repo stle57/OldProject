@@ -115,20 +115,21 @@
     }];
 }
 
--(void)editUserWithName:(NSString *)name email:(NSString *)email username:(NSString *)username phone:(NSString *)phone callback:(void (^)(BOOL success, NSDictionary *user))callback
+-(void)editUserWithName:(NSString *)name email:(NSString *)email username:(NSString *)username phone:(NSString *)phone bio:(NSString *)bio callback:(void (^)(BOOL success, NSDictionary *user))callback
 {
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/users/%@.json", [TDCurrentUser sharedInstance].userId]];
 
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
 
-    [self.httpManager PUT:url parameters:@{@"user": @{ @"name": name, @"username": username, @"phone_number": phone, @"email": email }, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [self.httpManager PUT:url parameters:@{@"user": @{ @"name": name, @"username": username, @"phone_number": phone, @"email": email, @"bio": bio }, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             NSDictionary *response = (NSDictionary *)responseObject;
+
             NSNumber *success = [response objectForKey:@"success"];
             if (success && [success boolValue]) {
                 callback([success boolValue], [response objectForKey:@"user"]);
             } else {
-                callback(NO, nil);
+                callback(NO, [response objectForKey:@"errors"]);
             }
         } else {
             NSLog(@"ERROR in edit user response, got: %@", [responseObject class]);

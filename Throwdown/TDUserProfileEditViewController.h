@@ -17,7 +17,7 @@
 #include "TDUserEditCell.h"
 #import "TDConstants.h"
 
-@interface TDUserProfileEditViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+@interface TDUserProfileEditViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextViewDelegate>
 {
     TDUser *profileUser;
     NSString *name;
@@ -25,6 +25,7 @@
     NSString *phone;
     NSString *email;
     NSString *password;
+    NSString *bio;
     CGRect origTableViewFrame;
     CGRect statusBarFrame;
     BOOL keybdUp;
@@ -40,6 +41,7 @@
 @property (nonatomic, retain) NSString *username;
 @property (nonatomic, retain) NSString *phone;
 @property (nonatomic, retain) NSString *email;
+@property (nonatomic, retain) NSString *bio;
 @property (nonatomic, retain) NSString *password;
 @property (nonatomic, retain) TDUser *profileUser;
 @property (nonatomic, assign) kFromProfileScreenType fromFrofileType;

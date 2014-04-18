@@ -55,9 +55,9 @@
     }];
 }
 
-- (void)editUserWithName:(NSString *)name email:(NSString *)email username:(NSString *)username phone:(NSString *)phone callback:(void (^)(BOOL success, NSDictionary *dict))callback
+- (void)editUserWithName:(NSString *)name email:(NSString *)email username:(NSString *)username phone:(NSString *)phone bio:(NSString *)bio callback:(void (^)(BOOL success, NSDictionary *dict))callback
 {
-    [[TDAPIClient sharedInstance] editUserWithName:name email:email username:username phone:phone callback:^(BOOL success, NSDictionary *user) {
+    [[TDAPIClient sharedInstance] editUserWithName:name email:email username:username phone:phone bio:bio callback:^(BOOL success, NSDictionary *user) {
         if (success) {
             NSLog(@"---SUCCESS:%@", user);
             if (user) {

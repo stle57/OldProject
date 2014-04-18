@@ -16,6 +16,7 @@
 @property (nonatomic, copy, readonly) NSString *name;
 @property (nonatomic, copy, readonly) NSString *email;
 @property (nonatomic, copy, readonly) NSString *phoneNumber;
+@property (nonatomic, copy, readonly) NSString *bio;
 @property (nonatomic, copy, readonly) NSString *authToken;
 @property (nonatomic, copy, readonly) NSString *deviceToken;
 @property (strong, nonatomic, readonly) NSString *picture;
