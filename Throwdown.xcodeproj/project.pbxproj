@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		2D00148B18CFB57C0070DE16 /* TDTwoButtonView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D00148918CFB57C0070DE16 /* TDTwoButtonView.m */; };
+		2D01951C1901DAF4000CBF74 /* TDNoPostsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D01951A1901DAF4000CBF74 /* TDNoPostsCell.m */; };
+		2D01951D1901DAF4000CBF74 /* TDNoPostsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D01951B1901DAF4000CBF74 /* TDNoPostsCell.xib */; };
 		2D1AEE7018C937560055C315 /* TDDetailsLikesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1AEE6E18C937560055C315 /* TDDetailsLikesCell.m */; };
 		2D1AEE7118C937560055C315 /* TDDetailsLikesCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D1AEE6F18C937560055C315 /* TDDetailsLikesCell.xib */; };
 		2D2E832E18CA579B00846B2E /* TDComment.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D2E832D18CA579B00846B2E /* TDComment.m */; };
@@ -123,6 +125,9 @@
 /* Begin PBXFileReference section */
 		2D00148818CFB57C0070DE16 /* TDTwoButtonView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTwoButtonView.h; sourceTree = "<group>"; };
 		2D00148918CFB57C0070DE16 /* TDTwoButtonView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTwoButtonView.m; sourceTree = "<group>"; };
+		2D0195191901DAF4000CBF74 /* TDNoPostsCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDNoPostsCell.h; sourceTree = "<group>"; };
+		2D01951A1901DAF4000CBF74 /* TDNoPostsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDNoPostsCell.m; sourceTree = "<group>"; };
+		2D01951B1901DAF4000CBF74 /* TDNoPostsCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDNoPostsCell.xib; sourceTree = "<group>"; };
 		2D1AEE6D18C937560055C315 /* TDDetailsLikesCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDDetailsLikesCell.h; sourceTree = "<group>"; };
 		2D1AEE6E18C937560055C315 /* TDDetailsLikesCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDDetailsLikesCell.m; sourceTree = "<group>"; };
 		2D1AEE6F18C937560055C315 /* TDDetailsLikesCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDDetailsLikesCell.xib; sourceTree = "<group>"; };
@@ -661,6 +666,9 @@
 				2DC7B6A918FF3D8500261BF7 /* TDToastView.xib */,
 				2DC7B6A718FF3D8500261BF7 /* TDToastView.h */,
 				2DC7B6A818FF3D8500261BF7 /* TDToastView.m */,
+				2D01951B1901DAF4000CBF74 /* TDNoPostsCell.xib */,
+				2D0195191901DAF4000CBF74 /* TDNoPostsCell.h */,
+				2D01951A1901DAF4000CBF74 /* TDNoPostsCell.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -776,6 +784,7 @@
 				2DA5F05318D36745003D2F99 /* ProximaNova-Regular.otf in Resources */,
 				2DA8639418F49D190089B048 /* TDUserProfileCell.xib in Resources */,
 				2D3F8DF718CFC81E00333F0B /* TDTwoButtonView.xib in Resources */,
+				2D01951D1901DAF4000CBF74 /* TDNoPostsCell.xib in Resources */,
 				2DBA430218DA455500366737 /* TDTextField.xib in Resources */,
 				2DA5F05218D36745003D2F99 /* ProximaNova-Light.otf in Resources */,
 				2D1AEE7118C937560055C315 /* TDDetailsLikesCell.xib in Resources */,
@@ -849,6 +858,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D01951C1901DAF4000CBF74 /* TDNoPostsCell.m in Sources */,
 				A19FF61018970BBB001A0AD0 /* RSModel.m in Sources */,
 				A19FF61118970BBB001A0AD0 /* RSStorageObject.m in Sources */,
 				A1F02FD418C92277002FEB2F /* TDPostUpload.m in Sources */,

@@ -64,6 +64,11 @@
     profileHeaderHeight = profileCell.frame.size.height;
     topOfBioLabelInProfileHeader = profileCell.bioLabel.frame.origin.y;
     profileCell = nil;
+    topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoPostsCell" owner:self options:nil];
+    TDNoPostsCell *noPostsCell = [topLevelObjects objectAtIndex:0];
+    noPostsHeight = noPostsCell.frame.size.height;
+    noPostsCell = nil;
+
 
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.delegate = self;

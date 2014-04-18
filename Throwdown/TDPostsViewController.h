@@ -27,6 +27,7 @@
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include "TDUserProfileCell.h"
+#include "TDNoPostsCell.h"
 
 @interface TDPostsViewController : UIViewController <TDLikeViewDelegate, TDPostViewDelegate, TDTwoButtonViewDelegate, TDDetailsCommentsCellDelegate, TDMoreCommentsDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate, TDDetailViewControllerDelegate, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate, TDUserProfileCellDelegate>
 {
@@ -45,6 +46,7 @@
     CGFloat moreCommentRowHeight;
     CGFloat activityRowHeight;
     CGFloat profileHeaderHeight;
+    CGFloat noPostsHeight;
     BOOL updatingAtBottom;
     BOOL showBottomSpinner;
     CGPoint tableOffset;
