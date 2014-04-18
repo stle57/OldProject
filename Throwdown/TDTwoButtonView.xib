@@ -46,11 +46,6 @@
                             <action selector="commentButtonPressed:" destination="P0B-TE-DmU" eventType="touchUpInside" id="7Jw-Dp-SSD"/>
                         </connections>
                     </button>
-                    <view userInteractionEnabled="NO" contentMode="scaleToFill" id="hGl-R2-oB6" userLabel="Button separator line">
-                        <rect key="frame" x="159" y="5" width="1" height="32"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" red="0.7843137255" green="0.7843137255" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
-                    </view>
                     <view userInteractionEnabled="NO" contentMode="scaleToFill" id="V4h-t3-u6G" userLabel="Padding line">
                         <rect key="frame" x="0.0" y="39" width="320" height="5"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
