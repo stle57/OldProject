@@ -21,6 +21,8 @@
 @property (weak, nonatomic) IBOutlet UIImageView *userImageView;
 @property (weak, nonatomic) IBOutlet UILabel *userNameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *bioLabel;
+@property (weak, nonatomic) IBOutlet UIView *whiteUnderView;
+@property (weak, nonatomic) IBOutlet UIView *bottomLine;
 @property (nonatomic, assign) CGRect origBioLabelRect;
 
 @end

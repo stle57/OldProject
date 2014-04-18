@@ -335,6 +335,14 @@
                 cell.bioLabel.text = self.profileUser.bio;
                 [TDAppDelegate fixHeightOfThisLabel:cell.bioLabel];
                 cell.bioLabel.hidden = NO;
+                cell.whiteUnderView.frame = CGRectMake(cell.whiteUnderView.frame.origin.x,
+                                                       cell.whiteUnderView.frame.origin.y,
+                                                       cell.whiteUnderView.frame.size.width,
+                                                       [self tableView:tableView heightForRowAtIndexPath:indexPath]-8.0);
+                cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
+                                                   CGRectGetMaxY(cell.whiteUnderView.frame)-(1.0/[[UIScreen mainScreen] scale]),
+                                                   cell.bottomLine.frame.size.width,
+                                                   (1.0 / [[UIScreen mainScreen] scale]));
             }
         }
 
@@ -452,7 +460,7 @@
     if (needsProfileHeader && indexPath.section == 0) {
 
         // min height is profileHeaderHeight
-        CGFloat cellHeight = topOfBioLabelInProfileHeader+self.profileUser.bioHeight+4.0;
+        CGFloat cellHeight = topOfBioLabelInProfileHeader+self.profileUser.bioHeight+12.0;
         return fmaxf(profileHeaderHeight, cellHeight);
     }
 
