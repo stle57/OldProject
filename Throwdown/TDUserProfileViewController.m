@@ -13,27 +13,38 @@
 #import "TDComment.h"
 #import "TDViewControllerHelper.h"
 #import "AFNetworking.h"
+#import "TDCurrentUser.h"
+
+@interface TDUserProfileViewController ()
+
+@property (nonatomic) NSMutableArray *userPosts;
+@property (nonatomic) TDUser *user;
+
+@end
 
 @implementation TDUserProfileViewController
 
-- (void)dealloc
-{
+- (void)dealloc {
+    self.user = nil;
+    self.userPosts = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:TDUpdateWithUserChangeNotification
                                                   object:nil];
 }
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     needsProfileHeader = YES;
 
     [super viewDidLoad];
 
+    self.userPosts = [[NSMutableArray alloc] init];
+
     // Title
     self.titleLabel.textColor = [TDConstants headerTextColor];
-    self.titleLabel.text = self.profileUser.username;
     self.titleLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:20.0];
     [self.navigationItem setTitleView:self.titleLabel];
+
+
 
     // Bar Button Items
     switch (self.fromProfileType) {
@@ -70,39 +81,32 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
 }
 
--(void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO animated:NO];
 
-    [super viewWillAppear:animated];
-
-    if (!self.posts && goneDownstream) {
+    if (!self.userPosts && goneDownstream) {
         [self refreshPostsList];
         [self fetchPostsUpStream];
     }
     goneDownstream = NO;
 }
 
--(void)viewWillDisappear:(BOOL)animated
-{
+- (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-
-//    [[TDPostAPI sharedInstance] clearPostsForUser]; // Clear so that we can use this display again
-//    self.posts = nil;
 }
 
-- (void)didReceiveMemoryWarning
-{
+- (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    self.user = nil;
+    self.userPosts  = nil;
 }
 
--(IBAction)settingsButtonHit:(id)sender
-{
+- (IBAction)settingsButtonHit:(id)sender {
     goneDownstream = YES;
 
     TDUserProfileEditViewController *vc = [[TDUserProfileEditViewController alloc] initWithNibName:@"TDUserProfileEditViewController" bundle:nil ];
-    vc.profileUser = self.profileUser;
+    vc.profileUser = [[TDCurrentUser sharedInstance] currentUserObject];
     vc.fromFrofileType = self.fromProfileType;
     [self.navigationController pushViewController:vc animated:YES];
 }
@@ -111,51 +115,95 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
--(IBAction)closeButtonHit:(id)sender {
+- (IBAction)closeButtonHit:(id)sender {
     [self.navigationController dismissViewControllerAnimated:YES
                                                   completion:nil];
 }
 
+- (void)unwindToRoot {
+    [self.navigationController dismissViewControllerAnimated:YES
+                                                  completion:nil];
+}
+
+
 #pragma mark - Posts
--(void)fetchPostsUpStream
-{
+
+- (void)fetchPostsUpStream {
     debug NSLog(@"userprofile-fetchPostsUpStream");
-    [[TDPostAPI sharedInstance] fetchPostsUpstreamForUser:self.profileUser.userId];
-}
-
--(BOOL)fetchPostsDownStream
-{
-    debug NSLog(@"userprofile-fetchPostsDownStream");
-    return [[TDPostAPI sharedInstance] fetchPostsDownstreamForUser:self.profileUser.userId];
-}
-
--(NSArray *)postsForThisScreen
-{
-    debug NSLog(@"userprofile-postsForThisScreen");
-    NSMutableArray *postsWithUsers = [NSMutableArray array];
-    for (TDPost *aPost in [[TDPostAPI sharedInstance] getPostsForUser]) {
-        [aPost replaceUser:self.profileUser];
-        [postsWithUsers addObject:aPost];
-    }
-
-    return postsWithUsers;
-}
-
-- (NSNumber *)lowestIdOfPosts {
-    return [[TDPostAPI sharedInstance] lowestIdOfPostsForUser];
-}
-
-#pragma mark - Refresh Control
-- (void)refreshControlUsed {
-    debug NSLog(@"Profile-refreshControlUsed");
-    [[TDPostAPI sharedInstance] fetchPostsForUserUpstreamWithErrorHandlerStart:nil userId:self.profileUser.userId error:^{
+    [[TDPostAPI sharedInstance] fetchPostsUpstreamForUser:self.userId success:^(NSDictionary *response) {
+        [self handlePostsResponse:response fromStart:YES];
         [self endRefreshControl];
     }];
 }
 
-#pragma mark - Post Delegate
+- (BOOL)fetchPostsDownStream {
+    debug NSLog(@"userprofile-fetchPostsDownStream");
+    return [[TDPostAPI sharedInstance] fetchPostsDownstreamForUser:self.userId lowestId:[self lowestIdOfPosts] success:^(NSDictionary *response) {
+        [self handlePostsResponse:response fromStart:NO];
+    }];
+}
+
+- (NSNumber *)lowestIdOfPosts {
+    NSNumber *lowestId = [NSNumber numberWithLongLong:LONG_LONG_MAX];
+    for (TDPost *post in self.userPosts) {
+        if ([lowestId compare:post.postId] == NSOrderedDescending) {
+            lowestId = post.postId;
+        }
+    }
+    long lowest = [lowestId longValue]-1;
+    lowestId = [NSNumber numberWithLong:lowest];
+    return lowestId;
+}
+
+- (void)handlePostsResponse:(NSDictionary *)response fromStart:(BOOL)start {
+    debug NSLog(@"%@", response);
+
+    if (start) {
+        self.userPosts = nil;
+        // TODO update user info
+        self.user = [[TDUser alloc] initWithDictionary:[response valueForKeyPath:@"user"]];
+        self.titleLabel.text = self.user.username;
+    }
+
+    if (!self.userPosts) {
+        self.userPosts = [[NSMutableArray alloc] init];
+    }
+
+    for (NSDictionary *postObject in [response valueForKeyPath:@"posts"]) {
+        [self.userPosts addObject:[[TDPost alloc]initWithDictionary:postObject]];
+    }
+
+    [self refreshPostsList];
+}
+
+#pragma mark - TDPostsViewController overrides
+
+- (TDUser *)getUser {
+    return self.user;
+}
+
+- (NSArray *)postsForThisScreen {
+    debug NSLog(@"userprofile-postsForThisScreen");
+//    NSMutableArray *postsWithUsers = [NSMutableArray array];
+//    for (TDPost *aPost in [[TDPostAPI sharedInstance] getPostsForUser]) {
+////        [aPost replaceUser:self.profileUser];
+//        [postsWithUsers addObject:aPost];
+//    }
+//
+    return self.userPosts;
+}
+
+
+#pragma mark - Refresh Control
+
+- (void)refreshControlUsed {
+    [self fetchPostsUpStream];
+}
+
+#pragma mark - PostView Delegate
+
 - (void)userButtonPressedFromRow:(NSInteger)row {
-    debug NSLog(@"profile-userButtonPressedFromRow:%ld %@ %@", (long)row, self.profileUser.userId, [[TDCurrentUser sharedInstance] currentUserObject].userId);
+    debug NSLog(@"profile-userButtonPressedFromRow:%ld %@ %@", (long)row, self.userId, [[TDCurrentUser sharedInstance] currentUserObject].userId);
 
     if (self.posts && [self.posts count] > row) {
         TDPost *post = (TDPost *)[self.posts objectAtIndex:row];
@@ -164,7 +212,7 @@
 }
 
 - (void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber {
-    debug NSLog(@"profile-userButtonPressedFromRow:%ld commentNumber:%ld, %@ %@", (long)row, (long)commentNumber, self.profileUser.userId, [[TDCurrentUser sharedInstance] currentUserObject].userId);
+    debug NSLog(@"profile-userButtonPressedFromRow:%ld commentNumber:%ld, %@ %@", (long)row, (long)commentNumber, self.userId, [[TDCurrentUser sharedInstance] currentUserObject].userId);
 
     // row - 1 because we have a profile header at row 0
     if (self.posts && [self.posts count] > row - 1) {
@@ -177,7 +225,7 @@
 }
 
 - (void)showUserProfile:(TDUser *)user {
-    if ([self.profileUser.userId isEqualToNumber:user.userId]) {
+    if ([self.userId isEqualToNumber:user.userId]) {
         // Same user - do nothing
         return;
     }
@@ -185,7 +233,7 @@
     goneDownstream = YES;
 
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
-    vc.profileUser = user;
+    vc.userId = user.userId;
     vc.fromProfileType = kFromProfileScreenType_OtherUser;
     [self.navigationController pushViewController:vc animated:YES];
 }
@@ -194,9 +242,8 @@
 {
     NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
 
-    if ([[[TDCurrentUser sharedInstance] currentUserObject].userId isEqualToNumber:self.profileUser.userId])
-    {
-        self.profileUser = [[TDCurrentUser sharedInstance] currentUserObject];
+    if ([[[TDCurrentUser sharedInstance] currentUserObject].userId isEqualToNumber:self.userId]) {
+        self.user = [[TDCurrentUser sharedInstance] currentUserObject];
     }
 
     [self.tableView reloadData];

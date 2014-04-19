@@ -8,23 +8,27 @@
 
 #import "TDToastView.h"
 #import "TDAppDelegate.h"
+#import "TDNavigationController.h"
 
-#define kToastTimeOnScreen  5.0
+#define kToastTimeOnScreen  3.0
 #define kToastHeight        50.0
+
+@interface TDToastView ()
+
+@property (nonatomic) UIButton *button;
+@property (nonatomic) CGPoint centerUp;
+@property (nonatomic) BOOL removed;
+
+@end
 
 @implementation TDToastView
 
-@synthesize delegate;
-@synthesize gotoPosition;
-
-- (void)dealloc
-{
-    delegate = nil;
-    self.gotoPosition = nil;
+- (void)dealloc {
+    self.delegate = nil;
+    self.payload = nil;
 }
 
-+ (id)toastView
-{
++ (id)toastView {
     TDToastView *toastView = [[[NSBundle mainBundle] loadNibNamed:@"TDToastView" owner:nil options:nil] lastObject];
     if ([toastView isKindOfClass:[TDToastView class]]) {
         return toastView;
@@ -33,8 +37,7 @@
     }
 }
 
-+(void)removeOldToasts
-{
++ (void)removeOldToasts {
     // Remove old ones
     for (UIView *oldToastView in [NSArray arrayWithArray:[[TDAppDelegate appDelegate].window subviews]]) {
         if (oldToastView.tag == TOAST_TAG) {
@@ -44,11 +47,10 @@
     }
 }
 
--(void)text:(NSString *)text icon:(kToastIconType)iconType gotoPosition:(NSNumber *)positionInApp
-{
+- (void)text:(NSString *)text icon:(kToastIconType)iconType payload:(NSDictionary *)payload {
     self.userInteractionEnabled = YES;
 
-    self.gotoPosition = positionInApp;
+    self.payload = payload;
 
     self.label.font = [UIFont fontWithName:@"ProximaNova-Regular" size:16.5];
     self.label.text = text;
@@ -57,49 +59,60 @@
     UIImage *iconImage = nil;
     switch (iconType) {
         case kToastIconType_None:
-        {
             self.iconImageView.hidden = YES;
-        }
-        break;
+            break;
         case kToastIconType_Warning:
-        {
-            self.iconImageView.hidden = NO;
             iconImage = [UIImage imageNamed:@"td_error_toast_icon"];
-            self.iconImageView.image = iconImage;
-        }
-        break;
+            self.coloredBackground.backgroundColor = [UIColor colorWithRed:(150/255) green:(50/255) blue:(50/255) alpha:0.9];
+            self.label.textColor = [UIColor whiteColor];
+            break;
+        case kToastIconType_Info:
+            iconImage = [UIImage imageNamed:@"td_info_toast_icon"];
+            self.coloredBackground.backgroundColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:0.9];
+            self.label.textColor =[UIColor darkGrayColor];
+            break;
 
         default:
-        break;
+            break;
     }
 
     if (iconImage) {
+        self.iconImageView.hidden = NO;
+        self.iconImageView.image = iconImage;
+
+        if (self.label.frame.size.width > self.frame.size.width) {
+            CGRect frame = self.label.frame;
+            frame.size.width = self.frame.size.width - self.iconImageView.frame.size.width - 5;
+            self.label.frame = frame;
+        }
+
         self.iconImageView.frame = CGRectMake(self.iconImageView.frame.origin.x,
                                               self.iconImageView.frame.origin.y,
                                               iconImage.size.width,
                                               iconImage.size.height);
         self.iconImageView.center = CGPointMake(self.iconImageView.center.x,
                                                 self.center.y);
+
+        // Center text and icon
+        self.iconImageView.frame = CGRectMake((self.frame.size.width - self.iconImageView.frame.size.width - self.label.frame.size.width) / 2.0,
+                                              self.iconImageView.frame.origin.y,
+                                              self.iconImageView.frame.size.width,
+                                              self.iconImageView.frame.size.height);
+
+        self.label.center = CGPointMake(CGRectGetMaxX(self.iconImageView.frame) + 10.0 + self.label.frame.size.width / 2.0,
+                                        self.center.y);
+    } else {
+        if (self.label.frame.size.width > self.frame.size.width) {
+            CGRect frame = self.label.frame;
+            frame.size.width = self.frame.size.width;
+            self.label.frame = frame;
+        }
+        self.label.center = self.center;
     }
     iconImage = nil;
-
-
-    // Center text and icon
-    if (self.iconImageView.hidden) {
-        self.label.center = self.center;
-    } else {
-        self.iconImageView.frame = CGRectMake((self.frame.size.width-self.iconImageView.frame.size.width-self.label.frame.size.width)/2.0,
-                                      self.iconImageView.frame.origin.y,
-                                      self.iconImageView.frame.size.width,
-                                      self.iconImageView.frame.size.height);
-
-        self.label.center = CGPointMake(CGRectGetMaxX(self.iconImageView.frame)+10.0+self.label.frame.size.width/2.0,
-                                                self.center.y);
-    }
 }
 
--(void)showToast
-{
+- (void)showToast {
     self.tag = TOAST_TAG;
     CGRect statusFrame = [UIApplication sharedApplication].statusBarFrame;
     CGFloat toastOffSet = statusFrame.size.height;
@@ -113,55 +126,58 @@
     self.center = CGPointMake(self.center.x,
                               self.center.y-CGRectGetMaxY(self.frame));
 
-    CGPoint centerUp = self.center;
+    self.centerUp = self.center;
 
     // Have to add a button since tap gestures and touchBegan don't work on an animated view(!)
-    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(0.0,
+    self.button = [[UIButton alloc] initWithFrame:CGRectMake(0.0,
                                                                 toastOffSet,
                                                                 [TDAppDelegate appDelegate].window.frame.size.width,
                                                                 kToastHeight)];
-    button.backgroundColor = [UIColor clearColor];
-    [button addTarget:self
+    self.button.backgroundColor = [UIColor clearColor];
+    [self.button addTarget:self
                action:@selector(tappedButton:)
      forControlEvents:UIControlEventTouchUpInside];
-    [[TDAppDelegate appDelegate].window addSubview:button];
+    [[TDAppDelegate appDelegate].window addSubview:self.button];
 
     [UIView animateWithDuration: 0.3
                           delay: 0.0
                         options: UIViewAnimationOptionCurveEaseInOut
                      animations:^{
-
                          self.center = origCenter;
-
                      }
                      completion:^(BOOL animDownDone){
-
-                         if (animDownDone)
-                         {
-
-                             [UIView animateWithDuration: 0.2
-                                                   delay: kToastTimeOnScreen
-                                                 options: UIViewAnimationOptionCurveEaseInOut
-                                              animations:^{
-
-                                                  self.center = centerUp;
-
-                                              }
-                                              completion:^(BOOL animUpDone){
-
-                                                  if (animUpDone)
-                                                  {
-                                                      [button removeFromSuperview];
-                                                      [self removeFromSuperview];
-                                                  }
-                                              }];
+                         if (animDownDone) {
+                             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kToastTimeOnScreen * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                                 [self remove];
+                             });
                          }
                      }];
 }
 
--(IBAction)tappedButton:(id)sender{
+- (void)remove {
+    if (!self.removed) {
+        self.removed = YES;
+        [UIView animateWithDuration: 0.2
+                              delay: 0.0
+                            options: UIViewAnimationOptionCurveEaseInOut
+                         animations:^{
+                             self.center = self.centerUp;
+                         }
+                         completion:^(BOOL animUpDone){
+                             if (animUpDone) {
+                                 [self.button removeFromSuperview];
+                                 [self removeFromSuperview];
+                             }
+                         }];
+    }
+}
 
-    NSLog(@"tapped with goto:%@", self.gotoPosition);
+- (IBAction)tappedButton:(id)sender {
+    debug NSLog(@"Toast tapped with payload:%@", self.payload);
+    [self remove];
+    if ([self.delegate respondsToSelector:@selector(toastNotificationTappedPayload:)]) {
+        [self.delegate performSelector:@selector(toastNotificationTappedPayload:) withObject:self.payload];
+    }
 }
 
 @end

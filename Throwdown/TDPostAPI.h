@@ -30,11 +30,8 @@
 - (UIImage *)getImage:(NSString *)imageName;
 - (void)deletePostWithId:(NSNumber *)postId;
 
-- (void)fetchPostsUpstreamForUser:(NSNumber *)userId;
-- (BOOL)fetchPostsDownstreamForUser:(NSNumber *)userId;
-- (void)fetchPostsForUserUpstreamWithErrorHandlerStart:(NSNumber *)start userId:(NSNumber *)userId error:(void (^)(void))errorHandler;
-- (NSArray *)getPostsForUser;
-- (NSNumber *)lowestIdOfPostsForUser;
-- (void)clearPostsForUser;
+- (void)fetchPostsUpstreamForUser:(NSNumber *)userId success:(void(^)(NSDictionary *response))successHandler;
+- (BOOL)fetchPostsDownstreamForUser:(NSNumber *)userId lowestId:(NSNumber *)lowestId success:(void(^)(NSDictionary *))successHandler;
+- (void)fetchPostsForUserUpstreamWithErrorHandlerStart:(NSNumber *)start userId:(NSNumber *)userId error:(void (^)(void))errorHandler success:(void(^)(NSDictionary *response))successHandler;
 
 @end

@@ -34,6 +34,7 @@
 
 @property (nonatomic, assign) id <TDDetailViewControllerDelegate> __unsafe_unretained delegate;
 @property (nonatomic, retain) TDPost *post;
+@property (nonatomic) NSNumber *postId;
 @property (nonatomic, retain) TDTypingView *typingView;
 @property (nonatomic, retain) UIView *frostedViewWhileTyping;
 @property (weak, nonatomic) IBOutlet UIView *postViewContainer;

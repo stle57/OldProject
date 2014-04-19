@@ -12,6 +12,13 @@
 #import "TestFlight.h"
 #import "Flurry.h"
 #import <Crashlytics/Crashlytics.h>
+#import "TDAPIClient.h"
+#import "TDHomeViewController.h"
+
+// Used for class reference:
+#import "TDRecordVideoViewController.h"
+#import "TDEditVideoViewController.h"
+#import "TDShareVideoViewController.h"
 
 @implementation TDAppDelegate
 
@@ -35,7 +42,10 @@
     self.window.rootViewController = initViewController;
     [self.window makeKeyAndVisible];
 
-//    [[UIApplication sharedApplication] unregisterForRemoteNotifications];
+    if ([launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
+        [self openPushNotification:[launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]];
+    }
+
     debug NSLog(@"app launched with options: %@", launchOptions);
     return YES;
 }
@@ -80,23 +90,78 @@
     NSLog(@"Failed device token error: %@", error);
 }
 
+/*
+ * Called when:
+ * - app is open and receives a notification
+ * - tapping a notification to open the app
+ */
 - (void)application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary*)userInfo
 {
-	// debug NSLog(@"Received notification: %@", userInfo);
-    // TODO: notify home view controller of new push notification (probably with NSNotification or:
-    // UINavigationController *navigationController = (UINavigationController*)_window.rootViewController;
-    // TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
+	debug NSLog(@"Received notification: %@", userInfo);
+
+    UINavigationController *navigationController = (UINavigationController*)_window.rootViewController;
+    TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
+
+    if ([application applicationState] == UIApplicationStateInactive) {
+        // App was re-launched by tapping a notification
+
+        [self openPushNotification:userInfo];
+
+    } else if ([application applicationState] == UIApplicationStateActive) {
+        // App is already active, show in-app notification
+
+        [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUpdate
+                                                            object:self
+                                                          userInfo:@{@"incrementCount": @1}];
+
+
+        // Don't show notification when user is creating something on these controllers:
+        NSArray *const kControllersNotElegibleForNotification = @[
+            [TDRecordVideoViewController class],
+            [TDEditVideoViewController class],
+            [TDShareVideoViewController class]];
+        UIViewController *controller = [TDAppDelegate topMostController];
+        if ([kControllersNotElegibleForNotification containsObject:[controller class]]) {
+            // containsObject should be returning YES or NO but returns nil !?
+        } else {
+
+            if ([userInfo objectForKey:@"activity_id"]) {
+                [[TDAPIClient sharedInstance] updateActivity:[userInfo objectForKey:@"activity_id"] seen:YES clicked:NO];
+            }
+
+            NSDictionary *aps = [userInfo objectForKey:@"aps"];
+            if (aps && [aps objectForKey:@"alert"]) {
+                [[TDAppDelegate appDelegate] showToastWithText:[aps objectForKey:@"alert"]
+                                                          type:kToastIconType_Info
+                                                       payload:userInfo
+                                                      delegate:homeViewController];
+            }
+        }
+    }
+}
+
+- (void)openPushNotification:(NSDictionary *)notification {
+    // Reset app badge count when user opens directly
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+
+    UINavigationController *navigationController = (UINavigationController*)_window.rootViewController;
+    TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
+
+    if ([notification objectForKey:@"activity_id"]) {
+        [[TDAPIClient sharedInstance] updateActivity:[notification objectForKey:@"activity_id"] seen:YES clicked:YES];
+    }
+
+    [homeViewController openPushNotification:notification];
 }
 
 #pragma mark - app delegate
 
-+ (TDAppDelegate*)appDelegate
-{
++ (TDAppDelegate*)appDelegate {
 	return (TDAppDelegate*)[[UIApplication sharedApplication] delegate];
 }
 
 #pragma mark - Post Operations
--(TDPost *)postWithPostId:(NSNumber *)postId {
+- (TDPost *)postWithPostId:(NSNumber *)postId {
     NSArray *posts = [[TDPostAPI sharedInstance] getPosts];
     for (TDPost *post in posts) {
         if (post.postId == postId) {
@@ -107,7 +172,20 @@
     return nil;
 }
 
+
+// TODO: These should be moved to helper class
 #pragma mark - Helpers
+
++ (UIViewController *)topMostController {
+    UIViewController *topController = [UIApplication sharedApplication].keyWindow.rootViewController;
+
+    while (topController.presentedViewController) {
+        topController = topController.presentedViewController;
+    }
+
+    return topController;
+}
+
 + (UIColor *)randomColor {
     CGFloat red =  (CGFloat)random()/(CGFloat)RAND_MAX;
     CGFloat blue = (CGFloat)random()/(CGFloat)RAND_MAX;
@@ -226,8 +304,7 @@
 }
 
 #pragma mark - Toast
--(void)showToastWithText:(NSString *)text type:(kToastIconType)type gotoPosition:(NSNumber *)positionInApp
-{
+- (void)showToastWithText:(NSString *)text type:(kToastIconType)type payload:(NSDictionary *)payload delegate:(id<TDToastViewDelegate>)delegate {
     // Remove old ones
     [TDToastView removeOldToasts];
 
@@ -235,9 +312,13 @@
     TDToastView *toastView = [TDToastView toastView];
     [self.window addSubview:toastView];
 
+    if (delegate) {
+        toastView.delegate = delegate;
+    }
+
     [toastView text:text
-               icon:kToastIconType_Warning
-       gotoPosition:positionInApp];
+               icon:type
+       payload:payload];
     [toastView showToast];
 }
 

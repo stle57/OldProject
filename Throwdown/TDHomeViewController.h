@@ -15,7 +15,8 @@
 #import <MessageUI/MessageUI.h>
 #import "TDDetailViewController.h"
 #import "TDPostsViewController.h"
+#import "TDToastView.h"
 
-@interface TDHomeViewController : TDPostsViewController
-
+@interface TDHomeViewController : TDPostsViewController<TDToastViewDelegate>
+- (void)openPushNotification:(NSDictionary *)notification;
 @end

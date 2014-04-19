@@ -162,6 +162,8 @@
     }];
 }
 
+#pragma mark - Activity / Notifications
+
 - (void)getActivityForUserToken:(NSString *)userToken success:(void (^)(NSArray *activities))success failure:(void (^)(void))failure {
     NSString *url = [NSString stringWithFormat:@"%@/api/v1/activities.json?user_token=%@", [TDConstants getBaseURL], userToken];
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
@@ -176,4 +178,16 @@
     }];
 }
 
+- (void)updateActivity:(NSNumber *)activityId seen:(BOOL)seen clicked:(BOOL)clicked {
+    NSString *url = [NSString stringWithFormat:@"%@/api/v1/activities/%@.json", [TDConstants getBaseURL], activityId];
+    NSMutableDictionary *params = [@{@"user_token": [TDCurrentUser sharedInstance].authToken} mutableCopy];
+    if (seen) {
+        [params addEntriesFromDictionary:@{@"seen": @true }];
+    }
+    if (clicked) {
+        [params addEntriesFromDictionary:@{@"clicked": @true }];
+    }
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [self.httpManager PUT:url parameters:params success:nil failure:nil]; // Don't care about the result
+}
 @end

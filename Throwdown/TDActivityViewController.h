@@ -10,4 +10,6 @@
 
 @interface TDActivityViewController : UITableViewController
 
+- (void)unwindToRoot;
+
 @end

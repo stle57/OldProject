@@ -52,7 +52,6 @@
     CGPoint tableOffset;
     CGRect statusBarFrame;
     BOOL needsProfileHeader;
-    TDUser *profileUser;
     CGFloat topOfBioLabelInProfileHeader;
 }
 
@@ -67,16 +66,17 @@
 @property (nonatomic, retain) UIDynamicAnimator *animator;
 @property (strong, nonatomic) TDHomeHeaderView *headerView;
 @property (strong, nonatomic) UIActivityIndicatorView *playerSpinner;
-@property (nonatomic, retain) TDUser *profileUser;
+@property (nonatomic, retain) NSNumber *userId;
 
--(NSArray *)postsForThisScreen;
--(void)reloadPosts;
+- (NSArray *)postsForThisScreen;
+- (void)reloadPosts;
 - (void)refreshPostsList;
 - (void)refreshControlUsed;
 - (void)endRefreshControl;
 - (void)showWelcomeController;
--(void)startSpinner:(NSNotification *)notification;
--(void)stopSpinner:(NSNotification *)notification;
--(void)stopSpinner;
--(void)startLoadingSpinner;
+- (void)startSpinner:(NSNotification *)notification;
+- (void)stopSpinner:(NSNotification *)notification;
+- (void)stopSpinner;
+- (void)startLoadingSpinner;
+- (TDUser *)getUser;
 @end

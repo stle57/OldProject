@@ -9,6 +9,7 @@
 #import "TDHomeViewController.h"
 #import "TDAppDelegate.h"
 #import "TDPostAPI.h"
+#import "TDAPIClient.h"
 #import "TDPostUpload.h"
 #import "TDConstants.h"
 #import "TDUserAPI.h"
@@ -17,15 +18,16 @@
 #import "TDLikeView.h"
 #import "TDHomeHeaderView.h"
 #import "TDActivityCell.h"
-#include <sys/types.h>
-#include <sys/sysctl.h>
 #import "TDUserProfileViewController.h"
 #import <QuartzCore/QuartzCore.h>
+#include <sys/types.h>
+#include <sys/sysctl.h>
 
 #define CELL_IDENTIFIER @"TDPostView"
 
 @interface TDHomeViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *badgeCountLabel;
+@property (weak, nonatomic) IBOutlet NSNumber *badgeCount;
 
 @property (nonatomic) BOOL didUpload;
 
@@ -55,7 +57,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
--(void)viewWillAppear:(BOOL)animated {
+- (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
     [self.navigationController setNavigationBarHidden:YES animated:NO];
@@ -64,7 +66,7 @@
     [self addFrostedBehindForStatusBar];
 }
 
--(void)viewDidAppear:(BOOL)animated {
+- (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
     if (goneDownstream) {
@@ -78,14 +80,14 @@
     }
 }
 
--(void)viewWillDisappear:(BOOL)animated
+- (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
 
     [self removeFrostedView];
 }
 
--(void)viewDidLayoutSubviews {
+- (void)viewDidLayoutSubviews {
     if (goneDownstream) {
         [self hideBottomButtons];
     }
@@ -96,23 +98,19 @@
 }
 
 #pragma mark - Posts
--(void)fetchPostsUpStream
-{
+- (void)fetchPostsUpStream {
     [[TDPostAPI sharedInstance] fetchPostsUpstream];
 }
 
--(BOOL)fetchPostsDownStream
-{
+- (BOOL)fetchPostsDownStream {
     return [[TDPostAPI sharedInstance] fetchPostsDownstream];
 }
 
--(NSArray *)postsForThisScreen
-{
+- (NSArray *)postsForThisScreen {
     return [[TDPostAPI sharedInstance] getPosts];
 }
 
--(NSNumber *)lowestIdOfPosts
-{
+- (NSNumber *)lowestIdOfPosts {
     return [[TDPostAPI sharedInstance] lowestIdOfPosts];
 }
 
@@ -125,8 +123,7 @@
 }
 
 #pragma mark - Frosted View behind Status bar
--(void)addFrostedBehindForStatusBar
-{
+- (void)addFrostedBehindForStatusBar {
     UINavigationBar *statusBarBackground = [[UINavigationBar alloc] initWithFrame:statusBarFrame];
     statusBarBackground.barStyle = UIBarStyleDefault;
     statusBarBackground.translucent = YES;
@@ -134,8 +131,7 @@
     [self.view insertSubview:statusBarBackground aboveSubview:self.tableView];
 }
 
--(void)removeFrostedView
-{
+- (void)removeFrostedView {
     // Need to remove it on viewWillDisappear to stop a flash at the screen top
     for (UIView *view in [NSArray arrayWithArray:self.view.subviews]) {
         if (view.tag == 9920) {
@@ -159,16 +155,14 @@
 }
 
 #pragma mark - Bottom Buttons Bounce
--(void)hideBottomButtons
-{
+- (void)hideBottomButtons {
     // Place off screen
     self.bottomButtonHolderView.center = CGPointMake(self.bottomButtonHolderView.center.x,
                                                      [UIScreen mainScreen].bounds.size.height+(self.bottomButtonHolderView.frame.size.height/2.0)+1.0);
 }
 
--(void)animateButtonsOnToScreen
-{
-    NSLog(@"home-animateButtonsOnToScreen");
+- (void)animateButtonsOnToScreen {
+    debug NSLog(@"home-animateButtonsOnToScreen");
 
     // Hide 1st
     [self hideBottomButtons];
@@ -194,7 +188,7 @@
     [self.animator addBehavior:propertiesBehavior];
 }
 
-#pragma mark - seques
+#pragma mark - segues
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
@@ -202,6 +196,10 @@
     if([segue isKindOfClass:[VideoButtonSegue class]]) {
         goneDownstream = YES;
     }
+}
+
+- (void)unwindToRoot {
+    [self.navigationController popToRootViewControllerAnimated:YES];
 }
 
 - (IBAction)unwindToHome:(UIStoryboardSegue *)sender {
@@ -218,52 +216,39 @@
 }
 
 #pragma mark - Post Delegate
--(void)userButtonPressedFromRow:(NSInteger)row
-{
+
+- (void)userButtonPressedFromRow:(NSInteger)row {
     TDPost *post = (TDPost *)[self.posts objectAtIndex:row];
-    [self gotoProfileForUser:post.user post:post];
+    [self openProfile:post.user.userId];
 }
 
--(void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber
-{
+- (void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber {
     TDPost *post = (TDPost *)[self.posts objectAtIndex:row];
     TDComment *comment = [post.comments objectAtIndex:commentNumber];
     TDUser *user = comment.user;
-
-    [self gotoProfileForUser:user post:post];
-}
-
--(void)gotoProfileForUser:(TDUser *)user post:(TDPost *)post
-{
-    NSLog(@"gotoProfileForUser:%@", user);
-
-    TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
-    vc.profileUser = user;
-
-    // Slightly different if current user
-    if ([user.userId isEqualToNumber:[[TDCurrentUser sharedInstance] currentUserObject].userId]) {
-        vc.fromProfileType = kFromProfileScreenType_OwnProfile;
-    } else {
-        vc.fromProfileType = kFromProfileScreenType_OtherUser;
-    }
-    [self.navigationController pushViewController:vc
-                                         animated:YES];
+    [self openProfile:user.userId];
 }
 
 #pragma mark - Notification Badge Count
 
 - (void)refreshPostsNotification:(NSNotification *)notification {
-    if (notification.userInfo && [notification.userInfo objectForKey:@"notificationCount"]) {
-        NSNumber *count = [notification.userInfo objectForKey:@"notificationCount"];
-        if ([count integerValue] > 0) {
+    if (notification.userInfo) {
+        if ([notification.userInfo objectForKey:@"notificationCount"]) {
+            self.badgeCount = (NSNumber *)[notification.userInfo objectForKey:@"notificationCount"];
+        } else if ([notification.userInfo objectForKey:@"incrementCount"]) {
+            self.badgeCount = [NSNumber numberWithLong:[self.badgeCount integerValue] + [((NSNumber *)[notification.userInfo objectForKey:@"incrementCount"]) integerValue]];
+        } else if ([notification.userInfo objectForKey:@"decreaseCount"]) {
+            self.badgeCount = [NSNumber numberWithLong:[self.badgeCount integerValue] - [((NSNumber *)[notification.userInfo objectForKey:@"decreaseCount"]) integerValue]];
+        }
+        if ([self.badgeCount integerValue] > 0) {
             self.badgeCountLabel.hidden = NO;
-            self.badgeCountLabel.text = [NSString stringWithFormat:@"%@", count];
+            self.badgeCountLabel.text = [NSString stringWithFormat:@"%@", self.badgeCount];
             CGRect frame = self.badgeCountLabel.frame;
-            if ([count integerValue] < 10) {
+            if ([self.badgeCount integerValue] < 10) {
                 frame.size.width = 14;
-            } else if ([count integerValue] < 100) {
+            } else if ([self.badgeCount integerValue] < 100) {
                 frame.size.width = 20;
-            } else if ([count integerValue] < 1000) {
+            } else if ([self.badgeCount integerValue] < 1000) {
                 frame.size.width = 25;
             } else {
                 frame.size.width = 30;
@@ -273,6 +258,63 @@
             self.badgeCountLabel.hidden = YES;
         }
     }
+}
+
+#pragma mark - TDToastViewDelegate
+
+- (void)toastNotificationTappedPayload:(NSDictionary *)payload {
+    [self openPushNotification:payload];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUpdate
+                                                        object:self
+                                                      userInfo:@{@"decreaseCount": @1}];
+    if ([payload objectForKey:@"activity_id"]) {
+        [[TDAPIClient sharedInstance] updateActivity:[payload objectForKey:@"activity_id"] seen:NO clicked:YES];
+    }
+}
+
+#pragma mark - Notifications and sub view
+
+- (void)openPushNotification:(NSDictionary *)notification {
+    [self unwindAllViewControllers];
+    if ([notification objectForKey:@"user_id"]) {
+        [self openProfile:[notification objectForKey:@"user_id"]];
+    } else if ([notification objectForKey:@"post_id"]) {
+        [self openDetailView:[notification objectForKey:@"post_id"]];
+    }
+}
+
+- (void)unwindAllViewControllers {
+    UIViewController *top = [TDAppDelegate topMostController];
+    if ([top class] == [UINavigationController class]) {
+        for (UIViewController *vc in [[((UINavigationController *)top) viewControllers] reverseObjectEnumerator]) {
+            if ([vc respondsToSelector:@selector(unwindToRoot)]) {
+                [vc performSelector:@selector(unwindToRoot)];
+                return;
+            }
+        }
+    }
+}
+
+- (void)openProfile:(NSNumber *)userId {
+    debug NSLog(@"gotoProfileForUser:%@", userId);
+
+    TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
+    vc.userId = userId;
+
+    // Slightly different if current user
+    if ([userId isEqualToNumber:[[TDCurrentUser sharedInstance] currentUserObject].userId]) {
+        vc.fromProfileType = kFromProfileScreenType_OwnProfile;
+    } else {
+        vc.fromProfileType = kFromProfileScreenType_OtherUser;
+    }
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void)openDetailView:(NSNumber *)postId {
+    TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
+    vc.postId = postId;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 @end

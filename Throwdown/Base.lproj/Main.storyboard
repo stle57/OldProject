@@ -167,6 +167,9 @@
                             </button>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <segue destination="kzH-DV-6xj" kind="unwind" identifier="UnwindToHomeSegue" unwindAction="unwindToHome:" id="inz-oy-1tZ"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="vmS-lS-Hnj" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="kzH-DV-6xj" userLabel="Exit" sceneMemberID="exit"/>

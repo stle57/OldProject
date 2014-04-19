@@ -26,6 +26,10 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 
 @implementation TDActivityViewController
 
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleDefault;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
 
@@ -53,6 +57,12 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
     [self.refreshControl setTintColor:[UIColor blackColor]];
 
     [self refresh];
+}
+
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:NO animated:NO];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -104,19 +114,31 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
     TDUser *user = [[TDUser alloc] initWithDictionary:userData];
 
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
-    vc.profileUser = user;
+    vc.userId = user.userId;
     vc.fromProfileType = kFromProfileScreenType_OtherUser;
 
     [self.navigationController pushViewController:vc animated:YES];
+    [self updateActivityAsClicked:row];
 }
 
 -(void)postPressedFromRow:(NSInteger)row {
-    NSDictionary *postData = [[self.activities objectAtIndex:row] objectForKey:@"post"];
-    TDPost *post = [[TDPost alloc] initWithDictionary:postData];
-
+    NSNumber *postId = [[[self.activities objectAtIndex:row] valueForKey:@"post"] valueForKey:@"id"];
     TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
-    vc.post = post;
+    vc.postId = postId;
     [self.navigationController pushViewController:vc animated:YES];
+    [self updateActivityAsClicked:row];
+}
+
+- (void)updateActivityAsClicked:(NSInteger)row {
+    if ([[self.activities objectAtIndex:row] objectForKey:@"id"]) {
+        [[TDAPIClient sharedInstance] updateActivity:[[self.activities objectAtIndex:row] objectForKey:@"id"] seen:NO clicked:YES];
+    }
+}
+
+#pragma mark - support unwinding on push notification
+
+- (void)unwindToRoot {
+    [self performSegueWithIdentifier:@"UnwindToHomeSegue" sender:nil];
 }
 
 @end

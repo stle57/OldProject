@@ -103,9 +103,11 @@ typedef enum {
 
     [self.previewImage setImage:nil];
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:TDDownloadPreviewImageNotification
-                                                        object:self
-                                                      userInfo:@{@"imageView":self.previewImage, @"filename":self.filename}];
+    if (self.filename) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:TDDownloadPreviewImageNotification
+                                                            object:self
+                                                          userInfo:@{@"imageView":self.previewImage, @"filename":self.filename}];
+    }
 
     if (self.player != nil) {
         [[NSNotificationCenter defaultCenter] removeObserver:self

@@ -19,7 +19,6 @@
 @implementation TDPostAPI
 {
     NSMutableArray *posts;
-    NSMutableArray *postsForUser;
 }
 
 + (TDPostAPI *)sharedInstance {
@@ -39,7 +38,6 @@
     self = [super init];
     if (self) {
         posts = [[NSMutableArray alloc] init];
-        postsForUser = [[NSMutableArray alloc] init];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadImage:) name:TDDownloadPreviewImageNotification object:nil];
     }
     return self;
@@ -47,7 +45,6 @@
 
 - (void)dealloc {
     posts = nil;
-    postsForUser = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -150,21 +147,20 @@
 }
 
 #pragma mark posts for a particular user
-- (void)fetchPostsUpstreamForUser:(NSNumber *)userId {
-    [self fetchPostsForUserUpstreamWithErrorHandlerStart:nil userId:userId error:nil];
+- (void)fetchPostsUpstreamForUser:(NSNumber *)userId success:(void(^)(NSDictionary *response))successHandler {
+    [self fetchPostsForUserUpstreamWithErrorHandlerStart:nil userId:userId error:nil success:successHandler];
 }
 
-- (BOOL)fetchPostsDownstreamForUser:(NSNumber *)userId {
-    NSNumber *lowestId = [self lowestIdOfPostsForUser];
+- (BOOL)fetchPostsDownstreamForUser:(NSNumber *)userId lowestId:(NSNumber *)lowestId success:(void(^)(NSDictionary *))successHandler {
     if ([lowestId compare:[NSNumber numberWithInt:0]] == NSOrderedAscending ||
         [lowestId compare:[NSNumber numberWithInt:0]] == NSOrderedSame) {
         return NO;
     }
-    [self fetchPostsForUserUpstreamWithErrorHandlerStart:lowestId userId:userId error:nil];
+    [self fetchPostsForUserUpstreamWithErrorHandlerStart:lowestId userId:userId error:nil success:successHandler];
     return YES;
 }
 
-- (void)fetchPostsForUserUpstreamWithErrorHandlerStart:(NSNumber *)start userId:(NSNumber *)userId error:(void (^)(void))errorHandler {
+- (void)fetchPostsForUserUpstreamWithErrorHandlerStart:(NSNumber *)start userId:(NSNumber *)userId error:(void (^)(void))errorHandler success:(void(^)(NSDictionary *response))successHandler {
     NSMutableString *url = [NSMutableString stringWithFormat:@"/api/v1/users/%@.json?user_token=%@", [userId stringValue], [TDCurrentUser sharedInstance].authToken];
 
     if (start) {
@@ -173,18 +169,9 @@
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager GET:[[TDConstants getBaseURL] stringByAppendingString:url] parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            debug NSLog(@"%@", responseObject);
-            if (!postsForUser) {
-                postsForUser = [[NSMutableArray alloc] init];
-            }
-
-            if (!start) {
-                [postsForUser removeAllObjects];
-            }
-            for (NSDictionary *postObject in [responseObject valueForKeyPath:@"posts"]) {
-                [postsForUser addObject:[[TDPost alloc]initWithDictionary:postObject]];
-            }
-            [self notifyPostsRefreshedWithUserId:userId];
+            successHandler(responseObject);
+        } else if (errorHandler) {
+            errorHandler();
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"HTTP Error: %@", error);
@@ -201,31 +188,8 @@
     }];
 }
 
-- (NSArray *)getPostsForUser {
-    return [postsForUser mutableCopy];
-}
-
--(NSNumber *)lowestIdOfPostsForUser {
-    NSNumber *lowestId = [NSNumber numberWithLongLong:LONG_LONG_MAX];
-    for (TDPost *post in postsForUser) {
-        if ([lowestId compare:post.postId] == NSOrderedDescending) {
-            lowestId = post.postId;
-        }
-    }
-    long lowest = [lowestId longValue]-1;
-    lowestId = [NSNumber numberWithLong:lowest];
-    return lowestId;
-}
-
--(void)clearPostsForUser
-{
-    [postsForUser removeAllObjects];
-    postsForUser = nil;
-}
-
 #pragma delete post
--(void)deletePostWithId:(NSNumber *)postId
-{
+- (void)deletePostWithId:(NSNumber *)postId {
     NSLog(@"API-delete post with id:%@", postId);
 
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts/[POST_ID].json"];
@@ -280,12 +244,6 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUpdate
                                                         object:self
                                                       userInfo:@{@"notificationCount": count}];
-}
-
-- (void)notifyPostsRefreshedWithUserId:(NSNumber *)userId {
-    [[NSNotificationCenter defaultCenter] postNotificationName:TDRefreshPostsNotification
-                                                        object:self
-                                                      userInfo:@{@"userId": userId}];
 }
 
 #pragma mark - like & comment
@@ -373,8 +331,7 @@
     }];
 }
 
--(void)getFullPostInfoForPostId:(NSNumber *)postId
-{
+- (void)getFullPostInfoForPostId:(NSNumber *)postId {
     //  /api/v1/posts/{post-id}.json
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts/[POST_ID].json"];
     url = [url stringByReplacingOccurrencesOfString:@"[POST_ID]"

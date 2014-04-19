@@ -17,7 +17,6 @@
 @synthesize posts;
 @synthesize refreshControl;
 @synthesize animator;
-@synthesize profileUser;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -144,7 +143,7 @@
 
 - (void)dealloc {
 
-    NSLog(@"dealloc:%@", [self class]);
+    debug NSLog(@"dealloc:%@", [self class]);
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
     self.tableView.delegate = nil;
@@ -152,7 +151,7 @@
     self.posts = nil;
     self.refreshControl = nil;
     self.animator = nil;
-    self.profileUser = nil;
+    self.userId = nil;
 }
 
 # pragma mark - Figure out what's on each row
@@ -171,13 +170,17 @@
     return nil;
 }
 
+- (TDUser *)getUser {
+    return nil;
+}
+
 - (void)refreshPostsList:(NSNotification*)notification {
 
     // If it's not our user, we don't want it
     // because we're sharing the user array for profile users
-    if (self.profileUser.userId && notification.userInfo && [notification.userInfo objectForKey:@"userId"]) {
+    if (self.userId && notification.userInfo && [notification.userInfo objectForKey:@"userId"]) {
         NSNumber *userId = (NSNumber *)[notification.userInfo objectForKey:@"userId"];
-        if (![userId isEqualToNumber:self.profileUser.userId]) {
+        if (![userId isEqualToNumber:self.userId]) {
             return;
         }
     }
@@ -278,8 +281,7 @@
 }
 
 // 1 section per post, +1 if we need the Profile Header cell
--(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return [self.posts count]+(showBottomSpinner ? 1 : 0)+(needsProfileHeader ? 1 : 0);
 }
 
@@ -331,11 +333,12 @@
         cell.userImageView.hidden = YES;
         cell.bioLabel.frame = cell.origBioLabelRect;
         
-        if (self.profileUser) {
-            cell.userNameLabel.text = self.profileUser.name;
+        if ([self getUser]) {
+            TDUser *user = [self getUser];
+            cell.userNameLabel.text = user.name;
 
-            if (self.profileUser.bio) {
-                cell.bioLabel.text = self.profileUser.bio;
+            if (user.bio) {
+                cell.bioLabel.text = user.bio;
                 [TDAppDelegate fixHeightOfThisLabel:cell.bioLabel];
                 cell.bioLabel.hidden = NO;
                 cell.whiteUnderView.frame = CGRectMake(cell.whiteUnderView.frame.origin.x,
@@ -463,8 +466,12 @@
     if (needsProfileHeader && indexPath.section == 0) {
 
         // min height is profileHeaderHeight
-        CGFloat cellHeight = topOfBioLabelInProfileHeader+self.profileUser.bioHeight+12.0;
-        return fmaxf(profileHeaderHeight, cellHeight);
+        if ([self getUser]) {
+            CGFloat cellHeight = topOfBioLabelInProfileHeader + [self getUser].bioHeight + 12.0;
+            return fmaxf(profileHeaderHeight, cellHeight);
+        } else {
+            return 0.0;
+        }
     }
 
     NSInteger realRow = indexPath.section - (needsProfileHeader ? 1 : 0);
@@ -511,12 +518,8 @@
 
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
 
-    TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
     TDPost *post = (TDPost *)[self.posts objectAtIndex:(needsProfileHeader ? indexPath.section - 1 : indexPath.section)];
-    vc.post = post;
-    vc.delegate = self;
-    [self.navigationController pushViewController:vc
-                                         animated:YES];
+    [self openDetailView:post.postId];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
@@ -531,12 +534,8 @@
 #pragma mark - TDPostView Delegate
 
 - (void)postTouchedFromRow:(NSInteger)row {
-    TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
     TDPost *post = (TDPost *)[self.posts objectAtIndex:row-(needsProfileHeader ? 1 : 0)];
-    vc.post = post;
-    vc.delegate = self;
-    [self.navigationController pushViewController:vc
-                                         animated:YES];
+    [self openDetailView:post.postId];
 }
 
 - (void)userButtonPressedFromRow:(NSInteger)row {
@@ -563,9 +562,8 @@
     }
 }
 
--(void)unLikeButtonPressedFromRow:(NSInteger)row
-{
-    NSLog(@"Home-unLikeButtonPressedFromRow:%ld", (long)row);
+-(void)unLikeButtonPressedFromRow:(NSInteger)row {
+    debug NSLog(@"Home-unLikeButtonPressedFromRow:%ld", (long)row);
 
     TDPost *post = (TDPost *)[self.posts objectAtIndex:row-(needsProfileHeader ? 1 : 0)];
 
@@ -582,21 +580,14 @@
     }
 }
 
--(void)commentButtonPressedFromRow:(NSInteger)row
-{
-    NSLog(@"Home-commentButtonPressedFromRow:%ld", (long)row);
-
-    // Goto Detail View
-    TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
+-(void)commentButtonPressedFromRow:(NSInteger)row {
+    debug NSLog(@"Home-commentButtonPressedFromRow:%ld", (long)row);
     TDPost *post = (TDPost *)[self.posts objectAtIndex:row-(needsProfileHeader ? 1 : 0)];
-    vc.post = post;
-    [self.navigationController pushViewController:vc
-                                         animated:YES];
+    [self openDetailView:post.postId];
 }
 
--(void)miniLikeButtonPressedForLiker:(NSDictionary *)liker
-{
-    NSLog(@"Home-miniLikeButtonPressedForLiker:%@", liker);
+-(void)miniLikeButtonPressedForLiker:(NSDictionary *)liker {
+    debug NSLog(@"Home-miniLikeButtonPressedForLiker:%@", liker);
 }
 
 # pragma mark - navigation
@@ -654,21 +645,28 @@
 
         if (buttonIndex == 1)   // Your Profile
         {
-            TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
-            vc.profileUser = [[TDCurrentUser sharedInstance] currentUserObject];
-
-            vc.fromProfileType = kFromProfileScreenType_OwnProfileButton;
-            vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-            UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
-            navController.navigationBar.barStyle = UIBarStyleDefault;
-            navController.navigationBar.translucent = YES;
-            [self.navigationController presentViewController:navController
-                                                    animated:YES
-                                                  completion:nil];
+            [self openUserProfile:[TDCurrentUser sharedInstance].userId];
         }
 
         self.profileButton.enabled = YES;
     }
+}
+
+#pragma mark - Open Different subviews
+
+- (void)openUserProfile:(NSNumber *)userId {
+    TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
+    vc.userId = userId;
+
+    if (userId == [TDCurrentUser sharedInstance].userId)
+    vc.fromProfileType = kFromProfileScreenType_OwnProfileButton;
+    vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
+    navController.navigationBar.barStyle = UIBarStyleDefault;
+    navController.navigationBar.translucent = YES;
+    [self.navigationController presentViewController:navController
+                                            animated:YES
+                                          completion:nil];
 }
 
 #pragma mark - Email Feedback
@@ -790,6 +788,13 @@
 
     showBottomSpinner = NO;
     [self.tableView reloadData];
+}
+
+- (void)openDetailView:(NSNumber *)postId {
+    TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
+    vc.postId = postId;
+    vc.delegate = self;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 @end

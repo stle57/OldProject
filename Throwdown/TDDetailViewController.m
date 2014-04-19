@@ -21,35 +21,17 @@
 @synthesize typingView;
 @synthesize frostedViewWhileTyping;
 
-- (void)dealloc
-{
+- (void)dealloc {
     delegate = nil;
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:TDRefreshPostsNotification
-                                                  object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:FULL_POST_INFO_NOTIFICATION
-                                                  object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:NEW_COMMENT_INFO_NOTICIATION
-                                                  object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:POST_DELETED_NOTIFICATION
-                                                  object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:POST_DELETED_FAIL_NOTIFICATION
-                                                  object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:TDUpdateWithUserChangeNotification
-                                                  object:nil];
-
     self.post = nil;
+    self.postId = nil;
     self.typingView = nil;
     self.frostedViewWhileTyping = nil;
     self.tableView.delegate = nil;
     self.tableView.dataSource = nil;
     self.tableView = nil;
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)viewDidLoad
@@ -137,10 +119,15 @@
 
     [self.navigationController setNavigationBarHidden:NO animated:NO];
 
+    // TODO: only when user didn't go downstream
     // Get the full post info
     if (self.post && self.post.postId) {
-        TDPostAPI *api = [TDPostAPI sharedInstance];
-        [api getFullPostInfoForPostId:self.post.postId];
+        self.postId = self.post.postId;
+    } else if (!self.post) {
+        self.post = [[TDPost alloc] init];
+    }
+    if (self.postId) {
+        [[TDPostAPI sharedInstance] getFullPostInfoForPostId:self.postId];
     }
 }
 
@@ -170,7 +157,7 @@
 
         // Delete from server Server
         TDPostAPI *api = [TDPostAPI sharedInstance];
-        [api deletePostWithId:self.post.postId];
+        [api deletePostWithId:self.postId];
     }
 }
 
@@ -178,7 +165,7 @@
 - (void)reloadPosts:(NSNotification*)notification {
     if (!liking) {
         TDPostAPI *api = [TDPostAPI sharedInstance];
-        [api getFullPostInfoForPostId:self.post.postId];
+        [api getFullPostInfoForPostId:self.postId];
     }
     liking = NO;
 }
@@ -186,7 +173,7 @@
 - (void)fullPostReturn:(NSNotification*)notification {
     if ([notification.userInfo isKindOfClass:[NSDictionary class]]) {
         TDPost *newPost = [[TDPost alloc] initWithDictionary:notification.userInfo];
-        if ([newPost.postId isEqualToNumber:self.post.postId]) {
+        if ([newPost.postId isEqualToNumber:self.postId]) {
             [self.post loadUpFromDict:notification.userInfo];
             [self.tableView reloadData];
 
@@ -470,7 +457,7 @@
 
 - (void)showUserProfile:(TDUser *)user {
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
-    vc.profileUser = user;
+    vc.userId = user.userId;
     vc.fromProfileType = kFromProfileScreenType_OtherUser;
     [self.navigationController pushViewController:vc animated:YES];
 }
