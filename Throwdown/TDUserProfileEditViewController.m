@@ -15,10 +15,6 @@
 #import "AFNetworking.h"
 #import "TDUserAPI.h"
 
-@interface TDUserProfileEditViewController ()
-
-@end
-
 @implementation TDUserProfileEditViewController
 
 @synthesize profileUser;
@@ -64,7 +60,7 @@
 {
     [super viewDidLoad];
 
-    NSLog(@"UserProfile:%@", self.profileUser);
+    debug NSLog(@"UserProfile:%@", self.profileUser);
 
     statusBarFrame = [self.view convertRect: [UIApplication sharedApplication].statusBarFrame fromView: nil];
 
@@ -125,7 +121,7 @@
 
 -(IBAction)saveButtonHit:(id)sender
 {
-    NSLog(@"saveButtonHit");
+    debug NSLog(@"saveButtonHit");
 
     self.saveButton.enabled = NO;
 
@@ -138,7 +134,7 @@
                                              bio:self.bio
                                         callback:^(BOOL success, NSDictionary *dict) {
                                             if (success) {
-                                                NSLog(@"EDIT SUCCESS:%@", dict);
+                                                debug NSLog(@"EDIT SUCCESS:%@", dict);
                                                 self.saveButton.enabled = NO;
                                                 
                                                 [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateWithUserChangeNotification
@@ -146,7 +142,7 @@
                                                                                                   userInfo:nil];
                                                 [self leave];
                                             } else {
-                                                NSLog(@"EDIT FAILURE:%@", dict);
+                                                debug NSLog(@"EDIT FAILURE:%@", dict);
 
                                                 NSMutableString *message = [NSMutableString string];
 
@@ -389,7 +385,7 @@
     if (([self.name length] > 0 && ![self.name isEqualToString:[TDCurrentUser sharedInstance].name]) ||
         ([self.username length] > 0 && ![self.username isEqualToString:[TDCurrentUser sharedInstance].username]) ||
         ([self.phone length] > 0 && ![self.phone isEqualToString:[TDCurrentUser sharedInstance].phoneNumber]) ||
-        ([self.bio length] > 0 && ![self.bio isEqualToString:[TDCurrentUser sharedInstance].bio]) ||
+        (![self.bio isEqualToString:[TDCurrentUser sharedInstance].bio]) ||
         ([self.email length] > 0 && ![self.email isEqualToString:[TDCurrentUser sharedInstance].email]))
     {
         return YES;

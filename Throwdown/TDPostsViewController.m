@@ -337,7 +337,7 @@
             TDUser *user = [self getUser];
             cell.userNameLabel.text = user.name;
 
-            if (user.bio) {
+            if (user.bio && ![user.bio isKindOfClass:[NSNull class]]) {
                 cell.bioLabel.text = user.bio;
                 [TDAppDelegate fixHeightOfThisLabel:cell.bioLabel];
                 cell.bioLabel.hidden = NO;

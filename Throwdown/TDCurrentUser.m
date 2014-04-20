@@ -53,7 +53,9 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
         _authToken   = [aDecoder decodeObjectForKey:@"authentication_token"];
         _deviceToken = [aDecoder decodeObjectForKey:@"device_token"];
         _phoneNumber = [aDecoder decodeObjectForKey:@"phone_number"];
-        _bio         = [aDecoder decodeObjectForKey:@"bio"];
+        if ([self nullcheck:[aDecoder decodeObjectForKey:@"bio"]]) {
+            _bio     = [aDecoder decodeObjectForKey:@"bio"];
+        }
 // not decoded        _picture = [aDecoder decodeObjectForKey:@"picture"];
     }
     return self;
@@ -68,7 +70,9 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     _authToken   = [dictionary objectForKey:@"authentication_token"];
     _phoneNumber = [dictionary objectForKey:@"phone_number"];
     _picture     = [dictionary objectForKey:@"picture"];
-    _bio         = [dictionary objectForKey:@"bio"];
+    if ([self nullcheck:[dictionary objectForKey:@"bio"]]) {
+        _bio     = [dictionary objectForKey:@"bio"];
+    }
     // _deviceToken not part of dictionary
 
     [self save];
@@ -169,5 +173,8 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound)];
 }
 
+- (BOOL)nullcheck:(id)object {
+    return (object && ![object isKindOfClass:[NSNull class]]);
+}
 
 @end
