@@ -105,6 +105,9 @@
 		A1C1D0F618A0387B00666D2A /* TDPostView.m in Sources */ = {isa = PBXBuildFile; fileRef = A1C1D0F518A0387B00666D2A /* TDPostView.m */; };
 		A1C2481118C6B9CA00F187D9 /* TDProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = A1C2481018C6B9CA00F187D9 /* TDProgressIndicator.m */; };
 		A1C2481418C7D4B000F187D9 /* URLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = A1C2481318C7D4B000F187D9 /* URLConnection.m */; };
+		A1D13FAD1905BEC1000980E0 /* UIImage+Alpha.m in Sources */ = {isa = PBXBuildFile; fileRef = A1D13FA81905BEC1000980E0 /* UIImage+Alpha.m */; };
+		A1D13FAE1905BEC1000980E0 /* UIImage+Resize.m in Sources */ = {isa = PBXBuildFile; fileRef = A1D13FAA1905BEC1000980E0 /* UIImage+Resize.m */; };
+		A1D13FAF1905BEC1000980E0 /* UIImage+RoundedCorner.m in Sources */ = {isa = PBXBuildFile; fileRef = A1D13FAC1905BEC1000980E0 /* UIImage+RoundedCorner.m */; };
 		A1DAEEB318EB79FA00742949 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1DAEEB218EB79FA00742949 /* Crashlytics.framework */; };
 		A1E3A16D18FCC8630038A8A4 /* TDActivitiesCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A1E3A16C18FCC8630038A8A4 /* TDActivitiesCell.xib */; };
 		A1E3A17018FCCF2B0038A8A4 /* TDActivitiesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E3A16F18FCCF2B0038A8A4 /* TDActivitiesCell.m */; };
@@ -282,6 +285,12 @@
 		A1C2481018C6B9CA00F187D9 /* TDProgressIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDProgressIndicator.m; sourceTree = "<group>"; };
 		A1C2481218C7D4B000F187D9 /* URLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLConnection.h; sourceTree = "<group>"; };
 		A1C2481318C7D4B000F187D9 /* URLConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = URLConnection.m; sourceTree = "<group>"; };
+		A1D13FA71905BEC1000980E0 /* UIImage+Alpha.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+Alpha.h"; path = "UIImage/UIImage+Alpha.h"; sourceTree = SOURCE_ROOT; };
+		A1D13FA81905BEC1000980E0 /* UIImage+Alpha.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+Alpha.m"; path = "UIImage/UIImage+Alpha.m"; sourceTree = SOURCE_ROOT; };
+		A1D13FA91905BEC1000980E0 /* UIImage+Resize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+Resize.h"; path = "UIImage/UIImage+Resize.h"; sourceTree = SOURCE_ROOT; };
+		A1D13FAA1905BEC1000980E0 /* UIImage+Resize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+Resize.m"; path = "UIImage/UIImage+Resize.m"; sourceTree = SOURCE_ROOT; };
+		A1D13FAB1905BEC1000980E0 /* UIImage+RoundedCorner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+RoundedCorner.h"; path = "UIImage/UIImage+RoundedCorner.h"; sourceTree = SOURCE_ROOT; };
+		A1D13FAC1905BEC1000980E0 /* UIImage+RoundedCorner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+RoundedCorner.m"; path = "UIImage/UIImage+RoundedCorner.m"; sourceTree = SOURCE_ROOT; };
 		A1DAEEB218EB79FA00742949 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		A1E3A16C18FCC8630038A8A4 /* TDActivitiesCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDActivitiesCell.xib; sourceTree = "<group>"; };
 		A1E3A16E18FCCF2B0038A8A4 /* TDActivitiesCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDActivitiesCell.h; sourceTree = "<group>"; };
@@ -444,6 +453,7 @@
 		A11E04DA1888CB79002F981A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A1D13F9D1905BE3F000980E0 /* UIImage */,
 				A102FE9E18ECF43C00139606 /* Flurry */,
 				A1DAEEB218EB79FA00742949 /* Crashlytics.framework */,
 				2D531ED818E38A47006CA088 /* MessageUI.framework */,
@@ -673,6 +683,20 @@
 			name = Views;
 			sourceTree = "<group>";
 		};
+		A1D13F9D1905BE3F000980E0 /* UIImage */ = {
+			isa = PBXGroup;
+			children = (
+				A1D13FA71905BEC1000980E0 /* UIImage+Alpha.h */,
+				A1D13FA81905BEC1000980E0 /* UIImage+Alpha.m */,
+				A1D13FA91905BEC1000980E0 /* UIImage+Resize.h */,
+				A1D13FAA1905BEC1000980E0 /* UIImage+Resize.m */,
+				A1D13FAB1905BEC1000980E0 /* UIImage+RoundedCorner.h */,
+				A1D13FAC1905BEC1000980E0 /* UIImage+RoundedCorner.m */,
+			);
+			name = UIImage;
+			path = "UIImage-categories";
+			sourceTree = "<group>";
+		};
 		A1E3A16B18FCC7F40038A8A4 /* Activities */ = {
 			isa = PBXGroup;
 			children = (
@@ -894,13 +918,16 @@
 				2DA8639318F49D190089B048 /* TDUserProfileCell.m in Sources */,
 				2D1AEE7018C937560055C315 /* TDDetailsLikesCell.m in Sources */,
 				A1C1D0F618A0387B00666D2A /* TDPostView.m in Sources */,
+				A1D13FAD1905BEC1000980E0 /* UIImage+Alpha.m in Sources */,
 				A19FF60E18970BBB001A0AD0 /* RSClient.m in Sources */,
 				A182D833188B60CD00F794A5 /* SAVideoRangeSlider.m in Sources */,
+				A1D13FAE1905BEC1000980E0 /* UIImage+Resize.m in Sources */,
 				A182D832188B60CD00F794A5 /* SASliderRight.m in Sources */,
 				A150F08A18A31B14009A72AD /* TDConstants.m in Sources */,
 				A14B2B8818B8351E00980A31 /* TDCurrentUser.m in Sources */,
 				A182D830188B60CD00F794A5 /* SAResizibleBubble.m in Sources */,
 				A182D8261889E8D900F794A5 /* TDEditVideoViewController.m in Sources */,
+				A1D13FAF1905BEC1000980E0 /* UIImage+RoundedCorner.m in Sources */,
 				A11E04E81888CB79002F981A /* main.m in Sources */,
 				A19FF5E41891FEEF001A0AD0 /* TDPost.m in Sources */,
 				A1432CE418A99DA40073E492 /* TDSignupStepOneViewController.m in Sources */,
