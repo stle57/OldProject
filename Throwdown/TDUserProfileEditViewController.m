@@ -71,9 +71,10 @@
     [self.navigationItem setTitleView:self.titleLabel];
 
     // Buttons
-    self.saveButton.titleLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:18.0];
-    self.closeButton.titleLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:18.0];
-    self.closeButton.titleLabel.textColor = [TDConstants headerTextColor];
+//    self.saveButton.titleLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:18.0];
+    self.doneButton.titleLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:18.0];
+//    self.closeButton.titleLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:18.0];
+//    self.closeButton.titleLabel.textColor = [TDConstants headerTextColor];
 
     // register for keyboard notifications
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -104,12 +105,15 @@
 
     origTableViewFrame = self.tableView.frame;
 
-    UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.saveButton];
-    self.navigationItem.rightBarButtonItem = rightBarButton;
-    self.saveButton.enabled = NO;
-    UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.closeButton];
-    self.navigationItem.leftBarButtonItem = leftBarButton;
-    self.closeButton.enabled = YES;
+//    UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.saveButton];
+//    self.navigationItem.rightBarButtonItem = rightBarButton;
+//    self.saveButton.enabled = NO;
+//    UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.closeButton];
+//    self.navigationItem.leftBarButtonItem = leftBarButton;
+//    self.closeButton.enabled = YES;
+    UIBarButtonItem *doneBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.doneButton];
+    self.navigationItem.leftBarButtonItem = doneBarButton;
+    self.doneButton.enabled = YES;
 
     [self checkForSaveButton];
 }
@@ -119,7 +123,7 @@
     [super didReceiveMemoryWarning];
 }
 
--(IBAction)saveButtonHit:(id)sender
+/*-(IBAction)saveButtonHit:(id)sender
 {
     debug NSLog(@"saveButtonHit");
 
@@ -191,6 +195,86 @@
                                             }
                                             
                                         }];
+} */
+
+-(IBAction)doneButtonHit:(id)sender
+{
+    // Changed?
+    if ([self checkIfChanged]) {
+        [self sendToTheServer];
+    } else {
+        [self leave];
+    }
+}
+
+-(void)sendToTheServer
+{
+    [self hideKeyboard];
+
+    [[TDUserAPI sharedInstance] editUserWithName:self.name
+                                           email:self.email
+                                        username:self.username
+                                           phone:self.phone
+                                             bio:self.bio
+                                        callback:^(BOOL success, NSDictionary *dict) {
+                                            if (success) {
+                                                debug NSLog(@"EDIT SUCCESS:%@", dict);
+                                                self.saveButton.enabled = NO;
+
+                                                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateWithUserChangeNotification
+                                                                                                    object:nil
+                                                                                                  userInfo:nil];
+                                                [self leave];
+                                            } else {
+                                                debug NSLog(@"EDIT FAILURE:%@", dict);
+
+                                                NSMutableString *message = [NSMutableString string];
+
+                                                if ([dict objectForKey:@"name"]) {
+                                                    [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"name"] baseString:[NSString stringWithFormat:@"Name (%@)", self.name]]];
+                                                  //  self.name = [TDCurrentUser sharedInstance].name;
+                                                }
+                                                if ([dict objectForKey:@"username"]) {
+                                                    [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"username"] baseString:[NSString stringWithFormat:@"Username (%@)", self.username]]];
+                                                  //  self.username = [TDCurrentUser sharedInstance].username;
+                                                }
+                                                if ([dict objectForKey:@"phone_number"]) {
+                                                    [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"phone_number"] baseString:[NSString stringWithFormat:@"Phone (%@)", self.phone]]];
+                                                  //  self.phone = [TDCurrentUser sharedInstance].phoneNumber;
+                                                }
+                                                if ([dict objectForKey:@"email"]) {
+                                                    [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"email"] baseString:[NSString stringWithFormat:@"Email (%@)", self.email]]];
+                                                 //   self.email = [TDCurrentUser sharedInstance].email;
+                                                }
+                                                if ([dict objectForKey:@"bio"]) {
+
+                                                    if (self.bio && [self.bio length] > 8) {    // make sure it's not too long for the alert
+                                                        self.bio = [NSString stringWithFormat:@"%@...", [self.bio substringToIndex:7]];
+                                                    }
+                                                    [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"bio"] baseString:[NSString stringWithFormat:@"Bio (%@)", self.bio]]];
+                                                    if ([TDCurrentUser sharedInstance].bio) {
+                                                      //  self.bio = [TDCurrentUser sharedInstance].bio;
+                                                    } else {
+                                                      //  self.bio = @"";
+                                                    }
+                                                }
+
+                                                message = [[message stringByReplacingOccurrencesOfString:@" ."
+                                                                                              withString:@"."] mutableCopy];
+
+                                                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Edit Error"
+                                                                                                message:message
+                                                                                               delegate:nil
+                                                                                      cancelButtonTitle:@"OK"
+                                                                                      otherButtonTitles:nil];
+                                                [alert show];
+
+                                                self.saveButton.enabled = YES;
+                                                
+                                                [self.tableView reloadData];
+                                            }
+                                            
+                                        }];
 }
 
 -(NSString *)buildStringFromErrors:(NSArray *)array baseString:(NSString *)baseString
@@ -202,7 +286,7 @@
     return returnString;
 }
 
--(IBAction)closeButtonHit:(id)sender
+/*-(IBAction)closeButtonHit:(id)sender
 {
     [self hideKeyboard];
 
@@ -219,7 +303,7 @@
     } else {
         [self leave];
     }
-}
+} */
 
 -(void)leave
 {
@@ -275,7 +359,7 @@
         break;
     }
 
-    [self checkForSaveButton];
+//    [self checkForSaveButton];
 }
 
 -(void)textFieldDidBeginEditing:(UITextField *)textField
@@ -296,21 +380,21 @@
 
 -(IBAction)textFieldDidChange:(id)sender
 {
-    [self checkForSaveButton];
+//    [self checkForSaveButton];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
 
-    if (self.saveButton.enabled)
+    if ([self checkIfChanged])
     {
-        [self saveButtonHit:nil];
+        [self doneButtonHit:nil];
         return NO;
     }
     else
     {
     }
 
-    [self checkForSaveButton];
+//    [self checkForSaveButton];
     return YES;
 }
 

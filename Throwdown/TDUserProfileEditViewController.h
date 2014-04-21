@@ -37,6 +37,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *sectionHeaderLabel;
 @property (weak, nonatomic) IBOutlet UIButton *saveButton;
+@property (weak, nonatomic) IBOutlet UIButton *doneButton;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
 @property (nonatomic, retain) NSString *name;
@@ -50,7 +51,8 @@
 @property (nonatomic, retain) UIImage *editedProfileImage90x90;
 @property (nonatomic, retain) UIImageView *tempFlyInImageView;
 
--(IBAction)closeButtonHit:(id)sender;
--(IBAction)saveButtonHit:(id)sender;
+//-(IBAction)closeButtonHit:(id)sender;
+//-(IBAction)saveButtonHit:(id)sender;
+-(IBAction)doneButtonHit:(id)sender;
 
 @end
