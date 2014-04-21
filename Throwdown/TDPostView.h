@@ -20,6 +20,7 @@
 @interface TDPostView : UITableViewCell
 {
     id <TDPostViewDelegate> __unsafe_unretained delegate;
+    CGRect origRectOfUserButton;
 }
 
 @property (nonatomic, assign) id <TDPostViewDelegate> __unsafe_unretained delegate;

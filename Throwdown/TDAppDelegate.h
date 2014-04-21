@@ -20,6 +20,7 @@
 + (void)fixHeightOfThisLabel:(UILabel *)aLabel;
 + (void)fixWidthOfThisLabel:(UILabel *)aLabel;
 + (CGFloat)heightOfTextForString:(NSString *)aString andFont:(UIFont *)aFont maxSize:(CGSize)aSize;
++ (CGFloat)minWidthOfThisLabel:(UILabel *)aLabel;
 + (UIImage *)squareImageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize;
 + (UIViewController *)topMostController;
 

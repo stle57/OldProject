@@ -10,6 +10,7 @@
 #import "TDConstants.h"
 #import "AVFoundation/AVFoundation.h"
 #import "NSDate+TimeAgo.h"
+#import "TDAppDelegate.h"
 
 typedef enum {
     ControlStatePaused,
@@ -73,6 +74,8 @@ typedef enum {
     CGRect topLineRect = self.topLine.frame;
     topLineRect.size.height = 1 / [[UIScreen mainScreen] scale];
     self.topLine.frame = topLineRect;
+
+    origRectOfUserButton = self.userNameButton.frame;
 }
 
 - (void)setPost:(TDPost *)post {
@@ -88,6 +91,12 @@ typedef enum {
 
     self.aPost = post;
     self.usernameLabel.text = post.user.username;
+    self.userNameButton.frame = origRectOfUserButton;
+    self.userNameButton.frame = CGRectMake(origRectOfUserButton.origin.x,
+                                           origRectOfUserButton.origin.y,
+                                           [TDAppDelegate minWidthOfThisLabel:self.usernameLabel],
+                                           origRectOfUserButton.size.height);
+
     self.createdLabel.text = [post.createdAt timeAgo];
 
     self.filename = post.filename;

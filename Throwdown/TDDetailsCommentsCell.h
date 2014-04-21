@@ -21,6 +21,7 @@
     TDComment *comment;
     NSInteger commentNumber;
     CGRect origTimeFrame;
+    CGRect origRectOfUserButton;
 }
 
 @property (nonatomic, assign) id <TDDetailsCommentsCellDelegate> __unsafe_unretained delegate;

@@ -34,6 +34,7 @@
     self.usernameLabel.font = [TDConstants fontBoldSized:16.0];
     self.timeLabel.font     = [TDConstants fontLightSized:13.0];
     self.messageLabel.font  = COMMENT_MESSAGE_FONT;
+    origRectOfUserButton = self.userButton.frame;
 }
 
 - (void)makeText:(NSString *)text {
@@ -57,6 +58,11 @@
     nameFrame.size.width = CGRectGetMaxX(self.timeLabel.frame)-nameFrame.origin.x-self.timeLabel.frame.size.width-1.0;
     self.usernameLabel.frame = nameFrame;
     self.usernameLabel.text = name;
+    self.userButton.frame = origRectOfUserButton;
+    self.userButton.frame = CGRectMake(origRectOfUserButton.origin.x,
+                                           origRectOfUserButton.origin.y,
+                                           [TDAppDelegate minWidthOfThisLabel:self.usernameLabel],
+                                           origRectOfUserButton.size.height);
 }
 
 - (IBAction)userButtonPressed:(id)sender {

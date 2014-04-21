@@ -261,6 +261,12 @@
 #pragma clang diagnostic pop
 }
 
++ (CGFloat)minWidthOfThisLabel:(UILabel *)aLabel {
+    return [TDAppDelegate widthOfTextForString:aLabel.text
+                                       andFont:aLabel.font
+                                       maxSize:CGSizeMake(MAXFLOAT, aLabel.frame.size.height)];
+}
+
 #pragma mark - Image Helpers
 + (UIImage *)squareImageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize {
     double ratio;
