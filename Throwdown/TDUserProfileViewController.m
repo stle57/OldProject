@@ -184,13 +184,12 @@
 
 - (NSArray *)postsForThisScreen {
     debug NSLog(@"userprofile-postsForThisScreen");
-//    NSMutableArray *postsWithUsers = [NSMutableArray array];
-//    for (TDPost *aPost in [[TDPostAPI sharedInstance] getPostsForUser]) {
-////        [aPost replaceUser:self.profileUser];
-//        [postsWithUsers addObject:aPost];
-//    }
-//
-    return self.userPosts;
+    NSMutableArray *postsWithUsers = [NSMutableArray array];
+    for (TDPost *aPost in self.userPosts) {
+        [aPost replaceUser:self.user];
+        [postsWithUsers addObject:aPost];
+    }
+    return postsWithUsers;
 }
 
 
