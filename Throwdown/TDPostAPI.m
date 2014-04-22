@@ -15,6 +15,8 @@
 #import "AFNetworking.h"
 #import "TDAppDelegate.h"
 #import "TDPostUpload.h"
+#import "UIImage+Resizing.h"
+#import "TDFileSystemHelper.h"
 
 @implementation TDPostAPI
 {
@@ -38,7 +40,7 @@
     self = [super init];
     if (self) {
         posts = [[NSMutableArray alloc] init];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadImage:) name:TDDownloadPreviewImageNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(setImage:) name:TDDownloadPreviewImageNotification object:nil];
     }
     return self;
 }
@@ -407,6 +409,10 @@
     return [cachePathArray lastObject];
 }
 
+- (BOOL)imageExists:(NSString *)filename {
+    return [TDFileSystemHelper fileExistsAtPath:[[self getCachePath] stringByAppendingFormat:@"/%@", filename]];
+}
+
 - (UIImage *)getImage:(NSString *)filename {
     filename = [[self getCachePath] stringByAppendingFormat:@"/%@", filename];
     NSData *data = [NSData dataWithContentsOfFile:filename];
@@ -419,41 +425,92 @@
     [data writeToFile:filename atomically:YES];
 }
 
-//- (UIImage *)getVideo:(NSString *)filename
-//{
-//    filename = [[self getCachePath] stringByAppendingFormat:@"/%@", filename];
-//    NSData *data = [NSData dataWithContentsOfFile:filename];
-//    return [UIImage imageWithData:data];
-//}
-
 - (void)saveVideo:(NSData *)data filename:(NSString*)filename {
     filename = [[self getCachePath] stringByAppendingFormat:@"/%@", filename];
     [data writeToFile:filename atomically:YES];
 }
 
-- (void)downloadImage:(NSNotification*)notification {
+
+#pragma mark - get and set TDDownloadPreviewImageNotification notification and resizing image
+
+- (void)setImage:(NSNotification *)notification {
     UIImageView *imageView = notification.userInfo[@"imageView"];
     NSString *filename = [notification.userInfo[@"filename"] stringByAppendingString:FTImage];
 
-    imageView.image = [self getImage:filename];
+    if ([notification.userInfo objectForKey:@"width"] && [notification.userInfo objectForKey:@"height"]) {
+        NSNumber *width = notification.userInfo[@"width"];
+        NSNumber *height = notification.userInfo[@"height"];
+        NSString *filenameWithSize = [NSString stringWithFormat:@"%@_%@x%@%@",
+                                      notification.userInfo[@"filename"],
+                                      width,
+                                      height,
+                                      FTImage];
+        CGSize size = CGSizeMake([width floatValue], [height floatValue]);
 
-    if (imageView.image == nil) {
-        NSURL *imageURL = [NSURL URLWithString:[RSHost stringByAppendingFormat:@"/%@", filename]];
-        AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[NSURLRequest alloc] initWithURL:imageURL]];
-        operation.responseSerializer = [AFImageResponseSerializer serializer];
-        [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-            if ([responseObject isKindOfClass:[UIImage class]]) {
-                UIImage *image = (UIImage *)responseObject;
-                imageView.image = image;
-                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-                    [self saveImage:image filename:filename];
-                });
-            }
-        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-            debug NSLog(@"Image error: %@, %@", filename, error);
-        }];
-        [operation start];
+        // First check for sized image cached
+        // Then resize and save larger res image
+        // Then download original and save as both original size and resized
+        if ([self imageExists:filenameWithSize]) {
+            [self setImageFromFile:filenameWithSize toView:imageView size:CGSizeZero sizedFilename:nil];
+        } else if ([self imageExists:filenameWithSize]) {
+            [self setImageFromFile:filename toView:imageView size:size sizedFilename:filenameWithSize];
+        } else {
+            [self downloadImage:filename imageView:imageView size:size sizedFilename:filenameWithSize];
+        }
+    } else {
+        if ([self imageExists:filename]) {
+            [self setImageFromFile:filename toView:imageView size:CGSizeZero sizedFilename:nil];
+        } else {
+            [self downloadImage:filename imageView:imageView size:CGSizeZero sizedFilename:nil];
+        }
     }
+}
+
+- (void)setImageFromFile:(NSString *)filename toView:(UIImageView *)view size:(CGSize)size sizedFilename:(NSString *)sizedFilename {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        UIImage *image = [self getImage:filename];
+        if (!CGSizeEqualToSize(size, CGSizeZero)) {
+            image = [image scaleToSize:size];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            view.image = image;
+        });
+        if (!CGSizeEqualToSize(size, CGSizeZero) && ![self imageExists:sizedFilename]) {
+            [self saveImage:image filename:sizedFilename];
+        }
+    });
+}
+
+- (void)setImage:(UIImage *)image filename:(NSString *)filename toView:(UIImageView *)view size:(CGSize)size sizedFilename:(NSString *)sizedFilename {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        UIImage *newImage = image;
+        if (!CGSizeEqualToSize(size, CGSizeZero)) {
+            newImage = [image scaleToSize:size];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            view.image = newImage;
+        });
+        if (![self imageExists:filename]) {
+            [self saveImage:image filename:filename];
+        }
+        if (!CGSizeEqualToSize(size, CGSizeZero) && ![self imageExists:sizedFilename]) {
+            [self saveImage:newImage filename:sizedFilename];
+        }
+    });
+}
+
+- (void)downloadImage:(NSString *)filename imageView:(UIImageView *)imageView size:(CGSize)size sizedFilename:(NSString *)sizedFilename {
+    NSURL *imageURL = [NSURL URLWithString:[RSHost stringByAppendingFormat:@"/%@", filename]];
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[NSURLRequest alloc] initWithURL:imageURL]];
+    operation.responseSerializer = [AFImageResponseSerializer serializer];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[UIImage class]]) {
+            [self setImage:(UIImage *)responseObject filename:filename toView:imageView size:size sizedFilename:sizedFilename];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"Image error: %@, %@", filename, error);
+    }];
+    [operation start];
 }
 
 # pragma mark - uploads

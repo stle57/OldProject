@@ -52,11 +52,13 @@ static NSString *const kUsernameAttribute = @"username";
     NSDate *createdAt  = [TDViewControllerHelper dateForRFC3339DateTimeString:[activity objectForKey:@"created_at"]];
     self.timeLabel.text = [createdAt timeAgo];
 
-    // TODO: scale the image properly
     [self.previewImage setImage:nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:TDDownloadPreviewImageNotification
                                                         object:self
-                                                      userInfo:@{@"imageView":self.previewImage, @"filename":[post objectForKey:@"filename"]}];
+                                                      userInfo:@{@"imageView":self.previewImage,
+                                                                  @"filename":[post objectForKey:@"filename"],
+                                                                     @"width":@30,
+                                                                    @"height":@30}];
 
     NSString *text;
     if ([@"comment" isEqualToString:[activity objectForKey:@"action"]]) {
