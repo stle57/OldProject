@@ -26,6 +26,12 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 
 @implementation TDActivityViewController
 
+- (void)dealloc
+{
+    self.tableView.delegate = nil;
+    self.tableView.dataSource = nil;
+}
+
 - (UIStatusBarStyle)preferredStatusBarStyle {
     return UIStatusBarStyleDefault;
 }

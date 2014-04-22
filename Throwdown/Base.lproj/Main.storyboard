@@ -140,6 +140,8 @@
         <!--Activity View Controller - Notifications-->
         <scene sceneID="ELI-Xr-1Rm">
             <objects>
+                <exit id="kzH-DV-6xj" userLabel="Exit" sceneMemberID="exit"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="vmS-lS-Hnj" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController id="afL-I4-sWD" customClass="TDActivityViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Uk6-5c-MYf">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
@@ -168,11 +170,10 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="tableView" destination="Uk6-5c-MYf" id="thW-ol-FWB"/>
                         <segue destination="kzH-DV-6xj" kind="unwind" identifier="UnwindToHomeSegue" unwindAction="unwindToHome:" id="inz-oy-1tZ"/>
                     </connections>
                 </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="vmS-lS-Hnj" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <exit id="kzH-DV-6xj" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="-297" y="1870"/>
         </scene>

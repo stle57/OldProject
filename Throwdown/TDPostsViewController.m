@@ -618,7 +618,9 @@
                                             animated:YES
                                           completion:nil]; */
 
-    self.profileButton.enabled = NO;
+    [self openUserProfile:[TDCurrentUser sharedInstance].userId];
+
+/*    self.profileButton.enabled = NO;
 
     // ActionSheet
     UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@""
@@ -627,7 +629,7 @@
                                                destructiveButtonTitle:nil
                                                     otherButtonTitles:@"Send Feedback", @"Your Profile", nil];
     actionSheet.tag = 3546;
-    [actionSheet showInView:self.view];
+    [actionSheet showInView:self.view]; */
 }
 
 - (IBAction)logOutFeedbackButtonPressed:(id)sender {

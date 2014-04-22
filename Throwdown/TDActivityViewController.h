@@ -8,8 +8,12 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TDActivityViewController : UITableViewController
+@interface TDActivityViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
+{
+
+}
+
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 - (void)unwindToRoot;
-
 @end
