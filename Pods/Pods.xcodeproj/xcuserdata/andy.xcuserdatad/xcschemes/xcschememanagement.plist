@@ -24,6 +24,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>Pods-TTTAttributedLabel.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>Pods-TestFlightSDK.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -42,37 +47,42 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>0189FBFD0FA34099AAB9CDD7</key>
+		<key>0F3345F73E9943A796830488</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>19CE4F78161B4173AD96F4D7</key>
+		<key>290C811CA940491C83B24D64</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>42342F3C3AA444C082B14526</key>
+		<key>4B761A71CB8F42F19B0A1125</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>534D73C2710344BA9DBDC0A4</key>
+		<key>4F98871FBA6A441CB0BC35E6</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>53B3E6CEC35A420FA4C0BB04</key>
+		<key>7F8854799B504F4792A82007</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>C2D4EC84A2E14DA7A2338BAB</key>
+		<key>82F50705FE1D47F5A8E73FD3</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>C565E4840F7F43489D2BBDC1</key>
+		<key>97A9FA8AB1C44DAC81FAA5E6</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>9947EF3880914F40AD0BAF5E</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -66,6 +66,12 @@
 #define COCOAPODS_VERSION_MINOR_NYXImagesKit 3
 #define COCOAPODS_VERSION_PATCH_NYXImagesKit 0
 
+// TTTAttributedLabel
+#define COCOAPODS_POD_AVAILABLE_TTTAttributedLabel
+#define COCOAPODS_VERSION_MAJOR_TTTAttributedLabel 1
+#define COCOAPODS_VERSION_MINOR_TTTAttributedLabel 9
+#define COCOAPODS_VERSION_PATCH_TTTAttributedLabel 5
+
 // TestFlightSDK
 #define COCOAPODS_POD_AVAILABLE_TestFlightSDK
 #define COCOAPODS_VERSION_MAJOR_TestFlightSDK 3

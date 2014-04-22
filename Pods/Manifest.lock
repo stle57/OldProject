@@ -22,6 +22,7 @@ PODS:
   - NSDate+TimeAgo (1.0.2)
   - NYXImagesKit (2.3)
   - TestFlightSDK (3.0.0)
+  - TTTAttributedLabel (1.9.5)
 
 DEPENDENCIES:
   - AFNetworking
@@ -30,6 +31,7 @@ DEPENDENCIES:
   - NSDate+TimeAgo
   - NYXImagesKit
   - TestFlightSDK (= 3.0.0)
+  - TTTAttributedLabel
 
 SPEC CHECKSUMS:
   AFNetworking: c7d7901a83f631414c7eda1737261f696101a5cd
@@ -38,5 +40,6 @@ SPEC CHECKSUMS:
   NSDate+TimeAgo: fe93d3042e83093ae3630bc47ae7d57f782733f6
   NYXImagesKit: bdcd82ed61e55ad95a2e95675c2f6b84f039c423
   TestFlightSDK: fe0567a897456b6f65b180541892ef0154986e01
+  TTTAttributedLabel: 6154fd2407a03fb8d71abfa36f4710fff26a168e
 
 COCOAPODS: 0.32.1
