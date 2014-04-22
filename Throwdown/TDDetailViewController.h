@@ -42,7 +42,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 
 - (void)reloadPosts:(NSNotification*)notification;
--(void)fullPostReturn:(NSNotification*)notification;
--(void)newCommentReturn:(NSNotification*)notification;
+- (void)fullPostReturn:(NSNotification*)notification;
+- (void)newCommentReturn:(NSNotification*)notification;
+- (void)unwindToRoot;
 
 @end

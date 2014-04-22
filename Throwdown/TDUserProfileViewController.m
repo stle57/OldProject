@@ -121,8 +121,9 @@
 }
 
 - (void)unwindToRoot {
-    [self.navigationController dismissViewControllerAnimated:YES
-                                                  completion:nil];
+    // Looks weird but ensures the profile closes on both own profile page and when tapped from feed
+    [self.navigationController popViewControllerAnimated:NO];
+    [self.navigationController dismissViewControllerAnimated:NO completion:nil];
 }
 
 

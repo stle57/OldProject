@@ -476,5 +476,12 @@
     [self.tableView reloadData];
 }
 
+#pragma mark - support unwinding on push notification
+
+- (void)unwindToRoot {
+    NSLog(@"unwind from detail view");
+    [self.navigationController popViewControllerAnimated:NO];
+}
+
 
 @end

@@ -19,6 +19,7 @@
 #import "TDHomeHeaderView.h"
 #import "TDActivityCell.h"
 #import "TDUserProfileViewController.h"
+#import "TDNavigationController.h"
 #import <QuartzCore/QuartzCore.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
@@ -198,10 +199,6 @@
     }
 }
 
-- (void)unwindToRoot {
-    [self.navigationController popToRootViewControllerAnimated:YES];
-}
-
 - (IBAction)unwindToHome:(UIStoryboardSegue *)sender {
     // hide the buttons here b/c the seuge animates a screenshot of current view and buttons are visible
     if (goneDownstream) {
@@ -286,7 +283,7 @@
 
 - (void)unwindAllViewControllers {
     UIViewController *top = [TDAppDelegate topMostController];
-    if ([top class] == [UINavigationController class]) {
+    if ([top class] == [UINavigationController class] || [top class] == [TDNavigationController class]) {
         for (UIViewController *vc in [[((UINavigationController *)top) viewControllers] reverseObjectEnumerator]) {
             if ([vc respondsToSelector:@selector(unwindToRoot)]) {
                 [vc performSelector:@selector(unwindToRoot)];
