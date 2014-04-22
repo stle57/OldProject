@@ -14,6 +14,7 @@
 #import "TDViewControllerHelper.h"
 #import "AFNetworking.h"
 #import "TDUserAPI.h"
+#import "NBPhoneNumberUtil.h"
 
 @implementation TDUserProfileEditViewController
 
@@ -394,6 +395,7 @@
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
     [self updateFieldsForTextField:textField text:[textField.text stringByReplacingCharactersInRange:range withString:string]];
+    [self checkIfChanged];
     return YES;
 }
 
@@ -487,9 +489,26 @@
     }
 }
 
+#pragma mark - Validate phone
+- (BOOL)validatePhone {
+    NSError *error = nil;
+    NBPhoneNumberUtil *phoneUtil = [NBPhoneNumberUtil sharedInstance];
+    NBPhoneNumber *parsedPhoneNumber = [phoneUtil parseWithPhoneCarrierRegion:self.phone error:&error];
+    self.phone = [phoneUtil format:parsedPhoneNumber numberFormat:NBEPhoneNumberFormatE164 error:&error];
+    if (!error && [phoneUtil isValidNumber:parsedPhoneNumber]) {
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
 #pragma mark - Check Save Button
 -(BOOL)checkIfChanged
 {
+    if ([self.phone length] > 0 && ![self validatePhone]) {
+        return NO;
+    }
+
     if (([self.name length] > 0 && ![self.name isEqualToString:[TDCurrentUser sharedInstance].name]) ||
         ([self.username length] > 0 && ![self.username isEqualToString:[TDCurrentUser sharedInstance].username]) ||
         ([self.phone length] > 0 && ![self.phone isEqualToString:[TDCurrentUser sharedInstance].phoneNumber]) ||
