@@ -557,7 +557,11 @@
         [post addLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
 
         // reload row
-        [self.tableView reloadData];
+        NSInteger totalRows = [self tableView:nil numberOfRowsInSection:row];
+        NSInteger lastRow = totalRows-1;
+        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:lastRow
+                                                                    inSection:row]]
+                              withRowAnimation:UITableViewRowAnimationNone];
 
         // Send to server
         TDPostAPI *api = [TDPostAPI sharedInstance];
@@ -576,7 +580,11 @@
         [post removeLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
 
         // reload row
-        [self.tableView reloadData];
+        NSInteger totalRows = [self tableView:nil numberOfRowsInSection:row];
+        NSInteger lastRow = totalRows-1;
+        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:lastRow
+                                                                    inSection:row]]
+                              withRowAnimation:UITableViewRowAnimationNone];
 
         TDPostAPI *api = [TDPostAPI sharedInstance];
         [api unLikePostWithId:post.postId];
