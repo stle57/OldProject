@@ -463,6 +463,11 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:@"TDPostUploadStarted" object:upload userInfo:nil];
 }
 
+- (void)uploadAvatarImage:(NSString *)localImagePath withName:(NSString *)newName {
+    TDPostUpload *upload = [[TDPostUpload alloc] initWithAvatarPath:localImagePath newName:newName];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"TDAvatarUploadStarted" object:upload userInfo:nil];
+}
+
 #pragma mark - Failures
 -(void)logOutUser
 {

@@ -199,11 +199,18 @@
 
 -(IBAction)doneButtonHit:(id)sender
 {
+    NSLog(@"doneButtonHit:%@", self.editedProfileImage90x90);
     // Changed?
     if ([self checkIfChanged]) {
         [self sendToTheServer];
     } else {
-        [self leave];
+
+        if (self.editedProfileImage90x90) {
+            [self uploadNewAvatarImage];
+
+        } else {
+            [self leave];
+        }
     }
 }
 
@@ -218,13 +225,21 @@
                                              bio:self.bio
                                         callback:^(BOOL success, NSDictionary *dict) {
                                             if (success) {
-                                                debug NSLog(@"EDIT SUCCESS:%@", dict);
+                                                debug NSLog(@"EDIT SUCCESS:%@ %@", dict, self.editedProfileImage90x90);
                                                 self.saveButton.enabled = NO;
 
                                                 [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateWithUserChangeNotification
                                                                                                     object:nil
                                                                                                   userInfo:nil];
-                                                [self leave];
+
+                                                if (self.editedProfileImage90x90) {
+                                                    [self uploadNewAvatarImage];
+                                                    
+                                                } else {
+                                                    [self leave];
+                                                }
+
+
                                             } else {
                                                 debug NSLog(@"EDIT FAILURE:%@", dict);
 
@@ -982,6 +997,30 @@
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
     [self dismissViewControllerAnimated:YES completion:NULL];
+}
+
+#pragma mark - Upload Avatar Image
+-(void)uploadNewAvatarImage
+{
+    // Filename
+    NSString *filename = [NSString stringWithFormat:@"%@.jpg", [TDPostAPI createUploadFileNameFor:[TDCurrentUser sharedInstance]]];
+
+    NSLog(@"uploadNewAvatarImage:%@", filename);
+
+    // Save to temp place
+    NSString *filePath = [NSHomeDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"Documents/%@", filename]];
+    [self saveAvatarImageTo:filePath
+                      image:self.editedProfileImage90x90];
+
+    TDPostAPI *api = [TDPostAPI sharedInstance];
+    [api uploadAvatarImage:filePath
+                  withName:filename];
+}
+
+- (void)saveAvatarImageTo:(NSString *)filePath image:(UIImage *)image {
+
+    unlink([filePath UTF8String]); // If a file already exists
+    [UIImageJPEGRepresentation(image, .97f) writeToFile:filePath atomically:YES];
 }
 
 @end

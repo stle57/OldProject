@@ -15,6 +15,7 @@
 @property (nonatomic) NSString *persistedPhotoPath;
 
 - (id)initWithVideoPath:(NSString *)videoPath thumbnailPath:(NSString *)thumbnailPath newName:(NSString *)newName;
+- (id)initWithAvatarPath:(NSString *)avatarPath newName:(NSString *)filename;
 - (void)retryUpload;
 - (void)setDelegate:(id<TDUploadProgressDelegate>)delegate;
 - (CGFloat)totalProgress;
