@@ -632,7 +632,7 @@
     [actionSheet showInView:self.view]; */
 }
 
-- (IBAction)logOutFeedbackButtonPressed:(id)sender {
+/*- (IBAction)logOutFeedbackButtonPressed:(id)sender {
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
 
     self.logOutFeedbackButton.enabled = NO;
@@ -663,7 +663,7 @@
 
         self.profileButton.enabled = YES;
     }
-}
+} */
 
 #pragma mark - Open Different subviews
 
@@ -682,18 +682,8 @@
                                           completion:nil];
 }
 
-#pragma mark - Email Feedback
-- (NSString *) platform{
-	size_t size;
-	sysctlbyname("hw.machine", NULL, &size, NULL, 0);
-	char *machine = malloc(size);
-	sysctlbyname("hw.machine", machine, &size, NULL, 0);
-	NSString *platform = [NSString stringWithCString:machine encoding:NSUTF8StringEncoding];
-	free(machine);
-	return platform;
-}
-
--(void)displayFeedbackEmail
+//#pragma mark - Email Feedback
+/*-(void)displayFeedbackEmail
 {
     MFMailComposeViewController *picker = [[MFMailComposeViewController alloc] init];
     picker.mailComposeDelegate = self;
@@ -732,7 +722,7 @@
 {
     [self dismissViewControllerAnimated:YES
                              completion:nil];
-}
+} */
 
 #pragma mark - Log Out User Notification
 -(void)logOutUser:(NSNotification *)notification

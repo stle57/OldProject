@@ -12,7 +12,6 @@
 #import "TDTwoButtonView.h"
 #import "TDDetailsCommentsCell.h"
 #import "TDMoreComments.h"
-#import <MessageUI/MessageUI.h>
 #import "TDDetailViewController.h"
 #import "TDAppDelegate.h"
 #import "TDPostAPI.h"
@@ -24,12 +23,10 @@
 #import "TDLikeView.h"
 #import "TDHomeHeaderView.h"
 #import "TDActivityCell.h"
-#include <sys/types.h>
-#include <sys/sysctl.h>
 #include "TDUserProfileCell.h"
 #include "TDNoPostsCell.h"
 
-@interface TDPostsViewController : UIViewController <TDLikeViewDelegate, TDPostViewDelegate, TDTwoButtonViewDelegate, TDDetailsCommentsCellDelegate, TDMoreCommentsDelegate, UIActionSheetDelegate, MFMailComposeViewControllerDelegate, TDDetailViewControllerDelegate, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate, TDUserProfileCellDelegate>
+@interface TDPostsViewController : UIViewController <TDLikeViewDelegate, TDPostViewDelegate, TDTwoButtonViewDelegate, TDDetailsCommentsCellDelegate, TDMoreCommentsDelegate, UIActionSheetDelegate, TDDetailViewControllerDelegate, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate, TDUserProfileCellDelegate>
 {
     NSArray *posts;
     UIRefreshControl *refreshControl;

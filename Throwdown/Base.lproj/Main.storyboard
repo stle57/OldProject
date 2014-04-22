@@ -138,25 +138,36 @@
             <point key="canvasLocation" x="-805" y="1113"/>
         </scene>
         <!--Activity View Controller - Notifications-->
-        <scene sceneID="ELI-Xr-1Rm">
+        <scene sceneID="e5Y-hG-4Fp">
             <objects>
-                <exit id="kzH-DV-6xj" userLabel="Exit" sceneMemberID="exit"/>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="vmS-lS-Hnj" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <tableViewController id="afL-I4-sWD" customClass="TDActivityViewController" sceneMemberID="viewController">
-                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="Uk6-5c-MYf">
+                <viewController id="ueK-a6-4lV" customClass="TDActivityViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="eRM-eF-DxQ">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <color key="separatorColor" red="0.82745098039999998" green="0.82745098039999998" blue="0.82745098039999998" alpha="1" colorSpace="calibratedRGB"/>
-                        <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                        <connections>
-                            <outlet property="dataSource" destination="afL-I4-sWD" id="1tq-4m-jSU"/>
-                            <outlet property="delegate" destination="afL-I4-sWD" id="tnB-jA-Xsa"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" title="Notifications" id="Dit-ar-fJL">
-                        <barButtonItem key="leftBarButtonItem" style="plain" id="QJh-HR-Nce">
-                            <button key="customView" opaque="NO" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Noc-Au-mtk">
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="qzV-nw-fmu">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <inset key="contentInset" minX="0.0" minY="0.0" maxX="0.0" maxY="50"/>
+                            </tableView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="aqV-xQ-E5K">
+                                <rect key="frame" x="0.0" y="518" width="320" height="50"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="saveshare_button">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted" image="saveshare_button_hit"/>
+                                <connections>
+                                    <action selector="feedbackButton:" destination="ueK-a6-4lV" eventType="touchUpInside" id="DSs-Fa-C1E"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Notifications" id="liU-LI-7yw">
+                        <barButtonItem key="leftBarButtonItem" style="plain" id="7mg-WG-4dz">
+                            <button key="customView" opaque="NO" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="42N-Np-nCW">
                                 <rect key="frame" x="16" y="11" width="20" height="22"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" image="nav_close">
@@ -164,18 +175,19 @@
                                 </state>
                                 <state key="highlighted" image="nav_close_hit"/>
                                 <connections>
-                                    <segue destination="kzH-DV-6xj" kind="unwind" unwindAction="unwindToHome:" id="KR1-MQ-ldR"/>
+                                    <segue destination="zKu-1j-h4U" kind="unwind" unwindAction="unwindToHome:" id="giF-Z1-7Ju"/>
                                 </connections>
                             </button>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="tableView" destination="Uk6-5c-MYf" id="thW-ol-FWB"/>
-                        <segue destination="kzH-DV-6xj" kind="unwind" identifier="UnwindToHomeSegue" unwindAction="unwindToHome:" id="inz-oy-1tZ"/>
+                        <outlet property="tableView" destination="qzV-nw-fmu" id="kLl-Hs-HVt"/>
                     </connections>
-                </tableViewController>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="GiT-L8-3qO" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="zKu-1j-h4U" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="-297" y="1870"/>
+            <point key="canvasLocation" x="-299" y="1870"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="AV1-mt-In7">
@@ -190,7 +202,7 @@
                         <color key="tintColor" red="0.92941176469999998" green="0.92941176469999998" blue="0.92941176469999998" alpha="1" colorSpace="calibratedRGB"/>
                     </toolbar>
                     <connections>
-                        <segue destination="afL-I4-sWD" kind="relationship" relationship="rootViewController" id="ITG-WE-IuL"/>
+                        <segue destination="ueK-a6-4lV" kind="relationship" relationship="rootViewController" id="nSr-ov-tWM"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="oxl-4h-URK" userLabel="First Responder" sceneMemberID="firstResponder"/>
