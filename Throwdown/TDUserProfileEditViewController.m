@@ -36,6 +36,12 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIKeyboardWillHideNotification
                                                   object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:TDUploadCompleteNotification
+                                                  object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:TDUploadFailedNotification
+                                                  object:nil];
     self.profileUser = nil;
     self.name = nil;
     self.username = nil;
@@ -86,6 +92,9 @@
                                              selector:@selector(keyboardWillHide:)
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadComplete:) name:TDUploadCompleteNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadFailed:) name:TDUploadFailedNotification object:nil];
 
     // Preload
     self.name = [TDCurrentUser sharedInstance].name;
@@ -1021,6 +1030,17 @@
 
     unlink([filePath UTF8String]); // If a file already exists
     [UIImageJPEGRepresentation(image, .97f) writeToFile:filePath atomically:YES];
+}
+
+#pragma mark - Notifications
+- (void)uploadComplete:(NSNotification*)notification {
+    NSLog(@"ProfileEdit-upload Complete");
+    self.editedProfileImage90x90 = nil;
+}
+
+- (void)uploadFailed:(NSNotification*)notification {
+    NSLog(@"ProfileEdit-upload Failed");
+    self.editedProfileImage90x90 = nil;
 }
 
 @end

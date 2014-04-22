@@ -315,9 +315,12 @@ typedef enum {
             self.videoStatus = UploadCompleted;
         } else {
             self.photoStatus = UploadCompleted;
+            [[NSNotificationCenter defaultCenter] postNotificationName:TDUploadCompleteNotification object:self];
         }
         [self finalizeUpload];
     } failure:^(NSHTTPURLResponse *response, NSData *data, NSError *error) {
+
+        [[NSNotificationCenter defaultCenter] postNotificationName:TDUploadFailedNotification object:self];
         NSLog(@"%@ upload failed", (fileType == UploadTypeVideo ? @"VIDEO" : @"IMAGE"));
         [self uploadFailed:fileType];
     } progressHandler:^(float progress) {
