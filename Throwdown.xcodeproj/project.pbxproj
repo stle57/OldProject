@@ -430,6 +430,9 @@
 		A11999D718D9290300C39ABF /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				2DC7B6A918FF3D8500261BF7 /* TDToastView.xib */,
+				2DC7B6A718FF3D8500261BF7 /* TDToastView.h */,
+				2DC7B6A818FF3D8500261BF7 /* TDToastView.m */,
 				A11999D818D929E200C39ABF /* UIPlaceHolderTextView.h */,
 				A11999D918D929E200C39ABF /* UIPlaceHolderTextView.m */,
 				A1BB462E18F5FDD700BD9527 /* UIAlertView+TDBlockAlert.h */,
@@ -645,19 +648,25 @@
 		A1C1D0A5189ADAED00666D2A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A1D13FF61905F92A000980E0 /* Home view */,
+				A1D13FF51905F8FE000980E0 /* User Profile */,
+				A1D13FF71905F938000980E0 /* Edit User Profile */,
+				A1D13FF41905F8B4000980E0 /* Feed */,
+				A1D13FF31905F899000980E0 /* Detail View */,
 				A1E3A16B18FCC7F40038A8A4 /* Activities */,
 				A11999D718D9290300C39ABF /* Components */,
+				A1D13FF81905F963000980E0 /* Onboarding */,
 				A1C1D0F218A02FAA00666D2A /* TDPostView.xib */,
 				A1C1D0F418A0387B00666D2A /* TDPostView.h */,
 				A1C1D0F518A0387B00666D2A /* TDPostView.m */,
-				2DA73D7818BFCCD000D87370 /* TDLikeView.xib */,
-				2DA73D7518BFCC2D00D87370 /* TDLikeView.h */,
-				2DA73D7618BFCC2E00D87370 /* TDLikeView.m */,
-				2D3F8DF618CFC81E00333F0B /* TDTwoButtonView.xib */,
-				2D00148818CFB57C0070DE16 /* TDTwoButtonView.h */,
-				2D00148918CFB57C0070DE16 /* TDTwoButtonView.m */,
-				A1C2480F18C6B9CA00F187D9 /* TDProgressIndicator.h */,
-				A1C2481018C6B9CA00F187D9 /* TDProgressIndicator.m */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		A1D13FF31905F899000980E0 /* Detail View */ = {
+			isa = PBXGroup;
+			children = (
+				2DA41A5B18C7E3EA00B21C74 /* HPTypingView */,
 				2DA41A5818C7E31000B21C74 /* TDTypingView.h */,
 				2DA41A5918C7E31000B21C74 /* TDTypingView.m */,
 				2D1AEE6F18C937560055C315 /* TDDetailsLikesCell.xib */,
@@ -666,34 +675,73 @@
 				2D648A1518C9415D002FE0AD /* TDDetailsCommentsCell.xib */,
 				2D648A1318C9415D002FE0AD /* TDDetailsCommentsCell.h */,
 				2D648A1418C9415D002FE0AD /* TDDetailsCommentsCell.m */,
-				2DA39FD518E0B2570004A9C7 /* TDMoreComments.xib */,
-				2DA39FD318E0B2570004A9C7 /* TDMoreComments.h */,
-				2DA39FD418E0B2570004A9C7 /* TDMoreComments.m */,
-				2DA8639218F49D190089B048 /* TDUserProfileCell.xib */,
-				2DA8639018F49D190089B048 /* TDUserProfileCell.h */,
-				2DA8639118F49D190089B048 /* TDUserProfileCell.m */,
-				2DE4653618F614150042D81C /* TDUserEditCell.xib */,
-				2DE4653418F614150042D81C /* TDUserEditCell.h */,
-				2DE4653518F614150042D81C /* TDUserEditCell.m */,
-				2DA41A5B18C7E3EA00B21C74 /* HPTypingView */,
-				A1B9002B18CBDCC800012A1F /* TDUploadProgressDelegate.h */,
-				A1B9002C18CC316700012A1F /* TDHomeHeaderView.h */,
-				A1B9002D18CC316800012A1F /* TDHomeHeaderView.m */,
-				A1B9002F18CC43FC00012A1F /* TDHomeHeaderUploadDelegate.h */,
-				2DBA430018DA455500366737 /* TDTextField.xib */,
-				2DBA42FE18DA455500366737 /* TDTextField.h */,
-				2DBA42FF18DA455500366737 /* TDTextField.m */,
+			);
+			name = "Detail View";
+			sourceTree = "<group>";
+		};
+		A1D13FF41905F8B4000980E0 /* Feed */ = {
+			isa = PBXGroup;
+			children = (
 				2DA420DB18E63E1A006F4D9C /* TDActivityCell.xib */,
 				2DA420D918E63E1A006F4D9C /* TDActivityCell.h */,
 				2DA420DA18E63E1A006F4D9C /* TDActivityCell.m */,
-				2DC7B6A918FF3D8500261BF7 /* TDToastView.xib */,
-				2DC7B6A718FF3D8500261BF7 /* TDToastView.h */,
-				2DC7B6A818FF3D8500261BF7 /* TDToastView.m */,
+				2DA73D7818BFCCD000D87370 /* TDLikeView.xib */,
+				2DA73D7518BFCC2D00D87370 /* TDLikeView.h */,
+				2DA73D7618BFCC2E00D87370 /* TDLikeView.m */,
 				2D01951B1901DAF4000CBF74 /* TDNoPostsCell.xib */,
 				2D0195191901DAF4000CBF74 /* TDNoPostsCell.h */,
 				2D01951A1901DAF4000CBF74 /* TDNoPostsCell.m */,
+				2D3F8DF618CFC81E00333F0B /* TDTwoButtonView.xib */,
+				2D00148818CFB57C0070DE16 /* TDTwoButtonView.h */,
+				2D00148918CFB57C0070DE16 /* TDTwoButtonView.m */,
+				2DA39FD518E0B2570004A9C7 /* TDMoreComments.xib */,
+				2DA39FD318E0B2570004A9C7 /* TDMoreComments.h */,
+				2DA39FD418E0B2570004A9C7 /* TDMoreComments.m */,
 			);
-			name = Views;
+			name = Feed;
+			sourceTree = "<group>";
+		};
+		A1D13FF51905F8FE000980E0 /* User Profile */ = {
+			isa = PBXGroup;
+			children = (
+				2DA8639218F49D190089B048 /* TDUserProfileCell.xib */,
+				2DA8639018F49D190089B048 /* TDUserProfileCell.h */,
+				2DA8639118F49D190089B048 /* TDUserProfileCell.m */,
+			);
+			name = "User Profile";
+			sourceTree = "<group>";
+		};
+		A1D13FF61905F92A000980E0 /* Home view */ = {
+			isa = PBXGroup;
+			children = (
+				A1B9002C18CC316700012A1F /* TDHomeHeaderView.h */,
+				A1B9002D18CC316800012A1F /* TDHomeHeaderView.m */,
+				A1B9002F18CC43FC00012A1F /* TDHomeHeaderUploadDelegate.h */,
+				A1C2480F18C6B9CA00F187D9 /* TDProgressIndicator.h */,
+				A1C2481018C6B9CA00F187D9 /* TDProgressIndicator.m */,
+				A1B9002B18CBDCC800012A1F /* TDUploadProgressDelegate.h */,
+			);
+			name = "Home view";
+			sourceTree = "<group>";
+		};
+		A1D13FF71905F938000980E0 /* Edit User Profile */ = {
+			isa = PBXGroup;
+			children = (
+				2DE4653618F614150042D81C /* TDUserEditCell.xib */,
+				2DE4653418F614150042D81C /* TDUserEditCell.h */,
+				2DE4653518F614150042D81C /* TDUserEditCell.m */,
+			);
+			name = "Edit User Profile";
+			sourceTree = "<group>";
+		};
+		A1D13FF81905F963000980E0 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				2DBA430018DA455500366737 /* TDTextField.xib */,
+				2DBA42FE18DA455500366737 /* TDTextField.h */,
+				2DBA42FF18DA455500366737 /* TDTextField.m */,
+			);
+			name = Onboarding;
 			sourceTree = "<group>";
 		};
 		A1E3A16B18FCC7F40038A8A4 /* Activities */ = {
