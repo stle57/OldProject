@@ -458,7 +458,7 @@
 
     // resize the table
     CGRect tableViewNewFrame = origTableViewFrame;
-    tableViewNewFrame.size.height -= keyboardSize.height-self.navigationController.navigationBar.frame.size.height-statusBarFrame.size.height;
+    tableViewNewFrame.size.height -= (keyboardSize.height);
 
     [UIView animateWithDuration: 0.3
                           delay: 0.0
