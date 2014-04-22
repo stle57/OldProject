@@ -26,8 +26,7 @@
     return self;
 }
 
--(void)userId:(NSNumber *)userId userName:(NSString *)userName name:(NSString *)name picture:(NSString *)picture bio:(NSString *)bio;
-{
+- (void)userId:(NSNumber *)userId userName:(NSString *)userName name:(NSString *)name picture:(NSString *)picture bio:(NSString *)bio; {
     _userId = userId;
     _username = userName;
     _name = name;
@@ -38,13 +37,11 @@
     [self figureOutBioLabelHeightForThisMessage:_bio];
 }
 
-- (NSString *)description
-{
+- (NSString *)description {
     return [NSString stringWithFormat:@"TDUser-user:%@ %@ %@ %@ %@", _userId, _name, _username, _picture, _bio];
 }
 
--(void)figureOutBioLabelHeightForThisMessage:(NSString *)text
-{
+- (void)figureOutBioLabelHeightForThisMessage:(NSString *)text {
     _bioHeight = 0.0;
     if (text && ![text isKindOfClass:[NSNull class]] && [text length] > 0) {
         _bioHeight = [TDAppDelegate heightOfTextForString:text

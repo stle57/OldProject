@@ -32,8 +32,8 @@
     self.timeLabel.textColor = [TDConstants commentTimeTextColor];
 
     // Fonts
-    self.usernameLabel.font = [TDConstants fontBoldSized:16.0];
-    self.timeLabel.font     = [TDConstants fontLightSized:13.0];
+    self.usernameLabel.font = USERNAME_FONT;
+    self.timeLabel.font     = TIME_FONT;
     self.messageLabel.font  = COMMENT_MESSAGE_FONT;
     origRectOfUserButton = self.userButton.frame;
 }

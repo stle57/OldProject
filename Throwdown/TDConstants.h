@@ -43,9 +43,8 @@ static NSString *const TDFontProximaNovaRegular = @"ProximaNova-Regular";
 static NSString *const TDFontProximaNovaSemibold = @"ProximaNova-Semibold";
 static CGFloat const TDCommentCellProfileHeight = 18.0;
 
-// testing showed adding 5px to a 16px font size was enought to render emoji properly
-// (16+5) - (16 * 1.3125) == 0
-static CGFloat const TDTextLineHeight = 1.3125;
+// 1.27 is the lowest we can go without cutting off the emoji
+static CGFloat const TDTextLineHeight = 1.27;
 
 static NSString *const kSpinningAnimation = @"rotationAnimation";
 
@@ -60,8 +59,11 @@ static NSString *const kSpinningAnimation = @"rotationAnimation";
 #define CELL_IDENTIFIER_EDITPROFILE     @"TDUserEditCell"
 #define TOAST_TAG                       87352
 #define COMMENT_MESSAGE_WIDTH           306.0
-#define COMMENT_MESSAGE_FONT            [TDConstants fontRegularSized:16.0]
+#define COMMENT_MESSAGE_FONT            [TDConstants fontRegularSized:14.0]
 #define BIO_FONT                        [TDConstants fontRegularSized:16.0]
+#define TITLE_FONT                      [TDConstants fontRegularSized:19.0]
+#define TIME_FONT                       [TDConstants fontLightSized:13.0]
+#define USERNAME_FONT                   [TDConstants fontBoldSized:16.0]
 #define kCommentDefaultText             @"Write a comment..."
 #define FULL_POST_INFO_NOTIFICATION     @"TDFullPostInfoNotification"
 #define NEW_COMMENT_INFO_NOTICIATION    @"TDNewCommentPostInfoNoticifation"

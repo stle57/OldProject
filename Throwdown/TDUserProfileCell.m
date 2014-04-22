@@ -20,8 +20,8 @@
 }
 
 - (void)awakeFromNib {
-    self.userNameLabel.font = [TDConstants fontRegularSized:19.0];
-    self.bioLabel.font = [TDConstants fontRegularSized:16.0];
+    self.userNameLabel.font = TITLE_FONT;
+    self.bioLabel.font = BIO_FONT;
     self.userImageView.layer.cornerRadius = 22.5;
     self.userImageView.layer.masksToBounds = YES;
 }

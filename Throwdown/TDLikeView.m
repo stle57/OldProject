@@ -17,37 +17,18 @@
 @synthesize comments;
 @synthesize like;
 
-- (void)dealloc
-{
+- (void)dealloc {
     delegate = nil;
     self.likers = nil;
     self.comments = nil;
 }
 
-- (id)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code
-    }
-    return self;
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    if (self) {
-    }
-    return self;
-}
-
 - (void)awakeFromNib {
-    self.moreLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:14.0];
+    self.moreLabel.font = [TDConstants fontSemiBoldSized:14.0];
 }
 
-- (IBAction)likeButtonPressed:(UIButton *)sender
-{
-    NSLog(@"TDLikeView-likeButtonPressed:%d", like);
+- (IBAction)likeButtonPressed:(UIButton *)sender {
+    debug NSLog(@"TDLikeView-likeButtonPressed:%d", like);
 
     if (like) {
         if (delegate) {
@@ -64,8 +45,7 @@
     }
 }
 
-- (IBAction)commentButtonPressed:(UIButton *)sender
-{
+- (IBAction)commentButtonPressed:(UIButton *)sender {
     if (delegate) {
         if ([delegate respondsToSelector:@selector(commentButtonPressedFromRow:)]) {
             [delegate commentButtonPressedFromRow:row];
@@ -73,8 +53,7 @@
     }
 }
 
--(void)setLike:(BOOL)liked
-{
+- (void)setLike:(BOOL)liked {
     like = liked;
     if (liked) {
         UIImage *buttonImage = [UIImage imageNamed:@"but_liked_big.png"];

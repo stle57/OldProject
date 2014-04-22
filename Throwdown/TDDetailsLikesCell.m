@@ -28,7 +28,7 @@ static NSString *const kUserIdAttribute = @"user_id";
 
     self.likersNamesLabel.linkAttributes = nil;
     self.likersNamesLabel.textColor = [UIColor darkGrayColor];
-    self.likersNamesLabel.font = [TDConstants fontBoldSized:16.0];
+    self.likersNamesLabel.font = USERNAME_FONT;
     self.likersNamesLabel.delegate = self;
 }
 
