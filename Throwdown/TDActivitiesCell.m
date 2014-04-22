@@ -74,7 +74,7 @@ static NSString *const kUsernameAttribute = @"username";
     NSDictionary *attributes = @{
                                  NSForegroundColorAttributeName: [TDConstants brandingRedColor],
                                  NSFontAttributeName: [TDConstants fontBoldSized:14.0],
-                                 kUsernameAttribute: @1
+                                 kUsernameAttribute: @YES
                                  };
     [mutableAttributedString addAttributes:attributes range:range];
     self.activityText.attributedText = mutableAttributedString;
@@ -88,28 +88,10 @@ static NSString *const kUsernameAttribute = @"username";
 }
 
 - (void)textTapped:(UITapGestureRecognizer *)recognizer {
-    UITextView *textView = (UITextView *)recognizer.view;
-
-    // Location of the tap in text-container coordinates
-    NSLayoutManager *layoutManager = textView.layoutManager;
-    CGPoint location = [recognizer locationInView:textView];
-    location.x -= textView.textContainerInset.left;
-    location.y -= textView.textContainerInset.top;
-
-    // Find the character that's been tapped on
-    NSUInteger characterIndex;
-    characterIndex = [layoutManager characterIndexForPoint:location
-                                           inTextContainer:textView.textContainer
-                  fractionOfDistanceBetweenInsertionPoints:NULL];
-
-    if (characterIndex < textView.textStorage.length) {
-        NSRange range;
-        NSDictionary *attributes = [textView.textStorage attributesAtIndex:characterIndex effectiveRange:&range];
-        if ([attributes objectForKey:kUsernameAttribute] && self.delegate) {
-            if ([self.delegate respondsToSelector:@selector(userProfilePressedFromRow:)]) {
-                [self.delegate userProfilePressedFromRow:self.row];
-            }
-        }
+    if (self.delegate &&
+        [self.delegate respondsToSelector:@selector(userProfilePressedFromRow:)] &&
+        [TDViewControllerHelper textAttributeTapped:kUsernameAttribute inTap:recognizer action:nil]) {
+            [self.delegate userProfilePressedFromRow:self.row];
     }
 }
 

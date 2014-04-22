@@ -7,12 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TTTAttributedLabel.h"
 
 @protocol TDDetailsLikesCellDelegate <NSObject>
 @optional
 -(void)likeButtonPressedFromLikes;
 -(void)unLikeButtonPressedFromLikes;
--(void)miniAvatarButtonPressedForLiker:(NSDictionary *)liker;
+-(void)usernamePressedForLiker:(NSNumber *)likerId;
 @end
 
 @interface TDDetailsLikesCell : UITableViewCell
@@ -30,7 +31,7 @@
 @property (nonatomic, retain) NSArray *comments;
 @property (weak, nonatomic) IBOutlet UIImageView *likeImageView;
 @property (weak, nonatomic) IBOutlet UIButton *likeButton;
-@property (weak, nonatomic) IBOutlet UILabel *likersNamesLabel;
+@property (weak, nonatomic) IBOutlet TTTAttributedLabel *likersNamesLabel;
 @property (nonatomic) CGFloat namesLabelHeight;
 
 - (IBAction)likeButtonPressed:(UIButton *)sender;
@@ -38,7 +39,5 @@
 - (void)setLikesArray:(NSArray *)array;
 
 + (NSInteger)heightOfLikersLabel:(NSArray *)likers;
-+ (NSInteger)numberOfRowsForLikers:(NSInteger)count;
-+ (NSInteger)rowNumberForLiker:(NSInteger)index;
 
 @end

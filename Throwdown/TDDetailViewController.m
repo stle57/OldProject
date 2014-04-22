@@ -209,7 +209,7 @@
 }
 
 - (void)postDeleted:(NSNotification*)notification {
-    NSLog(@"delete notification:%@", notification);
+    debug NSLog(@"delete notification:%@", notification);
 
     // And then go back
     self.navigationItem.rightBarButtonItem.enabled = YES;
@@ -217,7 +217,7 @@
 }
 
 - (void)postDeleteFail:(NSNotification *)notification {
-    NSLog(@"postDeleteFail notification:%@ CLASS:%@", notification, [notification.object class]);
+    debug NSLog(@"postDeleteFail notification:%@ CLASS:%@", notification, [notification.object class]);
 
     if ([notification.object isKindOfClass:[NSError class]]) {
         NSError *error = (NSError*)notification.object;
@@ -323,7 +323,7 @@
 #pragma mark - TypingView delegates
 
 - (void)keyboardAppeared:(CGFloat)height curve:(NSInteger)curve {
-    NSLog(@"delegate-keyboardAppeared:%f curve:%ld", height, (long)curve);
+    debug NSLog(@"delegate-keyboardAppeared:%f curve:%ld", height, (long)curve);
 
     self.typingView.isUp = YES;
 
@@ -358,7 +358,7 @@
 }
 
 - (void)keyboardDisappeared:(CGFloat)height {
-    NSLog(@"delegate-keyboardDisappeared:%f", height);
+    debug NSLog(@"delegate-keyboardDisappeared:%f", height);
 
     [UIView animateWithDuration: 0.25
                           delay: 0.0
@@ -379,7 +379,7 @@
 }
 
 - (void)typingViewMessage:(NSString *)message {
-    NSLog(@"chat-typingViewMessage:%@", message);
+    debug NSLog(@"chat-typingViewMessage:%@", message);
 
     if (self.typingView.isUp) {
         [self.typingView removeKeyboard];
@@ -392,7 +392,7 @@
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    NSLog(@"TDDetailViewController-touches");
+    debug NSLog(@"TDDetailViewController-touches");
 
     if (self.typingView.isUp) {
         [self.typingView removeKeyboard];
@@ -416,7 +416,7 @@
 }
 
 - (void)unLikeButtonPressedFromLikes {
-    NSLog(@"TDDetailViewController-unLikeButtonPressedLikes");
+    debug NSLog(@"TDDetailViewController-unLikeButtonPressedLikes");
 
     if (self.post.postId) {
 
@@ -432,8 +432,9 @@
     }
 }
 
-- (void)miniAvatarButtonPressedForLiker:(NSDictionary *)liker {
-    NSLog(@"delegate-miniAvatarButtonPressedForLiker:%@", liker);
+- (void)usernamePressedForLiker:(NSNumber *)likerId {
+    debug NSLog(@"delegate-miniAvatarButtonPressedForLiker:%@", likerId);
+    [self showUserProfile:likerId];
 }
 
 
@@ -441,7 +442,7 @@
 
 - (void)userButtonPressedFromRow:(NSInteger)row {
     // Because we're on the detail page the only user available is the post's user
-    [self showUserProfile:self.post.user];
+    [self showUserProfile:self.post.user.userId];
 }
 
 #pragma mark - TDDetailsCommentsCellDelegate
@@ -451,13 +452,13 @@
 
     if (self.post.comments && [post.comments count] > row) {
         TDComment *comment = [post.comments objectAtIndex:commentNumber];
-        [self showUserProfile:comment.user];
+        [self showUserProfile:comment.user.userId];
     }
 }
 
-- (void)showUserProfile:(TDUser *)user {
+- (void)showUserProfile:(NSNumber *)userId {
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
-    vc.userId = user.userId;
+    vc.userId = userId;
     vc.fromProfileType = kFromProfileScreenType_OtherUser;
     [self.navigationController pushViewController:vc animated:YES];
 }
@@ -465,7 +466,7 @@
 #pragma mark - Update Posts After User Change Notification
 -(void)updatePostsAfterUserUpdate:(NSNotification *)notification
 {
-    NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
+    debug NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
 
     if ([[[TDCurrentUser sharedInstance] currentUserObject].userId isEqualToNumber:self.post.user.userId])
     {

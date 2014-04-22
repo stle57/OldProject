@@ -55,4 +55,34 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
 	return result;
 }
 
+
++ (BOOL)textAttributeTapped:(NSString *)attribute inTap:(UITapGestureRecognizer *)recognizer action:(void (^)(id value))actionBlock {
+    UITextView *textView = (UITextView *)recognizer.view;
+
+    // Location of the tap in text-container coordinates
+    NSLayoutManager *layoutManager = textView.layoutManager;
+    CGPoint location = [recognizer locationInView:textView];
+    location.x -= textView.textContainerInset.left;
+    location.y -= textView.textContainerInset.top;
+
+    // Find the character that's been tapped on
+    NSUInteger characterIndex;
+    characterIndex = [layoutManager characterIndexForPoint:location
+                                           inTextContainer:textView.textContainer
+                  fractionOfDistanceBetweenInsertionPoints:NULL];
+
+    if (characterIndex < textView.textStorage.length) {
+        NSRange range;
+        NSDictionary *attributes = [textView.textStorage attributesAtIndex:characterIndex effectiveRange:&range];
+        if ([attributes objectForKey:attribute]) {
+            if (actionBlock) {
+                actionBlock([attributes objectForKey:attribute]);
+            }
+            return YES;
+        }
+    }
+    return NO;
+}
+
+
 @end
