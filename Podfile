@@ -6,6 +6,7 @@ pod 'AFNetworking'
 pod 'TestFlightSDK', '3.0.0'
 pod 'libPhoneNumber-iOS'
 pod 'NSDate+TimeAgo'
+pod 'NYXImagesKit'
 
 # target "Throwdown" do
 # 
