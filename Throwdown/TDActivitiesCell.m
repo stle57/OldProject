@@ -62,7 +62,7 @@ static NSString *const kUsernameAttribute = @"username";
 
     NSString *text;
     if ([@"comment" isEqualToString:[activity objectForKey:@"action"]]) {
-        text = [NSString stringWithFormat:@"%@ said: %@",
+        text = [NSString stringWithFormat:@"%@ said: \"%@\"",
                                           username,
                                           [[activity objectForKey:@"comment"] objectForKey:@"body"]];
     } else if ([@"like" isEqualToString:[activity objectForKey:@"action"]]) {
