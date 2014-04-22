@@ -8,6 +8,7 @@
 
 #import "TDViewControllerHelper.h"
 #import "TDWelcomeViewController.h"
+#import "TDConstants.h"
 
 static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*";
 
@@ -82,6 +83,14 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
         }
     }
     return NO;
+}
+
++ (NSAttributedString *)makeParagraphedText:(NSString *)text {
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:text];
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    [paragraphStyle setLineHeightMultiple:TDTextLineHeight];
+    [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [text length])];
+    return attributedString;
 }
 
 

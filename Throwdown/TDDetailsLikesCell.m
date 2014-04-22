@@ -26,6 +26,7 @@ static NSString *const kUserIdAttribute = @"user_id";
 - (void)awakeFromNib {
     [super awakeFromNib];
 
+    self.likersNamesLabel.linkAttributes = nil;
     self.likersNamesLabel.textColor = [UIColor darkGrayColor];
     self.likersNamesLabel.font = [TDConstants fontBoldSized:16.0];
     self.likersNamesLabel.delegate = self;
@@ -39,7 +40,7 @@ static NSString *const kUserIdAttribute = @"user_id";
 }
 
 - (IBAction)likeButtonPressed:(UIButton *)sender {
-    NSLog(@"TDDetailsLikesCell-likeButtonPressed:%@", delegate);
+    debug NSLog(@"TDDetailsLikesCell-likeButtonPressed:%@", delegate);
     if (like) {
         like = !like;
         if (delegate) {
@@ -61,7 +62,7 @@ static NSString *const kUserIdAttribute = @"user_id";
 }
 
 -(void)setLike:(BOOL)liked {
-    NSLog(@"TDDetailsLikesCell-setLike:%d", like);
+    debug NSLog(@"TDDetailsLikesCell-setLike:%d", like);
     like = liked;
     if (liked) {
         UIImage *buttonImage = [UIImage imageNamed:@"like_button_on.png"];

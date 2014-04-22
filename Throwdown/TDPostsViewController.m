@@ -8,6 +8,7 @@
 
 #import "TDPostsViewController.h"
 #import "TDUserProfileViewController.h"
+#import "TDViewControllerHelper.h"
 
 @interface TDPostsViewController () <UITableViewDataSource, UITableViewDelegate>
 @end
@@ -336,20 +337,21 @@
         if ([self getUser]) {
             TDUser *user = [self getUser];
             cell.userNameLabel.text = user.name;
+            cell.userImageView.hidden = NO;
 
             if (user.bio && ![user.bio isKindOfClass:[NSNull class]]) {
-                cell.bioLabel.text = user.bio;
+                cell.bioLabel.attributedText = [TDViewControllerHelper makeParagraphedText:user.bio];
                 [TDAppDelegate fixHeightOfThisLabel:cell.bioLabel];
                 cell.bioLabel.hidden = NO;
-                cell.whiteUnderView.frame = CGRectMake(cell.whiteUnderView.frame.origin.x,
-                                                       cell.whiteUnderView.frame.origin.y,
-                                                       cell.whiteUnderView.frame.size.width,
-                                                       [self tableView:tableView heightForRowAtIndexPath:indexPath]-8.0);
-                cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
-                                                   CGRectGetMaxY(cell.whiteUnderView.frame)-(1.0/[[UIScreen mainScreen] scale]),
-                                                   cell.bottomLine.frame.size.width,
-                                                   (1.0 / [[UIScreen mainScreen] scale]));
             }
+            cell.whiteUnderView.frame = CGRectMake(cell.whiteUnderView.frame.origin.x,
+                                                   cell.whiteUnderView.frame.origin.y,
+                                                   cell.whiteUnderView.frame.size.width,
+                                                   [self tableView:tableView heightForRowAtIndexPath:indexPath] - 8.0);
+            cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
+                                               CGRectGetMaxY(cell.whiteUnderView.frame) - (1.0 / [[UIScreen mainScreen] scale]),
+                                               cell.bottomLine.frame.size.width,
+                                               (1.0 / [[UIScreen mainScreen] scale]));
         }
 
         return cell;
@@ -467,7 +469,8 @@
 
         // min height is profileHeaderHeight
         if ([self getUser]) {
-            CGFloat cellHeight = topOfBioLabelInProfileHeader + [self getUser].bioHeight + 12.0;
+            CGFloat bioHeight = [self getUser].bioHeight;
+            CGFloat cellHeight = topOfBioLabelInProfileHeader + bioHeight + (bioHeight > 0 ? 17.0 : 12.0); // extra padding when we have a bio
             return fmaxf(profileHeaderHeight, cellHeight);
         } else {
             return 0.0;

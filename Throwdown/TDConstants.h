@@ -42,6 +42,10 @@ static NSString *const TDFontProximaNovaRegular = @"ProximaNova-Regular";
 static NSString *const TDFontProximaNovaSemibold = @"ProximaNova-Semibold";
 static CGFloat const TDCommentCellProfileHeight = 18.0;
 
+// testing showed adding 5px to a 16px font size was enought to render emoji properly
+// (16+5) - (16 * 1.3125) == 0
+static CGFloat const TDTextLineHeight = 1.3125;
+
 static NSString *const kSpinningAnimation = @"rotationAnimation";
 
 @interface TDConstants : NSObject

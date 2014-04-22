@@ -8,36 +8,22 @@
 
 #import "TDUserProfileCell.h"
 #import "TDAppDelegate.h"
+#import "TDConstants.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation TDUserProfileCell
 
 @synthesize delegate;
 
-- (void)dealloc
-{
+- (void)dealloc {
     delegate = nil;
 }
 
-- (id)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code
-    }
-    return self;
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    if (self) {
-    }
-    return self;
-}
-
 - (void)awakeFromNib {
-    self.userNameLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:19.0];
-    self.bioLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:14.0];
+    self.userNameLabel.font = [TDConstants fontRegularSized:19.0];
+    self.bioLabel.font = [TDConstants fontRegularSized:16.0];
+    self.userImageView.layer.cornerRadius = 22.5;
+    self.userImageView.layer.masksToBounds = YES;
 }
 
 @end

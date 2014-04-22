@@ -14,14 +14,14 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="57"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <view contentMode="scaleToFill" id="SEX-o7-p39">
+                    <view contentMode="scaleToFill" id="SEX-o7-p39" userLabel="Background View">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="57"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     </view>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="6qR-hB-9De" userLabel="user name">
-                        <rect key="frame" x="70" y="6" width="244" height="45"/>
+                        <rect key="frame" x="70" y="7" width="244" height="45"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -36,13 +36,13 @@
                         <color key="textColor" red="0.29803921570000003" green="0.29803921570000003" blue="0.29803921570000003" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="1Fe-Mr-5rh">
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="prof_pic_default" id="1Fe-Mr-5rh">
                         <rect key="frame" x="6" y="6" width="45" height="45"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" red="0.82745098039999998" green="0.82745098039999998" blue="0.82745098039999998" alpha="1" colorSpace="calibratedRGB"/>
                     </imageView>
                     <view contentMode="scaleToFill" id="if2-hz-B1y" userLabel="Top Line View">
-                        <rect key="frame" x="0.0" y="57" width="320" height="1"/>
+                        <rect key="frame" x="0.0" y="57.5" width="320" height="0.0"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" red="0.7843137255" green="0.7843137255" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
                         <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
@@ -60,4 +60,7 @@
             </connections>
         </tableViewCell>
     </objects>
+    <resources>
+        <image name="prof_pic_default" width="70" height="70"/>
+    </resources>
 </document>

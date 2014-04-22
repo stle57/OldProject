@@ -430,6 +430,9 @@
 		A11999D718D9290300C39ABF /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				2D648A1518C9415D002FE0AD /* TDDetailsCommentsCell.xib */,
+				2D648A1318C9415D002FE0AD /* TDDetailsCommentsCell.h */,
+				2D648A1418C9415D002FE0AD /* TDDetailsCommentsCell.m */,
 				2DC7B6A918FF3D8500261BF7 /* TDToastView.xib */,
 				2DC7B6A718FF3D8500261BF7 /* TDToastView.h */,
 				2DC7B6A818FF3D8500261BF7 /* TDToastView.m */,
@@ -672,9 +675,6 @@
 				2D1AEE6F18C937560055C315 /* TDDetailsLikesCell.xib */,
 				2D1AEE6D18C937560055C315 /* TDDetailsLikesCell.h */,
 				2D1AEE6E18C937560055C315 /* TDDetailsLikesCell.m */,
-				2D648A1518C9415D002FE0AD /* TDDetailsCommentsCell.xib */,
-				2D648A1318C9415D002FE0AD /* TDDetailsCommentsCell.h */,
-				2D648A1418C9415D002FE0AD /* TDDetailsCommentsCell.m */,
 			);
 			name = "Detail View";
 			sourceTree = "<group>";

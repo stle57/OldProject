@@ -10,6 +10,7 @@
 #import "TDAppDelegate.h"
 #import "TDConstants.h"
 #import "NSDate+TimeAgo.h"
+#import "TDViewControllerHelper.h"
 
 @implementation TDDetailsCommentsCell
 
@@ -42,7 +43,8 @@
     messagesFrame.size.width = COMMENT_MESSAGE_WIDTH;
     self.messageLabel.frame = messagesFrame;
     self.messageLabel.font = COMMENT_MESSAGE_FONT;
-    self.messageLabel.text = text;
+    self.messageLabel.attributedText = [TDViewControllerHelper makeParagraphedText:text];
+
     [TDAppDelegate fixHeightOfThisLabel:self.messageLabel];
 }
 
