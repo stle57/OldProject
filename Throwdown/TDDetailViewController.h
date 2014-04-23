@@ -17,6 +17,7 @@
 
 @optional
 -(void)postDeleted:(TDPost *)deletedPost;
+-(void)replacePostId:(NSNumber *)postId withPost:(TDPost *)post;
 @end
 
 @interface TDDetailViewController : UIViewController <TDTypingViewViewDelegate, UITableViewDataSource, UITableViewDelegate, TDDetailsLikesCellDelegate, TDDetailsCommentsCellDelegate, UIAlertViewDelegate, TDPostViewDelegate>

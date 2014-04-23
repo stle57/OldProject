@@ -76,4 +76,5 @@
 - (void)stopSpinner;
 - (void)startLoadingSpinner;
 - (TDUser *)getUser;
+- (void)openDetailView:(NSNumber *)postId;
 @end

@@ -204,6 +204,9 @@
                                   atScrollPosition:UITableViewScrollPositionBottom
                                           animated:NO];
             [[TDCurrentUser sharedInstance] registerForPushNotifications:@"Would you like to be notified of future replies?"];
+
+            // Tell delegate
+            [self tellDelegateToUpdateThisPost];
         }
     }
 }
@@ -414,6 +417,9 @@
         // Update Server
         TDPostAPI *api = [TDPostAPI sharedInstance];
         [api likePostWithId:self.post.postId];
+
+        // Tell delegate
+        [self tellDelegateToUpdateThisPost];
     }
 }
 
@@ -433,6 +439,9 @@
         // Update Server
         TDPostAPI *api = [TDPostAPI sharedInstance];
         [api unLikePostWithId:self.post.postId];
+
+        // Tell delegate
+        [self tellDelegateToUpdateThisPost];
     }
 }
 
@@ -453,6 +462,15 @@
     [self showUserProfile:likerId];
 }
 
+-(void)tellDelegateToUpdateThisPost
+{
+    if (delegate) {
+        if ([delegate respondsToSelector:@selector(replacePostId:withPost:)]) {
+            [delegate replacePostId:self.postId
+                           withPost:self.post];
+        }
+    }
+}
 
 #pragma mark - TDPostViewDelegate
 

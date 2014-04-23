@@ -846,4 +846,20 @@
     [self.navigationController pushViewController:vc animated:YES];
 }
 
+-(void)replacePostId:(NSNumber *)postId withPost:(TDPost *)post
+{
+    NSLog(@"replacePostID:%@ Post:%@", postId, post);
+    NSMutableArray *newPostsArray = [NSMutableArray arrayWithArray:self.posts];
+    for (TDPost *aPost in self.posts)
+    {
+        if ([aPost.postId isEqualToNumber:postId]) {
+            [newPostsArray replaceObjectAtIndex:[self.posts indexOfObject:aPost]
+                                     withObject:post];
+            self.posts = [NSArray arrayWithArray:newPostsArray];
+            [self.tableView reloadData];
+            break;
+        }
+    }
+}
+
 @end
