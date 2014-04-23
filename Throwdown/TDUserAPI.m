@@ -59,7 +59,7 @@
 {
     [[TDAPIClient sharedInstance] editUserWithName:name email:email username:username phone:phone bio:bio picture:pictureFileName callback:^(BOOL success, NSDictionary *user) {
         if (success) {
-            NSLog(@"---SUCCESS:%@", user);
+            debug NSLog(@"---SUCCESS:%@", user);
             if (user) {
                 [self.currentUser updateFromDictionary:user];
             }

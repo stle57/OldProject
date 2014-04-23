@@ -121,7 +121,16 @@
 
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
 
-    [self.httpManager PUT:url parameters:@{@"user": @{ @"name": name, @"username": username, @"phone_number": phone, @"email": email, @"bio": bio, @"picture": pictureFileName }, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    // Avoid any nils in the dictionary
+    NSNull *null = [NSNull null];
+    NSDictionary *params = @{@"user": @{ @"name": (name ? name : null),
+                                     @"username": (username ?username : null),
+                                 @"phone_number": (phone ? phone : null),
+                                        @"email": (email ? email : null),
+                                          @"bio": (bio ? bio : null),
+                                      @"picture": (pictureFileName ? pictureFileName : null)
+                             }, @"user_token": [TDCurrentUser sharedInstance].authToken};
+    [self.httpManager PUT:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             NSDictionary *response = (NSDictionary *)responseObject;
 
@@ -132,11 +141,11 @@
                 callback(NO, [response objectForKey:@"errors"]);
             }
         } else {
-            NSLog(@"ERROR in edit user response, got: %@", [responseObject class]);
+            debug NSLog(@"ERROR in edit user response, got: %@", [responseObject class]);
             callback(NO, nil);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"ERROR in edit user call: %@", [error localizedDescription]);
+        debug NSLog(@"ERROR in edit user call: %@", [error localizedDescription]);
         callback(NO, error.userInfo);
     }];
 }
@@ -156,9 +165,9 @@
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/device_tokens.json"];
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
     [self.httpManager POST:url parameters:@{@"user_token": userToken, @"device_token": token} success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"device token registered");
+        debug NSLog(@"device token registered");
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"device token failed registration");
+        debug NSLog(@"device token failed registration");
     }];
 }
 
