@@ -50,8 +50,8 @@
                                                  name:TDNotificationUpdate
                                                object:nil];
 
-    [self.badgeCountLabel setFont:[TDConstants fontLightSized:10]];
-    [self.badgeCountLabel.layer setCornerRadius:7.0];
+    [self.badgeCountLabel setFont:[TDConstants fontSemiBoldSized:11]];
+    [self.badgeCountLabel.layer setCornerRadius:9.0];
 }
 
 - (void)dealloc {
@@ -242,13 +242,13 @@
             self.badgeCountLabel.text = [NSString stringWithFormat:@"%@", self.badgeCount];
             CGRect frame = self.badgeCountLabel.frame;
             if ([self.badgeCount integerValue] < 10) {
-                frame.size.width = 14;
+                frame.size.width = 18;
             } else if ([self.badgeCount integerValue] < 100) {
-                frame.size.width = 20;
+                frame.size.width = 24;
             } else if ([self.badgeCount integerValue] < 1000) {
-                frame.size.width = 25;
+                frame.size.width = 28;
             } else {
-                frame.size.width = 30;
+                frame.size.width = 34;
             }
             self.badgeCountLabel.frame = frame;
         } else {
