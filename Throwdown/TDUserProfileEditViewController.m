@@ -25,6 +25,7 @@
 @synthesize email;
 @synthesize password;
 @synthesize bio;
+@synthesize pictureFileName;
 @synthesize fromFrofileType;
 @synthesize editedProfileImage90x90;
 @synthesize tempFlyInImageView;
@@ -50,6 +51,7 @@
     self.email = nil;
     self.password = nil;
     self.bio = nil;
+    self.pictureFileName = nil;
     self.editedProfileImage90x90 = nil;
     self.tempFlyInImageView = nil;
 }
@@ -233,6 +235,7 @@
                                         username:self.username
                                            phone:self.phone
                                              bio:self.bio
+                                         picture:self.pictureFileName
                                         callback:^(BOOL success, NSDictionary *dict) {
                                             if (success) {
                                                 debug NSLog(@"EDIT SUCCESS:%@ %@", dict, self.editedProfileImage90x90);
@@ -1032,6 +1035,7 @@
 {
     // Filename
     NSString *filename = [NSString stringWithFormat:@"%@.jpg", [TDPostAPI createUploadFileNameFor:[TDCurrentUser sharedInstance]]];
+    self.pictureFileName = filename;
 
     NSLog(@"uploadNewAvatarImage:%@", filename);
 
@@ -1055,6 +1059,11 @@
 - (void)uploadComplete:(NSNotification*)notification {
     NSLog(@"ProfileEdit-upload Complete");
     self.editedProfileImage90x90 = nil;
+
+    // Update Photo name to server
+    if (self.pictureFileName) {
+        [self sendToTheServer];
+    }
 }
 
 - (void)uploadFailed:(NSNotification*)notification {

@@ -26,6 +26,7 @@
     NSString *email;
     NSString *password;
     NSString *bio;
+    NSString *pictureFileName;
     CGRect origTableViewFrame;
     CGRect statusBarFrame;
     BOOL keybdUp;
@@ -46,6 +47,7 @@
 @property (nonatomic, retain) NSString *email;
 @property (nonatomic, retain) NSString *bio;
 @property (nonatomic, retain) NSString *password;
+@property (nonatomic, retain) NSString *pictureFileName;
 @property (nonatomic, retain) TDUser *profileUser;
 @property (nonatomic, assign) kFromProfileScreenType fromFrofileType;
 @property (nonatomic, retain) UIImage *editedProfileImage90x90;
