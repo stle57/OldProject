@@ -94,4 +94,27 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
 }
 
 
++ (void)linkUsernamesInLabel:(TTTAttributedLabel *)label text:(NSString *)text users:(NSArray *)users pattern:(NSString *)pattern fontSize:(NSUInteger)fontSize {
+    NSDictionary *userAttributes = @{ NSForegroundColorAttributeName:[TDConstants brandingRedColor], NSFontAttributeName: [TDConstants fontBoldSized:fontSize] };
+    [label setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:^NSMutableAttributedString *(NSMutableAttributedString *mutableAttributedString) {
+
+        NSRange range = NSMakeRange(0, [mutableAttributedString string].length);
+        NSRegularExpression *usernameRegex = [NSRegularExpression regularExpressionWithPattern:pattern options:kNilOptions error:nil];
+        [usernameRegex enumerateMatchesInString:[mutableAttributedString string] options:kNilOptions range:range usingBlock:^(NSTextCheckingResult *result, NSMatchingFlags flags, BOOL *stop) {
+            [mutableAttributedString addAttributes:userAttributes range:[result rangeAtIndex:1]];
+        }];
+
+        return mutableAttributedString;
+    }];
+
+    for (NSDictionary *user in users) {
+        NSString *pattern = [NSString stringWithFormat:@"(\\b%@\\b)", [user objectForKey:@"username"]];
+        NSRegularExpression *usernameRegex = [NSRegularExpression regularExpressionWithPattern:pattern options:kNilOptions error:nil];
+        NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@", [user objectForKey:@"id"]]];
+        NSRange linkRange = [usernameRegex rangeOfFirstMatchInString:text options:0 range:NSMakeRange(0, [text length])];
+        [label addLinkToURL:url withRange:linkRange];
+    }
+}
+
+
 @end

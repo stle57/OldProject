@@ -9,8 +9,8 @@
 #import <UIKit/UIKit.h>
 
 @protocol TDActivitiesCellDelegate <NSObject>
+@optional
 -(void)userProfilePressedFromRow:(NSInteger)row;
--(void)postPressedFromRow:(NSInteger)row;
 @end
 
 @interface TDActivitiesCell : UITableViewCell

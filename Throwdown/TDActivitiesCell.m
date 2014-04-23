@@ -12,34 +12,28 @@
 #import "NSDate+TimeAgo.h"
 
 static NSString *const kUsernameAttribute = @"username";
+static NSUInteger const kMaxCommentLength = 50;
 
-@interface TDActivitiesCell ()
+@interface TDActivitiesCell () <TTTAttributedLabelDelegate>
 
-@property (weak, nonatomic) IBOutlet UILabel *activityLabel;
+@property (weak, nonatomic) IBOutlet TTTAttributedLabel *activityLabel;
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *previewImage;
-@property (weak, nonatomic) IBOutlet UITextView *activityText;
 
 @end
 
 @implementation TDActivitiesCell
 
 - (void)awakeFromNib {
-    self.activityText.font = [TDConstants fontRegularSized:14.0];
-    self.timeLabel.font = [TDConstants fontLightSized:12.0];
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(textTapped:)];
-    [self.activityText addGestureRecognizer:tap];
-    tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(imageTapped:)];
-    [self.previewImage addGestureRecognizer:tap];
-}
+    self.activityLabel.font = COMMENT_MESSAGE_FONT;
+    self.activityLabel.linkAttributes = nil;
+    self.activityLabel.lineBreakMode = NSLineBreakByWordWrapping;
+    self.activityLabel.numberOfLines = 3;
+    self.activityLabel.verticalAlignment = TTTAttributedLabelVerticalAlignmentCenter;
+    self.activityLabel.delegate = self;
+    self.activityLabel.lineHeightMultiple = 1 - TDTextLineHeight;
 
-- (void)dealloc {
-    for (UIGestureRecognizer *gr in self.activityText.gestureRecognizers) {
-        [self.activityText removeGestureRecognizer:gr];
-    }
-    for (UIGestureRecognizer *gr in self.previewImage.gestureRecognizers) {
-        [self.previewImage removeGestureRecognizer:gr];
-    }
+    self.timeLabel.font    = TIME_FONT;
 }
 
 - (void)setActivity:(NSDictionary *)activity {
@@ -48,51 +42,52 @@ static NSString *const kUsernameAttribute = @"username";
     NSDictionary *post = (NSDictionary *)[activity objectForKey:@"post"];
     NSDictionary *user = (NSDictionary *)[activity objectForKey:@"user"];
     NSString *username = [user objectForKey:@"username"];
-
-    NSDate *createdAt  = [TDViewControllerHelper dateForRFC3339DateTimeString:[activity objectForKey:@"created_at"]];
-    self.timeLabel.text = [createdAt timeAgo];
+    NSString *createdAtText  = [[TDViewControllerHelper dateForRFC3339DateTimeString:[activity objectForKey:@"created_at"]] timeAgo];
 
     [self.previewImage setImage:nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:TDDownloadPreviewImageNotification
                                                         object:self
                                                       userInfo:@{@"imageView":self.previewImage,
                                                                   @"filename":[post objectForKey:@"filename"],
-                                                                     @"width":@30,
-                                                                    @"height":@30}];
+                                                                     @"width":@54,
+                                                                    @"height":@54}];
 
     NSString *text;
     if ([@"comment" isEqualToString:[activity objectForKey:@"action"]]) {
+        NSString *body = [[activity objectForKey:@"comment"] objectForKey:@"body"];
+        if ([body length] + [username length] > kMaxCommentLength) {
+            body = [[body substringToIndex:(kMaxCommentLength - [username length])] stringByAppendingString:@"…"];
+        }
         text = [NSString stringWithFormat:@"%@ said: \"%@\"",
                                           username,
-                                          [[activity objectForKey:@"comment"] objectForKey:@"body"]];
+                                          body];
     } else if ([@"like" isEqualToString:[activity objectForKey:@"action"]]) {
         text = [NSString stringWithFormat:@"%@ liked your post", username];
     }
+    // adding timestamp to label to center properly
+    text = [NSString stringWithFormat:@"%@\n%@", text, createdAtText];
 
-    NSMutableAttributedString *mutableAttributedString = [[NSMutableAttributedString alloc] initWithString:text];
-    NSRange range = NSMakeRange(0, username.length);
-    NSDictionary *attributes = @{
-                                 NSForegroundColorAttributeName: [TDConstants brandingRedColor],
-                                 NSFontAttributeName: [TDConstants fontBoldSized:14.0],
-                                 kUsernameAttribute: @YES
-                                 };
-    [mutableAttributedString addAttributes:attributes range:range];
-    self.activityText.attributedText = mutableAttributedString;
+    [TDViewControllerHelper linkUsernamesInLabel:self.activityLabel text:text users:@[[user copy]] pattern:@"(^\\w+\\b)" fontSize:16];
+
+    NSDictionary *timeAttributes = @{NSForegroundColorAttributeName:[TDConstants commentTimeTextColor],
+                                                NSFontAttributeName: TIME_FONT };
+
+    // Give timestamp right attributes
+    NSMutableAttributedString *mutableAttributedString = [self.activityLabel.attributedText mutableCopy];
+    NSString *pattern = [NSString stringWithFormat:@"(%@)$", createdAtText];
+    NSRegularExpression *timeRegex = [NSRegularExpression regularExpressionWithPattern:pattern options:kNilOptions error:nil];
+    NSRange range = [timeRegex rangeOfFirstMatchInString:text options:0 range:NSMakeRange(0, [text length])];
+    [mutableAttributedString addAttributes:timeAttributes range:range];
+    self.activityLabel.attributedText = mutableAttributedString;
 }
 
+#pragma mark - TTTAttributedLabelDelegate
 
-- (void)imageTapped:(UITapGestureRecognizer *)recognizer {
-    if ([self.delegate respondsToSelector:@selector(postPressedFromRow:)]) {
-        [self.delegate postPressedFromRow:self.row];
+- (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithURL:(NSURL *)url {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(userProfilePressedFromRow:)]) {
+        [self.delegate userProfilePressedFromRow:self.row];
     }
 }
 
-- (void)textTapped:(UITapGestureRecognizer *)recognizer {
-    if (self.delegate &&
-        [self.delegate respondsToSelector:@selector(userProfilePressedFromRow:)] &&
-        [TDViewControllerHelper textAttributeTapped:kUsernameAttribute inTap:recognizer action:nil]) {
-            [self.delegate userProfilePressedFromRow:self.row];
-    }
-}
 
 @end

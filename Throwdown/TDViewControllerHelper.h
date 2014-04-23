@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <TTTAttributedLabel/TTTAttributedLabel.h>
 
 @interface TDViewControllerHelper : NSObject
 
@@ -17,5 +18,6 @@
 + (NSDate *)dateForRFC3339DateTimeString:(NSString *)rfc3339DateTimeString;
 + (BOOL)textAttributeTapped:(NSString *)attribute inTap:(UITapGestureRecognizer *)recognizer action:(void (^)(id value))actionBlock;
 + (NSAttributedString *)makeParagraphedText:(NSString *)text;
++ (void)linkUsernamesInLabel:(TTTAttributedLabel *)label text:(NSString *)text users:(NSArray *)users pattern:(NSString *)pattern fontSize:(NSUInteger)fontSize;
 
 @end

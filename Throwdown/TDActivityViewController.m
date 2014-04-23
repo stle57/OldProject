@@ -17,10 +17,11 @@
 
 static NSString *const kActivityCell = @"TDActivitiesCell";
 
-@interface TDActivityViewController () <UITableViewDataSource, TDActivitiesCellDelegate>
+@interface TDActivityViewController () <UITableViewDataSource, UITableViewDelegate, TDActivitiesCellDelegate>
 
 @property (nonatomic) NSArray *activities;
 @property (nonatomic, retain) UIRefreshControl *refreshControl;
+@property (weak, nonatomic) IBOutlet UIButton *feedbackButton;
 
 @end
 
@@ -39,14 +40,8 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    // Reset app badge count
-    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
-    // Reset feed button count
-    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUpdate
-                                                        object:self
-                                                      userInfo:@{@"notificationCount": @0}];
-
-
+    self.feedbackButton.titleLabel.font = [TDConstants fontBoldSized:19.0];
+    self.tableView.delegate = self;
     self.tableView.dataSource = self;
     self.activities = @[];
     self.navigationController.navigationBar.titleTextAttributes = @{
@@ -85,7 +80,7 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.delegate = self;
     }
-    cell.activity = [self.activities objectAtIndex:[indexPath row]];
+    cell.activity = [self.activities objectAtIndex:indexPath.row];
     cell.row = indexPath.row;
 
     return cell;
@@ -102,6 +97,14 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 }
 
 - (void)refresh {
+    // Reset app badge count
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
+    // Reset feed button count
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUpdate
+                                                        object:self
+                                                      userInfo:@{@"notificationCount": @0}];
+
+
     [self.refreshControl beginRefreshing];
     [[TDAPIClient sharedInstance] getActivityForUserToken:[TDCurrentUser sharedInstance].authToken success:^(NSArray *activities) {
         self.activities = activities;
@@ -111,6 +114,16 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
         debug NSLog(@"error on activity");
         [self.refreshControl endRefreshing];
     }];
+}
+
+#pragma mark - UITableViewDelegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSNumber *postId = [[[self.activities objectAtIndex:indexPath.row] valueForKey:@"post"] valueForKey:@"id"];
+    TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
+    vc.postId = postId;
+    [self.navigationController pushViewController:vc animated:YES];
+    [self updateActivityAsClicked:indexPath.row];
 }
 
 #pragma mark - TDActivitiesCellDelegate
@@ -123,14 +136,6 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
     vc.userId = user.userId;
     vc.fromProfileType = kFromProfileScreenType_OtherUser;
 
-    [self.navigationController pushViewController:vc animated:YES];
-    [self updateActivityAsClicked:row];
-}
-
--(void)postPressedFromRow:(NSInteger)row {
-    NSNumber *postId = [[[self.activities objectAtIndex:row] valueForKey:@"post"] valueForKey:@"id"];
-    TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
-    vc.postId = postId;
     [self.navigationController pushViewController:vc animated:YES];
     [self updateActivityAsClicked:row];
 }
