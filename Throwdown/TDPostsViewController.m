@@ -546,7 +546,7 @@
 
 #pragma mark - TDLikeCommentViewDelegates
 
-- (void)likeButtonPressedFromRow:(NSInteger)row {
+- (void)likeButtonPressedFromRow:(NSInteger)row {   // 'row' is actually the section
     NSLog(@"Home-likeButtonPressedFromRow:%ld", (long)row);
 
     TDPost *post = (TDPost *)[self.posts objectAtIndex:row-(needsProfileHeader ? 1 : 0)];
@@ -556,12 +556,13 @@
         // Add the like for the update
         [post addLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
 
-        // reload row
-        NSInteger totalRows = [self tableView:nil numberOfRowsInSection:row];
-        NSInteger lastRow = totalRows-1;
-        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:lastRow
-                                                                    inSection:row]]
-                              withRowAnimation:UITableViewRowAnimationNone];
+        if ([post.likers count] == 1) {
+            [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:row]
+                          withRowAnimation:UITableViewRowAnimationNone];
+        } else {
+            // Update all but the top row
+            [self reloadAllRowsButTopForSection:row];
+        }
 
         // Send to server
         TDPostAPI *api = [TDPostAPI sharedInstance];
@@ -569,7 +570,7 @@
     }
 }
 
--(void)unLikeButtonPressedFromRow:(NSInteger)row {
+-(void)unLikeButtonPressedFromRow:(NSInteger)row {   // 'row' is actually the section
     debug NSLog(@"Home-unLikeButtonPressedFromRow:%ld", (long)row);
 
     TDPost *post = (TDPost *)[self.posts objectAtIndex:row-(needsProfileHeader ? 1 : 0)];
@@ -579,16 +580,29 @@
         // Remove the like for the update
         [post removeLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
 
-        // reload row
-        NSInteger totalRows = [self tableView:nil numberOfRowsInSection:row];
-        NSInteger lastRow = totalRows-1;
-        [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:lastRow
-                                                                    inSection:row]]
-                              withRowAnimation:UITableViewRowAnimationNone];
+        if ([post.likers count] == 0) {
+            [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:row]
+                          withRowAnimation:UITableViewRowAnimationNone];
+        } else {
+            // Update all but the top row
+            [self reloadAllRowsButTopForSection:row];
+        }
 
         TDPostAPI *api = [TDPostAPI sharedInstance];
         [api unLikePostWithId:post.postId];
     }
+}
+
+-(void)reloadAllRowsButTopForSection:(NSInteger)section
+{
+    NSInteger totalRows = [self tableView:nil numberOfRowsInSection:section];
+    NSMutableArray *rowArray = [NSMutableArray array];
+    for (int i = 1; i < totalRows; i++) {
+        [rowArray addObject:[NSIndexPath indexPathForRow:i
+                                               inSection:section]];
+    }
+    [self.tableView reloadRowsAtIndexPaths:rowArray
+                          withRowAnimation:UITableViewRowAnimationNone];
 }
 
 -(void)commentButtonPressedFromRow:(NSInteger)row {
