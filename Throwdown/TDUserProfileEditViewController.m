@@ -649,7 +649,7 @@
         break;
         case 2:
         {
-            return 1;
+            return 2;
         }
         break;
 
@@ -788,11 +788,26 @@
         break;
         case 2:
         {
-            // Log Out
-            cell.topLine.hidden = NO;
-            cell.middleLabel.hidden = NO;
-            cell.middleLabel.text = @"Log Out";
-            cell.selectionStyle = UITableViewCellSelectionStyleGray;
+            switch (indexPath.row) {
+                case 0:
+                {
+                    // Log Out
+                    cell.topLine.hidden = NO;
+                    cell.middleLabel.hidden = NO;
+                    cell.middleLabel.text = @"Change Password";
+                    cell.selectionStyle = UITableViewCellSelectionStyleGray;
+                }
+                break;
+                case 1:
+                {
+                    // Log Out
+                    cell.topLine.hidden = NO;
+                    cell.middleLabel.hidden = NO;
+                    cell.middleLabel.text = @"Log Out";
+                    cell.selectionStyle = UITableViewCellSelectionStyleGray;
+                }
+                break;
+            }
         }
         break;
 
@@ -863,15 +878,36 @@
         {
             [self hideKeyboard];
 
-            // Log Out
-            [[TDUserAPI sharedInstance] logout];
-            [self showWelcomeController];
+            switch (indexPath.row) {
+                case 0:
+                {
+                    [self showEditPassword];
+                }
+                break;
+                case 1:
+                {
+                    // Log Out
+                    [[TDUserAPI sharedInstance] logout];
+                    [self showWelcomeController];
+                }
+                break;
+
+                default:
+                break;
+            }
         }
         break;
 
         default:
         break;
     }
+}
+
+#pragma mark - Edit Password
+-(void)showEditPassword
+{
+    TDUserPasswordEditViewController *vc = [[TDUserPasswordEditViewController alloc] initWithNibName:@"TDUserPasswordEditViewController" bundle:nil ];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma mark - Log Out
