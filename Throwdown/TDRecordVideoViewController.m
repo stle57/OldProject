@@ -138,12 +138,13 @@ static int const kMaxRecordingSeconds = 30;
                         initWithSessionPreset:AVCaptureSessionPreset640x480
                                cameraPosition:AVCaptureDevicePositionBack];
     self.videoCamera.outputImageOrientation = UIInterfaceOrientationPortrait;
+    self.videoCamera.horizontallyMirrorFrontFacingCamera = YES;
 
-//    if ([self.videoCamera isBackFacingCameraPresent] && [self.videoCamera isFrontFacingCameraPresent]) {
-//        [self updateSwitchCameraButton:YES];
-//    } else {
-//        [self updateSwitchCameraButton:NO];
-//    }
+    if ([self.videoCamera isBackFacingCameraPresent] && [self.videoCamera isFrontFacingCameraPresent]) {
+        [self updateSwitchCameraButton:YES];
+    } else {
+        [self updateSwitchCameraButton:NO];
+    }
 //    [self updateFlashButton:[self.videoCamera.inputCamera hasTorch]];
 
     self.filter = [[GPUImageCropFilter alloc] initWithCropRegion:CGRectMake(0.f, 0.125f, 1.f, .75f)];
@@ -205,14 +206,7 @@ static int const kMaxRecordingSeconds = 30;
         }
         [camera unlockForConfiguration];
     }
-
-    self.coverView.alpha = 1.0;
-    [UIView animateWithDuration:0.2 delay:0.0 options:UIViewAnimationOptionCurveLinear animations:^{
-        self.coverView.alpha = 0.0;
-    } completion:^(BOOL finished) {
-        self.coverView.hidden = YES;
-        self.recordButton.enabled = YES;
-    }];
+    [self hidePreviewCover];
 }
 
 - (void)stopCamera {
@@ -229,13 +223,25 @@ static int const kMaxRecordingSeconds = 30;
     }
 }
 
-- (void)hidePreviewCover {
+- (void)showPreviewCover {
     self.recordButton.enabled = NO;
     self.coverView.alpha = 0.0;
     self.coverView.hidden = NO;
+    self.switchCamerabutton.enabled = NO;
     [UIView animateWithDuration:0.2 delay:0.0 options:UIViewAnimationOptionCurveLinear animations:^{
         self.coverView.alpha = 1.0;
     } completion:nil];
+}
+
+- (void)hidePreviewCover {
+    self.coverView.alpha = 1.0;
+    [UIView animateWithDuration:0.2 delay:0.0 options:UIViewAnimationOptionCurveLinear animations:^{
+        self.coverView.alpha = 0.0;
+    } completion:^(BOOL finished) {
+        self.coverView.hidden = YES;
+        self.recordButton.enabled = YES;
+        self.switchCamerabutton.enabled = YES;
+    }];
 }
 
 - (void)tapToFocus:(UITapGestureRecognizer *)sender {
@@ -257,7 +263,7 @@ static int const kMaxRecordingSeconds = 30;
 }
 
 - (void)stopRecording {
-    [self hidePreviewCover];
+    [self showPreviewCover];
     self.isRecording = NO;
     [self.recordButton setImage:[UIImage imageNamed:@"v_recstartbutton"] forState:UIControlStateNormal];
     [self.recordButton setImage:[UIImage imageNamed:@"v_recstartbutton_hit"] forState:UIControlStateHighlighted];
@@ -317,7 +323,7 @@ static int const kMaxRecordingSeconds = 30;
     [self.recordButton setImage:[UIImage imageNamed:@"v_stoprecbutton_hit"] forState:UIControlStateHighlighted];
 
 //    [self updateFlashButton:NO];
-//    [self updateSwitchCameraButton:NO];
+    [self updateSwitchCameraButton:NO];
 
     [self.movieWriter startRecording];
 
@@ -358,8 +364,10 @@ static int const kMaxRecordingSeconds = 30;
 }
 
 - (IBAction)switchCameraButtonPressed:(id)sender {
+    self.switchCamerabutton.enabled = NO;
     [self.videoCamera rotateCamera];
     [self updateFlashButton:[self.videoCamera.inputCamera hasFlash]];
+    self.switchCamerabutton.enabled = YES;
 }
 
 - (void)updateSwitchCameraButton:(BOOL)enable {
@@ -382,7 +390,7 @@ static int const kMaxRecordingSeconds = 30;
 # pragma mark - segues
 
 - (IBAction)cancelButtonPressed:(id)sender {
-    [self hidePreviewCover];
+    [self showPreviewCover];
     // This is to allow camera to stop properly before running animations
     // Especially lets the microphone usage warning go away in time.
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void){

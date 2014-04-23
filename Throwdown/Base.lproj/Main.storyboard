@@ -88,7 +88,7 @@
                                     <action selector="flashButtonPressed:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="1l9-U3-gaO"/>
                                 </connections>
                             </button>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="93b-E6-3u5" userLabel="Switch Camera Button">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="93b-E6-3u5" userLabel="Switch Camera Button">
                                 <rect key="frame" x="210" y="0.0" width="110" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="12" maxY="0.0"/>
