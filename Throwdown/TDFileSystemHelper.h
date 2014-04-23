@@ -1,6 +1,6 @@
 //
 //  TDFileSystemHelper.h
-//  Throwdown
+//  ;
 //
 //  Created by Andrew C on 3/20/14.
 //  Copyright (c) 2014 Throwdown. All rights reserved.
@@ -15,5 +15,13 @@
 + (uint64_t)getTotalDiskspace;
 + (BOOL)fileExistsAtPath:(NSString *)path;
 + (BOOL)directoryExistsAtPath:(NSString *)path;
+
+
+// getting and saving cached files
+
++ (BOOL)imageExists:(NSString *)filename;
++ (void)saveImage:(UIImage*)image filename:(NSString*)filename;
++ (void)saveData:(NSData *)data filename:(NSString*)filename;
++ (UIImage *)getImage:(NSString *)imageName;
 
 @end

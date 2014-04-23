@@ -10,6 +10,8 @@
 #import "AFNetworking.h"
 #import "TDConstants.h"
 #import "TDCurrentUser.h"
+#import "TDFileSystemHelper.h"
+#import "UIImage+Resizing.h"
 
 @interface TDAPIClient ()
 
@@ -42,6 +44,7 @@
 - (void)dealloc {
     self.httpManager = nil;
     self.credentialsTask = nil;
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 #pragma mark - api calls
@@ -199,4 +202,88 @@
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
     [self.httpManager PUT:url parameters:params success:nil failure:nil]; // Don't care about the result
 }
+
+
+#pragma mark - set or get cached images from web and resizing image to fit view
+
+- (void)setImage:(NSDictionary *)options {
+    UIImageView *imageView = options[@"imageView"];
+    NSString *filename = options[@"filename"];
+
+    if ([options objectForKey:@"width"] && [options objectForKey:@"height"]) {
+        NSNumber *width = options[@"width"];
+        NSNumber *height = options[@"height"];
+        NSString *filenameWithSize = [NSString stringWithFormat:@"%@_%@x%@%@",
+                                      options[@"filename"],
+                                      width,
+                                      height,
+                                      FTImage];
+        CGSize size = CGSizeMake([width floatValue], [height floatValue]);
+
+        // First check for sized image cached
+        // Then resize and save larger res image
+        // Then download original and save as both original size and resized
+        if ([TDFileSystemHelper imageExists:filenameWithSize]) {
+            [self setImageFromFile:filenameWithSize toView:imageView size:CGSizeZero sizedFilename:nil];
+        } else if ([TDFileSystemHelper imageExists:filenameWithSize]) {
+            [self setImageFromFile:filename toView:imageView size:size sizedFilename:filenameWithSize];
+        } else {
+            [self downloadImage:filename imageView:imageView size:size sizedFilename:filenameWithSize];
+        }
+    } else {
+        if ([TDFileSystemHelper imageExists:filename]) {
+            [self setImageFromFile:filename toView:imageView size:CGSizeZero sizedFilename:nil];
+        } else {
+            [self downloadImage:filename imageView:imageView size:CGSizeZero sizedFilename:nil];
+        }
+    }
+}
+
+- (void)setImageFromFile:(NSString *)filename toView:(UIImageView *)view size:(CGSize)size sizedFilename:(NSString *)sizedFilename {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        UIImage *image = [TDFileSystemHelper getImage:filename];
+        if (!CGSizeEqualToSize(size, CGSizeZero)) {
+            image = [image scaleToSize:size];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            view.image = image;
+        });
+        if (!CGSizeEqualToSize(size, CGSizeZero) && ![TDFileSystemHelper imageExists:sizedFilename]) {
+            [TDFileSystemHelper saveImage:image filename:sizedFilename];
+        }
+    });
+}
+
+- (void)setImage:(UIImage *)image filename:(NSString *)filename toView:(UIImageView *)view size:(CGSize)size sizedFilename:(NSString *)sizedFilename {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        UIImage *newImage = image;
+        if (!CGSizeEqualToSize(size, CGSizeZero)) {
+            newImage = [image scaleToSize:size];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            view.image = newImage;
+        });
+        if (![TDFileSystemHelper imageExists:filename]) {
+            [TDFileSystemHelper saveImage:image filename:filename];
+        }
+        if (!CGSizeEqualToSize(size, CGSizeZero) && ![TDFileSystemHelper imageExists:sizedFilename]) {
+            [TDFileSystemHelper saveImage:newImage filename:sizedFilename];
+        }
+    });
+}
+
+- (void)downloadImage:(NSString *)filename imageView:(UIImageView *)imageView size:(CGSize)size sizedFilename:(NSString *)sizedFilename {
+    NSURL *imageURL = [NSURL URLWithString:[RSHost stringByAppendingFormat:@"/%@", filename]];
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[NSURLRequest alloc] initWithURL:imageURL]];
+    operation.responseSerializer = [AFImageResponseSerializer serializer];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[UIImage class]]) {
+            [self setImage:(UIImage *)responseObject filename:filename toView:imageView size:size sizedFilename:sizedFilename];
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"Image error: %@, %@", filename, error);
+    }];
+    [operation start];
+}
+
 @end

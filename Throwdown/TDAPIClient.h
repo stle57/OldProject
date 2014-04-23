@@ -22,4 +22,6 @@
 - (void)getActivityForUserToken:(NSString *)userToken success:(void (^)(NSArray *activities))success failure:(void (^)(void))failure;
 - (void)updateActivity:(NSNumber *)activityId seen:(BOOL)seen clicked:(BOOL)clicked;
 
+- (void)setImage:(NSDictionary *)options;
+
 @end

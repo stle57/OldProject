@@ -11,6 +11,7 @@
 #import "AVFoundation/AVFoundation.h"
 #import "NSDate+TimeAgo.h"
 #import "TDAppDelegate.h"
+#import "TDAPIClient.h"
 
 typedef enum {
     ControlStatePaused,
@@ -113,9 +114,7 @@ typedef enum {
     [self.previewImage setImage:nil];
 
     if (self.filename) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:TDDownloadPreviewImageNotification
-                                                            object:self
-                                                          userInfo:@{@"imageView":self.previewImage, @"filename":self.filename}];
+        [[TDAPIClient sharedInstance] setImage:@{@"imageView":self.previewImage, @"filename":[self.filename stringByAppendingString:FTImage]}];
     }
 
     if (self.player != nil) {

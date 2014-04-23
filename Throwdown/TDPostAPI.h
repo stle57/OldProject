@@ -16,9 +16,9 @@
 + (NSString *)createUploadFileNameFor:(TDCurrentUser *)user;
 
 - (void)uploadVideo:(NSString *)localVideoPath withThumbnail:(NSString *)localPhotoPath withName:(NSString *)newName;
+
 - (void)uploadAvatarImage:(NSString *)localImagePath withName:(NSString *)newName;
 - (void)addPost:(NSString *)filename comment:(NSString *)comment success:(void (^)(void))success failure:(void (^)(void))failure;
-- (void)saveImage:(UIImage*)image filename:(NSString*)filename;
 - (void)fetchPostsUpstream;
 - (BOOL)fetchPostsDownstream;
 - (NSNumber *)lowestIdOfPosts;
@@ -28,7 +28,6 @@
 - (void)unLikePostWithId:(NSNumber *)postId;
 - (void)getFullPostInfoForPostId:(NSNumber *)postId;
 - (void)postNewComment:(NSString *)messageBody forPost:(NSNumber *)postId;
-- (UIImage *)getImage:(NSString *)imageName;
 - (void)deletePostWithId:(NSNumber *)postId;
 
 - (void)fetchPostsUpstreamForUser:(NSNumber *)userId success:(void(^)(NSDictionary *response))successHandler;

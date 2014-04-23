@@ -10,6 +10,7 @@
 #import "TDConstants.h"
 #import "TDViewControllerHelper.h"
 #import "NSDate+TimeAgo.h"
+#import "TDAPIClient.h"
 
 static NSString *const kUsernameAttribute = @"username";
 static NSUInteger const kMaxCommentLength = 50;
@@ -45,12 +46,10 @@ static NSUInteger const kMaxCommentLength = 50;
     NSString *createdAtText  = [[TDViewControllerHelper dateForRFC3339DateTimeString:[activity objectForKey:@"created_at"]] timeAgo];
 
     [self.previewImage setImage:nil];
-    [[NSNotificationCenter defaultCenter] postNotificationName:TDDownloadPreviewImageNotification
-                                                        object:self
-                                                      userInfo:@{@"imageView":self.previewImage,
-                                                                  @"filename":[post objectForKey:@"filename"],
-                                                                     @"width":@54,
-                                                                    @"height":@54}];
+    [[TDAPIClient sharedInstance] setImage:@{@"imageView":self.previewImage,
+                                             @"filename":[[post objectForKey:@"filename"] stringByAppendingString:FTImage],
+                                             @"width":@54,
+                                             @"height":@54}];
 
     NSString *text;
     if ([@"comment" isEqualToString:[activity objectForKey:@"action"]]) {

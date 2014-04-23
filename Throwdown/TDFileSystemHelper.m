@@ -70,4 +70,33 @@
     return (exists && isDir);
 }
 
+
+# pragma mark - getting and saving cached files
+
++ (NSString *)getCachePath {
+    NSArray* cachePathArray = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+    return [cachePathArray lastObject];
+}
+
++ (BOOL)imageExists:(NSString *)filename {
+    return [TDFileSystemHelper fileExistsAtPath:[[self getCachePath] stringByAppendingFormat:@"/%@", filename]];
+}
+
++ (UIImage *)getImage:(NSString *)filename {
+    filename = [[self getCachePath] stringByAppendingFormat:@"/%@", filename];
+    NSData *data = [NSData dataWithContentsOfFile:filename];
+    return [UIImage imageWithData:data];
+}
+
++ (void)saveImage:(UIImage*)image filename:(NSString*)filename {
+    NSData *data = UIImageJPEGRepresentation(image, 0.99f);
+    [self saveData:data filename:filename];
+}
+
++ (void)saveData:(NSData *)data filename:(NSString*)filename {
+    filename = [[self getCachePath] stringByAppendingFormat:@"/%@", filename];
+    [data writeToFile:filename atomically:YES];
+}
+
+
 @end
