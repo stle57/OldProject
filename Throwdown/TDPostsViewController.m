@@ -532,7 +532,7 @@
         // min height is profileHeaderHeight
         if ([self getUser]) {
             CGFloat bioHeight = [self getUser].bioHeight;
-            CGFloat cellHeight = topOfBioLabelInProfileHeader + bioHeight + (bioHeight > 0 ? 17.0 : 12.0); // extra padding when we have a bio
+            CGFloat cellHeight = topOfBioLabelInProfileHeader + bioHeight + (bioHeight > 0 ? 20.0 : 15.0); // extra padding when we have a bio
             return fmaxf(profileHeaderHeight, cellHeight);
         } else {
             return 0.0;
