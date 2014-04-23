@@ -405,7 +405,9 @@
 
         // Add the like for the update
         [self.post addLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
-        [self.tableView reloadData];
+//        [self.tableView reloadData];
+
+        [self updateAllRowsExceptTopOne];
 
         liking = YES;
 
@@ -422,7 +424,9 @@
 
         // Remove the like for the update
         [self.post removeLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
-        [self.tableView reloadData];
+       // [self.tableView reloadData];
+
+        [self updateAllRowsExceptTopOne];
 
         liking = YES;
 
@@ -430,6 +434,18 @@
         TDPostAPI *api = [TDPostAPI sharedInstance];
         [api unLikePostWithId:self.post.postId];
     }
+}
+
+-(void)updateAllRowsExceptTopOne
+{
+    NSInteger totalRows = [self tableView:nil numberOfRowsInSection:0];
+    NSMutableArray *rowArray = [NSMutableArray array];
+    for (int i = 1; i < totalRows; i++) {
+        [rowArray addObject:[NSIndexPath indexPathForRow:i
+                                               inSection:0]];
+    }
+    [self.tableView reloadRowsAtIndexPaths:rowArray
+                          withRowAnimation:UITableViewRowAnimationNone];
 }
 
 - (void)usernamePressedForLiker:(NSNumber *)likerId {

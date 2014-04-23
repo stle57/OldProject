@@ -310,6 +310,7 @@
 
 - (void)openDetailView:(NSNumber *)postId {
     TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
+    vc.delegate = self;
     vc.postId = postId;
     [self.navigationController pushViewController:vc animated:YES];
 }
