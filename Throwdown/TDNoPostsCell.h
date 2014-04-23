@@ -15,5 +15,6 @@
 @interface TDNoPostsCell : UITableViewCell
 
 @property (nonatomic, assign) id <TDNoPostsCellDelegate> __unsafe_unretained delegate;
+@property (weak, nonatomic) IBOutlet UILabel *noPostsLabel;
 
 @end
