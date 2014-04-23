@@ -116,6 +116,7 @@
 		A1E3A17018FCCF2B0038A8A4 /* TDActivitiesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E3A16F18FCCF2B0038A8A4 /* TDActivitiesCell.m */; };
 		A1E90CDD18B445FC0046D281 /* TDSignupStepTwoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E90CDC18B445FC0046D281 /* TDSignupStepTwoViewController.m */; };
 		A1F02FD418C92277002FEB2F /* TDPostUpload.m in Sources */ = {isa = PBXBuildFile; fileRef = A1F02FD318C92277002FEB2F /* TDPostUpload.m */; };
+		A1F3B3681907821800CDA9F5 /* throwdown_notification.caf in Resources */ = {isa = PBXBuildFile; fileRef = A1F3B3671907819000CDA9F5 /* throwdown_notification.caf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -302,6 +303,7 @@
 		A1E90CDC18B445FC0046D281 /* TDSignupStepTwoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSignupStepTwoViewController.m; sourceTree = "<group>"; };
 		A1F02FD218C92277002FEB2F /* TDPostUpload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDPostUpload.h; sourceTree = "<group>"; };
 		A1F02FD318C92277002FEB2F /* TDPostUpload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDPostUpload.m; sourceTree = "<group>"; };
+		A1F3B3671907819000CDA9F5 /* throwdown_notification.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = throwdown_notification.caf; path = ../throwdown_notification.caf; sourceTree = "<group>"; };
 		BC8AD58EF48B41289E5CE49E /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 		E657ABE418B84EA68554F855 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -508,6 +510,7 @@
 		A11E04E21888CB79002F981A /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				A1F3B3671907819000CDA9F5 /* throwdown_notification.caf */,
 				A1D13FF11905F2BE000980E0 /* Podfile */,
 				A11E04E31888CB79002F981A /* Throwdown-Info.plist */,
 				A11E04E41888CB79002F981A /* InfoPlist.strings */,
@@ -837,6 +840,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1F3B3681907821800CDA9F5 /* throwdown_notification.caf in Resources */,
 				2DA39FD718E0B2570004A9C7 /* TDMoreComments.xib in Resources */,
 				2DA5F05B18D37C70003D2F99 /* BebasNeue Book.otf in Resources */,
 				A1C1D0F318A02FAB00666D2A /* TDPostView.xib in Resources */,
