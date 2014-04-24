@@ -121,6 +121,8 @@
     self.doneButton.enabled = YES;
 
     [self checkForSaveButton];
+
+    [self hideActivity];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -131,10 +133,13 @@
     NSLog(@"doneButtonHit:%@", self.editedProfileImage90x90);
     // Changed?
     if ([self checkIfChanged]) {
+
+        [self showActivity];
         [self sendToTheServer];
     } else {
 
         if (self.editedProfileImage90x90) {
+            [self showActivity];
             [self uploadNewAvatarImage];
 
         } else {
@@ -144,6 +149,7 @@
 }
 
 - (void)sendToTheServer {
+
     [self hideKeyboard];
 
     [[TDUserAPI sharedInstance] editUserWithName:self.name
@@ -165,12 +171,15 @@
                                                     [self uploadNewAvatarImage];
                                                     
                                                 } else {
+                                                    [self hideActivity];
                                                     [self leave];
                                                 }
 
 
                                             } else {
                                                 debug NSLog(@"EDIT FAILURE:%@", dict);
+
+                                                [self hideActivity];
 
                                                 NSMutableString *message = [NSMutableString string];
 
@@ -967,6 +976,25 @@
 - (void)uploadFailed:(NSNotification*)notification {
     debug NSLog(@"ProfileEdit-upload Failed");
     self.editedProfileImage90x90 = nil;
+
+    [self hideActivity];
+}
+
+#pragma mark - Activity
+-(void)showActivity
+{
+    self.doneButton.enabled = NO;
+    self.activityIndicator.center = self.view.center;
+    [self.view bringSubviewToFront:self.activityIndicator];
+    [self.activityIndicator startSpinner];
+    self.activityIndicator.hidden = NO;
+}
+
+-(void)hideActivity
+{
+    self.doneButton.enabled = YES;
+    self.activityIndicator.hidden = YES;
+    [self.activityIndicator stopSpinner];
 }
 
 @end

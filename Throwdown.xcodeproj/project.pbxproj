@@ -17,6 +17,8 @@
 		2D531ED918E38A47006CA088 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D531ED818E38A47006CA088 /* MessageUI.framework */; };
 		2D5714CC18BD9AB300AF0B4D /* VideoButtonSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5714C918BD9AB300AF0B4D /* VideoButtonSegue.m */; };
 		2D5714CD18BD9AB300AF0B4D /* VideoCloseSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5714CB18BD9AB300AF0B4D /* VideoCloseSegue.m */; };
+		2D63FA871909D22200FEBA3C /* TDActivityIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D63FA851909D22200FEBA3C /* TDActivityIndicator.m */; };
+		2D63FA881909D22200FEBA3C /* TDActivityIndicator.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D63FA861909D22200FEBA3C /* TDActivityIndicator.xib */; };
 		2D648A1618C9415D002FE0AD /* TDDetailsCommentsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D648A1418C9415D002FE0AD /* TDDetailsCommentsCell.m */; };
 		2D648A1718C9415D002FE0AD /* TDDetailsCommentsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D648A1518C9415D002FE0AD /* TDDetailsCommentsCell.xib */; };
 		2DA39FD618E0B2570004A9C7 /* TDMoreComments.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA39FD418E0B2570004A9C7 /* TDMoreComments.m */; };
@@ -150,6 +152,9 @@
 		2D5714C918BD9AB300AF0B4D /* VideoButtonSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoButtonSegue.m; sourceTree = "<group>"; };
 		2D5714CA18BD9AB300AF0B4D /* VideoCloseSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoCloseSegue.h; sourceTree = "<group>"; };
 		2D5714CB18BD9AB300AF0B4D /* VideoCloseSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoCloseSegue.m; sourceTree = "<group>"; };
+		2D63FA841909D22200FEBA3C /* TDActivityIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDActivityIndicator.h; sourceTree = "<group>"; };
+		2D63FA851909D22200FEBA3C /* TDActivityIndicator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDActivityIndicator.m; sourceTree = "<group>"; };
+		2D63FA861909D22200FEBA3C /* TDActivityIndicator.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDActivityIndicator.xib; sourceTree = "<group>"; };
 		2D648A1318C9415D002FE0AD /* TDDetailsCommentsCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDDetailsCommentsCell.h; sourceTree = "<group>"; };
 		2D648A1418C9415D002FE0AD /* TDDetailsCommentsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDDetailsCommentsCell.m; sourceTree = "<group>"; };
 		2D648A1518C9415D002FE0AD /* TDDetailsCommentsCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDDetailsCommentsCell.xib; sourceTree = "<group>"; };
@@ -755,6 +760,9 @@
 				2DE4653618F614150042D81C /* TDUserEditCell.xib */,
 				2DE4653418F614150042D81C /* TDUserEditCell.h */,
 				2DE4653518F614150042D81C /* TDUserEditCell.m */,
+				2D63FA861909D22200FEBA3C /* TDActivityIndicator.xib */,
+				2D63FA841909D22200FEBA3C /* TDActivityIndicator.h */,
+				2D63FA851909D22200FEBA3C /* TDActivityIndicator.m */,
 			);
 			name = "Edit User Profile";
 			sourceTree = "<group>";
@@ -868,6 +876,7 @@
 				2DA5F05B18D37C70003D2F99 /* BebasNeue Book.otf in Resources */,
 				A1C1D0F318A02FAB00666D2A /* TDPostView.xib in Resources */,
 				2DA420DD18E63E1A006F4D9C /* TDActivityCell.xib in Resources */,
+				2D63FA881909D22200FEBA3C /* TDActivityIndicator.xib in Resources */,
 				2DC7B6AB18FF3D8500261BF7 /* TDToastView.xib in Resources */,
 				2DA5F05D18D37C70003D2F99 /* BebasNeue Regular.otf in Resources */,
 				A11E04F41888CB79002F981A /* Images.xcassets in Resources */,
@@ -989,6 +998,7 @@
 				2D648A1618C9415D002FE0AD /* TDDetailsCommentsCell.m in Sources */,
 				2DE4653718F614150042D81C /* TDUserEditCell.m in Sources */,
 				A11999DA18D929E200C39ABF /* UIPlaceHolderTextView.m in Sources */,
+				2D63FA871909D22200FEBA3C /* TDActivityIndicator.m in Sources */,
 				2DA73D7718BFCC2E00D87370 /* TDLikeView.m in Sources */,
 				2DA41A6018C7E49D00B21C74 /* HPGrowingTextView.m in Sources */,
 				A11E04F21888CB79002F981A /* TDRecordVideoViewController.m in Sources */,
