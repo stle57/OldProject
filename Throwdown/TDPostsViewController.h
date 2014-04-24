@@ -23,8 +23,9 @@
 #import "TDLikeView.h"
 #import "TDHomeHeaderView.h"
 #import "TDActivityCell.h"
-#include "TDUserProfileCell.h"
-#include "TDNoPostsCell.h"
+#import "TDUserProfileCell.h"
+#import "TDNoPostsCell.h"
+#import "TDUploadMoreCell.h"
 
 @interface TDPostsViewController : UIViewController <TDLikeViewDelegate, TDPostViewDelegate, TDTwoButtonViewDelegate, TDDetailsCommentsCellDelegate, TDMoreCommentsDelegate, UIActionSheetDelegate, TDDetailViewControllerDelegate, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate, TDUserProfileCellDelegate>
 {
@@ -44,8 +45,10 @@
     CGFloat activityRowHeight;
     CGFloat profileHeaderHeight;
     CGFloat noPostsHeight;
+    CGFloat uploadMoreHeight;
     BOOL updatingAtBottom;
     BOOL showBottomSpinner;
+    BOOL noMorePostsAtBottom;
     CGPoint tableOffset;
     CGRect statusBarFrame;
     BOOL needsProfileHeader;

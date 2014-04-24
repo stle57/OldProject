@@ -68,6 +68,10 @@
     TDNoPostsCell *noPostsCell = [topLevelObjects objectAtIndex:0];
     noPostsHeight = noPostsCell.frame.size.height;
     noPostsCell = nil;
+    topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDUploadMoreCell" owner:self options:nil];
+    TDUploadMoreCell *uploadMoreCell = [topLevelObjects objectAtIndex:0];
+    uploadMoreHeight = uploadMoreCell.frame.size.height;
+    uploadMoreCell = nil;
 
 
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -191,10 +195,10 @@
 
 /* Refreshes the list with currently downloaded posts */
 - (void)refreshPostsList {
-
     // if this was from a bottom scroll refresh
     NSArray *visibleCells = [self.tableView visibleCells];
     [self stopSpinner];
+
     updatingAtBottom = NO;
 
     // If from refresh control
@@ -244,6 +248,15 @@
     // Don't do if we're already at the bottom
     NSNumber *lowestId = [self lowestIdOfPosts];
     if ([lowestId isEqualToNumber:[NSNumber numberWithInt:1]]) {
+
+        if (noMorePostsAtBottom) {
+            // don't add a cell if we're already here
+        } else {
+            noMorePostsAtBottom = YES;
+
+            [self.tableView insertSections:[NSIndexSet indexSetWithIndex:([self.posts count]+(needsProfileHeader ? 1 : 0))]
+                          withRowAnimation:UITableViewRowAnimationNone];
+        }
         return;
     }
 
@@ -288,7 +301,7 @@
         return 1;
     }
 
-    return [self.posts count]+(showBottomSpinner ? 1 : 0)+(needsProfileHeader ? 1 : 0);
+    return [self.posts count]+(showBottomSpinner ? 1 : 0)+(noMorePostsAtBottom ? 1 : 0)+(needsProfileHeader ? 1 : 0);
 }
 
 // Rows is 1 (for the video) + 1 for likes row + # of comments + 1 for like/comment buttons
@@ -311,6 +324,11 @@
         return 1;
     }
 
+    // Last row with Upload More
+    if (noMorePostsAtBottom && section == ([self.posts count]+(needsProfileHeader ? 1 : 0))) {
+        return 1;
+    }
+
     TDPost *post = (TDPost *)[self.posts objectAtIndex:(section-(needsProfileHeader ? 1 : 0))];
     NSInteger count;
     if ([post.likers count] > 0) {
@@ -329,7 +347,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    // Just 'No Posts' cell
+   // Just 'No Posts' cell
     if ([self.posts count] == 0) {
 
         TDNoPostsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoPostsCell"];
@@ -395,6 +413,18 @@
         }
 
         [cell startSpinner];
+        return cell;
+    }
+
+    // Last row if no more
+    if (noMorePostsAtBottom && indexPath.section == ([self.posts count]+(needsProfileHeader ? 1 : 0))) {
+
+        TDUploadMoreCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDUploadMoreCell"];
+        if (!cell) {
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDUploadMoreCell" owner:self options:nil];
+            cell = [topLevelObjects objectAtIndex:0];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        }
         return cell;
     }
 
@@ -516,6 +546,11 @@
         return activityRowHeight;
     }
 
+    // Last row with Load More
+    if (noMorePostsAtBottom && realRow == [self.posts count]) {
+        return uploadMoreHeight;
+    }
+
     if (indexPath.row == 0) {
         return postViewHeight;
     }
@@ -527,9 +562,9 @@
 
     NSInteger lastRow = [self tableView:nil numberOfRowsInSection:indexPath.section] - 1;
 
-    // last row has to be 100 higher except on profile view to allow press on Like / Comment
+    // last row has to be 100 higher except on profile view to allow press on Like / Comment  <---extra height now in upload more cell
     if (indexPath.row == lastRow && realRow == ([self.posts count] - 1)) {
-        return (needsProfileHeader ? 0 : 100.0) + commentButtonsHeight;
+        return commentButtonsHeight; //(needsProfileHeader ? 0 : 0.0) + commentButtonsHeight;
     }
 
     if (indexPath.row == lastRow) {
