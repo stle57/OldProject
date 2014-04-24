@@ -12,6 +12,8 @@
 #import "TDAPIClient.h"
 
 @interface TDPostsViewController () <UITableViewDataSource, UITableViewDelegate>
+
+@property (nonatomic) BOOL loaded;
 @end
 
 @implementation TDPostsViewController
@@ -74,6 +76,8 @@
     uploadMoreHeight = uploadMoreCell.frame.size.height;
     uploadMoreCell = nil;
 
+
+    self.loaded = NO;
 
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.delegate = self;
@@ -181,9 +185,8 @@
 }
 
 - (void)refreshPostsList:(NSNotification*)notification {
-
-    // If it's not our user, we don't want it
-    // because we're sharing the user array for profile users
+    // Notification comes in when posts have been fetched
+    self.loaded = YES;
     if (self.userId && notification.userInfo && [notification.userInfo objectForKey:@"userId"]) {
         NSNumber *userId = (NSNumber *)[notification.userInfo objectForKey:@"userId"];
         if (![userId isEqualToNumber:self.userId]) {
@@ -348,7 +351,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
-   // Just 'No Posts' cell
+    // Just 'No Posts' cell
     if ([self.posts count] == 0) {
 
         TDNoPostsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoPostsCell"];
@@ -360,6 +363,12 @@
             // Center label
             cell.noPostsLabel.center = CGPointMake(cell.noPostsLabel.center.x,
                                                    self.tableView.center.y-[UIApplication sharedApplication].statusBarFrame.size.height);
+        }
+
+        if (!self.loaded) {
+            cell.noPostsLabel.text = @"Loading…";
+        } else {
+            cell.noPostsLabel.text = @"No posts yet";
         }
 
         return cell;
