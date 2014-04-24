@@ -101,6 +101,8 @@ typedef enum {
                                            [TDAppDelegate minWidthOfThisLabel:self.usernameLabel] + self.usernameLabel.frame.origin.x,
                                            origRectOfUserButton.size.height);
 
+    // Set first to not show the wrong image while loading or if load fails
+    [self.userProfileImage setImage:[UIImage imageNamed:@"prof_pic_default"]];
     if (post.user && ![post.user hasDefaultPicture]) {
         [[TDAPIClient sharedInstance] setImage:@{@"imageView":self.userProfileImage,
                                                  @"filename":post.user.picture,
