@@ -12,6 +12,7 @@
 #import "NSDate+TimeAgo.h"
 #import "TDAppDelegate.h"
 #import "TDAPIClient.h"
+#import <QuartzCore/QuartzCore.h>
 
 typedef enum {
     ControlStatePaused,
@@ -71,6 +72,9 @@ typedef enum {
     self.usernameLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:17.0];
     self.createdLabel.font = [UIFont fontWithName:@"ProximaNova-Light" size:14.0];
 
+    self.userProfileImage.layer.cornerRadius = self.userProfileImage.layer.frame.size.width / 2;
+    self.userProfileImage.clipsToBounds = YES;
+
     // top line to 0.5 high on retina
     CGRect topLineRect = self.topLine.frame;
     topLineRect.size.height = 1 / [[UIScreen mainScreen] scale];
@@ -92,11 +96,17 @@ typedef enum {
 
     self.aPost = post;
     self.usernameLabel.text = post.user.username;
-    self.userNameButton.frame = origRectOfUserButton;
     self.userNameButton.frame = CGRectMake(origRectOfUserButton.origin.x,
                                            origRectOfUserButton.origin.y,
-                                           [TDAppDelegate minWidthOfThisLabel:self.usernameLabel],
+                                           [TDAppDelegate minWidthOfThisLabel:self.usernameLabel] + self.usernameLabel.frame.origin.x,
                                            origRectOfUserButton.size.height);
+
+    if (post.user && ![post.user hasDefaultPicture]) {
+        [[TDAPIClient sharedInstance] setImage:@{@"imageView":self.userProfileImage,
+                                                 @"filename":post.user.picture,
+                                                 @"width":[NSNumber numberWithInt:self.userProfileImage.frame.size.width],
+                                                 @"height":[NSNumber numberWithInt:self.userProfileImage.frame.size.height]}];
+    }
 
     self.createdLabel.text = [post.createdAt timeAgo];
 

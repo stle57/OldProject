@@ -18,7 +18,6 @@
 #import "UIImage+Resizing.h"
 #import "UIImage+Rotating.h"
 #import "TDAPIClient.h"
-#import <QuartzCore/QuartzCore.h>
 
 @implementation TDUserProfileEditViewController
 
@@ -582,8 +581,6 @@
                 case 0:
                 {
                     cell.userImageView.hidden = NO;
-                    cell.userImageView.layer.cornerRadius = 20.0;
-                    cell.userImageView.clipsToBounds = YES;
                     if (self.editedProfileImage90x90) {
                         cell.userImageView.image = self.editedProfileImage90x90;
                     } else if (self.pictureFileName) {
@@ -719,7 +716,7 @@
         return 90.0;
     }
 
-    return 44.0;
+    return 42.0;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

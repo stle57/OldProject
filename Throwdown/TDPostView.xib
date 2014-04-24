@@ -19,15 +19,20 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.74901960784313726" green="0.74901960784313726" blue="0.74901960784313726" alpha="1" colorSpace="calibratedRGB"/>
                     </imageView>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="prof_pic_default" id="7Ka-Ao-83V" userLabel="Profile Image View">
+                        <rect key="frame" x="7" y="7" width="28" height="28"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" red="0.82745098039999998" green="0.82745098039999998" blue="0.82745098039999998" alpha="1" colorSpace="calibratedRGB"/>
+                    </imageView>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="HdL-dJ-gD3" userLabel="Username Label - acr">
-                        <rect key="frame" x="7" y="5" width="253" height="32"/>
+                        <rect key="frame" x="42" y="5" width="215" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                         <color key="textColor" red="0.92549019607843142" green="0.21568627450980393" blue="0.14901960784313725" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="4td-Qn-a0w">
-                        <rect key="frame" x="7" y="5" width="253" height="32"/>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="4td-Qn-a0w" userLabel="Username Button">
+                        <rect key="frame" x="0.0" y="5" width="262" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                         <state key="normal">
@@ -38,7 +43,7 @@
                         </connections>
                     </button>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="time label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" enabled="NO" adjustsFontSizeToFit="NO" id="lmo-V5-bmk" userLabel="Created at Label - time label">
-                        <rect key="frame" x="23" y="365" width="275" height="17"/>
+                        <rect key="frame" x="23" y="366" width="275" height="17"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                         <color key="textColor" red="0.63529411764705879" green="0.63529411764705879" blue="0.63529411764705879" alpha="1" colorSpace="calibratedRGB"/>
@@ -71,6 +76,7 @@
                 <outlet property="previewImage" destination="oJk-aR-BDT" id="ew8-3V-eGB"/>
                 <outlet property="topLine" destination="S9f-jl-fGa" id="RvX-on-pPt"/>
                 <outlet property="userNameButton" destination="4td-Qn-a0w" id="6Zc-oJ-pIK"/>
+                <outlet property="userProfileImage" destination="7Ka-Ao-83V" id="yoY-7R-cem"/>
                 <outlet property="usernameLabel" destination="HdL-dJ-gD3" id="hyy-Fd-btN"/>
                 <outlet property="videoHolderView" destination="ibx-f9-4Ka" id="yxp-9L-tD8"/>
             </connections>
@@ -78,5 +84,6 @@
     </objects>
     <resources>
         <image name="clock_icon" width="12" height="12"/>
+        <image name="prof_pic_default" width="70" height="70"/>
     </resources>
 </document>

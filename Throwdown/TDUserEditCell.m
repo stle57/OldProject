@@ -9,6 +9,7 @@
 #import "TDUserEditCell.h"
 #import "TDAppDelegate.h"
 #import "TDConstants.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation TDUserEditCell
 
@@ -54,6 +55,9 @@
     lineRect = self.topLine.frame;
     lineRect.size.height = 0.5;
     self.topLine.frame = lineRect;
+    self.userImageView.layer.cornerRadius = self.userImageView.layer.frame.size.width / 2;
+    self.userImageView.clipsToBounds = YES;
+
 
     textViewdOrigRect = self.textView.frame;
     bottomLineOrigY = self.bottomLine.frame.origin.y;
