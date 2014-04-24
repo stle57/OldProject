@@ -89,6 +89,12 @@ typedef enum {
         return;
     }
 
+    // Only update if this isn't the same post or username or picture has changed
+    if ([self.filename isEqualToString:post.filename] && [self.usernameLabel.text isEqualToString:post.user.username] && [self.userPicture isEqualToString:post.user.picture]) {
+        return;
+    }
+    self.userPicture = post.user.picture;
+
     // If it's the same (eg table was refreshed), bail so that we don't stop video playback
     if (self.isPlaying && [self.aPost isEqual:post]) {
         return;

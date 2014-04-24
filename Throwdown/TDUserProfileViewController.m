@@ -44,8 +44,6 @@
     self.titleLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:20.0];
     [self.navigationItem setTitleView:self.titleLabel];
 
-
-
     // Bar Button Items
     switch (self.fromProfileType) {
         case kFromProfileScreenType_OwnProfileButton:
@@ -85,7 +83,7 @@
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO animated:NO];
 
-    if (!self.userPosts && goneDownstream) {
+    if (!self.userPosts || goneDownstream) {
         [self refreshPostsList];
         [self fetchPostsUpStream];
     }
@@ -229,8 +227,6 @@
         // Same user - do nothing
         return;
     }
-
-    goneDownstream = YES;
 
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
     vc.userId = user.userId;
