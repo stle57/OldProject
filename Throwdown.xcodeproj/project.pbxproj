@@ -48,8 +48,6 @@
 		2DBA430218DA455500366737 /* TDTextField.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA430018DA455500366737 /* TDTextField.xib */; };
 		2DC7B6AA18FF3D8500261BF7 /* TDToastView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC7B6A818FF3D8500261BF7 /* TDToastView.m */; };
 		2DC7B6AB18FF3D8500261BF7 /* TDToastView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC7B6A918FF3D8500261BF7 /* TDToastView.xib */; };
-		2DE2C6A51908657F00E51156 /* TDUserPasswordEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE2C6A31908657F00E51156 /* TDUserPasswordEditViewController.m */; };
-		2DE2C6A61908657F00E51156 /* TDUserPasswordEditViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE2C6A41908657F00E51156 /* TDUserPasswordEditViewController.xib */; };
 		2DE2C70419087AA900E51156 /* TDUploadMoreCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE2C70219087AA900E51156 /* TDUploadMoreCell.m */; };
 		2DE2C70519087AA900E51156 /* TDUploadMoreCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE2C70319087AA900E51156 /* TDUploadMoreCell.xib */; };
 		2DE4653218F605DC0042D81C /* TDUserProfileEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE4653018F605DC0042D81C /* TDUserProfileEditViewController.m */; };
@@ -194,9 +192,6 @@
 		2DC7B6A718FF3D8500261BF7 /* TDToastView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDToastView.h; sourceTree = "<group>"; };
 		2DC7B6A818FF3D8500261BF7 /* TDToastView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDToastView.m; sourceTree = "<group>"; };
 		2DC7B6A918FF3D8500261BF7 /* TDToastView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDToastView.xib; sourceTree = "<group>"; };
-		2DE2C6A21908657F00E51156 /* TDUserPasswordEditViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserPasswordEditViewController.h; sourceTree = "<group>"; };
-		2DE2C6A31908657F00E51156 /* TDUserPasswordEditViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUserPasswordEditViewController.m; sourceTree = "<group>"; };
-		2DE2C6A41908657F00E51156 /* TDUserPasswordEditViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDUserPasswordEditViewController.xib; sourceTree = "<group>"; };
 		2DE2C70119087AA900E51156 /* TDUploadMoreCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUploadMoreCell.h; sourceTree = "<group>"; };
 		2DE2C70219087AA900E51156 /* TDUploadMoreCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUploadMoreCell.m; sourceTree = "<group>"; };
 		2DE2C70319087AA900E51156 /* TDUploadMoreCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDUploadMoreCell.xib; sourceTree = "<group>"; };
@@ -397,9 +392,6 @@
 				2DE4653118F605DC0042D81C /* TDUserProfileEditViewController.xib */,
 				2DE4652F18F605DC0042D81C /* TDUserProfileEditViewController.h */,
 				2DE4653018F605DC0042D81C /* TDUserProfileEditViewController.m */,
-				2DE2C6A41908657F00E51156 /* TDUserPasswordEditViewController.xib */,
-				2DE2C6A21908657F00E51156 /* TDUserPasswordEditViewController.h */,
-				2DE2C6A31908657F00E51156 /* TDUserPasswordEditViewController.m */,
 			);
 			name = UserProfile;
 			sourceTree = "<group>";
@@ -869,7 +861,6 @@
 				2DA41A5718C7D89C00B21C74 /* TDDetailViewController.xib in Resources */,
 				2DE4653318F605DC0042D81C /* TDUserProfileEditViewController.xib in Resources */,
 				2DE4653818F614150042D81C /* TDUserEditCell.xib in Resources */,
-				2DE2C6A61908657F00E51156 /* TDUserPasswordEditViewController.xib in Resources */,
 				2DA5F05418D36745003D2F99 /* ProximaNova-Semibold.otf in Resources */,
 				A1E3A16D18FCC8630038A8A4 /* TDActivitiesCell.xib in Resources */,
 				A11E04E61888CB79002F981A /* InfoPlist.strings in Resources */,
@@ -992,7 +983,6 @@
 				A19FF60E18970BBB001A0AD0 /* RSClient.m in Sources */,
 				A182D833188B60CD00F794A5 /* SAVideoRangeSlider.m in Sources */,
 				A182D832188B60CD00F794A5 /* SASliderRight.m in Sources */,
-				2DE2C6A51908657F00E51156 /* TDUserPasswordEditViewController.m in Sources */,
 				A150F08A18A31B14009A72AD /* TDConstants.m in Sources */,
 				A14B2B8818B8351E00980A31 /* TDCurrentUser.m in Sources */,
 				A182D830188B60CD00F794A5 /* SAResizibleBubble.m in Sources */,
