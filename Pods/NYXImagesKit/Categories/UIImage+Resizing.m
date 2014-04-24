@@ -59,6 +59,12 @@
 			break;
 	}
 
+    if (self.imageOrientation == UIImageOrientationRight || self.imageOrientation == UIImageOrientationLeft) {
+        CGFloat tmp = x;
+        x = y;
+        y = tmp;
+    }
+
 	CGRect cropRect = CGRectMake(x * self.scale, y * self.scale, newSize.width * self.scale, newSize.height * self.scale);
 
 	/// Create the cropped image
