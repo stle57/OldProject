@@ -13,12 +13,14 @@
 
 @interface TDNoPostsCell ()
 
+@property (weak, nonatomic) IBOutlet UILabel *messageLabel;
+
 @end
 
 @implementation TDNoPostsCell
 
 - (void)awakeFromNib {
-    self.noPostsLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:17.0];
+    self.messageLabel.font = [TDConstants fontRegularSized:18.0];
 }
 
 - (void)dealloc {

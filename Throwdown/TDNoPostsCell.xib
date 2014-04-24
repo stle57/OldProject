@@ -6,15 +6,15 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="TDNoPostsCell" rowHeight="568" id="IcI-ip-BCk" customClass="TDNoPostsCell">
-            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="TDNoPostsCell" rowHeight="400" id="IcI-ip-BCk" customClass="TDNoPostsCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="400"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="IcI-ip-BCk" id="Fe8-W9-YYf">
-                <rect key="frame" x="0.0" y="0.0" width="320" height="567"/>
+                <rect key="frame" x="0.0" y="0.0" width="320" height="399"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Posts Yet" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="jmH-GR-p5s" userLabel="no posts label">
-                        <rect key="frame" x="0.0" y="195" width="320" height="29"/>
+                    <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No Posts Yet" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="jmH-GR-p5s" userLabel="message label">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="399"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <color key="textColor" red="0.63529411764705879" green="0.63529411764705879" blue="0.63529411764705879" alpha="1" colorSpace="calibratedRGB"/>
@@ -23,7 +23,7 @@
                 </subviews>
             </tableViewCellContentView>
             <connections>
-                <outlet property="noPostsLabel" destination="jmH-GR-p5s" id="6Mb-3x-RO8"/>
+                <outlet property="messageLabel" destination="jmH-GR-p5s" id="KQ8-CY-Z58"/>
             </connections>
         </tableViewCell>
     </objects>
