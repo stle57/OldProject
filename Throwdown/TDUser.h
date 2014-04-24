@@ -18,6 +18,7 @@
 @property (nonatomic, assign) CGFloat bioHeight;
 
 - (id)initWithDictionary:(NSDictionary *)dict;
--(void)userId:(NSNumber *)userId userName:(NSString *)userName name:(NSString *)name picture:(NSString *)picture bio:(NSString *)bio;
+- (void)userId:(NSNumber *)userId userName:(NSString *)userName name:(NSString *)name picture:(NSString *)picture bio:(NSString *)bio;
+- (BOOL)hasDefaultPicture;
 
 @end

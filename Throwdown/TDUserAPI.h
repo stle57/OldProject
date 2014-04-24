@@ -20,5 +20,6 @@
 - (void)editUserWithName:(NSString *)name email:(NSString *)email username:(NSString *)username phone:(NSString *)phone bio:(NSString *)bio picture:(NSString *)pictureFileName callback:(void (^)(BOOL success, NSDictionary *dict))callback;
 - (BOOL)isLoggedIn;
 - (void)logout;
+- (void)uploadAvatarImage:(NSString *)localImagePath withName:(NSString *)newName;
 
 @end

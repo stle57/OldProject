@@ -8,6 +8,8 @@
 
 #import "TDUserAPI.h"
 #import "TDAPIClient.h"
+#import "RSClient.h"
+#import "TDConstants.h"
 
 @implementation TDUserAPI
 
@@ -75,6 +77,36 @@
 - (void)logout {
     [[TDAPIClient sharedInstance] logoutUserWithDeviceToken:self.currentUser.deviceToken];
     [self.currentUser logout];
+}
+
+- (void)uploadAvatarImage:(NSString *)localImagePath withName:(NSString *)newName {
+    debug NSLog(@"uploadAvatar:%@ %@", localImagePath, newName);
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        RSClient *client = [[RSClient alloc] initWithProvider:RSProviderTypeRackspaceUS username:RSUsername apiKey:RSApiKey];
+
+        [client authenticate:^{
+            [client getContainers:^(NSArray *containers, NSError *jsonError) {
+                RSContainer *container = [containers objectAtIndex:0];
+
+                RSStorageObject *storageObject = [[RSStorageObject alloc] init];
+                storageObject.name = newName;
+
+                [container uploadObject:storageObject fromFile:localImagePath success:^{
+                    [[NSNotificationCenter defaultCenter] postNotificationName:TDAvatarUploadCompleteNotification object:self];
+                } failure:^(NSHTTPURLResponse *response, NSData *data, NSError *error) {
+                    NSLog(@"ERROR AVATAR: %@", [error localizedDescription]);
+                    [[NSNotificationCenter defaultCenter] postNotificationName:TDAvatarUploadFailedNotification object:self];
+                }];
+            } failure:^(NSHTTPURLResponse *response, NSData *data, NSError *error) {
+                NSLog(@"ERROR AVATAR: Couldn't find containers");
+                [[NSNotificationCenter defaultCenter] postNotificationName:TDAvatarUploadFailedNotification object:self];
+            }];
+        } failure:^(NSHTTPURLResponse *response, NSData *data, NSError *error) {
+            NSLog(@"ERROR AVATAR: Authentication failed");
+            [[NSNotificationCenter defaultCenter] postNotificationName:TDAvatarUploadFailedNotification object:self];
+        }];
+    });
 }
 
 @end

@@ -89,40 +89,6 @@ typedef enum {
     return self;
 }
 
-- (id)initWithAvatarPath:(NSString *)avatarPath newName:(NSString *)filename {
-    self = [super init];
-    if (self) {
-        self.filename = filename;
-        self.hasReceivedComment = NO;
-
-        self.postStatus = UploadNotStarted;
-
-        self.client = [[RSClient alloc] initWithProvider:RSProviderTypeRackspaceUS username:RSUsername apiKey:RSApiKey];
-
-        self.finalPhotoName = self.filename;    // already has .jpg at the end
-        self.persistedPhotoPath = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/%@", self.finalPhotoName];
-        self.photoProgress = 0.0;
-        self.photoStatus = UploadNotStarted;
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(cancelUpload:)
-                                                     name:TDNotificationUploadCancelled
-                                                   object:nil];
-
-        // Copy photo syncroniously b/c we use it for thumbnails
-        [self copyTempFile:avatarPath to:self.persistedPhotoPath];
-
-        NSLog(@"initWithAvatarPath:%@ %@", avatarPath, filename);
-
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            self.photoFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:self.persistedPhotoPath error:nil][NSFileSize] unsignedLongLongValue];
-
-            [self startUploadAvatar];
-        });
-    }
-    return self;
-}
-
 - (void)dealloc {
     [self cleanup];
 }
@@ -211,14 +177,6 @@ typedef enum {
     }
 }
 
-- (void)finalizeUploadAvatar {
-    if (self.photoStatus == UploadCompleted) {
-
-        NSLog(@"FINALIZING AVATAR %@", self.filename);
-        [self uploadComplete];
-    }
-}
-
 - (void)uploadComplete {
     [self cleanup];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -272,31 +230,6 @@ typedef enum {
                 }];
             } failure:^(NSHTTPURLResponse *response, NSData *data, NSError *error) {
                 debug NSLog(@"ERROR: Authentication failed");
-                [self uploadFailed];
-            }];
-        });
-    }
-}
-
-- (void)startUploadAvatar {
-    if (self.photoStatus == UploadCompleted) {
-        [self finalizeUpload];
-    } else {
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [self.client authenticate:^{
-                [self.client getContainers:^(NSArray *containers, NSError *jsonError) {
-                    self.container = [containers objectAtIndex:0];
-
-                    if (self.photoStatus == UploadNotStarted || self.photoStatus == UploadFailed) {
-                        [self uploadFile:UploadTypeImage location:self.persistedPhotoPath storageName:self.finalPhotoName];
-                    }
-
-                } failure:^(NSHTTPURLResponse *response, NSData *data, NSError *error) {
-                    NSLog(@"ERROR AVATAR: Couldn't find containers");
-                    [self uploadFailed];
-                }];
-            } failure:^(NSHTTPURLResponse *response, NSData *data, NSError *error) {
-                NSLog(@"ERROR AVATAR: Authentication failed");
                 [self uploadFailed];
             }];
         });

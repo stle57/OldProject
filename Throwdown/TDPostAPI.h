@@ -17,7 +17,6 @@
 
 - (void)uploadVideo:(NSString *)localVideoPath withThumbnail:(NSString *)localPhotoPath withName:(NSString *)newName;
 
-- (void)uploadAvatarImage:(NSString *)localImagePath withName:(NSString *)newName;
 - (void)addPost:(NSString *)filename comment:(NSString *)comment success:(void (^)(void))success failure:(void (^)(void))failure;
 - (void)fetchPostsUpstream;
 - (BOOL)fetchPostsDownstream;

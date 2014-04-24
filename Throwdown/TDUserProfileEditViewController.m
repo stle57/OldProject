@@ -15,6 +15,10 @@
 #import "AFNetworking.h"
 #import "TDUserAPI.h"
 #import "NBPhoneNumberUtil.h"
+#import "UIImage+Resizing.h"
+#import "UIImage+Rotating.h"
+#import "TDAPIClient.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation TDUserProfileEditViewController
 
@@ -30,8 +34,7 @@
 @synthesize editedProfileImage90x90;
 @synthesize tempFlyInImageView;
 
-- (void)dealloc
-{
+- (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self
                                                     name:UIKeyboardWillShowNotification
                                                   object:nil];
@@ -39,10 +42,10 @@
                                                     name:UIKeyboardWillHideNotification
                                                   object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:TDUploadCompleteNotification
+                                                    name:TDAvatarUploadCompleteNotification
                                                   object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:TDUploadFailedNotification
+                                                    name:TDAvatarUploadFailedNotification
                                                   object:nil];
     self.profileUser = nil;
     self.name = nil;
@@ -56,8 +59,7 @@
     self.tempFlyInImageView = nil;
 }
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
@@ -65,11 +67,10 @@
     return self;
 }
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
 
-    debug NSLog(@"UserProfile:%@", self.profileUser);
+    debug NSLog(@"EditUserProfile:%@", self.profileUser);
 
     statusBarFrame = [self.view convertRect: [UIApplication sharedApplication].statusBarFrame fromView: nil];
 
@@ -80,10 +81,7 @@
     [self.navigationItem setTitleView:self.titleLabel];
 
     // Buttons
-//    self.saveButton.titleLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:18.0];
     self.doneButton.titleLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:18.0];
-//    self.closeButton.titleLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:18.0];
-//    self.closeButton.titleLabel.textColor = [TDConstants headerTextColor];
 
     // register for keyboard notifications
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -96,8 +94,8 @@
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadComplete:) name:TDUploadCompleteNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadFailed:) name:TDUploadFailedNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadComplete:) name:TDAvatarUploadCompleteNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadFailed:) name:TDAvatarUploadFailedNotification object:nil];
 
     // Preload
     self.name = [TDCurrentUser sharedInstance].name;
@@ -109,20 +107,16 @@
     } else {
         self.bio = @"";
     }
+    if (![[[TDCurrentUser sharedInstance] currentUserObject] hasDefaultPicture]) {
+        self.pictureFileName = [TDCurrentUser sharedInstance].picture;
+    }
 }
 
--(void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:NO animated:NO];
 
     origTableViewFrame = self.tableView.frame;
 
-//    UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.saveButton];
-//    self.navigationItem.rightBarButtonItem = rightBarButton;
-//    self.saveButton.enabled = NO;
-//    UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.closeButton];
-//    self.navigationItem.leftBarButtonItem = leftBarButton;
-//    self.closeButton.enabled = YES;
     UIBarButtonItem *doneBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.doneButton];
     self.navigationItem.leftBarButtonItem = doneBarButton;
     self.doneButton.enabled = YES;
@@ -130,87 +124,11 @@
     [self checkForSaveButton];
 }
 
-- (void)didReceiveMemoryWarning
-{
+- (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
 
-/*-(IBAction)saveButtonHit:(id)sender
-{
-    debug NSLog(@"saveButtonHit");
-
-    self.saveButton.enabled = NO;
-
-    [self hideKeyboard];
-
-    [[TDUserAPI sharedInstance] editUserWithName:self.name
-                                           email:self.email
-                                        username:self.username
-                                           phone:self.phone
-                                             bio:self.bio
-                                        callback:^(BOOL success, NSDictionary *dict) {
-                                            if (success) {
-                                                debug NSLog(@"EDIT SUCCESS:%@", dict);
-                                                self.saveButton.enabled = NO;
-                                                
-                                                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateWithUserChangeNotification
-                                                                                                    object:nil
-                                                                                                  userInfo:nil];
-                                                [self leave];
-                                            } else {
-                                                debug NSLog(@"EDIT FAILURE:%@", dict);
-
-                                                NSMutableString *message = [NSMutableString string];
-
-                                                if ([dict objectForKey:@"name"]) {
-                                                    [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"name"] baseString:[NSString stringWithFormat:@"Name (%@)", self.name]]];
-                                                    self.name = [TDCurrentUser sharedInstance].name;
-                                                }
-                                                if ([dict objectForKey:@"username"]) {
-                                                    [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"username"] baseString:[NSString stringWithFormat:@"Username (%@)", self.username]]];
-                                                    self.username = [TDCurrentUser sharedInstance].username;
-                                                }
-                                                if ([dict objectForKey:@"phone_number"]) {
-                                                    [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"phone_number"] baseString:[NSString stringWithFormat:@"Phone (%@)", self.phone]]];
-                                                    self.phone = [TDCurrentUser sharedInstance].phoneNumber;
-                                                }
-                                                if ([dict objectForKey:@"email"]) {
-                                                    [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"email"] baseString:[NSString stringWithFormat:@"Email (%@)", self.email]]];
-                                                    self.email = [TDCurrentUser sharedInstance].email;
-                                                }
-                                                if ([dict objectForKey:@"bio"]) {
-
-                                                    if (self.bio && [self.bio length] > 8) {    // make sure it's not too long for the alert
-                                                        self.bio = [NSString stringWithFormat:@"%@...", [self.bio substringToIndex:7]];
-                                                    }
-                                                    [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"bio"] baseString:[NSString stringWithFormat:@"Bio (%@)", self.bio]]];
-                                                    if ([TDCurrentUser sharedInstance].bio) {
-                                                        self.bio = [TDCurrentUser sharedInstance].bio;
-                                                    } else {
-                                                        self.bio = @"";
-                                                    }
-                                                }
-
-                                                message = [[message stringByReplacingOccurrencesOfString:@" ."
-                                                                                              withString:@"."] mutableCopy];
-
-                                                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Edit Error"
-                                                                                                message:message
-                                                                                               delegate:nil
-                                                                                      cancelButtonTitle:@"OK"
-                                                                                      otherButtonTitles:nil];
-                                                [alert show];
-
-                                                self.saveButton.enabled = YES;
-
-                                                [self.tableView reloadData];
-                                            }
-                                            
-                                        }];
-} */
-
--(IBAction)doneButtonHit:(id)sender
-{
+- (IBAction)doneButtonHit:(id)sender {
     NSLog(@"doneButtonHit:%@", self.editedProfileImage90x90);
     // Changed?
     if ([self checkIfChanged]) {
@@ -226,8 +144,7 @@
     }
 }
 
--(void)sendToTheServer
-{
+- (void)sendToTheServer {
     [self hideKeyboard];
 
     [[TDUserAPI sharedInstance] editUserWithName:self.name
@@ -305,8 +222,7 @@
                                         }];
 }
 
--(NSString *)buildStringFromErrors:(NSArray *)array baseString:(NSString *)baseString
-{
+- (NSString *)buildStringFromErrors:(NSArray *)array baseString:(NSString *)baseString {
     NSMutableString *returnString = [NSMutableString string];
     for (NSString *string in array) {
         [returnString appendFormat:@"%@ %@. ", baseString, string];
@@ -314,27 +230,7 @@
     return returnString;
 }
 
-/*-(IBAction)closeButtonHit:(id)sender
-{
-    [self hideKeyboard];
-
-    if ([self checkIfChanged]) {
-
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Edit"
-                                                        message:@"Are you sure you want to\nlose your edits?"
-                                                       delegate:self
-                                              cancelButtonTitle:@"Yes"
-                                              otherButtonTitles:@"No", nil];
-        alert.tag = 89892;
-        [alert show];
-
-    } else {
-        [self leave];
-    }
-} */
-
--(void)leave
-{
+- (void)leave {
     switch (fromFrofileType) {
         case kFromProfileScreenType_OwnProfile:
         {
@@ -353,8 +249,8 @@
 }
 
 #pragma mark - Keyboard / Textfield
--(void)updateFieldsForTextField:(UITextField *)textfield text:(NSString *)text
-{
+
+- (void)updateFieldsForTextField:(UITextField *)textfield text:(NSString *)text {
     // 800+(10*indexPath.section)+indexPath.row;
     switch (textfield.tag) {
         case (800+10*0+1):
@@ -413,22 +309,15 @@
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
-
-    if ([self checkIfChanged])
-    {
+    if ([self checkIfChanged]) {
         [self doneButtonHit:nil];
         return NO;
     }
-    else
-    {
-    }
-
 //    [self checkForSaveButton];
     return YES;
 }
 
-- (void)keyboardWillHide:(NSNotification *)n
-{
+- (void)keyboardWillHide:(NSNotification *)n {
     if (!keybdUp) {
         return;
     }
@@ -450,8 +339,7 @@
                      }];
 }
 
-- (void)keyboardWillShow:(NSNotification *)n
-{
+- (void)keyboardWillShow:(NSNotification *)n {
     if (keybdUp) {
         return;
     }
@@ -481,8 +369,7 @@
                      }];
 }
 
--(void)hideKeyboard
-{
+- (void)hideKeyboard {
     for (TDUserEditCell *cell in self.tableView.visibleCells) {
         if ([cell.textField isFirstResponder]) {
             [cell.textField resignFirstResponder];
@@ -665,7 +552,6 @@
     TDUserEditCell *cell = (TDUserEditCell*)[tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_EDITPROFILE];
 
     if (!cell) {
-
         NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_EDITPROFILE owner:self options:nil];
         cell = [topLevelObjects objectAtIndex:0];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -696,7 +582,16 @@
                 case 0:
                 {
                     cell.userImageView.hidden = NO;
-                    cell.userImageView.image = self.editedProfileImage90x90;
+                    cell.userImageView.layer.cornerRadius = 20.0;
+                    cell.userImageView.clipsToBounds = YES;
+                    if (self.editedProfileImage90x90) {
+                        cell.userImageView.image = self.editedProfileImage90x90;
+                    } else if (self.pictureFileName) {
+                        [[TDAPIClient sharedInstance] setImage:@{@"imageView":cell.userImageView,
+                                                                 @"filename":self.pictureFileName,
+                                                                 @"width":[NSNumber numberWithInt:cell.userImageView.frame.size.width],
+                                                                 @"height":[NSNumber numberWithInt:cell.userImageView.frame.size.height]}];
+                    }
                     cell.topLine.hidden = NO;
                     cell.leftMiddleLabel.hidden = NO;
                     cell.leftMiddleLabel.text = @"Edit Photo";
@@ -988,15 +883,16 @@
     }
 }
 
-- (void)showImagePickerForSourceType:(UIImagePickerControllerSourceType)sourceType
-{
+- (void)showImagePickerForSourceType:(UIImagePickerControllerSourceType)sourceType {
     UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
     imagePickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
     imagePickerController.sourceType = sourceType;
+    if (sourceType == UIImagePickerControllerSourceTypeCamera) {
+        imagePickerController.allowsEditing = YES;
+    }
     imagePickerController.delegate = self;
 
-    if (sourceType == UIImagePickerControllerSourceTypeCamera)
-    {
+    if (sourceType == UIImagePickerControllerSourceTypeCamera) {
         imagePickerController.showsCameraControls = YES;
     }
 
@@ -1011,12 +907,13 @@
         [self.tempFlyInImageView removeFromSuperview];
     }
 
-    UIImage *image = [info valueForKey:UIImagePickerControllerOriginalImage];
+    UIImage *image = [info valueForKey:UIImagePickerControllerEditedImage];
 
     // Scale to 90x90
-    self.editedProfileImage90x90 = [TDAppDelegate squareImageWithImage:image
-                                                          scaledToSize:CGSizeMake(90.0,
-                                                                                  90.0)];
+    CGFloat shorterSide = image.size.width < image.size.height ? image.size.width : image.size.height;
+    image = [image cropToSize:CGSizeMake(shorterSide, shorterSide) usingMode:NYXCropModeCenter];
+    image = [image scaleToSize:CGSizeMake(90.0, 90.0) usingMode:NYXResizeModeScaleToFill];
+    self.editedProfileImage90x90 = image;
 
     // Need to figure out where the avatar image is on the screen
     TDUserEditCell *cell = (TDUserEditCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0
@@ -1067,33 +964,39 @@
 }
 
 #pragma mark - Upload Avatar Image
--(void)uploadNewAvatarImage
-{
+
+-(void)uploadNewAvatarImage {
     // Filename
     NSString *filename = [NSString stringWithFormat:@"%@.jpg", [TDPostAPI createUploadFileNameFor:[TDCurrentUser sharedInstance]]];
     self.pictureFileName = filename;
 
-    NSLog(@"uploadNewAvatarImage:%@", filename);
+    debug NSLog(@"uploadNewAvatarImage:%@", filename);
 
     // Save to temp place
     NSString *filePath = [NSHomeDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"Documents/%@", filename]];
-    [self saveAvatarImageTo:filePath
-                      image:self.editedProfileImage90x90];
 
-    TDPostAPI *api = [TDPostAPI sharedInstance];
-    [api uploadAvatarImage:filePath
-                  withName:filename];
+    UIImage *image = self.editedProfileImage90x90;
+    if (image.imageOrientation == UIImageOrientationRight) {
+        image = [image rotateInDegrees:-90.0];
+    } else if (image.imageOrientation == UIImageOrientationDown) {
+        image = [image rotateInDegrees:-180.0];
+    } else if (image.imageOrientation == UIImageOrientationLeft) {
+        image = [image rotateInDegrees:-90.0];
+    }
+
+    [self saveAvatarImageTo:filePath image:image];
+    [[TDUserAPI sharedInstance] uploadAvatarImage:filePath withName:filename];
 }
 
 - (void)saveAvatarImageTo:(NSString *)filePath image:(UIImage *)image {
-
     unlink([filePath UTF8String]); // If a file already exists
     [UIImageJPEGRepresentation(image, .97f) writeToFile:filePath atomically:YES];
 }
 
 #pragma mark - Notifications
+
 - (void)uploadComplete:(NSNotification*)notification {
-    NSLog(@"ProfileEdit-upload Complete");
+    debug NSLog(@"ProfileEdit-upload Complete");
     self.editedProfileImage90x90 = nil;
 
     // Update Photo name to server
@@ -1103,7 +1006,7 @@
 }
 
 - (void)uploadFailed:(NSNotification*)notification {
-    NSLog(@"ProfileEdit-upload Failed");
+    debug NSLog(@"ProfileEdit-upload Failed");
     self.editedProfileImage90x90 = nil;
 }
 

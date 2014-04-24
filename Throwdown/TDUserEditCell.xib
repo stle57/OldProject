@@ -38,9 +38,10 @@
                         <color key="textColor" red="0.29803921570000003" green="0.29803921570000003" blue="0.29803921570000003" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="1Fe-Mr-5rh">
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="prof_pic_default" id="1Fe-Mr-5rh">
                         <rect key="frame" x="7" y="2" width="40" height="40"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" red="0.82745098039999998" green="0.82745098039999998" blue="0.82745098039999998" alpha="1" colorSpace="calibratedRGB"/>
                     </imageView>
                     <view contentMode="scaleToFill" id="5ga-t9-4Nj">
                         <rect key="frame" x="0.0" y="43" width="320" height="1"/>
@@ -84,4 +85,7 @@
             </connections>
         </tableViewCell>
     </objects>
+    <resources>
+        <image name="prof_pic_default" width="70" height="70"/>
+    </resources>
 </document>

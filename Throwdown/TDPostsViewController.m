@@ -9,6 +9,7 @@
 #import "TDPostsViewController.h"
 #import "TDUserProfileViewController.h"
 #import "TDViewControllerHelper.h"
+#import "TDAPIClient.h"
 
 @interface TDPostsViewController () <UITableViewDataSource, UITableViewDelegate>
 @end
@@ -389,6 +390,13 @@
                 [TDAppDelegate fixHeightOfThisLabel:cell.bioLabel];
                 cell.bioLabel.hidden = NO;
             }
+            if (![user hasDefaultPicture]) {
+                [[TDAPIClient sharedInstance] setImage:@{@"imageView":cell.userImageView,
+                                                         @"filename":user.picture,
+                                                         @"width":@45,
+                                                         @"height":@45}];
+            }
+
             cell.whiteUnderView.frame = CGRectMake(cell.whiteUnderView.frame.origin.x,
                                                    cell.whiteUnderView.frame.origin.y,
                                                    cell.whiteUnderView.frame.size.width,

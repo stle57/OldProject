@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TTTAttributedLabel.h"
+#import <TTTAttributedLabel/TTTAttributedLabel.h>
 
 @protocol TDDetailsLikesCellDelegate <NSObject>
 @optional
