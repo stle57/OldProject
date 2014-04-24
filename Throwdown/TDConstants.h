@@ -60,7 +60,7 @@ static NSString *const kSpinningAnimation = @"rotationAnimation";
 #define CELL_IDENTIFIER_EDITPROFILE     @"TDUserEditCell"
 #define TOAST_TAG                       87352
 #define COMMENT_MESSAGE_WIDTH           306.0
-#define COMMENT_MESSAGE_FONT            [TDConstants fontRegularSized:14.0]
+#define COMMENT_MESSAGE_FONT            [TDConstants fontRegularSized:15.0]
 #define BIO_FONT                        [TDConstants fontRegularSized:16.0]
 #define TITLE_FONT                      [TDConstants fontRegularSized:19.0]
 #define TIME_FONT                       [TDConstants fontLightSized:13.0]

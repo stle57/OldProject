@@ -30,6 +30,7 @@ static NSString *const kUserIdAttribute = @"user_id";
     self.likersNamesLabel.textColor = [UIColor darkGrayColor];
     self.likersNamesLabel.font = USERNAME_FONT;
     self.likersNamesLabel.delegate = self;
+    self.likersNamesLabel.lineHeightMultiple = 1 - TDTextLineHeight;
 }
 
 - (void)dealloc {
