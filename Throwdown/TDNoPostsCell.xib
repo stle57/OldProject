@@ -22,6 +22,7 @@
                     </label>
                 </subviews>
             </tableViewCellContentView>
+            <color key="backgroundColor" red="0.92941176469999998" green="0.92941176469999998" blue="0.92941176469999998" alpha="1" colorSpace="calibratedRGB"/>
             <connections>
                 <outlet property="noPostsLabel" destination="jmH-GR-p5s" id="6Mb-3x-RO8"/>
             </connections>

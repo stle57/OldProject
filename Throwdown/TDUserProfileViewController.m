@@ -41,7 +41,7 @@
 
     // Title
     self.titleLabel.textColor = [TDConstants headerTextColor];
-    self.titleLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:20.0];
+    self.titleLabel.font = [TDConstants fontSemiBoldSized:20.0];
     [self.navigationItem setTitleView:self.titleLabel];
 
 
@@ -158,6 +158,8 @@
 
 - (void)handlePostsResponse:(NSDictionary *)response fromStart:(BOOL)start {
     debug NSLog(@"%@", response);
+
+    self.loaded = YES;
 
     if (start) {
         self.userPosts = nil;

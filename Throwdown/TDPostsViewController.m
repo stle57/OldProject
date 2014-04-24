@@ -11,9 +11,9 @@
 #import "TDViewControllerHelper.h"
 #import "TDAPIClient.h"
 
-@interface TDPostsViewController () <UITableViewDataSource, UITableViewDelegate>
+static CGFloat const kHeightOfStatusBar = 65.0;
 
-@property (nonatomic) BOOL loaded;
+@interface TDPostsViewController () <UITableViewDataSource, UITableViewDelegate>
 @end
 
 @implementation TDPostsViewController
@@ -69,7 +69,7 @@
     profileCell = nil;
     topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoPostsCell" owner:self options:nil];
     TDNoPostsCell *noPostsCell = [topLevelObjects objectAtIndex:0];
-    noPostsHeight = noPostsCell.frame.size.height;
+    noPostsHeight = noPostsCell.frame.size.height - (needsProfileHeader ? profileHeaderHeight + kHeightOfStatusBar : 0);
     noPostsCell = nil;
     topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDUploadMoreCell" owner:self options:nil];
     TDUploadMoreCell *uploadMoreCell = [topLevelObjects objectAtIndex:0];
@@ -302,7 +302,7 @@
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
 
     if ([self.posts count] == 0) {
-        return 1;
+        return (needsProfileHeader ? 2 : 1);
     }
 
     return [self.posts count]+(showBottomSpinner ? 1 : 0)+(noMorePostsAtBottom ? 1 : 0)+(needsProfileHeader ? 1 : 0);
@@ -313,7 +313,7 @@
 // +1 if total comments count > 2
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    // Just 'No Posts' cell
+    // This covers user's profile header and 'No Posts'
     if ([self.posts count] == 0) {
         return 1;
     }
@@ -350,29 +350,6 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-
-    // Just 'No Posts' cell
-    if ([self.posts count] == 0) {
-
-        TDNoPostsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoPostsCell"];
-        if (!cell) {
-            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoPostsCell" owner:self options:nil];
-            cell = [topLevelObjects objectAtIndex:0];
-            cell.selectionStyle = UITableViewCellSelectionStyleNone;
-
-            // Center label
-            cell.noPostsLabel.center = CGPointMake(cell.noPostsLabel.center.x,
-                                                   self.tableView.center.y-[UIApplication sharedApplication].statusBarFrame.size.height);
-        }
-
-        if (!self.loaded) {
-            cell.noPostsLabel.text = @"Loading…";
-        } else {
-            cell.noPostsLabel.text = @"No posts yet";
-        }
-
-        return cell;
-    }
 
     // 1st row for Profile Header
     if (needsProfileHeader && indexPath.section == 0) {
@@ -418,6 +395,36 @@
 
         return cell;
     }
+
+    // 'Loading' or 'No Posts' cell
+    if ([self.posts count] == 0) {
+
+        TDNoPostsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoPostsCell"];
+        if (!cell) {
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoPostsCell" owner:self options:nil];
+            cell = [topLevelObjects objectAtIndex:0];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+
+            // Center label
+            cell.noPostsLabel.center = CGPointMake(cell.noPostsLabel.center.x,
+                                                   self.tableView.center.y-[UIApplication sharedApplication].statusBarFrame.size.height);
+        }
+
+        if (!self.loaded) {
+            cell.noPostsLabel.text = @"Loading…";
+        } else {
+            cell.noPostsLabel.text = @"No posts yet";
+        }
+
+        if (needsProfileHeader) {
+            CGRect frame = cell.frame;
+            frame.size.height = frame.size.height - profileHeaderHeight - kHeightOfStatusBar;
+            cell.frame = frame;
+        }
+
+        return cell;
+    }
+
 
     // Last row with Activity
     if (showBottomSpinner && indexPath.section == ([self.posts count]+(needsProfileHeader ? 1 : 0))) {
@@ -538,11 +545,6 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Just 'No Posts' cell
-    if ([self.posts count] == 0) {
-        return self.tableView.frame.size.height;
-    }
-
     // 1st row is Profile Header
     if (needsProfileHeader && indexPath.section == 0) {
 
@@ -553,6 +555,15 @@
             return fmaxf(profileHeaderHeight, cellHeight);
         } else {
             return 0.0;
+        }
+    }
+
+    // Just 'No Posts' cell
+    if ([self.posts count] == 0) {
+        if (needsProfileHeader) {
+            return self.tableView.frame.size.height - profileHeaderHeight;
+        } else {
+            return self.tableView.frame.size.height;
         }
     }
 
@@ -702,66 +713,8 @@
 # pragma mark - navigation
 
 - (IBAction)profileButtonPressed:(id)sender {
-/*    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
-
-    TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
-    vc.profileUser = [[TDCurrentUser sharedInstance] currentUserObject];
-
-    vc.fromFrofileType = kFromProfileScreenType_OwnProfileButton;
-    vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
-    navController.navigationBar.barStyle = UIBarStyleDefault;
-    navController.navigationBar.translucent = YES;
-    [self.navigationController presentViewController:navController
-                                            animated:YES
-                                          completion:nil]; */
-
     [self openUserProfile:[TDCurrentUser sharedInstance].userId];
-
-/*    self.profileButton.enabled = NO;
-
-    // ActionSheet
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@""
-                                                             delegate:self
-                                                    cancelButtonTitle:@"Cancel"
-                                               destructiveButtonTitle:nil
-                                                    otherButtonTitles:@"Send Feedback", @"Your Profile", nil];
-    actionSheet.tag = 3546;
-    [actionSheet showInView:self.view]; */
 }
-
-/*- (IBAction)logOutFeedbackButtonPressed:(id)sender {
-    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
-
-    self.logOutFeedbackButton.enabled = NO;
-
-    // ActionSheet
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@""
-                                                             delegate:self
-                                                    cancelButtonTitle:@"Cancel"
-                                               destructiveButtonTitle:nil
-                                                    otherButtonTitles:@"Send Feedback", @"Log Out", nil];
-    actionSheet.tag = 3546;
-    [actionSheet showInView:self.view];
-}
-
--(void)actionSheet:(UIActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    if (actionSheet.tag == 3546) {
-
-        if (buttonIndex == 0)   // Feedback
-        {
-            [self displayFeedbackEmail];
-        }
-
-        if (buttonIndex == 1)   // Your Profile
-        {
-            [self openUserProfile:[TDCurrentUser sharedInstance].userId];
-        }
-
-        self.profileButton.enabled = YES;
-    }
-} */
 
 #pragma mark - Open Different subviews
 
@@ -779,48 +732,6 @@
                                             animated:YES
                                           completion:nil];
 }
-
-//#pragma mark - Email Feedback
-/*-(void)displayFeedbackEmail
-{
-    MFMailComposeViewController *picker = [[MFMailComposeViewController alloc] init];
-    picker.mailComposeDelegate = self;
-
-    [picker setSubject:@"Throwdown Feedback"];
-
-    // Set up the recipients.
-    NSArray *toRecipients = [NSArray arrayWithObjects:@"feedback@throwdown.us",
-                             nil];
-
-    [picker setToRecipients:toRecipients];
-
-    // Fill out the email body text.
-    NSMutableString *emailBody = [NSMutableString string];
-    [emailBody appendString:[NSString stringWithFormat:@"Thanks for using Throwdown! We appreciate any thoughts you have on making it better or if you found a bug, let us know here."]];
-
-    [emailBody appendString:[NSString stringWithFormat:@"\n\n\n\n\nApp Version:%@", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]]];
-    [emailBody appendString:[NSString stringWithFormat:@"\nApp Build #:%@", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"]]];
-    [emailBody appendString:[NSString stringWithFormat:@"\nOS:%@", [[UIDevice currentDevice] systemVersion]]];
-    [emailBody appendString:[NSString stringWithFormat:@"\nModel:%@", [self platform]]];
-    [emailBody appendString:[NSString stringWithFormat:@"\nID:%@", [TDCurrentUser sharedInstance].userId]];
-    [emailBody appendString:[NSString stringWithFormat:@"\nName:%@", [TDCurrentUser sharedInstance].username]];
-
-    [picker setMessageBody:emailBody isHTML:NO];
-
-    // Present the mail composition interface.
-    [self presentViewController:picker
-                       animated:YES
-                     completion:nil];
-}
-
-// The mail compose view controller delegate method
-- (void)mailComposeController:(MFMailComposeViewController *)controller
-          didFinishWithResult:(MFMailComposeResult)result
-                        error:(NSError *)error
-{
-    [self dismissViewControllerAnimated:YES
-                             completion:nil];
-} */
 
 #pragma mark - Log Out User Notification
 -(void)logOutUser:(NSNotification *)notification
