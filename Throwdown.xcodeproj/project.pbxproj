@@ -56,6 +56,8 @@
 		2DE4653818F614150042D81C /* TDUserEditCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE4653618F614150042D81C /* TDUserEditCell.xib */; };
 		579149E08F7B4EE789901248 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E657ABE418B84EA68554F855 /* libPods.a */; };
 		A102FEA118ECF43C00139606 /* libFlurry_4.4.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A102FEA018ECF43C00139606 /* libFlurry_4.4.0.a */; };
+		A10F9C241909B01600D2CAB0 /* NewMessage.caf in Resources */ = {isa = PBXBuildFile; fileRef = A10F9C221909B01600D2CAB0 /* NewMessage.caf */; };
+		A10F9C251909B01600D2CAB0 /* SingleBellDing.caf in Resources */ = {isa = PBXBuildFile; fileRef = A10F9C231909B01600D2CAB0 /* SingleBellDing.caf */; };
 		A11999D618D90D5200C39ABF /* TDShareVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A11999D518D90D5200C39ABF /* TDShareVideoViewController.m */; };
 		A11999DA18D929E200C39ABF /* UIPlaceHolderTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = A11999D918D929E200C39ABF /* UIPlaceHolderTextView.m */; };
 		A11999DD18DC0D4200C39ABF /* TDFileSystemHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = A11999DC18DC0D4200C39ABF /* TDFileSystemHelper.m */; };
@@ -118,7 +120,7 @@
 		A1E3A17018FCCF2B0038A8A4 /* TDActivitiesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E3A16F18FCCF2B0038A8A4 /* TDActivitiesCell.m */; };
 		A1E90CDD18B445FC0046D281 /* TDSignupStepTwoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E90CDC18B445FC0046D281 /* TDSignupStepTwoViewController.m */; };
 		A1F02FD418C92277002FEB2F /* TDPostUpload.m in Sources */ = {isa = PBXBuildFile; fileRef = A1F02FD318C92277002FEB2F /* TDPostUpload.m */; };
-		A1F3B3681907821800CDA9F5 /* throwdown_notification.caf in Resources */ = {isa = PBXBuildFile; fileRef = A1F3B3671907819000CDA9F5 /* throwdown_notification.caf */; };
+		A1F3B3681907821800CDA9F5 /* Dring.caf in Resources */ = {isa = PBXBuildFile; fileRef = A1F3B3671907819000CDA9F5 /* Dring.caf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -203,6 +205,8 @@
 		2DE4653618F614150042D81C /* TDUserEditCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDUserEditCell.xib; sourceTree = "<group>"; };
 		A102FE9F18ECF43C00139606 /* Flurry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flurry.h; sourceTree = "<group>"; };
 		A102FEA018ECF43C00139606 /* libFlurry_4.4.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry_4.4.0.a; sourceTree = "<group>"; };
+		A10F9C221909B01600D2CAB0 /* NewMessage.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = NewMessage.caf; sourceTree = "<group>"; };
+		A10F9C231909B01600D2CAB0 /* SingleBellDing.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SingleBellDing.caf; sourceTree = "<group>"; };
 		A11999D418D90D5200C39ABF /* TDShareVideoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDShareVideoViewController.h; sourceTree = "<group>"; };
 		A11999D518D90D5200C39ABF /* TDShareVideoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDShareVideoViewController.m; sourceTree = "<group>"; };
 		A11999D818D929E200C39ABF /* UIPlaceHolderTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIPlaceHolderTextView.h; sourceTree = "<group>"; };
@@ -308,7 +312,7 @@
 		A1E90CDC18B445FC0046D281 /* TDSignupStepTwoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSignupStepTwoViewController.m; sourceTree = "<group>"; };
 		A1F02FD218C92277002FEB2F /* TDPostUpload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDPostUpload.h; sourceTree = "<group>"; };
 		A1F02FD318C92277002FEB2F /* TDPostUpload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDPostUpload.m; sourceTree = "<group>"; };
-		A1F3B3671907819000CDA9F5 /* throwdown_notification.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = throwdown_notification.caf; path = ../throwdown_notification.caf; sourceTree = "<group>"; };
+		A1F3B3671907819000CDA9F5 /* Dring.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Dring.caf; path = ../Dring.caf; sourceTree = "<group>"; };
 		BC8AD58EF48B41289E5CE49E /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 		E657ABE418B84EA68554F855 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -421,6 +425,16 @@
 			path = Flurry;
 			sourceTree = "<group>";
 		};
+		A10F9C211909AFF600D2CAB0 /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				A10F9C221909B01600D2CAB0 /* NewMessage.caf */,
+				A10F9C231909B01600D2CAB0 /* SingleBellDing.caf */,
+				A1F3B3671907819000CDA9F5 /* Dring.caf */,
+			);
+			name = Sounds;
+			sourceTree = "<group>";
+		};
 		A11999D318D90D2E00C39ABF /* Recording */ = {
 			isa = PBXGroup;
 			children = (
@@ -507,6 +521,7 @@
 				A11E04ED1888CB79002F981A /* Main.storyboard */,
 				A11E04F31888CB79002F981A /* Images.xcassets */,
 				2DA5F04C18D36736003D2F99 /* Fonts */,
+				A10F9C211909AFF600D2CAB0 /* Sounds */,
 				A11E04E21888CB79002F981A /* Supporting Files */,
 			);
 			path = Throwdown;
@@ -515,7 +530,6 @@
 		A11E04E21888CB79002F981A /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				A1F3B3671907819000CDA9F5 /* throwdown_notification.caf */,
 				A1D13FF11905F2BE000980E0 /* Podfile */,
 				A11E04E31888CB79002F981A /* Throwdown-Info.plist */,
 				A11E04E41888CB79002F981A /* InfoPlist.strings */,
@@ -848,8 +862,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1F3B3681907821800CDA9F5 /* throwdown_notification.caf in Resources */,
+				A1F3B3681907821800CDA9F5 /* Dring.caf in Resources */,
 				2DA39FD718E0B2570004A9C7 /* TDMoreComments.xib in Resources */,
+				A10F9C241909B01600D2CAB0 /* NewMessage.caf in Resources */,
 				2DA5F05B18D37C70003D2F99 /* BebasNeue Book.otf in Resources */,
 				A1C1D0F318A02FAB00666D2A /* TDPostView.xib in Resources */,
 				2DA420DD18E63E1A006F4D9C /* TDActivityCell.xib in Resources */,
@@ -871,6 +886,7 @@
 				2DE2C70519087AA900E51156 /* TDUploadMoreCell.xib in Resources */,
 				2DBA430218DA455500366737 /* TDTextField.xib in Resources */,
 				2DA5F05218D36745003D2F99 /* ProximaNova-Light.otf in Resources */,
+				A10F9C251909B01600D2CAB0 /* SingleBellDing.caf in Resources */,
 				2D1AEE7118C937560055C315 /* TDDetailsLikesCell.xib in Resources */,
 				2D648A1718C9415D002FE0AD /* TDDetailsCommentsCell.xib in Resources */,
 				2DA5354518F35E4300031128 /* TDUserProfileViewController.xib in Resources */,
