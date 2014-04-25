@@ -24,4 +24,7 @@
 
 - (void)setImage:(NSDictionary *)options;
 
+- (void)startSession:(NSDictionary *)metrics callback:(void(^)(NSNumber *sessionId))callback;
+- (void)updateSession:(NSNumber *)sessionId duration:(double)duration;
+
 @end

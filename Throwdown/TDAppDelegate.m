@@ -14,6 +14,7 @@
 #import <Crashlytics/Crashlytics.h>
 #import "TDAPIClient.h"
 #import "TDHomeViewController.h"
+#import "TDAnalytics.h"
 
 // Used for class reference:
 #import "TDRecordVideoViewController.h"
@@ -27,6 +28,8 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [Crashlytics startWithAPIKey:@"52059d9d37002218b9f7913616f80b1294e806c2"];
+
+    [[TDAnalytics sharedInstance] start];
 
     if ([TDConstants flurryKey]) {
         [Flurry setCrashReportingEnabled:NO];
