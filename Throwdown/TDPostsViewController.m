@@ -243,7 +243,7 @@
 
 # pragma mark - table view delegate
 - (void)updatePostsAtBottom {
-    NSLog(@"updatePostsAtBottom");
+    debug NSLog(@"updatePostsAtBottom");
 
     if (updatingAtBottom) {
         return;
@@ -284,7 +284,7 @@
 }
 
 - (void)reloadPosts {
-    NSLog(@"reload posts");
+    debug NSLog(@"reload posts");
     self.posts = [self postsForThisScreen];
     [self.tableView reloadData];
 }
@@ -292,7 +292,7 @@
 #pragma mark - Delete Post
 -(void)postDeleted:(NSNotification*)notification
 {
-    NSLog(@"delete notification:%@", notification);
+    debug NSLog(@"delete notification:%@", notification);
 
     posts = [self postsForThisScreen];
     [self.tableView reloadData];
@@ -627,7 +627,7 @@
 #pragma mark - TDLikeCommentViewDelegates
 
 - (void)likeButtonPressedFromRow:(NSInteger)row {   // 'row' is actually the section
-    NSLog(@"Home-likeButtonPressedFromRow:%ld", (long)row);
+    debug NSLog(@"Home-likeButtonPressedFromRow:%ld", (long)row);
 
     TDPost *post = (TDPost *)[self.posts objectAtIndex:row-(needsProfileHeader ? 1 : 0)];
 
@@ -821,7 +821,7 @@
 #pragma mark - Log Out User Notification
 -(void)logOutUser:(NSNotification *)notification
 {
-    NSLog(@"Home-logOutUser notification:%@", notification);
+    debug NSLog(@"Home-logOutUser notification:%@", notification);
 
     [[TDUserAPI sharedInstance] logout];
     [self showWelcomeController];
@@ -842,7 +842,7 @@
 #pragma mark - Update Posts After User Change Notification
 -(void)updatePostsAfterUserUpdate:(NSNotification *)notification
 {
-    NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
+    debug NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
 
     for (TDPost *aPost in self.posts)
     {
@@ -896,7 +896,7 @@
 
 -(void)replacePostId:(NSNumber *)postId withPost:(TDPost *)post
 {
-    NSLog(@"replacePostID:%@ Post:%@", postId, post);
+    debug NSLog(@"replacePostID:%@ Post:%@", postId, post);
     NSMutableArray *newPostsArray = [NSMutableArray arrayWithArray:self.posts];
     for (TDPost *aPost in self.posts)
     {
