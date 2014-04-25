@@ -409,7 +409,7 @@
     UIColor *textFieldPlaceHolderColor = [UIColor colorWithRed:(189.0/255.0) green:(189.0/255.0) blue:(189.0/255.0) alpha:1.0];
     cell.textView.frame = cell.textViewdOrigRect;
     cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
-                                       cell.bottomLineOrigY,
+                                       [self tableView:self.tableView heightForRowAtIndexPath:indexPath],
                                        cell.bottomLine.frame.size.width,
                                        cell.bottomLine.frame.size.height);
 
