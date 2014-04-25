@@ -302,6 +302,9 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
 
     if ([self.posts count] == 0) {
+        if (!self.loaded) {
+            return 1;
+        }
         return (needsProfileHeader ? 2 : 1);
     }
 
@@ -313,16 +316,16 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 // +1 if total comments count > 2
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    // This covers user's profile header and 'No Posts'
-    if ([self.posts count] == 0) {
-        return 1;
-    }
-
     // 1st row for Profile Header
     if (needsProfileHeader && section == 0) {
         return 1;
     }
 
+    // This covers user's profile header and 'No Posts'
+    if ([self.posts count] == 0) {
+        return 1;
+    }
+    
     // Last row with Activity
     if (showBottomSpinner && section == ([self.posts count]+(needsProfileHeader ? 1 : 0))) {
         return 1;
@@ -352,7 +355,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
     // 1st row for Profile Header
-    if (needsProfileHeader && indexPath.section == 0) {
+    if (needsProfileHeader && indexPath.section == 0 && self.loaded) {
 
         TDUserProfileCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_PROFILE];
         if (!cell) {
@@ -417,9 +420,10 @@ static CGFloat const kHeightOfStatusBar = 65.0;
         }
 
         if (needsProfileHeader) {
-            CGRect frame = cell.frame;
-            frame.size.height = frame.size.height - profileHeaderHeight - kHeightOfStatusBar;
-            cell.frame = frame;
+        //    CGRect frame = cell.frame;
+        //    frame.size.height = frame.size.height - [self tableView:self.tableView
+        //                                    heightForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+        //    cell.frame = frame;
         }
 
         return cell;
@@ -546,7 +550,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // 1st row is Profile Header
-    if (needsProfileHeader && indexPath.section == 0) {
+    if (needsProfileHeader && indexPath.section == 0 && self.loaded) {
 
         // min height is profileHeaderHeight
         if ([self getUser]) {
@@ -554,14 +558,14 @@ static CGFloat const kHeightOfStatusBar = 65.0;
             CGFloat cellHeight = topOfBioLabelInProfileHeader + bioHeight + (bioHeight > 0 ? 20.0 : 15.0); // extra padding when we have a bio
             return fmaxf(profileHeaderHeight, cellHeight);
         } else {
-            return 0.0;
+            return 1.0;
         }
     }
 
     // Just 'No Posts' cell
     if ([self.posts count] == 0) {
         if (needsProfileHeader) {
-            return self.tableView.frame.size.height - profileHeaderHeight;
+            return self.tableView.frame.size.height- profileHeaderHeight;
         } else {
             return self.tableView.frame.size.height;
         }
