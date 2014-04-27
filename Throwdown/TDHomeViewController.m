@@ -120,6 +120,7 @@
     debug NSLog(@"home-refreshControlUsed");
     [[TDPostAPI sharedInstance] fetchPostsUpstreamWithErrorHandlerStart:nil error:^{
         [self endRefreshControl];
+        [[TDAppDelegate appDelegate] showToastWithText:@"Can't connect to server" type:kToastIconType_Warning payload:@{} delegate:nil];
     }];
 }
 

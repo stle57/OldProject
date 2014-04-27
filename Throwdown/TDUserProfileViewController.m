@@ -132,6 +132,9 @@
     [[TDPostAPI sharedInstance] fetchPostsUpstreamForUser:self.userId success:^(NSDictionary *response) {
         [self handlePostsResponse:response fromStart:YES];
         [self endRefreshControl];
+    } error:^{
+        [self endRefreshControl];
+        [[TDAppDelegate appDelegate] showToastWithText:@"Can't connect to server" type:kToastIconType_Warning payload:@{} delegate:nil];
     }];
 }
 
@@ -156,6 +159,7 @@
 
 - (void)handlePostsResponse:(NSDictionary *)response fromStart:(BOOL)start {
     debug NSLog(@"%@", response);
+    [self endRefreshControl];
 
     if (start) {
         self.userPosts = nil;

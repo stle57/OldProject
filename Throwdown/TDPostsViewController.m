@@ -278,13 +278,13 @@
     }
 }
 
-- (void)reloadPosts:(NSNotification*)notification
-{
+- (void)reloadPosts:(NSNotification*)notification {
     [self reloadPosts];
 }
 
 - (void)reloadPosts {
     debug NSLog(@"reload posts");
+    [self endRefreshControl];
     self.posts = [self postsForThisScreen];
     [self.tableView reloadData];
 }
@@ -650,7 +650,7 @@
     }
 }
 
--(void)unLikeButtonPressedFromRow:(NSInteger)row {   // 'row' is actually the section
+- (void)unLikeButtonPressedFromRow:(NSInteger)row {   // 'row' is actually the section
     debug NSLog(@"Home-unLikeButtonPressedFromRow:%ld", (long)row);
 
     TDPost *post = (TDPost *)[self.posts objectAtIndex:row-(needsProfileHeader ? 1 : 0)];
@@ -673,8 +673,7 @@
     }
 }
 
--(void)reloadAllRowsButTopForSection:(NSInteger)section
-{
+- (void)reloadAllRowsButTopForSection:(NSInteger)section {
     NSInteger totalRows = [self tableView:nil numberOfRowsInSection:section];
     NSMutableArray *rowArray = [NSMutableArray array];
     for (int i = 1; i < totalRows; i++) {
@@ -685,79 +684,21 @@
                           withRowAnimation:UITableViewRowAnimationNone];
 }
 
--(void)commentButtonPressedFromRow:(NSInteger)row {
+- (void)commentButtonPressedFromRow:(NSInteger)row {
     debug NSLog(@"Home-commentButtonPressedFromRow:%ld", (long)row);
     TDPost *post = (TDPost *)[self.posts objectAtIndex:row-(needsProfileHeader ? 1 : 0)];
     [self openDetailView:post.postId];
 }
 
--(void)miniLikeButtonPressedForLiker:(NSDictionary *)liker {
+- (void)miniLikeButtonPressedForLiker:(NSDictionary *)liker {
     debug NSLog(@"Home-miniLikeButtonPressedForLiker:%@", liker);
 }
 
 # pragma mark - navigation
 
 - (IBAction)profileButtonPressed:(id)sender {
-/*    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
-
-    TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
-    vc.profileUser = [[TDCurrentUser sharedInstance] currentUserObject];
-
-    vc.fromFrofileType = kFromProfileScreenType_OwnProfileButton;
-    vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
-    navController.navigationBar.barStyle = UIBarStyleDefault;
-    navController.navigationBar.translucent = YES;
-    [self.navigationController presentViewController:navController
-                                            animated:YES
-                                          completion:nil]; */
-
     [self openUserProfile:[TDCurrentUser sharedInstance].userId];
-
-/*    self.profileButton.enabled = NO;
-
-    // ActionSheet
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@""
-                                                             delegate:self
-                                                    cancelButtonTitle:@"Cancel"
-                                               destructiveButtonTitle:nil
-                                                    otherButtonTitles:@"Send Feedback", @"Your Profile", nil];
-    actionSheet.tag = 3546;
-    [actionSheet showInView:self.view]; */
 }
-
-/*- (IBAction)logOutFeedbackButtonPressed:(id)sender {
-    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
-
-    self.logOutFeedbackButton.enabled = NO;
-
-    // ActionSheet
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@""
-                                                             delegate:self
-                                                    cancelButtonTitle:@"Cancel"
-                                               destructiveButtonTitle:nil
-                                                    otherButtonTitles:@"Send Feedback", @"Log Out", nil];
-    actionSheet.tag = 3546;
-    [actionSheet showInView:self.view];
-}
-
--(void)actionSheet:(UIActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    if (actionSheet.tag == 3546) {
-
-        if (buttonIndex == 0)   // Feedback
-        {
-            [self displayFeedbackEmail];
-        }
-
-        if (buttonIndex == 1)   // Your Profile
-        {
-            [self openUserProfile:[TDCurrentUser sharedInstance].userId];
-        }
-
-        self.profileButton.enabled = YES;
-    }
-} */
 
 #pragma mark - Open Different subviews
 
@@ -776,59 +717,15 @@
                                           completion:nil];
 }
 
-//#pragma mark - Email Feedback
-/*-(void)displayFeedbackEmail
-{
-    MFMailComposeViewController *picker = [[MFMailComposeViewController alloc] init];
-    picker.mailComposeDelegate = self;
-
-    [picker setSubject:@"Throwdown Feedback"];
-
-    // Set up the recipients.
-    NSArray *toRecipients = [NSArray arrayWithObjects:@"feedback@throwdown.us",
-                             nil];
-
-    [picker setToRecipients:toRecipients];
-
-    // Fill out the email body text.
-    NSMutableString *emailBody = [NSMutableString string];
-    [emailBody appendString:[NSString stringWithFormat:@"Thanks for using Throwdown! We appreciate any thoughts you have on making it better or if you found a bug, let us know here."]];
-
-    [emailBody appendString:[NSString stringWithFormat:@"\n\n\n\n\nApp Version:%@", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]]];
-    [emailBody appendString:[NSString stringWithFormat:@"\nApp Build #:%@", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"]]];
-    [emailBody appendString:[NSString stringWithFormat:@"\nOS:%@", [[UIDevice currentDevice] systemVersion]]];
-    [emailBody appendString:[NSString stringWithFormat:@"\nModel:%@", [self platform]]];
-    [emailBody appendString:[NSString stringWithFormat:@"\nID:%@", [TDCurrentUser sharedInstance].userId]];
-    [emailBody appendString:[NSString stringWithFormat:@"\nName:%@", [TDCurrentUser sharedInstance].username]];
-
-    [picker setMessageBody:emailBody isHTML:NO];
-
-    // Present the mail composition interface.
-    [self presentViewController:picker
-                       animated:YES
-                     completion:nil];
-}
-
-// The mail compose view controller delegate method
-- (void)mailComposeController:(MFMailComposeViewController *)controller
-          didFinishWithResult:(MFMailComposeResult)result
-                        error:(NSError *)error
-{
-    [self dismissViewControllerAnimated:YES
-                             completion:nil];
-} */
-
 #pragma mark - Log Out User Notification
--(void)logOutUser:(NSNotification *)notification
-{
+- (void)logOutUser:(NSNotification *)notification {
     debug NSLog(@"Home-logOutUser notification:%@", notification);
 
     [[TDUserAPI sharedInstance] logout];
     [self showWelcomeController];
 }
 
-- (void)showWelcomeController
-{
+- (void)showWelcomeController {
     [self dismissViewControllerAnimated:NO completion:nil];
 
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
@@ -840,12 +737,10 @@
 }
 
 #pragma mark - Update Posts After User Change Notification
--(void)updatePostsAfterUserUpdate:(NSNotification *)notification
-{
+- (void)updatePostsAfterUserUpdate:(NSNotification *)notification {
     debug NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
 
-    for (TDPost *aPost in self.posts)
-    {
+    for (TDPost *aPost in self.posts) {
         if ([[[TDCurrentUser sharedInstance] currentUserObject].userId isEqualToNumber:aPost.user.userId])
         {
             [aPost replaceUserAndLikesAndCommentsWithUser:[[TDCurrentUser sharedInstance] currentUserObject]];
@@ -856,18 +751,15 @@
 }
 
 #pragma mark - Loading Spinner
--(void)startSpinner:(NSNotification *)notification
-{
+- (void)startSpinner:(NSNotification *)notification {
     [self startLoadingSpinner];
 }
 
--(void)stopSpinner:(NSNotification *)notification
-{
+- (void)stopSpinner:(NSNotification *)notification {
     [self stopSpinner];
 }
 
 - (void)startLoadingSpinner {
-
     if (showBottomSpinner) {
         return;
     }
@@ -894,8 +786,7 @@
     [self.navigationController pushViewController:vc animated:YES];
 }
 
--(void)replacePostId:(NSNumber *)postId withPost:(TDPost *)post
-{
+- (void)replacePostId:(NSNumber *)postId withPost:(TDPost *)post {
     debug NSLog(@"replacePostID:%@ Post:%@", postId, post);
     NSMutableArray *newPostsArray = [NSMutableArray arrayWithArray:self.posts];
     for (TDPost *aPost in self.posts)
