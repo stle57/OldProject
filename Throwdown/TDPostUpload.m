@@ -29,10 +29,13 @@ typedef enum {
 @interface TDPostUpload ()
 
 @property (nonatomic) NSString *filename;
+@property (nonatomic) NSString *photoPath;
+@property (nonatomic) NSString *videoPath;
 @property (nonatomic) NSString *comment;
 @property (nonatomic) NSString *finalVideoName;
 @property (nonatomic) NSString *finalPhotoName;
 @property (nonatomic) BOOL hasReceivedComment;
+@property (nonatomic) BOOL videoUpload;
 @property (nonatomic) float videoProgress;
 @property (nonatomic) float photoProgress;
 @property (nonatomic) UploadStatus videoStatus;
@@ -48,45 +51,65 @@ typedef enum {
 
 @implementation TDPostUpload
 
-- (id)initWithVideoPath:(NSString *)videoPath thumbnailPath:(NSString *)thumbnailPath newName:(NSString *)filename {
+- (instancetype)initWithPhotoPath:(NSString *)photoPath newName:(NSString *)filename {
     self = [super init];
     if (self) {
         self.filename = filename;
-        self.hasReceivedComment = NO;
+        self.photoPath = photoPath;
+        self.videoUpload = NO;
+        [self setupUpload];
+    }
+    return self;
+}
 
-        self.postStatus = UploadNotStarted;
-
-        self.client = [[RSClient alloc] initWithProvider:RSProviderTypeRackspaceUS username:RSUsername apiKey:RSApiKey];
+- (instancetype)initWithVideoPath:(NSString *)videoPath thumbnailPath:(NSString *)thumbnailPath newName:(NSString *)filename {
+    self = [super init];
+    if (self) {
+        self.filename = filename;
+        self.photoPath = thumbnailPath;
+        self.videoPath = videoPath;
+        self.videoUpload = YES;
 
         self.finalVideoName = [self.filename stringByAppendingString:FTVideo];
         self.persistedVideoPath = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/%@", self.finalVideoName];
         self.videoProgress = 0.0;
         self.videoStatus = UploadNotStarted;
 
-        self.finalPhotoName = [self.filename stringByAppendingString:FTImage];
-        self.persistedPhotoPath = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/%@", self.finalPhotoName];
-        self.photoProgress = 0.0;
-        self.photoStatus = UploadNotStarted;
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(uploadCommentsReceived:)
-                                                     name:TDNotificationUploadComments
-                                                   object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(cancelUpload:)
-                                                     name:TDNotificationUploadCancelled
-                                                   object:nil];
-
-        // Copy photo syncroniously b/c we use it for thumbnails
-        [self copyTempFile:thumbnailPath to:self.persistedPhotoPath];
-
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [self copyTempFile:videoPath to:self.persistedVideoPath];
-            self.videoFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:self.persistedVideoPath error:nil][NSFileSize] unsignedLongLongValue];
-            self.photoFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:self.persistedPhotoPath error:nil][NSFileSize] unsignedLongLongValue];
-        });
+        [self setupUpload];
     }
     return self;
+}
+
+- (void)setupUpload {
+    self.hasReceivedComment = NO;
+    self.postStatus = UploadNotStarted;
+
+    self.client = [[RSClient alloc] initWithProvider:RSProviderTypeRackspaceUS username:RSUsername apiKey:RSApiKey];
+
+    self.finalPhotoName = [self.filename stringByAppendingString:FTImage];
+    self.persistedPhotoPath = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/%@", self.finalPhotoName];
+    self.photoProgress = 0.0;
+    self.photoStatus = UploadNotStarted;
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(uploadCommentsReceived:)
+                                                 name:TDNotificationUploadComments
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(cancelUpload:)
+                                                 name:TDNotificationUploadCancelled
+                                               object:nil];
+
+    // Copy photo syncroniously b/c we use it for thumbnails
+    [self copyTempFile:self.photoPath to:self.persistedPhotoPath];
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        if (self.videoUpload) {
+            [self copyTempFile:self.videoPath to:self.persistedVideoPath];
+            self.videoFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:self.persistedVideoPath error:nil][NSFileSize] unsignedLongLongValue];
+        }
+        self.photoFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:self.persistedPhotoPath error:nil][NSFileSize] unsignedLongLongValue];
+    });
 }
 
 - (void)dealloc {
@@ -125,8 +148,13 @@ typedef enum {
 # pragma mark - progress updates, delegates
 
 - (CGFloat)totalProgress {
+    CGFloat progress;
+    if (self.videoUpload) {
+        progress = (CGFloat)(self.videoFileSize * self.videoProgress + self.photoFileSize * self.photoProgress) / (self.videoFileSize + self.photoFileSize);
+    } else {
+        progress = (CGFloat)(self.photoFileSize * self.photoProgress) / self.photoFileSize;
+    }
     // - 0.05 is for the application server post to register the post
-    CGFloat progress =  (CGFloat)(self.videoFileSize * self.videoProgress + self.photoFileSize * self.photoProgress) / (self.videoFileSize + self.photoFileSize);
     if (progress > 0.0 && progress < 0.05) {
         progress = 0;
     } else {
@@ -161,13 +189,13 @@ typedef enum {
 
 - (void)finalizeUpload {
     if (self.hasReceivedComment &&
+        self.postStatus  != UploadCompleted &&
         self.photoStatus == UploadCompleted &&
-        self.videoStatus == UploadCompleted &&
-        self.postStatus  != UploadCompleted) {
+        (!self.videoUpload || self.videoStatus == UploadCompleted)) {
 
         debug NSLog(@"FINALIZING %@", self.filename);
         self.postStatus = UploadStarted;
-        [[TDPostAPI sharedInstance] addPost:self.filename comment:self.comment success:^{
+        [[TDPostAPI sharedInstance] addPost:self.filename comment:self.comment kind:(self.videoUpload ? @"video" : @"photo") success:^{
             self.postStatus = UploadCompleted;
             [self uploadComplete];
         } failure:^{
@@ -182,7 +210,9 @@ typedef enum {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [TDFileSystemHelper saveImage:[UIImage imageWithContentsOfFile:self.persistedPhotoPath] filename:self.finalPhotoName];
         [TDFileSystemHelper removeFileAt:self.persistedPhotoPath];
-        [TDFileSystemHelper removeFileAt:self.persistedVideoPath];
+        if (self.videoUpload) {
+            [TDFileSystemHelper removeFileAt:self.persistedVideoPath];
+        }
     });
 }
 
@@ -208,7 +238,7 @@ typedef enum {
 }
 
 - (void)startUploads {
-    if (self.photoStatus == UploadCompleted && self.videoStatus == UploadCompleted) {
+    if (self.photoStatus == UploadCompleted && (!self.videoUpload || self.videoStatus == UploadCompleted)) {
         [self finalizeUpload];
     } else {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -216,7 +246,7 @@ typedef enum {
                 [self.client getContainers:^(NSArray *containers, NSError *jsonError) {
                     self.container = [containers objectAtIndex:0];
 
-                    if (self.videoStatus == UploadNotStarted || self.videoStatus == UploadFailed) {
+                    if (self.videoUpload && (self.videoStatus == UploadNotStarted || self.videoStatus == UploadFailed)) {
                         [self uploadFile:UploadTypeVideo location:self.persistedVideoPath storageName:self.finalVideoName];
                     }
 

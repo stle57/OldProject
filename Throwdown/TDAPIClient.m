@@ -318,4 +318,40 @@
     [operation start];
 }
 
+
+#pragma mark - Device Sessions
+
+- (void)startSession:(NSDictionary *)metrics callback:(void(^)(NSNumber *sessionId))callback {
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/device_sessions.json"];
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    NSMutableDictionary *params = [@{@"device_session": metrics} mutableCopy];
+    if ([TDCurrentUser sharedInstance].authToken) {
+        [params addEntriesFromDictionary:@{@"user_token": [TDCurrentUser sharedInstance].authToken}];
+    }
+    [self.httpManager POST:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        debug NSLog(@"session registered");
+        if (callback) {
+            NSString *idString = (NSString *)[responseObject objectForKey:@"id"];
+            callback([NSNumber numberWithInt:[idString intValue]]);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"session failed registration %@", [error localizedDescription]);
+    }];
+}
+
+- (void)updateSession:(NSNumber *)sessionId duration:(double)duration {
+    NSString *url = [NSString stringWithFormat:@"%@/api/v1/device_sessions/%@.json", [TDConstants getBaseURL], sessionId];
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    NSMutableDictionary *params = [@{@"duration": [NSNumber numberWithDouble:duration]} mutableCopy];
+    if ([TDCurrentUser sharedInstance].authToken) {
+        [params addEntriesFromDictionary:@{@"user_token": [TDCurrentUser sharedInstance].authToken}];
+    }
+    [self.httpManager PUT:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        debug NSLog(@"session updated");
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"session failed update %@", [error localizedDescription]);
+    }];
+}
+
+
 @end

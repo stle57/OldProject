@@ -43,7 +43,7 @@
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(uploadStarted:)
-                                                 name:@"TDPostUploadStarted"
+                                                 name:TDPostUploadStarted
                                                object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(refreshPostsNotification:)
@@ -120,6 +120,7 @@
     debug NSLog(@"home-refreshControlUsed");
     [[TDPostAPI sharedInstance] fetchPostsUpstreamWithErrorHandlerStart:nil error:^{
         [self endRefreshControl];
+        [[TDAppDelegate appDelegate] showToastWithText:@"Can't connect to server" type:kToastIconType_Warning payload:@{} delegate:nil];
     }];
 }
 

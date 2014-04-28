@@ -16,6 +16,7 @@
 #include <sys/sysctl.h>
 #import "TDUserEditCell.h"
 #import "TDConstants.h"
+#import "TDActivityIndicator.h"
 #import "TDUserPasswordEditViewController.h"
 
 @interface TDUserProfileEditViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextViewDelegate>
@@ -42,6 +43,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *doneButton;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
+@property (weak, nonatomic) IBOutlet TDActivityIndicator *activityIndicator;
 @property (nonatomic, retain) NSString *name;
 @property (nonatomic, retain) NSString *username;
 @property (nonatomic, retain) NSString *phone;

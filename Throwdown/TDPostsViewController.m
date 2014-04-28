@@ -243,7 +243,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
 # pragma mark - table view delegate
 - (void)updatePostsAtBottom {
-    NSLog(@"updatePostsAtBottom");
+    debug NSLog(@"updatePostsAtBottom");
 
     if (updatingAtBottom) {
         return;
@@ -278,13 +278,13 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     }
 }
 
-- (void)reloadPosts:(NSNotification*)notification
-{
+- (void)reloadPosts:(NSNotification*)notification {
     [self reloadPosts];
 }
 
 - (void)reloadPosts {
-    NSLog(@"reload posts");
+    debug NSLog(@"reload posts");
+    [self endRefreshControl];
     self.posts = [self postsForThisScreen];
     [self.tableView reloadData];
 }
@@ -292,7 +292,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 #pragma mark - Delete Post
 -(void)postDeleted:(NSNotification*)notification
 {
-    NSLog(@"delete notification:%@", notification);
+    debug NSLog(@"delete notification:%@", notification);
 
     posts = [self postsForThisScreen];
     [self.tableView reloadData];
@@ -300,7 +300,6 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
 // 1 section per post, +1 if we need the Profile Header cell
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-
     if ([self.posts count] == 0) {
         if (!self.loaded) {
             return 1;
@@ -315,6 +314,11 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 // -1 if no likers
 // +1 if total comments count > 2
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+
+    // Just 'No Posts' cell
+    if ([self.posts count] == 0) {
+        return 1;
+    }
 
     // 1st row for Profile Header
     if (needsProfileHeader && section == 0) {
@@ -353,6 +357,28 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    // Just 'No Posts' cell
+    if ([self.posts count] == 0) {
+
+        TDNoPostsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoPostsCell"];
+        if (!cell) {
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoPostsCell" owner:self options:nil];
+            cell = [topLevelObjects objectAtIndex:0];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+
+            // Center label
+            cell.noPostsLabel.center = CGPointMake(cell.noPostsLabel.center.x,
+                                                   self.tableView.center.y-[UIApplication sharedApplication].statusBarFrame.size.height);
+        }
+
+        if (!self.loaded) {
+            cell.noPostsLabel.text = @"Loading…";
+        } else {
+            cell.noPostsLabel.text = @"No posts yet";
+        }
+
+        return cell;
+    }
 
     // 1st row for Profile Header
     if (needsProfileHeader && indexPath.section == 0 && self.loaded) {
@@ -646,7 +672,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 #pragma mark - TDLikeCommentViewDelegates
 
 - (void)likeButtonPressedFromRow:(NSInteger)row {   // 'row' is actually the section
-    NSLog(@"Home-likeButtonPressedFromRow:%ld", (long)row);
+    debug NSLog(@"Home-likeButtonPressedFromRow:%ld", (long)row);
 
     TDPost *post = (TDPost *)[self.posts objectAtIndex:row-(needsProfileHeader ? 1 : 0)];
 
@@ -669,7 +695,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     }
 }
 
--(void)unLikeButtonPressedFromRow:(NSInteger)row {   // 'row' is actually the section
+- (void)unLikeButtonPressedFromRow:(NSInteger)row {   // 'row' is actually the section
     debug NSLog(@"Home-unLikeButtonPressedFromRow:%ld", (long)row);
 
     TDPost *post = (TDPost *)[self.posts objectAtIndex:row-(needsProfileHeader ? 1 : 0)];
@@ -692,8 +718,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     }
 }
 
--(void)reloadAllRowsButTopForSection:(NSInteger)section
-{
+- (void)reloadAllRowsButTopForSection:(NSInteger)section {
     NSInteger totalRows = [self tableView:nil numberOfRowsInSection:section];
     NSMutableArray *rowArray = [NSMutableArray array];
     for (int i = 1; i < totalRows; i++) {
@@ -704,13 +729,13 @@ static CGFloat const kHeightOfStatusBar = 65.0;
                           withRowAnimation:UITableViewRowAnimationNone];
 }
 
--(void)commentButtonPressedFromRow:(NSInteger)row {
+- (void)commentButtonPressedFromRow:(NSInteger)row {
     debug NSLog(@"Home-commentButtonPressedFromRow:%ld", (long)row);
     TDPost *post = (TDPost *)[self.posts objectAtIndex:row-(needsProfileHeader ? 1 : 0)];
     [self openDetailView:post.postId];
 }
 
--(void)miniLikeButtonPressedForLiker:(NSDictionary *)liker {
+- (void)miniLikeButtonPressedForLiker:(NSDictionary *)liker {
     debug NSLog(@"Home-miniLikeButtonPressedForLiker:%@", liker);
 }
 
@@ -738,16 +763,14 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 }
 
 #pragma mark - Log Out User Notification
--(void)logOutUser:(NSNotification *)notification
-{
-    NSLog(@"Home-logOutUser notification:%@", notification);
+- (void)logOutUser:(NSNotification *)notification {
+    debug NSLog(@"Home-logOutUser notification:%@", notification);
 
     [[TDUserAPI sharedInstance] logout];
     [self showWelcomeController];
 }
 
-- (void)showWelcomeController
-{
+- (void)showWelcomeController {
     [self dismissViewControllerAnimated:NO completion:nil];
 
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
@@ -759,12 +782,10 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 }
 
 #pragma mark - Update Posts After User Change Notification
--(void)updatePostsAfterUserUpdate:(NSNotification *)notification
-{
-    NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
+- (void)updatePostsAfterUserUpdate:(NSNotification *)notification {
+    debug NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
 
-    for (TDPost *aPost in self.posts)
-    {
+    for (TDPost *aPost in self.posts) {
         if ([[[TDCurrentUser sharedInstance] currentUserObject].userId isEqualToNumber:aPost.user.userId])
         {
             [aPost replaceUserAndLikesAndCommentsWithUser:[[TDCurrentUser sharedInstance] currentUserObject]];
@@ -775,18 +796,15 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 }
 
 #pragma mark - Loading Spinner
--(void)startSpinner:(NSNotification *)notification
-{
+- (void)startSpinner:(NSNotification *)notification {
     [self startLoadingSpinner];
 }
 
--(void)stopSpinner:(NSNotification *)notification
-{
+- (void)stopSpinner:(NSNotification *)notification {
     [self stopSpinner];
 }
 
 - (void)startLoadingSpinner {
-
     if (showBottomSpinner) {
         return;
     }
@@ -813,9 +831,8 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
--(void)replacePostId:(NSNumber *)postId withPost:(TDPost *)post
-{
-    NSLog(@"replacePostID:%@ Post:%@", postId, post);
+- (void)replacePostId:(NSNumber *)postId withPost:(TDPost *)post {
+    debug NSLog(@"replacePostID:%@ Post:%@", postId, post);
     NSMutableArray *newPostsArray = [NSMutableArray arrayWithArray:self.posts];
     for (TDPost *aPost in self.posts)
     {

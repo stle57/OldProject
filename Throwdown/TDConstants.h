@@ -21,15 +21,26 @@ enum {
 };
 typedef NSUInteger kFromProfileScreenType;
 
+// Cloud
 static NSString *const RSUsername = @"throwdown";
 static NSString *const RSApiKey = @"c93395c50887cf4926d2d24e1d9ed4e7";
 static NSString *const RSHost = @"http://tdstore2.throwdown.us";
 
+// HTTP Headers
+static NSString *const kHTTPHeaderBundleVersion = @"X-Bundle-Version";
+
+// File types
 static NSString *const FTVideo = @".mp4";
 static NSString *const FTImage = @".jpg";
 static NSString *const CTVideo = @"video/mp4";
 static NSString *const CTImage = @"image/jpeg";
 
+static double const kMaxSessionLength = 1800; // in seconds = 30min
+static NSString *const kAnalyticsLogfile = @"analyticsLogfile.bin";
+static NSString *const kApplicationUUIDKey = @"TDApplicationUUIDKey";
+
+// NSNotification types
+static NSString *const TDPostUploadStarted = @"TDPostUploadStarted";
 static NSString *const TDNotificationStopPlayers = @"TDNotificationStopPlayers";
 static NSString *const TDNotificationUploadComments = @"TDNotificationUploadComments";
 static NSString *const TDNotificationUploadCancelled = @"TDNotificationUploadCancelled";
@@ -40,6 +51,7 @@ static NSString *const TDUploadCompleteNotification = @"TDUploadCompleteOK";
 static NSString *const TDUploadFailedNotification = @"TDUploadCompleteFailed";
 static NSString *const TDAvatarUploadCompleteNotification = @"TDAvatarUploadCompleteOK";
 static NSString *const TDAvatarUploadFailedNotification = @"TDAvatarUploadCompleteFailed";
+
 static NSString *const TDFontProximaNovaRegular = @"ProximaNova-Regular";
 static NSString *const TDFontProximaNovaSemibold = @"ProximaNova-Semibold";
 static CGFloat const TDCommentCellProfileHeight = 18.0;

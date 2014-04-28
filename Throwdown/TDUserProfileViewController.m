@@ -44,8 +44,6 @@
     self.titleLabel.font = [TDConstants fontSemiBoldSized:20.0];
     [self.navigationItem setTitleView:self.titleLabel];
 
-
-
     // Bar Button Items
     switch (self.fromProfileType) {
         case kFromProfileScreenType_OwnProfileButton:
@@ -85,7 +83,7 @@
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:NO animated:NO];
 
-    if (!self.userPosts && goneDownstream) {
+    if (!self.userPosts || goneDownstream) {
         [self refreshPostsList];
         [self fetchPostsUpStream];
     }
@@ -134,6 +132,9 @@
     [[TDPostAPI sharedInstance] fetchPostsUpstreamForUser:self.userId success:^(NSDictionary *response) {
         [self handlePostsResponse:response fromStart:YES];
         [self endRefreshControl];
+    } error:^{
+        [self endRefreshControl];
+        [[TDAppDelegate appDelegate] showToastWithText:@"Can't connect to server" type:kToastIconType_Warning payload:@{} delegate:nil];
     }];
 }
 
@@ -158,6 +159,7 @@
 
 - (void)handlePostsResponse:(NSDictionary *)response fromStart:(BOOL)start {
     debug NSLog(@"%@", response);
+    [self endRefreshControl];
 
     self.loaded = YES;
 
@@ -231,8 +233,6 @@
         // Same user - do nothing
         return;
     }
-
-    goneDownstream = YES;
 
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
     vc.userId = user.userId;

@@ -84,10 +84,15 @@ typedef enum {
 }
 
 - (void)setPost:(TDPost *)post {
-
     if (post == nil) {
         return;
     }
+
+    // Only update if this isn't the same post or username or picture has changed
+    if ([self.filename isEqualToString:post.filename] && [self.usernameLabel.text isEqualToString:post.user.username] && [self.userPicture isEqualToString:post.user.picture]) {
+        return;
+    }
+    self.userPicture = post.user.picture;
 
     // If it's the same (eg table was refreshed), bail so that we don't stop video playback
     if (self.isPlaying && [self.aPost isEqual:post]) {
@@ -113,10 +118,16 @@ typedef enum {
     self.createdLabel.text = [post.createdAt timeAgo];
 
     self.filename = post.filename;
+
     self.isLoading = NO;
     self.isPlaying = NO;
     self.didPlay = NO;
-    [self updateControlImage:ControlStateNone];
+
+    if (post.kind == TDPostKindPhoto) {
+        [self updateControlImage:ControlStateNone];
+    } else if (post.kind == TDPostKindVideo) {
+        [self updateControlImage:ControlStatePlay];
+    }
 
     // Likes & Comments
     [self.likeView setLike:post.liked];
@@ -172,7 +183,7 @@ typedef enum {
 }
 
 - (void)singleTapGestureCaptured:(UITapGestureRecognizer *)gesture {
-    if (!self.isLoading) {
+    if (self.aPost.kind == TDPostKindVideo && !self.isLoading) {
         if (self.isPlaying) {
             [self stopVideo];
         } else {
@@ -327,14 +338,9 @@ typedef enum {
 } */
 
 #pragma mark - User Name Button
-- (IBAction)userButtonPressed:(UIButton *)sender
-{
-    debug NSLog(@"userButtonPressed");
-
-    if (delegate) {
-        if ([delegate respondsToSelector:@selector(userButtonPressedFromRow:)]) {
-            [delegate userButtonPressedFromRow:self.row];
-        }
+- (IBAction)userButtonPressed:(UIButton *)sender {
+    if (delegate && [delegate respondsToSelector:@selector(userButtonPressedFromRow:)]) {
+        [delegate userButtonPressedFromRow:self.row];
     }
 }
 

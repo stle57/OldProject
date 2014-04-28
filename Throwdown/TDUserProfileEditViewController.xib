@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5053" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5056" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TDUserProfileEditViewController">
             <connections>
+                <outlet property="activityIndicator" destination="ded-Gi-FWr" id="367-l7-Rxq"/>
                 <outlet property="closeButton" destination="6Zl-1e-jyr" id="wFa-tu-wFU"/>
                 <outlet property="doneButton" destination="wsg-s7-A6a" id="3kp-Jc-MUx"/>
                 <outlet property="saveButton" destination="FdI-ak-PHn" id="6aA-nF-OaG"/>
@@ -29,6 +30,12 @@
                         <outlet property="delegate" destination="-1" id="s8s-FM-ojy"/>
                     </connections>
                 </tableView>
+                <view contentMode="scaleToFill" id="ded-Gi-FWr" customClass="TDActivityIndicator">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+                </view>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>

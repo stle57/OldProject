@@ -33,6 +33,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *userNameButton;
 @property (nonatomic, assign) NSInteger row;
 @property (strong, nonatomic) NSString *filename;
+@property (strong, nonatomic) NSString *userPicture;
+
 
 - (void)setPost:(TDPost *)post;
 - (IBAction)userButtonPressed:(UIButton *)sender;
