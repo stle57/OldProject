@@ -300,12 +300,9 @@
 
 // 1 section per post, +1 if we need the Profile Header cell
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-
-    /* for no posts yet - commented out for now
     if ([self.posts count] == 0) {
         return 1;
     }
-     */
 
     return [self.posts count]+(showBottomSpinner ? 1 : 0)+(noMorePostsAtBottom ? 1 : 0)+(needsProfileHeader ? 1 : 0);
 }
@@ -314,11 +311,10 @@
 // -1 if no likers
 // +1 if total comments count > 2
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-
     // Just 'No Posts' cell
-/*    if ([self.posts count] == 0) {
+    if ([self.posts count] == 0) {
         return 1;
-    } */
+    }
 
     // 1st row for Profile Header
     if (needsProfileHeader && section == 0) {
@@ -352,9 +348,8 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-
     // Just 'No Posts' cell
-/*    if ([self.posts count] == 0) {
+    if ([self.posts count] == 0) {
 
         TDNoPostsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoPostsCell"];
         if (!cell) {
@@ -367,8 +362,14 @@
                                                    self.tableView.center.y-[UIApplication sharedApplication].statusBarFrame.size.height);
         }
 
+        if (!self.loaded) {
+            cell.noPostsLabel.text = @"Loading…";
+        } else {
+            cell.noPostsLabel.text = @"No posts yet";
+        }
+
         return cell;
-    } */
+    }
 
     // 1st row for Profile Header
     if (needsProfileHeader && indexPath.section == 0) {
@@ -535,9 +536,9 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Just 'No Posts' cell
-/*    if ([self.posts count] == 0) {
+    if ([self.posts count] == 0) {
         return self.tableView.frame.size.height;
-    } */
+    }
 
     // 1st row is Profile Header
     if (needsProfileHeader && indexPath.section == 0) {
