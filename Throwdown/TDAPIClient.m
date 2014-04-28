@@ -153,6 +153,38 @@
     }];
 }
 
+-(void)changePasswordFrom:(NSString *)oldPassword newPassword:(NSString *)newPassword confirmPassword:(NSString *)confirmPassword callback:(void (^)(BOOL success, NSDictionary *user))callback
+{
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/change_password.json"]];
+
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+
+    // Avoid any nils in the dictionary
+    NSNull *null = [NSNull null];
+    NSDictionary *params = @{@"user": @{ @"current_password": (oldPassword ? oldPassword : null),
+                                         @"password": (newPassword ? newPassword : null),
+                                         @"password_confirmation": (confirmPassword ? confirmPassword : null)
+                                         }, @"user_token": [TDCurrentUser sharedInstance].authToken};
+    [self.httpManager PUT:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *response = (NSDictionary *)responseObject;
+
+            NSNumber *success = [response objectForKey:@"success"];
+            if (success && [success boolValue]) {
+                callback([success boolValue], [response objectForKey:@"user"]);
+            } else {
+                callback(NO, [response objectForKey:@"errors"]);
+            }
+        } else {
+            debug NSLog(@"ERROR in change password response, got: %@", [responseObject class]);
+            callback(NO, nil);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"ERROR in edit user call: %@", [error localizedDescription]);
+        callback(NO, error.userInfo);
+    }];
+}
+
 - (void)logoutUser {
     [self logoutUserWithDeviceToken:nil];
 }

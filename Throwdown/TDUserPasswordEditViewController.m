@@ -102,90 +102,83 @@
 {
     // Changed?
     if ([self checkIfChanged]) {
-//        [self sendToTheServer];
+        [self sendToTheServerNewPassword];
     } else {
             [self leave];
     }
 }
 
-/*-(void)sendToTheServer
-{
+- (void)sendToTheServerNewPassword {
     [self hideKeyboard];
 
-    [[TDUserAPI sharedInstance] editUserWithName:self.name
-                                           email:self.email
-                                        username:self.username
-                                           phone:self.phone
-                                             bio:self.bio
-                                         picture:self.pictureFileName
-                                        callback:^(BOOL success, NSDictionary *dict) {
-                                            if (success) {
-                                                debug NSLog(@"EDIT SUCCESS:%@ %@", dict, self.editedProfileImage90x90);
-                                                self.saveButton.enabled = NO;
+    [[TDUserAPI sharedInstance] changePasswordFrom:self.current
+                                       newPassword:self.password1
+                                   confirmPassword:self.password2
+                                          callback:^(BOOL success, NSDictionary *dict) {
+                                              if (success) {
 
-                                                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateWithUserChangeNotification
-                                                                                                    object:nil
-                                                                                                  userInfo:nil];
+                                                  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Password Changed"
+                                                                                                  message:@"Your password was successfully changed."
+                                                                                                 delegate:nil
+                                                                                        cancelButtonTitle:@"OK"
+                                                                                        otherButtonTitles:nil];
+                                                  [alert show];
 
-                                                if (self.editedProfileImage90x90) {
-                                                    [self uploadNewAvatarImage];
-                                                    
-                                                } else {
-                                                    [self leave];
-                                                }
+                                                  [self leave];
+                                              }
+                                              else {
+                                                  NSLog(@"EDIT FAILURE:%@ %@", dict, [dict class]);
 
+                                                  NSMutableString *message = [NSMutableString string];
 
-                                            } else {
-                                                debug NSLog(@"EDIT FAILURE:%@", dict);
+                                                  // Current
+                                                  if ([dict objectForKey:@"current_password"] && [[dict objectForKey:@"current_password"] isKindOfClass:[NSArray class]]) {
+                                                      NSArray *currentArray = [dict objectForKey:@"current_password"];
+                                                      if ([currentArray count] > 0) {
+                                                          [message appendString:@"Current password "];
+                                                      }
+                                                      for (NSString *string in currentArray) {
+                                                          [message appendFormat:@"%@, ", string];
+                                                      }
+                                                  }
 
-                                                NSMutableString *message = [NSMutableString string];
+                                                  // Remove last 2
+                                                  if ([message length] > 2) {
+                                                      message = [[message substringToIndex:[message length]-2] mutableCopy];
+                                                      [message appendString:@". "];
+                                                  }
 
-                                                if ([dict objectForKey:@"name"]) {
-                                                    [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"name"] baseString:[NSString stringWithFormat:@"Name (%@)", self.name]]];
-                                                  //  self.name = [TDCurrentUser sharedInstance].name;
-                                                }
-                                                if ([dict objectForKey:@"username"]) {
-                                                    [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"username"] baseString:[NSString stringWithFormat:@"Username (%@)", self.username]]];
-                                                  //  self.username = [TDCurrentUser sharedInstance].username;
-                                                }
-                                                if ([dict objectForKey:@"phone_number"]) {
-                                                    [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"phone_number"] baseString:[NSString stringWithFormat:@"Phone (%@)", self.phone]]];
-                                                  //  self.phone = [TDCurrentUser sharedInstance].phoneNumber;
-                                                }
-                                                if ([dict objectForKey:@"email"]) {
-                                                    [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"email"] baseString:[NSString stringWithFormat:@"Email (%@)", self.email]]];
-                                                 //   self.email = [TDCurrentUser sharedInstance].email;
-                                                }
-                                                if ([dict objectForKey:@"bio"]) {
+                                                  // New password
+                                                  if ([dict objectForKey:@"password"] && [[dict objectForKey:@"password"] isKindOfClass:[NSArray class]]) {
+                                                      NSArray *currentArray = [dict objectForKey:@"password"];
+                                                      if ([currentArray count] > 0) {
+                                                          if ([message length] > 0) {
+                                                              [message appendString:@"\nNew password "];
+                                                          } else {
+                                                              [message appendString:@"New password "];
+                                                          }
+                                                      }
+                                                      for (NSString *string in currentArray) {
+                                                          [message appendFormat:@"%@, ", string];
+                                                      }
+                                                  }
 
-                                                    if (self.bio && [self.bio length] > 8) {    // make sure it's not too long for the alert
-                                                        self.bio = [NSString stringWithFormat:@"%@...", [self.bio substringToIndex:7]];
-                                                    }
-                                                    [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"bio"] baseString:[NSString stringWithFormat:@"Bio (%@)", self.bio]]];
-                                                    if ([TDCurrentUser sharedInstance].bio) {
-                                                      //  self.bio = [TDCurrentUser sharedInstance].bio;
-                                                    } else {
-                                                      //  self.bio = @"";
-                                                    }
-                                                }
+                                                  // Remove last 2
+                                                  if ([message length] > 2) {
+                                                      message = [[message substringToIndex:[message length]-2] mutableCopy];
+                                                      [message appendString:@". "];
+                                                  }
 
-                                                message = [[message stringByReplacingOccurrencesOfString:@" ."
-                                                                                              withString:@"."] mutableCopy];
-
-                                                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Edit Error"
-                                                                                                message:message
-                                                                                               delegate:nil
-                                                                                      cancelButtonTitle:@"OK"
-                                                                                      otherButtonTitles:nil];
-                                                [alert show];
-
-                                                self.saveButton.enabled = YES;
-                                                
-                                                [self.tableView reloadData];
-                                            }
-                                            
-                                        }];
-} */
+                                                  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Password Edit"
+                                                                                                  message:message
+                                                                                                 delegate:nil
+                                                                                        cancelButtonTitle:@"OK"
+                                                                                        otherButtonTitles:nil];
+                                                  [alert show];
+                                              }
+                                          }];
+    
+}
 
 -(NSString *)buildStringFromErrors:(NSArray *)array baseString:(NSString *)baseString
 {
@@ -438,6 +431,7 @@
                 case 0:
                 {
                     cell.titleLabel.hidden = NO;
+                    cell.textField.secureTextEntry = YES;
                     cell.textField.hidden = NO;
                     cell.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"new password"
                                                                                            attributes:@{NSForegroundColorAttributeName: textFieldPlaceHolderColor}];
@@ -448,6 +442,7 @@
                 case 1:
                 {
                     cell.titleLabel.hidden = NO;
+                    cell.textField.secureTextEntry = YES;
                     cell.textField.hidden = NO;
                     cell.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"confirm new password"
                                                                                            attributes:@{NSForegroundColorAttributeName: textFieldPlaceHolderColor}];
