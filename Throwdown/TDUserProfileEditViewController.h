@@ -14,9 +14,10 @@
 #import "TDUserAPI.h"
 #include <sys/types.h>
 #include <sys/sysctl.h>
-#include "TDUserEditCell.h"
+#import "TDUserEditCell.h"
 #import "TDConstants.h"
 #import "TDActivityIndicator.h"
+#import "TDUserPasswordEditViewController.h"
 
 @interface TDUserProfileEditViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextViewDelegate>
 {
