@@ -18,6 +18,8 @@
 #import "TDUnwindSlideLeftSegue.h"
 #import "TDConstants.h"
 #import "TDFileSystemHelper.h"
+#import "UIImage+Resizing.h"
+#import "UIImage+Rotating.h"
 
 #define TEMP_FILE_PATH @"Documents/WorkingMovieTemp.m4v"
 #define TEMP_IMG_PATH @"Documents/working_image.jpg"
@@ -26,25 +28,30 @@ static const NSString *ItemStatusContext;
 
 @interface TDEditVideoViewController ()<SAVideoRangeSliderDelegate, UIAlertViewDelegate>
 
-@property (strong, nonatomic) SAVideoRangeSlider *slider;
-@property (strong, nonatomic) AVPlayer *player;
-@property (strong, nonatomic) AVPlayerItem *playerItem;
-@property (strong, nonatomic) AVPlayerLayer *playerLayer;
-@property (strong, nonatomic) NSURL *recordedVideoUrl;
-@property (strong, nonatomic) NSURL *editingVideoUrl;
-@property (strong, nonatomic) AVAssetExportSession *exportSession;
-@property (strong, nonatomic) NSString *thumbnailPath;
-@property (strong, nonatomic) NSString *filename;
+@property (nonatomic) SAVideoRangeSlider *slider;
+@property (nonatomic) AVPlayer *player;
+@property (nonatomic) AVPlayerItem *playerItem;
+@property (nonatomic) AVPlayerLayer *playerLayer;
+@property (nonatomic) NSURL *recordedVideoUrl;
+@property (nonatomic) NSURL *editingVideoUrl;
+@property (nonatomic) AVAssetExportSession *exportSession;
+@property (nonatomic) NSString *thumbnailPath;
+@property (nonatomic) NSString *filename;
+@property (nonatomic) NSString *photoPath;
+@property (nonatomic) NSData *photoData;
+@property (nonatomic) NSDictionary *metadata;
 @property (nonatomic) CGFloat startTime;
 @property (nonatomic) CGFloat stopTime;
 @property (nonatomic) BOOL playing;
 @property (nonatomic) BOOL reachedEnd;
 
+@property (weak, nonatomic) IBOutlet UIButton *cancelButton;
 @property (weak, nonatomic) IBOutlet UIButton *playButton;
 @property (weak, nonatomic) IBOutlet UIButton *doneButton;
 @property (weak, nonatomic) IBOutlet UIView *videoContainerView;
 @property (weak, nonatomic) IBOutlet UIView *controlsView;
 @property (weak, nonatomic) IBOutlet UIView *coverView;
+@property (weak, nonatomic) IBOutlet UIImageView *previewImageView;
 
 
 - (IBAction)playButtonPressed:(UIButton *)sender;
@@ -63,7 +70,9 @@ static const NSString *ItemStatusContext;
 }
 
 - (void)dealloc {
-    [self removePlayerItemObserver];
+    if (self.recordedVideoUrl) {
+        [self removePlayerItemObserver];
+    }
 }
 
 - (BOOL)reachedEnd {
@@ -92,21 +101,34 @@ static const NSString *ItemStatusContext;
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
+    self.doneButton.enabled = YES;
+    self.cancelButton.enabled = YES;
 
-    self.slider = [[SAVideoRangeSlider alloc] initWithFrame:CGRectMake(0, 0, 320, 44) videoUrl:self.recordedVideoUrl];
-    self.slider.delegate = self;
-    [self.slider setMinGap:.1f];
-    [self.slider setMaxGap:30];
-    [self.view addSubview:self.slider];
+    if (self.recordedVideoUrl) {
+        self.playButton.hidden = NO;
+        self.previewImageView.hidden = YES;
+        self.slider = [[SAVideoRangeSlider alloc] initWithFrame:CGRectMake(0, 0, 320, 44) videoUrl:self.recordedVideoUrl];
+        self.slider.delegate = self;
+        [self.slider setMinGap:.1f];
+        [self.slider setMaxGap:30];
+        [self.view addSubview:self.slider];
 
-    self.playerLayer = [AVPlayerLayer layer];
-    [self.playerLayer setPlayer:self.player];
-    [self.playerLayer setFrame:CGRectMake(0, 0, 320, 320)];
-    [self.playerLayer setBackgroundColor:[UIColor blackColor].CGColor];
-    [self.playerLayer setVideoGravity:AVLayerVideoGravityResize];
-    [self.videoContainerView.layer addSublayer:self.playerLayer];
+        self.playerLayer = [AVPlayerLayer layer];
+        [self.playerLayer setPlayer:self.player];
+        [self.playerLayer setFrame:CGRectMake(0, 0, 320, 320)];
+        [self.playerLayer setBackgroundColor:[UIColor blackColor].CGColor];
+        [self.playerLayer setVideoGravity:AVLayerVideoGravityResize];
+        [self.videoContainerView.layer addSublayer:self.playerLayer];
 
-    [self setPlayerAssetFromUrl:self.recordedVideoUrl];
+        [self setPlayerAssetFromUrl:self.recordedVideoUrl];
+    } else {
+        self.playButton.hidden = YES;
+        self.videoContainerView.hidden = YES;
+        self.previewImageView.hidden = NO;
+
+        self.photoData = [NSData dataWithContentsOfFile:self.photoPath];
+        self.previewImageView.image = [UIImage imageWithData:self.photoData];
+    }
 
     self.coverView.alpha = 1.0;
     [UIView animateWithDuration:0.2 delay:0.5 options:UIViewAnimationOptionCurveLinear animations:^{
@@ -161,20 +183,58 @@ static const NSString *ItemStatusContext;
 # pragma mark - saving
 
 - (IBAction)doneButtonPressed:(UIButton *)sender {
-    [self togglePlay:NO];
+    self.doneButton.enabled = NO;
+    self.cancelButton.enabled = NO;
 
-    ALAssetsLibrary* library = [[ALAssetsLibrary alloc] init];
-    [library writeVideoAtPathToSavedPhotosAlbum:(self.editingVideoUrl) completionBlock:nil];
+    if (self.filename) {
+        [self performSegueWithIdentifier:@"ShareVideoSegue" sender:self];
+        return;
+    }
 
-    self.filename = [TDPostAPI createUploadFileNameFor:[TDCurrentUser sharedInstance]];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        self.filename = [TDPostAPI createUploadFileNameFor:[TDCurrentUser sharedInstance]];
+        TDPostAPI *api = [TDPostAPI sharedInstance];
+        ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+        if (self.recordedVideoUrl) {
+            [self togglePlay:NO];
 
-    self.thumbnailPath = [NSHomeDirectory() stringByAppendingPathComponent:TEMP_IMG_PATH];
-    [self saveThumbnailTo:self.thumbnailPath];
+            self.thumbnailPath = [NSHomeDirectory() stringByAppendingPathComponent:TEMP_IMG_PATH];
+            [self saveThumbnailTo:self.thumbnailPath];
+            [api uploadVideo:[self.editingVideoUrl path] withThumbnail:self.thumbnailPath withName:self.filename];
 
-    TDPostAPI *api = [TDPostAPI sharedInstance];
-    [api uploadVideo:[self.editingVideoUrl path] withThumbnail:self.thumbnailPath withName:self.filename];
+            [library writeVideoAtPathToSavedPhotosAlbum:self.editingVideoUrl completionBlock:nil];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self performSegueWithIdentifier:@"ShareVideoSegue" sender:self];
+            });
+        } else {
+            NSMutableDictionary *metadata = [self.metadata mutableCopy];
+            UIImage *image = [UIImage imageWithData:self.photoData];
+            if (image.imageOrientation == UIImageOrientationRight) {
+                image = [image rotateInDegrees:-90.0];
+            } else if (image.imageOrientation == UIImageOrientationLeft) {
+                image = [image rotateInDegrees:-90.0];
+            } else if (image.imageOrientation == UIImageOrientationDown) {
+                image = [image rotateInDegrees:90.0];
+            } else if (image.imageOrientation == UIImageOrientationUp) {
+                [metadata removeObjectForKey:@"Orientation"];
+            }
 
-    [self performSegueWithIdentifier:@"ShareVideoSegue" sender:self];
+            NSLog(@"metadata %@", metadata);
+
+            [TDFileSystemHelper removeFileAt:self.photoPath];
+            [UIImageJPEGRepresentation(image, 0.97) writeToFile:self.photoPath atomically:YES];
+
+            [library writeImageDataToSavedPhotosAlbum:self.photoData metadata:metadata completionBlock:^(NSURL *assetURL, NSError *error) {
+                UIImage *smaller = [image scaleToSize:CGSizeMake(640.0, 640.0) usingMode:NYXResizeModeScaleToFill];
+                [TDFileSystemHelper removeFileAt:self.photoPath];
+                [UIImageJPEGRepresentation(smaller, 0.97) writeToFile:self.photoPath atomically:YES];
+                [api uploadPhoto:self.photoPath withName:self.filename];
+            }];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self performSegueWithIdentifier:@"ShareVideoSegue" sender:self];
+            });
+        }
+    });
 }
 
 - (void)saveThumbnailTo:(NSString *)filePath {
@@ -198,7 +258,11 @@ static const NSString *ItemStatusContext;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue isKindOfClass:[TDSlideLeftSegue class]]) {
         TDShareVideoViewController *vc = [segue destinationViewController];
-        [vc shareVideo:self.filename withThumbnail:self.thumbnailPath];
+        if (self.recordedVideoUrl) {
+            [vc shareVideo:self.filename withThumbnail:self.thumbnailPath];
+        } else {
+            [vc shareVideo:self.filename withThumbnail:self.photoPath];
+        }
     }
 }
 
@@ -215,6 +279,14 @@ static const NSString *ItemStatusContext;
                                      fromViewController:fromViewController
                                              identifier:identifier];
     }
+}
+
+#pragma mark - Photo handling
+
+- (void)editPhotoAt:(NSString *)photoPath metadata:(NSDictionary *)metadata {
+    self.photoPath = photoPath;
+    self.metadata = metadata;
+    debug NSLog(@"image metadata %@", metadata);
 }
 
 #pragma mark - SAVideoRangeSliderDelegate

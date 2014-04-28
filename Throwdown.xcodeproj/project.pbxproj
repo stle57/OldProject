@@ -104,6 +104,7 @@
 		A19FF60F18970BBB001A0AD0 /* RSContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF60118970BBB001A0AD0 /* RSContainer.m */; };
 		A19FF61018970BBB001A0AD0 /* RSModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF60318970BBB001A0AD0 /* RSModel.m */; };
 		A19FF61118970BBB001A0AD0 /* RSStorageObject.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF60518970BBB001A0AD0 /* RSStorageObject.m */; };
+		A1B11920190E030700FE7102 /* TDDeviceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A1B1191F190E030700FE7102 /* TDDeviceInfo.m */; };
 		A1B9002E18CC316800012A1F /* TDHomeHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = A1B9002D18CC316800012A1F /* TDHomeHeaderView.m */; };
 		A1BB463018F5FDD700BD9527 /* UIAlertView+TDBlockAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = A1BB462F18F5FDD700BD9527 /* UIAlertView+TDBlockAlert.m */; };
 		A1BB463318F7767200BD9527 /* TDActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1BB463218F7767200BD9527 /* TDActivityViewController.m */; };
@@ -289,6 +290,8 @@
 		A19FF60318970BBB001A0AD0 /* RSModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSModel.m; sourceTree = "<group>"; };
 		A19FF60418970BBB001A0AD0 /* RSStorageObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSStorageObject.h; sourceTree = "<group>"; };
 		A19FF60518970BBB001A0AD0 /* RSStorageObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSStorageObject.m; sourceTree = "<group>"; };
+		A1B1191E190E030700FE7102 /* TDDeviceInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDDeviceInfo.h; sourceTree = "<group>"; };
+		A1B1191F190E030700FE7102 /* TDDeviceInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDDeviceInfo.m; sourceTree = "<group>"; };
 		A1B9002B18CBDCC800012A1F /* TDUploadProgressDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TDUploadProgressDelegate.h; sourceTree = "<group>"; };
 		A1B9002C18CC316700012A1F /* TDHomeHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDHomeHeaderView.h; sourceTree = "<group>"; };
 		A1B9002D18CC316800012A1F /* TDHomeHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDHomeHeaderView.m; sourceTree = "<group>"; };
@@ -658,6 +661,8 @@
 				2D2E832D18CA579B00846B2E /* TDComment.m */,
 				A109FF331909C76000506F88 /* TDAnalytics.h */,
 				A109FF341909C76000506F88 /* TDAnalytics.m */,
+				A1B1191E190E030700FE7102 /* TDDeviceInfo.h */,
+				A1B1191F190E030700FE7102 /* TDDeviceInfo.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -980,6 +985,7 @@
 				A151958B18BAE8FD0050A45B /* TDUser.m in Sources */,
 				2DA39FD618E0B2570004A9C7 /* TDMoreComments.m in Sources */,
 				2D5714CC18BD9AB300AF0B4D /* VideoButtonSegue.m in Sources */,
+				A1B11920190E030700FE7102 /* TDDeviceInfo.m in Sources */,
 				A19FF60F18970BBB001A0AD0 /* RSContainer.m in Sources */,
 				2DA41A5618C7D89C00B21C74 /* TDDetailViewController.m in Sources */,
 				A11999DD18DC0D4200C39ABF /* TDFileSystemHelper.m in Sources */,

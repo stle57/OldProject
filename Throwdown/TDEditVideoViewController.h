@@ -9,5 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface TDEditVideoViewController : UIViewController
-- (void) editVideoAt:(NSString *)videoPath;
+- (void)editVideoAt:(NSString *)videoPath;
+- (void)editPhotoAt:(NSString *)photoPath metadata:(NSDictionary *)metadata;
 @end

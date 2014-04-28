@@ -26,6 +26,9 @@ static NSString *const RSUsername = @"throwdown";
 static NSString *const RSApiKey = @"c93395c50887cf4926d2d24e1d9ed4e7";
 static NSString *const RSHost = @"http://tdstore2.throwdown.us";
 
+// HTTP Headers
+static NSString *const kHTTPHeaderBundleVersion = @"X-Bundle-Version";
+
 // File types
 static NSString *const FTVideo = @".mp4";
 static NSString *const FTImage = @".jpg";
@@ -37,6 +40,7 @@ static NSString *const kAnalyticsLogfile = @"analyticsLogfile.bin";
 static NSString *const kApplicationUUIDKey = @"TDApplicationUUIDKey";
 
 // NSNotification types
+static NSString *const TDPostUploadStarted = @"TDPostUploadStarted";
 static NSString *const TDNotificationStopPlayers = @"TDNotificationStopPlayers";
 static NSString *const TDNotificationUploadComments = @"TDNotificationUploadComments";
 static NSString *const TDNotificationUploadCancelled = @"TDNotificationUploadCancelled";

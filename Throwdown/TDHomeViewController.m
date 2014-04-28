@@ -43,7 +43,7 @@
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(uploadStarted:)
-                                                 name:@"TDPostUploadStarted"
+                                                 name:TDPostUploadStarted
                                                object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(refreshPostsNotification:)
