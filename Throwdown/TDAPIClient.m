@@ -118,6 +118,30 @@
     }];
 }
 
+- (void)resetPassword:(NSString *)requestString callback:(void (^)(BOOL success, NSDictionary *user))callback
+{
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/users/password.json"];
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+
+    [self.httpManager POST:url parameters:@{@"user": @{ @"email": requestString}} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *response = (NSDictionary *)responseObject;
+            NSNumber *success = [response objectForKey:@"success"];
+            if (success && [success boolValue]) {
+                callback([success boolValue], response);
+            } else {
+                callback(NO, response);
+            }
+        } else {
+            debug NSLog(@"ERROR in reset password response, got: %@", [responseObject class]);
+            callback(NO, nil);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"ERROR in reset password call: %@", [error localizedDescription]);
+        callback(NO, nil);
+    }];
+}
+
 -(void)editUserWithName:(NSString *)name email:(NSString *)email username:(NSString *)username phone:(NSString *)phone bio:(NSString *)bio picture:(NSString *)pictureFileName callback:(void (^)(BOOL success, NSDictionary *user))callback
 {
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/users/%@.json", [TDCurrentUser sharedInstance].userId]];

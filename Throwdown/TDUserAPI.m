@@ -57,6 +57,13 @@
     }];
 }
 
+- (void)resetPassword:(NSString *)requestString callback:(void (^)(BOOL success, NSDictionary *dict))callback
+{
+    [[TDAPIClient sharedInstance] resetPassword:requestString callback:^(BOOL success, NSDictionary *returnDict) {
+        callback(success, returnDict);
+    }];
+}
+
 - (void)editUserWithName:(NSString *)name email:(NSString *)email username:(NSString *)username phone:(NSString *)phone bio:(NSString *)bio picture:(NSString *)pictureFileName callback:(void (^)(BOOL success, NSDictionary *dict))callback
 {
     [[TDAPIClient sharedInstance] editUserWithName:name email:email username:username phone:phone bio:bio picture:pictureFileName callback:^(BOOL success, NSDictionary *user) {

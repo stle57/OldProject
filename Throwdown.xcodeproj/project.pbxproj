@@ -23,6 +23,7 @@
 		2D648A1718C9415D002FE0AD /* TDDetailsCommentsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D648A1518C9415D002FE0AD /* TDDetailsCommentsCell.xib */; };
 		2DA39FD618E0B2570004A9C7 /* TDMoreComments.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA39FD418E0B2570004A9C7 /* TDMoreComments.m */; };
 		2DA39FD718E0B2570004A9C7 /* TDMoreComments.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA39FD518E0B2570004A9C7 /* TDMoreComments.xib */; };
+		2DA41156191006450099617B /* TDResetPasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA41155191006450099617B /* TDResetPasswordViewController.m */; };
 		2DA41A5618C7D89C00B21C74 /* TDDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA41A5418C7D89C00B21C74 /* TDDetailViewController.m */; };
 		2DA41A5718C7D89C00B21C74 /* TDDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA41A5518C7D89C00B21C74 /* TDDetailViewController.xib */; };
 		2DA41A5A18C7E31000B21C74 /* TDTypingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA41A5918C7E31000B21C74 /* TDTypingView.m */; };
@@ -166,6 +167,8 @@
 		2DA39FD318E0B2570004A9C7 /* TDMoreComments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDMoreComments.h; sourceTree = "<group>"; };
 		2DA39FD418E0B2570004A9C7 /* TDMoreComments.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDMoreComments.m; sourceTree = "<group>"; };
 		2DA39FD518E0B2570004A9C7 /* TDMoreComments.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDMoreComments.xib; sourceTree = "<group>"; };
+		2DA41154191006450099617B /* TDResetPasswordViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDResetPasswordViewController.h; sourceTree = "<group>"; };
+		2DA41155191006450099617B /* TDResetPasswordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDResetPasswordViewController.m; sourceTree = "<group>"; };
 		2DA41A5318C7D89C00B21C74 /* TDDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDDetailViewController.h; sourceTree = "<group>"; };
 		2DA41A5418C7D89C00B21C74 /* TDDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDDetailViewController.m; sourceTree = "<group>"; };
 		2DA41A5518C7D89C00B21C74 /* TDDetailViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDDetailViewController.xib; sourceTree = "<group>"; };
@@ -605,6 +608,8 @@
 				A1E90CDC18B445FC0046D281 /* TDSignupStepTwoViewController.m */,
 				A1432CE518A99DB30073E492 /* TDLoginViewController.h */,
 				A1432CE618A99DB30073E492 /* TDLoginViewController.m */,
+				2DA41154191006450099617B /* TDResetPasswordViewController.h */,
+				2DA41155191006450099617B /* TDResetPasswordViewController.m */,
 			);
 			name = Onboarding;
 			sourceTree = "<group>";
@@ -1043,6 +1048,7 @@
 				A182D833188B60CD00F794A5 /* SAVideoRangeSlider.m in Sources */,
 				A182D832188B60CD00F794A5 /* SASliderRight.m in Sources */,
 				2DE2C6A51908657F00E51156 /* TDUserPasswordEditViewController.m in Sources */,
+				2DA41156191006450099617B /* TDResetPasswordViewController.m in Sources */,
 				A150F08A18A31B14009A72AD /* TDConstants.m in Sources */,
 				A14B2B8818B8351E00980A31 /* TDCurrentUser.m in Sources */,
 				A182D830188B60CD00F794A5 /* SAResizibleBubble.m in Sources */,

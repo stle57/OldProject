@@ -13,11 +13,14 @@
 @interface TDLoginViewController () <UITextFieldDelegate>
 
 @property (weak, nonatomic) IBOutlet UIButton *loginButton;
+@property (weak, nonatomic) IBOutlet UIButton *resetPasswordButton;
 @property (weak, nonatomic) IBOutlet UIButton *backButton;
 @property (nonatomic, copy) NSString *userEmail;
 @property (nonatomic, copy) NSString *password;
 
 - (IBAction)backButtonPressed:(UIButton *)sender;
+- (IBAction)loginButtonPressed:(id)sender;
+- (IBAction)resetPasswordButtonPressed:(id)sender;
 @end
 
 @implementation TDLoginViewController
@@ -139,6 +142,8 @@
     self.backButton.enabled = NO;
     self.loginButton.hidden = YES;
     self.loginButton.enabled = NO;
+    self.resetPasswordButton.enabled = NO;
+    self.resetPasswordButton.hidden = YES;
 
     self.progress.alpha = 0.0;
     self.progress.hidden = NO;
@@ -159,10 +164,14 @@
                              [[TDUserAPI sharedInstance] loginUser:self.userEmail withPassword:self.password callback:^(BOOL success) {
                                  if (success) {
                                      [TDViewControllerHelper navigateToHomeFrom:self];
+                                     self.resetPasswordButton.enabled = YES;
+                                     self.resetPasswordButton.hidden = NO;
                                  } else {
                                      [TDViewControllerHelper showAlertMessage:@"Incorrect login info provided. Please try again." withTitle:nil];
                                      self.loginButton.enabled = YES;
                                      self.loginButton.hidden = NO;
+                                     self.resetPasswordButton.enabled = YES;
+                                     self.resetPasswordButton.hidden = NO;
                                      self.backButton.enabled = YES;
                                      [self.progress stopAnimating];
                                      [self.userNameTextField becomeFirstResponder];
@@ -171,5 +180,6 @@
                          }
                      }];
 }
+
 
 @end

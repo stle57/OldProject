@@ -77,9 +77,10 @@
     } else {
         // redo frames
         CGRect newFrame = self.placeholderLabel.frame;
-        newFrame.origin.x = self.iconImageView.frame.origin.x;
-        newFrame.size.width += (self.placeholderLabel.frame.origin.x-self.iconImageView.frame.origin.x);
+        newFrame.origin.x = self.iconImageView.frame.origin.x+4.0;
+        newFrame.size.width += (self.placeholderLabel.frame.origin.x+self.iconImageView.frame.origin.x-8.0);
         self.placeholderLabel.frame = newFrame;
+        newFrame.origin.x -= 4.0;
         self.textfield.frame = newFrame;
     }
 

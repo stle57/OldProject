@@ -871,6 +871,21 @@
                                     <action selector="loginButtonPressed:" destination="fM6-ZJ-00P" eventType="touchUpInside" id="sQk-Td-JrH"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="arb-7G-Tmh">
+                                <rect key="frame" x="18" y="226" width="285" height="42"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <state key="normal" image="reg_resetpass">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="disabled" image="reg_resetpass_disabled"/>
+                                <state key="selected" image="reg_resetpass_hit"/>
+                                <state key="highlighted" image="reg_resetpass_hit"/>
+                                <connections>
+                                    <segue destination="3b8-WK-IkA" kind="push" id="d1c-r2-svv"/>
+                                </connections>
+                            </button>
                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" id="xJf-HC-ZZr">
                                 <rect key="frame" x="142" y="221" width="37" height="37"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -900,6 +915,7 @@
                         <outlet property="loginButton" destination="Yw6-ck-N27" id="78M-R1-O8X"/>
                         <outlet property="passwordTextField" destination="QQM-HU-aED" id="W4c-XY-y0K"/>
                         <outlet property="progress" destination="xJf-HC-ZZr" id="T4j-GJ-JOW"/>
+                        <outlet property="resetPasswordButton" destination="arb-7G-Tmh" id="cYg-Gr-2gp"/>
                         <outlet property="topLabel" destination="4Ja-F3-QXx" id="WNy-Xy-gkz"/>
                         <outlet property="userNameTextField" destination="zFm-WF-360" id="Imx-i9-dO6"/>
                     </connections>
@@ -907,6 +923,84 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7Vy-KD-hq6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-866" y="303"/>
+        </scene>
+        <!--Reset Password View Controller - Log in-->
+        <scene sceneID="sqk-Bn-GBG">
+            <objects>
+                <viewController autoresizesArchivedViewToFullSize="NO" id="3b8-WK-IkA" customClass="TDResetPasswordViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="hJe-T7-Zfz">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="reg_bg2_568" id="tFj-vN-754">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Forgot Password" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="zjP-Hn-Phf">
+                                <rect key="frame" x="0.0" y="7" width="320" height="33"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="jGS-CU-oiz">
+                                <rect key="frame" x="12" y="9" width="33" height="33"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="reg_nav_back">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="disabled" image="reg_nav_back"/>
+                                <state key="selected" image="reg_nav_back_hit"/>
+                                <state key="highlighted" image="reg_nav_back_hit"/>
+                                <connections>
+                                    <action selector="backButtonPressed:" destination="3b8-WK-IkA" eventType="touchUpInside" id="v8Q-SH-uRT"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" tag="3" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Hyj-r7-EUO">
+                                <rect key="frame" x="18" y="125" width="285" height="42"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <state key="normal" image="reg_resetpass">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="disabled" image="reg_resetpass_disabled"/>
+                                <state key="selected" image="reg_resetpass_hit"/>
+                                <state key="highlighted" image="reg_resetpass_hit"/>
+                                <connections>
+                                    <action selector="resetButtonPressed:" destination="3b8-WK-IkA" eventType="touchUpInside" id="1IS-7f-URL"/>
+                                </connections>
+                            </button>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" id="MZb-4K-W09">
+                                <rect key="frame" x="142" y="221" width="37" height="37"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </activityIndicatorView>
+                            <view contentMode="scaleToFill" id="OUP-ja-Ya8" customClass="TDTextField">
+                                <rect key="frame" x="0.0" y="65" width="320" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="tintColor" red="0.92549019610000005" green="0.2156862745" blue="0.14901960780000001" alpha="1" colorSpace="calibratedRGB"/>
+                    </view>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" title="Log in" id="ArF-Ip-qSD"/>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="backButton" destination="jGS-CU-oiz" id="lbO-Wc-xFO"/>
+                        <outlet property="backgroundImageView" destination="tFj-vN-754" id="EdO-4o-7VX"/>
+                        <outlet property="progress" destination="MZb-4K-W09" id="M5Z-8p-Ogo"/>
+                        <outlet property="resetButton" destination="Hyj-r7-EUO" id="gRR-cY-F7R"/>
+                        <outlet property="topLabel" destination="zjP-Hn-Phf" id="Azy-Am-Fvs"/>
+                        <outlet property="userNameTextField" destination="OUP-ja-Ya8" id="eS9-bC-8zx"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dq2-jp-ERg" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-422" y="303"/>
         </scene>
     </scenes>
     <resources>
@@ -938,6 +1032,9 @@
         <image name="reg_next" width="285" height="42"/>
         <image name="reg_next_disabled" width="285" height="42"/>
         <image name="reg_next_hit" width="285" height="42"/>
+        <image name="reg_resetpass" width="285" height="42"/>
+        <image name="reg_resetpass_disabled" width="285" height="42"/>
+        <image name="reg_resetpass_hit" width="285" height="42"/>
         <image name="reg_signup" width="285" height="42"/>
         <image name="reg_signup_hit" width="285" height="42"/>
         <image name="saveshare_button" width="320" height="50"/>

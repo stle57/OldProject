@@ -106,7 +106,7 @@
     }
 
     // Add image buttons
-    NSInteger index = 0;
+/*    NSInteger index = 0;
     for (NSDictionary *likerDict in self.likers) {
         if ([likerDict objectForKey:@"picture"]) {
             [self addButtonWithPicture:[likerDict objectForKey:@"picture"]
@@ -116,7 +116,7 @@
                 break;
             }
         }
-    }
+    } */
 }
 
 -(void)setCommentsArray:(NSArray *)array {
