@@ -66,13 +66,12 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"Error: %@", error);
 
+        if (failure) {
+            failure();
+        }
         if (error) {
             if ([operation.response statusCode] == 401) {
                 [self logOutUser];
-            }
-        } else {
-            if (failure) {
-                failure();
             }
         }
     }];
