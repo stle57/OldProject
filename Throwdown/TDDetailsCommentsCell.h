@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "TDComment.h"
+#import "TDUpdatingDateLabel.h"
 
 @protocol TDDetailsCommentsCellDelegate <NSObject>
 @optional
@@ -29,7 +30,7 @@
 @property (nonatomic, retain) TDComment *comment;
 @property (nonatomic, assign) NSInteger commentNumber;
 @property (weak, nonatomic) IBOutlet UILabel *usernameLabel;
-@property (weak, nonatomic) IBOutlet UILabel *timeLabel;
+@property (weak, nonatomic) IBOutlet TDUpdatingDateLabel *timeLabel;
 @property (weak, nonatomic) IBOutlet UILabel *messageLabel;
 @property (weak, nonatomic) IBOutlet UIButton *userButton;
 @property (nonatomic, assign) CGRect origTimeFrame;

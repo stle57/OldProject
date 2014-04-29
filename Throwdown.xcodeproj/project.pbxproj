@@ -48,6 +48,7 @@
 		2DA8639418F49D190089B048 /* TDUserProfileCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA8639218F49D190089B048 /* TDUserProfileCell.xib */; };
 		2DBA430118DA455500366737 /* TDTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DBA42FF18DA455500366737 /* TDTextField.m */; };
 		2DBA430218DA455500366737 /* TDTextField.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DBA430018DA455500366737 /* TDTextField.xib */; };
+		2DC12118190F281C00835AAF /* TDUpdatingDateLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC12117190F281C00835AAF /* TDUpdatingDateLabel.m */; };
 		2DC7B6AA18FF3D8500261BF7 /* TDToastView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DC7B6A818FF3D8500261BF7 /* TDToastView.m */; };
 		2DC7B6AB18FF3D8500261BF7 /* TDToastView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC7B6A918FF3D8500261BF7 /* TDToastView.xib */; };
 		2DE2C6A51908657F00E51156 /* TDUserPasswordEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE2C6A31908657F00E51156 /* TDUserPasswordEditViewController.m */; };
@@ -200,6 +201,8 @@
 		2DBA42FE18DA455500366737 /* TDTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTextField.h; sourceTree = "<group>"; };
 		2DBA42FF18DA455500366737 /* TDTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTextField.m; sourceTree = "<group>"; };
 		2DBA430018DA455500366737 /* TDTextField.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDTextField.xib; sourceTree = "<group>"; };
+		2DC12116190F281C00835AAF /* TDUpdatingDateLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUpdatingDateLabel.h; sourceTree = "<group>"; };
+		2DC12117190F281C00835AAF /* TDUpdatingDateLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUpdatingDateLabel.m; sourceTree = "<group>"; };
 		2DC7B6A718FF3D8500261BF7 /* TDToastView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDToastView.h; sourceTree = "<group>"; };
 		2DC7B6A818FF3D8500261BF7 /* TDToastView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDToastView.m; sourceTree = "<group>"; };
 		2DC7B6A918FF3D8500261BF7 /* TDToastView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDToastView.xib; sourceTree = "<group>"; };
@@ -433,6 +436,15 @@
 				2DA5F05018D36745003D2F99 /* ProximaNova-Semibold.otf */,
 			);
 			name = Fonts;
+			sourceTree = "<group>";
+		};
+		2DC12115190F27FA00835AAF /* Updating Date */ = {
+			isa = PBXGroup;
+			children = (
+				2DC12116190F281C00835AAF /* TDUpdatingDateLabel.h */,
+				2DC12117190F281C00835AAF /* TDUpdatingDateLabel.m */,
+			);
+			name = "Updating Date";
 			sourceTree = "<group>";
 		};
 		A102FE9E18ECF43C00139606 /* Flurry */ = {
@@ -700,6 +712,7 @@
 				A1D13FF51905F8FE000980E0 /* User Profile */,
 				A1D13FF71905F938000980E0 /* Edit User Profile */,
 				A1D13FF41905F8B4000980E0 /* Feed */,
+				2DC12115190F27FA00835AAF /* Updating Date */,
 				A1D13FF31905F899000980E0 /* Detail View */,
 				A1E3A16B18FCC7F40038A8A4 /* Activities */,
 				A11999D718D9290300C39ABF /* Components */,
@@ -1050,6 +1063,7 @@
 				A1432CE118A99D750073E492 /* TDWelcomeViewController.m in Sources */,
 				2DA420DC18E63E1A006F4D9C /* TDActivityCell.m in Sources */,
 				A1C2481418C7D4B000F187D9 /* URLConnection.m in Sources */,
+				2DC12118190F281C00835AAF /* TDUpdatingDateLabel.m in Sources */,
 				A180D4DF18C14EA7003B9378 /* TDNavigationController.m in Sources */,
 				A1E3A17018FCCF2B0038A8A4 /* TDActivitiesCell.m in Sources */,
 				A1C2481118C6B9CA00F187D9 /* TDProgressIndicator.m in Sources */,

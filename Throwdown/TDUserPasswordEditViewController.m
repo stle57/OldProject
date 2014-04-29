@@ -127,7 +127,6 @@
                                                   [self leave];
                                               }
                                               else {
-                                                  NSLog(@"EDIT FAILURE:%@ %@", dict, [dict class]);
 
                                                   NSMutableString *message = [NSMutableString string];
 

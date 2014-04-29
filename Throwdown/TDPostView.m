@@ -45,6 +45,7 @@ typedef enum {
 
 @synthesize delegate;
 
+
 - (void)dealloc {
     delegate = nil;
 }
@@ -115,6 +116,7 @@ typedef enum {
                                                  @"height":[NSNumber numberWithInt:self.userProfileImage.frame.size.height]}];
     }
 
+    self.createdLabel.labelDate = post.createdAt;
     self.createdLabel.text = [post.createdAt timeAgo];
 
     self.filename = post.filename;
@@ -343,5 +345,4 @@ typedef enum {
         [delegate userButtonPressedFromRow:self.row];
     }
 }
-
 @end
