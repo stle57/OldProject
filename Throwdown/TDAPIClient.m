@@ -209,6 +209,47 @@
     }];
 }
 
+- (void)getPushNotificationSettingsForUserToken:(NSString *)userToken success:(void (^)(NSDictionary *pushNotifications))success failure:(void (^)(void))failure {
+    NSString *url = [NSString stringWithFormat:@"%@/api/v1/push_notification_settings.json?user_token=%@", [TDConstants getBaseURL], userToken];
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [self.httpManager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if (success) {
+            success([responseObject objectForKey:@"settings"]);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        if (failure) {
+            failure();
+        }
+    }];
+}
+
+-(void)sendPushNotificationSettings:(NSDictionary *)pushSettings callback:(void (^)(BOOL success))callback
+{
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/push_notification_settings.json"]];
+
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+
+    NSDictionary *params = @{@"settings": pushSettings, @"user_token": [TDCurrentUser sharedInstance].authToken};
+    [self.httpManager PUT:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *response = (NSDictionary *)responseObject;
+
+            NSNumber *success = [response objectForKey:@"success"];
+            if (success && [success boolValue]) {
+                callback([success boolValue]);
+            } else {
+                callback(NO);
+            }
+        } else {
+            debug NSLog(@"ERROR in edit user push settings, got: %@", responseObject);
+            callback(NO);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"ERROR in edit user push settings: %@", [error localizedDescription]);
+        callback(NO);
+    }];
+}
+
 - (void)logoutUser {
     [self logoutUserWithDeviceToken:nil];
 }

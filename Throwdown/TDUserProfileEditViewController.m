@@ -18,6 +18,7 @@
 #import "UIImage+Resizing.h"
 #import "UIImage+Rotating.h"
 #import "TDAPIClient.h"
+#import "TDUserPushNotificationsEditViewController.h"
 
 @implementation TDUserProfileEditViewController
 
@@ -480,7 +481,7 @@
 #pragma mark - TableView Delegates
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    if (section == 1) {
+    if (section == 2) {
         self.sectionHeaderLabel.text = @"PRIVATE INFORMATION";
         self.sectionHeaderLabel.font = [UIFont fontWithName:TDFontProximaNovaSemibold size:15.0];
         self.sectionHeaderLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
@@ -502,16 +503,17 @@
 {
     switch (section) {
         case 0:
+        case 1:
         {
             return 5.0;
         }
         break;
-        case 1:
+        case 2:
         {
             return self.sectionHeaderLabel.frame.size.height;
         }
         break;
-        case 2:
+        case 3:
         {
             return 0.0;
         }
@@ -526,7 +528,7 @@
 
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return 3; // User name, photo + phone, email, password + log out
+    return 4;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -536,20 +538,25 @@
         {
             return 4;
         }
-        break;
+            break;
         case 1:
         {
-            return 2;
+            return 1;
         }
-        break;
+            break;
         case 2:
         {
             return 2;
         }
-        break;
+            break;
+        case 3:
+        {
+            return 2;
+        }
+            break;
 
         default:
-        break;
+            break;
     }
 
     return 1;
@@ -568,6 +575,7 @@
     }
 
     cell.titleLabel.hidden = YES;
+    cell.longTitleLabel.hidden = YES;
     cell.middleLabel.hidden = YES;
     cell.userImageView.hidden = YES;
     cell.topLine.hidden = YES;
@@ -651,6 +659,24 @@
             switch (indexPath.row) {
                 case 0:
                 {
+                    // Log Out
+                    cell.topLine.hidden = NO;
+                    cell.longTitleLabel.hidden = NO;
+                    cell.longTitleLabel.text = @"Push Notifications";
+                    cell.selectionStyle = UITableViewCellSelectionStyleGray;
+                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                }
+                    break;
+                default:
+                    break;
+            }
+        }
+            break;
+        case 2:
+        {
+            switch (indexPath.row) {
+                case 0:
+                {
                     cell.titleLabel.hidden = NO;
                     cell.textField.hidden = NO;
                     cell.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"phone"
@@ -687,7 +713,7 @@
             }
         }
         break;
-        case 2:
+        case 3:
         {
             switch (indexPath.row) {
                 case 0:
@@ -763,10 +789,8 @@
             switch (indexPath.row) {
                 case 0:
                 {
-                }
-                break;
-                case 1:
-                {
+                    // Edit Push
+                    [self gotoEditPushNotifications];
                 }
                 break;
 
@@ -1014,6 +1038,13 @@
     self.editedProfileImage90x90 = nil;
 
     [self hideActivity];
+}
+
+#pragma mark - Edit Push Notifications
+-(void)gotoEditPushNotifications
+{
+    TDUserPushNotificationsEditViewController *vc = [[TDUserPushNotificationsEditViewController alloc] initWithNibName:@"TDUserPushNotificationsEditViewController" bundle:nil ];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma mark - Activity

@@ -390,6 +390,7 @@
     }
 
     cell.titleLabel.hidden = YES;
+    cell.longTitleLabel.hidden = YES;
     cell.middleLabel.hidden = YES;
     cell.userImageView.hidden = YES;
     cell.topLine.hidden = YES;

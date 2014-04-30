@@ -18,6 +18,8 @@
 - (void)resetPassword:(NSString *)requestString callback:(void (^)(BOOL success, NSDictionary *user))callback;
 - (void)editUserWithName:(NSString *)name email:(NSString *)email username:(NSString *)username phone:(NSString *)phone bio:(NSString *)bio picture:(NSString *)pictureFileName callback:(void (^)(BOOL success, NSDictionary *user))callback;
 -(void)changePasswordFrom:(NSString *)oldPassword newPassword:(NSString *)newPassword confirmPassword:(NSString *)confirmPassword callback:(void (^)(BOOL success, NSDictionary *user))callback;
+- (void)getPushNotificationSettingsForUserToken:(NSString *)userToken success:(void (^)(NSDictionary *pushNotifications))success failure:(void (^)(void))failure;
+-(void)sendPushNotificationSettings:(NSDictionary *)pushSettings callback:(void (^)(BOOL success))callback;
 - (void)logoutUser;
 - (void)logoutUserWithDeviceToken:(NSString *)token;
 - (void)registerDeviceToken:(NSString *)token forUserToken:(NSString *)userToken;

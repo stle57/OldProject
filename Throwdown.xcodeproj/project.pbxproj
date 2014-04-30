@@ -21,6 +21,10 @@
 		2D63FA881909D22200FEBA3C /* TDActivityIndicator.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D63FA861909D22200FEBA3C /* TDActivityIndicator.xib */; };
 		2D648A1618C9415D002FE0AD /* TDDetailsCommentsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D648A1418C9415D002FE0AD /* TDDetailsCommentsCell.m */; };
 		2D648A1718C9415D002FE0AD /* TDDetailsCommentsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D648A1518C9415D002FE0AD /* TDDetailsCommentsCell.xib */; };
+		2D83200419116D9000A91282 /* TDUserPushNotificationsEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D83200219116D9000A91282 /* TDUserPushNotificationsEditViewController.m */; };
+		2D83200519116D9000A91282 /* TDUserPushNotificationsEditViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D83200319116D9000A91282 /* TDUserPushNotificationsEditViewController.xib */; };
+		2D8320091911740A00A91282 /* TDPushEditCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D8320071911740A00A91282 /* TDPushEditCell.m */; };
+		2D83200A1911740A00A91282 /* TDPushEditCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D8320081911740A00A91282 /* TDPushEditCell.xib */; };
 		2DA39FD618E0B2570004A9C7 /* TDMoreComments.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA39FD418E0B2570004A9C7 /* TDMoreComments.m */; };
 		2DA39FD718E0B2570004A9C7 /* TDMoreComments.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA39FD518E0B2570004A9C7 /* TDMoreComments.xib */; };
 		2DA41156191006450099617B /* TDResetPasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA41155191006450099617B /* TDResetPasswordViewController.m */; };
@@ -164,6 +168,12 @@
 		2D648A1318C9415D002FE0AD /* TDDetailsCommentsCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDDetailsCommentsCell.h; sourceTree = "<group>"; };
 		2D648A1418C9415D002FE0AD /* TDDetailsCommentsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDDetailsCommentsCell.m; sourceTree = "<group>"; };
 		2D648A1518C9415D002FE0AD /* TDDetailsCommentsCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDDetailsCommentsCell.xib; sourceTree = "<group>"; };
+		2D83200119116D9000A91282 /* TDUserPushNotificationsEditViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserPushNotificationsEditViewController.h; sourceTree = "<group>"; };
+		2D83200219116D9000A91282 /* TDUserPushNotificationsEditViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUserPushNotificationsEditViewController.m; sourceTree = "<group>"; };
+		2D83200319116D9000A91282 /* TDUserPushNotificationsEditViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDUserPushNotificationsEditViewController.xib; sourceTree = "<group>"; };
+		2D8320061911740A00A91282 /* TDPushEditCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDPushEditCell.h; sourceTree = "<group>"; };
+		2D8320071911740A00A91282 /* TDPushEditCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDPushEditCell.m; sourceTree = "<group>"; };
+		2D8320081911740A00A91282 /* TDPushEditCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDPushEditCell.xib; sourceTree = "<group>"; };
 		2DA39FD318E0B2570004A9C7 /* TDMoreComments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDMoreComments.h; sourceTree = "<group>"; };
 		2DA39FD418E0B2570004A9C7 /* TDMoreComments.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDMoreComments.m; sourceTree = "<group>"; };
 		2DA39FD518E0B2570004A9C7 /* TDMoreComments.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDMoreComments.xib; sourceTree = "<group>"; };
@@ -421,6 +431,9 @@
 				2DE2C6A41908657F00E51156 /* TDUserPasswordEditViewController.xib */,
 				2DE2C6A21908657F00E51156 /* TDUserPasswordEditViewController.h */,
 				2DE2C6A31908657F00E51156 /* TDUserPasswordEditViewController.m */,
+				2D83200319116D9000A91282 /* TDUserPushNotificationsEditViewController.xib */,
+				2D83200119116D9000A91282 /* TDUserPushNotificationsEditViewController.h */,
+				2D83200219116D9000A91282 /* TDUserPushNotificationsEditViewController.m */,
 			);
 			name = UserProfile;
 			sourceTree = "<group>";
@@ -799,6 +812,9 @@
 				2D63FA861909D22200FEBA3C /* TDActivityIndicator.xib */,
 				2D63FA841909D22200FEBA3C /* TDActivityIndicator.h */,
 				2D63FA851909D22200FEBA3C /* TDActivityIndicator.m */,
+				2D8320081911740A00A91282 /* TDPushEditCell.xib */,
+				2D8320061911740A00A91282 /* TDPushEditCell.h */,
+				2D8320071911740A00A91282 /* TDPushEditCell.m */,
 			);
 			name = "Edit User Profile";
 			sourceTree = "<group>";
@@ -910,9 +926,11 @@
 				2DA39FD718E0B2570004A9C7 /* TDMoreComments.xib in Resources */,
 				A10F9C241909B01600D2CAB0 /* NewMessage.caf in Resources */,
 				2DA5F05B18D37C70003D2F99 /* BebasNeue Book.otf in Resources */,
+				2D83200519116D9000A91282 /* TDUserPushNotificationsEditViewController.xib in Resources */,
 				A1C1D0F318A02FAB00666D2A /* TDPostView.xib in Resources */,
 				2DA420DD18E63E1A006F4D9C /* TDActivityCell.xib in Resources */,
 				2D63FA881909D22200FEBA3C /* TDActivityIndicator.xib in Resources */,
+				2D83200A1911740A00A91282 /* TDPushEditCell.xib in Resources */,
 				2DC7B6AB18FF3D8500261BF7 /* TDToastView.xib in Resources */,
 				2DA5F05D18D37C70003D2F99 /* BebasNeue Regular.otf in Resources */,
 				A11E04F41888CB79002F981A /* Images.xcassets in Resources */,
@@ -1050,6 +1068,7 @@
 				2DE2C6A51908657F00E51156 /* TDUserPasswordEditViewController.m in Sources */,
 				2DA41156191006450099617B /* TDResetPasswordViewController.m in Sources */,
 				A150F08A18A31B14009A72AD /* TDConstants.m in Sources */,
+				2D8320091911740A00A91282 /* TDPushEditCell.m in Sources */,
 				A14B2B8818B8351E00980A31 /* TDCurrentUser.m in Sources */,
 				A182D830188B60CD00F794A5 /* SAResizibleBubble.m in Sources */,
 				A182D8261889E8D900F794A5 /* TDEditVideoViewController.m in Sources */,
@@ -1062,6 +1081,7 @@
 				A182D831188B60CD00F794A5 /* SASliderLeft.m in Sources */,
 				2DA41A6118C7E49D00B21C74 /* HPTextViewInternal.m in Sources */,
 				2DA5354818F36EF800031128 /* TDPostsViewController.m in Sources */,
+				2D83200419116D9000A91282 /* TDUserPushNotificationsEditViewController.m in Sources */,
 				A1B9002E18CC316800012A1F /* TDHomeHeaderView.m in Sources */,
 				2D5714CD18BD9AB300AF0B4D /* VideoCloseSegue.m in Sources */,
 				A1E90CDD18B445FC0046D281 /* TDSignupStepTwoViewController.m in Sources */,
