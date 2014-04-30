@@ -10,13 +10,14 @@
 #import "TDConstants.h"
 #import <QuartzCore/QuartzCore.h>
 #import "TDUploadProgressDelegate.h"
+#import "TTTAttributedLabel.h"
 
 @interface TDProgressIndicator () <TDUploadProgressDelegate>
 
 @property (strong, nonatomic) UIView *progressBackgroundView;
 @property (strong, nonatomic) UIView *progressBarView;
 @property (strong, nonatomic) UIButton *retryButton;
-@property (strong, nonatomic) UILabel *errorLabel;
+@property (strong, nonatomic) TTTAttributedLabel *errorLabel;
 @property (strong, nonatomic) TDPostUpload *upload;
 @property (strong, nonatomic) id<TDHomeHeaderUploadDelegate> delegate;
 
@@ -37,7 +38,12 @@
         self.thumbnailView.contentMode = UIViewContentModeScaleToFill;
         self.thumbnailView.backgroundColor = [TDConstants borderColor];
         self.thumbnailView.clipsToBounds = YES;
-        self.thumbnailView.image = [UIImage imageWithContentsOfFile:upload.persistedPhotoPath];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            UIImage *image = [UIImage imageWithContentsOfFile:upload.persistedPhotoPath];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.thumbnailView.image = image;
+            });
+        });
         [self addSubview:self.thumbnailView];
 
         self.progressBackgroundView = [[UIView alloc] initWithFrame:CGRectMake(63.0, 20.0, 200.0, 10.0)];
@@ -55,6 +61,7 @@
         UIView *bottomBorder = [[UIView alloc] initWithFrame:CGRectMake(0.0, 49.0 + (1 / [[UIScreen mainScreen] scale]), 320.0, 1 / [[UIScreen mainScreen] scale])];
         bottomBorder.backgroundColor = [TDConstants borderColor];
         [self addSubview:bottomBorder];
+        debug NSLog(@"upload indicator started");
     }
     return self;
 }
@@ -74,22 +81,16 @@
 }
 
 - (void)uploadFailed {
+    debug NSLog(@"upload failed");
     self.progressBackgroundView.hidden = YES;
     self.progressBarView.hidden = YES;
 
     if (!self.errorLabel) {
         CGRect labelFrame = CGRectMake(63.0, 0.0, 200.0, 49.0);
 
-        self.errorLabel = [[UILabel alloc] initWithFrame:labelFrame];
-        [self.errorLabel setNumberOfLines:0];
+        self.errorLabel = [[TTTAttributedLabel alloc] initWithFrame:labelFrame];
         self.errorLabel.text = @"Upload failed";
-        CGFloat fontSize = 0.0f;
-        labelFrame.size = [self.errorLabel.text sizeWithFont:self.errorLabel.font
-                                         minFontSize:self.errorLabel.minimumScaleFactor
-                                      actualFontSize:&fontSize
-                                            forWidth:labelFrame.size.width
-                                       lineBreakMode:self.errorLabel.lineBreakMode];
-
+        self.errorLabel.verticalAlignment = TTTAttributedLabelVerticalAlignmentCenter;
         [self addSubview:self.errorLabel];
 
         self.retryButton = [UIButton buttonWithType:UIButtonTypeCustom];

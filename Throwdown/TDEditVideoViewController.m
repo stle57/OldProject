@@ -169,7 +169,8 @@ static const NSString *ItemStatusContext;
 }
 
 - (IBAction)cancelButtonPressed:(id)sender {
-    UIAlertView *confirm = [[UIAlertView alloc] initWithTitle:@"Delete this video?" message:nil delegate:self cancelButtonTitle:@"Delete Video" otherButtonTitles:@"Keep", nil];
+    NSString *text = self.recordedVideoUrl ?  @"Delete this video?" : @"Delete this photo?";
+    UIAlertView *confirm = [[UIAlertView alloc] initWithTitle:text message:nil delegate:self cancelButtonTitle:@"Delete" otherButtonTitles:@"Keep", nil];
     [confirm show];
 }
 
@@ -193,12 +194,14 @@ static const NSString *ItemStatusContext;
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         self.filename = [TDPostAPI createUploadFileNameFor:[TDCurrentUser sharedInstance]];
+        debug NSLog(@"Creating filename %@", self.filename);
+
+        self.thumbnailPath = [NSHomeDirectory() stringByAppendingPathComponent:TEMP_IMG_PATH];
         TDPostAPI *api = [TDPostAPI sharedInstance];
         ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
         if (self.recordedVideoUrl) {
             [self togglePlay:NO];
 
-            self.thumbnailPath = [NSHomeDirectory() stringByAppendingPathComponent:TEMP_IMG_PATH];
             [self saveThumbnailTo:self.thumbnailPath];
             [api uploadVideo:[self.editingVideoUrl path] withThumbnail:self.thumbnailPath withName:self.filename];
 
@@ -208,28 +211,21 @@ static const NSString *ItemStatusContext;
             });
         } else {
             NSMutableDictionary *metadata = [self.metadata mutableCopy];
+            // this way it's auto detect. easier than setting each different
+            [metadata removeObjectForKey:@"Orientation"];
+            debug NSLog(@"metadata %@", metadata);
+
             UIImage *image = [UIImage imageWithData:self.photoData];
-            if (image.imageOrientation == UIImageOrientationRight) {
-                image = [image rotateInDegrees:-90.0];
-            } else if (image.imageOrientation == UIImageOrientationLeft) {
-                image = [image rotateInDegrees:-90.0];
-            } else if (image.imageOrientation == UIImageOrientationDown) {
-                image = [image rotateInDegrees:90.0];
-            } else if (image.imageOrientation == UIImageOrientationUp) {
-                [metadata removeObjectForKey:@"Orientation"];
-            }
-
-            NSLog(@"metadata %@", metadata);
-
             [TDFileSystemHelper removeFileAt:self.photoPath];
             [UIImageJPEGRepresentation(image, 0.97) writeToFile:self.photoPath atomically:YES];
 
-            [library writeImageDataToSavedPhotosAlbum:self.photoData metadata:metadata completionBlock:^(NSURL *assetURL, NSError *error) {
-                UIImage *smaller = [image scaleToSize:CGSizeMake(640.0, 640.0) usingMode:NYXResizeModeScaleToFill];
-                [TDFileSystemHelper removeFileAt:self.photoPath];
-                [UIImageJPEGRepresentation(smaller, 0.97) writeToFile:self.photoPath atomically:YES];
-                [api uploadPhoto:self.photoPath withName:self.filename];
-            }];
+            [library writeImageDataToSavedPhotosAlbum:self.photoData metadata:metadata completionBlock:nil];
+
+            UIImage *smaller = [image scaleToSize:CGSizeMake(640.0, 640.0) usingMode:NYXResizeModeScaleToFill];
+            [TDFileSystemHelper removeFileAt:self.thumbnailPath];
+            [UIImageJPEGRepresentation(smaller, 0.97) writeToFile:self.thumbnailPath atomically:YES];
+            [api uploadPhoto:self.thumbnailPath withName:self.filename];
+
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self performSegueWithIdentifier:@"ShareVideoSegue" sender:self];
             });
@@ -258,11 +254,7 @@ static const NSString *ItemStatusContext;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue isKindOfClass:[TDSlideLeftSegue class]]) {
         TDShareVideoViewController *vc = [segue destinationViewController];
-        if (self.recordedVideoUrl) {
-            [vc shareVideo:self.filename withThumbnail:self.thumbnailPath];
-        } else {
-            [vc shareVideo:self.filename withThumbnail:self.photoPath];
-        }
+        [vc shareVideo:self.filename withThumbnail:self.thumbnailPath];
     }
 }
 

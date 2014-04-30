@@ -227,8 +227,8 @@ static int const kMaxRecordingSeconds = 30;
 
 - (void)takePhoto {
     self.recordButton.enabled = NO;
-    [self showPreviewCover:nil];
     [self.stillCamera capturePhotoAsJPEGProcessedUpToFilter:self.filter withCompletionHandler:^(NSData *processedJPEG, NSError *error){
+        [self showPreviewCover:nil];
         [self stopVideoCamera];
         NSString *filename = [NSHomeDirectory() stringByAppendingPathComponent:kPhotoFilePath];
         [processedJPEG writeToFile:filename atomically:YES];
