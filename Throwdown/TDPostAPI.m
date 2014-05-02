@@ -92,7 +92,10 @@
 }
 
 - (void)fetchPostsUpstreamWithErrorHandlerStart:(NSNumber *)start error:(void (^)(void))errorHandler {
-    NSMutableDictionary *params = [@{@"user_token": [TDCurrentUser sharedInstance].authToken} mutableCopy];
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    if ([TDCurrentUser sharedInstance].authToken) {
+        [params addEntriesFromDictionary:@{@"user_token": [TDCurrentUser sharedInstance].authToken}];
+    }
     if (start) {
         [params addEntriesFromDictionary:@{@"start": start}];
     }
