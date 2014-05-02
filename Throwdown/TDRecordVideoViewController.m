@@ -14,6 +14,7 @@
 #import "VideoCloseSegue.h"
 #import <QuartzCore/QuartzCore.h>
 #import <QuartzCore/CAAnimation.h>
+#import <MobileCoreServices/MobileCoreServices.h>
 #import "TDFileSystemHelper.h"
 #import "TDConstants.h"
 
@@ -22,7 +23,7 @@ static NSString *const kRecordedMovieFilePath = @"Documents/RecordedMovie.m4v";
 static NSString *const kCroppedMovieFilePath = @"Documents/CroppedMovie.m4v";
 static int const kMaxRecordingSeconds = 30;
 
-@interface TDRecordVideoViewController ()
+@interface TDRecordVideoViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
 @property GPUImageCropFilter<GPUImageInput> *filter;
 @property GPUImageMovieWriter *movieWriter;
@@ -32,14 +33,18 @@ static int const kMaxRecordingSeconds = 30;
 @property BOOL isRecording;
 @property BOOL torchIsOn;
 @property BOOL photoMode;
+@property BOOL albumPickerOpen;
 @property int secondsRecorded;
 @property NSTimer *timeLabelTimer;
 @property (nonatomic) UITapGestureRecognizer *tapToFocusGesture;
 @property (nonatomic) NSURL *recordedURL;
 @property (nonatomic) NSURL *croppedURL;
+@property (nonatomic) NSURL *assetURL;
 @property (nonatomic) AVAssetExportSession *exportSession;
 @property (nonatomic) NSDictionary *currentCaptureMetadata;
+@property (nonatomic) UIImage *assetImage;
 
+@property (weak, nonatomic) IBOutlet UIButton *albumButton;
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
 @property (weak, nonatomic) IBOutlet UIButton *recordButton;
 @property (weak, nonatomic) IBOutlet UIButton *photoButton;
@@ -101,6 +106,7 @@ static int const kMaxRecordingSeconds = 30;
 
     self.recordButton.enabled = NO;
     self.photoMode = YES;
+    self.albumPickerOpen = NO;
 
     // Fix buttons for 3.5" screens
     if ([UIScreen mainScreen].bounds.size.height == 480.0) {
@@ -122,6 +128,14 @@ static int const kMaxRecordingSeconds = 30;
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+
+    if (self.albumPickerOpen) {
+        self.albumPickerOpen = NO;
+        return;
+    }
+
+    self.croppedURL = nil;
+    self.assetImage = nil;
 
     self.closeButton.enabled = YES;
     self.closeButton.hidden = NO;
@@ -433,6 +447,28 @@ static int const kMaxRecordingSeconds = 30;
     }
 }
 
+#pragma mark - Library picker
+
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    [self dismissViewControllerAnimated:YES completion:^{
+        if ([[info objectForKey:UIImagePickerControllerMediaType] isEqualToString:@"public.image"]) {
+            self.assetImage = [info objectForKey:UIImagePickerControllerOriginalImage];
+        } else if ([[info objectForKey:UIImagePickerControllerMediaType] isEqualToString:@"public.movie"]) {
+            self.assetURL = [info objectForKey:UIImagePickerControllerMediaURL];
+        }
+        [self performSegueWithIdentifier:@"EditVideoSegue" sender:nil];
+    }];
+}
+
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
+    [self dismissViewControllerAnimated:YES completion:NULL];
+    if (self.photoMode) {
+        [self startPhotoCamera];
+    } else {
+        [self startVideoCamera];
+    }
+}
+
 #pragma mark - UI callbacks
 
 - (IBAction)recordButtonPressed:(UIButton *)button {
@@ -447,6 +483,26 @@ static int const kMaxRecordingSeconds = 30;
             self.closeButton.hidden = YES;
         }
     }
+}
+
+- (IBAction)albumButtonPressed:(id)sender {
+    [self showPreviewCover:nil];
+    if (self.photoMode) {
+        [self stopPhotoCamera];
+    } else {
+        [self stopVideoCamera];
+    }
+    self.albumPickerOpen = YES;
+
+    UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
+    imagePickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
+    imagePickerController.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
+    imagePickerController.mediaTypes = @[(NSString *)kUTTypeImage, (NSString *)kUTTypeMovie];
+    imagePickerController.delegate = self;
+
+    [self presentViewController:imagePickerController
+                       animated:YES
+                     completion:nil];
 }
 
 - (IBAction)switchCameraButtonPressed:(id)sender {
@@ -572,11 +628,19 @@ static int const kMaxRecordingSeconds = 30;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue isKindOfClass:[TDSlideLeftSegue class]]) {
         TDEditVideoViewController *vc = [segue destinationViewController];
-        if (self.photoMode) {
+        if (self.assetURL) {
+            [vc editVideoAt:[self.assetURL path] original:NO];
+            self.assetURL = nil;
+        } else if (self.croppedURL) {
+            [vc editVideoAt:[self.croppedURL path] original:NO];
+            self.croppedURL = nil;
+        } else if (self.assetImage) {
+            [vc editImage:self.assetImage];
+            self.assetImage = nil;
+        } else {
             NSString *filename = [NSHomeDirectory() stringByAppendingPathComponent:kPhotoFilePath];
             [vc editPhotoAt:filename metadata:self.currentCaptureMetadata];
-        } else {
-            [vc editVideoAt:[self.croppedURL path]];
+            self.currentCaptureMetadata = nil;
         }
     }
 }
