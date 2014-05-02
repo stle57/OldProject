@@ -81,7 +81,7 @@ static NSUInteger const kMaxCommentLength = 50;
 
     // Background
     if ([activity objectForKey:@"unseen"]) {
-        if ([[activity objectForKey:@"post"] boolValue]) {
+        if ([[activity objectForKey:@"unseen"] boolValue]) {
             self.contentView.backgroundColor = [TDConstants activityUnseenColor];
         } else {
             self.contentView.backgroundColor = [UIColor whiteColor];

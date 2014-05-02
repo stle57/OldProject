@@ -92,7 +92,7 @@
 }
 
 + (UIColor *)activityUnseenColor {
-    return [UIColor colorWithRed:(255.0/255.0) green:(255.0/255.0) blue:(237.0/255.0) alpha:1.0];   // #fff5ed
+    return [UIColor colorWithRed:(255.0/255.0) green:(245.0/255.0) blue:(237.0/255.0) alpha:1.0];   // #fff5ed
 }
 
 #pragma mark - Fonts
