@@ -632,7 +632,7 @@ static int const kMaxRecordingSeconds = 30;
             [vc editVideoAt:[self.assetURL path] original:NO];
             self.assetURL = nil;
         } else if (self.croppedURL) {
-            [vc editVideoAt:[self.croppedURL path] original:NO];
+            [vc editVideoAt:[self.croppedURL path] original:YES];
             self.croppedURL = nil;
         } else if (self.assetImage) {
             [vc editImage:self.assetImage];
