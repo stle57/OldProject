@@ -35,18 +35,7 @@
 @synthesize tempFlyInImageView;
 
 - (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:UIKeyboardWillShowNotification
-                                                  object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:UIKeyboardWillHideNotification
-                                                  object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:TDAvatarUploadCompleteNotification
-                                                  object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:TDAvatarUploadFailedNotification
-                                                  object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     self.profileUser = nil;
     self.name = nil;
     self.username = nil;
@@ -57,14 +46,6 @@
     self.pictureFileName = nil;
     self.editedProfileImage90x90 = nil;
     self.tempFlyInImageView = nil;
-}
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
 }
 
 - (void)viewDidLoad {
@@ -461,15 +442,11 @@
 }
 
 #pragma mark - AlertView
--(void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
-    if (alertView.tag == 89892 && buttonIndex == 0) // Leave
-    {
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    if (alertView.tag == 89892 && buttonIndex == 0) {
         switch (fromFrofileType) {
             case kFromProfileScreenType_OwnProfile:
-            {
                 [self.navigationController popViewControllerAnimated:YES];
-            }
             break;
             
             default:
@@ -479,9 +456,8 @@
 }
 
 #pragma mark - TableView Delegates
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
-    if (section == 2) {
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    if (section == 1) {
         self.sectionHeaderLabel.text = @"PRIVATE INFORMATION";
         self.sectionHeaderLabel.font = [UIFont fontWithName:TDFontProximaNovaSemibold size:15.0];
         self.sectionHeaderLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
@@ -499,67 +475,45 @@
     return nil;
 }
 
--(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     switch (section) {
-        case 0:
         case 1:
-        {
-            return 5.0;
-        }
-        break;
-        case 2:
-        {
             return self.sectionHeaderLabel.frame.size.height;
-        }
         break;
+        case 0:
+        case 2:
         case 3:
-        {
-            return 0.0;
-        }
+            return 5.;
         break;
-
         default:
+            return 0.;
         break;
     }
-
-    return 0.0;
 }
 
--(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 4;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
     switch (section) {
-        case 0:
-        {
+        case 0: // profile
             return 4;
-        }
             break;
-        case 1:
-        {
+        case 1: // private
+            return 2;
+            break;
+        case 2: // push / password
+            return 2;
+            break;
+        case 3: // log out
             return 1;
-        }
             break;
-        case 2:
-        {
-            return 2;
-        }
-            break;
-        case 3:
-        {
-            return 2;
-        }
-            break;
-
         default:
+            return 1;
             break;
     }
-
-    return 1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -592,11 +546,9 @@
                                        cell.bottomLine.frame.size.height);
 
     switch (indexPath.section) {
-        case 0:
-        {
+        case 0: // profile settings
             switch (indexPath.row) {
                 case 0:
-                {
                     cell.userImageView.hidden = NO;
                     if (self.editedProfileImage90x90) {
                         cell.userImageView.image = self.editedProfileImage90x90;
@@ -610,30 +562,24 @@
                     cell.leftMiddleLabel.hidden = NO;
                     cell.leftMiddleLabel.text = @"Edit Photo";
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
-                }
                 break;
                 case 1:
-                {
                     cell.titleLabel.hidden = NO;
                     cell.textField.hidden = NO;
                     cell.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"name"
                                                                                            attributes:@{NSForegroundColorAttributeName: textFieldPlaceHolderColor}];
                     cell.titleLabel.text = @"Name";
                     cell.textField.text = self.name;
-                }
                 break;
                 case 2:
-                {
                     cell.titleLabel.hidden = NO;
                     cell.textField.hidden = NO;
                     cell.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"username"
                                                                                            attributes:@{NSForegroundColorAttributeName: textFieldPlaceHolderColor}];
                     cell.titleLabel.text = @"Username";
                     cell.textField.text = self.username;
-                }
                 break;
                 case 3:
-                {
                     cell.titleLabel.hidden = NO;
                     cell.textView.hidden = NO;
                     cell.titleLabel.text = @"Bio";
@@ -646,37 +592,16 @@
                                                        cell.bottomLine.frame.size.width,
                                                        cell.bottomLine.frame.size.height);
 
-                }
                 break;
 
                 default:
                 break;
             }
-        }
         break;
-        case 1:
-        {
+
+        case 1: // Private information
             switch (indexPath.row) {
                 case 0:
-                {
-                    // Log Out
-                    cell.topLine.hidden = NO;
-                    cell.longTitleLabel.hidden = NO;
-                    cell.longTitleLabel.text = @"Push Notifications";
-                    cell.selectionStyle = UITableViewCellSelectionStyleGray;
-                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-                }
-                    break;
-                default:
-                    break;
-            }
-        }
-            break;
-        case 2:
-        {
-            switch (indexPath.row) {
-                case 0:
-                {
                     cell.titleLabel.hidden = NO;
                     cell.textField.hidden = NO;
                     cell.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"phone"
@@ -684,58 +609,52 @@
                     cell.titleLabel.text = @"Phone";
                     cell.textField.text = self.phone;
                     cell.topLine.hidden = NO;
-                }
                 break;
                 case 1:
-                {
                     cell.titleLabel.hidden = NO;
                     cell.textField.hidden = NO;
                     cell.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"example@email.com"
                                                                                            attributes:@{NSForegroundColorAttributeName: textFieldPlaceHolderColor}];
                     cell.titleLabel.text = @"Email";
                     cell.textField.text = self.email;
-                }
                 break;
-/*                case 2:
-                {
-                    cell.titleLabel.hidden = NO;
-                    cell.textField.hidden = NO;
-                    cell.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"password"
-                                                                                           attributes:@{NSForegroundColorAttributeName: textFieldPlaceHolderColor}];
-                    cell.textField.secureTextEntry = YES;
-                    cell.titleLabel.text = @"Password";
-                    cell.textField.text = self.password;
-                }
-                break; */
 
                 default:
                 break;
             }
-        }
         break;
-        case 3:
-        {
+
+        case 2: // Settings
             switch (indexPath.row) {
                 case 0:
-                {
-                    // Log Out
                     cell.topLine.hidden = NO;
-                    cell.middleLabel.hidden = NO;
-                    cell.middleLabel.text = @"Change Password";
+                    cell.longTitleLabel.hidden = NO;
+                    cell.longTitleLabel.text = @"Push Notifications";
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
-                }
-                break;
+                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                    break;
                 case 1:
-                {
-                    // Log Out
+                    cell.topLine.hidden = YES;
+                    cell.longTitleLabel.hidden = NO;
+                    cell.longTitleLabel.text = @"Change Password";
+                    cell.selectionStyle = UITableViewCellSelectionStyleGray;
+                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                    break;
+                default:
+                    break;
+            }
+            break;
+
+        case 3: // Log out
+            switch (indexPath.row) {
+                case 0:
                     cell.topLine.hidden = NO;
                     cell.middleLabel.hidden = NO;
                     cell.middleLabel.text = @"Log Out";
+                    cell.middleLabel.textColor = [TDConstants brandingRedColor];
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
-                }
                 break;
             }
-        }
         break;
 
         default:
@@ -745,8 +664,7 @@
     return cell;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.section == 0 && indexPath.row == 3) {   // Bio
         return 90.0;
     }
@@ -754,73 +672,53 @@
     return 42.0;
 }
 
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
 
     switch (indexPath.section) {
         case 0:
-        {
             switch (indexPath.row) {
                 case 0:
-                {
                     [self hideKeyboard];
 
                     // PHOTO
                     [self showPhotoActionSheet];
-                }
                 break;
                 case 1:
-                {
-                }
                 break;
                 case 2:
-                {
-                }
                 break;
 
                 default:
                 break;
             }
-        }
-        break;
-        case 1:
-        {
-            switch (indexPath.row) {
-                case 0:
-                {
-                    // Edit Push
-                    [self gotoEditPushNotifications];
-                }
-                break;
+            break;
 
-                default:
-                break;
-            }
-        }
-        break;
         case 2:
-        {
-            [self hideKeyboard];
-
             switch (indexPath.row) {
-                case 0:
-                {
-                    [self showEditPassword];
-                }
+                case 0: // Edit Push
+                    [self gotoEditPushNotifications];
                 break;
                 case 1:
-                {
+                    [self showEditPassword];
+                    break;
+
+                default:
+                break;
+            }
+        break;
+        case 3:
+            [self hideKeyboard];
+            switch (indexPath.row) {
+                case 0:
                     // Log Out
                     [[TDUserAPI sharedInstance] logout];
                     [self showWelcomeController];
-                }
                 break;
 
                 default:
                 break;
             }
-        }
         break;
 
         default:

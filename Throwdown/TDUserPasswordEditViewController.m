@@ -23,37 +23,15 @@
 @synthesize current;
 @synthesize password2;
 
-- (void)dealloc
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:UIKeyboardWillShowNotification
-                                                  object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:UIKeyboardWillHideNotification
-                                                  object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:TDUploadCompleteNotification
-                                                  object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:TDUploadFailedNotification
-                                                  object:nil];
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     self.profileUser = nil;
     self.password1 = nil;
     self.password2 = nil;
     self.current = nil;
 }
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
 
     debug NSLog(@"UserProfile:%@", self.profileUser);
@@ -79,10 +57,13 @@
                                              selector:@selector(keyboardWillHide:)
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
+
+    UIBarButtonItem *barButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];
+    self.navigationItem.leftBarButtonItem = barButton;
+    self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
 }
 
--(void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:NO animated:NO];
 
     origTableViewFrame = self.tableView.frame;
@@ -93,23 +74,32 @@
     [self checkForSaveButton];
 }
 
-- (void)didReceiveMemoryWarning
-{
+- (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
 
--(IBAction)doneButtonHit:(id)sender
-{
+- (void)leave {
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (IBAction)doneButtonHit:(id)sender {
     // Changed?
     if ([self checkIfChanged]) {
         [self sendToTheServerNewPassword];
     } else {
-            [self leave];
+        [self leave];
     }
+}
+
+- (IBAction)backButtonHit:(id)sender {
+    [self hideKeyboard];
+    [self leave];
 }
 
 - (void)sendToTheServerNewPassword {
     [self hideKeyboard];
+
+    self.backButton.enabled = NO;
 
     [[TDUserAPI sharedInstance] changePasswordFrom:self.current
                                        newPassword:self.password1
@@ -123,13 +113,10 @@
                                                                                         cancelButtonTitle:@"OK"
                                                                                         otherButtonTitles:nil];
                                                   [alert show];
-
                                                   [self leave];
-                                              }
-                                              else {
-
+                                              } else {
+                                                  self.backButton.enabled = YES;
                                                   NSMutableString *message = [NSMutableString string];
-
                                                   // Current
                                                   if ([dict objectForKey:@"current_password"] && [[dict objectForKey:@"current_password"] isKindOfClass:[NSArray class]]) {
                                                       NSArray *currentArray = [dict objectForKey:@"current_password"];
@@ -179,8 +166,7 @@
     
 }
 
--(NSString *)buildStringFromErrors:(NSArray *)array baseString:(NSString *)baseString
-{
+-(NSString *)buildStringFromErrors:(NSArray *)array baseString:(NSString *)baseString {
     NSMutableString *returnString = [NSMutableString string];
     for (NSString *string in array) {
         [returnString appendFormat:@"%@ %@. ", baseString, string];
@@ -188,14 +174,8 @@
     return returnString;
 }
 
--(void)leave
-{
-    [self.navigationController popViewControllerAnimated:YES];
-}
-
 #pragma mark - Keyboard / Textfield
--(void)updateFieldsForTextField:(UITextField *)textfield text:(NSString *)text
-{
+-(void)updateFieldsForTextField:(UITextField *)textfield text:(NSString *)text {
     // 800+(10*indexPath.section)+indexPath.row;
     switch (textfield.tag) {
         case (800+10*0+0):
@@ -221,45 +201,32 @@
     [self checkForSaveButton];
 }
 
--(void)textFieldDidBeginEditing:(UITextField *)textField
-{
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
     [self updateFieldsForTextField:textField text:textField.text];
 }
 
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
-{
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     [self updateFieldsForTextField:textField text:[textField.text stringByReplacingCharactersInRange:range withString:string]];
     [self checkIfChanged];
     return YES;
 }
 
--(void)textFieldDidEndEditing:(UITextField *)textField
-{
+-(void)textFieldDidEndEditing:(UITextField *)textField {
     [self updateFieldsForTextField:textField text:textField.text];
-}
-
--(IBAction)textFieldDidChange:(id)sender
-{
-//    [self checkForSaveButton];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
 
-    if ([self checkIfChanged])
-    {
+    if ([self checkIfChanged]) {
         [self doneButtonHit:nil];
         return NO;
-    }
-    else
-    {
     }
 
     [self checkForSaveButton];
     return YES;
 }
 
-- (void)keyboardWillHide:(NSNotification *)n
-{
+- (void)keyboardWillHide:(NSNotification *)n {
     if (!keybdUp) {
         return;
     }
@@ -281,8 +248,7 @@
                      }];
 }
 
-- (void)keyboardWillShow:(NSNotification *)n
-{
+- (void)keyboardWillShow:(NSNotification *)n {
     if (keybdUp) {
         return;
     }
@@ -312,8 +278,7 @@
                      }];
 }
 
--(void)hideKeyboard
-{
+- (void)hideKeyboard {
     for (TDUserEditCell *cell in self.tableView.visibleCells) {
         if ([cell.textField isFirstResponder]) {
             [cell.textField resignFirstResponder];
@@ -324,8 +289,7 @@
 }
 
 #pragma mark - Check Save Button
--(BOOL)checkIfChanged
-{
+- (BOOL)checkIfChanged {
     if ([self.current length] > 0 &&
         [self.password1 length] > 0 &&
         [self.password1 isEqualToString:self.password2]) {
@@ -335,8 +299,7 @@
     return NO;
 }
 
--(void)checkForSaveButton
-{
+- (void)checkForSaveButton {
     if ([self checkIfChanged]) {
         self.doneButton.enabled = YES;
     } else {
@@ -345,14 +308,12 @@
 }
 
 #pragma mark - AlertView
--(void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
 }
 
 #pragma mark - TableView Delegates
 
--(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 2; // Existing, Edit
 }
 
@@ -360,14 +321,10 @@
 
     switch (section) {
         case 0:
-        {
             return 1;
-        }
         break;
         case 1:
-        {
             return 2;
-        }
         break;
         default:
         break;
@@ -408,52 +365,44 @@
 
     switch (indexPath.section) {
         case 0:
-        {
             switch (indexPath.row) {
                 case 0:
-                {
+                    cell.topLine.hidden = NO;
                     cell.titleLabel.hidden = NO;
                     cell.textField.hidden = NO;
-                    cell.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"current"
+                    cell.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"Your current password"
                                                                                            attributes:@{NSForegroundColorAttributeName: textFieldPlaceHolderColor}];
                     cell.titleLabel.text = @"Current";
                     cell.textField.text = self.current;
-                }
                 break;
                 default:
                 break;
             }
-        }
         break;
         case 1:
-        {
             switch (indexPath.row) {
                 case 0:
-                {
+                    cell.topLine.hidden = NO;
                     cell.titleLabel.hidden = NO;
                     cell.textField.secureTextEntry = YES;
                     cell.textField.hidden = NO;
-                    cell.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"new password"
+                    cell.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"New password"
                                                                                            attributes:@{NSForegroundColorAttributeName: textFieldPlaceHolderColor}];
                     cell.titleLabel.text = @"New";
                     cell.textField.text = self.password1;
-                }
                 break;
                 case 1:
-                {
                     cell.titleLabel.hidden = NO;
                     cell.textField.secureTextEntry = YES;
                     cell.textField.hidden = NO;
-                    cell.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"confirm new password"
+                    cell.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"Confirm new password"
                                                                                            attributes:@{NSForegroundColorAttributeName: textFieldPlaceHolderColor}];
                     cell.titleLabel.text = @"Confirm";
                     cell.textField.text = self.password2;
-                }
                 break;
                 default:
                 break;
             }
-        }
         break;
 
         default:
@@ -463,66 +412,12 @@
     return cell;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (indexPath.section == 0 && indexPath.row == 3) {   // Bio
-        return 90.0;
-    }
-
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 44.0;
 }
 
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
-
-    switch (indexPath.section) {
-        case 0:
-        {
-            switch (indexPath.row) {
-                case 0:
-                {
-                }
-                break;
-                case 1:
-                {
-                }
-                break;
-                case 2:
-                {
-                }
-                break;
-
-                default:
-                break;
-            }
-        }
-        break;
-        case 1:
-        {
-            switch (indexPath.row) {
-                case 0:
-                {
-                }
-                break;
-                case 1:
-                {
-                }
-                break;
-
-                default:
-                break;
-            }
-        }
-        break;
-        case 2:
-        {
-        }
-        break;
-
-        default:
-        break;
-    }
 }
 
 @end

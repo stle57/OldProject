@@ -22,23 +22,12 @@
 @synthesize pushSettingsDict;
 @synthesize headerView;
 
-- (void)dealloc
-{
+- (void)dealloc {
     self.pushSettingsDict = nil;
     self.headerView = nil;
 }
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
 
     statusBarFrame = [self.view convertRect: [UIApplication sharedApplication].statusBarFrame fromView: nil];
@@ -77,26 +66,19 @@
     }];
 }
 
-- (void)didReceiveMemoryWarning
-{
+- (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
 
--(IBAction)backButtonHit:(id)sender
-{
+- (IBAction)backButtonHit:(id)sender {
     self.activityIndicator.text.text = @"Saving Settings";
     [self showActivity];
 
     [[TDAPIClient sharedInstance] sendPushNotificationSettings:self.pushSettingsDict callback:^(BOOL success) {
-        if (success)
-        {
-            NSLog(@"success on push notifications send settings");
+        if (success) {
             [self hideActivity];
             [self leave];
-        }
-        else
-        {
-            NSLog(@"error on push notifications send settings");
+        } else {
             [self.tableView reloadData];
             [self hideActivity];
 
@@ -107,7 +89,7 @@
                                                   otherButtonTitles:nil];
             [alert show];
         }
-        }];
+    }];
 }
 
 -(void)leave
@@ -270,7 +252,7 @@
             break;
     }
 
-    NSLog(@"DICT:%@", self.pushSettingsDict);
+    debug NSLog(@"DICT:%@", self.pushSettingsDict);
 }
 
 -(void)switchOffFromRow:(NSInteger)row
@@ -305,7 +287,7 @@
             break;
     }
 
-    NSLog(@"DICT:%@", self.pushSettingsDict);
+    debug NSLog(@"DICT:%@", self.pushSettingsDict);
 }
 
 #pragma mark - Activity

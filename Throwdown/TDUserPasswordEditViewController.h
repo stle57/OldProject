@@ -30,10 +30,9 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *sectionHeaderLabel;
-@property (weak, nonatomic) IBOutlet UIButton *saveButton;
 @property (weak, nonatomic) IBOutlet UIButton *doneButton;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (weak, nonatomic) IBOutlet UIButton *closeButton;
+@property (strong, nonatomic) IBOutlet UIButton *backButton;
 @property (nonatomic, retain) NSString *password1;
 @property (nonatomic, retain) NSString *current;
 @property (nonatomic, retain) NSString *password2;
