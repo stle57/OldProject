@@ -22,10 +22,6 @@
 #import "UIImage+Rotating.h"
 #include <math.h>
 
-#define TEMP_FILE_PATH @"Documents/WorkingMovieTemp.m4v"
-#define CROPPED_VIDEO_PATH @"Documents/CroppedVideo.mp4"
-#define TEMP_IMG_PATH @"Documents/working_image.jpg"
-
 static const NSString *ItemStatusContext;
 
 @interface TDEditVideoViewController ()<SAVideoRangeSliderDelegate, UIAlertViewDelegate, UIScrollViewDelegate>
@@ -205,7 +201,7 @@ static const NSString *ItemStatusContext;
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         self.filename = [TDPostAPI createUploadFileNameFor:[TDCurrentUser sharedInstance]];
-        self.thumbnailPath = [NSHomeDirectory() stringByAppendingPathComponent:TEMP_IMG_PATH];
+        self.thumbnailPath = [NSHomeDirectory() stringByAppendingPathComponent:kThumbnailExportFilePath];
         debug NSLog(@"Creating filename %@", self.filename);
 
         if (self.recordedVideoUrl) {
@@ -402,7 +398,7 @@ static const NSString *ItemStatusContext;
 
 - (void)editVideoAt:(NSString *)videoPath original:(BOOL)original {
     self.recordedVideoUrl = [NSURL fileURLWithPath:videoPath];
-    self.editingVideoUrl = [NSURL fileURLWithPath:[NSHomeDirectory() stringByAppendingPathComponent:TEMP_FILE_PATH]];
+    self.editingVideoUrl = [NSURL fileURLWithPath:[NSHomeDirectory() stringByAppendingPathComponent:kVideoTrimmedFilePath]];
     self.isOriginal = original;
 
     [self deleteTmpFile];
@@ -600,7 +596,7 @@ static const NSString *ItemStatusContext;
     videoComposition.instructions = [NSArray arrayWithObject:instruction];
 
     //Create an Export Path to store the cropped video
-    NSString *exportPath = [NSHomeDirectory() stringByAppendingPathComponent:CROPPED_VIDEO_PATH];
+    NSString *exportPath = [NSHomeDirectory() stringByAppendingPathComponent:kVideoExportedFilePath];
     self.exportedVideoUrl = [NSURL fileURLWithPath:exportPath];
     [TDFileSystemHelper removeFileAt:exportPath];
 

@@ -18,11 +18,6 @@
 #import "TDFileSystemHelper.h"
 #import "TDConstants.h"
 
-static NSString *const kPhotoFilePath = @"Documents/Photo.jpg";
-static NSString *const kRecordedMovieFilePath = @"Documents/RecordedMovie.m4v";
-static NSString *const kCroppedMovieFilePath = @"Documents/CroppedMovie.m4v";
-static int const kMaxRecordingSeconds = 30;
-
 @interface TDRecordVideoViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
 @property GPUImageCropFilter<GPUImageInput> *filter;
@@ -298,7 +293,7 @@ static int const kMaxRecordingSeconds = 30;
     [self setupCameraCommons];
 
     NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:kRecordedMovieFilePath];
-    unlink([pathToMovie UTF8String]); // If a file already exists, AVAssetWriter won't let you record new frames, so delete the old movie
+    [TDFileSystemHelper removeFileAt:pathToMovie];
     self.recordedURL = [NSURL fileURLWithPath:pathToMovie];
 
     int videoSize = 640;
@@ -373,8 +368,8 @@ static int const kMaxRecordingSeconds = 30;
 
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             // Crop out black frames at start of recording
-            NSString *assetPath = [NSHomeDirectory() stringByAppendingPathComponent:kCroppedMovieFilePath];
-            unlink([assetPath UTF8String]); // remove file
+            NSString *assetPath = [NSHomeDirectory() stringByAppendingPathComponent:kRecordedTrimmedMovieFilePath];
+            [TDFileSystemHelper removeFileAt:assetPath];
             self.croppedURL = [NSURL fileURLWithPath:assetPath];
 
             AVAsset *asset = [[AVURLAsset alloc] initWithURL:self.recordedURL options:nil];
