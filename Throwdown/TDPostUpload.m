@@ -12,6 +12,7 @@
 #import "RSClient.h"
 #import "TDProgressIndicator.h"
 #import "TDFileSystemHelper.h"
+#include <math.h>
 
 typedef enum {
     UploadTypeVideo,
@@ -160,6 +161,11 @@ typedef enum {
     } else {
         progress -= 0.05;
     }
+
+    // Random occurance of progress being NaN found (not sure why)
+    if (isnan(progress)) {
+        progress = 0;
+    }
     return progress;
 }
 
@@ -171,7 +177,7 @@ typedef enum {
     }
 
     CGFloat totalProgress = [self totalProgress];
-    NSLog(@"Total progress for %@: %f", self.filename, totalProgress);
+    debug NSLog(@"Total progress for %@: %f", self.filename, totalProgress);
     if ([self.delegate respondsToSelector:@selector(uploadDidUpdate:)]) {
         [self.delegate uploadDidUpdate:totalProgress];
     }

@@ -603,11 +603,15 @@ static const NSString *ItemStatusContext;
 
     AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset:asset presetName:AVAssetExportPresetHighestQuality];
     exporter.videoComposition = videoComposition;
+    exporter.timeRange = videoTrack.timeRange;
     exporter.outputURL = self.exportedVideoUrl;
     exporter.outputFileType = AVFileTypeQuickTimeMovie;
 
     [exporter exportAsynchronouslyWithCompletionHandler:^{
 
+        if ([exporter status] == AVAssetExportSessionStatusFailed) {
+            NSLog(@"ERROR exporting video CODE %ld / %@ / %@", (long)exporter.error.code, [exporter.error localizedDescription], [exporter.error localizedFailureReason]);
+        }
         // Create thumbnail from video
         // First reload the asset
         AVURLAsset *asset = [AVURLAsset URLAssetWithURL:self.exportedVideoUrl options:nil];
