@@ -298,15 +298,18 @@ static const NSString *ItemStatusContext;
                 deg = M_PI_2;
                 break;
         }
-        image = [self imageRotatedByRadian:image radian:deg];
+
+        // Upright screenshots are stored with UIImageOrientationUp but width < height so skip rotation step
+        if (deg != 0 || image.size.width >= image.size.height) {
+            image = [self imageRotatedByRadian:image radian:deg];
+        }
         image = [self cropImage:image];
     }
 
     UIImage *smaller = [image scaleToSize:CGSizeMake(640.0, 640.0) usingMode:NYXResizeModeScaleToFill];
     [TDFileSystemHelper removeFileAt:self.thumbnailPath];
     [UIImageJPEGRepresentation(smaller, 0.97) writeToFile:self.thumbnailPath atomically:YES];
-    TDPostAPI *api = [TDPostAPI sharedInstance];
-    [api uploadPhoto:self.thumbnailPath withName:self.filename];
+    [[TDPostAPI sharedInstance] uploadPhoto:self.thumbnailPath withName:self.filename];
 
     dispatch_async(dispatch_get_main_queue(), ^{
         [self performSegueWithIdentifier:@"ShareVideoSegue" sender:self];
@@ -329,7 +332,7 @@ static const NSString *ItemStatusContext;
     // Move the origin to the middle of the image so we will rotate and scale around the center.
     CGContextTranslateCTM(bitmap, rotatedSize.width/2, rotatedSize.height/2);
 
-    //   // Rotate the image context
+    // Rotate the image context
     CGContextRotateCTM(bitmap, radian);
 
     // Now, draw the rotated/scaled image into the context
