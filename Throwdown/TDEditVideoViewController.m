@@ -33,7 +33,6 @@ static const NSString *ItemStatusContext;
 @property (nonatomic) NSURL *recordedVideoUrl;
 @property (nonatomic) NSURL *editingVideoUrl;
 @property (nonatomic) NSURL *exportedVideoUrl;
-@property (nonatomic) AVAssetExportSession *exportSession;
 @property (nonatomic) NSString *thumbnailPath;
 @property (nonatomic) NSString *filename;
 @property (nonatomic) NSString *photoPath;
@@ -503,25 +502,25 @@ static const NSString *ItemStatusContext;
 
     [self stopExistingUploads];
 
-    AVAsset *anAsset = [[AVURLAsset alloc] initWithURL:self.recordedVideoUrl options:nil];
-    NSArray *compatiblePresets = [AVAssetExportSession exportPresetsCompatibleWithAsset:anAsset];
+    AVAsset *asset = [[AVURLAsset alloc] initWithURL:self.recordedVideoUrl options:nil];
+    NSArray *compatiblePresets = [AVAssetExportSession exportPresetsCompatibleWithAsset:asset];
     if ([compatiblePresets containsObject:AVAssetExportPresetMediumQuality]) {
 
-        self.exportSession = [[AVAssetExportSession alloc]
-                              initWithAsset:anAsset presetName:AVAssetExportPresetPassthrough];
-        self.exportSession.outputURL = self.editingVideoUrl;
-        self.exportSession.outputFileType = AVFileTypeQuickTimeMovie;
+        AVAssetExportSession *exportSession = [[AVAssetExportSession alloc]
+                              initWithAsset:asset presetName:AVAssetExportPresetPassthrough];
+        exportSession.outputURL = self.editingVideoUrl;
+        exportSession.outputFileType = AVFileTypeQuickTimeMovie;
 
-        CMTime start = CMTimeMakeWithSeconds(self.startTime, anAsset.duration.timescale);
-        CMTime duration = CMTimeMakeWithSeconds(self.stopTime - self.startTime, anAsset.duration.timescale);
+        CMTime start = CMTimeMakeWithSeconds(self.startTime, asset.duration.timescale);
+        CMTime duration = CMTimeMakeWithSeconds(self.stopTime - self.startTime, asset.duration.timescale);
         CMTimeRange range = CMTimeRangeMake(start, duration);
-        self.exportSession.timeRange = range;
+        exportSession.timeRange = range;
 
-        [self.exportSession exportAsynchronouslyWithCompletionHandler:^{
-            switch ([self.exportSession status]) {
+        [exportSession exportAsynchronouslyWithCompletionHandler:^{
+            switch ([exportSession status]) {
                 case AVAssetExportSessionStatusFailed:
                 case AVAssetExportSessionStatusCancelled:
-                    debug NSLog(@"Export failed: %@", [[self.exportSession error] localizedDescription]);
+                    debug NSLog(@"Export failed: %@", [[exportSession error] localizedDescription]);
                     [self.slider setLeftPosition:0.0];
                     [self.slider setRightPosition:320.0];
                     [self setPlayerAssetFromUrl:self.recordedVideoUrl];
@@ -587,7 +586,6 @@ static const NSString *ItemStatusContext;
     CGFloat scale = 640. / shorter;
     CGAffineTransform t3 = CGAffineTransformConcat(t2, CGAffineTransformMakeScale(scale, scale));
 
-
     CGAffineTransform finalTransform = t3;
     [transformer setTransform:finalTransform atTime:kCMTimeZero];
 
@@ -606,38 +604,47 @@ static const NSString *ItemStatusContext;
     exporter.outputFileType = AVFileTypeQuickTimeMovie;
 
     [exporter exportAsynchronouslyWithCompletionHandler:^{
-        [self saveThumbnailFromVideo:self.exportedVideoUrl toLocation:self.thumbnailPath];
 
-        TDPostAPI *api = [TDPostAPI sharedInstance];
-        [api uploadVideo:exportPath withThumbnail:self.thumbnailPath withName:self.filename];
+        // Create thumbnail from video
+        // First reload the asset
+        AVURLAsset *asset = [AVURLAsset URLAssetWithURL:self.exportedVideoUrl options:nil];
+        NSString *tracksKey = @"tracks";
 
-         // TODO: Only save video if it was recorded, not picked from album
+        [asset loadValuesAsynchronouslyForKeys:@[tracksKey] completionHandler:^{
+            NSError *error;
+            AVKeyValueStatus status = [asset statusOfValueForKey:tracksKey error:&error];
+
+            if (status == AVKeyValueStatusLoaded) {
+                AVAssetImageGenerator *gen = [[AVAssetImageGenerator alloc] initWithAsset:asset];
+                gen.appliesPreferredTrackTransform = YES;
+                CMTime time = CMTimeMakeWithSeconds(0.0, 600);
+                NSError *error = nil;
+                CMTime actualTime;
+
+                CGImageRef image = [gen copyCGImageAtTime:time actualTime:&actualTime error:&error];
+                UIImage *thumb = [[UIImage alloc] initWithCGImage:image];
+                CGImageRelease(image);
+
+                [TDFileSystemHelper removeFileAt:self.thumbnailPath];
+                BOOL saved = [UIImageJPEGRepresentation(thumb, .97f) writeToFile:self.thumbnailPath atomically:YES];
+                NSLog(@"created thumbnail success: %@", saved ? @"YES" : @"NO");
+
+                // Start upload
+                [[TDPostAPI sharedInstance] uploadVideo:exportPath withThumbnail:self.thumbnailPath withName:self.filename];
+
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self performSegueWithIdentifier:@"ShareVideoSegue" sender:self];
+                });
+            } else {
+                NSLog(@"ERROR loading exported asset after export %@", [error localizedDescription]);
+            }
+        }];
 
         if (self.isOriginal) {
             ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
             [library writeVideoAtPathToSavedPhotosAlbum:self.exportedVideoUrl completionBlock:nil];
         }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self performSegueWithIdentifier:@"ShareVideoSegue" sender:self];
-        });
      }];
-}
-
-- (void)saveThumbnailFromVideo:(NSURL *)videoURL toLocation:(NSString *)filePath {
-    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:videoURL options:nil];
-    AVAssetImageGenerator *gen = [[AVAssetImageGenerator alloc] initWithAsset:asset];
-    gen.appliesPreferredTrackTransform = YES;
-    CMTime time = CMTimeMakeWithSeconds(0.0, 600);
-    NSError *error = nil;
-    CMTime actualTime;
-
-    CGImageRef image = [gen copyCGImageAtTime:time actualTime:&actualTime error:&error];
-    UIImage *thumb = [[UIImage alloc] initWithCGImage:image];
-    CGImageRelease(image);
-
-    [TDFileSystemHelper removeFileAt:filePath];
-    BOOL saved = [UIImageJPEGRepresentation(thumb, .97f) writeToFile:filePath atomically:YES];
-    NSLog(@"created thumbnail success: %@", saved ? @"YES" : @"NO");
 }
 
 #pragma mark - Video playback
