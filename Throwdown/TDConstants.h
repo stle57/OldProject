@@ -116,5 +116,6 @@ static NSString *const kSpinningAnimation = @"rotationAnimation";
 + (UIFont *)fontSemiBoldSized:(NSUInteger)size;
 + (UIFont *)fontBoldSized:(NSUInteger)size;
 
++ (NSDictionary *)defaultVideoCompressionSettings;
 
 @end

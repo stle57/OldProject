@@ -27,6 +27,7 @@ static const NSString *ItemStatusContext;
 @interface TDEditVideoViewController ()<SAVideoRangeSliderDelegate, UIAlertViewDelegate, UIScrollViewDelegate>
 
 @property (nonatomic) SAVideoRangeSlider *slider;
+@property (nonatomic) AVAsset *currentVideoAsset;
 @property (nonatomic) AVPlayer *player;
 @property (nonatomic) AVPlayerItem *playerItem;
 @property (nonatomic) AVPlayerLayer *playerLayer;
@@ -50,6 +51,8 @@ static const NSString *ItemStatusContext;
 @property (nonatomic) UIImageView *previewImageView;
 @property (nonatomic) UIView *videoContainerView;
 
+@property (nonatomic) AVAssetWriter *videoWriter; // doesn't work if not retained as strong property
+
 @property (weak, nonatomic) IBOutlet UIButton *cancelButton;
 @property (weak, nonatomic) IBOutlet UIButton *playButton;
 @property (weak, nonatomic) IBOutlet UIButton *doneButton;
@@ -72,6 +75,7 @@ static const NSString *ItemStatusContext;
 }
 
 - (void)dealloc {
+    self.videoWriter = nil;
     if (self.recordedVideoUrl) {
         [self removePlayerItemObserver];
     }
@@ -106,6 +110,7 @@ static const NSString *ItemStatusContext;
     debug NSLog(@"edit view did appear");
     self.doneButton.enabled = YES;
     self.cancelButton.enabled = YES;
+    self.playButton.enabled = YES;
 
     if (!self.isSetup) {
         if (self.recordedVideoUrl) {
@@ -192,23 +197,22 @@ static const NSString *ItemStatusContext;
 - (IBAction)doneButtonPressed:(UIButton *)sender {
     self.doneButton.enabled = NO;
     self.cancelButton.enabled = NO;
+    self.playButton.enabled = NO;
 
     if (self.filename) {
         [self performSegueWithIdentifier:@"ShareVideoSegue" sender:self];
         return;
     }
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        self.filename = [TDPostAPI createUploadFileNameFor:[TDCurrentUser sharedInstance]];
-        self.thumbnailPath = [NSHomeDirectory() stringByAppendingPathComponent:kThumbnailExportFilePath];
-        debug NSLog(@"Creating filename %@", self.filename);
+    self.filename = [TDPostAPI createUploadFileNameFor:[TDCurrentUser sharedInstance]];
+    self.thumbnailPath = [NSHomeDirectory() stringByAppendingPathComponent:kThumbnailExportFilePath];
+    debug NSLog(@"Creating filename %@", self.filename);
 
-        if (self.recordedVideoUrl) {
-            [self processVideo];
-        } else {
-            [self processPhoto];
-        }
-    });
+    if (self.recordedVideoUrl) {
+        [self processVideo];
+    } else {
+        [self processPhoto];
+    }
 }
 
 # pragma mark - segues
@@ -311,9 +315,7 @@ static const NSString *ItemStatusContext;
     [UIImageJPEGRepresentation(smaller, 0.97) writeToFile:self.thumbnailPath atomically:YES];
     [[TDPostAPI sharedInstance] uploadPhoto:self.thumbnailPath withName:self.filename];
 
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self performSegueWithIdentifier:@"ShareVideoSegue" sender:self];
-    });
+    [self performSegueWithIdentifier:@"ShareVideoSegue" sender:self];
 }
 
 - (UIImage *)imageRotatedByRadian:(UIImage *)image radian:(CGFloat)radian {
@@ -420,15 +422,15 @@ static const NSString *ItemStatusContext;
     [self.slider setMaxGap:30];
     [self.view addSubview:self.slider];
 
-    AVURLAsset *asset = [AVURLAsset URLAssetWithURL:self.recordedVideoUrl options:nil];
+    self.currentVideoAsset = [AVURLAsset URLAssetWithURL:self.recordedVideoUrl options:nil];
     NSString *tracksKey = @"tracks";
-    [asset loadValuesAsynchronouslyForKeys:@[tracksKey] completionHandler:^{
-        AVKeyValueStatus status = [asset statusOfValueForKey:tracksKey error:nil];
+    [self.currentVideoAsset loadValuesAsynchronouslyForKeys:@[tracksKey] completionHandler:^{
+        AVKeyValueStatus status = [self.currentVideoAsset statusOfValueForKey:tracksKey error:nil];
         dispatch_async(dispatch_get_main_queue(), ^{
             if (status == AVKeyValueStatusLoaded) {
 
                 // TODO: What to do when there is no videoTrack?
-                AVAssetTrack* videoTrack = [[asset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
+                AVAssetTrack* videoTrack = [[self.currentVideoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
                 CGSize videoSize = videoTrack.naturalSize;
 
                 self.videoContainerView = [[UIView alloc] initWithFrame:[self previewRect]];
@@ -444,7 +446,7 @@ static const NSString *ItemStatusContext;
                     rect.size.height = videoSize.height * scale;
                 }
 
-                self.playerItem = [AVPlayerItem playerItemWithAsset:asset];
+                self.playerItem = [AVPlayerItem playerItemWithAsset:self.currentVideoAsset];
                 self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
 
                 self.playerLayer = [AVPlayerLayer layer];
@@ -539,6 +541,60 @@ static const NSString *ItemStatusContext;
 - (void)processVideo {
     [self togglePlay:NO];
 
+    [self createThumbnail];
+
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        if (self.isOriginal) {
+            // Save to library
+            ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+            [library writeVideoAtPathToSavedPhotosAlbum:self.editingVideoUrl completionBlock:nil];
+
+            // Start upload
+            [[TDPostAPI sharedInstance] uploadVideo:[self.editingVideoUrl path] withThumbnail:self.thumbnailPath withName:self.filename];
+
+        } else {
+            [self compressVideo];
+        }
+    });
+
+    [self performSegueWithIdentifier:@"ShareVideoSegue" sender:self];
+}
+
+
+- (void)createThumbnail {
+    AVAssetImageGenerator *gen = [[AVAssetImageGenerator alloc] initWithAsset:self.currentVideoAsset];
+    gen.appliesPreferredTrackTransform = YES;
+    CMTime time = CMTimeMakeWithSeconds(0.0, 600);
+    NSError *error = nil;
+    CMTime actualTime;
+
+    // Get screenshot
+    CGImageRef image = [gen copyCGImageAtTime:time actualTime:&actualTime error:&error];
+    UIImage *thumbnail = [[UIImage alloc] initWithCGImage:image];
+    CGImageRelease(image);
+
+    // Crop it
+    CGFloat zoomScale = 1 / (self.videoContainerView.frame.size.width / MIN(thumbnail.size.width, thumbnail.size.height));
+	CGRect rect;
+	rect.origin.x = [self.scrollView contentOffset].x * zoomScale;
+	rect.origin.y = [self.scrollView contentOffset].y * zoomScale;
+	rect.size.width = [self.scrollView bounds].size.width * zoomScale;
+	rect.size.height = [self.scrollView bounds].size.height * zoomScale;
+
+	CGImageRef cr = CGImageCreateWithImageInRect([thumbnail CGImage], rect);
+	thumbnail = [UIImage imageWithCGImage:cr];
+	CGImageRelease(cr);
+
+    // Scale it
+    thumbnail = [thumbnail scaleToSize:CGSizeMake(640.0, 640.0) usingMode:NYXResizeModeScaleToFill];
+
+    [TDFileSystemHelper removeFileAt:self.thumbnailPath];
+    BOOL saved = [UIImageJPEGRepresentation(thumbnail, .97f) writeToFile:self.thumbnailPath atomically:YES];
+    debug NSLog(@"created thumbnail success: %@", saved ? @"YES" : @"NO");
+}
+
+- (void)compressVideo {
+
     AVAsset *asset = [AVAsset assetWithURL:self.editingVideoUrl];
     AVAssetTrack *videoTrack = [[asset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
     AVMutableVideoComposition* videoComposition = [AVMutableVideoComposition videoComposition];
@@ -556,22 +612,30 @@ static const NSString *ItemStatusContext;
     CGFloat longer = MAX(videoSize.height, videoSize.width);
     CGFloat rotation, tx, ty;
     UIInterfaceOrientation orientation = [self orientationForTrack:videoTrack];
-    if (orientation == UIInterfaceOrientationPortrait) {
-        rotation = M_PI_2;
-        tx = -(rect.origin.y * videoSize.height / self.scrollView.frame.size.height);
-        ty = -shorter;
-    } else if (orientation == UIInterfaceOrientationPortraitUpsideDown) {
-        rotation = -M_PI_2;
-        tx = 0 - (longer - (rect.origin.y * videoSize.height / self.scrollView.frame.size.height));
-        ty = 0;
-    } else if (orientation == UIInterfaceOrientationLandscapeLeft) { // (home button on the left)
-        rotation = M_PI;
-        tx = 0 - (longer - (rect.origin.x * videoSize.height / self.scrollView.frame.size.height));
-        ty = -shorter;
-    } else { // UIInterfaceOrientationLandscapeRight (home button on the right)
-        rotation = 0;
-        tx = -(rect.origin.x * videoSize.height / self.scrollView.frame.size.height);
-        ty = 0;
+    switch (orientation) {
+        case UIInterfaceOrientationPortrait:
+            rotation = M_PI_2;
+            tx = -(rect.origin.y * videoSize.height / self.scrollView.frame.size.height);
+            ty = -shorter;
+            break;
+
+        case UIInterfaceOrientationPortraitUpsideDown:
+            rotation = -M_PI_2;
+            tx = 0 - (longer - (rect.origin.y * videoSize.height / self.scrollView.frame.size.height));
+            ty = 0;
+            break;
+
+        case UIInterfaceOrientationLandscapeLeft: // home button on the left
+            rotation = M_PI;
+            tx = 0 - (longer - (rect.origin.x * videoSize.height / self.scrollView.frame.size.height));
+            ty = -shorter;
+            break;
+
+        case UIInterfaceOrientationLandscapeRight: // home button on the right
+            rotation = 0;
+            tx = -(rect.origin.x * videoSize.height / self.scrollView.frame.size.height);
+            ty = 0;
+            break;
     }
 
     //create a video instruction
@@ -601,78 +665,126 @@ static const NSString *ItemStatusContext;
     self.exportedVideoUrl = [NSURL fileURLWithPath:exportPath];
     [TDFileSystemHelper removeFileAt:exportPath];
 
-    AVAssetExportSession *exporter = [[AVAssetExportSession alloc] initWithAsset:asset presetName:AVAssetExportPresetHighestQuality];
-    exporter.videoComposition = videoComposition;
-    exporter.timeRange = videoTrack.timeRange;
-    exporter.outputURL = self.exportedVideoUrl;
-    exporter.outputFileType = AVFileTypeQuickTimeMovie;
+    NSError *werror = nil;
+    self.videoWriter = [[AVAssetWriter alloc] initWithURL:self.exportedVideoUrl fileType:AVFileTypeQuickTimeMovie error:&werror];
 
-    [exporter exportAsynchronouslyWithCompletionHandler:^{
+    // Video input
+    AVAssetWriterInput* videoWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo outputSettings:[TDConstants defaultVideoCompressionSettings]];
+    videoWriterInput.expectsMediaDataInRealTime = YES;
+    [self.videoWriter addInput:videoWriterInput];
 
-        if ([exporter status] == AVAssetExportSessionStatusFailed) {
-            NSLog(@"ERROR exporting video CODE %ld / %@ / %@", (long)exporter.error.code, [exporter.error localizedDescription], [exporter.error localizedFailureReason]);
-        }
-        // Create thumbnail from video
-        // First reload the asset
-        AVURLAsset *asset = [AVURLAsset URLAssetWithURL:self.exportedVideoUrl options:nil];
-        NSString *tracksKey = @"tracks";
+    NSError *verror = nil;
+    AVAssetReader *reader = [[AVAssetReader alloc] initWithAsset:asset error:&verror];
+    NSDictionary *decompressionVideoSettings = @{ (id)kCVPixelBufferPixelFormatTypeKey : [NSNumber numberWithUnsignedInt:kCVPixelFormatType_32ARGB], (id)kCVPixelBufferIOSurfacePropertiesKey : [NSDictionary dictionary] };
+    AVAssetReaderVideoCompositionOutput *assetVideoReaderOutput = [AVAssetReaderVideoCompositionOutput assetReaderVideoCompositionOutputWithVideoTracks:@[videoTrack] videoSettings:decompressionVideoSettings];
+    assetVideoReaderOutput.videoComposition = videoComposition;
+    [reader addOutput:assetVideoReaderOutput];
 
-        [asset loadValuesAsynchronouslyForKeys:@[tracksKey] completionHandler:^{
-            NSError *error;
-            AVKeyValueStatus status = [asset statusOfValueForKey:tracksKey error:&error];
+    // Audio
+    NSError *aerror = nil;
+    AVAssetWriterInput* audioWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio outputSettings:nil];
+    audioWriterInput.expectsMediaDataInRealTime = YES;
+    AVAssetReader *audioReader = [AVAssetReader assetReaderWithAsset:asset error:&aerror];
+    AVAssetTrack* audioTrack = [[asset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
+    AVAssetReaderOutput *readerOutput = [AVAssetReaderTrackOutput assetReaderTrackOutputWithTrack:audioTrack outputSettings:nil];
+    [audioReader addOutput:readerOutput];
 
-            if (status == AVKeyValueStatusLoaded) {
-                AVAssetImageGenerator *gen = [[AVAssetImageGenerator alloc] initWithAsset:asset];
-                gen.appliesPreferredTrackTransform = YES;
-                CMTime time = CMTimeMakeWithSeconds(0.0, 600);
-                NSError *error = nil;
-                CMTime actualTime;
+    [self.videoWriter addInput:audioWriterInput];
+    [self.videoWriter startWriting];
+    [self.videoWriter startSessionAtSourceTime:kCMTimeZero];
+    [reader startReading];
+    dispatch_queue_t _processingQueue = dispatch_queue_create("assetAudioWriterQueue", NULL);
+    [videoWriterInput requestMediaDataWhenReadyOnQueue:_processingQueue usingBlock:^{
+        while ([videoWriterInput isReadyForMoreMediaData]) {
 
-                CGImageRef image = [gen copyCGImageAtTime:time actualTime:&actualTime error:&error];
-                UIImage *thumb = [[UIImage alloc] initWithCGImage:image];
-                CGImageRelease(image);
+            CMSampleBufferRef sampleBuffer;
+            if ([reader status] == AVAssetReaderStatusReading &&
+                (sampleBuffer = [assetVideoReaderOutput copyNextSampleBuffer])) {
 
-                [TDFileSystemHelper removeFileAt:self.thumbnailPath];
-                BOOL saved = [UIImageJPEGRepresentation(thumb, .97f) writeToFile:self.thumbnailPath atomically:YES];
-                NSLog(@"created thumbnail success: %@", saved ? @"YES" : @"NO");
+                BOOL result = [videoWriterInput appendSampleBuffer:sampleBuffer];
+                CFRelease(sampleBuffer);
+                debug NSLog(@"Writing video buffer");
 
-                // Start upload
-                [[TDPostAPI sharedInstance] uploadVideo:exportPath withThumbnail:self.thumbnailPath withName:self.filename];
-
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self performSegueWithIdentifier:@"ShareVideoSegue" sender:self];
-                });
+                if (!result) {
+                    NSLog(@"Video reading cancelled!");
+                    [reader cancelReading];
+                    break;
+                }
             } else {
-                NSLog(@"ERROR loading exported asset after export %@", [error localizedDescription]);
-            }
-        }];
+                [videoWriterInput markAsFinished];
+                debug NSLog(@"video writing finished");
 
-        if (self.isOriginal) {
-            ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
-            [library writeVideoAtPathToSavedPhotosAlbum:self.exportedVideoUrl completionBlock:nil];
+                switch ([reader status]) {
+                    case AVAssetReaderStatusReading:
+                        // the reader has more for other tracks, even if this one is done
+                        NSLog(@"PROBLEM: AVAssetReaderStatusReading");
+                        break;
+
+                    case AVAssetReaderStatusCompleted: {
+                        // video compression done
+                        // Hook up audio
+                        [audioReader startReading];
+                        [self.videoWriter startSessionAtSourceTime:kCMTimeZero];
+
+                        while ([audioWriterInput isReadyForMoreMediaData]) {
+                            CMSampleBufferRef nextBuffer;
+                            if ([audioReader status] == AVAssetReaderStatusReading &&
+                                (nextBuffer = [readerOutput copyNextSampleBuffer])) {
+
+                                BOOL result = [audioWriterInput appendSampleBuffer:nextBuffer];
+                                CFRelease(nextBuffer);
+                                debug NSLog(@"Writing audio buffer");
+                                if (!result) {
+                                    NSLog(@"Audio reading cancelled!");
+                                    [audioReader cancelReading];
+                                    break;
+                                }
+
+                            } else {
+                                debug NSLog(@"audio writing finished, with start %f duration %f", CMTimeGetSeconds(videoTrack.timeRange.start), CMTimeGetSeconds(videoTrack.timeRange.duration));
+
+                                [audioWriterInput markAsFinished];
+                                [self.videoWriter endSessionAtSourceTime:videoTrack.timeRange.duration];
+                                [self.videoWriter finishWritingWithCompletionHandler:^{
+                                    debug NSLog(@"Finished writing to file");
+                                    self.videoWriter = nil;
+                                    [[TDPostAPI sharedInstance] uploadVideo:exportPath withThumbnail:self.thumbnailPath withName:self.filename];
+                                }];
+                            }
+                        }
+                    }
+                    break;
+                    case AVAssetReaderStatusFailed:
+                        NSLog(@"ERROR: AVAssetReaderStatusFailed");
+                        [self.videoWriter cancelWriting];
+                        self.videoWriter = nil;
+                        break;
+                }
+                break;
+            }
         }
-     }];
+    }];
 }
 
 #pragma mark - Video playback
 
 - (void)setPlayerAssetFromUrl:(NSURL *)videoUrl {
-    AVURLAsset *asset = [AVURLAsset URLAssetWithURL:videoUrl options:nil];
+    self.currentVideoAsset = [AVURLAsset URLAssetWithURL:videoUrl options:nil];
     NSString *tracksKey = @"tracks";
 
-    [asset loadValuesAsynchronouslyForKeys:@[tracksKey] completionHandler:^{
+    [self.currentVideoAsset loadValuesAsynchronouslyForKeys:@[tracksKey] completionHandler:^{
         dispatch_async(dispatch_get_main_queue(), ^{
             NSError *error;
-            AVKeyValueStatus status = [asset statusOfValueForKey:tracksKey error:&error];
+            AVKeyValueStatus status = [self.currentVideoAsset statusOfValueForKey:tracksKey error:&error];
 
             if (status == AVKeyValueStatusLoaded) {
                 if (self.playerItem == nil) {
-                    self.playerItem = [AVPlayerItem playerItemWithAsset:asset];
+                    self.playerItem = [AVPlayerItem playerItemWithAsset:self.currentVideoAsset];
                     self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
                     [self.playerLayer setPlayer:self.player];
                 } else {
                     [self removePlayerItemObserver];
-                    self.playerItem = [AVPlayerItem playerItemWithAsset:asset];
+                    self.playerItem = [AVPlayerItem playerItemWithAsset:self.currentVideoAsset];
                     [self.player replaceCurrentItemWithPlayerItem:self.playerItem];
                 }
                 [self addPlayerItemObserver];

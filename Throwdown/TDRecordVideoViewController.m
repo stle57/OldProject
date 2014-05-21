@@ -215,6 +215,7 @@
 - (void)startPhotoCamera {
     self.torchIsOn = NO;
     [self updateFlashImage:NO];
+    self.filter = [[GPUImageCropFilter alloc] initWithCropRegion:CGRectMake(0.f, 0.125f, 1.f, .75f)];
     [self setupCameraCommons];
     self.stillCamera = [[GPUImageStillCamera alloc] init];
     self.stillCamera.outputImageOrientation = UIInterfaceOrientationPortrait;
@@ -249,7 +250,6 @@
 #pragma mark - Shared Video and Photo
 
 - (void)setupCameraCommons {
-    self.filter = [[GPUImageCropFilter alloc] initWithCropRegion:CGRectMake(0.f, 0.125f, 1.f, .75f)];
     [self.filter addTarget:self.previewLayer];
     self.tapToFocusGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapToFocus:)];
     [self.previewLayer addGestureRecognizer:self.tapToFocusGesture];
@@ -278,7 +278,7 @@
     self.torchIsOn = NO;
     [self updateFlashImage:NO];
     self.videoCamera = [[GPUImageVideoCamera alloc]
-                        initWithSessionPreset:AVCaptureSessionPreset640x480
+                        initWithSessionPreset:AVCaptureSessionPreset1280x720
                                cameraPosition:AVCaptureDevicePositionBack];
     self.videoCamera.outputImageOrientation = UIInterfaceOrientationPortrait;
     self.videoCamera.horizontallyMirrorFrontFacingCamera = YES;
@@ -290,41 +290,15 @@
     }
     [self updateFlashButton:[self.videoCamera.inputCamera hasTorch]];
 
+
+    CGFloat size = .565;
+    self.filter = [[GPUImageCropFilter alloc] initWithCropRegion:CGRectMake(0., (1 - size)/2, 1., size)];
     [self setupCameraCommons];
 
     NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:kRecordedMovieFilePath];
     [TDFileSystemHelper removeFileAt:pathToMovie];
     self.recordedURL = [NSURL fileURLWithPath:pathToMovie];
-
-    int videoSize = 640;
-
-    NSMutableDictionary *settings = [[NSMutableDictionary alloc] init];
-    [settings setObject:AVVideoCodecH264 forKey:AVVideoCodecKey];
-    [settings setObject:[NSNumber numberWithInt:videoSize] forKey:AVVideoWidthKey];
-    [settings setObject:[NSNumber numberWithInt:videoSize] forKey:AVVideoHeightKey];
-
-    NSDictionary *videoCleanApertureSettings = [NSDictionary dictionaryWithObjectsAndKeys:
-                                                [NSNumber numberWithInt:videoSize], AVVideoCleanApertureWidthKey,
-                                                [NSNumber numberWithInt:videoSize], AVVideoCleanApertureHeightKey,
-                                                [NSNumber numberWithInt:0], AVVideoCleanApertureHorizontalOffsetKey,
-                                                [NSNumber numberWithInt:0], AVVideoCleanApertureVerticalOffsetKey,
-                                                nil];
-
-    NSDictionary *videoAspectRatioSettings = [NSDictionary dictionaryWithObjectsAndKeys:
-                                              [NSNumber numberWithInt:3], AVVideoPixelAspectRatioHorizontalSpacingKey,
-                                              [NSNumber numberWithInt:3], AVVideoPixelAspectRatioVerticalSpacingKey,
-                                              nil];
-
-    NSMutableDictionary * compressionProperties = [[NSMutableDictionary alloc] init];
-    [compressionProperties setObject:videoCleanApertureSettings forKey:AVVideoCleanApertureKey];
-    [compressionProperties setObject:videoAspectRatioSettings forKey:AVVideoPixelAspectRatioKey];
-    [compressionProperties setObject:[NSNumber numberWithInt: 1000000] forKey:AVVideoAverageBitRateKey];
-    [compressionProperties setObject:[NSNumber numberWithInt: 16] forKey:AVVideoMaxKeyFrameIntervalKey];
-    [compressionProperties setObject:AVVideoProfileLevelH264BaselineAutoLevel forKey:AVVideoProfileLevelKey];
-
-    [settings setObject:compressionProperties forKey:AVVideoCompressionPropertiesKey];
-
-    self.movieWriter = [[GPUImageMovieWriter alloc] initWithMovieURL:self.recordedURL size:CGSizeMake(videoSize, videoSize) fileType:AVFileTypeMPEG4 outputSettings:settings];
+    self.movieWriter = [[GPUImageMovieWriter alloc] initWithMovieURL:self.recordedURL size:CGSizeMake(640, 640) fileType:AVFileTypeMPEG4 outputSettings:[TDConstants defaultVideoCompressionSettings]];
     self.movieWriter.encodingLiveVideo = YES;
 
     [self.filter addTarget:self.movieWriter];
@@ -493,6 +467,7 @@
     imagePickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
     imagePickerController.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
     imagePickerController.mediaTypes = @[(NSString *)kUTTypeImage, (NSString *)kUTTypeMovie];
+    imagePickerController.videoQuality = UIImagePickerControllerQualityTypeHigh;
     imagePickerController.delegate = self;
 
     [self presentViewController:imagePickerController

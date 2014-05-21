@@ -101,15 +101,17 @@ typedef enum {
                                                  name:TDNotificationUploadCancelled
                                                object:nil];
 
-    // Copy photo syncroniously b/c we use it for thumbnails
+    // Copy photo in main thread b/c we use it for thumbnails
     [self copyTempFile:self.photoPath to:self.persistedPhotoPath];
 
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         if (self.videoUpload) {
             [self copyTempFile:self.videoPath to:self.persistedVideoPath];
             self.videoFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:self.persistedVideoPath error:nil][NSFileSize] unsignedLongLongValue];
+            debug NSLog(@"Video File Size %ld", (long)self.videoFileSize);
         }
         self.photoFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:self.persistedPhotoPath error:nil][NSFileSize] unsignedLongLongValue];
+        debug NSLog(@"Photo File Size %ld", (long)self.photoFileSize);
     });
 }
 
