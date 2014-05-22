@@ -9,12 +9,14 @@
 #import <Foundation/Foundation.h>
 #import "TDPost.h"
 #import "TDCurrentUser.h"
+#import "TDPostUpload.h"
 
 @interface TDPostAPI : NSObject
 
 + (TDPostAPI *)sharedInstance;
 + (NSString *)createUploadFileNameFor:(TDCurrentUser *)user;
 
+- (TDPostUpload *)initializeVideoUploadwithThumnail:(NSString *)localPhotoPath withName:(NSString *)newName;
 - (void)uploadVideo:(NSString *)localVideoPath withThumbnail:(NSString *)localPhotoPath withName:(NSString *)newName;
 - (void)uploadPhoto:(NSString *)localPhotoPath withName:(NSString *)newName;
 

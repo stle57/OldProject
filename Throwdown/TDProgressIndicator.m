@@ -19,7 +19,7 @@
 @property (strong, nonatomic) UIButton *retryButton;
 @property (strong, nonatomic) TTTAttributedLabel *errorLabel;
 @property (strong, nonatomic) TDPostUpload *upload;
-@property (strong, nonatomic) id<TDHomeHeaderUploadDelegate> delegate;
+@property (nonatomic, assign) id<TDHomeHeaderUploadDelegate> delegate;
 
 @end
 

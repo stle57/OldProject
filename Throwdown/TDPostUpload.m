@@ -23,7 +23,8 @@ typedef enum {
     UploadNotStarted,
     UploadStarted,
     UploadFailed,
-    UploadCompleted
+    UploadCompleted,
+    UploadNotReceivedFile
 } UploadStatus;
 
 
@@ -46,11 +47,22 @@ typedef enum {
 @property (nonatomic) unsigned long long photoFileSize;
 @property (nonatomic) RSClient *client;
 @property (nonatomic) RSContainer *container;
-@property (strong, nonatomic) id<TDUploadProgressDelegate> delegate;
 
 @end
 
 @implementation TDPostUpload
+
+- (instancetype)initWithVideoThumbnail:(NSString *)photoPath newName:(NSString *)filename {
+    self = [super init];
+    if (self) {
+        self.filename = filename;
+        self.photoPath = photoPath;
+        self.videoUpload = YES;
+        self.videoStatus = UploadNotReceivedFile;
+        [self setupUpload];
+    }
+    return self;
+}
 
 - (instancetype)initWithPhotoPath:(NSString *)photoPath newName:(NSString *)filename {
     self = [super init];
@@ -59,6 +71,7 @@ typedef enum {
         self.photoPath = photoPath;
         self.videoUpload = NO;
         [self setupUpload];
+        [self startUploads];
     }
     return self;
 }
@@ -68,17 +81,27 @@ typedef enum {
     if (self) {
         self.filename = filename;
         self.photoPath = thumbnailPath;
-        self.videoPath = videoPath;
-        self.videoUpload = YES;
-
-        self.finalVideoName = [self.filename stringByAppendingString:FTVideo];
-        self.persistedVideoPath = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/%@", self.finalVideoName];
-        self.videoProgress = 0.0;
-        self.videoStatus = UploadNotStarted;
-
         [self setupUpload];
+
+        self.videoUpload = YES;
+        [self attachVideo:videoPath];
     }
     return self;
+}
+
+- (void)attachVideo:(NSString *)videoPath {
+    self.videoPath = videoPath;
+    self.finalVideoName = [self.filename stringByAppendingString:FTVideo];
+    self.persistedVideoPath = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/%@", self.finalVideoName];
+    self.videoProgress = 0.0;
+    self.videoStatus = UploadNotStarted;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self copyTempFile:self.videoPath to:self.persistedVideoPath];
+        self.videoFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:self.persistedVideoPath error:nil][NSFileSize] unsignedLongLongValue];
+        debug NSLog(@"Video File Size %ld", (long)self.videoFileSize);
+    });
+
+    [self startUploads];
 }
 
 - (void)setupUpload {
@@ -104,15 +127,8 @@ typedef enum {
     // Copy photo in main thread b/c we use it for thumbnails
     [self copyTempFile:self.photoPath to:self.persistedPhotoPath];
 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        if (self.videoUpload) {
-            [self copyTempFile:self.videoPath to:self.persistedVideoPath];
-            self.videoFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:self.persistedVideoPath error:nil][NSFileSize] unsignedLongLongValue];
-            debug NSLog(@"Video File Size %ld", (long)self.videoFileSize);
-        }
-        self.photoFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:self.persistedPhotoPath error:nil][NSFileSize] unsignedLongLongValue];
-        debug NSLog(@"Photo File Size %ld", (long)self.photoFileSize);
-    });
+    self.photoFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:self.persistedPhotoPath error:nil][NSFileSize] unsignedLongLongValue];
+    debug NSLog(@"Photo File Size %ld", (long)self.photoFileSize);
 }
 
 - (void)dealloc {
@@ -182,16 +198,6 @@ typedef enum {
     debug NSLog(@"Total progress for %@: %f", self.filename, totalProgress);
     if ([self.delegate respondsToSelector:@selector(uploadDidUpdate:)]) {
         [self.delegate uploadDidUpdate:totalProgress];
-    }
-}
-
-- (void)setDelegate:(id<TDUploadProgressDelegate>)delegate {
-    _delegate = delegate;
-    // TODO: This is hacky.
-    // It won't start uploading until we have a delegate
-    // b/c we assign the delegate async through NSNotification
-    if (delegate != nil) {
-        [self startUploads];
     }
 }
 

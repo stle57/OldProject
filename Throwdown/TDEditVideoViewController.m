@@ -51,7 +51,9 @@ static const NSString *ItemStatusContext;
 @property (nonatomic) UIImageView *previewImageView;
 @property (nonatomic) UIView *videoContainerView;
 
-@property (nonatomic) AVAssetWriter *videoWriter; // doesn't work if not retained as strong property
+// These need to be retained with a strong pointer
+@property (nonatomic) AVAssetWriter *videoWriter;
+@property (nonatomic) TDPostUpload *currentUpload;
 
 @property (weak, nonatomic) IBOutlet UIButton *cancelButton;
 @property (weak, nonatomic) IBOutlet UIButton *playButton;
@@ -553,6 +555,8 @@ static const NSString *ItemStatusContext;
             [[TDPostAPI sharedInstance] uploadVideo:[self.editingVideoUrl path] withThumbnail:self.thumbnailPath withName:self.filename];
 
         } else {
+
+            self.currentUpload = [[TDPostAPI sharedInstance] initializeVideoUploadwithThumnail:self.thumbnailPath withName:self.filename];
             [self compressVideo];
         }
     });
@@ -594,7 +598,6 @@ static const NSString *ItemStatusContext;
 }
 
 - (void)compressVideo {
-
     AVAsset *asset = [AVAsset assetWithURL:self.editingVideoUrl];
     AVAssetTrack *videoTrack = [[asset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
     AVMutableVideoComposition* videoComposition = [AVMutableVideoComposition videoComposition];
@@ -747,8 +750,9 @@ static const NSString *ItemStatusContext;
                                 [self.videoWriter endSessionAtSourceTime:videoTrack.timeRange.duration];
                                 [self.videoWriter finishWritingWithCompletionHandler:^{
                                     debug NSLog(@"Finished writing to file");
+                                    [self.currentUpload attachVideo:exportPath];
+                                    self.currentUpload = nil;
                                     self.videoWriter = nil;
-                                    [[TDPostAPI sharedInstance] uploadVideo:exportPath withThumbnail:self.thumbnailPath withName:self.filename];
                                 }];
                             }
                         }

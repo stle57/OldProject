@@ -14,7 +14,6 @@
 #import "RSStorageObject.h"
 #import "AFNetworking.h"
 #import "TDAppDelegate.h"
-#import "TDPostUpload.h"
 #import "UIImage+Resizing.h"
 #import "TDFileSystemHelper.h"
 #import "TDDeviceInfo.h"
@@ -402,6 +401,12 @@
 }
 
 # pragma mark - uploads
+
+- (TDPostUpload *)initializeVideoUploadwithThumnail:(NSString *)localPhotoPath withName:(NSString *)newName {
+    TDPostUpload *upload = [[TDPostUpload alloc] initWithVideoThumbnail:localPhotoPath newName:newName];
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDPostUploadStarted object:upload userInfo:nil];
+    return upload;
+}
 
 - (void)uploadVideo:(NSString *)localVideoPath withThumbnail:(NSString *)localPhotoPath withName:(NSString *)newName {
     TDPostUpload *upload = [[TDPostUpload alloc] initWithVideoPath:localVideoPath thumbnailPath:localPhotoPath newName:newName];

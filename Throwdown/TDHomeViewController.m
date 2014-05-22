@@ -146,14 +146,15 @@
 #pragma mark - video upload indicator
 
 - (void)uploadStarted:(NSNotification *)notification {
-    [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (![[TDCurrentUser sharedInstance] isRegisteredForPush]) {
+            self.didUpload = YES;
+        }
 
-    if (![[TDCurrentUser sharedInstance] isRegisteredForPush]) {
-        self.didUpload = YES;
-    }
+        [self.headerView addUpload:notification.object];
 
-    TDPostUpload *upload = (TDPostUpload *)notification.object;
-    [self.headerView addUpload:upload];
+        [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
+    });
 }
 
 #pragma mark - Bottom Buttons Bounce
