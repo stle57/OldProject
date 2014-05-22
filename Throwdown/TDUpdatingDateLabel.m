@@ -65,13 +65,11 @@
 -(NSTimeInterval)workOutTimerGap
 {
     NSTimeInterval interval = fabs([self.labelDate timeIntervalSinceNow]);
-    NSTimeInterval seconds = 1.0;  // every second
+    NSTimeInterval seconds = 60.0;  // every minute
     if (interval >= (60*60*24)) {    // Every day
         seconds = (60*60*24);
     } else if (interval >= (60*60)) {    // Every hour
         seconds = (60*60);
-    } else if (interval >= (60)) {    // Every minute
-        seconds = (60);
     }
     return seconds;
 }
