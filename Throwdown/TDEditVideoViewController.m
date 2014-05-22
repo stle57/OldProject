@@ -585,7 +585,7 @@ static const NSString *ItemStatusContext;
     CGImageRelease(image);
 
     // Crop it
-    CGFloat zoomScale = 1 / (self.videoContainerView.frame.size.width / MIN(thumbnail.size.width, thumbnail.size.height));
+    CGFloat zoomScale = 1 / (320 / MIN(thumbnail.size.width, thumbnail.size.height));
 	CGRect rect;
 	rect.origin.x = [self.scrollView contentOffset].x * zoomScale;
 	rect.origin.y = [self.scrollView contentOffset].y * zoomScale;
