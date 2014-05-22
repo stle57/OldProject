@@ -341,12 +341,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     }
 
     TDPost *post = (TDPost *)[self.posts objectAtIndex:(section-(needsProfileHeader ? 1 : 0))];
-    NSInteger count;
-    if ([post.likers count] > 0) {
-        count = 3+([post.comments count] > 2 ? 2 : [post.comments count]);
-    } else {
-        count = 2+([post.comments count] > 2 ? 2 : [post.comments count]);
-    }
+    NSInteger count = 3 + ([post.comments count] > 2 ? 2 : [post.comments count]);
 
     // +1 if total comments count > 2
     if ([post.commentsTotalCount intValue] > 2) {
@@ -491,8 +486,6 @@ static CGFloat const kHeightOfStatusBar = 65.0;
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_POST_VIEW owner:self options:nil];
             cell = [topLevelObjects objectAtIndex:0];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
-
-            //        cell.likeView.delegate = self;
             cell.delegate = self;
         }
 
@@ -502,7 +495,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     }
 
     // Likes
-    if ([post.likers count] > 0 && indexPath.row == 1) {
+    if (indexPath.row == 1) {
         TDLikeView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_LIKE_VIEW];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_LIKE_VIEW owner:self options:nil];
@@ -510,8 +503,6 @@ static CGFloat const kHeightOfStatusBar = 65.0;
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             cell.delegate = self;
         }
-
-//        TDPost *post = (TDPost *)[self.posts objectAtIndex:indexPath.section];
         cell.row = indexPath.section;
         [cell setLike:post.liked];
         [cell setLikesArray:post.likers totalLikersCount:[post.likersTotalCount integerValue]];
@@ -564,7 +555,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 
-    NSInteger commentNumber = indexPath.row - 1 - ([post.likers count] > 0 ? 1 : 0);
+    NSInteger commentNumber = indexPath.row - 2;
     cell.commentNumber = commentNumber;
     cell.row = indexPath.section;
     TDComment *comment = [post.comments objectAtIndex:commentNumber];
@@ -614,8 +605,8 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     }
 
     TDPost *post = (TDPost *)[self.posts objectAtIndex:realRow];
-    if ([post.likers count] > 0 && indexPath.row == 1) {
-        return likeHeight;
+    if (indexPath.row == 1) {
+        return [post.likers count] > 0 ? likeHeight : 0;
     }
 
     NSInteger lastRow = [self tableView:nil numberOfRowsInSection:indexPath.section] - 1;
@@ -634,7 +625,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     }
 
     // Comments
-    NSInteger commentNumber = indexPath.row - 1 - ([post.likers count] > 0 ? 1 : 0);
+    NSInteger commentNumber = indexPath.row - 2;
     TDComment *comment = [post.comments objectAtIndex:commentNumber];
     return TDCommentCellProfileHeight + comment.messageHeight;
 }
@@ -681,13 +672,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
         // Add the like for the update
         [post addLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
 
-        if ([post.likers count] == 1) {
-            [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:row]
-                          withRowAnimation:UITableViewRowAnimationNone];
-        } else {
-            // Update all but the top row
-            [self reloadAllRowsButTopForSection:row];
-        }
+        [self reloadAllRowsButTopForSection:row];
 
         // Send to server
         TDPostAPI *api = [TDPostAPI sharedInstance];
@@ -705,13 +690,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
         // Remove the like for the update
         [post removeLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
 
-        if ([post.likers count] == 0) {
-            [self.tableView reloadSections:[NSIndexSet indexSetWithIndex:row]
-                          withRowAnimation:UITableViewRowAnimationNone];
-        } else {
-            // Update all but the top row
-            [self reloadAllRowsButTopForSection:row];
-        }
+        [self reloadAllRowsButTopForSection:row];
 
         TDPostAPI *api = [TDPostAPI sharedInstance];
         [api unLikePostWithId:post.postId];
@@ -725,8 +704,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
         [rowArray addObject:[NSIndexPath indexPathForRow:i
                                                inSection:section]];
     }
-    [self.tableView reloadRowsAtIndexPaths:rowArray
-                          withRowAnimation:UITableViewRowAnimationNone];
+    [self.tableView reloadRowsAtIndexPaths:rowArray withRowAnimation:UITableViewRowAnimationFade];
 }
 
 - (void)commentButtonPressedFromRow:(NSInteger)row {
