@@ -315,11 +315,6 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 // +1 if total comments count > 2
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    // Just 'No Posts' cell
-    if ([self.posts count] == 0) {
-        return 1;
-    }
-
     // 1st row for Profile Header
     if (needsProfileHeader && section == 0) {
         return 1;
@@ -352,28 +347,6 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    // Just 'No Posts' cell
-    if ([self.posts count] == 0) {
-
-        TDNoPostsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoPostsCell"];
-        if (!cell) {
-            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoPostsCell" owner:self options:nil];
-            cell = [topLevelObjects objectAtIndex:0];
-            cell.selectionStyle = UITableViewCellSelectionStyleNone;
-
-            // Center label
-            cell.noPostsLabel.center = CGPointMake(cell.noPostsLabel.center.x,
-                                                   self.tableView.center.y-[UIApplication sharedApplication].statusBarFrame.size.height);
-        }
-
-        if (!self.loaded) {
-            cell.noPostsLabel.text = @"Loading…";
-        } else {
-            cell.noPostsLabel.text = @"No posts yet";
-        }
-
-        return cell;
-    }
 
     // 1st row for Profile Header
     if (needsProfileHeader && indexPath.section == 0 && self.loaded) {
@@ -428,10 +401,6 @@ static CGFloat const kHeightOfStatusBar = 65.0;
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoPostsCell" owner:self options:nil];
             cell = [topLevelObjects objectAtIndex:0];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
-
-            // Center label
-            cell.noPostsLabel.center = CGPointMake(cell.noPostsLabel.center.x,
-                                                   self.tableView.center.y-[UIApplication sharedApplication].statusBarFrame.size.height);
         }
 
         if (!self.loaded) {
@@ -441,15 +410,17 @@ static CGFloat const kHeightOfStatusBar = 65.0;
         }
 
         if (needsProfileHeader) {
-        //    CGRect frame = cell.frame;
-        //    frame.size.height = frame.size.height - [self tableView:self.tableView
-        //                                    heightForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-        //    cell.frame = frame;
+            CGRect frame = cell.view.frame;
+            // 20 is for status bar height
+            frame.size.height = [UIScreen mainScreen].bounds.size.height - self.tableView.contentInset.top - (self.loaded ? profileHeaderHeight + 20 : 0);
+            cell.view.frame = frame;
         }
+
+        // Center label (could be improved!)
+        cell.noPostsLabel.center = CGPointMake(cell.view.center.x, cell.view.frame.size.height / 2);
 
         return cell;
     }
-
 
     // Last row with Activity
     if (showBottomSpinner && indexPath.section == ([self.posts count]+(needsProfileHeader ? 1 : 0))) {
@@ -581,11 +552,8 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
     // Just 'No Posts' cell
     if ([self.posts count] == 0) {
-        if (needsProfileHeader) {
-            return self.tableView.frame.size.height- profileHeaderHeight;
-        } else {
-            return self.tableView.frame.size.height;
-        }
+        // 20 is for status bar height
+        return [UIScreen mainScreen].bounds.size.height - self.tableView.contentInset.top - (self.loaded ? profileHeaderHeight + 20 : 0);
     }
 
     NSInteger realRow = indexPath.section - (needsProfileHeader ? 1 : 0);
