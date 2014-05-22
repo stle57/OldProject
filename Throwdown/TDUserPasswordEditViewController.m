@@ -370,6 +370,7 @@
                     cell.topLine.hidden = NO;
                     cell.titleLabel.hidden = NO;
                     cell.textField.hidden = NO;
+                    cell.textField.secureTextEntry = YES;
                     cell.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"Your current password"
                                                                                            attributes:@{NSForegroundColorAttributeName: textFieldPlaceHolderColor}];
                     cell.titleLabel.text = @"Current";
