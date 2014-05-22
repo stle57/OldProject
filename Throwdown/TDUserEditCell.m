@@ -41,6 +41,7 @@
 
 - (void)awakeFromNib {
     self.titleLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:19.0];
+    self.longTitleLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:19.0];
     self.middleLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:19.0];
     self.leftMiddleLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:19.0];
     self.textField.font = [UIFont fontWithName:@"ProximaNova-Regular" size:18.0];
@@ -57,7 +58,6 @@
     self.topLine.frame = lineRect;
     self.userImageView.layer.cornerRadius = self.userImageView.layer.frame.size.width / 2;
     self.userImageView.clipsToBounds = YES;
-
 
     textViewdOrigRect = self.textView.frame;
     bottomLineOrigY = self.bottomLine.frame.origin.y;

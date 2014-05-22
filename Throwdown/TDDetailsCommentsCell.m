@@ -49,6 +49,8 @@
 }
 
 - (void)makeTime:(NSDate *)time name:(NSString *)name {
+
+    self.timeLabel.labelDate = time;
     self.timeLabel.text = [time timeAgo];
 
     // Fix widths for name and time

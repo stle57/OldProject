@@ -26,6 +26,9 @@ static NSString *const RSUsername = @"throwdown";
 static NSString *const RSApiKey = @"c93395c50887cf4926d2d24e1d9ed4e7";
 static NSString *const RSHost = @"http://tdstore2.throwdown.us";
 
+// HTTP Headers
+static NSString *const kHTTPHeaderBundleVersion = @"X-Bundle-Version";
+
 // File types
 static NSString *const FTVideo = @".mp4";
 static NSString *const FTImage = @".jpg";
@@ -36,7 +39,21 @@ static double const kMaxSessionLength = 30; // in seconds
 static NSString *const kAnalyticsLogfile = @"analyticsLogfile.bin";
 static NSString *const kApplicationUUIDKey = @"TDApplicationUUIDKey";
 
+// File locations
+static NSString *const kVideoTrimmedFilePath = @"Documents/current_trimmed_video.m4v";
+static NSString *const kVideoExportedFilePath = @"Documents/current_exported_video.m4v";
+static NSString *const kThumbnailExportFilePath = @"Documents/current_thumbnail.jpg";
+
+static NSString *const kPhotoFilePath = @"Documents/current_photo.jpg";
+static NSString *const kRecordedMovieFilePath = @"Documents/current_recorded_video.m4v";
+static NSString *const kRecordedTrimmedMovieFilePath = @"Documents/current_recorded_trimmed_video.m4v";
+
+// Recording settings
+static int const kMaxRecordingSeconds = 30;
+static double const kMinFileSpaceForRecording = 50 * 1024^2; // 50mb
+
 // NSNotification types
+static NSString *const TDPostUploadStarted = @"TDPostUploadStarted";
 static NSString *const TDNotificationStopPlayers = @"TDNotificationStopPlayers";
 static NSString *const TDNotificationUploadComments = @"TDNotificationUploadComments";
 static NSString *const TDNotificationUploadCancelled = @"TDNotificationUploadCancelled";
@@ -93,11 +110,13 @@ static NSString *const kSpinningAnimation = @"rotationAnimation";
 + (UIColor *)headerTextColor;
 + (UIColor *)commentTextColor;
 + (UIColor *)commentTimeTextColor;
++ (UIColor *)activityUnseenColor;
 
 + (UIFont *)fontLightSized:(NSUInteger)size;
 + (UIFont *)fontRegularSized:(NSUInteger)size;
 + (UIFont *)fontSemiBoldSized:(NSUInteger)size;
 + (UIFont *)fontBoldSized:(NSUInteger)size;
 
++ (NSDictionary *)defaultVideoCompressionSettings;
 
 @end

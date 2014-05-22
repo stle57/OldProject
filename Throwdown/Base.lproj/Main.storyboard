@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="DPQ-qf-8sb">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5053" systemVersion="13C64" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="DPQ-qf-8sb">
     <dependencies>
         <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
@@ -34,53 +34,80 @@
                                 <rect key="frame" x="0.0" y="468" width="320" height="100"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="btn_camera_outerCircle_rightArrow_184x160" id="cnB-Wd-Stf" userLabel="Mode Indicator Image View">
+                                        <rect key="frame" x="68" y="-42" width="184" height="184"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Jc-mN-hx2" userLabel="Record Button">
-                                        <rect key="frame" x="120" y="1" width="80" height="100"/>
+                                        <rect key="frame" x="120" y="0.0" width="80" height="100"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <accessibility key="accessibilityConfiguration">
                                             <bool key="isElement" value="NO"/>
                                         </accessibility>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <color key="tintColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <state key="normal" image="v_recstartbutton">
+                                        <state key="normal" image="btn_camera_on_inner_132x132">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
-                                        <state key="highlighted" image="v_recstartbutton_hit"/>
+                                        <state key="highlighted" image="btn_camera_on_inner_132x132_hit"/>
                                         <connections>
                                             <action selector="recordButtonPressed:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="9lJ-u8-Krj"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6yY-RR-kvO" userLabel="Cancel Button">
-                                        <rect key="frame" x="0.0" y="0.0" width="60" height="100"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="adF-V8-fH8" userLabel="Photo Button">
+                                        <rect key="frame" x="200" y="24" width="50" height="50"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
-                                        <inset key="contentEdgeInsets" minX="12" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                        <state key="normal" image="v_closebutton">
+                                        <state key="normal" image="photo_cam_option_36x28">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
-                                        <state key="highlighted" image="v_closebutton_hit"/>
+                                        <state key="disabled" image="photo_cam_option_36x28_hit"/>
+                                        <state key="highlighted" image="photo_cam_option_36x28_hit"/>
                                         <connections>
-                                            <action selector="cancelButtonPressed:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="zff-LI-XcM"/>
+                                            <action selector="photoButtonPressed:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="JRs-Ag-ezf"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="bR2-LG-wfE" userLabel="Video Button">
+                                        <rect key="frame" x="70" y="25" width="50" height="50"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" image="video_cam_option_38x24">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="disabled" image="video_cam_option_38x24_hit"/>
+                                        <state key="highlighted" image="video_cam_option_38x24_hit"/>
+                                        <connections>
+                                            <action selector="videoButtonPressed:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="wrC-za-gfJ"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="2a9-PF-90i" userLabel="Album Button">
+                                        <rect key="frame" x="0.0" y="0.0" width="65" height="100"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <inset key="contentEdgeInsets" minX="12" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                        <state key="normal" image="photo_library_pre_96x96">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                        <state key="highlighted" image="photo_library_pre_96x96_hit"/>
+                                        <connections>
+                                            <action selector="albumButtonPressed:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="Rke-XW-twI"/>
                                         </connections>
                                     </button>
                                 </subviews>
-                                <color key="backgroundColor" red="0.1333333333" green="0.1333333333" blue="0.1333333333" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
                             <view userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cZv-bv-JN9" userLabel="Indicator background">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.13333333333333333" green="0.13333333333333333" blue="0.13333333333333333" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <view userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="X0a-I3-x3Z" userLabel="Progress Indicator">
                                 <rect key="frame" x="-320" y="0.0" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.92549019610000005" green="0.2156862745" blue="0.14901960780000001" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
-                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="p2X-Qr-6Vj" userLabel="Flash Button">
-                                <rect key="frame" x="0.0" y="0.0" width="110" height="44"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="p2X-Qr-6Vj" userLabel="Flash Button">
+                                <rect key="frame" x="110" y="0.0" width="100" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <inset key="contentEdgeInsets" minX="12" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                <state key="normal" image="v_flash">
+                                <state key="normal" image="v_flash_off_66x40">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <state key="highlighted" image="v_flash_hit"/>
@@ -88,9 +115,16 @@
                                     <action selector="flashButtonPressed:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="1l9-U3-gaO"/>
                                 </connections>
                             </button>
+                            <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Emc-Hw-KVu" userLabel="Time Label">
+                                <rect key="frame" x="110" y="0.0" width="100" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="24"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="93b-E6-3u5" userLabel="Switch Camera Button">
-                                <rect key="frame" x="210" y="0.0" width="110" height="44"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <rect key="frame" x="240" y="0.0" width="80" height="44"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
                                 <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="12" maxY="0.0"/>
                                 <state key="normal" image="v_rotatecam">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -100,13 +134,19 @@
                                     <action selector="switchCameraButtonPressed:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="Deo-2A-ng4"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Emc-Hw-KVu" userLabel="Time Label">
-                                <rect key="frame" x="110" y="0.0" width="100" height="44"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="6yY-RR-kvO" userLabel="Cancel Button">
+                                <rect key="frame" x="0.0" y="0.0" width="80" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="24"/>
-                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                                <inset key="contentEdgeInsets" minX="12" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                <state key="normal" image="x_32x32">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted" image="x_32x32_hit"/>
+                                <connections>
+                                    <action selector="cancelButtonPressed:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="zff-LI-XcM"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
@@ -118,15 +158,19 @@
                     <nil key="simulatedStatusBarMetrics"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
+                        <outlet property="albumButton" destination="2a9-PF-90i" id="x5p-0S-kMb"/>
                         <outlet property="closeButton" destination="6yY-RR-kvO" id="KIb-vu-e7J"/>
                         <outlet property="controlsView" destination="tgj-aS-c8v" id="gqB-1B-3Lx"/>
                         <outlet property="coverView" destination="yCY-OC-yOW" id="uOg-Vs-Ow7"/>
                         <outlet property="flashButton" destination="p2X-Qr-6Vj" id="DVl-BZ-K3W"/>
+                        <outlet property="modeIndicator" destination="cnB-Wd-Stf" id="Psk-Za-gmy"/>
+                        <outlet property="photoButton" destination="adF-V8-fH8" id="Wcd-66-ucI"/>
                         <outlet property="previewLayer" destination="dBh-cg-coo" id="zyj-dO-c1J"/>
                         <outlet property="progressBarView" destination="X0a-I3-x3Z" id="N5z-24-RwP"/>
                         <outlet property="recordButton" destination="1Jc-mN-hx2" id="gEP-7f-AEm"/>
                         <outlet property="switchCamerabutton" destination="93b-E6-3u5" id="gdi-bG-RHF"/>
                         <outlet property="timeLabel" destination="Emc-Hw-KVu" id="gn9-Ls-Uxf"/>
+                        <outlet property="videoButton" destination="bR2-LG-wfE" id="L5M-CU-w8p"/>
                         <outlet property="videoContainerView" destination="lpd-Xk-QaL" id="a2l-m2-M2e"/>
                         <segue destination="mmN-3Z-6Sw" kind="custom" identifier="EditVideoSegue" customClass="TDSlideLeftSegue" id="dIK-mC-q5V"/>
                         <segue destination="YgZ-o0-OG3" kind="unwind" identifier="VideoCloseSegue" unwindAction="unwindToHome:" id="9P0-1X-62J"/>
@@ -218,11 +262,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" id="2rR-iH-dDM" userLabel="Video Container View">
-                                <rect key="frame" x="0.0" y="96" width="320" height="320"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                            </view>
                             <view contentMode="scaleToFill" id="a3R-mv-ker" userLabel="Black Cover View">
                                 <rect key="frame" x="0.0" y="96" width="320" height="320"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -233,7 +272,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="lYC-Ku-kIh" userLabel="Cancel Button">
-                                        <rect key="frame" x="0.0" y="0.0" width="60" height="100"/>
+                                        <rect key="frame" x="0.0" y="-1" width="60" height="100"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                                         <inset key="contentEdgeInsets" minX="12" minY="0.0" maxX="0.0" maxY="0.0"/>
@@ -245,7 +284,7 @@
                                             <action selector="cancelButtonPressed:" destination="mmN-3Z-6Sw" eventType="touchUpInside" id="IXA-vK-pKf"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="jCp-Qn-DFT" userLabel="Play Button">
+                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="jCp-Qn-DFT" userLabel="Play Button">
                                         <rect key="frame" x="120" y="0.0" width="80" height="100"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <state key="normal" image="v_playbutton">
@@ -269,12 +308,12 @@
                                         </connections>
                                     </button>
                                 </subviews>
-                                <color key="backgroundColor" red="0.1333333333" green="0.1333333333" blue="0.1333333333" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
-                            <view contentMode="scaleToFill" id="Xno-cO-Egd">
+                            <view contentMode="scaleToFill" id="Xno-cO-Egd" userLabel="Black Top Stripe View">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.1333333333" green="0.1333333333" blue="0.1333333333" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                         </subviews>
                         <color key="backgroundColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
@@ -283,11 +322,11 @@
                     <nil key="simulatedStatusBarMetrics"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
+                        <outlet property="cancelButton" destination="lYC-Ku-kIh" id="rQA-Ro-Pqu"/>
                         <outlet property="controlsView" destination="8fL-Se-Rbe" id="NNZ-Ns-uai"/>
                         <outlet property="coverView" destination="a3R-mv-ker" id="WQc-ad-hd9"/>
                         <outlet property="doneButton" destination="Njs-Cf-zmw" id="G2z-1M-X0y"/>
                         <outlet property="playButton" destination="jCp-Qn-DFT" id="JSd-wq-CUZ"/>
-                        <outlet property="videoContainerView" destination="2rR-iH-dDM" id="UTV-I6-zxD"/>
                         <segue destination="Mi2-Xw-H7z" kind="unwind" identifier="VideoCloseSegue" unwindAction="unwindToHome:" id="aGd-fI-rfI"/>
                         <segue destination="Mi2-Xw-H7z" kind="unwind" identifier="UnwindSlideLeftSegue" unwindAction="unwindToRecordVideo:" id="gKJ-OT-eqX"/>
                         <segue destination="yPB-2g-BQK" kind="custom" identifier="ShareVideoSegue" customClass="TDSlideLeftSegue" id="2hO-hC-H0o"/>
@@ -834,6 +873,20 @@
                                     <action selector="loginButtonPressed:" destination="fM6-ZJ-00P" eventType="touchUpInside" id="sQk-Td-JrH"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="arb-7G-Tmh">
+                                <rect key="frame" x="18" y="229" width="285" height="29"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <state key="normal" title="Forgot your password?">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="selected" title="Forgot your password?"/>
+                                <connections>
+                                    <segue destination="3b8-WK-IkA" kind="push" id="d1c-r2-svv"/>
+                                </connections>
+                            </button>
                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" id="xJf-HC-ZZr">
                                 <rect key="frame" x="142" y="221" width="37" height="37"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -863,6 +916,7 @@
                         <outlet property="loginButton" destination="Yw6-ck-N27" id="78M-R1-O8X"/>
                         <outlet property="passwordTextField" destination="QQM-HU-aED" id="W4c-XY-y0K"/>
                         <outlet property="progress" destination="xJf-HC-ZZr" id="T4j-GJ-JOW"/>
+                        <outlet property="resetPasswordButton" destination="arb-7G-Tmh" id="cYg-Gr-2gp"/>
                         <outlet property="topLabel" destination="4Ja-F3-QXx" id="WNy-Xy-gkz"/>
                         <outlet property="userNameTextField" destination="zFm-WF-360" id="Imx-i9-dO6"/>
                     </connections>
@@ -871,8 +925,89 @@
             </objects>
             <point key="canvasLocation" x="-866" y="303"/>
         </scene>
+        <!--Reset Password View Controller - Log in-->
+        <scene sceneID="sqk-Bn-GBG">
+            <objects>
+                <viewController autoresizesArchivedViewToFullSize="NO" id="3b8-WK-IkA" customClass="TDResetPasswordViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="hJe-T7-Zfz">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="reg_bg2_568" id="tFj-vN-754">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Forgot Password" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="zjP-Hn-Phf">
+                                <rect key="frame" x="0.0" y="7" width="320" height="33"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="jGS-CU-oiz">
+                                <rect key="frame" x="12" y="9" width="33" height="33"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="reg_nav_back">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="disabled" image="reg_nav_back"/>
+                                <state key="selected" image="reg_nav_back_hit"/>
+                                <state key="highlighted" image="reg_nav_back_hit"/>
+                                <connections>
+                                    <action selector="backButtonPressed:" destination="3b8-WK-IkA" eventType="touchUpInside" id="v8Q-SH-uRT"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" tag="3" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="Hyj-r7-EUO">
+                                <rect key="frame" x="18" y="125" width="285" height="42"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <state key="normal" image="reg_resetpass">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="disabled" image="reg_resetpass_disabled"/>
+                                <state key="selected" image="reg_resetpass_hit"/>
+                                <state key="highlighted" image="reg_resetpass_hit"/>
+                                <connections>
+                                    <action selector="resetButtonPressed:" destination="3b8-WK-IkA" eventType="touchUpInside" id="1IS-7f-URL"/>
+                                </connections>
+                            </button>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" id="MZb-4K-W09">
+                                <rect key="frame" x="142" y="221" width="37" height="37"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </activityIndicatorView>
+                            <view contentMode="scaleToFill" id="OUP-ja-Ya8" customClass="TDTextField">
+                                <rect key="frame" x="0.0" y="65" width="320" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                            </view>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="tintColor" red="0.92549019610000005" green="0.2156862745" blue="0.14901960780000001" alpha="1" colorSpace="calibratedRGB"/>
+                    </view>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" title="Log in" id="ArF-Ip-qSD"/>
+                    <nil key="simulatedStatusBarMetrics"/>
+                    <nil key="simulatedTopBarMetrics"/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="backButton" destination="jGS-CU-oiz" id="lbO-Wc-xFO"/>
+                        <outlet property="backgroundImageView" destination="tFj-vN-754" id="EdO-4o-7VX"/>
+                        <outlet property="progress" destination="MZb-4K-W09" id="M5Z-8p-Ogo"/>
+                        <outlet property="resetButton" destination="Hyj-r7-EUO" id="gRR-cY-F7R"/>
+                        <outlet property="topLabel" destination="zjP-Hn-Phf" id="Azy-Am-Fvs"/>
+                        <outlet property="userNameTextField" destination="OUP-ja-Ya8" id="eS9-bC-8zx"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dq2-jp-ERg" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-422" y="303"/>
+        </scene>
     </scenes>
     <resources>
+        <image name="btn_camera_on_inner_132x132" width="66" height="66"/>
+        <image name="btn_camera_on_inner_132x132_hit" width="66" height="66"/>
+        <image name="btn_camera_outerCircle_rightArrow_184x160" width="92" height="80"/>
         <image name="nav_camera" width="61" height="61"/>
         <image name="nav_close" width="20" height="21"/>
         <image name="nav_close_hit" width="20" height="21"/>
@@ -882,6 +1017,10 @@
         <image name="nav_notif_hit" width="40" height="40"/>
         <image name="nav_profile" width="40" height="40"/>
         <image name="nav_profile_hit" width="40" height="40"/>
+        <image name="photo_cam_option_36x28" width="18" height="14"/>
+        <image name="photo_cam_option_36x28_hit" width="18" height="14"/>
+        <image name="photo_library_pre_96x96" width="48" height="48"/>
+        <image name="photo_library_pre_96x96_hit" width="48" height="48"/>
         <image name="reg_bg1_568" width="320" height="568"/>
         <image name="reg_bg2_568" width="320" height="568"/>
         <image name="reg_bg3_568" width="320" height="568"/>
@@ -896,6 +1035,9 @@
         <image name="reg_next" width="285" height="42"/>
         <image name="reg_next_disabled" width="285" height="42"/>
         <image name="reg_next_hit" width="285" height="42"/>
+        <image name="reg_resetpass" width="285" height="42"/>
+        <image name="reg_resetpass_disabled" width="285" height="42"/>
+        <image name="reg_resetpass_hit" width="285" height="42"/>
         <image name="reg_signup" width="285" height="42"/>
         <image name="reg_signup_hit" width="285" height="42"/>
         <image name="saveshare_button" width="320" height="50"/>
@@ -906,14 +1048,16 @@
         <image name="v_checkbutton_hit" width="30" height="30"/>
         <image name="v_closebutton" width="30" height="30"/>
         <image name="v_closebutton_hit" width="30" height="30"/>
-        <image name="v_flash" width="16" height="20"/>
         <image name="v_flash_hit" width="16" height="20"/>
+        <image name="v_flash_off_66x40" width="33" height="20"/>
         <image name="v_playbutton" width="40" height="40"/>
         <image name="v_playbutton_hit" width="40" height="40"/>
-        <image name="v_recstartbutton" width="60" height="60"/>
-        <image name="v_recstartbutton_hit" width="60" height="60"/>
         <image name="v_rotatecam" width="25" height="18"/>
         <image name="v_rotatecam_hit" width="25" height="18"/>
+        <image name="video_cam_option_38x24" width="19" height="12"/>
+        <image name="video_cam_option_38x24_hit" width="19" height="12"/>
+        <image name="x_32x32" width="16" height="16"/>
+        <image name="x_32x32_hit" width="16" height="16"/>
     </resources>
     <color key="tintColor" red="0.92941176469999998" green="0.92941176469999998" blue="0.92941176469999998" alpha="1" colorSpace="calibratedRGB"/>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

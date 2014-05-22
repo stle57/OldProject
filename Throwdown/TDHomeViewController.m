@@ -20,6 +20,8 @@
 #import "TDActivityCell.h"
 #import "TDUserProfileViewController.h"
 #import "TDNavigationController.h"
+#import "TDFileSystemHelper.h"
+#import "UIAlertView+TDBlockAlert.h"
 #import <QuartzCore/QuartzCore.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
@@ -43,7 +45,7 @@
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(uploadStarted:)
-                                                 name:@"TDPostUploadStarted"
+                                                 name:TDPostUploadStarted
                                                object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(refreshPostsNotification:)
@@ -120,6 +122,7 @@
     debug NSLog(@"home-refreshControlUsed");
     [[TDPostAPI sharedInstance] fetchPostsUpstreamWithErrorHandlerStart:nil error:^{
         [self endRefreshControl];
+        [[TDAppDelegate appDelegate] showToastWithText:@"Can't connect to server" type:kToastIconType_Warning payload:@{} delegate:nil];
     }];
 }
 
@@ -145,14 +148,15 @@
 #pragma mark - video upload indicator
 
 - (void)uploadStarted:(NSNotification *)notification {
-    [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (![[TDCurrentUser sharedInstance] isRegisteredForPush]) {
+            self.didUpload = YES;
+        }
 
-    if (![[TDCurrentUser sharedInstance] isRegisteredForPush]) {
-        self.didUpload = YES;
-    }
+        [self.headerView addUpload:notification.object];
 
-    TDPostUpload *upload = (TDPostUpload *)notification.object;
-    [self.headerView addUpload:upload];
+        [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
+    });
 }
 
 #pragma mark - Bottom Buttons Bounce
@@ -190,6 +194,16 @@
 }
 
 #pragma mark - segues
+
+- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
+    if ([@"VideoButtonSegue" isEqualToString:identifier] && [TDFileSystemHelper getFreeDiskspace] < kMinFileSpaceForRecording) {
+        NSLog(@"Warning, low disk space: %lld", [TDFileSystemHelper getFreeDiskspace]);
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Storage Space Low" message:@"There is not enough available storage to record or upload content. Clear some space to continue." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert showWithCompletionBlock:nil];
+        return NO;
+    }
+    return YES;
+}
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];

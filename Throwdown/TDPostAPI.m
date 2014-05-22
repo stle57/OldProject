@@ -14,9 +14,9 @@
 #import "RSStorageObject.h"
 #import "AFNetworking.h"
 #import "TDAppDelegate.h"
-#import "TDPostUpload.h"
 #import "UIImage+Resizing.h"
 #import "TDFileSystemHelper.h"
+#import "TDDeviceInfo.h"
 
 @implementation TDPostAPI
 {
@@ -52,10 +52,10 @@
 # pragma mark - posts get/add/remove
 
 
-- (void)addPost:(NSString *)filename comment:(NSString *)comment success:(void (^)(void))success failure:(void (^)(void))failure {
+- (void)addPost:(NSString *)filename comment:(NSString *)comment kind:(NSString *)kind success:(void (^)(void))success failure:(void (^)(void))failure {
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts.json"];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager POST:url parameters:@{ @"post": @{@"filename": filename, @"comment": comment}, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager POST:url parameters:@{ @"post": @{@"filename": filename, @"comment": comment, @"kind": kind}, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
         debug NSLog(@"JSON: %@", [responseObject class]);
         // Not the best way to do this but for now...
         [self fetchPostsUpstream];
@@ -65,13 +65,12 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"Error: %@", error);
 
+        if (failure) {
+            failure();
+        }
         if (error) {
             if ([operation.response statusCode] == 401) {
                 [self logOutUser];
-            }
-        } else {
-            if (failure) {
-                failure();
             }
         }
     }];
@@ -92,7 +91,10 @@
 }
 
 - (void)fetchPostsUpstreamWithErrorHandlerStart:(NSNumber *)start error:(void (^)(void))errorHandler {
-    NSMutableDictionary *params = [@{@"user_token": [TDCurrentUser sharedInstance].authToken} mutableCopy];
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    if ([TDCurrentUser sharedInstance].authToken) {
+        [params addEntriesFromDictionary:@{@"user_token": [TDCurrentUser sharedInstance].authToken}];
+    }
     if (start) {
         [params addEntriesFromDictionary:@{@"start": start}];
     }
@@ -100,9 +102,9 @@
         [params addEntriesFromDictionary:@{@"device_token": [TDCurrentUser sharedInstance].deviceToken}];
     }
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager.requestSerializer setValue:TDDeviceInfo.bundleVersion forHTTPHeaderField:kHTTPHeaderBundleVersion];
     [manager GET:[[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts.json"] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-
             if (!start) {
                 [posts removeAllObjects];
             }
@@ -117,13 +119,12 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"HTTP Error: %@", error);
 
+        if (errorHandler) {
+            errorHandler();
+        }
         if (error) {
             if ([operation.response statusCode] == 401) {
                 [self logOutUser];
-            }
-        } else {
-            if (errorHandler) {
-                errorHandler();
             }
         }
     }];
@@ -147,8 +148,8 @@
 }
 
 #pragma mark posts for a particular user
-- (void)fetchPostsUpstreamForUser:(NSNumber *)userId success:(void(^)(NSDictionary *response))successHandler {
-    [self fetchPostsForUserUpstreamWithErrorHandlerStart:nil userId:userId error:nil success:successHandler];
+- (void)fetchPostsUpstreamForUser:(NSNumber *)userId success:(void(^)(NSDictionary *response))successHandler error:(void(^)(void))errorHandler {
+    [self fetchPostsForUserUpstreamWithErrorHandlerStart:nil userId:userId error:errorHandler success:successHandler];
 }
 
 - (BOOL)fetchPostsDownstreamForUser:(NSNumber *)userId lowestId:(NSNumber *)lowestId success:(void(^)(NSDictionary *))successHandler {
@@ -176,13 +177,13 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"HTTP Error: %@", error);
 
+        if (errorHandler) {
+            errorHandler();
+        }
+
         if (error) {
             if ([operation.response statusCode] == 401) {
                 [self logOutUser];
-            }
-        } else {
-            if (errorHandler) {
-                errorHandler();
             }
         }
     }];
@@ -376,9 +377,8 @@
             if ([returnDict objectForKey:@"success"]) {
                 if ([[returnDict objectForKey:@"success"] boolValue]) {
 
-                    NSLog(@"New Comment Success!");
                     [self notifyPostsRefreshed];
-                    NSLog(@"New Comment Success!:%@", returnDict);
+                    debug NSLog(@"New Comment Success!:%@", returnDict);
 
                     // Notify any views to reload
                     [[NSNotificationCenter defaultCenter] postNotificationName:NEW_COMMENT_INFO_NOTICIATION
@@ -402,9 +402,20 @@
 
 # pragma mark - uploads
 
+- (TDPostUpload *)initializeVideoUploadwithThumnail:(NSString *)localPhotoPath withName:(NSString *)newName {
+    TDPostUpload *upload = [[TDPostUpload alloc] initWithVideoThumbnail:localPhotoPath newName:newName];
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDPostUploadStarted object:upload userInfo:nil];
+    return upload;
+}
+
 - (void)uploadVideo:(NSString *)localVideoPath withThumbnail:(NSString *)localPhotoPath withName:(NSString *)newName {
     TDPostUpload *upload = [[TDPostUpload alloc] initWithVideoPath:localVideoPath thumbnailPath:localPhotoPath newName:newName];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"TDPostUploadStarted" object:upload userInfo:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDPostUploadStarted object:upload userInfo:nil];
+}
+
+- (void)uploadPhoto:(NSString *)localPhotoPath withName:(NSString *)newName {
+    TDPostUpload *upload = [[TDPostUpload alloc] initWithPhotoPath:localPhotoPath newName:newName];
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDPostUploadStarted object:upload userInfo:nil];
 }
 
 #pragma mark - Failures

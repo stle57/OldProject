@@ -67,6 +67,7 @@
 @property (strong, nonatomic) TDHomeHeaderView *headerView;
 @property (strong, nonatomic) UIActivityIndicatorView *playerSpinner;
 @property (nonatomic, retain) NSNumber *userId;
+@property (nonatomic) BOOL loaded;
 
 - (NSArray *)postsForThisScreen;
 - (void)reloadPosts;

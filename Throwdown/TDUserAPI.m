@@ -57,6 +57,13 @@
     }];
 }
 
+- (void)resetPassword:(NSString *)requestString callback:(void (^)(BOOL success, NSDictionary *dict))callback
+{
+    [[TDAPIClient sharedInstance] resetPassword:requestString callback:^(BOOL success, NSDictionary *returnDict) {
+        callback(success, returnDict);
+    }];
+}
+
 - (void)editUserWithName:(NSString *)name email:(NSString *)email username:(NSString *)username phone:(NSString *)phone bio:(NSString *)bio picture:(NSString *)pictureFileName callback:(void (^)(BOOL success, NSDictionary *dict))callback
 {
     [[TDAPIClient sharedInstance] editUserWithName:name email:email username:username phone:phone bio:bio picture:pictureFileName callback:^(BOOL success, NSDictionary *user) {
@@ -68,6 +75,22 @@
         }
         callback(success, user);
     }];
+}
+
+-(void)changePasswordFrom:(NSString *)oldPassword newPassword:(NSString *)newPassword confirmPassword:(NSString *)confirmPassword callback:(void (^)(BOOL success, NSDictionary *dict))callback
+{
+    [[TDAPIClient sharedInstance] changePasswordFrom:oldPassword
+                                         newPassword:newPassword
+                                     confirmPassword:confirmPassword
+                                            callback:^(BOOL success, NSDictionary *user) {
+                                                if (success) {
+                                                    NSLog(@"---CHANGE PASSWORD SUCCESS:%@", user);
+                                                    if (user) {
+                                                        [self.currentUser updateFromDictionary:user];
+                                                    }
+                                                }
+                                                callback(success, user);
+                                            }];
 }
 
 - (BOOL)isLoggedIn {

@@ -10,6 +10,7 @@
 #import "TDPost.h"
 #import "TDLikeView.h"
 #import "TDTwoButtonView.h"
+#import "TDUpdatingDateLabel.h"
 
 @protocol TDPostViewDelegate <NSObject>
 @optional
@@ -27,14 +28,13 @@
 @property (weak, nonatomic) IBOutlet UILabel *usernameLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *previewImage;
 @property (weak, nonatomic) IBOutlet UIImageView *userProfileImage;
-@property (weak, nonatomic) IBOutlet UILabel *createdLabel;
+@property (weak, nonatomic) IBOutlet TDUpdatingDateLabel *createdLabel;
 @property (weak, nonatomic) IBOutlet TDLikeView *likeView;
 @property (weak, nonatomic) IBOutlet UIView *bottomPaddingLine;
 @property (weak, nonatomic) IBOutlet UIButton *userNameButton;
 @property (nonatomic, assign) NSInteger row;
 @property (strong, nonatomic) NSString *filename;
 @property (strong, nonatomic) NSString *userPicture;
-
 
 - (void)setPost:(TDPost *)post;
 - (IBAction)userButtonPressed:(UIButton *)sender;

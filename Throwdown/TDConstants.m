@@ -7,6 +7,7 @@
 //
 
 #import "TDConstants.h"
+#import "AVFoundation/AVFoundation.h"
 
 //#define CDN_BASE_URL @"http://tdstore2.throwdown.us"
 
@@ -91,6 +92,10 @@
     return [UIColor colorWithRed:(162.0/255.0) green:(162.0/255.0) blue:(162.0/255.0) alpha:1.0];  // a2a2a2
 }
 
++ (UIColor *)activityUnseenColor {
+    return [UIColor colorWithRed:(255.0/255.0) green:(238.0/255.0) blue:(224.0/255.0) alpha:1.0];   // #fff5ed
+}
+
 #pragma mark - Fonts
 
 + (UIFont *)fontLightSized:(NSUInteger)size {
@@ -107,6 +112,37 @@
 
 + (UIFont *)fontBoldSized:(NSUInteger)size {
     return [UIFont fontWithName:@"ProximaNova-Bold" size:size];
+}
+
+#pragma mark - Video Settings
+
++ (NSDictionary *)defaultVideoCompressionSettings {
+    int videoSize = 640;
+    NSMutableDictionary *settings = [[NSMutableDictionary alloc] init];
+    [settings setObject:AVVideoCodecH264 forKey:AVVideoCodecKey];
+    [settings setObject:[NSNumber numberWithInt:videoSize] forKey:AVVideoWidthKey];
+    [settings setObject:[NSNumber numberWithInt:videoSize] forKey:AVVideoHeightKey];
+
+    NSDictionary *videoCleanApertureSettings = [NSDictionary dictionaryWithObjectsAndKeys:
+                                                [NSNumber numberWithInt:videoSize], AVVideoCleanApertureWidthKey,
+                                                [NSNumber numberWithInt:videoSize], AVVideoCleanApertureHeightKey,
+                                                [NSNumber numberWithInt:0], AVVideoCleanApertureHorizontalOffsetKey,
+                                                [NSNumber numberWithInt:0], AVVideoCleanApertureVerticalOffsetKey,
+                                                nil];
+
+    NSDictionary *videoAspectRatioSettings = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              [NSNumber numberWithInt:3], AVVideoPixelAspectRatioHorizontalSpacingKey,
+                                              [NSNumber numberWithInt:3], AVVideoPixelAspectRatioVerticalSpacingKey,
+                                              nil];
+
+    NSMutableDictionary * compressionProperties = [[NSMutableDictionary alloc] init];
+    [compressionProperties setObject:videoCleanApertureSettings forKey:AVVideoCleanApertureKey];
+    [compressionProperties setObject:videoAspectRatioSettings forKey:AVVideoPixelAspectRatioKey];
+    [compressionProperties setObject:[NSNumber numberWithInt: 1200000] forKey:AVVideoAverageBitRateKey];
+    [compressionProperties setObject:[NSNumber numberWithInt: 90] forKey:AVVideoMaxKeyFrameIntervalKey];
+    [compressionProperties setObject:AVVideoProfileLevelH264Baseline31 forKey:AVVideoProfileLevelKey];
+    [settings setObject:compressionProperties forKey:AVVideoCompressionPropertiesKey];
+    return settings;
 }
 
 @end

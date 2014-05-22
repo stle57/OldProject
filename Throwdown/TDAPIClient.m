@@ -118,6 +118,30 @@
     }];
 }
 
+- (void)resetPassword:(NSString *)requestString callback:(void (^)(BOOL success, NSDictionary *user))callback
+{
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/users/password.json"];
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+
+    [self.httpManager POST:url parameters:@{@"user": @{ @"email": requestString}} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *response = (NSDictionary *)responseObject;
+            NSNumber *success = [response objectForKey:@"success"];
+            if (success && [success boolValue]) {
+                callback([success boolValue], response);
+            } else {
+                callback(NO, response);
+            }
+        } else {
+            debug NSLog(@"ERROR in reset password response, got: %@", [responseObject class]);
+            callback(NO, nil);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"ERROR in reset password call: %@", [error localizedDescription]);
+        callback(NO, nil);
+    }];
+}
+
 -(void)editUserWithName:(NSString *)name email:(NSString *)email username:(NSString *)username phone:(NSString *)phone bio:(NSString *)bio picture:(NSString *)pictureFileName callback:(void (^)(BOOL success, NSDictionary *user))callback
 {
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/users/%@.json", [TDCurrentUser sharedInstance].userId]];
@@ -150,6 +174,79 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"ERROR in edit user call: %@", [error localizedDescription]);
         callback(NO, error.userInfo);
+    }];
+}
+
+-(void)changePasswordFrom:(NSString *)oldPassword newPassword:(NSString *)newPassword confirmPassword:(NSString *)confirmPassword callback:(void (^)(BOOL success, NSDictionary *user))callback
+{
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/change_password.json"]];
+
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+
+    // Avoid any nils in the dictionary
+    NSNull *null = [NSNull null];
+    NSDictionary *params = @{@"user": @{ @"current_password": (oldPassword ? oldPassword : null),
+                                         @"password": (newPassword ? newPassword : null),
+                                         @"password_confirmation": (confirmPassword ? confirmPassword : null)
+                                         }, @"user_token": [TDCurrentUser sharedInstance].authToken};
+    [self.httpManager PUT:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *response = (NSDictionary *)responseObject;
+
+            NSNumber *success = [response objectForKey:@"success"];
+            if (success && [success boolValue]) {
+                callback([success boolValue], [response objectForKey:@"user"]);
+            } else {
+                callback(NO, [response objectForKey:@"errors"]);
+            }
+        } else {
+            debug NSLog(@"ERROR in change password response, got: %@", [responseObject class]);
+            callback(NO, nil);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"ERROR in edit user call: %@", [error localizedDescription]);
+        callback(NO, error.userInfo);
+    }];
+}
+
+- (void)getPushNotificationSettingsForUserToken:(NSString *)userToken success:(void (^)(NSDictionary *pushNotifications))success failure:(void (^)(void))failure {
+    NSString *url = [NSString stringWithFormat:@"%@/api/v1/push_notification_settings.json?user_token=%@", [TDConstants getBaseURL], userToken];
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [self.httpManager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if (success) {
+            success([responseObject objectForKey:@"settings"]);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        if (failure) {
+            failure();
+        }
+    }];
+}
+
+-(void)sendPushNotificationSettings:(NSDictionary *)pushSettings callback:(void (^)(BOOL success))callback
+{
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/push_notification_settings.json"]];
+
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+
+    NSDictionary *params = @{@"settings": pushSettings, @"user_token": [TDCurrentUser sharedInstance].authToken};
+    [self.httpManager PUT:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *response = (NSDictionary *)responseObject;
+
+            NSNumber *success = [response objectForKey:@"success"];
+            if (success && [success boolValue]) {
+                callback([success boolValue]);
+            } else {
+                callback(NO);
+            }
+        } else {
+            debug NSLog(@"ERROR in edit user push settings, got: %@", responseObject);
+            callback(NO);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"ERROR in edit user push settings: %@", [error localizedDescription]);
+        callback(NO);
     }];
 }
 

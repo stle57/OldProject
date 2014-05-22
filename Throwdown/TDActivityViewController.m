@@ -123,7 +123,7 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
     TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
     vc.postId = postId;
     [self.navigationController pushViewController:vc animated:YES];
-    [self updateActivityAsClicked:indexPath.row];
+    [self updateActivityAsClicked:indexPath];
 }
 
 #pragma mark - TDActivitiesCellDelegate
@@ -137,12 +137,14 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
     vc.fromProfileType = kFromProfileScreenType_OtherUser;
 
     [self.navigationController pushViewController:vc animated:YES];
-    [self updateActivityAsClicked:row];
+    [self updateActivityAsClicked:[NSIndexPath indexPathForRow:row inSection:0]];
 }
 
-- (void)updateActivityAsClicked:(NSInteger)row {
-    if ([[self.activities objectAtIndex:row] objectForKey:@"id"]) {
-        [[TDAPIClient sharedInstance] updateActivity:[[self.activities objectAtIndex:row] objectForKey:@"id"] seen:NO clicked:YES];
+- (void)updateActivityAsClicked:(NSIndexPath *)indexPath {
+    if ([[self.activities objectAtIndex:indexPath.row] objectForKey:@"id"]) {
+        [[TDAPIClient sharedInstance] updateActivity:[[self.activities objectAtIndex:indexPath.row] objectForKey:@"id"] seen:NO clicked:YES];
+        TDActivitiesCell *cell = (TDActivitiesCell *)[self.tableView cellForRowAtIndexPath:indexPath];
+        cell.contentView.backgroundColor = [UIColor whiteColor];
     }
 }
 

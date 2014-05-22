@@ -12,6 +12,7 @@
 #import "RSClient.h"
 #import "TDProgressIndicator.h"
 #import "TDFileSystemHelper.h"
+#include <math.h>
 
 typedef enum {
     UploadTypeVideo,
@@ -22,17 +23,21 @@ typedef enum {
     UploadNotStarted,
     UploadStarted,
     UploadFailed,
-    UploadCompleted
+    UploadCompleted,
+    UploadNotReceivedFile
 } UploadStatus;
 
 
 @interface TDPostUpload ()
 
 @property (nonatomic) NSString *filename;
+@property (nonatomic) NSString *photoPath;
+@property (nonatomic) NSString *videoPath;
 @property (nonatomic) NSString *comment;
 @property (nonatomic) NSString *finalVideoName;
 @property (nonatomic) NSString *finalPhotoName;
 @property (nonatomic) BOOL hasReceivedComment;
+@property (nonatomic) BOOL videoUpload;
 @property (nonatomic) float videoProgress;
 @property (nonatomic) float photoProgress;
 @property (nonatomic) UploadStatus videoStatus;
@@ -42,51 +47,88 @@ typedef enum {
 @property (nonatomic) unsigned long long photoFileSize;
 @property (nonatomic) RSClient *client;
 @property (nonatomic) RSContainer *container;
-@property (strong, nonatomic) id<TDUploadProgressDelegate> delegate;
 
 @end
 
 @implementation TDPostUpload
 
-- (id)initWithVideoPath:(NSString *)videoPath thumbnailPath:(NSString *)thumbnailPath newName:(NSString *)filename {
+- (instancetype)initWithVideoThumbnail:(NSString *)photoPath newName:(NSString *)filename {
     self = [super init];
     if (self) {
         self.filename = filename;
-        self.hasReceivedComment = NO;
-
-        self.postStatus = UploadNotStarted;
-
-        self.client = [[RSClient alloc] initWithProvider:RSProviderTypeRackspaceUS username:RSUsername apiKey:RSApiKey];
-
-        self.finalVideoName = [self.filename stringByAppendingString:FTVideo];
-        self.persistedVideoPath = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/%@", self.finalVideoName];
-        self.videoProgress = 0.0;
-        self.videoStatus = UploadNotStarted;
-
-        self.finalPhotoName = [self.filename stringByAppendingString:FTImage];
-        self.persistedPhotoPath = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/%@", self.finalPhotoName];
-        self.photoProgress = 0.0;
-        self.photoStatus = UploadNotStarted;
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(uploadCommentsReceived:)
-                                                     name:TDNotificationUploadComments
-                                                   object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(cancelUpload:)
-                                                     name:TDNotificationUploadCancelled
-                                                   object:nil];
-
-        // Copy photo syncroniously b/c we use it for thumbnails
-        [self copyTempFile:thumbnailPath to:self.persistedPhotoPath];
-
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [self copyTempFile:videoPath to:self.persistedVideoPath];
-            self.videoFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:self.persistedVideoPath error:nil][NSFileSize] unsignedLongLongValue];
-            self.photoFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:self.persistedPhotoPath error:nil][NSFileSize] unsignedLongLongValue];
-        });
+        self.photoPath = photoPath;
+        self.videoUpload = YES;
+        self.videoStatus = UploadNotReceivedFile;
+        [self setupUpload];
     }
     return self;
+}
+
+- (instancetype)initWithPhotoPath:(NSString *)photoPath newName:(NSString *)filename {
+    self = [super init];
+    if (self) {
+        self.filename = filename;
+        self.photoPath = photoPath;
+        self.videoUpload = NO;
+        [self setupUpload];
+        [self startUploads];
+    }
+    return self;
+}
+
+- (instancetype)initWithVideoPath:(NSString *)videoPath thumbnailPath:(NSString *)thumbnailPath newName:(NSString *)filename {
+    self = [super init];
+    if (self) {
+        self.filename = filename;
+        self.photoPath = thumbnailPath;
+        [self setupUpload];
+
+        self.videoUpload = YES;
+        [self attachVideo:videoPath];
+    }
+    return self;
+}
+
+- (void)attachVideo:(NSString *)videoPath {
+    self.videoPath = videoPath;
+    self.finalVideoName = [self.filename stringByAppendingString:FTVideo];
+    self.persistedVideoPath = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/%@", self.finalVideoName];
+    self.videoProgress = 0.0;
+    self.videoStatus = UploadNotStarted;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self copyTempFile:self.videoPath to:self.persistedVideoPath];
+        self.videoFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:self.persistedVideoPath error:nil][NSFileSize] unsignedLongLongValue];
+        debug NSLog(@"Video File Size %ld", (long)self.videoFileSize);
+    });
+
+    [self startUploads];
+}
+
+- (void)setupUpload {
+    self.hasReceivedComment = NO;
+    self.postStatus = UploadNotStarted;
+
+    self.client = [[RSClient alloc] initWithProvider:RSProviderTypeRackspaceUS username:RSUsername apiKey:RSApiKey];
+
+    self.finalPhotoName = [self.filename stringByAppendingString:FTImage];
+    self.persistedPhotoPath = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/%@", self.finalPhotoName];
+    self.photoProgress = 0.0;
+    self.photoStatus = UploadNotStarted;
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(uploadCommentsReceived:)
+                                                 name:TDNotificationUploadComments
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(cancelUpload:)
+                                                 name:TDNotificationUploadCancelled
+                                               object:nil];
+
+    // Copy photo in main thread b/c we use it for thumbnails
+    [self copyTempFile:self.photoPath to:self.persistedPhotoPath];
+
+    self.photoFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:self.persistedPhotoPath error:nil][NSFileSize] unsignedLongLongValue];
+    debug NSLog(@"Photo File Size %ld", (long)self.photoFileSize);
 }
 
 - (void)dealloc {
@@ -125,12 +167,22 @@ typedef enum {
 # pragma mark - progress updates, delegates
 
 - (CGFloat)totalProgress {
+    CGFloat progress;
+    if (self.videoUpload) {
+        progress = (CGFloat)(self.videoFileSize * self.videoProgress + self.photoFileSize * self.photoProgress) / (self.videoFileSize + self.photoFileSize);
+    } else {
+        progress = (CGFloat)(self.photoFileSize * self.photoProgress) / self.photoFileSize;
+    }
     // - 0.05 is for the application server post to register the post
-    CGFloat progress =  (CGFloat)(self.videoFileSize * self.videoProgress + self.photoFileSize * self.photoProgress) / (self.videoFileSize + self.photoFileSize);
     if (progress > 0.0 && progress < 0.05) {
         progress = 0;
     } else {
         progress -= 0.05;
+    }
+
+    // Random occurance of progress being NaN found (not sure why)
+    if (isnan(progress)) {
+        progress = 0;
     }
     return progress;
 }
@@ -143,31 +195,21 @@ typedef enum {
     }
 
     CGFloat totalProgress = [self totalProgress];
-    NSLog(@"Total progress for %@: %f", self.filename, totalProgress);
+    debug NSLog(@"Total progress for %@: %f", self.filename, totalProgress);
     if ([self.delegate respondsToSelector:@selector(uploadDidUpdate:)]) {
         [self.delegate uploadDidUpdate:totalProgress];
     }
 }
 
-- (void)setDelegate:(id<TDUploadProgressDelegate>)delegate {
-    _delegate = delegate;
-    // TODO: This is hacky.
-    // It won't start uploading until we have a delegate
-    // b/c we assign the delegate async through NSNotification
-    if (delegate != nil) {
-        [self startUploads];
-    }
-}
-
 - (void)finalizeUpload {
     if (self.hasReceivedComment &&
+        self.postStatus  != UploadCompleted &&
         self.photoStatus == UploadCompleted &&
-        self.videoStatus == UploadCompleted &&
-        self.postStatus  != UploadCompleted) {
+        (!self.videoUpload || self.videoStatus == UploadCompleted)) {
 
         debug NSLog(@"FINALIZING %@", self.filename);
         self.postStatus = UploadStarted;
-        [[TDPostAPI sharedInstance] addPost:self.filename comment:self.comment success:^{
+        [[TDPostAPI sharedInstance] addPost:self.filename comment:self.comment kind:(self.videoUpload ? @"video" : @"photo") success:^{
             self.postStatus = UploadCompleted;
             [self uploadComplete];
         } failure:^{
@@ -182,7 +224,9 @@ typedef enum {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [TDFileSystemHelper saveImage:[UIImage imageWithContentsOfFile:self.persistedPhotoPath] filename:self.finalPhotoName];
         [TDFileSystemHelper removeFileAt:self.persistedPhotoPath];
-        [TDFileSystemHelper removeFileAt:self.persistedVideoPath];
+        if (self.videoUpload) {
+            [TDFileSystemHelper removeFileAt:self.persistedVideoPath];
+        }
     });
 }
 
@@ -208,7 +252,7 @@ typedef enum {
 }
 
 - (void)startUploads {
-    if (self.photoStatus == UploadCompleted && self.videoStatus == UploadCompleted) {
+    if (self.photoStatus == UploadCompleted && (!self.videoUpload || self.videoStatus == UploadCompleted)) {
         [self finalizeUpload];
     } else {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -216,7 +260,7 @@ typedef enum {
                 [self.client getContainers:^(NSArray *containers, NSError *jsonError) {
                     self.container = [containers objectAtIndex:0];
 
-                    if (self.videoStatus == UploadNotStarted || self.videoStatus == UploadFailed) {
+                    if (self.videoUpload && (self.videoStatus == UploadNotStarted || self.videoStatus == UploadFailed)) {
                         [self uploadFile:UploadTypeVideo location:self.persistedVideoPath storageName:self.finalVideoName];
                     }
 

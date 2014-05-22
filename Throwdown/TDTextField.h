@@ -13,7 +13,8 @@ enum {
     kTDTextFieldType_Email,
     kTDTextFieldType_FirstLast,
     kTDTextFieldType_UserName,
-    kTDTextFieldType_Password
+    kTDTextFieldType_Password,
+    kTDTextFieldType_UsernameOrPhoneNumber
 };
 typedef NSUInteger kTDTextFieldType;
 

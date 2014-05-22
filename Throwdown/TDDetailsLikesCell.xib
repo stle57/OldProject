@@ -31,7 +31,7 @@
                         </connections>
                     </button>
                     <label opaque="NO" clipsSubviews="YES" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="PsW-21-ZKk" customClass="TTTAttributedLabel">
-                        <rect key="frame" x="30" y="4" width="217" height="18"/>
+                        <rect key="frame" x="30" y="0.0" width="217" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="highlightedColor"/>

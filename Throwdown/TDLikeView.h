@@ -37,9 +37,9 @@
 
 - (IBAction)likeButtonPressed:(UIButton *)sender;
 - (IBAction)commentButtonPressed:(UIButton *)sender;
--(void)setLike:(BOOL)liked;
--(void)setComment:(BOOL)commented;
--(void)setLikesArray:(NSArray *)array totalLikersCount:(NSInteger)totalLikersCount;
--(void)setCommentsArray:(NSArray *)array;
+- (void)setLike:(BOOL)liked;
+- (void)setComment:(BOOL)commented;
+- (void)setLikesArray:(NSArray *)array totalLikersCount:(NSInteger)totalLikersCount;
+- (void)setCommentsArray:(NSArray *)array;
 
 @end

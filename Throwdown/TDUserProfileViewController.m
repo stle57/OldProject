@@ -41,7 +41,7 @@
 
     // Title
     self.titleLabel.textColor = [TDConstants headerTextColor];
-    self.titleLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:20.0];
+    self.titleLabel.font = [TDConstants fontSemiBoldSized:20.0];
     [self.navigationItem setTitleView:self.titleLabel];
 
     // Bar Button Items
@@ -132,6 +132,9 @@
     [[TDPostAPI sharedInstance] fetchPostsUpstreamForUser:self.userId success:^(NSDictionary *response) {
         [self handlePostsResponse:response fromStart:YES];
         [self endRefreshControl];
+    } error:^{
+        [self endRefreshControl];
+        [[TDAppDelegate appDelegate] showToastWithText:@"Can't connect to server" type:kToastIconType_Warning payload:@{} delegate:nil];
     }];
 }
 
@@ -156,6 +159,9 @@
 
 - (void)handlePostsResponse:(NSDictionary *)response fromStart:(BOOL)start {
     debug NSLog(@"%@", response);
+    [self endRefreshControl];
+
+    self.loaded = YES;
 
     if (start) {
         self.userPosts = nil;

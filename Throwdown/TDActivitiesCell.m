@@ -78,6 +78,15 @@ static NSUInteger const kMaxCommentLength = 50;
     NSRange range = [timeRegex rangeOfFirstMatchInString:text options:0 range:NSMakeRange(0, [text length])];
     [mutableAttributedString addAttributes:timeAttributes range:range];
     self.activityLabel.attributedText = mutableAttributedString;
+
+    // Background
+    if ([activity objectForKey:@"unseen"]) {
+        if ([[activity objectForKey:@"unseen"] boolValue]) {
+            self.contentView.backgroundColor = [TDConstants activityUnseenColor];
+        } else {
+            self.contentView.backgroundColor = [UIColor whiteColor];
+        }
+    }
 }
 
 #pragma mark - TTTAttributedLabelDelegate

@@ -10,9 +10,6 @@
 #import "TDTextField.h"
 
 @interface TDLoginViewController : UIViewController <TDTextFieldDelegate, UITextFieldDelegate>
-{
-
-}
 
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImageView;
 @property (weak, nonatomic) IBOutlet UILabel *topLabel;

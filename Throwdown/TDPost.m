@@ -9,6 +9,9 @@
 #import "TDPost.h"
 #import "TDViewControllerHelper.h"
 
+static NSString *const kKindVideo = @"video";
+static NSString *const kKindPhoto = @"photo";
+
 @implementation TDPost
 
 /*
@@ -18,6 +21,7 @@
  );
  "created_at" = "2014-02-26T05:15:41.000Z";
  filename = "6_1393391740.356891";
+ kind = "video|image"
  id = 17;
  "like_count" = 0;
  liked = 0;
@@ -35,20 +39,17 @@
 
 - (id)initWithDictionary:(NSDictionary *)dict {
     self = [super init];
-    if (self)
-    {
+    if (self) {
         [self loadUpFromDict:dict];
     }
     return self;
 }
 
-- (NSString *)description
-{
+- (NSString *)description {
     return [NSString stringWithFormat:@"Post id:%@\nUser:%@\ncomments:%@\nlikers:%@\nLiked:%d", self.postId, self.user, self.comments, self.likers, self.liked];
 }
 
--(void)loadUpFromDict:(NSDictionary *)dict
-{
+- (void)loadUpFromDict:(NSDictionary *)dict {
     _postId   = [dict objectForKey:@"id"];
     _user = [[TDUser alloc] initWithDictionary:[dict objectForKey:@"user"]];
     _filename = [dict objectForKey:@"filename"];
@@ -57,6 +58,13 @@
     _likers = [dict objectForKey:@"likers"];
     _commentsTotalCount = [dict objectForKey:@"comment_count"];
     _likersTotalCount = [dict objectForKey:@"like_count"];
+
+    NSString *kind = [dict objectForKey:@"kind"];
+    if ([kind isEqualToString:kKindPhoto]) {
+        _kind = TDPostKindPhoto;
+    } else if ([kind isEqualToString:kKindVideo]) {
+        _kind = TDPostKindVideo;
+    }
 
     TDComment *comment = nil;
     NSMutableArray *commentsArray = [NSMutableArray arrayWithCapacity:0];
@@ -69,13 +77,7 @@
     _comments = commentsArray;
 }
 
-- (NSDictionary *)jsonRepresentation
-{
-    return @{ @"filename": self.filename };
-}
-
--(void)addLikerUser:(TDUser *)likerUser
-{
+- (void)addLikerUser:(TDUser *)likerUser {
     NSMutableDictionary *likerDict = [NSMutableDictionary dictionaryWithCapacity:0];
     [likerDict setObject:likerUser.userId forKey:@"id"];
     [likerDict setObject:likerUser.username forKey:@"username"];
@@ -92,8 +94,7 @@
     _liked = YES;
 }
 
--(void)removeLikerUser:(TDUser *)likerUser
-{
+- (void)removeLikerUser:(TDUser *)likerUser {
     for (NSDictionary *likerDict in [NSArray arrayWithArray:self.likers]) {
         if ([[likerDict objectForKey:@"id"] isEqualToNumber:likerUser.userId]) {
             // Remove it
@@ -109,16 +110,14 @@
     _liked = NO;
 }
 
--(void)addComment:(TDComment *)newComment
-{
+- (void)addComment:(TDComment *)newComment {
     NSMutableArray *newArray = [NSMutableArray arrayWithArray:self.comments];
     [newArray addObject:newComment];
     _comments = newArray;
     _commentsTotalCount = [NSNumber numberWithInt:[_commentsTotalCount intValue] + 1];
 }
 
--(void)orderCommentsForHomeScreen
-{
+- (void)orderCommentsForHomeScreen {
     NSMutableArray *sortingArray = [self.comments mutableCopy];
 
     // Sort by dates - newest on bottom
@@ -133,8 +132,7 @@
     _comments = [NSArray arrayWithArray:sortingArray];
 }
 
--(void)orderCommentsForDetailsScreen
-{
+- (void)orderCommentsForDetailsScreen {
     NSMutableArray *sortingArray = [self.comments mutableCopy];
 
     // Sort by dates - newest on bottom
@@ -144,8 +142,7 @@
     _comments = [NSArray arrayWithArray:sortingArray];
 }
 
-- (BOOL)isEqual:(id)other
-{
+- (BOOL)isEqual:(id)other {
     if (other == self) {
         return YES;
     } else if (![super isEqual:other]) {
@@ -156,32 +153,26 @@
     }
 }
 
--(void)replaceUser:(TDUser *)newUser
-{
+- (void)replaceUser:(TDUser *)newUser {
     _user = newUser;
 }
 
--(void)replaceLikers:(NSArray *)newLikers
-{
+- (void)replaceLikers:(NSArray *)newLikers {
     _likers = newLikers;
 }
 
--(void)replaceComments:(NSArray *)newComments
-{
+- (void)replaceComments:(NSArray *)newComments {
     _comments = newComments;
 }
 
--(void)replaceUserAndLikesAndCommentsWithUser:(TDUser *)newUser
-{
+- (void)replaceUserAndLikesAndCommentsWithUser:(TDUser *)newUser {
     // User
     [self replaceUser:newUser];
 
     // Likers
     NSMutableArray *newLikers = [NSMutableArray arrayWithArray:self.likers];
-    for (NSDictionary *liker in [NSArray arrayWithArray:self.likers])
-    {
-        if ([liker objectForKey:@"id"] && [[liker objectForKey:@"id"] isEqualToNumber:newUser.userId])
-        {
+    for (NSDictionary *liker in [NSArray arrayWithArray:self.likers]) {
+        if ([liker objectForKey:@"id"] && [[liker objectForKey:@"id"] isEqualToNumber:newUser.userId]) {
             NSMutableDictionary *newLiker = [NSMutableDictionary dictionaryWithDictionary:liker];
             if (newUser.bio) {
                 [newLiker setObject:newUser.bio forKey:@"bio"];
@@ -211,10 +202,8 @@
     newLikers = nil;
 
     // Comments
-    for (TDComment *comment in [NSArray arrayWithArray:self.comments])
-    {
-        if ([comment.user.userId isEqualToNumber:newUser.userId])
-        {
+    for (TDComment *comment in [NSArray arrayWithArray:self.comments]) {
+        if ([comment.user.userId isEqualToNumber:newUser.userId]) {
             // User
             [comment replaceUser:newUser];
         }
