@@ -874,16 +874,15 @@
                                 </connections>
                             </button>
                             <button opaque="NO" tag="3" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="arb-7G-Tmh">
-                                <rect key="frame" x="18" y="226" width="285" height="42"/>
+                                <rect key="frame" x="18" y="229" width="285" height="29"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <state key="normal" image="reg_resetpass">
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <state key="normal" title="Forgot your password?">
                                     <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </state>
-                                <state key="disabled" image="reg_resetpass_disabled"/>
-                                <state key="selected" image="reg_resetpass_hit"/>
-                                <state key="highlighted" image="reg_resetpass_hit"/>
+                                <state key="selected" title="Forgot your password?"/>
                                 <connections>
                                     <segue destination="3b8-WK-IkA" kind="push" id="d1c-r2-svv"/>
                                 </connections>

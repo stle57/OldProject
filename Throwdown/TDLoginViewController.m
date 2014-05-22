@@ -9,6 +9,7 @@
 #import "TDLoginViewController.h"
 #import "TDViewControllerHelper.h"
 #import "TDUserAPI.h"
+#import "TDConstants.h"
 
 @interface TDLoginViewController () <UITextFieldDelegate>
 
@@ -20,16 +21,15 @@
 
 - (IBAction)backButtonPressed:(UIButton *)sender;
 - (IBAction)loginButtonPressed:(id)sender;
-- (IBAction)resetPasswordButtonPressed:(id)sender;
 @end
 
 @implementation TDLoginViewController
 
--(void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.topLabel.font = [UIFont fontWithName:@"ProximaNova-Light" size:20.0];
+    self.resetPasswordButton.titleLabel.font = [TDConstants fontRegularSized:16];
+    self.topLabel.font = [TDConstants fontLightSized:20];
 
     // Textfields
     [self.userNameTextField setUpWithIconImageNamed:@"reg_ico_email"
