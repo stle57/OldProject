@@ -435,6 +435,13 @@ static const NSString *ItemStatusContext;
                 AVAssetTrack* videoTrack = [[self.currentVideoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
                 CGSize videoSize = videoTrack.naturalSize;
 
+                // Initially trim the video if it's longer than 30s
+                if (CMTimeGetSeconds(videoTrack.timeRange.duration) > 30.0) {
+                    self.startTime = self.slider.leftPosition;
+                    self.stopTime = self.slider.rightPosition;
+                    [self trimVideo];
+                }
+
                 self.videoContainerView = [[UIView alloc] initWithFrame:[self previewRect]];
 
                 CGFloat scale = self.videoContainerView.frame.size.width / MIN(videoSize.width, videoSize.height);
