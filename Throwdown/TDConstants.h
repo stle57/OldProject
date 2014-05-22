@@ -50,6 +50,7 @@ static NSString *const kRecordedTrimmedMovieFilePath = @"Documents/current_recor
 
 // Recording settings
 static int const kMaxRecordingSeconds = 30;
+static double const kMinFileSpaceForRecording = 50 * 1024^2; // 50mb
 
 // NSNotification types
 static NSString *const TDPostUploadStarted = @"TDPostUploadStarted";

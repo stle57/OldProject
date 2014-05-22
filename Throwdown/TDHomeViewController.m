@@ -20,6 +20,8 @@
 #import "TDActivityCell.h"
 #import "TDUserProfileViewController.h"
 #import "TDNavigationController.h"
+#import "TDFileSystemHelper.h"
+#import "UIAlertView+TDBlockAlert.h"
 #import <QuartzCore/QuartzCore.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
@@ -192,6 +194,16 @@
 }
 
 #pragma mark - segues
+
+- (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
+    if ([@"VideoButtonSegue" isEqualToString:identifier] && [TDFileSystemHelper getFreeDiskspace] < kMinFileSpaceForRecording) {
+        NSLog(@"Warning, low disk space: %lld", [TDFileSystemHelper getFreeDiskspace]);
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Storage Space Low" message:@"There is not enough available storage to record or upload content. Clear some space to continue." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert showWithCompletionBlock:nil];
+        return NO;
+    }
+    return YES;
+}
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
