@@ -30,7 +30,7 @@ static NSString *const kUserIdAttribute = @"user_id";
     self.likersNamesLabel.textColor = [UIColor darkGrayColor];
     self.likersNamesLabel.font = USERNAME_FONT;
     self.likersNamesLabel.delegate = self;
-    self.likersNamesLabel.lineHeightMultiple = 1 - TDTextLineHeight;
+    self.likersNamesLabel.verticalAlignment = TTTAttributedLabelVerticalAlignmentTop;
 }
 
 - (void)dealloc {
@@ -97,14 +97,16 @@ static NSString *const kUserIdAttribute = @"user_id";
     // Add likers label
     NSString *text = [[self.likers valueForKeyPath:@"username"] componentsJoinedByString:@", "];
     [TDViewControllerHelper linkUsernamesInLabel:self.likersNamesLabel text:text users:self.likers pattern:@"(\\b\\w+\\b)" fontSize:16];
+    self.likersNamesLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:self.likersNamesLabel.attributedText];
     [TDAppDelegate fixHeightOfThisLabel:self.likersNamesLabel];
 }
 
 + (NSInteger)heightOfLikersLabel:(NSArray *)likers {
     NSString *text = [[likers valueForKeyPath:@"username"] componentsJoinedByString:@", "];
-    return [TDAppDelegate heightOfTextForString:text
-                                 andFont:[TDConstants fontSemiBoldSized:16.0]
-                                 maxSize:CGSizeMake(217.0, MAXFLOAT)];
+    NSInteger height = [TDAppDelegate heightOfTextForString:text
+                                                    andFont:USERNAME_FONT
+                                                    maxSize:CGSizeMake(215.0, MAXFLOAT)];
+    return height;
 }
 
 #pragma mark - TTTAttributedLabelDelegate

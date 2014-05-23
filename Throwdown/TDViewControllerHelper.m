@@ -85,7 +85,16 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     return NO;
 }
 
-+ (NSAttributedString *)makeParagraphedText:(NSString *)text {
++ (NSAttributedString *)makeParagraphedTextWithAttributedString:(NSAttributedString *)attributedString {
+    NSMutableAttributedString *mutableAttributedString = [attributedString mutableCopy];
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    // 1 seems to work better than TDTextLineHeight on TTTAttributedLabels might have to change this if used for regular label
+    [paragraphStyle setLineHeightMultiple:1];
+    [mutableAttributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [attributedString length])];
+    return mutableAttributedString;
+}
+
++ (NSAttributedString *)makeParagraphedTextWithString:(NSString *)text {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:text];
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     [paragraphStyle setLineHeightMultiple:TDTextLineHeight];

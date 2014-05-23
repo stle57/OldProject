@@ -43,7 +43,7 @@
     messagesFrame.size.width = COMMENT_MESSAGE_WIDTH;
     self.messageLabel.frame = messagesFrame;
     self.messageLabel.font = COMMENT_MESSAGE_FONT;
-    self.messageLabel.attributedText = [TDViewControllerHelper makeParagraphedText:text];
+    self.messageLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithString:text];
 
     [TDAppDelegate fixHeightOfThisLabel:self.messageLabel];
 }

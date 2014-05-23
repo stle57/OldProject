@@ -309,7 +309,8 @@
             return minLikeheight;    // at least one row to show 'like' button
         } else {
             NSUInteger textHeight = [TDDetailsLikesCell heightOfLikersLabel:self.post.likers];
-            return (textHeight < minLikeheight ? minLikeheight : textHeight + 7.0); // 7 = label's margin from top
+            textHeight = (textHeight < minLikeheight ? minLikeheight : textHeight);
+            return textHeight;
         }
     }
 

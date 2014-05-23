@@ -30,10 +30,10 @@
                             <action selector="likeButtonPressed:" destination="wCZ-UE-T81" eventType="touchUpInside" id="0x4-PF-EbB"/>
                         </connections>
                     </button>
-                    <label opaque="NO" clipsSubviews="YES" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="PsW-21-ZKk" customClass="TTTAttributedLabel">
-                        <rect key="frame" x="30" y="0.0" width="217" height="18"/>
+                    <label opaque="NO" clipsSubviews="YES" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="PsW-21-ZKk" customClass="TTTAttributedLabel">
+                        <rect key="frame" x="30" y="4" width="215" height="18"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <attributedString key="attributedText"/>
                         <nil key="highlightedColor"/>
                     </label>
                 </subviews>

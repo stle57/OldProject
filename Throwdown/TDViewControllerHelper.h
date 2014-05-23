@@ -17,7 +17,8 @@
 + (BOOL)validateEmail:(NSString *)email;
 + (NSDate *)dateForRFC3339DateTimeString:(NSString *)rfc3339DateTimeString;
 + (BOOL)textAttributeTapped:(NSString *)attribute inTap:(UITapGestureRecognizer *)recognizer action:(void (^)(id value))actionBlock;
-+ (NSAttributedString *)makeParagraphedText:(NSString *)text;
++ (NSAttributedString *)makeParagraphedTextWithAttributedString:(NSAttributedString *)attributedString;
++ (NSAttributedString *)makeParagraphedTextWithString:(NSString *)text;
 + (void)linkUsernamesInLabel:(TTTAttributedLabel *)label text:(NSString *)text users:(NSArray *)users pattern:(NSString *)pattern fontSize:(NSUInteger)fontSize;
 
 @end

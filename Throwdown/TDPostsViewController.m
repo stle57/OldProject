@@ -369,7 +369,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
             cell.userImageView.hidden = NO;
 
             if (user.bio && ![user.bio isKindOfClass:[NSNull class]]) {
-                cell.bioLabel.attributedText = [TDViewControllerHelper makeParagraphedText:user.bio];
+                cell.bioLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithString:user.bio];
                 [TDAppDelegate fixHeightOfThisLabel:cell.bioLabel];
                 cell.bioLabel.hidden = NO;
             }
