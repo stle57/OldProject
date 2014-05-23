@@ -380,9 +380,7 @@ static const NSString *ItemStatusContext;
     [self.scrollView setShowsVerticalScrollIndicator:NO];
     [self.scrollView setMaximumZoomScale:2.0];
 
-    CGRect rect;
-    rect.size.width = self.previewImageView.image.size.width;
-    rect.size.height = self.previewImageView.image.size.height;
+    CGRect rect = CGRectMake(0, 0, self.previewImageView.image.size.width, self.previewImageView.image.size.height);
     CGFloat shorter = MIN(rect.size.width, rect.size.height);
 
     [self.previewImageView setFrame:rect];
@@ -446,6 +444,9 @@ static const NSString *ItemStatusContext;
 
                 CGFloat scale = self.videoContainerView.frame.size.width / MIN(videoSize.width, videoSize.height);
                 CGRect rect;
+                rect.origin.x = 0;
+                rect.origin.y = 0;
+
                 UIInterfaceOrientation orientation = [self orientationForTrack:videoTrack];
                 if (orientation == UIInterfaceOrientationPortrait || orientation == UIInterfaceOrientationPortraitUpsideDown) {
                     rect.size.width = videoSize.height * scale;
