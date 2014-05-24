@@ -32,8 +32,8 @@
     self.topLabel.font = [TDConstants fontLightSized:20];
 
     // Textfields
-    [self.userNameTextField setUpWithIconImageNamed:@"reg_ico_email"
-                                        placeHolder:@"Email Address"
+    [self.userNameTextField setUpWithIconImageNamed:@"reg_ico_name"
+                                        placeHolder:@"Username or Email"
                                        keyboardType:UIKeyboardTypeEmailAddress
                                                type:kTDTextFieldType_Email
                                            delegate:self];
@@ -93,7 +93,7 @@
         break;
     }
 
-    if ([TDViewControllerHelper validateEmail:self.userEmail] && [self.password length] > 5) {
+    if ([self.userEmail length] > 0 && [self.password length] > 5) {
         self.loginButton.enabled = YES;
     } else {
         self.loginButton.enabled = NO;
@@ -119,7 +119,7 @@
         break;
     }
 
-    if ([TDViewControllerHelper validateEmail:self.userEmail] && [self.password length] > 5) {
+    if ([self.userEmail length] > 0 && [self.password length] > 5) {
         self.loginButton.enabled = YES;
     } else {
         self.loginButton.enabled = NO;

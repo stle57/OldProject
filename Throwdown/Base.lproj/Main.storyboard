@@ -933,7 +933,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="reg_bg2_568" id="tFj-vN-754">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="reg_bg4_568" id="tFj-vN-754">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
@@ -1024,6 +1024,7 @@
         <image name="reg_bg1_568" width="320" height="568"/>
         <image name="reg_bg2_568" width="320" height="568"/>
         <image name="reg_bg3_568" width="320" height="568"/>
+        <image name="reg_bg4_568" width="320" height="568"/>
         <image name="reg_finish" width="285" height="42"/>
         <image name="reg_finish_disabled" width="285" height="42"/>
         <image name="reg_finish_hit" width="285" height="42"/>

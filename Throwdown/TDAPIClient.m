@@ -99,6 +99,7 @@
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/users/sign_in.json"];
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
 
+    // We're keeping email param name for backward compatibility
     [self.httpManager POST:url parameters:@{@"user": @{ @"email": email, @"password": password }} success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             NSDictionary *response = (NSDictionary *)responseObject;
