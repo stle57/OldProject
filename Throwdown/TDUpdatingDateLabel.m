@@ -77,9 +77,7 @@
 -(void)timeStampUpdate
 {
     self.frame = origFrame;
-
     self.text = [self.labelDate timeAgo];
-    [TDAppDelegate fixWidthOfThisLabel:self];
 
     if (self.textAlignment == NSTextAlignmentRight) {
         CGRect timeFrame = self.frame;
