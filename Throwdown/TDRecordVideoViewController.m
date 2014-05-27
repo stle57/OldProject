@@ -162,29 +162,33 @@
     });
 }
 
-- (void)showPreviewCover:(void(^)(void))completion {
+- (void)showPreviewCover {
     self.recordButton.enabled = NO;
-    self.coverView.alpha = 0.0;
-    self.coverView.hidden = NO;
     self.switchCamerabutton.enabled = NO;
-    [UIView animateWithDuration:0.1 delay:0.0 options:UIViewAnimationOptionCurveLinear animations:^{
+    self.flashButton.enabled = NO;
+
+    [UIView animateWithDuration:0.1 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionCurveLinear animations:^{
         self.coverView.alpha = 1.0;
-    } completion:^(BOOL finished) {
-        if (completion) {
-            completion();
-        }
-    }];
+    } completion:nil];
 }
 
 - (void)hidePreviewCover {
-    self.coverView.alpha = 1.0;
-    [UIView animateWithDuration:0.1 delay:0.0 options:UIViewAnimationOptionCurveLinear animations:^{
-        self.coverView.alpha = 0.0;
-    } completion:^(BOOL finished) {
-        self.coverView.hidden = YES;
-        self.recordButton.enabled = YES;
-        self.switchCamerabutton.enabled = YES;
-    }];
+    // skip animation if we opened the album picker really quickly
+    if (!self.albumPickerOpen) {
+        [UIView animateWithDuration:0.1 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState|UIViewAnimationOptionCurveLinear animations:^{
+            self.coverView.alpha = 0.0;
+        } completion:^(BOOL finished) {
+            if (finished) {
+                [self enableControls];
+            }
+        }];
+    }
+}
+
+- (void)enableControls {
+    self.recordButton.enabled = YES;
+    self.switchCamerabutton.enabled = YES;
+    self.flashButton.enabled = YES;
 }
 
 - (void)tapToFocus:(UITapGestureRecognizer *)sender {
@@ -238,7 +242,7 @@
 - (void)takePhoto {
     self.recordButton.enabled = NO;
     [self.stillCamera capturePhotoAsJPEGProcessedUpToFilter:self.filter withCompletionHandler:^(NSData *processedJPEG, NSError *error){
-        [self showPreviewCover:nil];
+        [self showPreviewCover];
         [self stopVideoCamera];
         NSString *filename = [NSHomeDirectory() stringByAppendingPathComponent:kPhotoFilePath];
         [processedJPEG writeToFile:filename atomically:YES];
@@ -325,7 +329,7 @@
 }
 
 - (void)stopRecording {
-    [self showPreviewCover:nil];
+    [self showPreviewCover];
     self.isRecording = NO;
     [self.recordButton setImage:[UIImage imageNamed:@"btn_video_on_inner_132x132"] forState:UIControlStateNormal];
     [self.recordButton setImage:[UIImage imageNamed:@"btn_video_on_inner_132x132_hit"] forState:UIControlStateHighlighted];
@@ -431,6 +435,7 @@
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
     [self dismissViewControllerAnimated:YES completion:NULL];
+    [self enableControls];
     if (self.photoMode) {
         [self startPhotoCamera];
     } else {
@@ -455,7 +460,7 @@
 }
 
 - (IBAction)albumButtonPressed:(id)sender {
-    [self showPreviewCover:nil];
+    [self showPreviewCover];
     if (self.photoMode) {
         [self stopPhotoCamera];
     } else {
@@ -556,16 +561,16 @@
     rotationAnimation.fillMode = kCAFillModeForwards;
     [self.modeIndicator.layer addAnimation:rotationAnimation forKey:kSpinningAnimation];
 
-    [self showPreviewCover:^{
-        if (photo) {
-            [self stopVideoCamera];
-            [self startPhotoCamera];
-        } else {
-            [self stopPhotoCamera];
-            [self startVideoCamera];
-        }
-        self.photoMode = !self.photoMode;
-    }];
+    [self showPreviewCover];
+
+    if (photo) {
+        [self stopVideoCamera];
+        [self startPhotoCamera];
+    } else {
+        [self stopPhotoCamera];
+        [self startVideoCamera];
+    }
+    self.photoMode = !self.photoMode;
 }
 
 - (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {
@@ -587,7 +592,7 @@
 # pragma mark - segues
 
 - (IBAction)cancelButtonPressed:(id)sender {
-    [self showPreviewCover:nil];
+    [self showPreviewCover];
     // This is to allow camera to stop properly before running animations
     // Especially lets the microphone usage warning go away in time.
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void){
