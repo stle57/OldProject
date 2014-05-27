@@ -10,6 +10,7 @@
 #import "TDViewControllerHelper.h"
 #import "TDUserAPI.h"
 #import "NBPhoneNumberUtil.h"
+#import "TDConstants.h"
 
 @interface TDResetPasswordViewController () <UITextFieldDelegate>
 
@@ -26,7 +27,8 @@
 {
     [super viewDidLoad];
 
-    self.topLabel.font = [UIFont fontWithName:@"ProximaNova-Light" size:20.0];
+    self.topLabel.textColor = [TDConstants headerTextColor];
+    self.topLabel.font = [TDConstants fontRegularSized:20];
 
     // Textfields
     [self.userNameTextField setUpWithIconImageNamed:@"reg_ico_email"

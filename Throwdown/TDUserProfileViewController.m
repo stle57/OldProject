@@ -41,7 +41,7 @@
 
     // Title
     self.titleLabel.textColor = [TDConstants headerTextColor];
-    self.titleLabel.font = [TDConstants fontSemiBoldSized:20.0];
+    self.titleLabel.font = [TDConstants fontRegularSized:20];
     [self.navigationItem setTitleView:self.titleLabel];
 
     // Bar Button Items

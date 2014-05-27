@@ -33,9 +33,9 @@
     statusBarFrame = [self.view convertRect: [UIApplication sharedApplication].statusBarFrame fromView: nil];
 
     // Title
-    self.titleLabel.textColor = [TDConstants headerTextColor];
     self.titleLabel.text = @"Push Notifications";
-    self.titleLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:20.0];
+    self.titleLabel.textColor = [TDConstants headerTextColor];
+    self.titleLabel.font = [TDConstants fontRegularSized:20];
     [self.navigationItem setTitleView:self.titleLabel];
 
     self.backButton = [TDViewControllerHelper navBackButton];

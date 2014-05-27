@@ -39,13 +39,13 @@
     statusBarFrame = [self.view convertRect: [UIApplication sharedApplication].statusBarFrame fromView: nil];
 
     // Title
+    self.titleLabel.text = @"Change Password";
     self.titleLabel.textColor = [TDConstants headerTextColor];
-    self.titleLabel.text = @"Edit Password";
-    self.titleLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:20.0];
+    self.titleLabel.font = [TDConstants fontRegularSized:20];
     [self.navigationItem setTitleView:self.titleLabel];
 
     // Buttons
-    self.doneButton.titleLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:18.0];
+    self.doneButton.titleLabel.font = [TDConstants fontSemiBoldSized:18];
 
     // register for keyboard notifications
     [[NSNotificationCenter defaultCenter] addObserver:self
