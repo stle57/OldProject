@@ -117,14 +117,11 @@
 #pragma mark - TableView Delegates
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     self.sectionHeaderLabel.text = @"Get Push Notification When Someone:";
-    self.sectionHeaderLabel.font = [UIFont fontWithName:TDFontProximaNovaRegular size:15.0];
+    self.sectionHeaderLabel.font = [TDConstants fontRegularSized:15.0];
     self.sectionHeaderLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
 
     if (!self.headerView) {
-        self.headerView = [[UIView alloc] initWithFrame:CGRectMake(0.0,
-                                                                   0.0,
-                                                                   self.view.frame.size.width,
-                                                                   40.0)];
+        self.headerView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.view.frame.size.width, 40.0)];
         CGRect headerLabelFrame = self.sectionHeaderLabel.frame;
         headerLabelFrame.origin.x = 5.0;
         headerLabelFrame.origin.y = 12.0;

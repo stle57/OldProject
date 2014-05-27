@@ -17,13 +17,11 @@
 @synthesize bottomLineOrigY;
 @synthesize rowNumber;
 
-- (void)dealloc
-{
+- (void)dealloc {
     delegate = nil;
 }
 
-- (id)initWithFrame:(CGRect)frame
-{
+- (id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
@@ -31,8 +29,7 @@
     return self;
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
+- (id)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
     }
@@ -40,7 +37,7 @@
 }
 
 - (void)awakeFromNib {
-    self.longTitleLabel.font = [UIFont fontWithName:TDFontProximaNovaRegular size:15.5];
+    self.longTitleLabel.font = [TDConstants fontRegularSized:16];
     CGRect lineRect = self.bottomLine.frame;
     lineRect.size.height = 0.5;
     self.bottomLine.frame = lineRect;
@@ -50,22 +47,13 @@
     bottomLineOrigY = self.bottomLine.frame.origin.y;
 }
 
--(IBAction)switch:(id)sender
-{
-    NSLog(@"SW");
-
+- (IBAction)switch:(id)sender {
     if (self.aSwitch.on) {
-        if (delegate) {
-            if ([delegate respondsToSelector:@selector(switchOnFromRow:)]) {
-                [delegate switchOnFromRow:rowNumber];
-            }
+        if (delegate && [delegate respondsToSelector:@selector(switchOnFromRow:)]) {
+            [delegate switchOnFromRow:rowNumber];
         }
-    } else {
-        if (delegate) {
-            if ([delegate respondsToSelector:@selector(switchOffFromRow:)]) {
-                [delegate switchOffFromRow:rowNumber];
-            }
-        }
+    } else if (delegate && [delegate respondsToSelector:@selector(switchOffFromRow:)]) {
+        [delegate switchOffFromRow:rowNumber];
     }
 }
 
