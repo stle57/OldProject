@@ -58,6 +58,8 @@
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
 
+    self.backButton = [TDViewControllerHelper navBackButton];
+    [self.backButton addTarget:self action:@selector(backButtonHit:) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *barButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];
     self.navigationItem.leftBarButtonItem = barButton;
     self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
@@ -91,7 +93,7 @@
     }
 }
 
-- (IBAction)backButtonHit:(id)sender {
+- (void)backButtonHit:(id)sender {
     [self hideKeyboard];
     [self leave];
 }

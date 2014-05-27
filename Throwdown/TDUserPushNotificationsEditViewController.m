@@ -38,12 +38,14 @@
     self.titleLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:20.0];
     [self.navigationItem setTitleView:self.titleLabel];
 
+    self.backButton = [TDViewControllerHelper navBackButton];
+    [self.backButton addTarget:self action:@selector(backButtonHit:) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *barButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];
     self.navigationItem.leftBarButtonItem = barButton;
+    self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
 }
 
--(void)viewWillAppear:(BOOL)animated
-{
+- (void)viewWillAppear:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:NO animated:NO];
 
     self.activityIndicator.text.text = @"Getting Settings";
@@ -70,7 +72,7 @@
     [super didReceiveMemoryWarning];
 }
 
-- (IBAction)backButtonHit:(id)sender {
+- (void)backButtonHit:(id)sender {
     self.activityIndicator.text.text = @"Saving Settings";
     [self showActivity];
 
@@ -92,19 +94,16 @@
     }];
 }
 
--(void)leave
-{
+- (void)leave {
     [self.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark - AlertView
--(void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
-{
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
 }
 
 #pragma mark - TableView Delegates
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     self.sectionHeaderLabel.text = @"Get Push Notification When Someone:";
     self.sectionHeaderLabel.font = [UIFont fontWithName:TDFontProximaNovaRegular size:15.0];
     self.sectionHeaderLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
@@ -123,18 +122,15 @@
     return self.headerView;
 }
 
--(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     return 40.0;
 }
 
--(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-
     return 3;
 }
 
@@ -195,22 +191,19 @@
     return cell;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row == 3) {
         return 58.0;
     }
     return 42.0;
 }
 
--(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
 }
 
 #pragma mark - TDPushEdit Cell delegate
--(void)switchOnFromRow:(NSInteger)row
-{
+- (void)switchOnFromRow:(NSInteger)row {
     switch (row) {
 //        case 0:
 //            [self.pushSettingsDict setObject:[NSNumber numberWithBool:YES]
@@ -233,8 +226,7 @@
     debug NSLog(@"DICT:%@", self.pushSettingsDict);
 }
 
--(void)switchOffFromRow:(NSInteger)row
-{
+- (void)switchOffFromRow:(NSInteger)row {
     switch (row) {
 //        case 0:
 //            [self.pushSettingsDict setObject:[NSNumber numberWithBool:NO]

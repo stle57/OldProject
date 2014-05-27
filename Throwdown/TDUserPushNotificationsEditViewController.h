@@ -30,10 +30,9 @@
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *sectionHeaderLabel;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (weak, nonatomic) IBOutlet UIButton *backButton;
 @property (weak, nonatomic) IBOutlet TDActivityIndicator *activityIndicator;
+@property (nonatomic) UIButton *backButton;
 @property (nonatomic, retain) NSMutableDictionary *pushSettingsDict;
 @property (nonatomic, retain) UIView *headerView;
 
--(IBAction)backButtonHit:(id)sender;
 @end

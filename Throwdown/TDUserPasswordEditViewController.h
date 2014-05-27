@@ -34,12 +34,10 @@
 @property (weak, nonatomic) IBOutlet UIButton *doneButton;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet TDActivityIndicator *activityIndicator;
-@property (strong, nonatomic) IBOutlet UIButton *backButton;
+@property (strong, nonatomic) UIButton *backButton;
 @property (nonatomic, retain) NSString *password1;
 @property (nonatomic, retain) NSString *current;
 @property (nonatomic, retain) NSString *password2;
 @property (nonatomic, retain) TDUser *profileUser;
-
--(IBAction)doneButtonHit:(id)sender;
 
 @end
