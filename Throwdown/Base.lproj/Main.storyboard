@@ -220,7 +220,7 @@
                                 </state>
                                 <state key="highlighted" image="nav_close_hit"/>
                                 <connections>
-                                    <segue destination="zKu-1j-h4U" kind="unwind" unwindAction="unwindToHome:" id="giF-Z1-7Ju"/>
+                                    <segue destination="zKu-1j-h4U" kind="unwind" identifier="UnwindToHomeSegue" unwindAction="unwindToHome:" id="giF-Z1-7Ju"/>
                                 </connections>
                             </button>
                         </barButtonItem>
