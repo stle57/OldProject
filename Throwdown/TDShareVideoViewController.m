@@ -33,7 +33,8 @@
     [button addTarget:self action:@selector(backButtonPressed) forControlEvents:UIControlEventTouchUpInside];
     self.navigationBarItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
 
-    [self.navigationBar setTitleTextAttributes:@{ NSFontAttributeName:[UIFont fontWithName:TDFontProximaNovaRegular size:17.0] }];
+    [self.navigationBar setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontRegularSized:20],
+                                       NSForegroundColorAttributeName: [TDConstants headerTextColor] }];
 
     [self.commentTextView setPlaceholder:kCommentDefaultText];
     [self.commentTextView setFont:[UIFont fontWithName:TDFontProximaNovaRegular size:17.0]];
