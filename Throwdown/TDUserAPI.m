@@ -77,17 +77,13 @@
     }];
 }
 
--(void)changePasswordFrom:(NSString *)oldPassword newPassword:(NSString *)newPassword confirmPassword:(NSString *)confirmPassword callback:(void (^)(BOOL success, NSDictionary *dict))callback
-{
+- (void)changePasswordFrom:(NSString *)oldPassword newPassword:(NSString *)newPassword confirmPassword:(NSString *)confirmPassword callback:(void (^)(BOOL success, NSDictionary *dict))callback {
     [[TDAPIClient sharedInstance] changePasswordFrom:oldPassword
                                          newPassword:newPassword
                                      confirmPassword:confirmPassword
                                             callback:^(BOOL success, NSDictionary *user) {
-                                                if (success) {
-                                                    NSLog(@"---CHANGE PASSWORD SUCCESS:%@", user);
-                                                    if (user) {
-                                                        [self.currentUser updateFromDictionary:user];
-                                                    }
+                                                if (success && user) {
+                                                    [self.currentUser updateFromDictionary:user];
                                                 }
                                                 callback(success, user);
                                             }];

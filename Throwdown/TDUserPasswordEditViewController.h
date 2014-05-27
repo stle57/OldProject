@@ -16,6 +16,7 @@
 #include <sys/sysctl.h>
 #import "TDUserEditCell.h"
 #import "TDConstants.h"
+#import "TDActivityIndicator.h"
 
 @interface TDUserPasswordEditViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, UINavigationControllerDelegate, UITextViewDelegate>
 {
@@ -32,6 +33,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *sectionHeaderLabel;
 @property (weak, nonatomic) IBOutlet UIButton *doneButton;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet TDActivityIndicator *activityIndicator;
 @property (strong, nonatomic) IBOutlet UIButton *backButton;
 @property (nonatomic, retain) NSString *password1;
 @property (nonatomic, retain) NSString *current;

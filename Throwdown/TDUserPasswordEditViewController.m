@@ -99,14 +99,15 @@
 - (void)sendToTheServerNewPassword {
     [self hideKeyboard];
 
-    self.backButton.enabled = NO;
+    self.activityIndicator.text.text = @"Saving…";
+    [self showActivity];
 
     [[TDUserAPI sharedInstance] changePasswordFrom:self.current
                                        newPassword:self.password1
                                    confirmPassword:self.password2
                                           callback:^(BOOL success, NSDictionary *dict) {
+                                              [self hideActivity];
                                               if (success) {
-
                                                   UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Password Changed"
                                                                                                   message:@"Your password was successfully changed."
                                                                                                  delegate:nil
@@ -114,8 +115,9 @@
                                                                                         otherButtonTitles:nil];
                                                   [alert show];
                                                   [self leave];
+
                                               } else {
-                                                  self.backButton.enabled = YES;
+
                                                   NSMutableString *message = [NSMutableString string];
                                                   // Current
                                                   if ([dict objectForKey:@"current_password"] && [[dict objectForKey:@"current_password"] isKindOfClass:[NSArray class]]) {
@@ -155,6 +157,10 @@
                                                       [message appendString:@". "];
                                                   }
 
+                                                  if (!message || [message length] == 0) {
+                                                      message = [@"Couldn't connect to server" mutableCopy];
+                                                  }
+
                                                   UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Password Edit"
                                                                                                   message:message
                                                                                                  delegate:nil
@@ -179,23 +185,16 @@
     // 800+(10*indexPath.section)+indexPath.row;
     switch (textfield.tag) {
         case (800+10*0+0):
-        {
             self.current = text;
-        }
-        break;
+            break;
         case (800+10*1+0):
-        {
             self.password1 = text;
-        }
-        break;
+            break;
         case (800+10*1+1):
-        {
             self.password2 = text;
-        }
-        break;
-
+            break;
         default:
-        break;
+            break;
     }
 
     [self checkForSaveButton];
@@ -216,7 +215,6 @@
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
-
     if ([self checkIfChanged]) {
         [self doneButtonHit:nil];
         return NO;
@@ -266,13 +264,10 @@
                           delay: 0.0
                         options: UIViewAnimationOptionCurveEaseIn
                      animations:^{
-
                          self.tableView.frame = tableViewNewFrame;
                      }
                      completion:^(BOOL done) {
-
-                         if (done)
-                         {
+                         if (done) {
                              keybdUp = YES;
                          }
                      }];
@@ -419,6 +414,24 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
+}
+
+#pragma mark - Activity
+
+- (void)showActivity {
+    self.doneButton.enabled = NO;
+    self.backButton.enabled = NO;
+    self.activityIndicator.center = self.view.center;
+    [self.view bringSubviewToFront:self.activityIndicator];
+    [self.activityIndicator startSpinner];
+    self.activityIndicator.hidden = NO;
+}
+
+- (void)hideActivity {
+    self.doneButton.enabled = YES;
+    self.backButton.enabled = YES;
+    self.activityIndicator.hidden = YES;
+    [self.activityIndicator stopSpinner];
 }
 
 @end

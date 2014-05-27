@@ -258,8 +258,8 @@
 }
 
 #pragma mark - Activity
--(void)showActivity
-{
+
+- (void)showActivity {
     self.backButton.enabled = NO;
     self.activityIndicator.center = self.view.center;
     [self.view bringSubviewToFront:self.activityIndicator];
@@ -267,8 +267,7 @@
     self.activityIndicator.hidden = NO;
 }
 
--(void)hideActivity
-{
+- (void)hideActivity {
     self.backButton.enabled = YES;
     self.activityIndicator.hidden = YES;
     [self.activityIndicator stopSpinner];
