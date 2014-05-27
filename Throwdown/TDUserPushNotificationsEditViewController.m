@@ -17,6 +17,13 @@
 #import "NBPhoneNumberUtil.h"
 #import "TDAPIClient.h"
 
+@interface TDUserPushNotificationsEditViewController ()
+
+@property (nonatomic) NSDictionary *originalSettings;
+
+@end
+
+
 @implementation TDUserPushNotificationsEditViewController
 
 @synthesize pushSettingsDict;
@@ -24,6 +31,7 @@
 
 - (void)dealloc {
     self.pushSettingsDict = nil;
+    self.originalSettings = nil;
     self.headerView = nil;
 }
 
@@ -55,6 +63,7 @@
 
         if ([pushNotifications isKindOfClass:[NSDictionary class]]) {
             self.pushSettingsDict = [pushNotifications mutableCopy];
+            self.originalSettings = [pushNotifications copy];
             gotFromServer = YES;
             [self.tableView reloadData];
             [self hideActivity];
@@ -73,25 +82,28 @@
 }
 
 - (void)backButtonHit:(id)sender {
-    self.activityIndicator.text.text = @"Saving Settings";
-    [self showActivity];
+    if ([self.pushSettingsDict isEqualToDictionary:self.originalSettings]) {
+        [self leave];
+    } else {
+        self.activityIndicator.text.text = @"Saving Settings";
+        [self showActivity];
+        [[TDAPIClient sharedInstance] sendPushNotificationSettings:self.pushSettingsDict callback:^(BOOL success) {
+            if (success) {
+                [self hideActivity];
+                [self leave];
+            } else {
+                [self.tableView reloadData];
+                [self hideActivity];
 
-    [[TDAPIClient sharedInstance] sendPushNotificationSettings:self.pushSettingsDict callback:^(BOOL success) {
-        if (success) {
-            [self hideActivity];
-            [self leave];
-        } else {
-            [self.tableView reloadData];
-            [self hideActivity];
-
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Push Settings"
-                                                            message:@"Something went wrong, please try again."
-                                                           delegate:nil
-                                                  cancelButtonTitle:@"OK"
-                                                  otherButtonTitles:nil];
-            [alert show];
-        }
-    }];
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Push Settings"
+                                                                message:@"Something went wrong, please try again."
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"OK"
+                                                      otherButtonTitles:nil];
+                [alert show];
+            }
+        }];
+    }
 }
 
 - (void)leave {
@@ -139,7 +151,6 @@
     TDPushEditCell *cell = (TDPushEditCell*)[tableView dequeueReusableCellWithIdentifier:@"TDPushEditCell"];
 
     if (!cell) {
-
         NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDPushEditCell" owner:self options:nil];
         cell = [topLevelObjects objectAtIndex:0];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
