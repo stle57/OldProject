@@ -143,7 +143,7 @@
 #pragma mark - Delete Post
 - (void)deleteButtonPressed:(id)selector {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Delete?"
-                                                    message:@"Are you sure you want to\ndelete this video?"
+                                                    message:@"Are you sure you want to\ndelete this post?"
                                                    delegate:self
                                           cancelButtonTitle:@"Yes"
                                           otherButtonTitles:@"No", nil];
