@@ -61,7 +61,15 @@
     [self.navigationItem setTitleView:self.titleLabel];
 
     // Buttons
-    self.doneButton.titleLabel.font = [TDConstants fontSemiBoldSized:18.0];
+    self.saveButton.titleLabel.font = [TDConstants fontSemiBoldSized:18.0];
+    UIBarButtonItem *saveBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.saveButton];
+    self.navigationItem.rightBarButtonItem = saveBarButton;
+
+    self.backButton = [TDViewControllerHelper navBackButton];
+    [self.backButton addTarget:self action:@selector(backButtonHit:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *barButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];
+    self.navigationItem.leftBarButtonItem = barButton;
+    self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
 
     // Preload
     self.name = [TDCurrentUser sharedInstance].name;
@@ -83,12 +91,7 @@
 
     origTableViewFrame = self.tableView.frame;
 
-    UIBarButtonItem *doneBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.doneButton];
-    self.navigationItem.leftBarButtonItem = doneBarButton;
-    self.doneButton.enabled = YES;
-
     [self checkForSaveButton];
-
     [self hideActivity];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
@@ -106,29 +109,23 @@
     [super didReceiveMemoryWarning];
 }
 
-- (IBAction)doneButtonHit:(id)sender {
-    NSLog(@"doneButtonHit:%@", self.editedProfileImage90x90);
-    // Changed?
-    if ([self checkIfChanged]) {
-
-        [self showActivity];
-        [self sendToTheServer];
+- (IBAction)saveButtonHit:(id)sender {
+    [self hideKeyboard];
+    [self showActivity];
+    if (self.editedProfileImage90x90) {
+        self.activityIndicator.text.text = @"Uploading photo";
+        [self uploadNewAvatarImage];
     } else {
-
-        if (self.editedProfileImage90x90) {
-            [self showActivity];
-            [self uploadNewAvatarImage];
-
-        } else {
-            [self leave];
-        }
+        [self sendToTheServer];
     }
 }
 
+- (void)backButtonHit:(id)sender {
+    [self leave];
+}
+
 - (void)sendToTheServer {
-
-    [self hideKeyboard];
-
+    self.activityIndicator.text.text = @"Saving";
     [[TDUserAPI sharedInstance] editUserWithName:self.name
                                            email:self.email
                                         username:self.username
@@ -136,27 +133,17 @@
                                              bio:self.bio
                                          picture:self.pictureFileName
                                         callback:^(BOOL success, NSDictionary *dict) {
+                                            [self hideActivity];
+
                                             if (success) {
                                                 debug NSLog(@"EDIT SUCCESS:%@ %@", dict, self.editedProfileImage90x90);
-                                                self.saveButton.enabled = NO;
 
                                                 [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateWithUserChangeNotification
                                                                                                     object:nil
                                                                                                   userInfo:nil];
-
-                                                if (self.editedProfileImage90x90) {
-                                                    [self uploadNewAvatarImage];
-                                                    
-                                                } else {
-                                                    [self hideActivity];
-                                                    [self leave];
-                                                }
-
-
+                                                [self leave];
                                             } else {
                                                 debug NSLog(@"EDIT FAILURE:%@", dict);
-
-                                                [self hideActivity];
 
                                                 NSMutableString *message = [NSMutableString string];
 
@@ -198,12 +185,8 @@
                                                                                       cancelButtonTitle:@"OK"
                                                                                       otherButtonTitles:nil];
                                                 [alert show];
-
-                                                self.saveButton.enabled = YES;
-                                                
                                                 [self.tableView reloadData];
                                             }
-                                            
                                         }];
 }
 
@@ -239,66 +222,47 @@
     // 800+(10*indexPath.section)+indexPath.row;
     switch (textfield.tag) {
         case (800+10*0+1):
-        {
             self.name = text;
-        }
-        break;
+            break;
         case (800+10*0+2):
-        {
             self.username = text;
-        }
-        break;
+            break;
         case (800+10*1+0):
-        {
             self.phone = text;
-        }
-        break;
+            break;
         case (800+10*1+1):
-        {
             self.email = text;
-        }
-        break;
+            break;
         case (800+10*1+2):
-        {
             self.password = text;
-        }
-        break;
-
+            break;
         default:
-        break;
+            break;
     }
 
-//    [self checkForSaveButton];
+    [self checkForSaveButton];
 }
 
--(void)textFieldDidBeginEditing:(UITextField *)textField
-{
+- (void)textFieldDidBeginEditing:(UITextField *)textField {
     [self updateFieldsForTextField:textField text:textField.text];
 }
 
-- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
-{
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     [self updateFieldsForTextField:textField text:[textField.text stringByReplacingCharactersInRange:range withString:string]];
-    [self checkIfChanged];
+    [self checkForSaveButton];
     return YES;
 }
 
--(void)textFieldDidEndEditing:(UITextField *)textField
-{
+- (void)textFieldDidEndEditing:(UITextField *)textField {
     [self updateFieldsForTextField:textField text:textField.text];
 }
 
--(IBAction)textFieldDidChange:(id)sender
-{
-//    [self checkForSaveButton];
+- (IBAction)textFieldDidChange:(id)sender {
+    [self checkForSaveButton];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    if ([self checkIfChanged]) {
-        [self doneButtonHit:nil];
-        return NO;
-    }
-//    [self checkForSaveButton];
+    [self checkForSaveButton];
     return YES;
 }
 
@@ -378,16 +342,17 @@
 }
 
 #pragma mark - Check Save Button
--(BOOL)checkIfChanged
-{
+- (BOOL)checkIfChanged {
     if ([self.phone length] > 0 && ![self validatePhone]) {
         return NO;
     }
 
-    if (([self.name length] > 0 && ![self.name isEqualToString:[TDCurrentUser sharedInstance].name]) ||
+    NSString *currentBio = [TDCurrentUser sharedInstance].bio;
+    if (self.editedProfileImage90x90 != nil ||
+        ([self.name length] > 0 && ![self.name isEqualToString:[TDCurrentUser sharedInstance].name]) ||
         ([self.username length] > 0 && ![self.username isEqualToString:[TDCurrentUser sharedInstance].username]) ||
         ([self.phone length] > 0 && ![self.phone isEqualToString:[TDCurrentUser sharedInstance].phoneNumber]) ||
-        (![self.bio isEqualToString:[TDCurrentUser sharedInstance].bio]) ||
+        (![self.bio isEqualToString:(currentBio ? currentBio :  @"")]) ||
         ([self.email length] > 0 && ![self.email isEqualToString:[TDCurrentUser sharedInstance].email]))
     {
         return YES;
@@ -396,8 +361,7 @@
     return NO;
 }
 
--(void)checkForSaveButton
-{
+- (void)checkForSaveButton {
     if ([self checkIfChanged]) {
         self.saveButton.enabled = YES;
     } else {
@@ -406,26 +370,22 @@
 }
 
 #pragma mark - TextView
-- (void)textViewDidBeginEditing:(UITextView *)textView
-{
+- (void)textViewDidBeginEditing:(UITextView *)textView {
     self.bio = textView.text;
     [self checkForSaveButton];
 }
 
-- (void)textViewDidChange:(UITextView *)textView
-{
+- (void)textViewDidChange:(UITextView *)textView {
     self.bio = textView.text;
     [self checkForSaveButton];
 }
 
-- (void)textViewDidEndEditing:(UITextView *)textView
-{
+- (void)textViewDidEndEditing:(UITextView *)textView {
     self.bio = textView.text;
     [self checkForSaveButton];
 }
 
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
-{
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
     // Too long?
     if ([[textView.text stringByReplacingCharactersInRange:range withString:text] length] > 200) {
         return NO;
@@ -557,7 +517,7 @@
                     cell.leftMiddleLabel.hidden = NO;
                     cell.leftMiddleLabel.text = @"Edit Photo";
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
-                break;
+                    break;
                 case 1:
                     cell.titleLabel.hidden = NO;
                     cell.textField.hidden = NO;
@@ -565,7 +525,7 @@
                                                                                            attributes:@{NSForegroundColorAttributeName: textFieldPlaceHolderColor}];
                     cell.titleLabel.text = @"Name";
                     cell.textField.text = self.name;
-                break;
+                    break;
                 case 2:
                     cell.titleLabel.hidden = NO;
                     cell.textField.hidden = NO;
@@ -573,7 +533,7 @@
                                                                                            attributes:@{NSForegroundColorAttributeName: textFieldPlaceHolderColor}];
                     cell.titleLabel.text = @"Username";
                     cell.textField.text = self.username;
-                break;
+                    break;
                 case 3:
                     cell.titleLabel.hidden = NO;
                     cell.textView.hidden = NO;
@@ -587,10 +547,9 @@
                                                        cell.bottomLine.frame.size.width,
                                                        cell.bottomLine.frame.size.height);
 
-                break;
-
+                    break;
                 default:
-                break;
+                    break;
             }
         break;
 
@@ -613,9 +572,8 @@
                     cell.titleLabel.text = @"Email";
                     cell.textField.text = self.email;
                 break;
-
                 default:
-                break;
+                    break;
             }
         break;
 
@@ -648,23 +606,18 @@
                     cell.middleLabel.text = @"Log Out";
                     cell.middleLabel.textColor = [TDConstants brandingRedColor];
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
-                break;
+                    break;
             }
         break;
-
         default:
-        break;
+            break;
     }
 
     return cell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.section == 0 && indexPath.row == 3) {   // Bio
-        return 90.0;
-    }
-
-    return 42.0;
+    return indexPath.section == 0 && indexPath.row == 3 ? 90.0 : 42.0;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -673,19 +626,16 @@
     switch (indexPath.section) {
         case 0:
             switch (indexPath.row) {
-                case 0:
+                case 0: // PHOTO
                     [self hideKeyboard];
-
-                    // PHOTO
                     [self showPhotoActionSheet];
-                break;
+                    break;
                 case 1:
-                break;
+                    break;
                 case 2:
-                break;
-
+                    break;
                 default:
-                break;
+                    break;
             }
             break;
 
@@ -693,13 +643,12 @@
             switch (indexPath.row) {
                 case 0: // Edit Push
                     [self gotoEditPushNotifications];
-                break;
+                    break;
                 case 1:
                     [self showEditPassword];
                     break;
-
                 default:
-                break;
+                    break;
             }
         break;
         case 3:
@@ -710,27 +659,23 @@
                     [[TDUserAPI sharedInstance] logout];
                     [self showWelcomeController];
                 break;
-
                 default:
-                break;
+                    break;
             }
         break;
-
         default:
-        break;
+            break;
     }
 }
 
 #pragma mark - Edit Password
--(void)showEditPassword
-{
+- (void)showEditPassword {
     TDUserPasswordEditViewController *vc = [[TDUserPasswordEditViewController alloc] initWithNibName:@"TDUserPasswordEditViewController" bundle:nil ];
     [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma mark - Log Out
-- (void)showWelcomeController
-{
+- (void)showWelcomeController {
     [self dismissViewControllerAnimated:NO completion:nil];
 
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
@@ -742,11 +687,9 @@
 }
 
 #pragma mark - Photo
--(void)showPhotoActionSheet
-{
+- (void)showPhotoActionSheet {
     // ActionSheet
-    if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera])
-    {
+    if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
         UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@""
                                                                  delegate:self
                                                         cancelButtonTitle:@"Cancel"
@@ -754,9 +697,7 @@
                                                         otherButtonTitles:@"Choose Photo", nil];
         actionSheet.tag = 3556;
         [actionSheet showInView:self.view];
-    }
-    else
-    {
+    } else {
         UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@""
                                                                  delegate:self
                                                         cancelButtonTitle:@"Cancel"
@@ -767,41 +708,27 @@
     }
 }
 
--(void)actionSheet:(UIActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex
-{
+- (void)actionSheet:(UIActionSheet *)actionSheet willDismissWithButtonIndex:(NSInteger)buttonIndex {
     if (actionSheet.tag == 3556) {
-
         switch (buttonIndex) {
-            case 0:
-            {
-                // Choose Photo
+            case 0: // Choose Photo
                 [self showImagePickerForSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
-            }
-            break;
-
+                break;
             default:
-            break;
+                break;
         }
     }
 
     if (actionSheet.tag == 3557) {
-
         switch (buttonIndex) {
-            case 0:
-            {
-                // Take Photo
+            case 0: // Take Photo
                 [self showImagePickerForSourceType:UIImagePickerControllerSourceTypeCamera];
-            }
-            break;
-            case 1:
-            {
-                // Choose Photo
+                break;
+            case 1: // Choose Photo
                 [self showImagePickerForSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
-            }
-            break;
-
+                break;
             default:
-            break;
+                break;
         }
     }
 }
@@ -822,8 +749,7 @@
                      completion:nil];
 }
 
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
-{
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
     if (self.tempFlyInImageView && [self.tempFlyInImageView superview]) {
         [self.tempFlyInImageView removeFromSuperview];
     }
@@ -847,7 +773,6 @@
     // Get rid of photo picker
     [self dismissViewControllerAnimated:NO
                              completion:^{
-
                                  // Add big in center
                                  self.tempFlyInImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0.0,
                                                                                                          0.0,
@@ -861,14 +786,10 @@
                                                        delay: 0.0
                                                      options: UIViewAnimationOptionCurveEaseOut
                                                   animations:^{
-
                                                       self.tempFlyInImageView.frame = avatarImageFrame;
-
                                                   }
                                                   completion:^(BOOL animDone){
-                                                      
-                                                      if (animDone)
-                                                      {
+                                                      if (animDone) {
                                                           [self.tempFlyInImageView removeFromSuperview];
                                                           self.tempFlyInImageView = nil;
                                                           [self.tableView reloadData];
@@ -879,14 +800,13 @@
 }
 
 
-- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
-{
+- (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
     [self dismissViewControllerAnimated:YES completion:NULL];
 }
 
 #pragma mark - Upload Avatar Image
 
--(void)uploadNewAvatarImage {
+- (void)uploadNewAvatarImage {
     // Filename
     NSString *filename = [NSString stringWithFormat:@"%@.jpg", [TDPostAPI createUploadFileNameFor:[TDCurrentUser sharedInstance]]];
     self.pictureFileName = filename;
@@ -919,42 +839,36 @@
 - (void)uploadComplete:(NSNotification*)notification {
     debug NSLog(@"ProfileEdit-upload Complete");
     self.editedProfileImage90x90 = nil;
-
-    // Update Photo name to server
-    if (self.pictureFileName) {
-        [self sendToTheServer];
-    }
+    [self sendToTheServer];
 }
 
 - (void)uploadFailed:(NSNotification*)notification {
     debug NSLog(@"ProfileEdit-upload Failed");
     self.editedProfileImage90x90 = nil;
-
     [self hideActivity];
 }
 
 #pragma mark - Edit Push Notifications
--(void)gotoEditPushNotifications
-{
+- (void)gotoEditPushNotifications {
     TDUserPushNotificationsEditViewController *vc = [[TDUserPushNotificationsEditViewController alloc] initWithNibName:@"TDUserPushNotificationsEditViewController" bundle:nil ];
     [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma mark - Activity
--(void)showActivity
-{
-    self.doneButton.enabled = NO;
+- (void)showActivity {
+    self.saveButton.enabled = NO;
+    self.backButton.enabled = NO;
     self.activityIndicator.center = self.view.center;
     [self.view bringSubviewToFront:self.activityIndicator];
     [self.activityIndicator startSpinner];
     self.activityIndicator.hidden = NO;
 }
 
--(void)hideActivity
-{
-    self.doneButton.enabled = YES;
+- (void)hideActivity {
+    self.backButton.enabled = YES;
     self.activityIndicator.hidden = YES;
     [self.activityIndicator stopSpinner];
+    [self checkForSaveButton];
 }
 
 @end
