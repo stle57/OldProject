@@ -98,14 +98,20 @@ static NSString *const kUserIdAttribute = @"user_id";
     [self.likersNamesLabel setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
     [TDViewControllerHelper linkUsernamesInLabel:self.likersNamesLabel users:self.likers pattern:@"(\\b\\w+\\b)"];
     self.likersNamesLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:self.likersNamesLabel.attributedText];
-    [TDAppDelegate fixHeightOfThisLabel:self.likersNamesLabel];
+
+    // manually fix the height b/c we force the width down to 210 (AppDelegate method doesn't support it)
+    NSInteger height = [TDDetailsLikesCell heightOfLikersLabel:likers];
+    self.likersNamesLabel.frame = CGRectMake(self.likersNamesLabel.frame.origin.x,
+                                             self.likersNamesLabel.frame.origin.y,
+                                             self.likersNamesLabel.frame.size.width,
+                                             height);
 }
 
 + (NSInteger)heightOfLikersLabel:(NSArray *)likers {
     NSString *text = [[likers valueForKeyPath:@"username"] componentsJoinedByString:@", "];
     NSInteger height = [TDAppDelegate heightOfTextForString:text
                                                     andFont:USERNAME_FONT
-                                                    maxSize:CGSizeMake(215.0, MAXFLOAT)];
+                                                    maxSize:CGSizeMake(210.0, MAXFLOAT)];
     return height;
 }
 
