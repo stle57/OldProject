@@ -97,7 +97,7 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
 + (NSAttributedString *)makeParagraphedTextWithString:(NSString *)text {
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:text];
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    [paragraphStyle setLineHeightMultiple:TDTextLineHeight];
+    [paragraphStyle setLineHeightMultiple:kTextLineHeight];
     [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [text length])];
     return attributedString;
 }
@@ -136,6 +136,5 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
         }
     }];
 }
-
 
 @end

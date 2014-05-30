@@ -43,12 +43,14 @@
     messagesFrame.size.width = COMMENT_MESSAGE_WIDTH;
     self.messageLabel.frame = messagesFrame;
     self.messageLabel.font = COMMENT_MESSAGE_FONT;
+    self.messageLabel.verticalAlignment = TTTAttributedLabelVerticalAlignmentTop;
 
     [self.messageLabel setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
     [TDViewControllerHelper linkUsernamesInLabel:self.messageLabel users:mentions];
     self.messageLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:self.messageLabel.attributedText];
 
-    [TDAppDelegate fixHeightOfThisLabel:self.messageLabel];
+    CGSize size = [self.messageLabel sizeThatFits:CGSizeMake(COMMENT_MESSAGE_WIDTH, MAXFLOAT)];
+    self.messageLabel.frame = CGRectMake(self.messageLabel.frame.origin.x, self.messageLabel.frame.origin.y, size.width, size.height);
 }
 
 - (void)makeTime:(NSDate *)time name:(NSString *)name {

@@ -67,10 +67,12 @@ static NSString *const TDAvatarUploadFailedNotification = @"TDAvatarUploadComple
 
 static NSString *const TDFontProximaNovaRegular = @"ProximaNova-Regular";
 static NSString *const TDFontProximaNovaSemibold = @"ProximaNova-Semibold";
-static CGFloat const TDCommentCellProfileHeight = 18.0;
+static CGFloat const kCommentCellUserHeight = 18.0;
+static CGFloat const kCommentPadding = 3; // padding between comments
+static CGFloat const kCommentLastPadding = 8; // bottom padding of comments
 
 // 1.27 is the lowest we can go without cutting off the emoji
-static CGFloat const TDTextLineHeight = 1.27;
+static CGFloat const kTextLineHeight = 1.27;
 
 static NSString *const kSpinningAnimation = @"rotationAnimation";
 

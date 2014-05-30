@@ -19,7 +19,6 @@
     if (self) {
         [self loadFromDict:dict];
         _user = [[TDUser alloc] initWithDictionary:[dict objectForKey:@"user"]];
-        [self figureOutMessageLabelHeightForThisMessage:_body];
     }
     return self;
 }
@@ -27,7 +26,6 @@
 - (void)user:(TDUser *)user dict:(NSDictionary *)commentDict {
     _user = user;
     [self loadFromDict:commentDict];
-    [self figureOutMessageLabelHeightForThisMessage:_body];
 }
 
 - (void)loadFromDict:(NSDictionary *)dict {
@@ -35,12 +33,22 @@
     _body = [dict objectForKey:@"body"];
     _mentions = [dict objectForKey:@"mentions"];
     _createdAt = [TDViewControllerHelper dateForRFC3339DateTimeString:[dict objectForKey:@"created_at"]];
+    [self figureOutMessageLabelHeightForThisMessage:_body];
 }
 
 - (void)figureOutMessageLabelHeightForThisMessage:(NSString *)text {
-    _messageHeight = [TDAppDelegate heightOfTextForString:text
-                                                  andFont:COMMENT_MESSAGE_FONT
-                                                  maxSize:CGSizeMake(COMMENT_MESSAGE_WIDTH, MAXFLOAT)];
+
+    // Slow but the most accurate way to calculate the size
+    TTTAttributedLabel *label = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(0, 0, COMMENT_MESSAGE_WIDTH, 18)];
+    label.font = COMMENT_MESSAGE_FONT;
+    label.verticalAlignment = TTTAttributedLabelVerticalAlignmentTop;
+    [label setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
+    [TDViewControllerHelper linkUsernamesInLabel:label users:_mentions];
+    label.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:label.attributedText];
+    label.numberOfLines = 0;
+
+    CGSize size = [label sizeThatFits:CGSizeMake(COMMENT_MESSAGE_WIDTH, MAXFLOAT)];
+    _messageHeight = size.height;
 }
 
 - (void)replaceUser:(TDUser *)newUser {

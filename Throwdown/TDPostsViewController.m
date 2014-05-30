@@ -595,7 +595,11 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     // Comments
     NSInteger commentNumber = indexPath.row - 2;
     TDComment *comment = [post.comments objectAtIndex:commentNumber];
-    return TDCommentCellProfileHeight + comment.messageHeight;
+
+    if ((indexPath.row - 2) == ([post.comments count] - 1)) {
+        return kCommentCellUserHeight + kCommentLastPadding + comment.messageHeight;
+    }
+    return kCommentCellUserHeight + kCommentPadding + comment.messageHeight;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {

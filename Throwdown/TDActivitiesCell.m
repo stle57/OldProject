@@ -31,7 +31,7 @@ static NSUInteger const kMaxCommentLength = 50;
     self.activityLabel.numberOfLines = 3;
     self.activityLabel.verticalAlignment = TTTAttributedLabelVerticalAlignmentCenter;
     self.activityLabel.delegate = self;
-    self.activityLabel.lineHeightMultiple = 1 - TDTextLineHeight;
+    self.activityLabel.lineHeightMultiple = 1 - kTextLineHeight;
 
     self.timeLabel.font    = TIME_FONT;
 }

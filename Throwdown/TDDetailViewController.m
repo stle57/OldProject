@@ -319,10 +319,10 @@
     // A comment is at least 40+height for the message text
     TDComment *comment = [self.post.comments objectAtIndex:(indexPath.row-2)];
     // Last one?
-    if (((indexPath.row-2)) == ([self.post.comments count]-1)) {
-        return TDCommentCellProfileHeight + comment.messageHeight + 8.0;    // add a bit of padding
+    if ((indexPath.row - 2) == ([self.post.comments count] - 1)) {
+        return kCommentCellUserHeight + kCommentLastPadding + comment.messageHeight;
     }
-    return TDCommentCellProfileHeight + comment.messageHeight;
+    return kCommentCellUserHeight + kCommentPadding + comment.messageHeight;
 }
 
 #pragma mark - TypingView delegates

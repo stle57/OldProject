@@ -215,7 +215,7 @@
                                                                                        forKey:NSFontAttributeName]
                                                   context: nil].size;
 
-        return ceilf(ceilf(sizeOfText.height) * TDTextLineHeight);
+        return ceilf(ceilf(sizeOfText.height) * kTextLineHeight);
     }
 
 // iOS6
