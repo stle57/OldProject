@@ -13,12 +13,13 @@
 
 @property (strong, nonatomic, readonly) NSNumber *commentId;
 @property (strong, nonatomic, readonly) NSString *body;
+@property (strong, nonatomic, readonly) NSArray *mentions;
 @property (nonatomic, readonly) NSDate *createdAt;
 @property (strong, nonatomic, readonly) TDUser *user;
 @property (nonatomic, assign) CGFloat messageHeight;
 
 - (id)initWithDictionary:(NSDictionary *)dict;
--(void)user:(TDUser *)user dict:(NSDictionary *)commentDict;
--(void)figureOutMessageLabelHeightForThisMessage:(NSString *)text;
--(void)replaceUser:(TDUser *)newUser;
+- (void)user:(TDUser *)user dict:(NSDictionary *)commentDict;
+- (void)figureOutMessageLabelHeightForThisMessage:(NSString *)text;
+- (void)replaceUser:(TDUser *)newUser;
 @end

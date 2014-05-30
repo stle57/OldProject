@@ -19,6 +19,7 @@
 + (BOOL)textAttributeTapped:(NSString *)attribute inTap:(UITapGestureRecognizer *)recognizer action:(void (^)(id value))actionBlock;
 + (NSAttributedString *)makeParagraphedTextWithAttributedString:(NSAttributedString *)attributedString;
 + (NSAttributedString *)makeParagraphedTextWithString:(NSString *)text;
-+ (void)linkUsernamesInLabel:(TTTAttributedLabel *)label text:(NSString *)text users:(NSArray *)users pattern:(NSString *)pattern fontSize:(NSUInteger)fontSize;
++ (void)linkUsernamesInLabel:(TTTAttributedLabel *)label users:(NSArray *)users;
++ (void)linkUsernamesInLabel:(TTTAttributedLabel *)label users:(NSArray *)users pattern:(NSString *)pattern;
 
 @end

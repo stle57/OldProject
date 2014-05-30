@@ -16,13 +16,12 @@
 
 @synthesize delegate;
 @synthesize row;
-@synthesize comment;
 @synthesize commentNumber;
 @synthesize origTimeFrame;
 
 - (void)dealloc {
     delegate = nil;
-    self.comment = nil;
+    self.messageLabel.delegate = nil;
 }
 
 - (void)awakeFromNib {
@@ -35,15 +34,19 @@
     self.usernameLabel.font = USERNAME_FONT;
     self.timeLabel.font     = TIME_FONT;
     self.messageLabel.font  = COMMENT_MESSAGE_FONT;
+    self.messageLabel.delegate = self;
     origRectOfUserButton = self.userButton.frame;
 }
 
-- (void)makeText:(NSString *)text {
+- (void)makeText:(NSString *)text mentions:(NSArray *)mentions {
     CGRect messagesFrame = self.messageLabel.frame;
     messagesFrame.size.width = COMMENT_MESSAGE_WIDTH;
     self.messageLabel.frame = messagesFrame;
     self.messageLabel.font = COMMENT_MESSAGE_FONT;
-    self.messageLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithString:text];
+
+    [self.messageLabel setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
+    [TDViewControllerHelper linkUsernamesInLabel:self.messageLabel users:mentions];
+    self.messageLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:self.messageLabel.attributedText];
 
     [TDAppDelegate fixHeightOfThisLabel:self.messageLabel];
 }
@@ -70,10 +73,16 @@
 }
 
 - (IBAction)userButtonPressed:(id)sender {
-    if (delegate) {
-        if ([delegate respondsToSelector:@selector(userButtonPressedFromRow:commentNumber:)]) {
-            [delegate userButtonPressedFromRow:self.row commentNumber:self.commentNumber];
-        }
+    if (delegate && [delegate respondsToSelector:@selector(userButtonPressedFromRow:commentNumber:)]) {
+        [delegate userButtonPressedFromRow:self.row commentNumber:self.commentNumber];
+    }
+}
+
+#pragma mark - TTTAttributedLabelDelegate
+
+- (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithURL:(NSURL *)url {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(userProfilePressedWithId:)]) {
+        [self.delegate userProfilePressedWithId:[NSNumber numberWithInteger:[[url path] integerValue]]];
     }
 }
 

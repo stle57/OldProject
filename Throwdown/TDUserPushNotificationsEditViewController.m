@@ -140,7 +140,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 3;
+    return 4;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -170,25 +170,25 @@
     }
 
     switch (indexPath.row) {
-//        case 0:
-//            cell.longTitleLabel.text = @"Mentions you";
-//            if ([self.pushSettingsDict objectForKey:@"mentions"]) {
-//                cell.aSwitch.on = [[self.pushSettingsDict objectForKey:@"mentions"] boolValue];
-//            }
-//            break;
         case 0:
+            cell.longTitleLabel.text = @"Mentions you";
+            if ([self.pushSettingsDict objectForKey:@"mentions"]) {
+                cell.aSwitch.on = [[self.pushSettingsDict objectForKey:@"mentions"] boolValue];
+            }
+            break;
+        case 1:
             cell.longTitleLabel.text = @"Likes your post";
             if ([self.pushSettingsDict objectForKey:@"post_likes"]) {
                 cell.aSwitch.on = [[self.pushSettingsDict objectForKey:@"post_likes"] boolValue];
             }
             break;
-        case 1:
+        case 2:
             cell.longTitleLabel.text = @"Comments on your post";
             if ([self.pushSettingsDict objectForKey:@"post_comments"]) {
                 cell.aSwitch.on = [[self.pushSettingsDict objectForKey:@"post_comments"] boolValue];
             }
             break;
-        case 2:
+        case 3:
             cell.longTitleLabel.text = @"Comments on a post you've\ncommented on";
             if ([self.pushSettingsDict objectForKey:@"comment_followup"]) {
                 cell.aSwitch.on = [[self.pushSettingsDict objectForKey:@"comment_followup"] boolValue];
@@ -213,21 +213,17 @@
 #pragma mark - TDPushEdit Cell delegate
 - (void)switchOnFromRow:(NSInteger)row {
     switch (row) {
-//        case 0:
-//            [self.pushSettingsDict setObject:[NSNumber numberWithBool:YES]
-//                                      forKey:@"mentions"];
-//            break;
         case 0:
-            [self.pushSettingsDict setObject:[NSNumber numberWithBool:YES]
-                                      forKey:@"post_likes"];
+            [self.pushSettingsDict setObject:[NSNumber numberWithBool:YES] forKey:@"mentions"];
             break;
         case 1:
-            [self.pushSettingsDict setObject:[NSNumber numberWithBool:YES]
-                                      forKey:@"post_comments"];
+            [self.pushSettingsDict setObject:[NSNumber numberWithBool:YES] forKey:@"post_likes"];
             break;
         case 2:
-            [self.pushSettingsDict setObject:[NSNumber numberWithBool:YES]
-                                      forKey:@"comment_followup"];
+            [self.pushSettingsDict setObject:[NSNumber numberWithBool:YES] forKey:@"post_comments"];
+            break;
+        case 3:
+            [self.pushSettingsDict setObject:[NSNumber numberWithBool:YES] forKey:@"comment_followup"];
             break;
     }
 
@@ -236,21 +232,17 @@
 
 - (void)switchOffFromRow:(NSInteger)row {
     switch (row) {
-//        case 0:
-//            [self.pushSettingsDict setObject:[NSNumber numberWithBool:NO]
-//                                      forKey:@"mentions"];
-//            break;
         case 0:
-            [self.pushSettingsDict setObject:[NSNumber numberWithBool:NO]
-                                      forKey:@"post_likes"];
+            [self.pushSettingsDict setObject:[NSNumber numberWithBool:NO] forKey:@"mentions"];
             break;
         case 1:
-            [self.pushSettingsDict setObject:[NSNumber numberWithBool:NO]
-                                      forKey:@"post_comments"];
+            [self.pushSettingsDict setObject:[NSNumber numberWithBool:NO] forKey:@"post_likes"];
             break;
         case 2:
-            [self.pushSettingsDict setObject:[NSNumber numberWithBool:NO]
-                                      forKey:@"comment_followup"];
+            [self.pushSettingsDict setObject:[NSNumber numberWithBool:NO] forKey:@"post_comments"];
+            break;
+        case 3:
+            [self.pushSettingsDict setObject:[NSNumber numberWithBool:NO] forKey:@"comment_followup"];
             break;
     }
 

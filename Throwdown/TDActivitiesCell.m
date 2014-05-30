@@ -27,7 +27,6 @@ static NSUInteger const kMaxCommentLength = 50;
 
 - (void)awakeFromNib {
     self.activityLabel.font = COMMENT_MESSAGE_FONT;
-    self.activityLabel.linkAttributes = nil;
     self.activityLabel.lineBreakMode = NSLineBreakByWordWrapping;
     self.activityLabel.numberOfLines = 3;
     self.activityLabel.verticalAlignment = TTTAttributedLabelVerticalAlignmentCenter;
@@ -52,11 +51,13 @@ static NSUInteger const kMaxCommentLength = 50;
                                              @"height":@54}];
 
     NSString *text;
+    NSArray *users;
     if ([@"comment" isEqualToString:[activity objectForKey:@"action"]]) {
         NSString *body = [[activity objectForKey:@"comment"] objectForKey:@"body"];
         if ([body length] + [username length] > kMaxCommentLength) {
             body = [[body substringToIndex:(kMaxCommentLength - [username length])] stringByAppendingString:@"…"];
         }
+        users = [[activity objectForKey:@"comment"] objectForKey:@"mentions"];
         text = [NSString stringWithFormat:@"%@ said: \"%@\"",
                                           username,
                                           body];
@@ -66,17 +67,23 @@ static NSUInteger const kMaxCommentLength = 50;
     // adding timestamp to label to center properly
     text = [NSString stringWithFormat:@"%@\n%@", text, createdAtText];
 
-    [TDViewControllerHelper linkUsernamesInLabel:self.activityLabel text:text users:@[[user copy]] pattern:@"(^\\w+\\b)" fontSize:16];
+    [self.activityLabel setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
+    if (users) {
+        [TDViewControllerHelper linkUsernamesInLabel:self.activityLabel users:users];
+    }
 
-    NSDictionary *timeAttributes = @{NSForegroundColorAttributeName:[TDConstants commentTimeTextColor],
-                                                NSFontAttributeName: TIME_FONT };
+    NSMutableAttributedString *mutableAttributedString = [self.activityLabel.attributedText mutableCopy];
+
+    // Link and bold the initial username
+    [TDViewControllerHelper linkUsernamesInLabel:self.activityLabel users:@[user] pattern:@"(^\\w+\\b)"];
+    NSDictionary *userAttributes = @{ NSForegroundColorAttributeName:[TDConstants brandingRedColor], NSFontAttributeName: [TDConstants fontBoldSized:COMMENT_MESSAGE_FONT_SIZE] };
+    [mutableAttributedString addAttributes:userAttributes range:NSMakeRange(0, [username length])];
 
     // Give timestamp right attributes
-    NSMutableAttributedString *mutableAttributedString = [self.activityLabel.attributedText mutableCopy];
-    NSString *pattern = [NSString stringWithFormat:@"(%@)$", createdAtText];
-    NSRegularExpression *timeRegex = [NSRegularExpression regularExpressionWithPattern:pattern options:kNilOptions error:nil];
-    NSRange range = [timeRegex rangeOfFirstMatchInString:text options:0 range:NSMakeRange(0, [text length])];
-    [mutableAttributedString addAttributes:timeAttributes range:range];
+    NSDictionary *timeAttributes = @{NSForegroundColorAttributeName:[TDConstants commentTimeTextColor], NSFontAttributeName: TIME_FONT };
+    NSUInteger strLength = [[mutableAttributedString string] length];
+    [mutableAttributedString addAttributes:timeAttributes range:NSMakeRange(strLength - [createdAtText length], [createdAtText length])];
+
     self.activityLabel.attributedText = mutableAttributedString;
 
     // Background
@@ -92,8 +99,11 @@ static NSUInteger const kMaxCommentLength = 50;
 #pragma mark - TTTAttributedLabelDelegate
 
 - (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithURL:(NSURL *)url {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(userProfilePressedFromRow:)]) {
-        [self.delegate userProfilePressedFromRow:self.row];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(userProfilePressedWithId:)]) {
+        [self.delegate userProfilePressedWithId:[NSNumber numberWithInteger:[[url path] integerValue]]];
+    }
+    if (self.delegate && [self.delegate respondsToSelector:@selector(activityPressedFromRow:)]) {
+        [self.delegate activityPressedFromRow:[NSNumber numberWithInteger:self.row]];
     }
 }
 

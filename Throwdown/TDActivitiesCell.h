@@ -10,7 +10,8 @@
 
 @protocol TDActivitiesCellDelegate <NSObject>
 @optional
--(void)userProfilePressedFromRow:(NSInteger)row;
+-(void)userProfilePressedWithId:(NSNumber *)userId;
+-(void)activityPressedFromRow:(NSNumber *)row;
 @end
 
 @interface TDActivitiesCell : UITableViewCell

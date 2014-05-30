@@ -26,7 +26,6 @@ static NSString *const kUserIdAttribute = @"user_id";
 - (void)awakeFromNib {
     [super awakeFromNib];
 
-    self.likersNamesLabel.linkAttributes = nil;
     self.likersNamesLabel.textColor = [UIColor darkGrayColor];
     self.likersNamesLabel.font = USERNAME_FONT;
     self.likersNamesLabel.delegate = self;
@@ -96,7 +95,8 @@ static NSString *const kUserIdAttribute = @"user_id";
 
     // Add likers label
     NSString *text = [[self.likers valueForKeyPath:@"username"] componentsJoinedByString:@", "];
-    [TDViewControllerHelper linkUsernamesInLabel:self.likersNamesLabel text:text users:self.likers pattern:@"(\\b\\w+\\b)" fontSize:16];
+    [self.likersNamesLabel setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
+    [TDViewControllerHelper linkUsernamesInLabel:self.likersNamesLabel users:self.likers pattern:@"(\\b\\w+\\b)"];
     self.likersNamesLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:self.likersNamesLabel.attributedText];
     [TDAppDelegate fixHeightOfThisLabel:self.likersNamesLabel];
 }

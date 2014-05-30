@@ -292,7 +292,7 @@
     NSInteger commentNumber = (indexPath.row - 2);
     TDComment *comment = [self.post.comments objectAtIndex:commentNumber];
     cell.commentNumber = commentNumber;
-    [cell makeText:comment.body];
+    [cell makeText:comment.body mentions:comment.mentions];
     [cell makeTime:comment.createdAt name:comment.user.username];
 
     return cell;
@@ -490,6 +490,10 @@
         TDComment *comment = [post.comments objectAtIndex:commentNumber];
         [self showUserProfile:comment.user.userId];
     }
+}
+
+- (void)userProfilePressedWithId:(NSNumber *)userId {
+    [self showUserProfile:userId];
 }
 
 - (void)showUserProfile:(NSNumber *)userId {

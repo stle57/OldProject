@@ -14,39 +14,36 @@
 
 @implementation TDComment
 
-- (id)initWithDictionary:(NSDictionary *)dict
-{
+- (id)initWithDictionary:(NSDictionary *)dict {
     self = [super init];
-    if (self)
-    {
-        _commentId = [dict objectForKey:@"id"];
-        _body = [dict objectForKey:@"body"];
-        _createdAt = [TDViewControllerHelper dateForRFC3339DateTimeString:[dict objectForKey:@"created_at"]];
+    if (self) {
+        [self loadFromDict:dict];
         _user = [[TDUser alloc] initWithDictionary:[dict objectForKey:@"user"]];
         [self figureOutMessageLabelHeightForThisMessage:_body];
     }
     return self;
 }
 
--(void)user:(TDUser *)user dict:(NSDictionary *)commentDict
-{
+- (void)user:(TDUser *)user dict:(NSDictionary *)commentDict {
     _user = user;
-
-    _commentId = [commentDict objectForKey:@"id"];
-    _body = [commentDict objectForKey:@"body"];
-    _createdAt = [TDViewControllerHelper dateForRFC3339DateTimeString:[commentDict objectForKey:@"created_at"]];
+    [self loadFromDict:commentDict];
     [self figureOutMessageLabelHeightForThisMessage:_body];
 }
 
--(void)figureOutMessageLabelHeightForThisMessage:(NSString *)text
-{
+- (void)loadFromDict:(NSDictionary *)dict {
+    _commentId = [dict objectForKey:@"id"];
+    _body = [dict objectForKey:@"body"];
+    _mentions = [dict objectForKey:@"mentions"];
+    _createdAt = [TDViewControllerHelper dateForRFC3339DateTimeString:[dict objectForKey:@"created_at"]];
+}
+
+- (void)figureOutMessageLabelHeightForThisMessage:(NSString *)text {
     _messageHeight = [TDAppDelegate heightOfTextForString:text
                                                   andFont:COMMENT_MESSAGE_FONT
                                                   maxSize:CGSizeMake(COMMENT_MESSAGE_WIDTH, MAXFLOAT)];
 }
 
--(void)replaceUser:(TDUser *)newUser
-{
+- (void)replaceUser:(TDUser *)newUser {
     _user = newUser;
 }
 

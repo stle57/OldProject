@@ -27,8 +27,7 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 
 @implementation TDActivityViewController
 
-- (void)dealloc
-{
+- (void)dealloc {
     self.tableView.delegate = nil;
     self.tableView.dataSource = nil;
 }
@@ -120,7 +119,7 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSNumber *postId = [[[self.activities objectAtIndex:indexPath.row] valueForKey:@"post"] valueForKey:@"id"];
-    TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
+    TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil];
     vc.postId = postId;
     [self.navigationController pushViewController:vc animated:YES];
     [self updateActivityAsClicked:indexPath];
@@ -128,16 +127,15 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 
 #pragma mark - TDActivitiesCellDelegate
 
-- (void)userProfilePressedFromRow:(NSInteger)row {
-    NSDictionary *userData = [[self.activities objectAtIndex:row] objectForKey:@"user"];
-    TDUser *user = [[TDUser alloc] initWithDictionary:userData];
-
-    TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
-    vc.userId = user.userId;
+- (void)userProfilePressedWithId:(NSNumber *)userId {
+    TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil];
+    vc.userId = userId;
     vc.fromProfileType = kFromProfileScreenType_OtherUser;
 
     [self.navigationController pushViewController:vc animated:YES];
-    [self updateActivityAsClicked:[NSIndexPath indexPathForRow:row inSection:0]];
+}
+- (void)activityPressedFromRow:(NSNumber *)row {
+    [self updateActivityAsClicked:[NSIndexPath indexPathForRow:[row integerValue] inSection:0]];
 }
 
 - (void)updateActivityAsClicked:(NSIndexPath *)indexPath {
@@ -155,8 +153,7 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 }
 
 #pragma mark - Feedback
--(IBAction)feedbackButton:(id)sender
-{
+- (IBAction)feedbackButton:(id)sender {
     [self displayFeedbackEmail];
 }
 

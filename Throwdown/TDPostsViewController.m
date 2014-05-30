@@ -530,7 +530,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     cell.commentNumber = commentNumber;
     cell.row = indexPath.section;
     TDComment *comment = [post.comments objectAtIndex:commentNumber];
-    [cell makeText:comment.body];
+    [cell makeText:comment.body mentions:comment.mentions];
     [cell makeTime:comment.createdAt name:comment.user.username];
     return cell;
 }
@@ -626,6 +626,18 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 }
 
 - (void)userButtonPressedFromRow:(NSInteger)row {
+}
+
+#pragma mark - TDDetailsCommentsCellDelegate
+
+- (void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber {
+}
+
+- (void)userProfilePressedWithId:(NSNumber *)userId {
+    TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
+    vc.userId = userId;
+    vc.fromProfileType = kFromProfileScreenType_OtherUser;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma mark - TDLikeCommentViewDelegates
