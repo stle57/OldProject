@@ -521,7 +521,6 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     if (!cell) {
         NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDDetailsCommentsCell" owner:self options:nil];
         cell = [topLevelObjects objectAtIndex:0];
-        cell.origTimeFrame = cell.timeLabel.frame;
         cell.delegate = self;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
@@ -530,8 +529,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     cell.commentNumber = commentNumber;
     cell.row = indexPath.section;
     TDComment *comment = [post.comments objectAtIndex:commentNumber];
-    [cell makeText:comment.body mentions:comment.mentions];
-    [cell makeTime:comment.createdAt name:comment.user.username];
+    [cell updateWithComment:comment];
     return cell;
 }
 

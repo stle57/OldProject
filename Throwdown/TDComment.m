@@ -47,8 +47,9 @@
     label.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:label.attributedText];
     label.numberOfLines = 0;
 
+    // Adding 2 covers an edge case where emoji would get cut off
     CGSize size = [label sizeThatFits:CGSizeMake(COMMENT_MESSAGE_WIDTH, MAXFLOAT)];
-    _messageHeight = size.height;
+    _messageHeight = size.height + 2;
 }
 
 - (void)replaceUser:(TDUser *)newUser {

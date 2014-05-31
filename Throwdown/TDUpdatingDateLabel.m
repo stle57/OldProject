@@ -14,30 +14,18 @@
 
 @synthesize timeStampUpdateTimer;
 
-- (void)dealloc
-{
+- (void)dealloc {
     self.labelDate = nil;
     [self.timeStampUpdateTimer invalidate];
     self.timeStampUpdateTimer = nil;
 }
 
-- (id)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-
-    }
-    return self;
-}
-
 - (void)awakeFromNib {
     [super awakeFromNib];
-
     origFrame = self.frame;
 }
 
--(void)setLabelDate:(NSDate *)date
-{
+- (void)setLabelDate:(NSDate *)date {
     _labelDate = date;
 
     // Update Timer
@@ -45,8 +33,7 @@
 }
 
 #pragma mark - Time Stamp
--(void)startUpdateTimer
-{
+- (void)startUpdateTimer {
     if (!self.labelDate || [self.labelDate isKindOfClass:[NSNull class]]) {
         return;
     }
@@ -62,8 +49,7 @@
     [[NSRunLoop mainRunLoop] addTimer:self.timeStampUpdateTimer forMode:NSRunLoopCommonModes];
 }
 
--(NSTimeInterval)workOutTimerGap
-{
+- (NSTimeInterval)workOutTimerGap {
     NSTimeInterval interval = fabs([self.labelDate timeIntervalSinceNow]);
     NSTimeInterval seconds = 60.0;  // every minute
     if (interval >= (60*60*24)) {    // Every day
@@ -74,8 +60,7 @@
     return seconds;
 }
 
--(void)timeStampUpdate
-{
+- (void)timeStampUpdate {
     self.frame = origFrame;
     self.text = [self.labelDate timeAgo];
 
@@ -88,6 +73,5 @@
     // Do again, adjusting interval as necessary
     [self startUpdateTimer];
 }
-
 
 @end

@@ -22,8 +22,6 @@
     id <TDDetailsCommentsCellDelegate> __unsafe_unretained delegate;
     NSInteger row;
     NSInteger commentNumber;
-    CGRect origTimeFrame;
-    CGRect origRectOfUserButton;
 }
 
 @property (nonatomic, assign) id <TDDetailsCommentsCellDelegate> __unsafe_unretained delegate;
@@ -33,9 +31,7 @@
 @property (weak, nonatomic) IBOutlet TDUpdatingDateLabel *timeLabel;
 @property (weak, nonatomic) IBOutlet TTTAttributedLabel *messageLabel;
 @property (weak, nonatomic) IBOutlet UIButton *userButton;
-@property (nonatomic, assign) CGRect origTimeFrame;
 
--(void)makeText:(NSString *)text mentions:(NSArray *)mentions;
--(void)makeTime:(NSDate *)time name:(NSString *)name;
--(IBAction)userButtonPressed:(id)sender;
+- (void)updateWithComment:(TDComment *)comment;
+- (IBAction)userButtonPressed:(id)sender;
 @end

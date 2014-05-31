@@ -17,7 +17,6 @@
 @synthesize delegate;
 @synthesize row;
 @synthesize commentNumber;
-@synthesize origTimeFrame;
 
 - (void)dealloc {
     delegate = nil;
@@ -25,7 +24,6 @@
 }
 
 - (void)awakeFromNib {
-
     // Colors
     self.messageLabel.textColor = [TDConstants commentTextColor];
     self.timeLabel.textColor = [TDConstants commentTimeTextColor];
@@ -35,43 +33,29 @@
     self.timeLabel.font     = TIME_FONT;
     self.messageLabel.font  = COMMENT_MESSAGE_FONT;
     self.messageLabel.delegate = self;
-    origRectOfUserButton = self.userButton.frame;
 }
 
-- (void)makeText:(NSString *)text mentions:(NSArray *)mentions {
+- (void)updateWithComment:(TDComment *)comment {
+    self.timeLabel.labelDate = comment.createdAt;
+    self.timeLabel.text = [comment.createdAt timeAgo];
+    self.usernameLabel.text = comment.user.username;
+
+    // Make the button the size of username text
+    CGRect frame = self.usernameLabel.frame;
+    frame.size = [self.usernameLabel sizeThatFits:frame.size];
+    self.userButton.frame = frame;
+
+    // Comment body
     CGRect messagesFrame = self.messageLabel.frame;
     messagesFrame.size.width = COMMENT_MESSAGE_WIDTH;
     self.messageLabel.frame = messagesFrame;
     self.messageLabel.font = COMMENT_MESSAGE_FONT;
     self.messageLabel.verticalAlignment = TTTAttributedLabelVerticalAlignmentTop;
 
-    [self.messageLabel setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
-    [TDViewControllerHelper linkUsernamesInLabel:self.messageLabel users:mentions];
+    [self.messageLabel setText:comment.body afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
+    [TDViewControllerHelper linkUsernamesInLabel:self.messageLabel users:comment.mentions];
     self.messageLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:self.messageLabel.attributedText];
-
-    CGSize size = [self.messageLabel sizeThatFits:CGSizeMake(COMMENT_MESSAGE_WIDTH, MAXFLOAT)];
-    self.messageLabel.frame = CGRectMake(self.messageLabel.frame.origin.x, self.messageLabel.frame.origin.y, size.width, size.height);
-}
-
-- (void)makeTime:(NSDate *)time name:(NSString *)name {
-
-    self.timeLabel.labelDate = time;
-    self.timeLabel.text = [time timeAgo];
-
-    // Fix widths for name and time
-    [TDAppDelegate fixWidthOfThisLabel:self.timeLabel];
-    CGRect timeFrame = self.timeLabel.frame;
-    timeFrame.origin.x = CGRectGetMaxX(origTimeFrame)-timeFrame.size.width;
-    self.timeLabel.frame = timeFrame;
-    CGRect nameFrame = self.usernameLabel.frame;
-    nameFrame.size.width = CGRectGetMaxX(self.timeLabel.frame)-nameFrame.origin.x-self.timeLabel.frame.size.width-1.0;
-    self.usernameLabel.frame = nameFrame;
-    self.usernameLabel.text = name;
-    self.userButton.frame = origRectOfUserButton;
-    self.userButton.frame = CGRectMake(origRectOfUserButton.origin.x,
-                                           origRectOfUserButton.origin.y,
-                                           [TDAppDelegate minWidthOfThisLabel:self.usernameLabel],
-                                           origRectOfUserButton.size.height);
+    self.messageLabel.frame = CGRectMake(self.messageLabel.frame.origin.x, self.messageLabel.frame.origin.y, COMMENT_MESSAGE_WIDTH, comment.messageHeight);
 }
 
 - (IBAction)userButtonPressed:(id)sender {
