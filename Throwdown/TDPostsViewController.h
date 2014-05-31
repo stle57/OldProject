@@ -60,7 +60,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *recordButton;
 @property (weak, nonatomic) IBOutlet UIButton *notificationButton;
 @property (weak, nonatomic) IBOutlet UIButton *profileButton;
-@property (weak, nonatomic) IBOutlet UIButton *logOutFeedbackButton;
 @property (weak, nonatomic) IBOutlet UIView *bottomButtonHolderView;
 @property (nonatomic, retain) UIRefreshControl *refreshControl;
 @property (nonatomic, retain) UIDynamicAnimator *animator;

@@ -717,9 +717,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
     navController.navigationBar.barStyle = UIBarStyleDefault;
     navController.navigationBar.translucent = YES;
-    [self.navigationController presentViewController:navController
-                                            animated:YES
-                                          completion:nil];
+    [self.navigationController presentViewController:navController animated:YES completion:nil];
 }
 
 #pragma mark - Log Out User Notification

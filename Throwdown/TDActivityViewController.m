@@ -149,7 +149,10 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 #pragma mark - support unwinding on push notification
 
 - (void)unwindToRoot {
-    [self performSegueWithIdentifier:@"UnwindToHomeSegue" sender:nil];
+    debug NSLog(@"unwind from activity");
+    // Looks weird but ensures the profile closes on both own profile page and when tapped from feed
+    [self.navigationController popViewControllerAnimated:NO];
+    [self.navigationController dismissViewControllerAnimated:NO completion:nil];
 }
 
 #pragma mark - Feedback

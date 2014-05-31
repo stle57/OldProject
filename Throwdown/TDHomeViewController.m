@@ -298,10 +298,11 @@
 - (void)unwindAllViewControllers {
     UIViewController *top = [TDAppDelegate topMostController];
     if ([top class] == [UINavigationController class] || [top class] == [TDNavigationController class]) {
-        for (UIViewController *vc in [[((UINavigationController *)top) viewControllers] reverseObjectEnumerator]) {
+        for (UIViewController *vc in [((UINavigationController *)top) viewControllers]) {
+            NSLog(@"testing %@", [vc class]);
             if ([vc respondsToSelector:@selector(unwindToRoot)]) {
+                NSLog(@"closing %@", [vc class]);
                 [vc performSelector:@selector(unwindToRoot)];
-                return;
             }
         }
     }
@@ -322,15 +323,19 @@
     [self.navigationController pushViewController:vc animated:YES];
 }
 
+- (IBAction)notificationButtonPressed:(id)sender {
+    debug NSLog(@"open notification view");
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"ActivityViewController"];
+    vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
+    navController.navigationBar.barStyle = UIBarStyleDefault;
+    navController.navigationBar.translucent = YES;
+    [self.navigationController presentViewController:navController animated:YES completion:nil];
+}
+
 - (void)openDetailView:(NSNumber *)postId {
     [super openDetailView:postId];
 }
-
-/*- (void)openDetailView:(NSNumber *)postId {
-    TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
-    vc.delegate = self;
-    vc.postId = postId;
-    [self.navigationController pushViewController:vc animated:YES];
-} */
 
 @end

@@ -12,12 +12,9 @@
 #import <MessageUI/MessageUI.h>
 
 @interface TDActivityViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, MFMailComposeViewControllerDelegate>
-{
-
-}
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 - (void)unwindToRoot;
--(IBAction)feedbackButton:(id)sender;
+- (IBAction)feedbackButton:(id)sender;
 @end

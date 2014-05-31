@@ -502,12 +502,10 @@
 }
 
 #pragma mark - Update Posts After User Change Notification
--(void)updatePostsAfterUserUpdate:(NSNotification *)notification
-{
+- (void)updatePostsAfterUserUpdate:(NSNotification *)notification {
     debug NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
 
-    if ([[[TDCurrentUser sharedInstance] currentUserObject].userId isEqualToNumber:self.post.user.userId])
-    {
+    if ([[[TDCurrentUser sharedInstance] currentUserObject].userId isEqualToNumber:self.post.user.userId]) {
         [self.post replaceUserAndLikesAndCommentsWithUser:[[TDCurrentUser sharedInstance] currentUserObject]];
     }
 
@@ -517,7 +515,7 @@
 #pragma mark - support unwinding on push notification
 
 - (void)unwindToRoot {
-    NSLog(@"unwind from detail view");
+    debug NSLog(@"unwind from detail view");
     [self.navigationController popViewControllerAnimated:NO];
 }
 
