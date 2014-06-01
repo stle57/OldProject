@@ -127,11 +127,6 @@
         if ([kControllersNotElegibleForNotification containsObject:[controller class]]) {
             // containsObject should be returning YES or NO but returns nil !?
         } else {
-
-            if ([userInfo objectForKey:@"activity_id"]) {
-                [[TDAPIClient sharedInstance] updateActivity:[userInfo objectForKey:@"activity_id"] seen:YES clicked:NO];
-            }
-
             NSDictionary *aps = [userInfo objectForKey:@"aps"];
             if (aps && [aps objectForKey:@"alert"]) {
                 [[TDAppDelegate appDelegate] showToastWithText:[aps objectForKey:@"alert"]
