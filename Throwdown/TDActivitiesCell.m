@@ -11,9 +11,7 @@
 #import "TDViewControllerHelper.h"
 #import "NSDate+TimeAgo.h"
 #import "TDAPIClient.h"
-
-static NSString *const kUsernameAttribute = @"username";
-static NSUInteger const kMaxCommentLength = 50;
+#import <QuartzCore/QuartzCore.h>
 
 @interface TDActivitiesCell () <TTTAttributedLabelDelegate>
 
@@ -28,21 +26,21 @@ static NSUInteger const kMaxCommentLength = 50;
 - (void)awakeFromNib {
     self.activityLabel.font = COMMENT_MESSAGE_FONT;
     self.activityLabel.lineBreakMode = NSLineBreakByWordWrapping;
-    self.activityLabel.numberOfLines = 3;
-    self.activityLabel.verticalAlignment = TTTAttributedLabelVerticalAlignmentCenter;
+    self.activityLabel.verticalAlignment = TTTAttributedLabelVerticalAlignmentTop;
     self.activityLabel.delegate = self;
-    self.activityLabel.lineHeightMultiple = 1 - kTextLineHeight;
+    self.activityLabel.numberOfLines = 2;
 
-    self.timeLabel.font    = TIME_FONT;
+    self.timeLabel.font = TIME_FONT;
 }
 
 - (void)setActivity:(NSDictionary *)activity {
     _activity = activity;
 
+    self.timeLabel.text = [[TDViewControllerHelper dateForRFC3339DateTimeString:[activity objectForKey:@"created_at"]] timeAgo];
+
     NSDictionary *post = (NSDictionary *)[activity objectForKey:@"post"];
     NSDictionary *user = (NSDictionary *)[activity objectForKey:@"user"];
     NSString *username = [user objectForKey:@"username"];
-    NSString *createdAtText  = [[TDViewControllerHelper dateForRFC3339DateTimeString:[activity objectForKey:@"created_at"]] timeAgo];
 
     [self.previewImage setImage:nil];
     [[TDAPIClient sharedInstance] setImage:@{@"imageView":self.previewImage,
@@ -54,9 +52,6 @@ static NSUInteger const kMaxCommentLength = 50;
     NSArray *users;
     if ([@"comment" isEqualToString:[activity objectForKey:@"action"]]) {
         NSString *body = [[activity objectForKey:@"comment"] objectForKey:@"body"];
-        if ([body length] + [username length] > kMaxCommentLength) {
-            body = [[body substringToIndex:(kMaxCommentLength - [username length])] stringByAppendingString:@"…"];
-        }
         users = [[activity objectForKey:@"comment"] objectForKey:@"mentions"];
         text = [NSString stringWithFormat:@"%@ said: \"%@\"",
                                           username,
@@ -64,27 +59,34 @@ static NSUInteger const kMaxCommentLength = 50;
     } else if ([@"like" isEqualToString:[activity objectForKey:@"action"]]) {
         text = [NSString stringWithFormat:@"%@ liked your post", username];
     }
-    // adding timestamp to label to center properly
-    text = [NSString stringWithFormat:@"%@\n%@", text, createdAtText];
 
     [self.activityLabel setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
     if (users) {
         [TDViewControllerHelper linkUsernamesInLabel:self.activityLabel users:users];
     }
 
-    NSMutableAttributedString *mutableAttributedString = [self.activityLabel.attributedText mutableCopy];
-
     // Link and bold the initial username
+    NSMutableAttributedString *mutableAttributedString = [self.activityLabel.attributedText mutableCopy];
     [TDViewControllerHelper linkUsernamesInLabel:self.activityLabel users:@[user] pattern:@"(^\\w+\\b)"];
     NSDictionary *userAttributes = @{ NSForegroundColorAttributeName:[TDConstants brandingRedColor], NSFontAttributeName: [TDConstants fontBoldSized:COMMENT_MESSAGE_FONT_SIZE] };
     [mutableAttributedString addAttributes:userAttributes range:NSMakeRange(0, [username length])];
+    self.activityLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:mutableAttributedString withMultiple:1.f];
 
-    // Give timestamp right attributes
-    NSDictionary *timeAttributes = @{NSForegroundColorAttributeName:[TDConstants commentTimeTextColor], NSFontAttributeName: TIME_FONT };
-    NSUInteger strLength = [[mutableAttributedString string] length];
-    [mutableAttributedString addAttributes:timeAttributes range:NSMakeRange(strLength - [createdAtText length], [createdAtText length])];
+    CGSize labelSize = [self.activityLabel sizeThatFits:CGSizeMake(248, MAXFLOAT)];
+    CGSize timeSize  = self.timeLabel.frame.size;
+    labelSize.height = labelSize.height + 7;
 
-    self.activityLabel.attributedText = mutableAttributedString;
+    int y = (self.contentView.frame.size.height - (labelSize.height + timeSize.height)) / 2;
+    CGRect labelFrame = CGRectMake(7, y, labelSize.width, labelSize.height);
+    self.activityLabel.frame = labelFrame;
+
+    y = y + labelSize.height;
+    if (labelSize.height <= 43) {
+        y -= 4;
+    }
+    CGRect timeFrame = CGRectMake(7, y, timeSize.width, timeSize.height);
+    self.timeLabel.frame = timeFrame;
+
 
     // Background
     if ([activity objectForKey:@"unseen"]) {

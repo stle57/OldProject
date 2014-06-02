@@ -42,6 +42,10 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
     self.feedbackButton.titleLabel.font = [TDConstants fontBoldSized:19.0];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
+
+    CGRect frame = self.tableView.frame;
+    frame.size.height = [UIScreen mainScreen].bounds.size.height - self.feedbackButton.frame.size.height;
+    self.tableView.frame = frame;
     self.activities = @[];
     self.navigationController.navigationBar.titleTextAttributes = @{
                                                                     NSForegroundColorAttributeName: [UIColor colorWithRed:.223529412 green:.223529412 blue:.223529412 alpha:1.0],
