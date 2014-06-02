@@ -21,6 +21,7 @@
 @implementation TDPostAPI
 {
     NSMutableArray *posts;
+    BOOL noMorePosts;
 }
 
 + (TDPostAPI *)sharedInstance {
@@ -58,7 +59,7 @@
     [manager POST:url parameters:@{ @"post": @{@"filename": filename, @"comment": comment, @"kind": kind}, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
         debug NSLog(@"JSON: %@", [responseObject class]);
         // Not the best way to do this but for now...
-        [self fetchPostsUpstream];
+        [self fetchPostsUpstreamWithErrorHandlerStart:nil error:nil];
         if (success) {
             success();
         }
@@ -76,21 +77,11 @@
     }];
 }
 
-- (void)fetchPostsUpstream {
-    [self fetchPostsUpstreamWithErrorHandlerStart:nil error:nil];
-}
-
-- (BOOL)fetchPostsDownstream {
-    NSNumber *lowestId = [self lowestIdOfPosts];
-    if ([lowestId compare:[NSNumber numberWithInt:0]] == NSOrderedAscending ||
-        [lowestId compare:[NSNumber numberWithInt:0]] == NSOrderedSame) {
-        return NO;
-    }
-    [self fetchPostsUpstreamWithErrorHandlerStart:lowestId error:nil];
-    return YES;
-}
-
 - (void)fetchPostsUpstreamWithErrorHandlerStart:(NSNumber *)start error:(void (^)(void))errorHandler {
+    [self fetchPostsUpstreamWithErrorHandlerStart:start success:nil error:errorHandler];
+}
+
+- (void)fetchPostsUpstreamWithErrorHandlerStart:(NSNumber *)start success:(void (^)(NSDictionary*response))successHandler error:(void (^)(void))errorHandler {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
     if ([TDCurrentUser sharedInstance].authToken) {
         [params addEntriesFromDictionary:@{@"user_token": [TDCurrentUser sharedInstance].authToken}];
@@ -114,6 +105,12 @@
             if ([responseObject valueForKey:@"notification_count"]) {
                 [self notifyNotificationCount:[responseObject valueForKey:@"notification_count"]];
             }
+            if ([responseObject valueForKey:@"next_start"] == [NSNull null]) {
+                noMorePosts = YES;
+            }
+            if (successHandler) {
+                successHandler(responseObject);
+            }
             [self notifyPostsRefreshed];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -134,8 +131,7 @@
     return [posts mutableCopy];
 }
 
--(NSNumber *)lowestIdOfPosts
-{
+- (NSNumber *)lowestIdOfPosts {
     NSNumber *lowestId = [NSNumber numberWithLongLong:LONG_LONG_MAX];
     for (TDPost *post in posts) {
         if ([lowestId compare:post.postId] == NSOrderedDescending) {
@@ -152,13 +148,8 @@
     [self fetchPostsForUserUpstreamWithErrorHandlerStart:nil userId:userId error:errorHandler success:successHandler];
 }
 
-- (BOOL)fetchPostsDownstreamForUser:(NSNumber *)userId lowestId:(NSNumber *)lowestId success:(void(^)(NSDictionary *))successHandler {
-    if ([lowestId compare:[NSNumber numberWithInt:0]] == NSOrderedAscending ||
-        [lowestId compare:[NSNumber numberWithInt:0]] == NSOrderedSame) {
-        return NO;
-    }
+- (void)fetchPostsDownstreamForUser:(NSNumber *)userId lowestId:(NSNumber *)lowestId success:(void(^)(NSDictionary *))successHandler {
     [self fetchPostsForUserUpstreamWithErrorHandlerStart:lowestId userId:userId error:nil success:successHandler];
-    return YES;
 }
 
 - (void)fetchPostsForUserUpstreamWithErrorHandlerStart:(NSNumber *)start userId:(NSNumber *)userId error:(void (^)(void))errorHandler success:(void(^)(NSDictionary *response))successHandler {

@@ -22,7 +22,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="feed_end_arrow" id="Hmv-TY-5Yn">
-                        <rect key="frame" x="142" y="34" width="36" height="15"/>
+                        <rect key="frame" x="155" y="34" width="10" height="12"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     </imageView>
                 </subviews>

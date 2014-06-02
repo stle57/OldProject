@@ -24,7 +24,6 @@ typedef NSUInteger kToastIconType;
 @interface TDToastView : UIView <UIGestureRecognizerDelegate>
 
 @property (nonatomic, assign) id <TDToastViewDelegate> __unsafe_unretained delegate;
-@property (weak, nonatomic) IBOutlet UIView *coloredBackground;
 @property (weak, nonatomic) IBOutlet UIImageView *iconImageView;
 @property (weak, nonatomic) IBOutlet UILabel *label;
 @property (nonatomic, retain) NSDictionary *payload;

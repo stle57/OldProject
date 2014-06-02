@@ -10,6 +10,7 @@
 #import "TDUserProfileViewController.h"
 #import "TDViewControllerHelper.h"
 #import "TDAPIClient.h"
+#import "TDHomeViewController.h"
 
 static CGFloat const kHeightOfStatusBar = 65.0;
 
@@ -62,8 +63,8 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     uploadMoreHeight = uploadMoreCell.frame.size.height;
     uploadMoreCell = nil;
 
-
     self.loaded = NO;
+    self.errorLoading = NO;
 
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.delegate = self;
@@ -86,33 +87,34 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     [self.tableView addSubview:self.refreshControl];
     [self.refreshControl setTintColor:[UIColor blackColor]];
 
-    self.headerView = [[TDHomeHeaderView alloc] initWithTableView:self.tableView];
+    if ([self class] == [TDHomeViewController class]) {
+        self.headerView = [[TDHomeHeaderView alloc] initWithTableView:self.tableView];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(startSpinner:)
-                                                 name:START_MAIN_SPINNER_NOTIFICATION
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(stopSpinner:)
-                                                 name:STOP_MAIN_SPINNER_NOTIFICATION
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(postDeleted:)
-                                                 name:POST_DELETED_NOTIFICATION
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(logOutUser:)
-                                                 name:LOG_OUT_NOTIFICATION
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(updatePostsAfterUserUpdate:)
-                                                 name:TDUpdateWithUserChangeNotification
-                                               object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(startSpinner:)
+                                                     name:START_MAIN_SPINNER_NOTIFICATION
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(stopSpinner:)
+                                                     name:STOP_MAIN_SPINNER_NOTIFICATION
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(postDeleted:)
+                                                     name:POST_DELETED_NOTIFICATION
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(logOutUser:)
+                                                     name:LOG_OUT_NOTIFICATION
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(updatePostsAfterUserUpdate:)
+                                                     name:TDUpdateWithUserChangeNotification
+                                                   object:nil];
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-
     // If we're coming back from the details screen, we need to
     // order the comments to only the most recent 2
     if ([self.posts count] > 0) {
@@ -126,19 +128,20 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+    if ([self class] != [TDHomeViewController class]) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
+    }
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
     return UIStatusBarStyleDefault;
 }
 
-- (void)didReceiveMemoryWarning
-{
+- (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
 
 - (void)dealloc {
-
     debug NSLog(@"dealloc:%@", [self class]);
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
@@ -173,6 +176,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 - (void)refreshPostsList:(NSNotification*)notification {
     // Notification comes in when posts have been fetched
     self.loaded = YES;
+    self.errorLoading = NO;
     if (self.userId && notification.userInfo && [notification.userInfo objectForKey:@"userId"]) {
         NSNumber *userId = (NSNumber *)[notification.userInfo objectForKey:@"userId"];
         if (![userId isEqualToNumber:self.userId]) {
@@ -220,6 +224,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     [self startLoadingSpinner];
 
     if (![self fetchPostsDownStream]) {
+        noMorePostsAtBottom = YES;
         updatingAtBottom = NO;
         [self stopSpinner];
     }
@@ -248,7 +253,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 // 1 section per post, +1 if we need the Profile Header cell
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     if ([self.posts count] == 0) {
-        if (!self.loaded) {
+        if (!self.loaded || self.errorLoading) {
             return 1;
         }
         return (needsProfileHeader ? 2 : 1);
@@ -296,7 +301,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 
     // 1st row for Profile Header
-    if (needsProfileHeader && indexPath.section == 0 && self.loaded) {
+    if (needsProfileHeader && indexPath.section == 0 && self.loaded && !self.errorLoading) {
 
         TDUserProfileCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_PROFILE];
         if (!cell) {
@@ -352,6 +357,8 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
         if (!self.loaded) {
             cell.noPostsLabel.text = @"Loading…";
+        } else if (self.errorLoading) {
+            cell.noPostsLabel.text = @"Error loading posts";
         } else {
             cell.noPostsLabel.text = @"No posts yet";
         }
@@ -481,10 +488,9 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     return cell;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     // 1st row is Profile Header
-    if (needsProfileHeader && indexPath.section == 0 && self.loaded) {
+    if (needsProfileHeader && indexPath.section == 0 && self.loaded && !self.errorLoading) {
 
         // min height is profileHeaderHeight
         if ([self getUser]) {
@@ -555,7 +561,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
 
-    int index = (needsProfileHeader ? indexPath.section - 1 : indexPath.section);
+    NSInteger index = (needsProfileHeader ? indexPath.section - 1 : indexPath.section);
     if ([self.posts count] >= index) {
         TDPost *post = (TDPost *)[self.posts objectAtIndex:index];
         [self openDetailView:post.postId];

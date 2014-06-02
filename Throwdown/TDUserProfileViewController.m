@@ -114,6 +114,7 @@
 }
 
 - (IBAction)closeButtonHit:(id)sender {
+    self.closeButton.enabled = NO;
     [self.navigationController dismissViewControllerAnimated:YES
                                                   completion:nil];
 }
@@ -135,14 +136,24 @@
     } error:^{
         [self endRefreshControl];
         [[TDAppDelegate appDelegate] showToastWithText:@"Can't connect to server" type:kToastIconType_Warning payload:@{} delegate:nil];
+        self.loaded = YES;
+        self.errorLoading = YES;
+        [self.tableView reloadData];
     }];
 }
 
 - (BOOL)fetchPostsDownStream {
+    if (noMorePostsAtBottom) {
+        return NO;
+    }
     debug NSLog(@"userprofile-fetchPostsDownStream");
-    return [[TDPostAPI sharedInstance] fetchPostsDownstreamForUser:self.userId lowestId:[self lowestIdOfPosts] success:^(NSDictionary *response) {
+    [[TDPostAPI sharedInstance] fetchPostsForUserUpstreamWithErrorHandlerStart:[self lowestIdOfPosts] userId:self.userId error:^{
+        self.loaded = YES;
+        self.errorLoading = YES;
+    } success:^(NSDictionary *response) {
         [self handlePostsResponse:response fromStart:NO];
     }];
+    return YES;
 }
 
 - (NSNumber *)lowestIdOfPosts {
@@ -161,6 +172,7 @@
     [self endRefreshControl];
 
     self.loaded = YES;
+    self.errorLoading = NO;
 
     if (start) {
         self.userPosts = nil;

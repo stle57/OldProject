@@ -62,6 +62,7 @@
 @property (strong, nonatomic) UIActivityIndicatorView *playerSpinner;
 @property (nonatomic, retain) NSNumber *userId;
 @property (nonatomic) BOOL loaded;
+@property (nonatomic) BOOL errorLoading;
 
 - (NSArray *)postsForThisScreen;
 - (void)reloadPosts;

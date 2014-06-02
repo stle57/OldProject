@@ -21,10 +21,7 @@
 - (void)uploadPhoto:(NSString *)localPhotoPath withName:(NSString *)newName;
 
 - (void)addPost:(NSString *)filename comment:(NSString *)comment kind:(NSString *)kind success:(void (^)(void))success failure:(void (^)(void))failure;
-- (void)fetchPostsUpstream;
-- (BOOL)fetchPostsDownstream;
 - (NSNumber *)lowestIdOfPosts;
-- (void)fetchPostsUpstreamWithErrorHandlerStart:(NSNumber *)start error:(void (^)(void))errorHandler;
 - (NSArray *)getPosts;
 - (void)likePostWithId:(NSNumber *)postId;
 - (void)unLikePostWithId:(NSNumber *)postId;
@@ -32,8 +29,10 @@
 - (void)postNewComment:(NSString *)messageBody forPost:(NSNumber *)postId;
 - (void)deletePostWithId:(NSNumber *)postId;
 
+- (void)fetchPostsUpstreamWithErrorHandlerStart:(NSNumber *)start error:(void (^)(void))errorHandler;
+- (void)fetchPostsUpstreamWithErrorHandlerStart:(NSNumber *)start success:(void (^)(NSDictionary*response))successHandler error:(void (^)(void))errorHandler;
 - (void)fetchPostsUpstreamForUser:(NSNumber *)userId success:(void(^)(NSDictionary *response))successHandler error:(void(^)(void))errorHandler;
-- (BOOL)fetchPostsDownstreamForUser:(NSNumber *)userId lowestId:(NSNumber *)lowestId success:(void(^)(NSDictionary *))successHandler;
+- (void)fetchPostsDownstreamForUser:(NSNumber *)userId lowestId:(NSNumber *)lowestId success:(void(^)(NSDictionary *))successHandler;
 - (void)fetchPostsForUserUpstreamWithErrorHandlerStart:(NSNumber *)start userId:(NSNumber *)userId error:(void (^)(void))errorHandler success:(void(^)(NSDictionary *response))successHandler;
 
 @end

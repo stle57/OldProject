@@ -107,11 +107,30 @@
 
 #pragma mark - Posts
 - (void)fetchPostsUpStream {
-    [[TDPostAPI sharedInstance] fetchPostsUpstream];
+    [[TDPostAPI sharedInstance] fetchPostsUpstreamWithErrorHandlerStart:nil success:^(NSDictionary *response) {
+        self.loaded = YES;
+        self.errorLoading = NO;
+        if ([response valueForKey:@"next_start"] == [NSNull null]) {
+            noMorePostsAtBottom = YES;
+        }
+    } error:^{
+        self.loaded = YES;
+        self.errorLoading = YES;
+        [[TDAppDelegate appDelegate] showToastWithText:@"Can't connect to server" type:kToastIconType_Warning payload:@{} delegate:nil];
+        [self.tableView reloadData];
+    }];
 }
 
-- (BOOL)fetchPostsDownStream {
-    return [[TDPostAPI sharedInstance] fetchPostsDownstream];
+- (BOOL)fetchPostsDownstream {
+    if (noMorePostsAtBottom) {
+        return NO;
+    }
+    [[TDPostAPI sharedInstance] fetchPostsUpstreamWithErrorHandlerStart:[self lowestIdOfPosts] success:^(NSDictionary *response) {
+        if ([response valueForKey:@"next_start"] == [NSNull null]) {
+            noMorePostsAtBottom = YES;
+        }
+    } error:nil];
+    return YES;
 }
 
 - (NSArray *)postsForThisScreen {
