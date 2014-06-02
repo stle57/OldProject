@@ -41,8 +41,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    [self.view insertSubview:self.bottomButtonHolderView aboveSubview:self.tableView];
-
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(uploadStarted:)
                                                  name:TDPostUploadStarted
@@ -54,6 +52,14 @@
 
     [self.badgeCountLabel setFont:[TDConstants fontSemiBoldSized:11]];
     [self.badgeCountLabel.layer setCornerRadius:9.0];
+
+    // Fix buttons for 3.5" screens
+    int screenHeight = [UIScreen mainScreen].bounds.size.height;
+    self.recordButton.center = CGPointMake(self.recordButton.center.x, screenHeight - self.recordButton.frame.size.height / 2.0);
+    self.profileButton.center = CGPointMake(self.profileButton.center.x, screenHeight - self.profileButton.frame.size.height / 2.0);
+    self.badgeCountLabel.center = CGPointMake(self.badgeCountLabel.center.x, screenHeight - 45);
+    self.notificationButton.center = CGPointMake(self.notificationButton.center.x, screenHeight - self.notificationButton.frame.size.height / 2.0);
+    origRecordButtonCenter = self.recordButton.center;
 }
 
 - (void)dealloc {
@@ -83,8 +89,7 @@
     }
 }
 
-- (void)viewWillDisappear:(BOOL)animated
-{
+- (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
 
     [self removeFrostedView];
@@ -162,35 +167,37 @@
 #pragma mark - Bottom Buttons Bounce
 - (void)hideBottomButtons {
     // Place off screen
-    self.bottomButtonHolderView.center = CGPointMake(self.bottomButtonHolderView.center.x,
-                                                     [UIScreen mainScreen].bounds.size.height+(self.bottomButtonHolderView.frame.size.height/2.0)+1.0);
+    self.recordButton.center = CGPointMake(self.recordButton.center.x,
+                                           [UIScreen mainScreen].bounds.size.height + (self.recordButton.frame.size.height / 2.0) + 1.0);
+    self.profileButton.center = CGPointMake(self.profileButton.center.x,
+                                            [UIScreen mainScreen].bounds.size.height + (self.profileButton.frame.size.height / 2.0) + 1.0);
+    self.notificationButton.center = CGPointMake(self.notificationButton.center.x,
+                                                 [UIScreen mainScreen].bounds.size.height + (self.notificationButton.frame.size.height / 2.0) + 1.0);
+    self.badgeCountLabel.hidden = YES;
 }
 
 - (void)animateButtonsOnToScreen {
-    debug NSLog(@"home-animateButtonsOnToScreen");
-
-    // Hide 1st
     [self hideBottomButtons];
-
-    UIDynamicAnimator* anAnimator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
-    self.animator = anAnimator;
-    
-    UIGravityBehavior* gravityBeahvior = [[UIGravityBehavior alloc] initWithItems:@[self.bottomButtonHolderView]];
-    gravityBeahvior.magnitude = 4.0;
-    gravityBeahvior.gravityDirection = CGVectorMake(0.0, -1.0);
-    UICollisionBehavior* collisionBehavior1 = [[UICollisionBehavior alloc] initWithItems:@[self.bottomButtonHolderView]];
-    collisionBehavior1.translatesReferenceBoundsIntoBoundary = NO;
-    [collisionBehavior1 addBoundaryWithIdentifier:@"middle"
-                                        fromPoint:CGPointMake(0.0,
-                                                              origButtonViewCenter.y-self.bottomButtonHolderView.frame.size.height/2.0)
-                                          toPoint:CGPointMake(self.view.frame.size.width,
-                                                              origButtonViewCenter.y-self.bottomButtonHolderView.frame.size.height/2.0)];
-    UIDynamicItemBehavior* propertiesBehavior = [[UIDynamicItemBehavior alloc] initWithItems:@[self.bottomButtonHolderView]];
+    NSArray *items = @[self.recordButton, self.profileButton, self.notificationButton];
+    self.animator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
+    UIGravityBehavior* gravityBehavior = [[UIGravityBehavior alloc] initWithItems:items];
+    gravityBehavior.magnitude = 4.0;
+    gravityBehavior.gravityDirection = CGVectorMake(0.0, -1.0);
+    UICollisionBehavior* collisionBehavior = [[UICollisionBehavior alloc] initWithItems:items];
+    collisionBehavior.translatesReferenceBoundsIntoBoundary = NO;
+    [collisionBehavior addBoundaryWithIdentifier:@"middle"
+                                       fromPoint:CGPointMake(0.0, origRecordButtonCenter.y - self.recordButton.frame.size.height / 2.0)
+                                         toPoint:CGPointMake(self.view.frame.size.width, origRecordButtonCenter.y - self.recordButton.frame.size.height / 2.0)];
+    UIDynamicItemBehavior* propertiesBehavior = [[UIDynamicItemBehavior alloc] initWithItems:items];
     propertiesBehavior.elasticity = 0.4;
     propertiesBehavior.friction = 100.0;
-    [self.animator addBehavior:gravityBeahvior];
-    [self.animator addBehavior:collisionBehavior1];
+    [self.animator addBehavior:gravityBehavior];
+    [self.animator addBehavior:collisionBehavior];
     [self.animator addBehavior:propertiesBehavior];
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.8 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self displayBadgeCount];
+    });
 }
 
 #pragma mark - segues
@@ -251,24 +258,28 @@
         } else if ([notification.userInfo objectForKey:@"decreaseCount"]) {
             self.badgeCount = [NSNumber numberWithLong:[self.badgeCount integerValue] - [((NSNumber *)[notification.userInfo objectForKey:@"decreaseCount"]) integerValue]];
         }
-        if ([self.badgeCount integerValue] > 0) {
-            self.badgeCountLabel.hidden = NO;
-            self.badgeCountLabel.text = [NSString stringWithFormat:@"%@", self.badgeCount];
-            CGRect frame = self.badgeCountLabel.frame;
-            if ([self.badgeCount integerValue] < 10) {
-                frame.size.width = 18;
-            } else if ([self.badgeCount integerValue] < 100) {
-                frame.size.width = 24;
-            } else if ([self.badgeCount integerValue] < 1000) {
-                frame.size.width = 28;
-            } else {
-                frame.size.width = 34;
-            }
-            self.badgeCountLabel.frame = frame;
-        } else {
-            self.badgeCountLabel.hidden = YES;
-        }
+        [self displayBadgeCount];
     }
+}
+- (void)displayBadgeCount {
+    if ([self.badgeCount integerValue] > 0) {
+        self.badgeCountLabel.hidden = NO;
+        self.badgeCountLabel.text = [NSString stringWithFormat:@"%@", self.badgeCount];
+        CGRect frame = self.badgeCountLabel.frame;
+        if ([self.badgeCount integerValue] < 10) {
+            frame.size.width = 18;
+        } else if ([self.badgeCount integerValue] < 100) {
+            frame.size.width = 24;
+        } else if ([self.badgeCount integerValue] < 1000) {
+            frame.size.width = 28;
+        } else {
+            frame.size.width = 34;
+        }
+        self.badgeCountLabel.frame = frame;
+    } else {
+        self.badgeCountLabel.hidden = YES;
+    }
+
 }
 
 #pragma mark - TDToastViewDelegate

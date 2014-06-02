@@ -181,17 +181,15 @@
             errorHandler();
         }
 
-        if (error) {
-            if ([operation.response statusCode] == 401) {
-                [self logOutUser];
-            }
+        if ([operation.response statusCode] == 401) {
+            [self logOutUser];
         }
     }];
 }
 
 #pragma delete post
 - (void)deletePostWithId:(NSNumber *)postId {
-    NSLog(@"API-delete post with id:%@", postId);
+    debug NSLog(@"API-delete post with id:%@", postId);
 
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts/[POST_ID].json"];
     url = [url stringByReplacingOccurrencesOfString:@"[POST_ID]"
@@ -248,8 +246,7 @@
 }
 
 #pragma mark - like & comment
--(void)likePostWithId:(NSNumber *)postId
-{
+- (void)likePostWithId:(NSNumber *)postId {
     //  /api/v1/posts/{post's id}/like.json
 
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts/[POST_ID]/like.json"];
@@ -257,13 +254,11 @@
                                          withString:[postId stringValue]];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager POST:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
-
-        if ([responseObject isKindOfClass:[NSDictionary class]])
-        {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
             NSDictionary *returnDict = [NSDictionary dictionaryWithDictionary:responseObject];
             if ([returnDict objectForKey:@"success"]) {
                 if ([[returnDict objectForKey:@"success"] boolValue]) {
-                    NSLog(@"Like Success!");
+                    debug NSLog(@"Like Success!");
 
                     // Change the like in that post
                     TDPost *post = (TDPost *)[[TDAppDelegate appDelegate] postWithPostId:postId];
@@ -275,10 +270,9 @@
                 }
             }
         }
-
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
 
-        NSLog(@"LIKE Error: %@", error);
+        debug NSLog(@"LIKE Error: %@", error);
 
         if (error) {
             if ([operation.response statusCode] == 401) {
@@ -290,8 +284,7 @@
     }];
 }
 
--(void)unLikePostWithId:(NSNumber *)postId
-{
+- (void)unLikePostWithId:(NSNumber *)postId {
     //  /api/v1/posts/{post's id}/like.json
 
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts/[POST_ID]/like.json"];
@@ -299,29 +292,23 @@
                                          withString:[postId stringValue]];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager DELETE:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
-
-        if ([responseObject isKindOfClass:[NSDictionary class]])
-        {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
             NSDictionary *returnDict = [NSDictionary dictionaryWithDictionary:responseObject];
             if ([returnDict objectForKey:@"success"]) {
                 if ([[returnDict objectForKey:@"success"] boolValue]) {
-                    NSLog(@"unLike Success!");
+                    debug NSLog(@"unLike Success!");
 
                     // Change the like in that post
                     TDPost *post = (TDPost *)[[TDAppDelegate appDelegate] postWithPostId:postId];
-
                     if (post) {
                         post.liked = NO;
-                      //  [self notifyPostsRefreshed];
                     }
                 }
             }
         }
 
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-
-        NSLog(@"UNLIKE Error: %@", error);
-
+        debug NSLog(@"UNLIKE Error: %@", error);
         if (error) {
             if ([operation.response statusCode] == 401) {
                 [self logOutUser];
@@ -390,7 +377,7 @@
 
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         
-        NSLog(@"New Comment Error: %@", error);
+        debug NSLog(@"New Comment Error: %@", error);
 
         if (error) {
             if ([operation.response statusCode] == 401) {

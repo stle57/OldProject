@@ -21,13 +21,21 @@
                         <color key="textColor" red="0.29803921568627451" green="0.29803921568627451" blue="0.29803921568627451" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="feed_end_arrow" id="Hmv-TY-5Yn">
+                        <rect key="frame" x="142" y="34" width="36" height="15"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    </imageView>
                 </subviews>
                 <color key="backgroundColor" red="0.93333333333333335" green="0.93333333333333335" blue="0.93333333333333335" alpha="1" colorSpace="calibratedRGB"/>
             </tableViewCellContentView>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
             <connections>
+                <outlet property="uploadMoreArrow" destination="Hmv-TY-5Yn" id="Jak-pG-BFG"/>
                 <outlet property="uploadMoreLabel" destination="eZc-AQ-eOA" id="Dhw-Sm-48T"/>
             </connections>
         </tableViewCell>
     </objects>
+    <resources>
+        <image name="feed_end_arrow" width="10" height="12"/>
+    </resources>
 </document>

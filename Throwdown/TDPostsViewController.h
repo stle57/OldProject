@@ -33,9 +33,6 @@
     UIRefreshControl *refreshControl;
     BOOL goneDownstream;
     CGPoint origRecordButtonCenter;
-    CGPoint origNotificationButtonCenter;
-    CGPoint origProfileButtonCenter;
-    CGPoint origButtonViewCenter;
     UIDynamicAnimator *animator;
     CGFloat postViewHeight;
     CGFloat likeHeight;
@@ -49,7 +46,6 @@
     BOOL updatingAtBottom;
     BOOL showBottomSpinner;
     BOOL noMorePostsAtBottom;
-    CGPoint tableOffset;
     CGRect statusBarFrame;
     BOOL needsProfileHeader;
     CGFloat topOfBioLabelInProfileHeader;
@@ -60,7 +56,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *recordButton;
 @property (weak, nonatomic) IBOutlet UIButton *notificationButton;
 @property (weak, nonatomic) IBOutlet UIButton *profileButton;
-@property (weak, nonatomic) IBOutlet UIView *bottomButtonHolderView;
 @property (nonatomic, retain) UIRefreshControl *refreshControl;
 @property (nonatomic, retain) UIDynamicAnimator *animator;
 @property (strong, nonatomic) TDHomeHeaderView *headerView;

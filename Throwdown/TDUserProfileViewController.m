@@ -158,7 +158,6 @@
 }
 
 - (void)handlePostsResponse:(NSDictionary *)response fromStart:(BOOL)start {
-    debug NSLog(@"%@", response);
     [self endRefreshControl];
 
     self.loaded = YES;
@@ -176,6 +175,9 @@
 
     for (NSDictionary *postObject in [response valueForKeyPath:@"posts"]) {
         [self.userPosts addObject:[[TDPost alloc]initWithDictionary:postObject]];
+    }
+    if ([response valueForKey:@"next_start"] == [NSNull null]) {
+        noMorePostsAtBottom = YES;
     }
 
     [self refreshPostsList];
@@ -240,9 +242,8 @@
     [self.navigationController pushViewController:vc animated:YES];
 }
 
--(void)updatePostsAfterUserUpdate:(NSNotification *)notification
-{
-    NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
+- (void)updatePostsAfterUserUpdate:(NSNotification *)notification {
+    debug NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
 
     if ([[[TDCurrentUser sharedInstance] currentUserObject].userId isEqualToNumber:self.userId]) {
         self.user = [[TDCurrentUser sharedInstance] currentUserObject];

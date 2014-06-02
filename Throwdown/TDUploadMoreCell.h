@@ -9,8 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface TDUploadMoreCell : UITableViewCell
-{
-}
 
+@property (weak, nonatomic) IBOutlet UIImageView *uploadMoreArrow;
 @property (weak, nonatomic) IBOutlet UILabel *uploadMoreLabel;
 @end

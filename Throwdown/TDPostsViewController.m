@@ -13,9 +13,6 @@
 
 static CGFloat const kHeightOfStatusBar = 65.0;
 
-@interface TDPostsViewController () <UITableViewDataSource, UITableViewDelegate>
-@end
-
 @implementation TDPostsViewController
 
 @synthesize posts;
@@ -24,17 +21,6 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    tableOffset = CGPointZero;
-
-    // Fix buttons for 3.5" screens
-    self.bottomButtonHolderView.center = CGPointMake(self.bottomButtonHolderView.center.x,
-                                                     [UIScreen mainScreen].bounds.size.height-self.bottomButtonHolderView.frame.size.height/2.0);
-    origButtonViewCenter = self.bottomButtonHolderView.center;
-
-    origRecordButtonCenter = self.recordButton.center;
-    origNotificationButtonCenter = self.notificationButton.center;
-    origProfileButtonCenter = self.profileButton.center;
 
     // Cell heights
     NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_POST_VIEW owner:self options:nil];
@@ -199,8 +185,6 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
 /* Refreshes the list with currently downloaded posts */
 - (void)refreshPostsList {
-    // if this was from a bottom scroll refresh
-    NSArray *visibleCells = [self.tableView visibleCells];
     [self stopSpinner];
 
     updatingAtBottom = NO;
@@ -210,22 +194,6 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
     posts = [self postsForThisScreen];
     [self.tableView reloadData];
-
-    // If we had an offset, then go there
-    if (!CGPointEqualToPoint(tableOffset, CGPointZero)) {
-
-        // Double check that we're still at the bottom of the table
-        // ie is a visible cell the bottom spinner?
-        for (id cell in visibleCells) {
-            if ([cell isKindOfClass:[TDActivityCell class]]) {
-                [self.tableView setContentOffset:tableOffset
-                                        animated:NO];
-                break;
-            }
-        }
-    }
-
-    tableOffset = CGPointZero;
 }
 
 #pragma mark - refresh control
@@ -243,31 +211,10 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
 # pragma mark - table view delegate
 - (void)updatePostsAtBottom {
+    if (updatingAtBottom || noMorePostsAtBottom) {
+        return;
+    }
     debug NSLog(@"updatePostsAtBottom");
-
-    if (updatingAtBottom) {
-        return;
-    }
-
-    // Don't do if we're already at the bottom
-    NSNumber *lowestId = [self lowestIdOfPosts];
-    if ([lowestId isEqualToNumber:[NSNumber numberWithInt:1]]) {
-
-        if (noMorePostsAtBottom) {
-            // don't add a cell if we're already here
-        } else {
-            noMorePostsAtBottom = YES;
-
-            [self.tableView insertSections:[NSIndexSet indexSetWithIndex:([self.posts count]+(needsProfileHeader ? 1 : 0))]
-                          withRowAnimation:UITableViewRowAnimationNone];
-        }
-        return;
-    }
-
-    // Don't do the bottom if the list is very short
-    if ([self.posts count] < 2) {
-        return;
-    }
 
     updatingAtBottom = YES;
     [self startLoadingSpinner];
@@ -307,7 +254,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
         return (needsProfileHeader ? 2 : 1);
     }
 
-    return [self.posts count]+(showBottomSpinner ? 1 : 0)+(noMorePostsAtBottom ? 1 : 0)+(needsProfileHeader ? 1 : 0);
+    return [self.posts count] + (showBottomSpinner ? 1 : 0) + (noMorePostsAtBottom ? 1 : 0) + (needsProfileHeader ? 1 : 0);
 }
 
 // Rows is 1 (for the video) + 1 for likes row + # of comments + 1 for like/comment buttons
@@ -445,6 +392,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
             cell = [topLevelObjects objectAtIndex:0];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
         }
+        cell.uploadMoreArrow.hidden = needsProfileHeader;
         return cell;
     }
 
@@ -607,8 +555,11 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
 
-    TDPost *post = (TDPost *)[self.posts objectAtIndex:(needsProfileHeader ? indexPath.section - 1 : indexPath.section)];
-    [self openDetailView:post.postId];
+    int index = (needsProfileHeader ? indexPath.section - 1 : indexPath.section);
+    if ([self.posts count] >= index) {
+        TDPost *post = (TDPost *)[self.posts objectAtIndex:index];
+        [self openDetailView:post.postId];
+    }
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
@@ -767,9 +718,6 @@ static CGFloat const kHeightOfStatusBar = 65.0;
         return;
     }
 
-    tableOffset = CGPointMake(self.tableView.contentOffset.x,
-                              self.tableView.contentOffset.y);//+activityRowHeight);
-
     showBottomSpinner = YES;
 
     // Add a bottom row
@@ -777,7 +725,6 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 }
 
 - (void)stopSpinner {
-
     showBottomSpinner = NO;
     [self.tableView reloadData];
 }

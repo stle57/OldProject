@@ -8,23 +8,12 @@
 
 #import "TDUploadMoreCell.h"
 #import "TDAppDelegate.h"
+#import "TDConstants.h"
 
 @implementation TDUploadMoreCell
 
-- (void)dealloc
-{
-}
-
 - (void)awakeFromNib {
-    self.uploadMoreLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:18.0];
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    if (self) {
-    }
-    return self;
+    self.uploadMoreLabel.font = [TDConstants fontRegularSized:14];
 }
 
 @end
