@@ -125,10 +125,10 @@ typedef enum {
     self.isPlaying = NO;
     self.didPlay = NO;
 
-    if (post.kind == TDPostKindPhoto) {
-        [self updateControlImage:ControlStateNone];
-    } else if (post.kind == TDPostKindVideo) {
+    if (post.kind == TDPostKindVideo) {
         [self updateControlImage:ControlStatePlay];
+    } else {
+        [self updateControlImage:ControlStateNone];
     }
 
     // Likes & Comments

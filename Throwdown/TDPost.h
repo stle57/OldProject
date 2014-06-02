@@ -11,6 +11,7 @@
 #import "TDComment.h"
 
 typedef enum {
+    TDPostKindUnknown,
     TDPostKindVideo,
     TDPostKindPhoto
 } TDPostKind;
