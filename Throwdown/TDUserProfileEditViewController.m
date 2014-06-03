@@ -20,6 +20,13 @@
 #import "TDAPIClient.h"
 #import "TDUserPushNotificationsEditViewController.h"
 
+@interface TDUserProfileEditViewController ()
+
+@property (nonatomic) BOOL hasLoaded;
+@property (nonatomic) NSDictionary *settings;
+
+@end
+
 @implementation TDUserProfileEditViewController
 
 @synthesize profileUser;
@@ -52,7 +59,7 @@
 
     debug NSLog(@"EditUserProfile:%@", self.profileUser);
 
-    statusBarFrame = [self.view convertRect: [UIApplication sharedApplication].statusBarFrame fromView: nil];
+    statusBarFrame = [self.view convertRect:[UIApplication sharedApplication].statusBarFrame fromView: nil];
 
     // Title
     self.titleLabel.text = @"Edit Profile";
@@ -71,19 +78,41 @@
     self.navigationItem.leftBarButtonItem = barButton;
     self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
 
-    // Preload
-    self.name = [TDCurrentUser sharedInstance].name;
-    self.username = [TDCurrentUser sharedInstance].username;
-    self.phone = [TDCurrentUser sharedInstance].phoneNumber;
-    self.email = [TDCurrentUser sharedInstance].email;
-    if ([TDCurrentUser sharedInstance].bio) {
-        self.bio = [TDCurrentUser sharedInstance].bio;
-    } else {
-        self.bio = @"";
-    }
-    if (![[[TDCurrentUser sharedInstance] currentUserObject] hasDefaultPicture]) {
-        self.pictureFileName = [TDCurrentUser sharedInstance].picture;
-    }
+    self.activityIndicator.text.text = @"Loading";
+    [self showActivity];
+    [[TDAPIClient sharedInstance] getUserSettings:[TDCurrentUser sharedInstance].authToken success:^(NSDictionary *settings) {
+        self.hasLoaded = YES;
+        if ([settings isKindOfClass:[NSDictionary class]]) {
+            self.settings = settings;
+            self.name = [settings objectForKey:@"name"];
+            self.username = [settings objectForKey:@"username"];
+            self.phone = [settings objectForKey:@"displayed_phone_number"];
+            self.email = [settings objectForKey:@"displayed_email"];
+            if ([settings objectForKey:@"bio"] == [NSNull null]) {
+                self.bio = @"";
+            } else {
+                self.bio = [settings objectForKey:@"bio"];
+            }
+
+            if ([settings objectForKey:@"picture"] == [NSNull null] && ![[settings objectForKey:@"picture"] isEqualToString:@"default"]) {
+                self.pictureFileName = [settings objectForKey:@"picture"];
+            }
+        }
+
+        [self checkForSaveButton];
+        [self.tableView reloadData];
+        [self hideActivity];
+    } failure:^{
+        self.hasLoaded = NO;
+        [self.tableView reloadData];
+        [self hideActivity];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't load profile"
+                                                        message:@"Please close and re-open settings to be able to make changes."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+    }];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -91,8 +120,10 @@
 
     origTableViewFrame = self.tableView.frame;
 
-    [self checkForSaveButton];
-    [self hideActivity];
+    if (self.hasLoaded) {
+        [self checkForSaveButton];
+        [self hideActivity];
+    }
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
@@ -149,19 +180,15 @@
 
                                                 if ([dict objectForKey:@"name"]) {
                                                     [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"name"] baseString:[NSString stringWithFormat:@"Name (%@)", self.name]]];
-                                                  //  self.name = [TDCurrentUser sharedInstance].name;
                                                 }
                                                 if ([dict objectForKey:@"username"]) {
                                                     [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"username"] baseString:[NSString stringWithFormat:@"Username (%@)", self.username]]];
-                                                  //  self.username = [TDCurrentUser sharedInstance].username;
                                                 }
                                                 if ([dict objectForKey:@"phone_number"]) {
                                                     [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"phone_number"] baseString:[NSString stringWithFormat:@"Phone (%@)", self.phone]]];
-                                                  //  self.phone = [TDCurrentUser sharedInstance].phoneNumber;
                                                 }
                                                 if ([dict objectForKey:@"email"]) {
                                                     [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"email"] baseString:[NSString stringWithFormat:@"Email (%@)", self.email]]];
-                                                 //   self.email = [TDCurrentUser sharedInstance].email;
                                                 }
                                                 if ([dict objectForKey:@"bio"]) {
 
@@ -169,11 +196,6 @@
                                                         self.bio = [NSString stringWithFormat:@"%@...", [self.bio substringToIndex:7]];
                                                     }
                                                     [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"bio"] baseString:[NSString stringWithFormat:@"Bio (%@)", self.bio]]];
-                                                    if ([TDCurrentUser sharedInstance].bio) {
-                                                      //  self.bio = [TDCurrentUser sharedInstance].bio;
-                                                    } else {
-                                                      //  self.bio = @"";
-                                                    }
                                                 }
 
                                                 message = [[message stringByReplacingOccurrencesOfString:@" ."
@@ -343,17 +365,21 @@
 
 #pragma mark - Check Save Button
 - (BOOL)checkIfChanged {
+    if (!self.hasLoaded) {
+        // Don't allow saving if server failed
+        return NO;
+    }
     if ([self.phone length] > 0 && ![self validatePhone]) {
         return NO;
     }
 
-    NSString *currentBio = [TDCurrentUser sharedInstance].bio;
+    NSString *currentBio = [self.settings objectForKey:@"bio"];
     if (self.editedProfileImage90x90 != nil ||
-        ([self.name length] > 0 && ![self.name isEqualToString:[TDCurrentUser sharedInstance].name]) ||
-        ([self.username length] > 0 && ![self.username isEqualToString:[TDCurrentUser sharedInstance].username]) ||
-        ([self.phone length] > 0 && ![self.phone isEqualToString:[TDCurrentUser sharedInstance].phoneNumber]) ||
+        ([self.name length] > 0 && ![self.name isEqualToString:[self.settings objectForKey:@"name"]]) ||
+        ([self.username length] > 0 && ![self.username isEqualToString:[self.settings objectForKey:@"username"]]) ||
+        ([self.phone length] > 0 && ![self.phone isEqualToString:[self.settings objectForKey:@"displayed_phone_number"]]) ||
         (![self.bio isEqualToString:(currentBio ? currentBio :  @"")]) ||
-        ([self.email length] > 0 && ![self.email isEqualToString:[TDCurrentUser sharedInstance].email]))
+        ([self.email length] > 0 && ![self.email isEqualToString:[self.settings objectForKey:@"displayed_email"]]))
     {
         return YES;
     }

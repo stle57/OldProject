@@ -56,7 +56,7 @@
 - (void)viewWillAppear:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:NO animated:NO];
 
-    self.activityIndicator.text.text = @"Getting Settings";
+    self.activityIndicator.text.text = @"Loading";
     [self showActivity];
 
     [[TDAPIClient sharedInstance] getPushNotificationSettingsForUserToken:[TDCurrentUser sharedInstance].authToken success:^(NSDictionary *pushNotifications) {
@@ -85,7 +85,7 @@
     if ([self.pushSettingsDict isEqualToDictionary:self.originalSettings]) {
         [self leave];
     } else {
-        self.activityIndicator.text.text = @"Saving Settings";
+        self.activityIndicator.text.text = @"Saving";
         [self showActivity];
         [[TDAPIClient sharedInstance] sendPushNotificationSettings:self.pushSettingsDict callback:^(BOOL success) {
             if (success) {
