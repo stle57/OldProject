@@ -21,22 +21,29 @@ typedef enum {
     ControlStateNone
 } ControlState;
 
+
+typedef enum {
+    PlayerStateNotLoaded,
+    PlayerStateLoading,
+    PlayerStatePlaying,
+    PlayerStatePaused,
+    PlayerStateReachedEnd
+} PlayerState;
+
 @interface TDPostView ()
 
 @property (weak, nonatomic) IBOutlet UIView *videoHolderView;
-@property (weak, nonatomic) IBOutlet UIView *controlView;
+@property (weak, nonatomic) IBOutlet UIButton *controlView;
+@property (weak, nonatomic) IBOutlet UIView *topLine;
 
 @property (strong, nonatomic) UIImageView *controlImage;
 @property (strong, nonatomic) UIImageView *playerSpinner;
-@property (weak, nonatomic) IBOutlet UIView *topLine;
 @property (strong, nonatomic) AVPlayer *player;
 @property (strong, nonatomic) AVPlayerItem *playerItem;
 @property (strong, nonatomic) AVPlayerLayer *playerLayer;
 @property (strong, nonatomic) TDPost *aPost;
-@property (nonatomic) BOOL isPlaying;
-@property (nonatomic) BOOL didPlay;
-@property (nonatomic) BOOL isLoading;
-@property (nonatomic) BOOL reachedEnd;
+@property (nonatomic) PlayerState state;
+@property (nonatomic) NSTimer *loadingTimeout;
 
 @end
 
@@ -45,27 +52,11 @@ typedef enum {
 
 @synthesize delegate;
 
-
 - (void)dealloc {
     delegate = nil;
 }
 
-- (BOOL)reachedEnd {
-    if (!_reachedEnd) {
-        _reachedEnd = NO;
-    }
-    return _reachedEnd;
-}
-
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
-    [super setSelected:selected animated:animated];
-}
-
 - (void)awakeFromNib {
-
-    UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapGestureCaptured:)];
-    [self.controlView addGestureRecognizer:singleTap];
-
     [self.previewImage setMultipleTouchEnabled:YES];
     [self.previewImage setUserInteractionEnabled:YES];
     self.userInteractionEnabled=YES;
@@ -96,10 +87,11 @@ typedef enum {
     self.userPicture = post.user.picture;
 
     // If it's the same (eg table was refreshed), bail so that we don't stop video playback
-    if (self.isPlaying && [self.aPost isEqual:post]) {
+    if (self.state == PlayerStatePlaying && [self.aPost isEqual:post]) {
         return;
     }
 
+    self.state = PlayerStateNotLoaded;
     self.aPost = post;
     self.usernameLabel.text = post.user.username;
     self.userNameButton.frame = CGRectMake(origRectOfUserButton.origin.x,
@@ -121,10 +113,6 @@ typedef enum {
 
     self.filename = post.filename;
 
-    self.isLoading = NO;
-    self.isPlaying = NO;
-    self.didPlay = NO;
-
     if (post.kind == TDPostKindVideo) {
         [self updateControlImage:ControlStatePlay];
     } else {
@@ -137,28 +125,35 @@ typedef enum {
     [self.likeView setCommentsArray:post.comments];
 
     [self.previewImage setImage:nil];
+    [self hideLoadingError];
 
     if (self.filename) {
         [[TDAPIClient sharedInstance] setImage:@{@"imageView":self.previewImage, @"filename":[self.filename stringByAppendingString:FTImage]}];
     }
 
     if (self.player != nil) {
-        [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                        name:TDNotificationStopPlayers
-                                                      object:self];
-        [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                        name:AVPlayerItemDidPlayToEndTimeNotification
-                                                      object:self.playerItem];
-
-        [self.playerItem removeObserver:self forKeyPath:@"status" context:nil];
-        [self.playerItem removeObserver:self forKeyPath:@"playbackBufferEmpty" context:nil];
-        [self.playerItem removeObserver:self forKeyPath:@"playbackLikelyToKeepUp" context:nil];
-
-        [self.playerLayer removeFromSuperlayer];
-        self.player = nil;
-        self.playerItem = nil;
-        self.playerLayer = nil;
+        [self removeObservers];
     }
+}
+
+- (void)removeObservers {
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:TDNotificationStopPlayers
+                                                  object:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:AVPlayerItemDidPlayToEndTimeNotification
+                                                  object:self.playerItem];
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:AVPlayerItemPlaybackStalledNotification
+                                                  object:self.playerItem];
+
+    [self.playerItem removeObserver:self forKeyPath:@"status" context:nil];
+    //        [self.playerItem removeObserver:self forKeyPath:@"playbackBufferEmpty" context:nil];
+    //        [self.playerItem removeObserver:self forKeyPath:@"playbackLikelyToKeepUp" context:nil];
+    [self.playerLayer removeFromSuperlayer];
+    self.player = nil;
+    self.playerItem = nil;
+    self.playerLayer = nil;
 }
 
 - (void)updateControlImage:(ControlState)controlState {
@@ -167,6 +162,7 @@ typedef enum {
         [self addSubview:self.playerSpinner];
     }
     [self stopSpinner];
+    debug NSLog(@"update control state to: %d", controlState);
     switch (controlState) {
         case ControlStatePlay:
             [self.playerSpinner setImage:[UIImage imageNamed:@"video_status_play"]];
@@ -184,134 +180,205 @@ typedef enum {
     }
 }
 
-- (void)singleTapGestureCaptured:(UITapGestureRecognizer *)gesture {
-    if (self.aPost.kind == TDPostKindVideo && !self.isLoading) {
-        if (self.isPlaying) {
-            [self stopVideo];
-        } else {
-            [self startVideo];
+- (IBAction)controlViewPressed:(id)sender {
+    if (self.aPost.kind == TDPostKindVideo) {
+
+        switch (self.state) {
+            case PlayerStateNotLoaded:
+                [self loadVideo];
+                break;
+
+            case PlayerStatePlaying:
+                [self stopVideo];
+                break;
+
+            case PlayerStateReachedEnd:
+                self.state = PlayerStateLoading;
+                [self updateControlImage:ControlStateLoading];
+                [self startLoadingTimeout];
+                [self.player seekToTime:kCMTimeZero];
+                break;
+
+            case PlayerStatePaused:
+                [self playVideo];
+                break;
+
+            case PlayerStateLoading:
+                // Do nothing
+                break;
         }
     }
+}
+
+- (void)stopVideo {
+    self.state = PlayerStatePaused;
+    [self.player pause];
+    [self updateControlImage:ControlStatePaused];
+}
+
+- (void)playVideo {
+    self.state = PlayerStatePlaying;
+    [self updateControlImage:ControlStateNone];
+    [self.player play];
+}
+
+- (void)loadVideo {
+    // Stop any previous players
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:self.filename];
+
+    if (self.player != nil) {
+        [self removeObservers];
+    }
+
+    self.state = PlayerStateLoading;
+    [self hideLoadingError];
+
+    NSURL *location = [TDConstants getStreamingUrlFor:self.filename];
+    debug NSLog(@"Loading movie from: %@", location);
+
+    self.playerLayer = [AVPlayerLayer layer];
+    [self.playerLayer setFrame:CGRectMake(0, 0, 320, 320)];
+    [self.playerLayer setBackgroundColor:[UIColor blackColor].CGColor];
+    [self.playerLayer setVideoGravity:AVLayerVideoGravityResize];
+    [self.videoHolderView.layer addSublayer:self.playerLayer];
+    self.playerLayer.hidden = YES;
+
+    [self updateControlImage:ControlStateLoading];
+    [self startLoadingTimeout];
+
+    AVURLAsset *asset = [AVURLAsset URLAssetWithURL:location options:nil];
+    NSString *tracksKey = @"tracks";
+
+    [asset loadValuesAsynchronouslyForKeys:@[tracksKey] completionHandler:^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSError *error;
+            AVKeyValueStatus status = [asset statusOfValueForKey:tracksKey error:&error];
+
+            if (status == AVKeyValueStatusLoaded) {
+                self.playerItem = [AVPlayerItem playerItemWithAsset:asset];
+                [self.playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
+//                   [self.playerItem addObserver:self forKeyPath:@"playbackBufferEmpty" options:NSKeyValueObservingOptionNew context:nil];
+//                   [self.playerItem addObserver:self forKeyPath:@"playbackLikelyToKeepUp" options:NSKeyValueObservingOptionNew context:nil];
+
+                [[NSNotificationCenter defaultCenter] addObserver:self
+                                                         selector:@selector(stopVideoFromNotification:)
+                                                             name:TDNotificationStopPlayers
+                                                           object:nil];
+                [[NSNotificationCenter defaultCenter] addObserver:self
+                                                         selector:@selector(playerItemDidReachEnd:)
+                                                             name:AVPlayerItemDidPlayToEndTimeNotification
+                                                           object:self.playerItem];
+                [[NSNotificationCenter defaultCenter] addObserver:self
+                                                         selector:@selector(playerItemDidStall:)
+                                                             name:AVPlayerItemPlaybackStalledNotification
+                                                           object:self.playerItem];
+
+                self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
+                [self.playerLayer setPlayer:self.player];
+
+                // Not sure why we have to specify this specifically, since this value is defined as default
+                [[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategorySoloAmbient error: nil];
+            } else {
+                debug NSLog(@"The asset's tracks were not loaded:\n%@", [error localizedDescription]);
+                self.state = PlayerStateNotLoaded;
+                [self showLoadingError];
+            }
+        });
+    }];
 }
 
 - (void)stopVideoFromNotification:(NSNotification *)notification {
     // Ignore if we're sending to ourselves
     if (notification.object != self.filename) {
         debug NSLog(@"TDNotificationStopPlayers ACCEPTED");
-        // setting didPlay prevents auto-play if this notification is received
-        // after tapping to start a video before video finishes buffering
-        self.didPlay = YES;
-        [self stopVideo];
+        if (self.state == PlayerStateLoading || self.state == PlayerStateNotLoaded) {
+            self.state = PlayerStateNotLoaded;
+        } else {
+            self.state = PlayerStatePaused;
+            [self stopVideo];
+        }
     } else {
         debug NSLog(@"TDNotificationStopPlayers IGNORED");
     }
 }
 
-- (void)stopVideo {
-    if (self.isPlaying) {
-        self.isPlaying = NO;
-        [self.player pause];
-        [self updateControlImage:ControlStatePaused];
-    }
-}
-
-- (void)startVideo {
-    // Stop any previous players
-    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:self.filename];
-
-    if (self.player == nil)  {
-        self.isLoading = YES;
-        NSURL *location = [TDConstants getStreamingUrlFor:self.filename];
-        debug NSLog(@"Loading movie from: %@", location);
-
-        self.playerLayer = [AVPlayerLayer layer];
-        [self.playerLayer setFrame:CGRectMake(0, 0, 320, 320)];
-        [self.playerLayer setBackgroundColor:[UIColor blackColor].CGColor];
-        [self.playerLayer setVideoGravity:AVLayerVideoGravityResize];
-        [self.videoHolderView.layer addSublayer:self.playerLayer];
-        self.playerLayer.hidden = YES;
-
-        [self updateControlImage:ControlStateLoading];
-
-        AVURLAsset *asset = [AVURLAsset URLAssetWithURL:location options:nil];
-        NSString *tracksKey = @"tracks";
-
-        [asset loadValuesAsynchronouslyForKeys:@[tracksKey] completionHandler:^{
-            dispatch_async(dispatch_get_main_queue(), ^{
-               NSError *error;
-               AVKeyValueStatus status = [asset statusOfValueForKey:tracksKey error:&error];
-
-               if (status == AVKeyValueStatusLoaded) {
-                   self.playerItem = [AVPlayerItem playerItemWithAsset:asset];
-                   [self.playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
-                   [self.playerItem addObserver:self forKeyPath:@"playbackBufferEmpty" options:NSKeyValueObservingOptionNew context:nil];
-                   [self.playerItem addObserver:self forKeyPath:@"playbackLikelyToKeepUp" options:NSKeyValueObservingOptionNew context:nil];
-
-                   [[NSNotificationCenter defaultCenter] addObserver:self
-                                                            selector:@selector(stopVideoFromNotification:)
-                                                                name:TDNotificationStopPlayers
-                                                              object:nil];
-                   [[NSNotificationCenter defaultCenter] addObserver:self
-                                                            selector:@selector(playerItemDidReachEnd:)
-                                                                name:AVPlayerItemDidPlayToEndTimeNotification
-                                                              object:self.playerItem];
-
-                   self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
-                   [self.playerLayer setPlayer:self.player];
-
-                   // Not sure why we have to specify this specifically, since this value is defined as default
-                   [[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategorySoloAmbient error: nil];
-               } else {
-                   // TODO: Put up an error state on the view
-                   debug NSLog(@"The asset's tracks were not loaded:\n%@", [error localizedDescription]);
-               }
-           });
-         }];
-    } else {
-        self.isPlaying = YES;
-        if (self.reachedEnd) {
-            [self.player seekToTime:kCMTimeZero];
-            self.reachedEnd = NO;
-        }
-        [self.player play];
-        [self updateControlImage:ControlStateNone];
-    }
-}
-
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if (object == self.playerItem && [keyPath isEqualToString:@"playbackBufferEmpty"]) {
-        [self updateControlImage:ControlStateLoading];
-        return;
-    } else if (object == self.playerItem && [keyPath isEqualToString:@"playbackLikelyToKeepUp"]) {
-        [self updateControlImage:ControlStateNone];
-        return;
-    } else if (object == self.playerItem && [keyPath isEqualToString:@"status"]) {
-
-        if (self.playerItem.status == AVPlayerItemStatusReadyToPlay) {
-            dispatch_async(dispatch_get_main_queue(), ^{
+//    if (object == self.playerItem && [keyPath isEqualToString:@"playbackBufferEmpty"]) {
+//        debug NSLog(@"PLAYBACK: empty");
+//        [self updateControlImage:ControlStateLoading];
+//        return;
+//    } else if (object == self.playerItem && [keyPath isEqualToString:@"playbackLikelyToKeepUp"]) {
+//        debug NSLog(@"PLAYBACK: keep up %@ playing", self.isPlaying ? @"" : @"not");
+//        [self updateControlImage:ControlStateNone];
+//        return;
+    if (object == self.playerItem && [keyPath isEqualToString:@"status"]) {
+        debug NSLog(@"PLAYBACK: status at state %d", self.state);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (self.playerItem.status == AVPlayerItemStatusReadyToPlay) {
                 self.playerLayer.hidden = NO;
-                // Only play once on status change (status change is called every time the player is reset)
-                if (self.isLoading) {
-                    self.isLoading = NO;
-                    [self stopSpinner];
+                // Only play once it's been loaded
+                // status change is called every time the player is reset
+                if (self.state == PlayerStateLoading) {
                     [self updateControlImage:ControlStateNone];
+                    [self playVideo];
                 }
-                if (!self.didPlay) {
-                    self.didPlay = YES;
-                    [self startVideo];
-                }
-            });
-        }
+            } else if (self.playerItem.status == AVPlayerItemStatusFailed) {
+                debug NSLog(@"PLAYBACK: failed!");
+                self.state = PlayerStateNotLoaded;
+                [self showLoadingError];
+            }
+        });
         return;
     }
     [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     return;
 }
 
+- (void)startLoadingTimeout {
+    if (self.loadingTimeout) {
+        [self.loadingTimeout invalidate];
+    }
+    self.loadingTimeout = [NSTimer scheduledTimerWithTimeInterval:30.0
+                                                           target:self
+                                                         selector:@selector(loadingTimedOut:)
+                                                         userInfo:nil
+                                                          repeats:NO];
+}
+
+- (void)loadingTimedOut:(NSTimer *)timer {
+    if (self.state == PlayerStateLoading) {
+        debug NSLog(@"PLAYBACK: timeout");
+        self.state = PlayerStateNotLoaded;
+        [self showLoadingError];
+    }
+}
+
+- (void)playerItemDidStall:(NSNotification *)notification {
+    debug NSLog(@"PLAYBACK: stalled");
+    self.state = PlayerStateNotLoaded;
+    [self showLoadingError];
+}
+
 - (void)playerItemDidReachEnd:(NSNotification *)notification {
-    self.isPlaying = NO;
-    self.reachedEnd = YES;
+    debug NSLog(@"PLAYBACK: reached end");
+    self.state = PlayerStateReachedEnd;
     [self updateControlImage:ControlStatePlay];
+   [self hideLoadingError];
+}
+
+- (void)showLoadingError {
+    [self updateControlImage:ControlStateNone];
+    self.controlView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.7];
+    [self.controlView setImage:[UIImage imageNamed:@"video_status_retry"] forState:UIControlStateNormal];
+    [self.controlView setImage:[UIImage imageNamed:@"video_status_retry_hit"] forState:UIControlStateHighlighted];
+    [self.controlView setImage:[UIImage imageNamed:@"video_status_retry_hit"] forState:UIControlStateSelected];
+}
+
+- (void)hideLoadingError {
+    self.controlView.backgroundColor = [UIColor clearColor];
+    [self.controlView setImage:nil forState:UIControlStateNormal];
+    [self.controlView setImage:nil forState:UIControlStateHighlighted];
+    [self.controlView setImage:nil forState:UIControlStateSelected];
 }
 
 - (void)startSpinner {
@@ -329,15 +396,6 @@ typedef enum {
 - (void)stopSpinner {
     [self.playerSpinner.layer removeAnimationForKey:kSpinningAnimation];
 }
-
-/*-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
-    if (delegate) {
-        if ([delegate respondsToSelector:@selector(postTouchedFromRow:)]) {
-            [delegate postTouchedFromRow:self.row];
-        }
-    }
-} */
 
 #pragma mark - User Name Button
 - (IBAction)userButtonPressed:(UIButton *)sender {

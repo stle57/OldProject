@@ -247,8 +247,7 @@
     debug NSLog(@"home view unwindToHome with identifier %@", sender.identifier);
 }
 
-- (void)showHomeController
-{
+- (void)showHomeController {
     // stub to stop crash bug from segue: navigateToHomeFrom
 }
 
@@ -354,7 +353,7 @@
 }
 
 - (IBAction)notificationButtonPressed:(id)sender {
-    debug NSLog(@"open notification view");
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *vc = [storyboard instantiateViewControllerWithIdentifier:@"ActivityViewController"];
     vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;

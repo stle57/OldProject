@@ -659,6 +659,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 # pragma mark - navigation
 
 - (IBAction)profileButtonPressed:(id)sender {
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
     [self openUserProfile:[TDCurrentUser sharedInstance].userId];
 }
 
