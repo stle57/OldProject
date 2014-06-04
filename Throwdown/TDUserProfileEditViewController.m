@@ -18,6 +18,7 @@
 #import "UIImage+Resizing.h"
 #import "UIImage+Rotating.h"
 #import "TDAPIClient.h"
+#import "UIAlertView+TDBlockAlert.h"
 #import "TDUserPushNotificationsEditViewController.h"
 
 @interface TDUserProfileEditViewController ()
@@ -697,10 +698,16 @@
         case 3:
             [self hideKeyboard];
             switch (indexPath.row) {
-                case 0:
+                case 0: {
                     // Log Out
-                    [[TDUserAPI sharedInstance] logout];
-                    [self showWelcomeController];
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Log out?" message:nil delegate:nil cancelButtonTitle:@"No" otherButtonTitles:@"Yes", nil];
+                    [alert showWithCompletionBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
+                        if (buttonIndex != alertView.cancelButtonIndex) {
+                            [[TDUserAPI sharedInstance] logout];
+                            [self showWelcomeController];
+                        }
+                    }];
+                }
                 break;
                 default:
                     break;
