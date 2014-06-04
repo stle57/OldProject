@@ -140,7 +140,7 @@
         [self endRefreshControl];
     } error:^{
         [self endRefreshControl];
-        [[TDAppDelegate appDelegate] showToastWithText:@"Can't connect to server" type:kToastIconType_Warning payload:@{} delegate:nil];
+        [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastIconType_Warning payload:@{} delegate:nil];
         self.loaded = YES;
         self.errorLoading = YES;
         [self.tableView reloadData];

@@ -51,7 +51,7 @@
 
     self.payload = payload;
 
-    self.label.font = [UIFont fontWithName:@"ProximaNova-Regular" size:16.5];
+    self.label.font =  [TDConstants fontRegularSized:16];
     self.label.text = text;
     [TDAppDelegate fixWidthOfThisLabel:self.label];
 
@@ -62,7 +62,7 @@
             break;
         case kToastIconType_Warning:
             iconImage = [UIImage imageNamed:@"td_error_toast_icon"];
-            self.backgroundColor = [UIColor colorWithRed:(150/255) green:(50/255) blue:(50/255) alpha:0.8];
+            self.backgroundColor = [UIColor colorWithRed:(158./255) green:(11./255) blue:(15./255) alpha:0.85];
             self.label.textColor = [UIColor whiteColor];
             break;
         case kToastIconType_Info:
@@ -132,17 +132,17 @@
           forControlEvents:UIControlEventTouchUpInside];
     [[TDAppDelegate appDelegate].window addSubview:self.button];
 
-    self.label.hidden = YES;
-    self.iconImageView.hidden = YES;
+    self.label.alpha = 0.;
+    self.iconImageView.alpha = 0.;
     [UIView animateWithDuration: 0.2
                           delay: 0.0
                         options: UIViewAnimationOptionCurveEaseInOut
                      animations:^{
                          self.frame = CGRectMake(0, toastOffSet, self.frame.size.width, kToastHeight);
+                         self.label.alpha = 1.;
+                         self.iconImageView.alpha = 1.;
                      }
                      completion:^(BOOL animDownDone){
-                         self.label.hidden = NO;
-                         self.iconImageView.hidden = NO;
                          dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kToastTimeOnScreen * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
                              [self remove];
                          });
@@ -152,11 +152,15 @@
 - (void)remove {
     if (!self.removed) {
         self.removed = YES;
+        self.label.alpha = 1.;
+        self.iconImageView.alpha = 1.;
         [UIView animateWithDuration: 0.2
                               delay: 0.0
                             options: UIViewAnimationOptionCurveEaseInOut
                          animations:^{
                              self.frame = CGRectMake(0, self.frame.origin.y, self.frame.size.width, 0);
+                             self.label.alpha = 0.;
+                             self.iconImageView.alpha = 0.;
                          }
                          completion:^(BOOL completed){
                              [self.button removeFromSuperview];
