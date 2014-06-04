@@ -10,6 +10,7 @@
 #import "TDAPIClient.h"
 #import "RSClient.h"
 #import "TDConstants.h"
+#import <Crashlytics/Crashlytics.h>
 
 @implementation TDUserAPI
 
@@ -42,6 +43,7 @@
     [[TDAPIClient sharedInstance] signupUser:userAttributes callback:^(BOOL success, NSDictionary *user) {
         if (success) {
             [self.currentUser updateFromDictionary:user];
+            [self setCrashlyticsMeta];
         }
         callback(success);
     }];
@@ -52,6 +54,7 @@
     [[TDAPIClient sharedInstance] loginUser:email withPassword:password callback:^(BOOL success, NSDictionary *user) {
         if (success) {
             [self.currentUser updateFromDictionary:user];
+            [self setCrashlyticsMeta];
         }
         callback(success);
     }];
@@ -96,6 +99,7 @@
 - (void)logout {
     [[TDAPIClient sharedInstance] logoutUserWithDeviceToken:self.currentUser.deviceToken];
     [self.currentUser logout];
+    [self setCrashlyticsMeta];
 }
 
 - (void)uploadAvatarImage:(NSString *)localImagePath withName:(NSString *)newName {
@@ -127,5 +131,18 @@
         }];
     });
 }
+
+- (void)setCrashlyticsMeta {
+    if ([[TDUserAPI sharedInstance] isLoggedIn]) {
+        [Crashlytics setUserIdentifier:[NSString stringWithFormat:@"%@", self.currentUser.userId]];
+        [Crashlytics setUserName:self.currentUser.username];
+        [Crashlytics setUserEmail:self.currentUser.email];
+    } else {
+        [Crashlytics setUserIdentifier:nil];
+        [Crashlytics setUserName:nil];
+        [Crashlytics setUserEmail:nil];
+    }
+ }
+
 
 @end

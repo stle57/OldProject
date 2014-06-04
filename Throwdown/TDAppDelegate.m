@@ -28,6 +28,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     [Crashlytics startWithAPIKey:@"52059d9d37002218b9f7913616f80b1294e806c2"];
+    [[TDUserAPI sharedInstance] setCrashlyticsMeta];
 
     [[TDAnalytics sharedInstance] start];
 
