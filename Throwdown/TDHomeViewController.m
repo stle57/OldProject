@@ -41,14 +41,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(uploadStarted:)
-                                                 name:TDPostUploadStarted
-                                               object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(refreshPostsNotification:)
-                                                 name:TDNotificationUpdate
-                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadStarted:) name:TDPostUploadStarted object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshPostsNotification:) name:TDNotificationUpdate object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadHome:) name:TDNotificationReloadHome object:nil];
 
     [self.badgeCountLabel setFont:[TDConstants fontSemiBoldSized:11]];
     [self.badgeCountLabel.layer setCornerRadius:9.0];
@@ -106,6 +101,10 @@
 }
 
 #pragma mark - Posts
+
+- (void)reloadHome:(NSNotification *)notification {
+    [self fetchPostsUpStream];
+}
 
 - (NSUInteger)noticeCount {
     return [[TDPostAPI sharedInstance] noticeCount];

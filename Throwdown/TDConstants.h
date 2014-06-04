@@ -53,6 +53,7 @@ static int const kMaxRecordingSeconds = 30;
 static double const kMinFileSpaceForRecording = 50 * 1024^2; // 50mb
 
 // NSNotification types
+static NSString *const TDNotificationReloadHome = @"TDNotificationReloadHome";
 static NSString *const TDPostUploadStarted = @"TDPostUploadStarted";
 static NSString *const TDNotificationStopPlayers = @"TDNotificationStopPlayers";
 static NSString *const TDNotificationUploadComments = @"TDNotificationUploadComments";

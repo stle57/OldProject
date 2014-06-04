@@ -27,11 +27,17 @@
                         <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <view contentMode="scaleToFill" id="Jw8-yZ-YcG" userLabel="Top line View">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="1"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
                 </subviews>
             </tableViewCellContentView>
             <connections>
                 <outlet property="ctaLabel" destination="Y95-m9-Mhs" id="Gzn-51-YJn"/>
                 <outlet property="messageLabel" destination="AxW-gT-wft" id="xrf-DL-qDq"/>
+                <outlet property="topLine" destination="Jw8-yZ-YcG" id="nt8-c1-Icn"/>
             </connections>
         </tableViewCell>
     </objects>

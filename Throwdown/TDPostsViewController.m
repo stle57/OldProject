@@ -69,9 +69,6 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshPostsList:) name:TDRefreshPostsNotification object:nil];
-    [self refreshPostsList];
-    [self fetchPostsUpStream];
 
     // Remember here so we don't lose this during statusBar animations
     statusBarFrame = [self.view convertRect: [UIApplication sharedApplication].statusBarFrame fromView: nil];
@@ -89,28 +86,15 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
     if ([self class] == [TDHomeViewController class]) {
         self.headerView = [[TDHomeHeaderView alloc] initWithTableView:self.tableView];
-
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(startSpinner:)
-                                                     name:START_MAIN_SPINNER_NOTIFICATION
-                                                   object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(stopSpinner:)
-                                                     name:STOP_MAIN_SPINNER_NOTIFICATION
-                                                   object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(postDeleted:)
-                                                     name:POST_DELETED_NOTIFICATION
-                                                   object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(logOutUser:)
-                                                     name:LOG_OUT_NOTIFICATION
-                                                   object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(updatePostsAfterUserUpdate:)
-                                                     name:TDUpdateWithUserChangeNotification
-                                                   object:nil];
     }
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(startSpinner:) name:START_MAIN_SPINNER_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(stopSpinner:) name:STOP_MAIN_SPINNER_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postDeleted:) name:POST_DELETED_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logOutUser:) name:LOG_OUT_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshPostsList:) name:TDRefreshPostsNotification object:nil];
+    [self refreshPostsList];
+    [self fetchPostsUpStream];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -310,7 +294,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     NSInteger realRow = [self.posts count] + [self noticeCount] + (needsProfileHeader ? 1 : 0);
     NSInteger postRow = indexPath.section - [self noticeCount] - (needsProfileHeader ? 1 : 0);
 
-    NSLog(@"s: %d r: %d n: %d p: %d rr: %d pr: %d", indexPath.section, indexPath.row, [self noticeCount], [self.posts count], realRow, postRow);
+    debug NSLog(@"s: %d r: %d n: %d p: %d rr: %d pr: %d", indexPath.section, indexPath.row, [self noticeCount], [self.posts count], realRow, postRow);
 
     // 1st row for Profile Header
     if (needsProfileHeader && indexPath.section == 0 && self.loaded && !self.errorLoading) {

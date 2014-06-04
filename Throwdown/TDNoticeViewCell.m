@@ -15,11 +15,20 @@ static NSInteger const kMaxLabelWidth = 306;
 static NSInteger const kCTALabelHeight = 20;
 static NSInteger const kLabelTopMargin = 5;
 
+@interface TDNoticeViewCell ()
+@property (weak, nonatomic) IBOutlet UIView *topLine;
+
+@end
+
 @implementation TDNoticeViewCell
 
 - (void)awakeFromNib {
     self.messageLabel.font = [TDConstants fontRegularSized:15];
     self.ctaLabel.font = [TDConstants fontSemiBoldSized:15];
+
+    CGRect topLineRect = self.topLine.frame;
+    topLineRect.size.height = 1 / [[UIScreen mainScreen] scale];
+    self.topLine.frame = topLineRect;
 }
 
 - (void)setNotice:(TDNotice *)notice {
