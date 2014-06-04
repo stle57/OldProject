@@ -35,7 +35,9 @@
         [Flurry setCrashReportingEnabled:NO];
         [Flurry startSession:[TDConstants flurryKey]];
     }
-    [TestFlight takeOff:@"6fef227c-c5cb-4505-9502-9052e2819f45"];
+    if ([TDConstants environment] != TDEnvProduction) {
+        [TestFlight takeOff:@"6fef227c-c5cb-4505-9502-9052e2819f45"];
+    }
 
     NSString *storyboardId = [[TDUserAPI sharedInstance] isLoggedIn] ? @"HomeViewController" : @"WelcomeViewController";
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
