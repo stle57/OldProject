@@ -17,6 +17,7 @@
 #import "UIImage+Resizing.h"
 #import "TDFileSystemHelper.h"
 #import "TDDeviceInfo.h"
+#import "TDNotice.h"
 
 @implementation TDPostAPI
 {
@@ -49,8 +50,16 @@
     posts = nil;
 }
 
+#pragma mark - notices
 
-# pragma mark - posts get/add/remove
+- (NSUInteger)noticeCount {
+    if (self.notices) {
+        return [self.notices count];
+    }
+    return 0;
+}
+
+#pragma mark - posts get/add/remove
 
 
 - (void)addPost:(NSString *)filename comment:(NSString *)comment kind:(NSString *)kind success:(void (^)(void))success failure:(void (^)(void))failure {
@@ -107,6 +116,15 @@
             }
             if ([responseObject valueForKey:@"next_start"] == [NSNull null]) {
                 noMorePosts = YES;
+            }
+            if ([responseObject objectForKey:@"notices"]) {
+                NSMutableArray *tmp = [[NSMutableArray alloc] init];
+                for (NSDictionary *dict in [responseObject objectForKey:@"notices"]) {
+                    [tmp addObject:[[TDNotice alloc] initWithDictionary:dict]];
+                }
+                self.notices = [NSArray arrayWithArray:tmp];
+            } else {
+                self.notices = nil;
             }
             if (successHandler) {
                 successHandler(responseObject);

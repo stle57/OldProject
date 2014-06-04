@@ -154,6 +154,10 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 }
 
 # pragma mark - Figure out what's on each row
+- (NSUInteger)noticeCount {
+    return 0;
+}
+
 - (void)fetchPostsUpStream {
 }
 
@@ -242,10 +246,8 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 }
 
 #pragma mark - Delete Post
--(void)postDeleted:(NSNotification*)notification
-{
+- (void)postDeleted:(NSNotification*)notification {
     debug NSLog(@"delete notification:%@", notification);
-
     posts = [self postsForThisScreen];
     [self.tableView reloadData];
 }
@@ -254,12 +256,12 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     if ([self.posts count] == 0) {
         if (!self.loaded || self.errorLoading) {
-            return 1;
+            return 1 + [self noticeCount];
         }
-        return (needsProfileHeader ? 2 : 1);
+        return (needsProfileHeader ? 2 : 1) + [self noticeCount];
     }
 
-    return [self.posts count] + (showBottomSpinner ? 1 : 0) + (noMorePostsAtBottom ? 1 : 0) + (needsProfileHeader ? 1 : 0);
+    return [self.posts count] + [self noticeCount] + (showBottomSpinner ? 1 : 0) + (noMorePostsAtBottom ? 1 : 0) + (needsProfileHeader ? 1 : 0);
 }
 
 // Rows is 1 (for the video) + 1 for likes row + # of comments + 1 for like/comment buttons
@@ -272,22 +274,28 @@ static CGFloat const kHeightOfStatusBar = 65.0;
         return 1;
     }
 
-    // This covers user's profile header and 'No Posts'
+    if ([self noticeCount] > 0 && section < [self noticeCount]) {
+        return 1;
+    }
+
+    // 'No Posts'
     if ([self.posts count] == 0) {
         return 1;
     }
-    
+
+    NSInteger row = [self.posts count] + [self noticeCount] + (needsProfileHeader ? 1 : 0);
+
     // Last row with Activity
-    if (showBottomSpinner && section == ([self.posts count]+(needsProfileHeader ? 1 : 0))) {
+    if (showBottomSpinner && section == row) {
         return 1;
     }
 
     // Last row with Upload More
-    if (noMorePostsAtBottom && section == ([self.posts count]+(needsProfileHeader ? 1 : 0))) {
+    if (noMorePostsAtBottom && section == row) {
         return 1;
     }
 
-    TDPost *post = (TDPost *)[self.posts objectAtIndex:(section-(needsProfileHeader ? 1 : 0))];
+    TDPost *post = (TDPost *)[self.posts objectAtIndex:(section - [self noticeCount] - (needsProfileHeader ? 1 : 0))];
     NSInteger count = 3 + ([post.comments count] > 2 ? 2 : [post.comments count]);
 
     // +1 if total comments count > 2
@@ -299,10 +307,13 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSInteger realRow = [self.posts count] + [self noticeCount] + (needsProfileHeader ? 1 : 0);
+    NSInteger postRow = indexPath.section - [self noticeCount] - (needsProfileHeader ? 1 : 0);
+
+    NSLog(@"s: %d r: %d n: %d p: %d rr: %d pr: %d", indexPath.section, indexPath.row, [self noticeCount], [self.posts count], realRow, postRow);
 
     // 1st row for Profile Header
     if (needsProfileHeader && indexPath.section == 0 && self.loaded && !self.errorLoading) {
-
         TDUserProfileCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_PROFILE];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_PROFILE owner:self options:nil];
@@ -345,9 +356,21 @@ static CGFloat const kHeightOfStatusBar = 65.0;
         return cell;
     }
 
+    // Notices on Home Screen
+    if ([self noticeCount] > 0 && indexPath.section < [self noticeCount]) {
+        TDNotice *notice = [[TDPostAPI sharedInstance].notices objectAtIndex:indexPath.section];
+        TDNoticeViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoticeViewCell"];
+        if (!cell) {
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoticeViewCell" owner:self options:nil];
+            cell = [topLevelObjects objectAtIndex:0];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        }
+        [cell setNotice:notice];
+        return cell;
+    }
+
     // 'Loading' or 'No Posts' cell
     if ([self.posts count] == 0) {
-
         TDNoPostsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoPostsCell"];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoPostsCell" owner:self options:nil];
@@ -377,8 +400,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     }
 
     // Last row with Activity
-    if (showBottomSpinner && indexPath.section == ([self.posts count]+(needsProfileHeader ? 1 : 0))) {
-
+    if (showBottomSpinner && indexPath.section == realRow) {
         TDActivityCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_ACTIVITY];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_ACTIVITY owner:self options:nil];
@@ -391,7 +413,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     }
 
     // Last row if no more
-    if (noMorePostsAtBottom && indexPath.section == ([self.posts count]+(needsProfileHeader ? 1 : 0))) {
+    if (noMorePostsAtBottom && indexPath.section == realRow) {
 
         TDUploadMoreCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDUploadMoreCell"];
         if (!cell) {
@@ -404,7 +426,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     }
 
     // The video
-    TDPost *post = (TDPost *)[self.posts objectAtIndex:(indexPath.section-(needsProfileHeader ? 1 : 0))];
+    TDPost *post = (TDPost *)[self.posts objectAtIndex:postRow];
 
     if (indexPath.row == 0) {
         TDPostView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_POST_VIEW];
@@ -439,8 +461,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     NSInteger totalRows = [self tableView:nil numberOfRowsInSection:indexPath.section];
     NSInteger lastRow = totalRows-1;
 
-    if (indexPath.row == lastRow)
-    {
+    if (indexPath.row == lastRow) {
         TDTwoButtonView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_COMMENT_VIEW];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_COMMENT_VIEW owner:self options:nil];
@@ -456,8 +477,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     }
 
     // More Comments Row
-    if ([post.commentsTotalCount intValue] > 2 && indexPath.row == (lastRow-1))
-    {
+    if ([post.commentsTotalCount intValue] > 2 && indexPath.row == (lastRow-1)) {
         TDMoreComments *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_MORE_COMMENTS];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_MORE_COMMENTS owner:self options:nil];
@@ -491,7 +511,6 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     // 1st row is Profile Header
     if (needsProfileHeader && indexPath.section == 0 && self.loaded && !self.errorLoading) {
-
         // min height is profileHeaderHeight
         if ([self getUser]) {
             CGFloat bioHeight = [self getUser].bioHeight;
@@ -502,13 +521,17 @@ static CGFloat const kHeightOfStatusBar = 65.0;
         }
     }
 
+    if ([self noticeCount] > 0 && indexPath.section < [self noticeCount]) {
+        return [TDNoticeViewCell heightForNotice:[[TDPostAPI sharedInstance].notices objectAtIndex:indexPath.section]];
+    }
+
     // Just 'No Posts' cell
     if ([self.posts count] == 0) {
         // 20 is for status bar height
         return [UIScreen mainScreen].bounds.size.height - self.tableView.contentInset.top - (self.loaded ? profileHeaderHeight + 20 : 0);
     }
 
-    NSInteger realRow = indexPath.section - (needsProfileHeader ? 1 : 0);
+    NSInteger realRow = indexPath.section - [self noticeCount] - (needsProfileHeader ? 1 : 0);
 
     // Last row with Activity
     if (showBottomSpinner && realRow == [self.posts count]) {
@@ -555,6 +578,14 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([self noticeCount] > 0 && indexPath.section < [self noticeCount]) {
+        TDNotice *notice = [[TDPostAPI sharedInstance].notices objectAtIndex:indexPath.section];
+        if (notice) {
+            [notice callAction];
+        }
+        return;
+    }
+
     if (!self.posts || [self.posts count] == 0 || (needsProfileHeader && indexPath.section == 0)) {
         return;
     }
@@ -702,8 +733,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     debug NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
 
     for (TDPost *aPost in self.posts) {
-        if ([[[TDCurrentUser sharedInstance] currentUserObject].userId isEqualToNumber:aPost.user.userId])
-        {
+        if ([[[TDCurrentUser sharedInstance] currentUserObject].userId isEqualToNumber:aPost.user.userId]) {
             [aPost replaceUserAndLikesAndCommentsWithUser:[[TDCurrentUser sharedInstance] currentUserObject]];
         }
     }

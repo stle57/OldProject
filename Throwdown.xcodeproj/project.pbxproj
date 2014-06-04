@@ -113,6 +113,9 @@
 		A19FF61018970BBB001A0AD0 /* RSModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF60318970BBB001A0AD0 /* RSModel.m */; };
 		A19FF61118970BBB001A0AD0 /* RSStorageObject.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF60518970BBB001A0AD0 /* RSStorageObject.m */; };
 		A1B11920190E030700FE7102 /* TDDeviceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A1B1191F190E030700FE7102 /* TDDeviceInfo.m */; };
+		A1B3EF3B193E8D240014B619 /* TDNoticeViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A1B3EF39193E8D240014B619 /* TDNoticeViewCell.m */; };
+		A1B3EF3C193E8D240014B619 /* TDNoticeViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A1B3EF3A193E8D240014B619 /* TDNoticeViewCell.xib */; };
+		A1B3EF42193F9B5D0014B619 /* TDNotice.m in Sources */ = {isa = PBXBuildFile; fileRef = A1B3EF41193F9B5D0014B619 /* TDNotice.m */; };
 		A1B9002E18CC316800012A1F /* TDHomeHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = A1B9002D18CC316800012A1F /* TDHomeHeaderView.m */; };
 		A1BB463018F5FDD700BD9527 /* UIAlertView+TDBlockAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = A1BB462F18F5FDD700BD9527 /* UIAlertView+TDBlockAlert.m */; };
 		A1BB463318F7767200BD9527 /* TDActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1BB463218F7767200BD9527 /* TDActivityViewController.m */; };
@@ -313,6 +316,11 @@
 		A19FF60518970BBB001A0AD0 /* RSStorageObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSStorageObject.m; sourceTree = "<group>"; };
 		A1B1191E190E030700FE7102 /* TDDeviceInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDDeviceInfo.h; sourceTree = "<group>"; };
 		A1B1191F190E030700FE7102 /* TDDeviceInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDDeviceInfo.m; sourceTree = "<group>"; };
+		A1B3EF38193E8D240014B619 /* TDNoticeViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDNoticeViewCell.h; sourceTree = "<group>"; };
+		A1B3EF39193E8D240014B619 /* TDNoticeViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDNoticeViewCell.m; sourceTree = "<group>"; };
+		A1B3EF3A193E8D240014B619 /* TDNoticeViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDNoticeViewCell.xib; sourceTree = "<group>"; };
+		A1B3EF40193F9B5D0014B619 /* TDNotice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDNotice.h; sourceTree = "<group>"; };
+		A1B3EF41193F9B5D0014B619 /* TDNotice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDNotice.m; sourceTree = "<group>"; };
 		A1B9002B18CBDCC800012A1F /* TDUploadProgressDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TDUploadProgressDelegate.h; sourceTree = "<group>"; };
 		A1B9002C18CC316700012A1F /* TDHomeHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDHomeHeaderView.h; sourceTree = "<group>"; };
 		A1B9002D18CC316800012A1F /* TDHomeHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDHomeHeaderView.m; sourceTree = "<group>"; };
@@ -701,6 +709,8 @@
 				A109FF341909C76000506F88 /* TDAnalytics.m */,
 				A1B1191E190E030700FE7102 /* TDDeviceInfo.h */,
 				A1B1191F190E030700FE7102 /* TDDeviceInfo.m */,
+				A1B3EF40193F9B5D0014B619 /* TDNotice.h */,
+				A1B3EF41193F9B5D0014B619 /* TDNotice.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -799,6 +809,9 @@
 				A1C2480F18C6B9CA00F187D9 /* TDProgressIndicator.h */,
 				A1C2481018C6B9CA00F187D9 /* TDProgressIndicator.m */,
 				A1B9002B18CBDCC800012A1F /* TDUploadProgressDelegate.h */,
+				A1B3EF38193E8D240014B619 /* TDNoticeViewCell.h */,
+				A1B3EF39193E8D240014B619 /* TDNoticeViewCell.m */,
+				A1B3EF3A193E8D240014B619 /* TDNoticeViewCell.xib */,
 			);
 			name = "Home view";
 			sourceTree = "<group>";
@@ -936,6 +949,7 @@
 				A11E04F41888CB79002F981A /* Images.xcassets in Resources */,
 				2DA5F05E18D37C70003D2F99 /* BebasNeue Thin.otf in Resources */,
 				2DA73D7918BFCCD000D87370 /* TDLikeView.xib in Resources */,
+				A1B3EF3C193E8D240014B619 /* TDNoticeViewCell.xib in Resources */,
 				2DA41A5718C7D89C00B21C74 /* TDDetailViewController.xib in Resources */,
 				2DE4653318F605DC0042D81C /* TDUserProfileEditViewController.xib in Resources */,
 				2DE4653818F614150042D81C /* TDUserEditCell.xib in Resources */,
@@ -1054,10 +1068,12 @@
 				2D648A1618C9415D002FE0AD /* TDDetailsCommentsCell.m in Sources */,
 				2DE4653718F614150042D81C /* TDUserEditCell.m in Sources */,
 				A11999DA18D929E200C39ABF /* UIPlaceHolderTextView.m in Sources */,
+				A1B3EF42193F9B5D0014B619 /* TDNotice.m in Sources */,
 				2D63FA871909D22200FEBA3C /* TDActivityIndicator.m in Sources */,
 				2DA73D7718BFCC2E00D87370 /* TDLikeView.m in Sources */,
 				2DA41A6018C7E49D00B21C74 /* HPGrowingTextView.m in Sources */,
 				A11E04F21888CB79002F981A /* TDRecordVideoViewController.m in Sources */,
+				A1B3EF3B193E8D240014B619 /* TDNoticeViewCell.m in Sources */,
 				A11E04EC1888CB79002F981A /* TDAppDelegate.m in Sources */,
 				2DA8639318F49D190089B048 /* TDUserProfileCell.m in Sources */,
 				2D1AEE7018C937560055C315 /* TDDetailsLikesCell.m in Sources */,

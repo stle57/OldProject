@@ -433,5 +433,14 @@
     }];
 }
 
+- (void)callURL:(NSString *)url {
+    debug NSLog(@"GET callUrl %@", url);
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [self.httpManager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        debug NSLog(@"url call success %@", url);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"url call failed %@ / %@", url, error);
+    }];
+}
 
 @end

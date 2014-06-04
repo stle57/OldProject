@@ -106,6 +106,11 @@
 }
 
 #pragma mark - Posts
+
+- (NSUInteger)noticeCount {
+    return [[TDPostAPI sharedInstance] noticeCount];
+}
+
 - (void)fetchPostsUpStream {
     [[TDPostAPI sharedInstance] fetchPostsUpstreamWithErrorHandlerStart:nil success:^(NSDictionary *response) {
         self.loaded = YES;

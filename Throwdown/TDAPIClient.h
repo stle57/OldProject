@@ -32,4 +32,5 @@
 - (void)startSession:(NSDictionary *)metrics callback:(void(^)(NSNumber *sessionId))callback;
 - (void)updateSession:(NSNumber *)sessionId duration:(double)duration;
 
+- (void)callURL:(NSString *)url;
 @end

@@ -26,6 +26,7 @@
 #import "TDUserProfileCell.h"
 #import "TDNoPostsCell.h"
 #import "TDUploadMoreCell.h"
+#import "TDNoticeViewCell.h"
 
 @interface TDPostsViewController : UIViewController <TDLikeViewDelegate, TDPostViewDelegate, TDTwoButtonViewDelegate, TDDetailsCommentsCellDelegate, TDMoreCommentsDelegate, UIActionSheetDelegate, TDDetailViewControllerDelegate, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate, TDUserProfileCellDelegate>
 {

@@ -13,8 +13,12 @@
 
 @interface TDPostAPI : NSObject
 
+@property (nonatomic) NSArray *notices;
+
 + (TDPostAPI *)sharedInstance;
 + (NSString *)createUploadFileNameFor:(TDCurrentUser *)user;
+
+- (NSUInteger)noticeCount;
 
 - (TDPostUpload *)initializeVideoUploadwithThumnail:(NSString *)localPhotoPath withName:(NSString *)newName;
 - (void)uploadVideo:(NSString *)localVideoPath withThumbnail:(NSString *)localPhotoPath withName:(NSString *)newName;
