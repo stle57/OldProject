@@ -102,6 +102,11 @@
 
 #pragma mark - Posts
 
+- (TDPost *)postForRow:(NSInteger)row {
+    NSInteger realRow = row - [self noticeCount] - (needsProfileHeader ? 1 : 0);
+    return [self.posts objectAtIndex:realRow];
+}
+
 - (void)reloadHome:(NSNotification *)notification {
     [self fetchPostsUpStream];
 }
@@ -258,12 +263,12 @@
 #pragma mark - Post Delegate
 
 - (void)userButtonPressedFromRow:(NSInteger)row {
-    TDPost *post = (TDPost *)[self.posts objectAtIndex:row];
+    TDPost *post = [self postForRow:row];
     [self openProfile:post.user.userId];
 }
 
 - (void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber {
-    TDPost *post = (TDPost *)[self.posts objectAtIndex:row];
+    TDPost *post = [self postForRow:row];
     TDComment *comment = [post.comments objectAtIndex:commentNumber];
     TDUser *user = comment.user;
     [self openProfile:user.userId];

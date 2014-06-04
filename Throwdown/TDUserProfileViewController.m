@@ -128,6 +128,11 @@
 
 #pragma mark - Posts
 
+- (TDPost *)postForRow:(NSInteger)row {
+    NSInteger realRow = row - (needsProfileHeader ? 1 : 0);
+    return [self.posts objectAtIndex:realRow];
+}
+
 - (void)fetchPostsUpStream {
     debug NSLog(@"userprofile-fetchPostsUpStream");
     [[TDPostAPI sharedInstance] fetchPostsUpstreamForUser:self.userId success:^(NSDictionary *response) {
@@ -224,7 +229,7 @@
     debug NSLog(@"profile-userButtonPressedFromRow:%ld %@ %@", (long)row, self.userId, [[TDCurrentUser sharedInstance] currentUserObject].userId);
 
     if (self.posts && [self.posts count] > row) {
-        TDPost *post = (TDPost *)[self.posts objectAtIndex:row];
+        TDPost *post = [self postForRow:row];
         [self showUserProfile:post.user];
     }
 }
@@ -234,7 +239,7 @@
 
     // row - 1 because we have a profile header at row 0
     if (self.posts && [self.posts count] > row - 1) {
-        TDPost *post = (TDPost *)[self.posts objectAtIndex:row - 1];
+        TDPost *post = [self postForRow:row];
         if (post.comments && [post.comments count] > commentNumber) {
             TDComment *comment = [post.comments objectAtIndex:commentNumber];
             [self showUserProfile:comment.user];

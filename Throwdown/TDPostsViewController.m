@@ -138,6 +138,12 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 }
 
 # pragma mark - Figure out what's on each row
+
+- (TDPost *)postForRow:(NSInteger)row {
+    NSInteger realRow = row - [self noticeCount] - (needsProfileHeader ? 1 : 0);
+    return [self.posts objectAtIndex:realRow];
+}
+
 - (NSUInteger)noticeCount {
     return 0;
 }
@@ -279,7 +285,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
         return 1;
     }
 
-    TDPost *post = (TDPost *)[self.posts objectAtIndex:(section - [self noticeCount] - (needsProfileHeader ? 1 : 0))];
+    TDPost *post = [self postForRow:section];
     NSInteger count = 3 + ([post.comments count] > 2 ? 2 : [post.comments count]);
 
     // +1 if total comments count > 2
@@ -294,7 +300,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     NSInteger realRow = [self.posts count] + [self noticeCount] + (needsProfileHeader ? 1 : 0);
     NSInteger postRow = indexPath.section - [self noticeCount] - (needsProfileHeader ? 1 : 0);
 
-    debug NSLog(@"s: %d r: %d n: %d p: %d rr: %d pr: %d", indexPath.section, indexPath.row, [self noticeCount], [self.posts count], realRow, postRow);
+    debug NSLog(@"s: %ld r: %ld n: %ld p: %lu rr: %ld pr: %ld", (long)indexPath.section, (long)indexPath.row, [self noticeCount], (long)[self.posts count], (long)realRow, (long)postRow);
 
     // 1st row for Profile Header
     if (needsProfileHeader && indexPath.section == 0 && self.loaded && !self.errorLoading) {
@@ -410,8 +416,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     }
 
     // The video
-    TDPost *post = (TDPost *)[self.posts objectAtIndex:postRow];
-
+    TDPost *post = [self postForRow:indexPath.section];
     if (indexPath.row == 0) {
         TDPostView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_POST_VIEW];
         if (!cell) {
@@ -531,7 +536,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
         return postViewHeight;
     }
 
-    TDPost *post = (TDPost *)[self.posts objectAtIndex:realRow];
+    TDPost *post = [self postForRow:indexPath.section];
     if (indexPath.row == 1) {
         return [post.likers count] > 0 ? likeHeight : 0;
     }
@@ -576,9 +581,9 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
 
-    NSInteger index = (needsProfileHeader ? indexPath.section - 1 : indexPath.section);
+    NSInteger index = indexPath.section - [self noticeCount] - (needsProfileHeader ? 1 : 0);
     if ([self.posts count] >= index) {
-        TDPost *post = (TDPost *)[self.posts objectAtIndex:index];
+        TDPost *post = [self postForRow:indexPath.section];
         [self openDetailView:post.postId];
     }
 }
@@ -595,7 +600,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 #pragma mark - TDPostView Delegate
 
 - (void)postTouchedFromRow:(NSInteger)row {
-    TDPost *post = (TDPost *)[self.posts objectAtIndex:row-(needsProfileHeader ? 1 : 0)];
+    TDPost *post = [self postForRow:row];
     [self openDetailView:post.postId];
 }
 
@@ -619,8 +624,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 - (void)likeButtonPressedFromRow:(NSInteger)row {   // 'row' is actually the section
     debug NSLog(@"Home-likeButtonPressedFromRow:%ld", (long)row);
 
-    TDPost *post = (TDPost *)[self.posts objectAtIndex:row-(needsProfileHeader ? 1 : 0)];
-
+    TDPost *post = [self postForRow:row];
     if (post.postId) {
 
         // Add the like for the update
@@ -637,8 +641,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 - (void)unLikeButtonPressedFromRow:(NSInteger)row {   // 'row' is actually the section
     debug NSLog(@"Home-unLikeButtonPressedFromRow:%ld", (long)row);
 
-    TDPost *post = (TDPost *)[self.posts objectAtIndex:row-(needsProfileHeader ? 1 : 0)];
-
+    TDPost *post = [self postForRow:row];
     if (post.postId) {
 
         // Remove the like for the update
@@ -663,7 +666,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
 - (void)commentButtonPressedFromRow:(NSInteger)row {
     debug NSLog(@"Home-commentButtonPressedFromRow:%ld", (long)row);
-    TDPost *post = (TDPost *)[self.posts objectAtIndex:row-(needsProfileHeader ? 1 : 0)];
+    TDPost *post = [self postForRow:row];
     [self openDetailView:post.postId];
 }
 
