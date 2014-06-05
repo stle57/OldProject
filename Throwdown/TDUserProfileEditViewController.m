@@ -95,7 +95,7 @@
                 self.bio = [settings objectForKey:@"bio"];
             }
 
-            if ([settings objectForKey:@"picture"] == [NSNull null] && ![[settings objectForKey:@"picture"] isEqualToString:@"default"]) {
+            if ([settings objectForKey:@"picture"] != [NSNull null] && ![[settings objectForKey:@"picture"] isEqualToString:@"default"]) {
                 self.pictureFileName = [settings objectForKey:@"picture"];
             }
         }
