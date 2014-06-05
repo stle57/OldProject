@@ -298,9 +298,10 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSInteger realRow = [self.posts count] + [self noticeCount] + (needsProfileHeader ? 1 : 0);
-    NSInteger postRow = indexPath.section - [self noticeCount] - (needsProfileHeader ? 1 : 0);
 
-    debug NSLog(@"s: %ld r: %ld n: %ld p: %lu rr: %ld pr: %ld", (long)indexPath.section, (long)indexPath.row, [self noticeCount], (long)[self.posts count], (long)realRow, (long)postRow);
+    // debugging these table view buggers:
+    // NSInteger postRow = indexPath.section - [self noticeCount] - (needsProfileHeader ? 1 : 0);
+    // debug NSLog(@"s: %ld r: %ld n: %ld p: %lu rr: %ld pr: %ld", (long)indexPath.section, (long)indexPath.row, (long)[self noticeCount], (long)[self.posts count], (long)realRow, (long)postRow);
 
     // 1st row for Profile Header
     if (needsProfileHeader && indexPath.section == 0 && self.loaded && !self.errorLoading) {
@@ -329,14 +330,14 @@ static CGFloat const kHeightOfStatusBar = 65.0;
             if (![user hasDefaultPicture]) {
                 [[TDAPIClient sharedInstance] setImage:@{@"imageView":cell.userImageView,
                                                          @"filename":user.picture,
-                                                         @"width":@45,
-                                                         @"height":@45}];
+                                                         @"width":@60,
+                                                         @"height":@60}];
             }
 
             cell.whiteUnderView.frame = CGRectMake(cell.whiteUnderView.frame.origin.x,
                                                    cell.whiteUnderView.frame.origin.y,
                                                    cell.whiteUnderView.frame.size.width,
-                                                   [self tableView:tableView heightForRowAtIndexPath:indexPath] - 8.0);
+                                                   [self tableView:tableView heightForRowAtIndexPath:indexPath] - 5.0);
             cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
                                                CGRectGetMaxY(cell.whiteUnderView.frame) - (1.0 / [[UIScreen mainScreen] scale]),
                                                cell.bottomLine.frame.size.width,

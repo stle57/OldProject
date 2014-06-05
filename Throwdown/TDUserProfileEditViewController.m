@@ -39,7 +39,7 @@
 @synthesize bio;
 @synthesize pictureFileName;
 @synthesize fromFrofileType;
-@synthesize editedProfileImage90x90;
+@synthesize editedProfileImage;
 @synthesize tempFlyInImageView;
 
 - (void)dealloc {
@@ -51,7 +51,7 @@
     self.password = nil;
     self.bio = nil;
     self.pictureFileName = nil;
-    self.editedProfileImage90x90 = nil;
+    self.editedProfileImage = nil;
     self.tempFlyInImageView = nil;
 }
 
@@ -144,7 +144,7 @@
 - (IBAction)saveButtonHit:(id)sender {
     [self hideKeyboard];
     [self showActivity];
-    if (self.editedProfileImage90x90) {
+    if (self.editedProfileImage) {
         self.activityIndicator.text.text = @"Uploading photo";
         [self uploadNewAvatarImage];
     } else {
@@ -168,7 +168,7 @@
                                             [self hideActivity];
 
                                             if (success) {
-                                                debug NSLog(@"EDIT SUCCESS:%@ %@", dict, self.editedProfileImage90x90);
+                                                debug NSLog(@"EDIT SUCCESS:%@ %@", dict, self.editedProfileImage);
 
                                                 [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateWithUserChangeNotification object:nil];
 
@@ -392,7 +392,7 @@
     }
 
     NSString *currentBio = [self.settings objectForKey:@"bio"];
-    if (self.editedProfileImage90x90 != nil ||
+    if (self.editedProfileImage != nil ||
         ([self.name length] > 0 && ![self.name isEqualToString:[self.settings objectForKey:@"name"]]) ||
         ([self.username length] > 0 && ![self.username isEqualToString:[self.settings objectForKey:@"username"]]) ||
         ([self.phone length] > 0 && ![self.phone isEqualToString:[self.settings objectForKey:@"displayed_phone_number"]]) ||
@@ -549,8 +549,8 @@
             switch (indexPath.row) {
                 case 0:
                     cell.userImageView.hidden = NO;
-                    if (self.editedProfileImage90x90) {
-                        cell.userImageView.image = self.editedProfileImage90x90;
+                    if (self.editedProfileImage) {
+                        cell.userImageView.image = self.editedProfileImage;
                     } else if (self.pictureFileName) {
                         [[TDAPIClient sharedInstance] setImage:@{@"imageView":cell.userImageView,
                                                                  @"filename":self.pictureFileName,
@@ -806,11 +806,11 @@
 
     UIImage *image = [info valueForKey:UIImagePickerControllerEditedImage];
 
-    // Scale to 90x90
+    // Scale to 120x120
     CGFloat shorterSide = image.size.width < image.size.height ? image.size.width : image.size.height;
     image = [image cropToSize:CGSizeMake(shorterSide, shorterSide) usingMode:NYXCropModeCenter];
-    image = [image scaleToSize:CGSizeMake(90.0, 90.0) usingMode:NYXResizeModeScaleToFill];
-    self.editedProfileImage90x90 = image;
+    image = [image scaleToSize:CGSizeMake(120.0, 120.0) usingMode:NYXResizeModeScaleToFill];
+    self.editedProfileImage = image;
 
     // Need to figure out where the avatar image is on the screen
     TDUserEditCell *cell = (TDUserEditCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0
@@ -866,7 +866,7 @@
     // Save to temp place
     NSString *filePath = [NSHomeDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"Documents/%@", filename]];
 
-    UIImage *image = self.editedProfileImage90x90;
+    UIImage *image = self.editedProfileImage;
     if (image.imageOrientation == UIImageOrientationRight) {
         image = [image rotateInDegrees:-90.0];
     } else if (image.imageOrientation == UIImageOrientationDown) {
@@ -888,13 +888,13 @@
 
 - (void)uploadComplete:(NSNotification*)notification {
     debug NSLog(@"ProfileEdit-upload Complete");
-    self.editedProfileImage90x90 = nil;
+    self.editedProfileImage = nil;
     [self sendToTheServer];
 }
 
 - (void)uploadFailed:(NSNotification*)notification {
     debug NSLog(@"ProfileEdit-upload Failed");
-    self.editedProfileImage90x90 = nil;
+    self.editedProfileImage = nil;
     [self hideActivity];
 }
 

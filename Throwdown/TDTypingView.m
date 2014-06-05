@@ -162,7 +162,7 @@
     // Check for multiple lines
     CGFloat textViewHeight = self.textView.contentSize.height-self.textView.font.lineHeight;
     NSInteger numLines = self.textView.contentSize.height/self.textView.font.lineHeight;
-    NSLog(@"Number of lines:%ld %f", (long)numLines, ((numLines-1)*self.textView.font.lineHeight));
+    debug NSLog(@"Number of lines:%ld %f", (long)numLines, ((numLines-1)*self.textView.font.lineHeight));
 
     [self.layer removeAllAnimations];
     [self.textView.layer removeAllAnimations];

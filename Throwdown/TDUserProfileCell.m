@@ -22,7 +22,7 @@
 - (void)awakeFromNib {
     self.userNameLabel.font = TITLE_FONT;
     self.bioLabel.font = BIO_FONT;
-    self.userImageView.layer.cornerRadius = 22.5;
+    self.userImageView.layer.cornerRadius = 30;
     self.userImageView.layer.masksToBounds = YES;
 }
 
