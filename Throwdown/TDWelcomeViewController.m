@@ -46,7 +46,7 @@
     CGRect textFrame = self.titleLabel.frame;
     textFrame.origin.y = 50.0;
     self.titleLabel.frame = textFrame;
-    self.snippetLabel.text = @"A social network that\ncelebrates fitness";
+    self.snippetLabel.text = @"A community that\ncelebrates fitness";
     self.snippetLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:24.0];
     [TDAppDelegate fixHeightOfThisLabel:self.snippetLabel];
     textFrame = self.snippetLabel.frame;
