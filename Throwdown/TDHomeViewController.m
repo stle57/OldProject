@@ -161,11 +161,13 @@
 
 #pragma mark - Frosted View behind Status bar
 - (void)addFrostedBehindForStatusBar {
-    UINavigationBar *statusBarBackground = [[UINavigationBar alloc] initWithFrame:statusBarFrame];
-    statusBarBackground.barStyle = UIBarStyleDefault;
-    statusBarBackground.translucent = YES;
-    statusBarBackground.tag = 9920;
-    [self.view insertSubview:statusBarBackground aboveSubview:self.tableView];
+    if (statusBarFrame.size.height == 20) {
+        UINavigationBar *statusBarBackground = [[UINavigationBar alloc] initWithFrame:statusBarFrame];
+        statusBarBackground.barStyle = UIBarStyleDefault;
+        statusBarBackground.translucent = YES;
+        statusBarBackground.tag = 9920;
+        [self.view insertSubview:statusBarBackground aboveSubview:self.tableView];
+    }
 }
 
 - (void)removeFrostedView {
