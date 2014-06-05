@@ -15,7 +15,7 @@
 
 #define DEV_SERVER @"http://amber.local:3000"
 #define STAGING_SERVER @"http://staging.throwdown.us"
-#define PRODUCTION_SERVER @"http://throwdown.us"
+#define PRODUCTION_SERVER @"https://throwdown.us"
 
 @implementation TDConstants
 
