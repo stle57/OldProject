@@ -904,7 +904,7 @@
 				ORGANIZATIONNAME = Throwdown;
 				TargetAttributes = {
 					A11E04D71888CB79002F981A = {
-						DevelopmentTeam = 3QE2A2X49H;
+						DevelopmentTeam = T4FM8T6LS4;
 					};
 					A11E04F81888CB79002F981A = {
 						TestTargetID = A11E04D71888CB79002F981A;
