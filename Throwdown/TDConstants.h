@@ -35,6 +35,7 @@ static NSString *const FTImage = @".jpg";
 static NSString *const CTVideo = @"video/mp4";
 static NSString *const CTImage = @"image/jpeg";
 
+static double const kAutomaticRefreshTimeout = 30; // in seconds - minium time between reloading feed after opening app
 static double const kMaxSessionLength = 30; // in seconds
 static NSString *const kAnalyticsLogfile = @"analyticsLogfile.bin";
 static NSString *const kApplicationUUIDKey = @"TDApplicationUUIDKey";
