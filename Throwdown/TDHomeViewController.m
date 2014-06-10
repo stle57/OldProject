@@ -130,7 +130,7 @@
     }];
 }
 
-- (BOOL)fetchPostsDownstream {
+- (BOOL)fetchPostsDownStream {
     if (noMorePostsAtBottom) {
         return NO;
     }
