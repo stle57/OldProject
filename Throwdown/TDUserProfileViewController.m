@@ -81,6 +81,10 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+
+    // Stop any current playbacks
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
+
     [self.navigationController setNavigationBarHidden:NO animated:NO];
 
     if (!self.userPosts || goneDownstream) {
@@ -92,6 +96,9 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
+
+    // Stop any current playbacks
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
 }
 
 - (void)didReceiveMemoryWarning {

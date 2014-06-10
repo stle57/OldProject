@@ -34,12 +34,8 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
-
-    // Stop any current playbacks
-    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
 
     // Title
     self.titleLabel.textColor = [TDConstants headerTextColor];
@@ -118,6 +114,9 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
+    // Stop any current playbacks
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
+
     [self.navigationController setNavigationBarHidden:NO animated:NO];
 
     // TODO: only when user didn't go downstream
@@ -133,6 +132,7 @@
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
     [self.navigationController setNavigationBarHidden:YES animated:YES];
 }
 

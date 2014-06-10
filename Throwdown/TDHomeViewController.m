@@ -350,6 +350,7 @@
 
 - (void)openProfile:(NSNumber *)userId {
     debug NSLog(@"gotoProfileForUser:%@", userId);
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
 
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
     vc.userId = userId;
