@@ -685,11 +685,10 @@ static const NSString *ItemStatusContext;
     [self.videoWriter addInput:videoWriterInput];
 
     NSError *verror = nil;
-    AVAssetReader *reader = [[AVAssetReader alloc] initWithAsset:asset error:&verror];
-    NSDictionary *decompressionVideoSettings = @{ (id)kCVPixelBufferPixelFormatTypeKey : [NSNumber numberWithUnsignedInt:kCVPixelFormatType_32ARGB], (id)kCVPixelBufferIOSurfacePropertiesKey : [NSDictionary dictionary] };
-    AVAssetReaderVideoCompositionOutput *assetVideoReaderOutput = [AVAssetReaderVideoCompositionOutput assetReaderVideoCompositionOutputWithVideoTracks:@[videoTrack] videoSettings:decompressionVideoSettings];
+    AVAssetReader *videoReader = [[AVAssetReader alloc] initWithAsset:asset error:&verror];
+    AVAssetReaderVideoCompositionOutput *assetVideoReaderOutput = [AVAssetReaderVideoCompositionOutput assetReaderVideoCompositionOutputWithVideoTracks:@[videoTrack] videoSettings:nil];
     assetVideoReaderOutput.videoComposition = videoComposition;
-    [reader addOutput:assetVideoReaderOutput];
+    [videoReader addOutput:assetVideoReaderOutput];
 
     // Audio
     NSError *aerror = nil;
@@ -703,13 +702,13 @@ static const NSString *ItemStatusContext;
     [self.videoWriter addInput:audioWriterInput];
     [self.videoWriter startWriting];
     [self.videoWriter startSessionAtSourceTime:kCMTimeZero];
-    [reader startReading];
+    [videoReader startReading];
     dispatch_queue_t _processingQueue = dispatch_queue_create("assetAudioWriterQueue", NULL);
     [videoWriterInput requestMediaDataWhenReadyOnQueue:_processingQueue usingBlock:^{
         while ([videoWriterInput isReadyForMoreMediaData]) {
 
             CMSampleBufferRef sampleBuffer;
-            if ([reader status] == AVAssetReaderStatusReading &&
+            if ([videoReader status] == AVAssetReaderStatusReading &&
                 (sampleBuffer = [assetVideoReaderOutput copyNextSampleBuffer])) {
 
                 BOOL result = [videoWriterInput appendSampleBuffer:sampleBuffer];
@@ -718,14 +717,14 @@ static const NSString *ItemStatusContext;
 
                 if (!result) {
                     NSLog(@"Video reading cancelled!");
-                    [reader cancelReading];
+                    [videoReader cancelReading];
                     break;
                 }
             } else {
                 [videoWriterInput markAsFinished];
                 debug NSLog(@"video writing finished");
 
-                switch ([reader status]) {
+                switch ([videoReader status]) {
                     case AVAssetReaderStatusReading:
                         // the reader has more for other tracks, even if this one is done
                         NSLog(@"PROBLEM: AVAssetReaderStatusReading");
@@ -767,7 +766,7 @@ static const NSString *ItemStatusContext;
                     }
                     break;
                     case AVAssetReaderStatusFailed:
-                        NSLog(@"ERROR: AVAssetReaderStatusFailed");
+                        NSLog(@"ERROR: AVAssetReaderStatusFailed: %@", videoReader.error);
                         [self.videoWriter cancelWriting];
                         self.videoWriter = nil;
                         break;
