@@ -20,7 +20,7 @@
 -(void)replacePostId:(NSNumber *)postId withPost:(TDPost *)post;
 @end
 
-@interface TDDetailViewController : UIViewController <TDTypingViewViewDelegate, UITableViewDataSource, UITableViewDelegate, TDDetailsLikesCellDelegate, TDDetailsCommentsCellDelegate, UIAlertViewDelegate, TDPostViewDelegate>
+@interface TDDetailViewController : UIViewController <TDTypingViewViewDelegate, UITableViewDataSource, UITableViewDelegate, TDDetailsLikesCellDelegate, TDDetailsCommentsCellDelegate, UIAlertViewDelegate, UIActionSheetDelegate, TDPostViewDelegate>
 {
     id <TDDetailViewControllerDelegate> __unsafe_unretained delegate;
     TDPost *post;

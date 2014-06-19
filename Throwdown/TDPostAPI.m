@@ -196,7 +196,25 @@
     }];
 }
 
+#pragma mark - Report post
+
+- (void)reportPostWithId:(NSNumber *)postId {
+    debug NSLog(@"API-report post with id:%@", postId);
+
+    NSString *url = [NSString stringWithFormat:@"%@/api/v1/posts/%@/report.json", [TDConstants getBaseURL], postId];
+
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [manager POST:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken }
+            success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                NSLog(@"Success reporting %@", postId);
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                NSLog(@"Error reporting: %@", error);
+            }];
+}
+
 #pragma delete post
+
 - (void)deletePostWithId:(NSNumber *)postId {
     debug NSLog(@"API-delete post with id:%@", postId);
 
@@ -206,9 +224,7 @@
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager DELETE:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken}
             success:^(AFHTTPRequestOperation *operation, id responseObject) {
-
-                if ([responseObject isKindOfClass:[NSDictionary class]])
-                {
+                if ([responseObject isKindOfClass:[NSDictionary class]]) {
                     NSDictionary *returnDict = [NSDictionary dictionaryWithDictionary:responseObject];
                     if ([returnDict objectForKey:@"success"]) {
                         if ([[returnDict objectForKey:@"success"] boolValue]) {

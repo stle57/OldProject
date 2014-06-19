@@ -57,6 +57,15 @@
     self.navigationItem.leftBarButtonItem = barButton;
     self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
 
+    // Delete or report icon - have to use uibutton to give design's hit state correctly
+    UIButton *rightButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [rightButton setFrame:CGRectMake(0.0, 0.0, 20, 21)];
+    [rightButton setImage:[UIImage imageNamed:@"nav_dots"] forState:UIControlStateNormal];
+    [rightButton setImage:[UIImage imageNamed:@"nav_dots_hit"] forState:UIControlStateHighlighted];
+    [rightButton addTarget:self action:@selector(reportButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem *deleteBarButton = [[UIBarButtonItem alloc] initWithCustomView:rightButton];
+    self.navigationItem.rightBarButtonItem = deleteBarButton;
+
     // Cell heights
     NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_POST_VIEW owner:self options:nil];
     TDPostView *cell = [topLevelObjects objectAtIndex:0];
@@ -89,26 +98,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postDeleted:) name:POST_DELETED_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postDeleteFail:) name:POST_DELETED_FAIL_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
-
-    // Delete Icon - have to use uibutton to give design's hit state correctly
-    UIButton *deleteButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    UIImage *trashImage = [UIImage imageNamed:@"nav_trash"];
-    [deleteButton setImage:trashImage
-                  forState:UIControlStateNormal];
-    [deleteButton setFrame:CGRectMake(0.0,
-                                      0.0,
-                                      trashImage.size.width,
-                                      trashImage.size.height)];
-    deleteButton.hidden = YES;
-    trashImage = nil;
-    trashImage = [UIImage imageNamed:@"nav_trash_hit"];
-    [deleteButton setImage:trashImage
-                  forState:UIControlStateSelected];
-    trashImage = nil;
-    [deleteButton addTarget:self action:@selector(deleteButtonPressed:)
-           forControlEvents:UIControlEventTouchUpInside];
-    UIBarButtonItem *deleteBarButton = [[UIBarButtonItem alloc] initWithCustomView:deleteButton];
-    self.navigationItem.rightBarButtonItem = deleteBarButton;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -140,25 +129,60 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-#pragma mark - Delete Post
-- (void)deleteButtonPressed:(id)selector {
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Delete?"
-                                                    message:@"Are you sure you want to\ndelete this post?"
-                                                   delegate:self
-                                          cancelButtonTitle:@"Yes"
-                                          otherButtonTitles:@"No", nil];
-    alert.tag = 89890;
-    [alert show];
+#pragma mark - Delete / Report Post
+
+- (void)reportButtonPressed:(id)sender {
+    NSString *reportText;
+    if ([self.post.user.userId isEqualToNumber:[[TDCurrentUser sharedInstance] currentUserObject].userId]) {
+        reportText = @"Delete";
+    } else {
+        reportText = @"Report as Inappropriate";
+    }
+    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil
+                                                             delegate:self
+                                                    cancelButtonTitle:@"Cancel"
+                                               destructiveButtonTitle:reportText
+                                                    otherButtonTitles:nil];
+    [actionSheet showInView:self.view];
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == actionSheet.destructiveButtonIndex) {
+        if ([self.post.user.userId isEqualToNumber:[[TDCurrentUser sharedInstance] currentUserObject].userId]) {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Delete?"
+                                                            message:@"Are you sure you want to\ndelete this post?"
+                                                           delegate:self
+                                                  cancelButtonTitle:@"Yes"
+                                                  otherButtonTitles:@"No", nil];
+            alert.tag = 89890;
+            [alert show];
+        } else {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Report as Inappropriate?"
+                                                            message:@"Please confirm you'd like to report this post as inappropriate."
+                                                           delegate:self
+                                                  cancelButtonTitle:@"Report"
+                                                  otherButtonTitles:@"Cancel", nil];
+            alert.tag = 18890;
+            [alert show];
+        }
+    }
 }
 
 - (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex {
     // Delete Yes is index 0
-    if (alertView.tag == 89890 && buttonIndex == 0) {
+    if (alertView.tag == 89890 && buttonIndex == alertView.cancelButtonIndex) {
         self.navigationItem.rightBarButtonItem.enabled = NO;
-
         // Delete from server Server
-        TDPostAPI *api = [TDPostAPI sharedInstance];
-        [api deletePostWithId:self.postId];
+        [[TDPostAPI sharedInstance] deletePostWithId:self.postId];
+    } else if (alertView.tag == 18890 && buttonIndex == alertView.cancelButtonIndex) {
+        // Report!
+        [[TDPostAPI sharedInstance] reportPostWithId:self.postId];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Report Sent"
+                                                        message:@"Our moderators will review this post within the next 24 hours. Thank you."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
     }
 }
 
@@ -177,14 +201,6 @@
         if ([newPost.postId isEqualToNumber:self.postId]) {
             [self.post loadUpFromDict:notification.userInfo];
             [self.tableView reloadData];
-
-            // Delete button
-            if ([self.post.user.userId isEqualToNumber:[[TDCurrentUser sharedInstance] currentUserObject].userId]) {
-                // Same User as current
-                self.navigationItem.rightBarButtonItem.customView.hidden = NO;
-            } else {
-                self.navigationItem.rightBarButtonItem.customView.hidden = YES;
-            }
         }
     }
 }

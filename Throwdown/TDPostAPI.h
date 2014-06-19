@@ -31,6 +31,7 @@
 - (void)unLikePostWithId:(NSNumber *)postId;
 - (void)getFullPostInfoForPostId:(NSNumber *)postId;
 - (void)postNewComment:(NSString *)messageBody forPost:(NSNumber *)postId;
+- (void)reportPostWithId:(NSNumber *)postId;
 - (void)deletePostWithId:(NSNumber *)postId;
 
 - (void)fetchPostsUpstreamWithErrorHandlerStart:(NSNumber *)start error:(void (^)(void))errorHandler;
