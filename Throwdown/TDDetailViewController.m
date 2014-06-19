@@ -95,8 +95,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadPosts:) name:TDRefreshPostsNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fullPostReturn:) name:FULL_POST_INFO_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newCommentReturn:) name:NEW_COMMENT_INFO_NOTICIATION object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postDeleted:) name:POST_DELETED_NOTIFICATION object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postDeleteFail:) name:POST_DELETED_FAIL_NOTIFICATION object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postDeleted:) name:TDNotificationRemovePost object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
 }
 
@@ -229,30 +228,8 @@
 }
 
 - (void)postDeleted:(NSNotification*)notification {
-    debug NSLog(@"delete notification:%@", notification);
-
-    // And then go back
     self.navigationItem.rightBarButtonItem.enabled = YES;
     [self.navigationController popViewControllerAnimated:YES];
-}
-
-- (void)postDeleteFail:(NSNotification *)notification {
-    debug NSLog(@"postDeleteFail notification:%@ CLASS:%@", notification, [notification.object class]);
-
-    if ([notification.object isKindOfClass:[NSError class]]) {
-        NSError *error = (NSError*)notification.object;
-        if ([[error.userInfo objectForKey:AFNetworkingOperationFailingURLResponseErrorKey] isKindOfClass:[NSHTTPURLResponse class]]) {
-            NSHTTPURLResponse *response = (NSHTTPURLResponse *)[error.userInfo objectForKey:AFNetworkingOperationFailingURLResponseErrorKey];
-            if (response && response.statusCode == 403) {
-                [TDViewControllerHelper showAlertMessage:@"There was an error (403). You don’t have permission to delete this post." withTitle:@"Error"];
-            }
-            if (response && response.statusCode == 401) {
-                [TDViewControllerHelper showAlertMessage:@"There was an error (401).\nPlease try again." withTitle:@"Error"];
-            }
-        }
-    }
-
-    self.navigationItem.rightBarButtonItem.enabled = YES;
 }
 
 #pragma mark - TableView delegates

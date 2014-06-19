@@ -138,7 +138,7 @@
     if (noMorePostsAtBottom) {
         return NO;
     }
-    [[TDPostAPI sharedInstance] fetchPostsUpstreamWithErrorHandlerStart:[self lowestIdOfPosts] success:^(NSDictionary *response) {
+    [[TDPostAPI sharedInstance] fetchPostsUpstreamWithErrorHandlerStart:[super lowestIdOfPosts] success:^(NSDictionary *response) {
         if ([response valueForKey:@"next_start"] == [NSNull null]) {
             noMorePostsAtBottom = YES;
         }
@@ -148,10 +148,6 @@
 
 - (NSArray *)postsForThisScreen {
     return [[TDPostAPI sharedInstance] getPosts];
-}
-
-- (NSNumber *)lowestIdOfPosts {
-    return [[TDPostAPI sharedInstance] lowestIdOfPosts];
 }
 
 #pragma mark - Refresh Control

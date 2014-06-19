@@ -25,7 +25,6 @@
 - (void)uploadPhoto:(NSString *)localPhotoPath withName:(NSString *)newName;
 
 - (void)addPost:(NSString *)filename comment:(NSString *)comment kind:(NSString *)kind success:(void (^)(void))success failure:(void (^)(void))failure;
-- (NSNumber *)lowestIdOfPosts;
 - (NSArray *)getPosts;
 - (void)likePostWithId:(NSNumber *)postId;
 - (void)unLikePostWithId:(NSNumber *)postId;

@@ -89,10 +89,12 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     }
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(startSpinner:) name:START_MAIN_SPINNER_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(stopSpinner:) name:STOP_MAIN_SPINNER_NOTIFICATION object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postDeleted:) name:POST_DELETED_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logOutUser:) name:LOG_OUT_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshPostsList:) name:TDRefreshPostsNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removePost:) name:TDNotificationRemovePost object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removePostFailed:) name:TDNotificationRemovePostFailed object:nil];
+
     [self refreshPostsList];
     [self fetchPostsUpStream];
 }
@@ -110,13 +112,6 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     [self.tableView reloadData];
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-    if ([self class] != [TDHomeViewController class]) {
-        [[NSNotificationCenter defaultCenter] removeObserver:self];
-    }
-}
-
 - (UIStatusBarStyle)preferredStatusBarStyle {
     return UIStatusBarStyleDefault;
 }
@@ -132,6 +127,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     self.tableView.delegate = nil;
     self.tableView.dataSource = nil;
     self.posts = nil;
+    self.removingPosts = nil;
     self.refreshControl = nil;
     self.animator = nil;
     self.userId = nil;
@@ -164,7 +160,15 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 }
 
 - (NSNumber *)lowestIdOfPosts {
-    return nil;
+    NSNumber *lowestId = [NSNumber numberWithLongLong:LONG_LONG_MAX];
+    for (TDPost *post in posts) {
+        if ([lowestId compare:post.postId] == NSOrderedDescending) {
+            lowestId = post.postId;
+        }
+    }
+    long lowest = [lowestId longValue]-1;
+    lowestId = [NSNumber numberWithLong:lowest];
+    return lowestId;
 }
 
 - (TDUser *)getUser {
@@ -194,8 +198,58 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     // If from refresh control
     [self endRefreshControl];
 
-    posts = [self postsForThisScreen];
+    self.posts = [self postsForThisScreen];
     [self.tableView reloadData];
+}
+
+# pragma mark - handle removing posts
+
+- (void)removePost:(NSNotification *)n {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        BOOL changeMade = NO;
+        NSNumber *postId = (NSNumber *)[n.userInfo objectForKey:@"postId"];
+        NSMutableArray *newList = [[NSMutableArray array] init];
+        for (TDPost *post in self.posts) {
+            if ([post.postId isEqualToNumber:postId]) {
+                debug NSLog(@"removing post from vc with id %@", postId);
+                changeMade = YES;
+                if (!self.removingPosts) {
+                    self.removingPosts = [[NSMutableDictionary alloc] init];
+                }
+                [self.removingPosts setObject:post forKey:post.postId];
+            } else {
+                [newList addObject:post];
+            }
+        }
+        if (changeMade) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.posts = [[NSArray alloc] initWithArray:newList];
+                [self.tableView reloadData];
+            });
+        }
+    });
+}
+
+- (void)removePostFailed:(NSNotification *)n {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        NSNumber *postId = (NSNumber *)[n.userInfo objectForKey:@"postId"];
+        if (self.removingPosts && [self.removingPosts objectForKey:postId]) {
+            NSMutableArray *newList = [[NSMutableArray array] initWithArray:self.posts];
+            [newList addObject:[self.removingPosts objectForKey:postId]];
+            NSSortDescriptor *valueDescriptor = [[NSSortDescriptor alloc] initWithKey:@"postId" ascending:NO];
+            self.posts = [newList sortedArrayUsingDescriptors:@[valueDescriptor]];
+            // clean up cache
+            [self.removingPosts removeObjectForKey:postId];
+            if ([self.removingPosts count] == 0) {
+                self.removingPosts = nil;
+            }
+
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.tableView reloadData];
+                [TDViewControllerHelper showAlertMessage:@"There was a problem deleting the post, please try again." withTitle:nil];
+            });
+        }
+    });
 }
 
 #pragma mark - refresh control
@@ -236,13 +290,6 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     debug NSLog(@"reload posts");
     [self endRefreshControl];
     self.posts = [self postsForThisScreen];
-    [self.tableView reloadData];
-}
-
-#pragma mark - Delete Post
-- (void)postDeleted:(NSNotification*)notification {
-    debug NSLog(@"delete notification:%@", notification);
-    posts = [self postsForThisScreen];
     [self.tableView reloadData];
 }
 

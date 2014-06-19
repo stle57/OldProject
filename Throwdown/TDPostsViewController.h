@@ -30,7 +30,6 @@
 
 @interface TDPostsViewController : UIViewController <TDLikeViewDelegate, TDPostViewDelegate, TDTwoButtonViewDelegate, TDDetailsCommentsCellDelegate, TDMoreCommentsDelegate, UIActionSheetDelegate, TDDetailViewControllerDelegate, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate, TDUserProfileCellDelegate>
 {
-    NSArray *posts;
     UIRefreshControl *refreshControl;
     BOOL goneDownstream;
     CGPoint origRecordButtonCenter;
@@ -53,6 +52,7 @@
 }
 
 @property (nonatomic, retain) NSArray *posts;
+@property (nonatomic) NSMutableDictionary *removingPosts;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIButton *recordButton;
 @property (weak, nonatomic) IBOutlet UIButton *notificationButton;
@@ -66,6 +66,8 @@
 @property (nonatomic) BOOL errorLoading;
 
 - (NSArray *)postsForThisScreen;
+- (NSNumber *)lowestIdOfPosts;
+- (TDUser *)getUser;
 - (void)reloadPosts;
 - (void)refreshPostsList;
 - (void)refreshControlUsed;
@@ -75,6 +77,5 @@
 - (void)stopSpinner:(NSNotification *)notification;
 - (void)stopSpinner;
 - (void)startLoadingSpinner;
-- (TDUser *)getUser;
 - (void)openDetailView:(NSNumber *)postId;
 @end

@@ -17,7 +17,6 @@
 
 @interface TDUserProfileViewController ()
 
-@property (nonatomic) NSMutableArray *userPosts;
 @property (nonatomic) TDUser *user;
 
 @end
@@ -26,18 +25,13 @@
 
 - (void)dealloc {
     self.user = nil;
-    self.userPosts = nil;
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:TDUpdateWithUserChangeNotification
-                                                  object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)viewDidLoad {
     needsProfileHeader = YES;
 
     [super viewDidLoad];
-
-    self.userPosts = [[NSMutableArray alloc] init];
 
     // Title
     self.titleLabel.textColor = [TDConstants headerTextColor];
@@ -87,7 +81,7 @@
 
     [self.navigationController setNavigationBarHidden:NO animated:NO];
 
-    if (!self.userPosts || goneDownstream) {
+    if (!self.posts || goneDownstream) {
         [self refreshPostsList];
         [self fetchPostsUpStream];
     }
@@ -104,7 +98,8 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     self.user = nil;
-    self.userPosts  = nil;
+    self.posts  = nil;
+    self.removingPosts = nil;
 }
 
 - (IBAction)settingsButtonHit:(id)sender {
@@ -163,25 +158,13 @@
         return NO;
     }
     debug NSLog(@"userprofile-fetchPostsDownStream");
-    [[TDPostAPI sharedInstance] fetchPostsForUserUpstreamWithErrorHandlerStart:[self lowestIdOfPosts] userId:self.userId error:^{
+    [[TDPostAPI sharedInstance] fetchPostsForUserUpstreamWithErrorHandlerStart:[super lowestIdOfPosts] userId:self.userId error:^{
         self.loaded = YES;
         self.errorLoading = YES;
     } success:^(NSDictionary *response) {
         [self handlePostsResponse:response fromStart:NO];
     }];
     return YES;
-}
-
-- (NSNumber *)lowestIdOfPosts {
-    NSNumber *lowestId = [NSNumber numberWithLongLong:LONG_LONG_MAX];
-    for (TDPost *post in self.userPosts) {
-        if ([lowestId compare:post.postId] == NSOrderedDescending) {
-            lowestId = post.postId;
-        }
-    }
-    long lowest = [lowestId longValue]-1;
-    lowestId = [NSNumber numberWithLong:lowest];
-    return lowestId;
 }
 
 - (void)handlePostsResponse:(NSDictionary *)response fromStart:(BOOL)start {
@@ -191,23 +174,28 @@
     self.errorLoading = NO;
 
     if (start) {
-        self.userPosts = nil;
+        self.posts = nil;
+        self.removingPosts = nil;
         // TODO update user info
         self.user = [[TDUser alloc] initWithDictionary:[response valueForKeyPath:@"user"]];
         self.titleLabel.text = self.user.username;
     }
 
-    if (!self.userPosts) {
-        self.userPosts = [[NSMutableArray alloc] init];
+    NSMutableArray *newPosts;
+    if (self.posts) {
+        newPosts = [[NSMutableArray alloc] initWithArray:self.posts];
+    } else {
+        newPosts = [[NSMutableArray alloc] init];
     }
 
     for (NSDictionary *postObject in [response valueForKeyPath:@"posts"]) {
-        [self.userPosts addObject:[[TDPost alloc]initWithDictionary:postObject]];
+        [newPosts addObject:[[TDPost alloc] initWithDictionary:postObject]];
     }
     if ([response valueForKey:@"next_start"] == [NSNull null]) {
         noMorePostsAtBottom = YES;
     }
 
+    self.posts = newPosts;
     [self refreshPostsList];
 }
 
@@ -220,13 +208,12 @@
 - (NSArray *)postsForThisScreen {
     debug NSLog(@"userprofile-postsForThisScreen");
     NSMutableArray *postsWithUsers = [NSMutableArray array];
-    for (TDPost *aPost in self.userPosts) {
+    for (TDPost *aPost in self.posts) {
         [aPost replaceUser:self.user];
         [postsWithUsers addObject:aPost];
     }
     return postsWithUsers;
 }
-
 
 #pragma mark - Refresh Control
 

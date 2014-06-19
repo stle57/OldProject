@@ -19,11 +19,14 @@
 #import "TDDeviceInfo.h"
 #import "TDNotice.h"
 
+@interface TDPostAPI ()
+
+@property (nonatomic) NSMutableArray *posts;
+@property (nonatomic) BOOL noMorePosts;
+
+@end
+
 @implementation TDPostAPI
-{
-    NSMutableArray *posts;
-    BOOL noMorePosts;
-}
 
 + (TDPostAPI *)sharedInstance {
     static TDPostAPI *_sharedInstance = nil;
@@ -41,13 +44,13 @@
 - (id)init {
     self = [super init];
     if (self) {
-        posts = [[NSMutableArray alloc] init];
+        self.posts = [[NSMutableArray alloc] init];
     }
     return self;
 }
 
 - (void)dealloc {
-    posts = nil;
+    self.posts = nil;
 }
 
 #pragma mark - notices
@@ -106,16 +109,16 @@
     [manager GET:[[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts.json"] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             if (!start) {
-                [posts removeAllObjects];
+                [self.posts removeAllObjects];
             }
             for (NSDictionary *postObject in [responseObject valueForKeyPath:@"posts"]) {
-                [posts addObject:[[TDPost alloc]initWithDictionary:postObject]];
+                [self.posts addObject:[[TDPost alloc]initWithDictionary:postObject]];
             }
             if ([responseObject valueForKey:@"notification_count"]) {
                 [self notifyNotificationCount:[responseObject valueForKey:@"notification_count"]];
             }
             if ([responseObject valueForKey:@"next_start"] == [NSNull null]) {
-                noMorePosts = YES;
+                self.noMorePosts = YES;
             }
             if ([responseObject objectForKey:@"notices"]) {
                 NSMutableArray *tmp = [[NSMutableArray alloc] init];
@@ -146,20 +149,9 @@
 }
 
 - (NSArray *)getPosts {
-    return [posts mutableCopy];
+    return [self.posts mutableCopy];
 }
 
-- (NSNumber *)lowestIdOfPosts {
-    NSNumber *lowestId = [NSNumber numberWithLongLong:LONG_LONG_MAX];
-    for (TDPost *post in posts) {
-        if ([lowestId compare:post.postId] == NSOrderedDescending) {
-            lowestId = post.postId;
-        }
-    }
-    long lowest = [lowestId longValue]-1;
-    lowestId = [NSNumber numberWithLong:lowest];
-    return lowestId;
-}
 
 #pragma mark posts for a particular user
 - (void)fetchPostsUpstreamForUser:(NSNumber *)userId success:(void(^)(NSDictionary *response))successHandler error:(void(^)(void))errorHandler {
@@ -218,6 +210,19 @@
 - (void)deletePostWithId:(NSNumber *)postId {
     debug NSLog(@"API-delete post with id:%@", postId);
 
+    // First remove post from main feed's lists
+    NSMutableArray *mutablePosts = [NSMutableArray arrayWithCapacity:0];
+    for (TDPost *post in self.posts) {
+        if (![post.postId isEqualToNumber:postId]) {
+            [mutablePosts addObject:post];
+        }
+    }
+    [self.posts removeAllObjects];
+    [self.posts addObjectsFromArray:mutablePosts];
+
+    // Then notify any view controllers about the removal which will cache the post and refresh table
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationRemovePost object:nil userInfo:@{@"postId": postId}];
+
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts/[POST_ID].json"];
     url = [url stringByReplacingOccurrencesOfString:@"[POST_ID]"
                                          withString:[postId stringValue]];
@@ -226,34 +231,15 @@
             success:^(AFHTTPRequestOperation *operation, id responseObject) {
                 if ([responseObject isKindOfClass:[NSDictionary class]]) {
                     NSDictionary *returnDict = [NSDictionary dictionaryWithDictionary:responseObject];
-                    if ([returnDict objectForKey:@"success"]) {
-                        if ([[returnDict objectForKey:@"success"] boolValue]) {
-
-                            // Remove the post from 'posts'
-                            NSMutableArray *mutablePosts = [NSMutableArray arrayWithCapacity:0];
-                            for (TDPost *post in posts) {
-                                if (![post.postId isEqualToNumber:postId]) {
-                                    [mutablePosts addObject:post];
-                                }
-                            }
-                            [posts removeAllObjects];
-                            [posts addObjectsFromArray:mutablePosts];
-
-                            // Success
-                            [[NSNotificationCenter defaultCenter] postNotificationName:POST_DELETED_NOTIFICATION
-                                                                                object:postId
-                                                                              userInfo:nil];
-                        } else {
-                            // Fail
-                        }
+                    if (![returnDict objectForKey:@"success"] || ![[returnDict objectForKey:@"success"] boolValue]) {
+                        [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationRemovePostFailed object:nil userInfo:@{@"postId": postId}];
                     }
                 }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"Error: %@", error);
-
-        [[NSNotificationCenter defaultCenter] postNotificationName:POST_DELETED_FAIL_NOTIFICATION
-                                                            object:error
-                                                          userInfo:nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationRemovePostFailed
+                                                            object:nil
+                                                          userInfo:@{ @"postId": postId }];
     }];
 }
 
