@@ -433,12 +433,12 @@ static const NSString *ItemStatusContext;
                 AVAssetTrack* videoTrack = [[self.currentVideoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
                 CGSize videoSize = videoTrack.naturalSize;
 
-                // Initially trim the video if it's longer than 30s
-                if (CMTimeGetSeconds(videoTrack.timeRange.duration) > 30.0) {
-                    self.startTime = self.slider.leftPosition;
-                    self.stopTime = self.slider.rightPosition;
-                    [self trimVideo];
-                }
+                // Initially trim the video;
+                // - This covers a weird case/bug when the end of the video would be erronious
+                // - Also covers the case where the video is > 30 seconds
+                self.startTime = self.slider.leftPosition;
+                self.stopTime = self.slider.rightPosition;
+                [self trimVideo];
 
                 self.videoContainerView = [[UIView alloc] initWithFrame:[self previewRect]];
 
@@ -527,7 +527,7 @@ static const NSString *ItemStatusContext;
         exportSession.outputFileType = AVFileTypeQuickTimeMovie;
 
         CMTime start = CMTimeMakeWithSeconds(self.startTime, asset.duration.timescale);
-        CMTime duration = CMTimeMakeWithSeconds(self.stopTime - self.startTime, asset.duration.timescale);
+        CMTime duration = CMTimeMakeWithSeconds(self.stopTime - self.startTime - kGlobalVideoTrimTime, asset.duration.timescale);
         CMTimeRange range = CMTimeRangeMake(start, duration);
         exportSession.timeRange = range;
 
@@ -609,7 +609,7 @@ static const NSString *ItemStatusContext;
     AVAsset *asset = [AVAsset assetWithURL:self.editingVideoUrl];
     AVAssetTrack *videoTrack = [[asset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
     AVMutableVideoComposition* videoComposition = [AVMutableVideoComposition videoComposition];
-    videoComposition.frameDuration = CMTimeMake(1, 30);
+    videoComposition.frameDuration = videoTrack.minFrameDuration;
     videoComposition.renderSize = CGSizeMake(640., 640.);
 
     CGRect rect;
@@ -664,12 +664,11 @@ static const NSString *ItemStatusContext;
     CGFloat scale = 640. / shorter;
     CGAffineTransform t3 = CGAffineTransformConcat(t2, CGAffineTransformMakeScale(scale, scale));
 
-    CGAffineTransform finalTransform = t3;
-    [transformer setTransform:finalTransform atTime:kCMTimeZero];
+    [transformer setTransform:t3 atTime:kCMTimeZero];
 
     //add the transformer layer instructions, then add to video composition
-    instruction.layerInstructions = [NSArray arrayWithObject:transformer];
-    videoComposition.instructions = [NSArray arrayWithObject:instruction];
+    instruction.layerInstructions = @[transformer];
+    videoComposition.instructions = @[instruction];
 
     //Create an Export Path to store the cropped video
     NSString *exportPath = [NSHomeDirectory() stringByAppendingPathComponent:kVideoExportedFilePath];

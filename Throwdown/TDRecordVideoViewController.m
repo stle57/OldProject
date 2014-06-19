@@ -281,9 +281,7 @@
     self.isRecording = NO;
     self.torchIsOn = NO;
     [self updateFlashImage:NO];
-    self.videoCamera = [[GPUImageVideoCamera alloc]
-                        initWithSessionPreset:AVCaptureSessionPreset1280x720
-                               cameraPosition:AVCaptureDevicePositionBack];
+    self.videoCamera = [[GPUImageVideoCamera alloc] initWithSessionPreset:AVCaptureSessionPreset1280x720 cameraPosition:AVCaptureDevicePositionBack];
     self.videoCamera.outputImageOrientation = UIInterfaceOrientationPortrait;
     self.videoCamera.horizontallyMirrorFrontFacingCamera = YES;
 
@@ -356,8 +354,8 @@
             self.exportSession.outputFileType = AVFileTypeQuickTimeMovie;
 
             CGFloat durationSeconds = CMTimeGetSeconds([asset duration]);
-            CMTime start = CMTimeMakeWithSeconds(0.05, asset.duration.timescale);
-            CMTime duration = CMTimeMakeWithSeconds(durationSeconds - 0.05, asset.duration.timescale);
+            CMTime start = CMTimeMakeWithSeconds(kGlobalVideoTrimTime, asset.duration.timescale);
+            CMTime duration = CMTimeMakeWithSeconds(durationSeconds - kGlobalVideoTrimTime, asset.duration.timescale);
             CMTimeRange range = CMTimeRangeMake(start, duration);
             self.exportSession.timeRange = range;
 
