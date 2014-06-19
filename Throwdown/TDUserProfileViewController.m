@@ -136,8 +136,12 @@
 #pragma mark - Posts
 
 - (TDPost *)postForRow:(NSInteger)row {
-    NSInteger realRow = row - (needsProfileHeader ? 1 : 0);
-    return [self.posts objectAtIndex:realRow];
+    NSInteger realRow = row - 1; // 1 is for the header
+    if (realRow < self.posts.count) {
+        return [self.posts objectAtIndex:realRow];
+    } else {
+        return nil;
+    }
 }
 
 - (void)fetchPostsUpStream {
@@ -234,9 +238,8 @@
 
 - (void)userButtonPressedFromRow:(NSInteger)row {
     debug NSLog(@"profile-userButtonPressedFromRow:%ld %@ %@", (long)row, self.userId, [[TDCurrentUser sharedInstance] currentUserObject].userId);
-
-    if (self.posts && [self.posts count] > row) {
-        TDPost *post = [self postForRow:row];
+    TDPost *post = [self postForRow:row];
+    if (post) {
         [self showUserProfile:post.user];
     }
 }
@@ -244,13 +247,10 @@
 - (void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber {
     debug NSLog(@"profile-userButtonPressedFromRow:%ld commentNumber:%ld, %@ %@", (long)row, (long)commentNumber, self.userId, [[TDCurrentUser sharedInstance] currentUserObject].userId);
 
-    // row - 1 because we have a profile header at row 0
-    if (self.posts && [self.posts count] > row - 1) {
-        TDPost *post = [self postForRow:row];
-        if (post.comments && [post.comments count] > commentNumber) {
-            TDComment *comment = [post.comments objectAtIndex:commentNumber];
-            [self showUserProfile:comment.user];
-        }
+    TDPost *post = [self postForRow:row];
+    if (post && post.comments && [post.comments count] > commentNumber) {
+        TDComment *comment = [post.comments objectAtIndex:commentNumber];
+        [self showUserProfile:comment.user];
     }
 }
 

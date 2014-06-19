@@ -103,8 +103,12 @@
 #pragma mark - Posts
 
 - (TDPost *)postForRow:(NSInteger)row {
-    NSInteger realRow = row - [self noticeCount] - (needsProfileHeader ? 1 : 0);
-    return [self.posts objectAtIndex:realRow];
+    NSInteger realRow = row - [self noticeCount];
+    if (realRow < self.posts.count) {
+        return [self.posts objectAtIndex:realRow];
+    } else {
+        return nil;
+    }
 }
 
 - (void)reloadHome:(NSNotification *)notification {
@@ -266,14 +270,18 @@
 
 - (void)userButtonPressedFromRow:(NSInteger)row {
     TDPost *post = [self postForRow:row];
-    [self openProfile:post.user.userId];
+    if (post) {
+        [self openProfile:post.user.userId];
+    }
 }
 
 - (void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber {
     TDPost *post = [self postForRow:row];
-    TDComment *comment = [post.comments objectAtIndex:commentNumber];
-    TDUser *user = comment.user;
-    [self openProfile:user.userId];
+    if (post) {
+        TDComment *comment = [post.comments objectAtIndex:commentNumber];
+        TDUser *user = comment.user;
+        [self openProfile:user.userId];
+    }
 }
 
 #pragma mark - Notification Badge Count

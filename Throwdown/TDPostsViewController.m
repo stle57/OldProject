@@ -141,7 +141,11 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
 - (TDPost *)postForRow:(NSInteger)row {
     NSInteger realRow = row - [self noticeCount] - (needsProfileHeader ? 1 : 0);
-    return [self.posts objectAtIndex:realRow];
+    if (realRow <= self.posts.count) {
+        return [self.posts objectAtIndex:realRow];
+    } else {
+        return nil;
+    }
 }
 
 - (NSUInteger)noticeCount {
@@ -286,14 +290,15 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     }
 
     TDPost *post = [self postForRow:section];
-    NSInteger count = 3 + ([post.comments count] > 2 ? 2 : [post.comments count]);
-
-    // +1 if total comments count > 2
-    if ([post.commentsTotalCount intValue] > 2) {
-        count++;
+    if (post) {
+        NSInteger count = 3 + ([post.comments count] > 2 ? 2 : [post.comments count]);
+        // +1 if total comments count > 2
+        if ([post.commentsTotalCount intValue] > 2) {
+            count++;
+        }
+        return count;
     }
-
-    return count;
+    return 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -426,7 +431,6 @@ static CGFloat const kHeightOfStatusBar = 65.0;
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             cell.delegate = self;
         }
-
         [cell setPost:post];
         cell.row = indexPath.section;
         return cell;
@@ -442,8 +446,13 @@ static CGFloat const kHeightOfStatusBar = 65.0;
             cell.delegate = self;
         }
         cell.row = indexPath.section;
-        [cell setLike:post.liked];
-        [cell setLikesArray:post.likers totalLikersCount:[post.likersTotalCount integerValue]];
+        if (post) {
+            [cell setLike:post.liked];
+            [cell setLikesArray:post.likers totalLikersCount:[post.likersTotalCount integerValue]];
+        } else {
+            [cell setLike:NO];
+            [cell setLikesArray:@[] totalLikersCount:0];
+        }
         return cell;
     }
 
@@ -582,9 +591,8 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
 
-    NSInteger index = indexPath.section - [self noticeCount] - (needsProfileHeader ? 1 : 0);
-    if ([self.posts count] >= index) {
-        TDPost *post = [self postForRow:indexPath.section];
+    TDPost *post = [self postForRow:indexPath.section];
+    if (post) {
         [self openDetailView:post.postId];
     }
 }
@@ -602,7 +610,9 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
 - (void)postTouchedFromRow:(NSInteger)row {
     TDPost *post = [self postForRow:row];
-    [self openDetailView:post.postId];
+    if (post) {
+        [self openDetailView:post.postId];
+    }
 }
 
 - (void)userButtonPressedFromRow:(NSInteger)row {
@@ -626,8 +636,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     debug NSLog(@"Home-likeButtonPressedFromRow:%ld", (long)row);
 
     TDPost *post = [self postForRow:row];
-    if (post.postId) {
-
+    if (post && post.postId) {
         // Add the like for the update
         [post addLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
 
@@ -643,7 +652,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     debug NSLog(@"Home-unLikeButtonPressedFromRow:%ld", (long)row);
 
     TDPost *post = [self postForRow:row];
-    if (post.postId) {
+    if (post && post.postId) {
 
         // Remove the like for the update
         [post removeLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
