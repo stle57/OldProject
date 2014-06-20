@@ -11,8 +11,8 @@
 
 @protocol TDTypingViewViewDelegate <NSObject>
 @optional
--(void)keyboardAppeared:(CGFloat)height curve:(NSInteger)curve;
--(void)keyboardDisappeared:(CGFloat)height;
+-(void)keyboardAppeared:(CGFloat)height notification:(NSNotification *)notification;
+-(void)keyboardDisappeared:(CGFloat)height notification:(NSNotification *)notification;
 -(void)typingViewMessage:(NSString *)message;
 -(void)adjustFrostedView;
 @end

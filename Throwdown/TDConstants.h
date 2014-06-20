@@ -63,6 +63,8 @@ static NSString *const TDNotificationUploadCancelled = @"TDNotificationUploadCan
 static NSString *const TDNotificationUpdate = @"TDNotificationUpdate";
 static NSString *const TDNotificationRemovePost = @"TDNotificationRemovePost";
 static NSString *const TDNotificationRemovePostFailed = @"TDNotificationRemovePostFailed";
+static NSString *const TDNoticifationNewCommentPostInfo = @"TDNoticifationNewCommentPostInfo";
+static NSString *const TDNoticifationNewCommentFailed = @"TDNoticifationNewCommentFailed";
 static NSString *const TDRefreshPostsNotification = @"TDRefreshPostsNotification";
 static NSString *const TDUpdateWithUserChangeNotification = @"TDUpdateWithUserChangeNotification";
 static NSString *const TDUploadCompleteNotification = @"TDUploadCompleteOK";
@@ -100,7 +102,6 @@ static NSString *const kSpinningAnimation = @"rotationAnimation";
 #define USERNAME_FONT                   [TDConstants fontBoldSized:16.0]
 #define kCommentDefaultText             @"Write a comment..."
 #define FULL_POST_INFO_NOTIFICATION     @"TDFullPostInfoNotification"
-#define NEW_COMMENT_INFO_NOTICIATION    @"TDNewCommentPostInfoNoticifation"
 #define START_MAIN_SPINNER_NOTIFICATION @"TDMainSpinnerStart"
 #define STOP_MAIN_SPINNER_NOTIFICATION  @"TDMainSpinnerStop"
 #define LOG_OUT_NOTIFICATION            @"TDLogOutNotification"

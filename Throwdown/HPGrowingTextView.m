@@ -127,7 +127,7 @@
     minNumberOfLines = 1;
     
     animateHeightChange = YES;
-    animationDuration = 0.1f;
+    animationDuration = 0.;
     
     internalTextView.text = @"";
     
@@ -312,18 +312,18 @@
                 
                 if ([UIView resolveClassMethod:@selector(animateWithDuration:animations:)]) {
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 40000
-                    [UIView animateWithDuration:animationDuration
-                                          delay:0 
-                                        options:(UIViewAnimationOptionAllowUserInteraction|
-                                                 UIViewAnimationOptionBeginFromCurrentState)                                 
-                                     animations:^(void) {
+//                    [UIView animateWithDuration:animationDuration
+//                                          delay:0 
+//                                        options:(UIViewAnimationOptionAllowUserInteraction|
+//                                                 UIViewAnimationOptionBeginFromCurrentState)                                 
+//                                     animations:^(void) {
                                          [self resizeTextView:newSizeH];
-                                     } 
-                                     completion:^(BOOL finished) {
+//                                     } 
+//                                     completion:^(BOOL finished) {
                                          if ([delegate respondsToSelector:@selector(growingTextView:didChangeHeight:)]) {
                                              [delegate growingTextView:self didChangeHeight:newSizeH];
                                          }
-                                     }];
+//                                     }];
 #endif
                 } else {
                     [UIView beginAnimations:@"" context:nil];
@@ -358,7 +358,7 @@
     // scroll to caret (needed on iOS7)
     if ([self respondsToSelector:@selector(snapshotViewAfterScreenUpdates:)])
     {
-        [self performSelector:@selector(resetScrollPositionForIOS7) withObject:nil afterDelay:0.1f];
+        [self performSelector:@selector(resetScrollPositionForIOS7) withObject:nil afterDelay:0.];
     }
     
     // Tell the delegate that the text view changed

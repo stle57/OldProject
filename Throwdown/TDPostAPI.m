@@ -387,6 +387,11 @@
     
     */
 
+    if (!messageBody || !postId) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:TDNoticifationNewCommentFailed object:nil userInfo:nil];
+        return;
+    }
+
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/comments.json"];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager POST:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken , @"comment[body]" : messageBody, @"comment[post_id]" : postId} success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -401,7 +406,7 @@
                     debug NSLog(@"New Comment Success!:%@", returnDict);
 
                     // Notify any views to reload
-                    [[NSNotificationCenter defaultCenter] postNotificationName:NEW_COMMENT_INFO_NOTICIATION
+                    [[NSNotificationCenter defaultCenter] postNotificationName:TDNoticifationNewCommentPostInfo
                                                                         object:self
                                                                       userInfo:returnDict];
                 }

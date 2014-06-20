@@ -94,7 +94,8 @@
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadPosts:) name:TDRefreshPostsNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fullPostReturn:) name:FULL_POST_INFO_NOTIFICATION object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newCommentReturn:) name:NEW_COMMENT_INFO_NOTICIATION object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newCommentReturn:) name:TDNoticifationNewCommentPostInfo object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newCommentFailed:) name:TDNoticifationNewCommentFailed object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postDeleted:) name:TDNotificationRemovePost object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
 }
@@ -229,6 +230,9 @@
                         dict:[[commentDict objectForKey:@"comment"] objectForKey:@"comment"]];
             [self.post addComment:newComment];
             [self.typingView reset];
+            self.typingView.hpTextView.editable = YES;
+            self.typingView.textView.editable = YES;
+            self.typingView.postButton.enabled = NO;
             [self.tableView reloadData];
             [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:(2+[self.post.comments count])-1
                                                                       inSection:0]
@@ -240,6 +244,18 @@
             [self tellDelegateToUpdateThisPost];
         }
     }
+}
+
+- (void)newCommentFailed:(NSNotification*)notification {
+    self.typingView.hpTextView.editable = YES;
+    self.typingView.textView.editable = YES;
+    self.typingView.postButton.enabled = YES;
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                    message:@"Commenting failed. Please try again."
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
 }
 
 - (void)postDeleted:(NSNotification*)notification {
@@ -333,28 +349,27 @@
 
 #pragma mark - TypingView delegates
 
-- (void)keyboardAppeared:(CGFloat)height curve:(NSInteger)curve {
-    debug NSLog(@"delegate-keyboardAppeared:%f curve:%ld", height, (long)curve);
-
+- (void)keyboardAppeared:(CGFloat)height notification:(NSNotification *)notification {
     self.typingView.isUp = YES;
 
     CGPoint newCenter = CGPointMake(origTypingViewCenter.x,
                                     origTypingViewCenter.y-height);
 
-    [UIView animateWithDuration:0.5
+    NSDictionary *info = notification.userInfo;
+    NSNumber *curveValue = [info objectForKey:UIKeyboardAnimationCurveUserInfoKey];
+    UIViewAnimationCurve animationCurve = curveValue.intValue;
+    NSTimeInterval animationDuration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+
+    // animationCurve << 16 to convert it from a view animation curve to a view animation option
+    [UIView animateWithDuration:animationDuration
                           delay:0.0
-         usingSpringWithDamping:500.0
-          initialSpringVelocity:0.0
-                        options:curve
+                        options:(animationCurve << 16)
                      animations:^{
                          self.typingView.center = newCenter;
                      }
                      completion:^(BOOL animDone){
-
-                         if (animDone)
-                         {
+                         if (animDone) {
                              self.typingView.keybdUpFrame = self.typingView.frame;
-
                              [self adjustFrostedView];
                          }
                      }];
@@ -368,21 +383,22 @@
     self.frostedViewWhileTyping.hidden = NO;
 }
 
-- (void)keyboardDisappeared:(CGFloat)height {
+- (void)keyboardDisappeared:(CGFloat)height notification:(NSNotification *)notification {
     debug NSLog(@"delegate-keyboardDisappeared:%f", height);
 
-    [UIView animateWithDuration: 0.25
-                          delay: 0.0
-                        options: UIViewAnimationOptionCurveLinear
+    NSDictionary *info = notification.userInfo;
+    NSNumber *curveValue = [info objectForKey:UIKeyboardAnimationCurveUserInfoKey];
+    UIViewAnimationCurve animationCurve = curveValue.intValue;
+    NSTimeInterval animationDuration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+
+    [UIView animateWithDuration:animationDuration
+                          delay:0.
+                        options:(animationCurve << 16)
                      animations:^{
-
                          self.typingView.center = origTypingViewCenter;
-
                      }
                      completion:^(BOOL animDone){
-
-                         if (animDone)
-                         {
+                         if (animDone) {
                              self.typingView.isUp = NO;
                              self.frostedViewWhileTyping.hidden = YES;
                          }
@@ -391,20 +407,18 @@
 
 - (void)typingViewMessage:(NSString *)message {
     debug NSLog(@"chat-typingViewMessage:%@", message);
-
-    if (self.typingView.isUp) {
-        [self.typingView removeKeyboard];
+    if (message && self.post && self.post.postId) {
+        if (self.typingView.isUp) {
+            [self.typingView removeKeyboard];
+        }
+        self.typingView.hpTextView.editable = NO;
+        self.typingView.textView.editable = NO;
+        self.typingView.postButton.enabled = NO;
+        [[TDPostAPI sharedInstance] postNewComment:message forPost:self.post.postId];
     }
-
-    // Post the comment to the server
-    TDPostAPI *api = [TDPostAPI sharedInstance];
-    [api postNewComment:message
-                forPost:self.post.postId];
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    debug NSLog(@"TDDetailViewController-touches");
-
     if (self.typingView.isUp) {
         [self.typingView removeKeyboard];
     }
@@ -453,8 +467,7 @@
     }
 }
 
--(void)updateAllRowsExceptTopOne
-{
+- (void)updateAllRowsExceptTopOne {
     NSInteger totalRows = [self tableView:nil numberOfRowsInSection:0];
     NSMutableArray *rowArray = [NSMutableArray array];
     for (int i = 1; i < totalRows; i++) {
@@ -470,13 +483,9 @@
     [self showUserProfile:likerId];
 }
 
--(void)tellDelegateToUpdateThisPost
-{
-    if (delegate) {
-        if ([delegate respondsToSelector:@selector(replacePostId:withPost:)]) {
-            [delegate replacePostId:self.postId
-                           withPost:self.post];
-        }
+- (void)tellDelegateToUpdateThisPost {
+    if (delegate && [delegate respondsToSelector:@selector(replacePostId:withPost:)]) {
+        [delegate replacePostId:self.postId withPost:self.post];
     }
 }
 

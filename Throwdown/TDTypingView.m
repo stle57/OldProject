@@ -26,8 +26,7 @@
 #define MAX_LENGTH      4000
 #define TYPING_HEIGHT   44.0
 
-- (void)dealloc
-{
+- (void)dealloc {
     delegate = nil;
 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
@@ -149,14 +148,13 @@
     return self;
 }
 
-+(CGFloat)typingHeight
-{
++ (CGFloat)typingHeight {
     return TYPING_HEIGHT;
 }
 
 #pragma mark TextView Delegates
-- (void)textViewDidChange:(UITextView *)aTextView
-{
+
+- (void)textViewDidChange:(UITextView *)aTextView {
 	self.counterLabel.text = [NSString stringWithFormat:@"%ld", (long)(MAX_LENGTH-[self.textView.text length])];
 
     // Check for multiple lines
@@ -164,129 +162,69 @@
     NSInteger numLines = self.textView.contentSize.height/self.textView.font.lineHeight;
     debug NSLog(@"Number of lines:%ld %f", (long)numLines, ((numLines-1)*self.textView.font.lineHeight));
 
-    [self.layer removeAllAnimations];
-    [self.textView.layer removeAllAnimations];
-    [self.postButton.layer removeAllAnimations];
-    [self.topLine.layer removeAllAnimations];
-    [self.bottomLine.layer removeAllAnimations];
-
     CGRect newFrame = CGRectMake(self.frame.origin.x,
-                                 keybdUpFrame.origin.y-(textViewHeight-origTextViewHeight),
+                                 keybdUpFrame.origin.y - (textViewHeight-origTextViewHeight),
                                  self.frame.size.width,
-                                 keybdUpFrame.size.height+(textViewHeight-origTextViewHeight));
+                                 keybdUpFrame.size.height + (textViewHeight-origTextViewHeight));
     if (numLines == 1) {
         newFrame = keybdUpFrame;
         self.textView.contentInset = UIEdgeInsetsZero;
     }
-
-    [UIView animateWithDuration: 0.1
-                          delay: 0.0
-                        options: UIViewAnimationOptionCurveLinear
-                     animations:^{
-
-                         self.frame = newFrame;
-
-
-                     }
-                     completion:^(BOOL animDone){
-
-                         if (animDone)
-                         {
-                             [UIView animateWithDuration: 0.1
-                                                   delay: 0.0
-                                                 options: UIViewAnimationOptionCurveLinear
-                                              animations:^{
-
-                                                  self.textView.frame = CGRectMake(12.0,
-                                                                                   4.0,
-                                                                                   self.frame.size.width-92.0,
-                                                                                   self.frame.size.height-8.0);
-                                                  self.postButton.frame = CGRectMake(self.textView.frame.origin.x+self.textView.frame.size.width+8.0,
-                                                                                     0.0,
-                                                                                     self.frame.size.width-(self.textView.frame.origin.x+self.textView.frame.size.width+8.0),
-                                                                                     self.textView.frame.size.height);
-                                                  self.topLine.frame = CGRectMake(0.0,
-                                                                                  0.0,
-                                                                                  self.frame.size.width,
-                                                                                  0.5);
-                                                  self.bottomLine.frame = CGRectMake(0.0,
-                                                                                     self.frame.size.height-0.5,
-                                                                                     self.frame.size.width,
-                                                                                     0.5);
-
-                                              }
-                                              completion:^(BOOL animDone){
-
-                                                  if (animDone)
-                                                  {
-                                                      self.postButton.center = CGPointMake(self.postButton.center.x,
-                                                                                           self.textView.center.y);
-                                                  }
-                                              }];
-                         }
-                     }];
+    self.frame = newFrame;
+    self.textView.frame = CGRectMake(12.0, 4.0, self.frame.size.width - 92.0, self.frame.size.height - 8.0);
+    self.postButton.frame = CGRectMake(self.textView.frame.origin.x + self.textView.frame.size.width + 8.0,
+                                       0.0,
+                                       self.frame.size.width - (self.textView.frame.origin.x + self.textView.frame.size.width+8.0),
+                                       self.textView.frame.size.height);
+    self.topLine.frame = CGRectMake(0.0, 0.0, self.frame.size.width, 0.5);
+    self.bottomLine.frame = CGRectMake(0.0, self.frame.size.height - 0.5, self.frame.size.width, 0.5);
+    self.postButton.center = CGPointMake(self.postButton.center.x, self.textView.center.y);
 
     lastNumberOfLines = numLines;
 
-    if ([self.textView.text length] > 0 && ![self.textView.text isEqualToString:kCommentDefaultText])
-    {
+    if ([self.textView.text length] > 0 && ![self.textView.text isEqualToString:kCommentDefaultText]) {
         self.postButton.enabled = YES;
-    }
-    else
-    {
+    } else {
         self.postButton.enabled = NO;
     }
 
-	if ([self.textView.text length] > (MAX_LENGTH-30))
-	{
+	if ([self.textView.text length] > (MAX_LENGTH-30)) {
 		self.counterLabel.textColor = [UIColor redColor];
-	}
-	else
-	{
+	} else {
 		self.counterLabel.textColor = [UIColor lightGrayColor];
 	}
 }
 
-- (BOOL)textView:(UITextView *)aTextView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
-{
+- (BOOL)textView:(UITextView *)aTextView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
 	return range.location >= MAX_LENGTH ? NO : YES;
 }
 
 #pragma mark - Growing Text View
-- (BOOL)growingTextView:(HPGrowingTextView *)growingTextView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
-{
-    if (growingTextView.text.length + (text.length - range.length) <= MAX_LENGTH)
-    {
+- (BOOL)growingTextView:(HPGrowingTextView *)growingTextView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+    if (growingTextView.text.length + (text.length - range.length) <= MAX_LENGTH) {
         return YES;
     }
     return NO;
 }
 
-- (void)growingTextViewDidChange:(HPGrowingTextView *)growingTextView
-{
+- (void)growingTextViewDidChange:(HPGrowingTextView *)growingTextView {
     self.counterLabel.text = [NSString stringWithFormat:@"%ld", (long)(MAX_LENGTH-[self.hpTextView.text length])];
 
     NSInteger numLines = growingTextView.internalTextView.contentSize.height/self.hpTextView.font.lineHeight;
-    NSLog(@"TDTypingView-growingTextViewDidChange-Number of lines:%ld %f", (long)numLines, ((numLines-1)*self.textView.font.lineHeight));
+    debug NSLog(@"TDTypingView-growingTextViewDidChange-Number of lines:%ld %f", (long)numLines, ((numLines-1)*self.textView.font.lineHeight));
 
     lastNumberOfLines = numLines;
 
-    if ([self.hpTextView.text length] > 0 && ![self.hpTextView.text isEqualToString:kCommentDefaultText])
-    {
+    if ([self.hpTextView.text length] > 0 && ![self.hpTextView.text isEqualToString:kCommentDefaultText]) {
         self.postButton.enabled = YES;
-    }
-    else
-    {
+    } else {
         self.postButton.enabled = NO;
     }
 
-	if ([self.hpTextView.text length] > (MAX_LENGTH-30))
-	{
+	if ([self.hpTextView.text length] > (MAX_LENGTH-30)) {
         self.counterLabel.hidden = NO;
 		self.counterLabel.textColor = [UIColor redColor];
-	}
-	else
-	{
+    } else {
         self.counterLabel.hidden = YES;
 		self.counterLabel.textColor = [UIColor lightGrayColor];
 	}
@@ -295,32 +233,13 @@
     CGRect newFrame = self.postButton.frame;
     newFrame.size.height = self.hpTextView.frame.size.height;
 
-    [UIView animateWithDuration: 0.1
-                          delay: 0.0
-                        options: UIViewAnimationOptionCurveLinear
-                     animations:^{
-
-                         self.postButton.frame = newFrame;
-                         self.postButton.center = CGPointMake(self.postButton.center.x,
-                                                              self.hpTextView.center.y);
-                         self.counterLabel.center = CGPointMake(self.counterLabel.center.x,
-                                                                4.0+self.counterLabel.frame.size.height/2.0);
-                         self.bottomLine.frame = CGRectMake(0.0,
-                                                            self.frame.size.height-0.5,
-                                                            self.frame.size.width,
-                                                            0.5);
-
-                     }
-                     completion:^(BOOL animDone){
-
-                         if (animDone)
-                         {
-                         }
-                     }];
+    self.postButton.frame = newFrame;
+    self.postButton.center = CGPointMake(self.postButton.center.x, self.hpTextView.center.y);
+    self.counterLabel.center = CGPointMake(self.counterLabel.center.x, 4.0 + self.counterLabel.frame.size.height/2.0);
+    self.bottomLine.frame = CGRectMake(0.0, self.frame.size.height - 0.5, self.frame.size.width, 0.5);
 }
 
-- (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height
-{
+- (void)growingTextView:(HPGrowingTextView *)growingTextView willChangeHeight:(float)height {
     float diff = (growingTextView.frame.size.height - height);
 
 	CGRect r = self.frame;
@@ -328,22 +247,19 @@
     r.origin.y += diff;
 	self.frame = r;
 
-    if (delegate ) {
-        if ([delegate respondsToSelector:@selector(adjustFrostedView)]) {
-            [delegate adjustFrostedView];
-        }
+    if (delegate && [delegate respondsToSelector:@selector(adjustFrostedView)]) {
+        [delegate adjustFrostedView];
     }
 }
 
 #pragma mark keyboard
--(BOOL)showingKeyboard
-{
+
+- (BOOL)showingKeyboard {
     return [self.hpTextView isFirstResponder];
 }
 
--(void)removeKeyboard
-{
-    NSLog(@"TDTyping-hideKeyboard");
+- (void)removeKeyboard {
+    debug NSLog(@"TDTyping-hideKeyboard");
 
     if ([self.hpTextView.text length] > 0) {
         rememberText = self.hpTextView.text;
@@ -360,26 +276,21 @@
     }
 }
 
--(void)keyboardWillAppear:(NSNotification*)aNotification
-{
+- (void)keyboardWillAppear:(NSNotification*)aNotification {
     NSDictionary* info = [aNotification userInfo];
     CGFloat keybdHeight = [[info objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue].size.height;
 
-    if (delegate ) {
-        if ([delegate respondsToSelector:@selector(keyboardAppeared:curve:)]) {
-            [delegate keyboardAppeared:keybdHeight curve:[[info objectForKey:UIKeyboardAnimationCurveUserInfoKey] integerValue]];
-        }
+    if (delegate && [delegate respondsToSelector:@selector(keyboardAppeared:notification:)]) {
+        [delegate keyboardAppeared:keybdHeight notification:aNotification];
     }
 
-    [self performSelector:@selector(restoreOldText) withObject:nil afterDelay:0.1];
+    [self performSelector:@selector(restoreOldText) withObject:nil afterDelay:0.];
 }
 
--(void)keyboardDidAppear:(NSNotification*)aNotification
-{
+- (void)keyboardDidAppear:(NSNotification*)aNotification {
 }
 
--(void)restoreOldText
-{
+- (void)restoreOldText {
     if (rememberText) {
         self.hpTextView.singleLineTextLabel.hidden = YES;
         self.hpTextView.singleLineTextLabel.text = @"";
@@ -388,8 +299,7 @@
     }
 }
 
--(void)keyboardWillDisappear:(NSNotification*)aNotification
-{
+- (void)keyboardWillDisappear:(NSNotification*)aNotification {
     NSDictionary* info = [aNotification userInfo];
 
     NSValue* aValue = [info objectForKey:UIKeyboardFrameBeginUserInfoKey];
@@ -398,15 +308,12 @@
 
     debug NSLog(@"Keyboard Disappearing:%@ HEIGHT:%f", info, keybdHeight);
 
-    if (delegate ) {
-        if ([delegate respondsToSelector:@selector(keyboardDisappeared:)]) {
-            [delegate keyboardDisappeared:keybdHeight];
-        }
+    if (delegate && [delegate respondsToSelector:@selector(keyboardDisappeared:notification:)]) {
+        [delegate keyboardDisappeared:keybdHeight notification:aNotification];
     }
 }
 
--(void)reset
-{
+- (void)reset {
     self.hpTextView.text = kCommentDefaultText;
     self.hpTextView.rememberText = @"";
     self.rememberText = @"";
@@ -416,16 +323,12 @@
 
 #pragma mark buttons
 
--(void)postButtonPressed:(id)selector
-{
-    NSLog(@"post button:%@", self.hpTextView.text);
-
+- (void)postButtonPressed:(id)selector {
+    debug NSLog(@"post button:%@", self.hpTextView.text);
     self.postButton.enabled = NO;
 
-    if (delegate ) {
-        if ([delegate respondsToSelector:@selector(typingViewMessage:)]) {
-            [delegate typingViewMessage:self.hpTextView.text];
-        }
+    if (delegate && [delegate respondsToSelector:@selector(typingViewMessage:)]) {
+        [delegate typingViewMessage:self.hpTextView.text];
     }
 }
 
