@@ -19,6 +19,13 @@
 
 @implementation TDDeviceInfo
 
++ (BOOL)hasUUID {
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:kApplicationUUIDKey]) {
+        return NO;
+    }
+    return YES;
+}
+
 + (NSString *)uuid {
     NSString *UUID = [[NSUserDefaults standardUserDefaults] objectForKey:kApplicationUUIDKey];
     if (!UUID) {

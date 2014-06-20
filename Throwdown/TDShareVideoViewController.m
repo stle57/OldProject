@@ -10,6 +10,7 @@
 #import "TDViewControllerHelper.h"
 #import "UIPlaceHolderTextView.h"
 #import "TDConstants.h"
+#import "TDAnalytics.h"
 
 @interface TDShareVideoViewController ()
 
@@ -29,6 +30,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [[TDAnalytics sharedInstance] logEvent:@"camera_share_loaded"];
     UIButton *button = [TDViewControllerHelper navBackButton];
     [button addTarget:self action:@selector(backButtonPressed) forControlEvents:UIControlEventTouchUpInside];
     self.navigationBarItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
@@ -92,6 +94,7 @@
                                                       userInfo:@{ @"filename":self.filename,
                                                                   @"comment":self.commentTextView.text }];
     [self performSegueWithIdentifier:@"VideoCloseSegue" sender:self];
+    [[TDAnalytics sharedInstance] logEvent:@"camera_shared"];
 }
 
 @end

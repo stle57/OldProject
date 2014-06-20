@@ -11,4 +11,5 @@
 @interface TDAnalytics : NSObject // <NSCoding>
 + (TDAnalytics *)sharedInstance;
 - (void)start;
+- (void)logEvent:(NSString *)event;
 @end

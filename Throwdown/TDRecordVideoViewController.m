@@ -17,6 +17,7 @@
 #import <MobileCoreServices/MobileCoreServices.h>
 #import "TDFileSystemHelper.h"
 #import "TDConstants.h"
+#import "TDAnalytics.h"
 
 @interface TDRecordVideoViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
@@ -98,6 +99,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setNeedsStatusBarAppearanceUpdate];
+    [[TDAnalytics sharedInstance] logEvent:@"camera_opened"];
 
     self.recordButton.enabled = NO;
     self.photoMode = YES;
@@ -421,6 +423,7 @@
 #pragma mark - Library picker
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    [[TDAnalytics sharedInstance] logEvent:@"camera_picker_select"];
     [self dismissViewControllerAnimated:YES completion:^{
         if ([[info objectForKey:UIImagePickerControllerMediaType] isEqualToString:@"public.image"]) {
             self.assetImage = [info objectForKey:UIImagePickerControllerOriginalImage];
@@ -455,6 +458,14 @@
             self.closeButton.hidden = YES;
         }
     }
+    [[TDAnalytics sharedInstance] logEvent:@"camera_record"];
+    if (self.torchIsOn) {
+        [[TDAnalytics sharedInstance] logEvent:@"camera_record_flash"];
+    }
+    if ((self.photoMode && [self.stillCamera.inputCamera position] == AVCaptureDevicePositionFront) ||
+        (!self.photoMode && [self.videoCamera.inputCamera position] == AVCaptureDevicePositionFront)) {
+        [[TDAnalytics sharedInstance] logEvent:@"camera_record_selfie"];
+    }
 }
 
 - (IBAction)albumButtonPressed:(id)sender {
@@ -476,6 +487,7 @@
     [self presentViewController:imagePickerController
                        animated:YES
                      completion:nil];
+    [[TDAnalytics sharedInstance] logEvent:@"camera_picker_opened"];
 }
 
 - (IBAction)switchCameraButtonPressed:(id)sender {
@@ -525,10 +537,12 @@
 }
 
 - (IBAction)photoButtonPressed:(id)sender {
+    [[TDAnalytics sharedInstance] logEvent:@"camera_photo"];
     [self switchInputModeToPhoto:YES];
 }
 
 - (IBAction)videoButtonPressed:(id)sender {
+    [[TDAnalytics sharedInstance] logEvent:@"camera_video"];
     [self switchInputModeToPhoto:NO];
 }
 

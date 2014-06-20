@@ -10,6 +10,7 @@
 #import "TDViewControllerHelper.h"
 #import "TDUserAPI.h"
 #import "TDConstants.h"
+#import "TDAnalytics.h"
 
 @interface TDLoginViewController () <UITextFieldDelegate>
 
@@ -27,6 +28,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [[TDAnalytics sharedInstance] logEvent:@"login_opened"];
 
     self.resetPasswordButton.titleLabel.font = [TDConstants fontRegularSized:16];
     self.topLabel.font = [TDConstants fontLightSized:20];
@@ -128,8 +130,7 @@
     return NO;
 }
 
-- (IBAction)backButtonPressed:(UIButton *)sender
-{
+- (IBAction)backButtonPressed:(UIButton *)sender {
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -163,6 +164,7 @@
                          {
                              [[TDUserAPI sharedInstance] loginUser:self.userEmail withPassword:self.password callback:^(BOOL success) {
                                  if (success) {
+                                     [[TDAnalytics sharedInstance] logEvent:@"login_completed"];
                                      [TDViewControllerHelper navigateToHomeFrom:self];
                                      self.resetPasswordButton.enabled = YES;
                                      self.resetPasswordButton.hidden = NO;

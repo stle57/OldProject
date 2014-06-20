@@ -13,6 +13,7 @@
 #import "TDViewControllerHelper.h"
 #import "AFNetworking.h"
 #import "TDUserProfileViewController.h"
+#import "TDAnalytics.h"
 
 @implementation TDDetailViewController
 
@@ -178,6 +179,7 @@
         }
     } else if (buttonIndex != actionSheet.cancelButtonIndex) {
         // index 1 = Copy Share Link
+        [[TDAnalytics sharedInstance] logEvent:@"copied_share_url"];
         [[UIPasteboard generalPasteboard] setString:[TDConstants getShareURL:self.post.slug]];
         [[TDAppDelegate appDelegate] showToastWithText:@"Link copied to clipboard!" type:kToastIconType_Info payload:nil delegate:nil];
     }

@@ -12,6 +12,7 @@
 #import "TDConstants.h"
 #import <QuartzCore/QuartzCore.h>
 #import "TDUserAPI.h"
+#import "TDAnalytics.h"
 
 @interface TDSignupStepTwoViewController ()<UITextFieldDelegate>
 
@@ -28,6 +29,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    [[TDAnalytics sharedInstance] logEvent:@"signup_step_two"];
 
     NSError *error = nil;
     self.usernamePattern = [NSRegularExpression regularExpressionWithPattern:@"[^\\w+\\d++_]"
@@ -136,6 +139,7 @@
                              [[TDUserAPI sharedInstance] signupUser:self.userParameters callback:^(BOOL success) {
                                  if (success) {
                                      self.progress.hidden = YES;
+                                     [[TDAnalytics sharedInstance] logEvent:@"signup_completed"];
                                      [TDViewControllerHelper navigateToHomeFrom:self];
                                  } else {
                                      [TDViewControllerHelper showAlertMessage:@"There was an error, please try again." withTitle:@"Error"];
@@ -151,8 +155,7 @@
 }
 
 - (void)userParameters:(NSDictionary *)parameters {
-
-    NSLog(@"param:%@", parameters);
+    debug NSLog(@"param:%@", parameters);
 
     self.userParameters = [parameters mutableCopy];
     self.userName = [self.userParameters objectForKey:@"username"];

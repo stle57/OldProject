@@ -66,11 +66,7 @@ NSString *TDURLUnescapedString(NSString *string) {
     static TDAnalytics *_sharedInstance = nil;
     static dispatch_once_t oncePredicate;
     dispatch_once(&oncePredicate, ^{
-//        NSData *data = [NSData dataWithContentsOfFile:[NSHomeDirectory() stringByAppendingString:kAnalyticsLogfile]];
-//        _sharedInstance = [NSKeyedUnarchiver unarchiveObjectWithData:data];
-//        if (_sharedInstance == nil) {
-            _sharedInstance = [[TDAnalytics alloc] init];
-//        }
+        _sharedInstance = [[TDAnalytics alloc] init];
     });
     return _sharedInstance;
 }
@@ -105,29 +101,14 @@ NSString *TDURLUnescapedString(NSString *string) {
         [self.timer invalidate];
     }
 }
-//
-//#pragma mark - save and load data to disk
-//
-//- (id)initWithCoder:(NSCoder *)decoder {
-//    self = [self init];
-//    if (self) {
-//        _sessionId = [decoder decodeObjectForKey:@"sessionId"];
-//        _events   = [decoder decodeObjectForKey:@"events"];
-//    }
-//    return self;
-//}
-//
-//- (void)encodeWithCoder:(NSCoder *)coder {
-//    [coder encodeObject:self.sessionId forKey:@"sessionId"];
-//    [coder encodeObject:self.events forKey:@"events"];
-//}
-//
-//- (void)save {
-//    NSString *filename = [NSHomeDirectory() stringByAppendingString:kAnalyticsLogfile];
-//    [TDFileSystemHelper removeFileAt:filename];
-//    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:self];
-//    [data writeToFile:filename atomically:YES];
-//}
+
+#pragma mark - event handling
+
+- (void)logEvent:(NSString *)event {
+    [[TDAPIClient sharedInstance] logEvent:event sessionId:self.sessionId];
+}
+
+//copied_share_url
 
 #pragma mark - session handling
 
@@ -141,9 +122,13 @@ NSString *TDURLUnescapedString(NSString *string) {
 }
 
 - (void)newSession {
+    // First check if already installed, then register session (for the id) then log installed event if new install
+    BOOL hasUUID = [TDDeviceInfo hasUUID];
     [[TDAPIClient sharedInstance] startSession:TDDeviceInfo.metrics callback:^(NSNumber *sessionId) {
         self.sessionId = sessionId;
-//        [self save];
+        if (!hasUUID) {
+            [[TDAnalytics sharedInstance] logEvent:@"installed"];
+        }
     }];
 }
 
@@ -183,7 +168,6 @@ NSString *TDURLUnescapedString(NSString *string) {
 - (void)exit {
     [self suspend];
     self.sessionId = nil;
-//    [self save];
 }
 
 #pragma mark - Notification callbacks

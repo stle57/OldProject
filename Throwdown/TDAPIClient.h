@@ -29,6 +29,7 @@
 
 - (void)setImage:(NSDictionary *)options;
 
+- (void)logEvent:(NSString *)event sessionId:(NSNumber *)sessionId;
 - (void)startSession:(NSDictionary *)metrics callback:(void(^)(NSNumber *sessionId))callback;
 - (void)updateSession:(NSNumber *)sessionId duration:(double)duration;
 

@@ -238,8 +238,7 @@
     }];
 }
 
--(void)sendPushNotificationSettings:(NSDictionary *)pushSettings callback:(void (^)(BOOL success))callback
-{
+- (void)sendPushNotificationSettings:(NSDictionary *)pushSettings callback:(void (^)(BOOL success))callback {
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/push_notification_settings.json"]];
 
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
@@ -398,6 +397,28 @@
     [operation start];
 }
 
+#pragma mark - Events
+- (void)logEvent:(NSString *)event sessionId:(NSNumber *)sessionId {
+    NSString *url = [NSString stringWithFormat:@"%@/api/v1/events.json", [TDConstants getBaseURL]];
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+
+    NSDictionary *eventDetails;
+    if (sessionId) {
+        eventDetails = @{@"device_session_id": sessionId, @"action": event};
+    } else {
+        eventDetails = @{@"action": event};
+    }
+    NSMutableDictionary *params = [@{@"event": eventDetails} mutableCopy];
+    if ([TDCurrentUser sharedInstance].authToken) {
+        [params addEntriesFromDictionary:@{@"user_token": [TDCurrentUser sharedInstance].authToken}];
+    }
+    [self.httpManager POST:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        debug NSLog(@"event logged: %@", event);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"event failed (%@) %@", event, [error localizedDescription]);
+    }];
+
+}
 
 #pragma mark - Device Sessions
 

@@ -18,6 +18,7 @@
 #import "TDUnwindSlideLeftSegue.h"
 #import "TDConstants.h"
 #import "TDFileSystemHelper.h"
+#import "TDAnalytics.h"
 #import "UIImage+Resizing.h"
 #import "UIImage+Rotating.h"
 #include <math.h>
@@ -249,6 +250,10 @@ static const NSString *ItemStatusContext;
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
      [self stopExistingUploads]; // b/c user has changed the crop for photo/video
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    [[TDAnalytics sharedInstance] logEvent:@"camera_crop_moved"];
 }
 
 #pragma mark - Photo handling
@@ -838,6 +843,7 @@ static const NSString *ItemStatusContext;
 
 - (void)videoRange:(SAVideoRangeSlider *)videoRange didGestureStateEndedLeftPosition:(CGFloat)leftPosition rightPosition:(CGFloat)rightPosition {
     [self trimVideo];
+    [[TDAnalytics sharedInstance] logEvent:@"camera_trimmed"];
 }
 
 @end

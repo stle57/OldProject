@@ -13,6 +13,7 @@
 #import "TDConstants.h"
 #import "NBPhoneNumberUtil.h"
 #import <QuartzCore/QuartzCore.h>
+#import "TDAnalytics.h"
 
 @interface TDSignupStepOneViewController ()<UITextFieldDelegate>
 
@@ -36,6 +37,8 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    [[TDAnalytics sharedInstance] logEvent:@"signup_step_one"];
 
     NSError *error = nil;
     self.namePattern = [NSRegularExpression regularExpressionWithPattern:@"\\w+"

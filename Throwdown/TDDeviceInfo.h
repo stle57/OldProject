@@ -10,6 +10,7 @@
 
 @interface TDDeviceInfo : NSObject
 
++ (BOOL)hasUUID;
 + (NSString *)uuid;
 + (NSString *)device;
 + (NSString *)osName;

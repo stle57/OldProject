@@ -10,6 +10,7 @@
 #import "TDFileSystemHelper.h"
 #import "TDAPIClient.h"
 #import "UIAlertView+TDBlockAlert.h"
+#import "TDAnalytics.h"
 
 static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
 
@@ -91,6 +92,7 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
 }
 
 - (void)logout {
+    [[TDAnalytics sharedInstance] logEvent:@"logged_out"];
     _userId = nil;
     _username = nil;
     _name = nil;
@@ -147,9 +149,11 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
         if ([self didAskForPush]) {
             [self registerForRemoteNotificationTypes];
         } else {
+            [[TDAnalytics sharedInstance] logEvent:@"notification_asked"];
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Turn on Notifications?" message:message delegate:nil cancelButtonTitle:@"Not now" otherButtonTitles:@"YES", nil];
             [alert showWithCompletionBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
                 if (buttonIndex != alertView.cancelButtonIndex) {
+                    [[TDAnalytics sharedInstance] logEvent:@"notification_accept"];
                     [self registerForRemoteNotificationTypes];
                 }
             }];
@@ -158,6 +162,7 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
 }
 
 - (void)registerDeviceToken:(NSString *)token {
+    [[TDAnalytics sharedInstance] logEvent:@"notification_approved"];
 	token = [token stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
 	token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
     if (![token isEqualToString:self.deviceToken]) {
