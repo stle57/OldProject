@@ -137,11 +137,22 @@
     } else {
         reportText = @"Report as Inappropriate";
     }
-    UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil
-                                                             delegate:self
-                                                    cancelButtonTitle:@"Cancel"
-                                               destructiveButtonTitle:reportText
-                                                    otherButtonTitles:nil];
+
+    UIActionSheet *actionSheet;
+    if (self.post.slug) {
+        actionSheet = [[UIActionSheet alloc] initWithTitle:nil
+                                                  delegate:self
+                                         cancelButtonTitle:@"Cancel"
+                                    destructiveButtonTitle:reportText
+                                         otherButtonTitles:@"Copy Share Link", nil];
+    } else {
+        actionSheet = [[UIActionSheet alloc] initWithTitle:nil
+                                                  delegate:self
+                                         cancelButtonTitle:@"Cancel"
+                                    destructiveButtonTitle:reportText
+                                         otherButtonTitles:nil];
+
+    }
     [actionSheet showInView:self.view];
 }
 
@@ -164,6 +175,10 @@
             alert.tag = 18890;
             [alert show];
         }
+    } else if (buttonIndex != actionSheet.cancelButtonIndex) {
+        // index 1 = Copy Share Link
+        [[UIPasteboard generalPasteboard] setString:[TDConstants getShareURL:self.post.slug]];
+        [[TDAppDelegate appDelegate] showToastWithText:@"Link copied to clipboard!" type:kToastIconType_Info payload:nil delegate:nil];
     }
 }
 

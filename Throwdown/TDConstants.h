@@ -107,6 +107,7 @@ static NSString *const kSpinningAnimation = @"rotationAnimation";
 
 + (TDEnvironment)environment;
 + (NSString *)getBaseURL;
++ (NSString *)getShareURL:(NSString *)slug;
 + (NSString *)flurryKey;
 + (NSURL *)getStreamingUrlFor:(NSString *)filename;
 

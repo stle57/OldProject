@@ -21,6 +21,7 @@ typedef enum {
 
 @property (strong, nonatomic, readonly) NSNumber *postId;
 @property (nonatomic, copy, readonly) NSString *filename;
+@property (nonatomic, copy, readonly) NSString *slug;
 @property (nonatomic, readonly) TDPostKind kind;
 @property (nonatomic, readonly) TDUser *user;
 @property (nonatomic, readonly) NSDate *createdAt;

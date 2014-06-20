@@ -9,13 +9,11 @@
 #import "TDConstants.h"
 #import "AVFoundation/AVFoundation.h"
 
-//#define CDN_BASE_URL @"http://tdstore2.throwdown.us"
-
-#define CDN_BASE_URL @"http://139bc8fb83b0918931ad-a6f5654f38394ba560d9625746ae5e96.iosr.cf5.rackcdn.com"
-
-#define DEV_SERVER @"http://amber.local:3000"
-#define STAGING_SERVER @"http://staging.throwdown.us"
-#define PRODUCTION_SERVER @"https://throwdown.us"
+static NSString *const kDevHost = @"http://amber.local:3000";
+static NSString *const kStagingHost = @"http://staging.throwdown.us";
+static NSString *const kProductionHost = @"https://throwdown.us";
+static NSString *const kProductionSharingHost = @"http://tdwn.us";
+static NSString *const kCDNStreamingServer = @"http://139bc8fb83b0918931ad-a6f5654f38394ba560d9625746ae5e96.iosr.cf5.rackcdn.com";
 
 @implementation TDConstants
 
@@ -31,20 +29,34 @@
     }
 }
 
-+ (NSString*)getBaseURL {
-   // Andrew B return STAGING_SERVER;
-
++ (NSString *)getBaseURL {
     switch ([self environment]) {
         case TDEnvDevelopment:
-            return DEV_SERVER;
+            return kDevHost;
             break;
         case TDEnvStaging:
-            return STAGING_SERVER;
+            return kStagingHost;
             break;
         case TDEnvProduction:
-            return PRODUCTION_SERVER;
+            return kProductionHost;
             break;
     }
+}
+
++ (NSString *)getShareURL:(NSString *)slug {
+    NSString *server;
+    switch ([self environment]) {
+        case TDEnvDevelopment:
+            server = kDevHost;
+            break;
+        case TDEnvStaging:
+            server = kStagingHost;
+            break;
+        case TDEnvProduction:
+            server = kProductionSharingHost;
+            break;
+    }
+    return [NSString stringWithFormat:@"%@/p/%@", server, slug];
 }
 
 + (NSString *)flurryKey {
@@ -61,7 +73,7 @@
 }
 
 + (NSURL *)getStreamingUrlFor:(NSString *)filename {
-    NSString *location = [NSString stringWithFormat:@"%@/%@.mp4", CDN_BASE_URL, filename];
+    NSString *location = [NSString stringWithFormat:@"%@/%@.mp4", kCDNStreamingServer, filename];
     return [NSURL URLWithString:location];
 }
 

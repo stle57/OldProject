@@ -58,6 +58,7 @@ static NSString *const kKindPhoto = @"photo";
     _likers = [dict objectForKey:@"likers"];
     _commentsTotalCount = [dict objectForKey:@"comment_count"];
     _likersTotalCount = [dict objectForKey:@"like_count"];
+    _slug = [dict objectForKey:@"slug"];
 
     NSString *kind = [dict objectForKey:@"kind"];
     if ([kind isEqualToString:kKindPhoto]) {
