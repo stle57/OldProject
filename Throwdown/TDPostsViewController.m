@@ -401,7 +401,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
     // Notices on Home Screen
     if ([self noticeCount] > 0 && indexPath.section < [self noticeCount]) {
-        TDNotice *notice = [[TDPostAPI sharedInstance].notices objectAtIndex:indexPath.section];
+        TDNotice *notice = [[TDPostAPI sharedInstance] getNoticeAt:indexPath.section];
         TDNoticeViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoticeViewCell"];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoticeViewCell" owner:self options:nil];
@@ -568,7 +568,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     }
 
     if ([self noticeCount] > 0 && indexPath.section < [self noticeCount]) {
-        return [TDNoticeViewCell heightForNotice:[[TDPostAPI sharedInstance].notices objectAtIndex:indexPath.section]];
+        return [TDNoticeViewCell heightForNotice:[[TDPostAPI sharedInstance] getNoticeAt:indexPath.section]];
     }
 
     // Just 'No Posts' cell
@@ -625,9 +625,14 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if ([self noticeCount] > 0 && indexPath.section < [self noticeCount]) {
-        TDNotice *notice = [[TDPostAPI sharedInstance].notices objectAtIndex:indexPath.section];
+        TDNotice *notice = [[TDPostAPI sharedInstance] getNoticeAt:indexPath.section];
         if (notice) {
             [notice callAction];
+            if (notice.dismissOnCall) {
+                if ([[TDPostAPI sharedInstance] removeNoticeAt:indexPath.section]) {
+                    [self.tableView reloadData];
+                }
+            }
         }
         return;
     }

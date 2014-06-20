@@ -8,9 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "TDNotice.h"
+#import <TTTAttributedLabel/TTTAttributedLabel.h>
 
 @interface TDNoticeViewCell : UITableViewCell
-@property (weak, nonatomic) IBOutlet UILabel *messageLabel;
+@property (weak, nonatomic) IBOutlet TTTAttributedLabel *messageLabel;
 @property (weak, nonatomic) IBOutlet UILabel *ctaLabel;
 
 - (void)setNotice:(TDNotice *)notice;

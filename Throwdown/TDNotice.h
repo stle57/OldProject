@@ -13,6 +13,9 @@
 @property (nonatomic, readonly) NSString *message;
 @property (nonatomic, readonly) NSString *cta;
 @property (nonatomic, readonly) NSString *confirmation;
+@property (nonatomic, readonly) BOOL dismissOnCall;
+@property (nonatomic, readonly) BOOL darkTextColor;
+@property (nonatomic, readonly) BOOL darkCTAColor;
 
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 - (UIColor *)color;

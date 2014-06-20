@@ -25,14 +25,46 @@
     self = [super init];
     if (self) {
         _message = [dict objectForKey:@"message"];
-        _cta = [dict objectForKey:@"cta"];
-        _confirmation = [dict objectForKey:@"confirmation"];
+        if (![self isNull:@"cta" in:dict]) {
+            _cta = [dict objectForKey:@"cta"];
+        }
+        if (![self isNull:@"confirmation" in:dict]) {
+            _confirmation = [dict objectForKey:@"confirmation"];
+        }
+        if (![self isNull:@"dismiss_on_call" in:dict]) {
+            _dismissOnCall = [[dict objectForKey:@"dismiss_on_call"] boolValue];
+        } else {
+            _dismissOnCall = NO;
+        }
+        if (![self isNull:@"dark_cta_color" in:dict]) {
+            _darkCTAColor = [[dict objectForKey:@"dark_cta_color"] boolValue];
+        } else {
+            _darkCTAColor = NO;
+        }
+        if (![self isNull:@"dark_text_color" in:dict]) {
+            _darkTextColor = [[dict objectForKey:@"dark_text_color"] boolValue];
+        } else {
+            _darkTextColor = YES;
+        }
 
-        _action = [dict objectForKey:@"action"];
-        _url = [dict objectForKey:@"url"];
-        _col = [dict objectForKey:@"color"];
+        if (![self isNull:@"action" in:dict]) {
+            _action = [dict objectForKey:@"action"];
+        }
+        if (![self isNull:@"url" in:dict]) {
+            _url = [dict objectForKey:@"url"];
+        }
+        if (![self isNull:@"color" in:dict]) {
+            _col = [dict objectForKey:@"color"];
+        }
     }
     return self;
+}
+
+- (BOOL)isNull:(NSString *)property in:(NSDictionary *)dict {
+    if (![dict objectForKey:property] || [dict objectForKey:property] == [NSNull null]) {
+        return YES;
+    }
+    return NO;
 }
 
 - (UIColor *)color {

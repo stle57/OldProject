@@ -80,12 +80,16 @@
     return [UIColor colorWithRed:0.78 green:0.78 blue:0.78 alpha:1.0]; // c8c8c8
 }
 
++ (UIColor *)darkTextColor {
+    return [UIColor colorWithRed:(27.0/255.0) green:(27.0/255.0) blue:(27.0/255.0) alpha:1.0];  // 1b1b1b
+}
+
 + (UIColor *)headerTextColor {
     return [UIColor colorWithRed:(76.0/255.0) green:(76.0/255.0) blue:(76.0/255.0) alpha:1.0];  // 4c4c4c
 }
 
 + (UIColor *)commentTextColor {
-    return [UIColor colorWithRed:(76.0/255.0) green:(76.0/255.0) blue:(76.0/255.0) alpha:1.0];  // 4c4c4c
+    return [self headerTextColor];
 }
 
 + (UIColor *)commentTimeTextColor {

@@ -10,15 +10,16 @@
 #import "TDPost.h"
 #import "TDCurrentUser.h"
 #import "TDPostUpload.h"
+#import "TDNotice.h"
 
 @interface TDPostAPI : NSObject
-
-@property (nonatomic) NSArray *notices;
 
 + (TDPostAPI *)sharedInstance;
 + (NSString *)createUploadFileNameFor:(TDCurrentUser *)user;
 
 - (NSUInteger)noticeCount;
+- (TDNotice *)getNoticeAt:(NSUInteger)index;
+- (BOOL)removeNoticeAt:(NSUInteger)index;
 
 - (TDPostUpload *)initializeVideoUploadwithThumnail:(NSString *)localPhotoPath withName:(NSString *)newName;
 - (void)uploadVideo:(NSString *)localVideoPath withThumbnail:(NSString *)localPhotoPath withName:(NSString *)newName;

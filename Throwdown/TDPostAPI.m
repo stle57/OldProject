@@ -17,11 +17,11 @@
 #import "UIImage+Resizing.h"
 #import "TDFileSystemHelper.h"
 #import "TDDeviceInfo.h"
-#import "TDNotice.h"
 
 @interface TDPostAPI ()
 
 @property (nonatomic) NSMutableArray *posts;
+@property (nonatomic) NSArray *notices;
 @property (nonatomic) BOOL noMorePosts;
 
 @end
@@ -60,6 +60,28 @@
         return [self.notices count];
     }
     return 0;
+}
+
+- (TDNotice *)getNoticeAt:(NSUInteger)index {
+    if (self.notices && index < [self.notices count]) {
+        return [self.notices objectAtIndex:index];
+    }
+    return nil;
+}
+
+/*
+ * Removes notice from list of notices if it exists
+ *
+ * Returns BOOL YES if an item was removed, NO if no item was found
+ */
+- (BOOL)removeNoticeAt:(NSUInteger)index {
+    if (self.notices && index < [self.notices count]) {
+        NSMutableArray *list = [[NSMutableArray alloc] initWithArray:self.notices];
+        [list removeObjectAtIndex:index];
+        self.notices = [[NSArray alloc] initWithArray:list];
+        return YES;
+    }
+    return NO;
 }
 
 #pragma mark - posts get/add/remove
