@@ -30,9 +30,6 @@
 		2DA41156191006450099617B /* TDResetPasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA41155191006450099617B /* TDResetPasswordViewController.m */; };
 		2DA41A5618C7D89C00B21C74 /* TDDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA41A5418C7D89C00B21C74 /* TDDetailViewController.m */; };
 		2DA41A5718C7D89C00B21C74 /* TDDetailViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA41A5518C7D89C00B21C74 /* TDDetailViewController.xib */; };
-		2DA41A5A18C7E31000B21C74 /* TDTypingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA41A5918C7E31000B21C74 /* TDTypingView.m */; };
-		2DA41A6018C7E49D00B21C74 /* HPGrowingTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA41A5D18C7E49D00B21C74 /* HPGrowingTextView.m */; };
-		2DA41A6118C7E49D00B21C74 /* HPTextViewInternal.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA41A5F18C7E49D00B21C74 /* HPTextViewInternal.m */; };
 		2DA420DC18E63E1A006F4D9C /* TDActivityCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA420DA18E63E1A006F4D9C /* TDActivityCell.m */; };
 		2DA420DD18E63E1A006F4D9C /* TDActivityCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA420DB18E63E1A006F4D9C /* TDActivityCell.xib */; };
 		2DA5354418F35E4300031128 /* TDUserProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA5354218F35E4300031128 /* TDUserProfileViewController.m */; };
@@ -185,12 +182,6 @@
 		2DA41A5318C7D89C00B21C74 /* TDDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDDetailViewController.h; sourceTree = "<group>"; };
 		2DA41A5418C7D89C00B21C74 /* TDDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDDetailViewController.m; sourceTree = "<group>"; };
 		2DA41A5518C7D89C00B21C74 /* TDDetailViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDDetailViewController.xib; sourceTree = "<group>"; };
-		2DA41A5818C7E31000B21C74 /* TDTypingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTypingView.h; sourceTree = "<group>"; };
-		2DA41A5918C7E31000B21C74 /* TDTypingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTypingView.m; sourceTree = "<group>"; };
-		2DA41A5C18C7E49D00B21C74 /* HPGrowingTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HPGrowingTextView.h; sourceTree = "<group>"; };
-		2DA41A5D18C7E49D00B21C74 /* HPGrowingTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPGrowingTextView.m; sourceTree = "<group>"; };
-		2DA41A5E18C7E49D00B21C74 /* HPTextViewInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HPTextViewInternal.h; sourceTree = "<group>"; };
-		2DA41A5F18C7E49D00B21C74 /* HPTextViewInternal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HPTextViewInternal.m; sourceTree = "<group>"; };
 		2DA420D918E63E1A006F4D9C /* TDActivityCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDActivityCell.h; sourceTree = "<group>"; };
 		2DA420DA18E63E1A006F4D9C /* TDActivityCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDActivityCell.m; sourceTree = "<group>"; };
 		2DA420DB18E63E1A006F4D9C /* TDActivityCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDActivityCell.xib; sourceTree = "<group>"; };
@@ -414,17 +405,6 @@
 				2DA41A5418C7D89C00B21C74 /* TDDetailViewController.m */,
 			);
 			name = Detail;
-			sourceTree = "<group>";
-		};
-		2DA41A5B18C7E3EA00B21C74 /* HPTypingView */ = {
-			isa = PBXGroup;
-			children = (
-				2DA41A5C18C7E49D00B21C74 /* HPGrowingTextView.h */,
-				2DA41A5D18C7E49D00B21C74 /* HPGrowingTextView.m */,
-				2DA41A5E18C7E49D00B21C74 /* HPTextViewInternal.h */,
-				2DA41A5F18C7E49D00B21C74 /* HPTextViewInternal.m */,
-			);
-			name = HPTypingView;
 			sourceTree = "<group>";
 		};
 		2DA5354018F35E0D00031128 /* UserProfile */ = {
@@ -755,9 +735,6 @@
 		A1D13FF31905F899000980E0 /* Detail View */ = {
 			isa = PBXGroup;
 			children = (
-				2DA41A5B18C7E3EA00B21C74 /* HPTypingView */,
-				2DA41A5818C7E31000B21C74 /* TDTypingView.h */,
-				2DA41A5918C7E31000B21C74 /* TDTypingView.m */,
 				2D1AEE6F18C937560055C315 /* TDDetailsLikesCell.xib */,
 				2D1AEE6D18C937560055C315 /* TDDetailsLikesCell.h */,
 				2D1AEE6E18C937560055C315 /* TDDetailsLikesCell.m */,
@@ -1053,7 +1030,6 @@
 				A19FF60D18970BBB001A0AD0 /* RSCDNContainer.m in Sources */,
 				2DE4653218F605DC0042D81C /* TDUserProfileEditViewController.m in Sources */,
 				2DA5354418F35E4300031128 /* TDUserProfileViewController.m in Sources */,
-				2DA41A5A18C7E31000B21C74 /* TDTypingView.m in Sources */,
 				A1BC0B3F18BE825200F507B3 /* TDSlideLeftSegue.m in Sources */,
 				2D00148B18CFB57C0070DE16 /* TDTwoButtonView.m in Sources */,
 				A14B2B7F18B5308000980A31 /* TDAPIClient.m in Sources */,
@@ -1071,7 +1047,6 @@
 				A1B3EF42193F9B5D0014B619 /* TDNotice.m in Sources */,
 				2D63FA871909D22200FEBA3C /* TDActivityIndicator.m in Sources */,
 				2DA73D7718BFCC2E00D87370 /* TDLikeView.m in Sources */,
-				2DA41A6018C7E49D00B21C74 /* HPGrowingTextView.m in Sources */,
 				A11E04F21888CB79002F981A /* TDRecordVideoViewController.m in Sources */,
 				A1B3EF3B193E8D240014B619 /* TDNoticeViewCell.m in Sources */,
 				A11E04EC1888CB79002F981A /* TDAppDelegate.m in Sources */,
@@ -1095,7 +1070,6 @@
 				A17567901891C7F20034AD05 /* TDPostAPI.m in Sources */,
 				2DC7B6AA18FF3D8500261BF7 /* TDToastView.m in Sources */,
 				A182D831188B60CD00F794A5 /* SASliderLeft.m in Sources */,
-				2DA41A6118C7E49D00B21C74 /* HPTextViewInternal.m in Sources */,
 				2DA5354818F36EF800031128 /* TDPostsViewController.m in Sources */,
 				2D83200419116D9000A91282 /* TDUserPushNotificationsEditViewController.m in Sources */,
 				A1B9002E18CC316800012A1F /* TDHomeHeaderView.m in Sources */,

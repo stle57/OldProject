@@ -19,7 +19,7 @@
 @property (nonatomic, assign) CGFloat messageHeight;
 
 - (id)initWithDictionary:(NSDictionary *)dict;
-- (void)user:(TDUser *)user dict:(NSDictionary *)commentDict;
+- (id)initWithUser:(TDUser *)user body:(NSString *)body createdAt:(NSDate *)date;
 - (void)figureOutMessageLabelHeightForThisMessage:(NSString *)text;
 - (void)replaceUser:(TDUser *)newUser;
 @end

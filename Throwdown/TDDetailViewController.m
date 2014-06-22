@@ -14,23 +14,44 @@
 #import "AFNetworking.h"
 #import "TDUserProfileViewController.h"
 #import "TDAnalytics.h"
+#import "UIPlaceHolderTextView.h"
+
+static float const kMinInputHeight = 31.;
+static float const kMaxInputHeight = 100.;
+
+@interface TDDetailViewController () <UITextViewDelegate>
+
+@property (nonatomic, retain) UIView *frostedViewWhileTyping;
+@property (weak, nonatomic) IBOutlet UIView *postViewContainer;
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+@property (weak, nonatomic) IBOutlet UIView *commentView;
+@property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *textView;
+@property (weak, nonatomic) IBOutlet UIButton *sendButton;
+@property (weak, nonatomic) IBOutlet UIView *topLineView;
+@property (weak, nonatomic) UIView *currentKeyboardView;
+
+@property (nonatomic) CGFloat postViewHeight;
+@property (nonatomic) CGFloat postCommentViewHeight;
+@property (nonatomic) CGFloat minLikeheight;
+@property (nonatomic) CGPoint origTypingViewCenter;
+@property (nonatomic) BOOL liking;
+@property (nonatomic) BOOL isEditing;
+@property (nonatomic) NSString *cachedText;
+
+@end
 
 @implementation TDDetailViewController
 
-@synthesize delegate;
-@synthesize post;
-@synthesize typingView;
-@synthesize frostedViewWhileTyping;
-
 - (void)dealloc {
-    delegate = nil;
+    self.delegate = nil;
     self.post = nil;
     self.postId = nil;
-    self.typingView = nil;
     self.frostedViewWhileTyping = nil;
     self.tableView.delegate = nil;
     self.tableView.dataSource = nil;
     self.tableView = nil;
+    self.textView.delegate = nil;
 
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
@@ -70,35 +91,37 @@
     // Cell heights
     NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_POST_VIEW owner:self options:nil];
     TDPostView *cell = [topLevelObjects objectAtIndex:0];
-    postViewHeight = cell.frame.size.height;
-    postCommentViewHeight = cell.likeView.frame.size.height;
+    self.postViewHeight = cell.frame.size.height;
+    self.postCommentViewHeight = cell.likeView.frame.size.height;
     cell = nil;
     topLevelObjects = nil;
     topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDDetailsLikesCell" owner:self options:nil];
     TDDetailsLikesCell *cell1 = [topLevelObjects objectAtIndex:0];
-    minLikeheight = cell1.frame.size.height;
+    self.minLikeheight = cell1.frame.size.height;
     cell1 = nil;
 
     // Typing Bottom
-    self.typingView = [[TDTypingView alloc] initWithFrame:CGRectMake(0.0,
-                                                                    [UIScreen mainScreen].bounds.size.height-[TDTypingView typingHeight],
-                                                                    self.view.frame.size.width,
-                                                                    [TDTypingView typingHeight])];
-    self.typingView.delegate = self;
-    [self.view insertSubview:self.typingView aboveSubview:self.tableView];
-    origTypingViewCenter = self.typingView.center;
-
-    // Adjust tableView and frosted
-    CGRect frame = self.tableView.frame;
-    frame.size.height -= [TDTypingView typingHeight];
-    self.tableView.frame = frame;
+    self.textView.delegate = self;
+    self.textView.font = COMMENT_MESSAGE_FONT;
+    self.textView.clipsToBounds = YES;
+    self.textView.layer.cornerRadius = 4;
+    self.textView.layer.borderWidth = (1.0 / [[UIScreen mainScreen] scale]);
+    self.textView.layer.borderColor = [TDConstants borderColor].CGColor;
+    self.textView.placeholder = kCommentDefaultText;
+    self.sendButton.titleLabel.font = [TDConstants fontSemiBoldSized:18.];
+    self.sendButton.enabled = NO;
+    self.topLineView.frame = CGRectMake(0, 0, 320, 1.0 / [[UIScreen mainScreen] scale]);
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadPosts:) name:TDRefreshPostsNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fullPostReturn:) name:FULL_POST_INFO_NOTIFICATION object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newCommentReturn:) name:TDNoticifationNewCommentPostInfo object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newCommentFailed:) name:TDNoticifationNewCommentFailed object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postDeleted:) name:TDNotificationRemovePost object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidChange:) name:UIKeyboardDidChangeFrameNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidHide:) name:UIKeyboardDidHideNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -108,6 +131,9 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
 
     [self.navigationController setNavigationBarHidden:NO animated:NO];
+
+    CGFloat height = [UIScreen mainScreen].bounds.size.height - self.commentView.layer.frame.size.height;
+    self.tableView.frame = CGRectMake(0, 0, 320, height);
 
     // TODO: only when user didn't go downstream
     // Get the full post info
@@ -204,12 +230,13 @@
 }
 
 #pragma mark - Notifications
+
 - (void)reloadPosts:(NSNotification*)notification {
-    if (!liking) {
+    if (!self.liking) {
         TDPostAPI *api = [TDPostAPI sharedInstance];
         [api getFullPostInfoForPostId:self.postId];
     }
-    liking = NO;
+    self.liking = NO;
 }
 
 - (void)fullPostReturn:(NSNotification*)notification {
@@ -222,52 +249,15 @@
     }
 }
 
-- (void)newCommentReturn:(NSNotification*)notification {
-    if ([notification.userInfo isKindOfClass:[NSDictionary class]]) {
-
-        NSDictionary *commentDict = (NSDictionary *)notification.userInfo;
-        if ([commentDict objectForKey:@"comment"] && [[commentDict objectForKey:@"comment"] objectForKey:@"comment"]) {
-            TDComment *newComment = [[TDComment alloc] init];
-            [newComment user:[[TDCurrentUser sharedInstance] currentUserObject]
-                        dict:[[commentDict objectForKey:@"comment"] objectForKey:@"comment"]];
-            [self.post addComment:newComment];
-            [self.typingView reset];
-            self.typingView.hpTextView.editable = YES;
-            self.typingView.textView.editable = YES;
-            self.typingView.postButton.enabled = NO;
-            [self.tableView reloadData];
-            [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:(2+[self.post.comments count])-1
-                                                                      inSection:0]
-                                  atScrollPosition:UITableViewScrollPositionBottom
-                                          animated:NO];
-            [[TDCurrentUser sharedInstance] registerForPushNotifications:@"Would you like to be notified of future replies?"];
-
-            // Tell delegate
-            [self tellDelegateToUpdateThisPost];
-        }
-    }
-}
-
-- (void)newCommentFailed:(NSNotification*)notification {
-    self.typingView.hpTextView.editable = YES;
-    self.typingView.textView.editable = YES;
-    self.typingView.postButton.enabled = YES;
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
-                                                    message:@"Commenting failed. Please try again."
-                                                   delegate:nil
-                                          cancelButtonTitle:@"OK"
-                                          otherButtonTitles:nil];
-    [alert show];
-}
-
 - (void)postDeleted:(NSNotification*)notification {
     self.navigationItem.rightBarButtonItem.enabled = YES;
     [self.navigationController popViewControllerAnimated:YES];
 }
 
 #pragma mark - TableView delegates
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 2+[self.post.comments count];   // PostView, Like Cell, +Comments.count
+    return 2 + [self.post.comments count];   // PostView, Like Cell, +Comments.count
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -325,16 +315,16 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     // Post
     if (indexPath.row == 0) {
-        return postViewHeight - postCommentViewHeight;
+        return self.postViewHeight - self.postCommentViewHeight;
     }
 
     // Likes row
     if (indexPath.row == 1) {
         if ([self.post.likers count] == 0) {
-            return minLikeheight;    // at least one row to show 'like' button
+            return self.minLikeheight;    // at least one row to show 'like' button
         } else {
             NSUInteger textHeight = [TDDetailsLikesCell heightOfLikersLabel:self.post.likers];
-            textHeight = (textHeight < minLikeheight ? minLikeheight : textHeight);
+            textHeight = (textHeight < self.minLikeheight ? self.minLikeheight : textHeight);
             return textHeight;
         }
     }
@@ -349,122 +339,32 @@
     return kCommentCellUserHeight + kCommentPadding + comment.messageHeight;
 }
 
-#pragma mark - TypingView delegates
-
-- (void)keyboardAppeared:(CGFloat)height notification:(NSNotification *)notification {
-    self.typingView.isUp = YES;
-
-    CGPoint newCenter = CGPointMake(origTypingViewCenter.x,
-                                    origTypingViewCenter.y-height);
-
-    NSDictionary *info = notification.userInfo;
-    NSNumber *curveValue = [info objectForKey:UIKeyboardAnimationCurveUserInfoKey];
-    UIViewAnimationCurve animationCurve = curveValue.intValue;
-    NSTimeInterval animationDuration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
-
-    // animationCurve << 16 to convert it from a view animation curve to a view animation option
-    [UIView animateWithDuration:animationDuration
-                          delay:0.0
-                        options:(animationCurve << 16)
-                     animations:^{
-                         self.typingView.center = newCenter;
-                     }
-                     completion:^(BOOL animDone){
-                         if (animDone) {
-                             self.typingView.keybdUpFrame = self.typingView.frame;
-                             [self adjustFrostedView];
-                         }
-                     }];
-}
-
-- (void)adjustFrostedView {
-    CGRect newFrame = self.frostedViewWhileTyping.frame;
-    newFrame.origin.y = self.navigationController.navigationBar.frame.size.height;
-    newFrame.size.height = self.typingView.frame.origin.y-newFrame.origin.y;
-    self.frostedViewWhileTyping.frame = newFrame;
-    self.frostedViewWhileTyping.hidden = NO;
-}
-
-- (void)keyboardDisappeared:(CGFloat)height notification:(NSNotification *)notification {
-    debug NSLog(@"delegate-keyboardDisappeared:%f", height);
-
-    NSDictionary *info = notification.userInfo;
-    NSNumber *curveValue = [info objectForKey:UIKeyboardAnimationCurveUserInfoKey];
-    UIViewAnimationCurve animationCurve = curveValue.intValue;
-    NSTimeInterval animationDuration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
-
-    [UIView animateWithDuration:animationDuration
-                          delay:0.
-                        options:(animationCurve << 16)
-                     animations:^{
-                         self.typingView.center = origTypingViewCenter;
-                     }
-                     completion:^(BOOL animDone){
-                         if (animDone) {
-                             self.typingView.isUp = NO;
-                             self.frostedViewWhileTyping.hidden = YES;
-                         }
-                     }];
-}
-
-- (void)typingViewMessage:(NSString *)message {
-    debug NSLog(@"chat-typingViewMessage:%@", message);
-    if (message && self.post && self.post.postId) {
-        if (self.typingView.isUp) {
-            [self.typingView removeKeyboard];
-        }
-        self.typingView.hpTextView.editable = NO;
-        self.typingView.textView.editable = NO;
-        self.typingView.postButton.enabled = NO;
-        [[TDPostAPI sharedInstance] postNewComment:message forPost:self.post.postId];
-    }
-}
-
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    if (self.typingView.isUp) {
-        [self.typingView removeKeyboard];
-    }
-}
-
 #pragma mark - TDDetailsLikesCell Delegates
+
 - (void)likeButtonPressedFromLikes {
     if (self.post.postId) {
+        self.liking = YES;
 
         // Add the like for the update
         [self.post addLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
-//        [self.tableView reloadData];
-
         [self updateAllRowsExceptTopOne];
 
-        liking = YES;
+        [[TDPostAPI sharedInstance] likePostWithId:self.post.postId];
 
-        // Update Server
-        TDPostAPI *api = [TDPostAPI sharedInstance];
-        [api likePostWithId:self.post.postId];
-
-        // Tell delegate
         [self tellDelegateToUpdateThisPost];
     }
 }
 
 - (void)unLikeButtonPressedFromLikes {
     debug NSLog(@"TDDetailViewController-unLikeButtonPressedLikes");
-
     if (self.post.postId) {
+        self.liking = YES;
 
-        // Remove the like for the update
         [self.post removeLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
-       // [self.tableView reloadData];
-
         [self updateAllRowsExceptTopOne];
 
-        liking = YES;
+        [[TDPostAPI sharedInstance] unLikePostWithId:self.post.postId];
 
-        // Update Server
-        TDPostAPI *api = [TDPostAPI sharedInstance];
-        [api unLikePostWithId:self.post.postId];
-
-        // Tell delegate
         [self tellDelegateToUpdateThisPost];
     }
 }
@@ -481,13 +381,12 @@
 }
 
 - (void)usernamePressedForLiker:(NSNumber *)likerId {
-    debug NSLog(@"delegate-miniAvatarButtonPressedForLiker:%@", likerId);
     [self showUserProfile:likerId];
 }
 
 - (void)tellDelegateToUpdateThisPost {
-    if (delegate && [delegate respondsToSelector:@selector(replacePostId:withPost:)]) {
-        [delegate replacePostId:self.postId withPost:self.post];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(replacePostId:withPost:)]) {
+        [self.delegate replacePostId:self.postId withPost:self.post];
     }
 }
 
@@ -503,8 +402,8 @@
 - (void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber {
     debug NSLog(@"detail-userButtonPressedFromRow:%ld commentNumber:%ld, %@ %@", (long)row, (long)commentNumber, self.post.user.userId, [[TDCurrentUser sharedInstance] currentUserObject].userId);
 
-    if (self.post.comments && [post.comments count] > row) {
-        TDComment *comment = [post.comments objectAtIndex:commentNumber];
+    if (self.post.comments && [self.post.comments count] > row) {
+        TDComment *comment = [self.post.comments objectAtIndex:commentNumber];
         [self showUserProfile:comment.user.userId];
     }
 }
@@ -536,6 +435,167 @@
 - (void)unwindToRoot {
     debug NSLog(@"unwind from detail view");
     [self.navigationController popViewControllerAnimated:NO];
+}
+
+#pragma mark - Keyboard management
+
+- (void)keyboardDidChange:(NSNotification *)notification {
+    if (!self.currentKeyboardView) {
+        for (UIWindow *window in [[UIApplication sharedApplication] windows]) {
+            //Because we cant get access to the UIPeripheral throught the SDK we will just use UIView.
+            //UIPeripheral is a subclass of UIView anyways
+            //Iterate though each view inside of the selected Window
+            for(int i = 0; i < [window.subviews count]; i++) {
+                //Get a reference of the current view
+                UIView *keyboard = [window.subviews objectAtIndex:i];
+                //Assuming this is for 4.0+, In 3.0 you would use "<UIKeyboard"
+                if([[keyboard description] hasPrefix:@"<UIPeripheral"] == YES) {
+                    //Keyboard is now a UIView reference to the UIPeripheral we want
+                    self.currentKeyboardView = keyboard;
+                    [self.currentKeyboardView addObserver:self forKeyPath:@"frame" options:NSKeyValueObservingOptionNew context:nil];
+                }
+            }
+        }
+    }
+}
+
+- (void)keyboardWillShow:(NSNotification *)notification {
+    [self unregisterKeyboardObserver];
+
+    NSDictionary *info = [notification userInfo];
+
+    NSValue *kbFrame = [info objectForKey:UIKeyboardFrameEndUserInfoKey];
+    CGRect keyboardFrame = [kbFrame CGRectValue];
+
+    BOOL isPortrait = UIDeviceOrientationIsPortrait([UIApplication sharedApplication].statusBarOrientation);
+    CGFloat keyboardHeight = isPortrait ? keyboardFrame.size.height : keyboardFrame.size.width;
+    CGFloat screenHeight = self.view.bounds.size.height;
+
+    NSNumber *curveValue = [info objectForKey:UIKeyboardAnimationCurveUserInfoKey];
+    UIViewAnimationCurve animationCurve = curveValue.intValue;
+    NSTimeInterval animationDuration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+
+    CGPoint center = self.commentView.center;
+    center.y = screenHeight - keyboardHeight - (self.commentView.layer.frame.size.height/2);
+
+    CGRect frame = self.tableView.frame;
+    frame.size.height = screenHeight - keyboardHeight - self.commentView.layer.frame.size.height;
+
+    // animationCurve << 16 to convert it from a view animation curve to a view animation option
+    [UIView animateWithDuration:animationDuration delay:0.0 options:(animationCurve << 16) animations:^{
+        self.commentView.center = center;
+        self.tableView.frame = frame;
+    } completion:nil];
+}
+
+- (void)keyboardDidShow:(NSNotification *)notification {
+    self.isEditing = YES;
+//    [self alignTextView:self.textView withAnimation:YES];
+}
+
+- (void)keyboardDidHide:(NSNotification *)notification {
+    self.isEditing = NO;
+    [self unregisterKeyboardObserver];
+}
+
+- (void)unregisterKeyboardObserver {
+    if (self.currentKeyboardView) {
+        [self.currentKeyboardView removeObserver:self forKeyPath:@"frame"];
+        self.currentKeyboardView = nil;
+    }
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
+    if (object == self.currentKeyboardView && [keyPath isEqualToString:@"frame"]) {
+        [self updateTextViewFromFrame:self.currentKeyboardView.frame];
+        return;
+    }
+    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    return;
+}
+
+- (void)updateTextViewFromFrame:(CGRect)frame {
+    CGRect tableFrame = self.tableView.layer.frame;
+    tableFrame.size.height = frame.origin.y - self.commentView.layer.frame.size.height;
+    self.tableView.frame = tableFrame;
+
+    CGPoint current = self.commentView.center;
+    current.y = frame.origin.y - (self.commentView.layer.frame.size.height /2);
+    self.commentView.center = current;
+}
+
+- (void)textViewDidChange:(UITextView *)textView {
+    CGFloat height = MAX(MIN(textView.contentSize.height, kMaxInputHeight), kMinInputHeight);
+    [self updateCommentSize:height];
+}
+
+- (void)updateCommentSize:(CGFloat)height {
+    self.sendButton.enabled = ([[self.textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0);
+
+    CGRect textFrame = self.textView.frame;
+    textFrame.size.height = height;
+    self.textView.frame = textFrame;
+
+    CGFloat bottom = [UIScreen mainScreen].bounds.size.height;
+    if (self.currentKeyboardView) {
+        bottom = self.currentKeyboardView.frame.origin.y;
+    }
+
+    CGRect commentFrame = self.commentView.frame;
+    commentFrame.size.height = textFrame.size.height + 10;
+    commentFrame.origin.y = bottom - (height + 10);
+    self.commentView.frame = commentFrame;
+
+    CGRect tableFrame = self.tableView.layer.frame;
+    tableFrame.size.height = bottom - height;
+    self.tableView.frame = tableFrame;
+
+    CGRect buttonFrame = self.sendButton.frame;
+    buttonFrame.origin.y = self.commentView.layer.frame.size.height - 40;
+    self.sendButton.frame = buttonFrame;
+
+    [self.view layoutSubviews];
+}
+
+#pragma mark - Commenting
+
+- (IBAction)sendButtonPressed:(id)sender {
+    NSString *body = [self.textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    if ([body length] > 0 && self.post && self.post.postId) {
+        self.cachedText = body;
+        self.textView.text = @"";
+        [self updateCommentSize:kMinInputHeight];
+
+        TDComment *newComment = [[TDComment alloc] initWithUser:[[TDCurrentUser sharedInstance] currentUserObject]
+                                                           body:body
+                                                      createdAt:[NSDate date]];
+        [self.post addComment:newComment];
+
+        [self.tableView reloadData];
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow: (2 + [self.post.comments count]) - 1 inSection: 0]
+                              atScrollPosition:UITableViewScrollPositionBottom
+                                      animated:YES];
+
+        [self.textView resignFirstResponder];
+
+        [[TDCurrentUser sharedInstance] registerForPushNotifications:@"Would you like to be notified of future replies?"];
+
+        [self tellDelegateToUpdateThisPost];
+
+        [[TDPostAPI sharedInstance] postNewComment:body forPost:self.post.postId];
+    }
+}
+
+- (void)newCommentFailed:(NSNotification*)notification {
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                    message:@"Something went wrong while saving your comment. Please try again."
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+    self.textView.text = self.cachedText;
+    self.cachedText = nil;
+    self.sendButton.enabled = YES;
 }
 
 

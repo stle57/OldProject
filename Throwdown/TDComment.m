@@ -23,9 +23,14 @@
     return self;
 }
 
-- (void)user:(TDUser *)user dict:(NSDictionary *)commentDict {
-    _user = user;
-    [self loadFromDict:commentDict];
+- (id)initWithUser:(TDUser *)user body:(NSString *)body createdAt:(NSDate *)date {
+    self = [super init];
+    if (self) {
+        _user = user;
+        _body = body;
+        _createdAt = date;
+    }
+    return self;
 }
 
 - (void)loadFromDict:(NSDictionary *)dict {
