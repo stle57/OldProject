@@ -25,9 +25,6 @@
 @property (nonatomic, retain) TDPost *post;
 @property (nonatomic) NSNumber *postId;
 
-- (void)reloadPosts:(NSNotification*)notification;
-- (void)fullPostReturn:(NSNotification*)notification;
-- (void)newCommentReturn:(NSNotification*)notification;
 - (void)unwindToRoot;
 
 @end

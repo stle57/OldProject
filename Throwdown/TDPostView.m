@@ -44,6 +44,7 @@ typedef enum {
 @property (strong, nonatomic) TDPost *aPost;
 @property (nonatomic) PlayerState state;
 @property (nonatomic) NSTimer *loadingTimeout;
+@property (nonatomic) UITapGestureRecognizer *tapGestureRecognizer;
 
 @end
 
@@ -54,6 +55,7 @@ typedef enum {
 
 - (void)dealloc {
     delegate = nil;
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)awakeFromNib {
@@ -61,8 +63,8 @@ typedef enum {
     [self.previewImage setUserInteractionEnabled:YES];
     self.userInteractionEnabled=YES;
 
-    self.usernameLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:17.0];
-    self.createdLabel.font = [UIFont fontWithName:@"ProximaNova-Light" size:14.0];
+    self.usernameLabel.font = [TDConstants fontSemiBoldSized:17.0];
+    self.createdLabel.font = [TDConstants fontLightSized:14.0];
 
     self.userProfileImage.layer.cornerRadius = self.userProfileImage.layer.frame.size.width / 2;
     self.userProfileImage.clipsToBounds = YES;
@@ -74,8 +76,18 @@ typedef enum {
 
     origRectOfUserButton = self.userNameButton.frame;
 
-    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapFrom:)];
-    [self.controlView addGestureRecognizer:tapGestureRecognizer];
+    self.tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapFrom:)];
+    [self.controlView addGestureRecognizer:self.tapGestureRecognizer];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pauseTapGesture:) name:TDNotificationPauseTapGesture object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resumeTapGesture:) name:TDNotificationResumeTapGesture object:nil];
+}
+
+- (void)pauseTapGesture:(NSNotification *)n {
+    [self.controlView removeGestureRecognizer:self.tapGestureRecognizer];
+}
+
+- (void)resumeTapGesture:(NSNotification *)n {
+    [self.controlView addGestureRecognizer:self.tapGestureRecognizer];
 }
 
 - (void)setPost:(TDPost *)post {

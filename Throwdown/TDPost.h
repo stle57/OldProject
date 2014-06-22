@@ -36,6 +36,7 @@ typedef enum {
 - (void)addLikerUser:(TDUser *)likerUser;
 - (void)removeLikerUser:(TDUser *)likerUser;
 - (void)addComment:(TDComment *)newComment;
+- (void)removeLastComment;
 - (void)orderCommentsForHomeScreen;
 - (void)orderCommentsForDetailsScreen;
 - (void)replaceUser:(TDUser *)newUser;

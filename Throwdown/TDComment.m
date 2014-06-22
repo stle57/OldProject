@@ -28,7 +28,9 @@
     if (self) {
         _user = user;
         _body = body;
+        _mentions = @[];
         _createdAt = date;
+        [self figureOutMessageLabelHeightForThisMessage:_body];
     }
     return self;
 }

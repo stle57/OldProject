@@ -16,13 +16,12 @@
 #import "TDAnalytics.h"
 #import "UIPlaceHolderTextView.h"
 
-static float const kMinInputHeight = 31.;
+static float const kInputLineSpacing = 3;
+static float const kMinInputHeight = 33.;
 static float const kMaxInputHeight = 100.;
 
-@interface TDDetailViewController () <UITextViewDelegate>
+@interface TDDetailViewController () <UITextViewDelegate, NSLayoutManagerDelegate>
 
-@property (nonatomic, retain) UIView *frostedViewWhileTyping;
-@property (weak, nonatomic) IBOutlet UIView *postViewContainer;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UIView *commentView;
@@ -31,10 +30,9 @@ static float const kMaxInputHeight = 100.;
 @property (weak, nonatomic) IBOutlet UIView *topLineView;
 @property (weak, nonatomic) UIView *currentKeyboardView;
 
+@property (nonatomic) UITapGestureRecognizer *tapGesture;
 @property (nonatomic) CGFloat postViewHeight;
-@property (nonatomic) CGFloat postCommentViewHeight;
 @property (nonatomic) CGFloat minLikeheight;
-@property (nonatomic) CGPoint origTypingViewCenter;
 @property (nonatomic) BOOL liking;
 @property (nonatomic) BOOL isEditing;
 @property (nonatomic) NSString *cachedText;
@@ -47,7 +45,6 @@ static float const kMaxInputHeight = 100.;
     self.delegate = nil;
     self.post = nil;
     self.postId = nil;
-    self.frostedViewWhileTyping = nil;
     self.tableView.delegate = nil;
     self.tableView.dataSource = nil;
     self.tableView = nil;
@@ -63,15 +60,6 @@ static float const kMaxInputHeight = 100.;
     self.titleLabel.textColor = [TDConstants headerTextColor];
     self.titleLabel.font = [TDConstants fontRegularSized:20];
     [self.navigationItem setTitleView:self.titleLabel];
-
-    // Frosted View for while we're typing to stop video playing
-    self.frostedViewWhileTyping = [[UIView alloc] initWithFrame:CGRectMake(0.0,
-                                                                           0.0,
-                                                                           self.view.frame.size.width,
-                                                                           self.view.frame.size.height)];
-    self.frostedViewWhileTyping.backgroundColor = [UIColor clearColor];
-    [self.view addSubview:self.frostedViewWhileTyping];
-    self.frostedViewWhileTyping.hidden = YES;
 
     UIButton *backButton = [TDViewControllerHelper navBackButton];
     [backButton addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
@@ -92,7 +80,6 @@ static float const kMaxInputHeight = 100.;
     NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_POST_VIEW owner:self options:nil];
     TDPostView *cell = [topLevelObjects objectAtIndex:0];
     self.postViewHeight = cell.frame.size.height;
-    self.postCommentViewHeight = cell.likeView.frame.size.height;
     cell = nil;
     topLevelObjects = nil;
     topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDDetailsLikesCell" owner:self options:nil];
@@ -101,12 +88,14 @@ static float const kMaxInputHeight = 100.;
     cell1 = nil;
 
     // Typing Bottom
+    self.textView.font = [TDConstants fontRegularSized:17];
     self.textView.delegate = self;
-    self.textView.font = COMMENT_MESSAGE_FONT;
     self.textView.clipsToBounds = YES;
+    self.textView.layoutManager.delegate = self;
     self.textView.layer.cornerRadius = 4;
     self.textView.layer.borderWidth = (1.0 / [[UIScreen mainScreen] scale]);
-    self.textView.layer.borderColor = [TDConstants borderColor].CGColor;
+    self.textView.layer.borderColor = [UIColor colorWithRed:178./255. green:178./255. blue:178./255. alpha:1].CGColor;
+    self.textView.contentInset = UIEdgeInsetsMake(0, 0, -10, 0);
     self.textView.placeholder = kCommentDefaultText;
     self.sendButton.titleLabel.font = [TDConstants fontSemiBoldSized:18.];
     self.sendButton.enabled = NO;
@@ -114,7 +103,7 @@ static float const kMaxInputHeight = 100.;
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadPosts:) name:TDRefreshPostsNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fullPostReturn:) name:FULL_POST_INFO_NOTIFICATION object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newCommentFailed:) name:TDNoticifationNewCommentFailed object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newCommentFailed:) name:TDNotificationNewCommentFailed object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postDeleted:) name:TDNotificationRemovePost object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
 
@@ -148,6 +137,9 @@ static float const kMaxInputHeight = 100.;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    if (self.isEditing) {
+        [self.textView resignFirstResponder];
+    }
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
     [self.navigationController setNavigationBarHidden:YES animated:YES];
 }
@@ -315,7 +307,7 @@ static float const kMaxInputHeight = 100.;
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     // Post
     if (indexPath.row == 0) {
-        return self.postViewHeight - self.postCommentViewHeight;
+        return self.postViewHeight;
     }
 
     // Likes row
@@ -437,7 +429,7 @@ static float const kMaxInputHeight = 100.;
     [self.navigationController popViewControllerAnimated:NO];
 }
 
-#pragma mark - Keyboard management
+#pragma mark - Keyboard / TextView management
 
 - (void)keyboardDidChange:(NSNotification *)notification {
     if (!self.currentKeyboardView) {
@@ -475,27 +467,51 @@ static float const kMaxInputHeight = 100.;
     UIViewAnimationCurve animationCurve = curveValue.intValue;
     NSTimeInterval animationDuration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
 
-    CGPoint center = self.commentView.center;
-    center.y = screenHeight - keyboardHeight - (self.commentView.layer.frame.size.height/2);
 
-    CGRect frame = self.tableView.frame;
-    frame.size.height = screenHeight - keyboardHeight - self.commentView.layer.frame.size.height;
+    CGFloat height = MAX(MIN(self.textView.contentSize.height, kMaxInputHeight), kMinInputHeight);
+    CGFloat bottom = screenHeight - keyboardHeight;
+
+    CGRect textFrame = self.textView.frame;
+    textFrame.size.height = height;
+
+    CGRect commentFrame = self.commentView.frame;
+    commentFrame.size.height = textFrame.size.height + 14;
+    commentFrame.origin.y = bottom - (height + 14);
+
+    CGRect tableFrame = self.tableView.layer.frame;
+    tableFrame.size.height = bottom - height - 14;
+
+    CGRect buttonFrame = self.sendButton.frame;
+    buttonFrame.origin.y = (height + 14) - buttonFrame.size.height;
 
     // animationCurve << 16 to convert it from a view animation curve to a view animation option
     [UIView animateWithDuration:animationDuration delay:0.0 options:(animationCurve << 16) animations:^{
-        self.commentView.center = center;
-        self.tableView.frame = frame;
+        self.textView.frame = textFrame;
+        self.commentView.frame = commentFrame;
+        self.sendButton.frame = buttonFrame;
+        self.tableView.frame = tableFrame;
     } completion:nil];
 }
 
 - (void)keyboardDidShow:(NSNotification *)notification {
     self.isEditing = YES;
-//    [self alignTextView:self.textView withAnimation:YES];
+    self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapFrom:)];
+    [self.tableView addGestureRecognizer:self.tapGesture];
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationPauseTapGesture object:nil];
 }
 
 - (void)keyboardDidHide:(NSNotification *)notification {
     self.isEditing = NO;
+    [self.tableView removeGestureRecognizer:self.tapGesture];
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationResumeTapGesture object:nil];
+    self.tapGesture = nil;
     [self unregisterKeyboardObserver];
+}
+
+- (void)handleTapFrom:(UITapGestureRecognizer *)tap {
+    if (self.isEditing) {
+        [self.textView resignFirstResponder];
+    }
 }
 
 - (void)unregisterKeyboardObserver {
@@ -525,8 +541,9 @@ static float const kMaxInputHeight = 100.;
 }
 
 - (void)textViewDidChange:(UITextView *)textView {
-    CGFloat height = MAX(MIN(textView.contentSize.height, kMaxInputHeight), kMinInputHeight);
+    CGFloat height = MAX(MIN(textView.contentSize.height - kInputLineSpacing, kMaxInputHeight), kMinInputHeight);
     [self updateCommentSize:height];
+    debug NSLog(@"H: %f / %f", height, textView.contentSize.height);
 }
 
 - (void)updateCommentSize:(CGFloat)height {
@@ -542,16 +559,16 @@ static float const kMaxInputHeight = 100.;
     }
 
     CGRect commentFrame = self.commentView.frame;
-    commentFrame.size.height = textFrame.size.height + 10;
-    commentFrame.origin.y = bottom - (height + 10);
+    commentFrame.size.height = textFrame.size.height + 14;
+    commentFrame.origin.y = bottom - (height + 14);
     self.commentView.frame = commentFrame;
 
     CGRect tableFrame = self.tableView.layer.frame;
-    tableFrame.size.height = bottom - height;
+    tableFrame.size.height = bottom - height - 14;
     self.tableView.frame = tableFrame;
 
     CGRect buttonFrame = self.sendButton.frame;
-    buttonFrame.origin.y = self.commentView.layer.frame.size.height - 40;
+    buttonFrame.origin.y = self.commentView.layer.frame.size.height - buttonFrame.size.height;
     self.sendButton.frame = buttonFrame;
 
     [self.view layoutSubviews];
@@ -574,7 +591,7 @@ static float const kMaxInputHeight = 100.;
         [self.tableView reloadData];
         [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow: (2 + [self.post.comments count]) - 1 inSection: 0]
                               atScrollPosition:UITableViewScrollPositionBottom
-                                      animated:YES];
+                                      animated:NO];
 
         [self.textView resignFirstResponder];
 
@@ -587,6 +604,9 @@ static float const kMaxInputHeight = 100.;
 }
 
 - (void)newCommentFailed:(NSNotification*)notification {
+    [self.post removeLastComment]; // Naive but will work unless commenter goes crazy during outage
+    [self.tableView reloadData];
+
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
                                                     message:@"Something went wrong while saving your comment. Please try again."
                                                    delegate:nil
@@ -598,5 +618,10 @@ static float const kMaxInputHeight = 100.;
     self.sendButton.enabled = YES;
 }
 
+#pragma mark - NSLayoutManagerDelegate
+
+- (CGFloat)layoutManager:(NSLayoutManager *)layoutManager lineSpacingAfterGlyphAtIndex:(NSUInteger)glyphIndex withProposedLineFragmentRect:(CGRect)rect {
+    return kInputLineSpacing;
+}
 
 @end

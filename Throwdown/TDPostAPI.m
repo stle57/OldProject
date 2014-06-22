@@ -376,51 +376,34 @@
 }
 
 #pragma mark - Comments
--(void)postNewComment:(NSString *)messageBody forPost:(NSNumber *)postId
-{
-    /*
-    
-    POST /api/v1/comments.json with parameters:
-    + comment[body]={COMMENT BODY}
-    + comment[post_id]={POST ID}
-    + user_token={CURRENT USER TOKEN}
-    
-    */
 
+- (void)postNewComment:(NSString *)messageBody forPost:(NSNumber *)postId {
     if (!messageBody || !postId) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:TDNoticifationNewCommentFailed object:nil userInfo:nil];
         return;
     }
 
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/comments.json"];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager POST:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken , @"comment[body]" : messageBody, @"comment[post_id]" : postId} success:^(AFHTTPRequestOperation *operation, id responseObject) {
-
-        if ([responseObject isKindOfClass:[NSDictionary class]])
-        {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
             NSDictionary *returnDict = [NSDictionary dictionaryWithDictionary:responseObject];
-            if ([returnDict objectForKey:@"success"]) {
-                if ([[returnDict objectForKey:@"success"] boolValue]) {
+            if ([returnDict objectForKey:@"success"] && [[returnDict objectForKey:@"success"] boolValue]) {
+                [self notifyPostsRefreshed];
+                debug NSLog(@"New Comment Success!:%@", returnDict);
 
-                    [self notifyPostsRefreshed];
-                    debug NSLog(@"New Comment Success!:%@", returnDict);
-
-                    // Notify any views to reload
-                    [[NSNotificationCenter defaultCenter] postNotificationName:TDNoticifationNewCommentPostInfo
-                                                                        object:self
-                                                                      userInfo:returnDict];
-                }
+                // Notify any views to reload
+                [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationNewCommentPostInfo
+                                                                    object:self
+                                                                  userInfo:returnDict];
+            } else {
+                [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationNewCommentFailed object:nil userInfo:nil];
             }
         }
-
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        
         debug NSLog(@"New Comment Error: %@", error);
-
-        if (error) {
-            if ([operation.response statusCode] == 401) {
-                [self logOutUser];
-            }
+        [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationNewCommentFailed object:nil userInfo:nil];
+        if (error && [operation.response statusCode] == 401) {
+            [self logOutUser];
         }
     }];
 }

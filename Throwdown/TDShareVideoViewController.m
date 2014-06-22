@@ -12,7 +12,7 @@
 #import "TDConstants.h"
 #import "TDAnalytics.h"
 
-@interface TDShareVideoViewController ()
+@interface TDShareVideoViewController () <UITextViewDelegate, NSLayoutManagerDelegate>
 
 @property (weak, nonatomic) IBOutlet UINavigationBar *navigationBar;
 @property (weak, nonatomic) IBOutlet UINavigationItem *navigationBarItem;
@@ -38,13 +38,15 @@
     [self.navigationBar setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontRegularSized:20],
                                        NSForegroundColorAttributeName: [TDConstants headerTextColor] }];
 
+    self.commentTextView.delegate = self;
+    self.commentTextView.font = [TDConstants fontRegularSized:17];
+    self.commentTextView.layoutManager.delegate = self;
     [self.commentTextView setPlaceholder:kCommentDefaultText];
-    [self.commentTextView setFont:[UIFont fontWithName:TDFontProximaNovaRegular size:17.0]];
 
     [self.previewImage setImage:[UIImage imageWithContentsOfFile:self.thumbnailPath]];
 
     // Set font for "Done" button and sneacky way to hide the button when keyboard is down (same color as background)
-    [self.closeKeyboardButton setTitleTextAttributes:@{ NSFontAttributeName:[UIFont fontWithName:TDFontProximaNovaRegular size:15.0] } forState:UIControlStateNormal];
+    [self.closeKeyboardButton setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontRegularSized:15.0] } forState:UIControlStateNormal];
     [self.closeKeyboardButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[UIColor colorWithRed:0.93 green:0.93 blue:0.93 alpha:1.0] } forState:UIControlStateDisabled];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -63,6 +65,7 @@
 }
 
 - (void)dealloc {
+    self.commentTextView.delegate = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -95,6 +98,12 @@
                                                                   @"comment":self.commentTextView.text }];
     [self performSegueWithIdentifier:@"VideoCloseSegue" sender:self];
     [[TDAnalytics sharedInstance] logEvent:@"camera_shared"];
+}
+
+#pragma mark - NSLayoutManagerDelegate
+
+- (CGFloat)layoutManager:(NSLayoutManager *)layoutManager lineSpacingAfterGlyphAtIndex:(NSUInteger)glyphIndex withProposedLineFragmentRect:(CGRect)rect {
+    return 3;
 }
 
 @end

@@ -14,29 +14,6 @@ static NSString *const kKindPhoto = @"photo";
 
 @implementation TDPost
 
-/*
- 
- "comment_count" = 0;
- comments =     (
- );
- "created_at" = "2014-02-26T05:15:41.000Z";
- filename = "6_1393391740.356891";
- kind = "video|image"
- id = 17;
- "like_count" = 0;
- liked = 0;
- likers =     (
- );
- user =     {
-    id = 6;
-    name = "Joseph Huang";
-    username = jh;
- };
- }
-
- */
-
-
 - (id)initWithDictionary:(NSDictionary *)dict {
     self = [super init];
     if (self) {
@@ -116,6 +93,15 @@ static NSString *const kKindPhoto = @"photo";
     [newArray addObject:newComment];
     _comments = newArray;
     _commentsTotalCount = [NSNumber numberWithInt:[_commentsTotalCount intValue] + 1];
+}
+
+- (void)removeLastComment {
+    if (_commentsTotalCount > 0) {
+        NSMutableArray *newArray = [NSMutableArray arrayWithArray:self.comments];
+        [newArray removeObjectAtIndex:[self.comments count] - 1];
+        _comments = newArray;
+        _commentsTotalCount = [NSNumber numberWithInt:[_commentsTotalCount intValue] - 1];
+    }
 }
 
 - (void)orderCommentsForHomeScreen {
