@@ -165,7 +165,7 @@ static const NSString *ItemStatusContext;
 - (IBAction)cancelButtonPressed:(id)sender {
     if (self.isOriginal) {
         NSString *text = self.recordedVideoUrl ?  @"Delete this video?" : @"Delete this photo?";
-        UIAlertView *confirm = [[UIAlertView alloc] initWithTitle:text message:nil delegate:self cancelButtonTitle:@"Delete" otherButtonTitles:@"Keep", nil];
+        UIAlertView *confirm = [[UIAlertView alloc] initWithTitle:text message:nil delegate:self cancelButtonTitle:@"Keep" otherButtonTitles:@"Delete", nil];
         [confirm show];
     } else {
         [self stopExistingUploads];
@@ -174,7 +174,7 @@ static const NSString *ItemStatusContext;
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (buttonIndex == alertView.cancelButtonIndex) {
+    if (buttonIndex != alertView.cancelButtonIndex) {
         [self stopExistingUploads];
         [self performSegueWithIdentifier:@"UnwindSlideLeftSegue" sender:self];
     }

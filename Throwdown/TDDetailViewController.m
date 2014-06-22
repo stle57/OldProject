@@ -190,16 +190,16 @@ static float const kMaxInputHeight = 100.;
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Delete?"
                                                             message:@"Are you sure you want to\ndelete this post?"
                                                            delegate:self
-                                                  cancelButtonTitle:@"Yes"
-                                                  otherButtonTitles:@"No", nil];
+                                                  cancelButtonTitle:@"No"
+                                                  otherButtonTitles:@"Yes", nil];
             alert.tag = 89890;
             [alert show];
         } else {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Report as Inappropriate?"
                                                             message:@"Please confirm you'd like to report this post as inappropriate."
                                                            delegate:self
-                                                  cancelButtonTitle:@"Report"
-                                                  otherButtonTitles:@"Cancel", nil];
+                                                  cancelButtonTitle:@"Cancel"
+                                                  otherButtonTitles:@"Report", nil];
             alert.tag = 18890;
             [alert show];
         }
@@ -213,11 +213,11 @@ static float const kMaxInputHeight = 100.;
 
 - (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex {
     // Delete Yes is index 0
-    if (alertView.tag == 89890 && buttonIndex == alertView.cancelButtonIndex) {
+    if (alertView.tag == 89890 && buttonIndex != alertView.cancelButtonIndex) {
         self.navigationItem.rightBarButtonItem.enabled = NO;
         // Delete from server Server
         [[TDPostAPI sharedInstance] deletePostWithId:self.postId];
-    } else if (alertView.tag == 18890 && buttonIndex == alertView.cancelButtonIndex) {
+    } else if (alertView.tag == 18890 && buttonIndex != alertView.cancelButtonIndex) {
         // Report!
         [[TDPostAPI sharedInstance] reportPostWithId:self.postId];
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Report Sent"
