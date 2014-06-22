@@ -537,13 +537,13 @@
 }
 
 - (IBAction)photoButtonPressed:(id)sender {
-    [[TDAnalytics sharedInstance] logEvent:@"camera_photo"];
     [self switchInputModeToPhoto:YES];
+    [[TDAnalytics sharedInstance] logEvent:@"camera_photo"];
 }
 
 - (IBAction)videoButtonPressed:(id)sender {
-    [[TDAnalytics sharedInstance] logEvent:@"camera_video"];
     [self switchInputModeToPhoto:NO];
+    [[TDAnalytics sharedInstance] logEvent:@"camera_video"];
 }
 
 #pragma mark - Switch input mode
@@ -553,6 +553,7 @@
         return;
     }
 
+    self.recordButton.enabled = NO;
     self.videoButton.enabled = NO;
     self.photoButton.enabled = NO;
 

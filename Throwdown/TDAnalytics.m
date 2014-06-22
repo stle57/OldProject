@@ -105,10 +105,10 @@ NSString *TDURLUnescapedString(NSString *string) {
 #pragma mark - event handling
 
 - (void)logEvent:(NSString *)event {
-    [[TDAPIClient sharedInstance] logEvent:event sessionId:self.sessionId];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        [[TDAPIClient sharedInstance] logEvent:event sessionId:self.sessionId];
+    });
 }
-
-//copied_share_url
 
 #pragma mark - session handling
 
