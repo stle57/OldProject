@@ -33,7 +33,7 @@ typedef enum {
 @interface TDPostView ()
 
 @property (weak, nonatomic) IBOutlet UIView *videoHolderView;
-@property (weak, nonatomic) IBOutlet UIButton *controlView;
+@property (weak, nonatomic) IBOutlet UIImageView *controlView;
 @property (weak, nonatomic) IBOutlet UIView *topLine;
 
 @property (strong, nonatomic) UIImageView *controlImage;
@@ -73,6 +73,9 @@ typedef enum {
     self.topLine.frame = topLineRect;
 
     origRectOfUserButton = self.userNameButton.frame;
+
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapFrom:)];
+    [self.controlView addGestureRecognizer:tapGestureRecognizer];
 }
 
 - (void)setPost:(TDPost *)post {
@@ -180,7 +183,7 @@ typedef enum {
     }
 }
 
-- (IBAction)controlViewPressed:(id)sender {
+- (void)handleTapFrom:(UITapGestureRecognizer *)tap {
     if (self.aPost.kind == TDPostKindVideo) {
 
         switch (self.state) {
@@ -257,8 +260,6 @@ typedef enum {
             if (status == AVKeyValueStatusLoaded) {
                 self.playerItem = [AVPlayerItem playerItemWithAsset:asset];
                 [self.playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
-//                   [self.playerItem addObserver:self forKeyPath:@"playbackBufferEmpty" options:NSKeyValueObservingOptionNew context:nil];
-//                   [self.playerItem addObserver:self forKeyPath:@"playbackLikelyToKeepUp" options:NSKeyValueObservingOptionNew context:nil];
 
                 [[NSNotificationCenter defaultCenter] addObserver:self
                                                          selector:@selector(stopVideoFromNotification:)
@@ -303,14 +304,6 @@ typedef enum {
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-//    if (object == self.playerItem && [keyPath isEqualToString:@"playbackBufferEmpty"]) {
-//        debug NSLog(@"PLAYBACK: empty");
-//        [self updateControlImage:ControlStateLoading];
-//        return;
-//    } else if (object == self.playerItem && [keyPath isEqualToString:@"playbackLikelyToKeepUp"]) {
-//        debug NSLog(@"PLAYBACK: keep up %@ playing", self.isPlaying ? @"" : @"not");
-//        [self updateControlImage:ControlStateNone];
-//        return;
     if (object == self.playerItem && [keyPath isEqualToString:@"status"]) {
         debug NSLog(@"PLAYBACK: status at state %d", self.state);
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -369,16 +362,12 @@ typedef enum {
 - (void)showLoadingError {
     [self updateControlImage:ControlStateNone];
     self.controlView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.7];
-    [self.controlView setImage:[UIImage imageNamed:@"video_status_retry"] forState:UIControlStateNormal];
-    [self.controlView setImage:[UIImage imageNamed:@"video_status_retry_hit"] forState:UIControlStateHighlighted];
-    [self.controlView setImage:[UIImage imageNamed:@"video_status_retry_hit"] forState:UIControlStateSelected];
+    [self.controlView setImage:[UIImage imageNamed:@"video_status_retry"]];
 }
 
 - (void)hideLoadingError {
     self.controlView.backgroundColor = [UIColor clearColor];
-    [self.controlView setImage:nil forState:UIControlStateNormal];
-    [self.controlView setImage:nil forState:UIControlStateHighlighted];
-    [self.controlView setImage:nil forState:UIControlStateSelected];
+    [self.controlView setImage:nil];
 }
 
 - (void)startSpinner {
