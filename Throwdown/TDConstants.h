@@ -118,6 +118,7 @@ static NSString *const kSpinningAnimation = @"rotationAnimation";
 + (UIColor *)backgroundColor;
 + (UIColor *)borderColor;
 + (UIColor *)darkTextColor;
++ (UIColor *)disabledTextColor;
 + (UIColor *)headerTextColor;
 + (UIColor *)commentTextColor;
 + (UIColor *)commentTimeTextColor;

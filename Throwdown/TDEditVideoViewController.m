@@ -202,11 +202,6 @@ static const NSString *ItemStatusContext;
     self.cancelButton.enabled = NO;
     self.playButton.enabled = NO;
 
-    if (self.filename) {
-        [self performSegueWithIdentifier:@"ShareVideoSegue" sender:self];
-        return;
-    }
-
     self.filename = [TDPostAPI createUploadFileNameFor:[TDCurrentUser sharedInstance]];
     self.thumbnailPath = [NSHomeDirectory() stringByAppendingPathComponent:kThumbnailExportFilePath];
     debug NSLog(@"Creating filename %@", self.filename);
@@ -221,14 +216,10 @@ static const NSString *ItemStatusContext;
 # pragma mark - segues
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue isKindOfClass:[TDSlideLeftSegue class]]) {
+    if ([segue.identifier isEqualToString:@"MediaAddedSegue"]) {
         TDShareVideoViewController *vc = [segue destinationViewController];
-        [vc shareVideo:self.filename withThumbnail:self.thumbnailPath];
+        [vc shareVideo:self.filename withThumbnail:self.thumbnailPath isOriginal:self.isOriginal];
     }
-}
-
-- (IBAction)unwindToEditVideo:(UIStoryboardSegue *)sender {
-    // Empty on purpose
 }
 
 - (UIStoryboardSegue *)segueForUnwindingToViewController:(UIViewController *)toViewController fromViewController:(UIViewController *)fromViewController identifier:(NSString *)identifier {
@@ -322,7 +313,7 @@ static const NSString *ItemStatusContext;
     [UIImageJPEGRepresentation(smaller, 0.97) writeToFile:self.thumbnailPath atomically:YES];
     [[TDPostAPI sharedInstance] uploadPhoto:self.thumbnailPath withName:self.filename];
 
-    [self performSegueWithIdentifier:@"ShareVideoSegue" sender:self];
+    [self performSegueWithIdentifier:@"MediaAddedSegue" sender:self];
 }
 
 - (UIImage *)imageRotatedByRadian:(UIImage *)image radian:(CGFloat)radian {
@@ -574,7 +565,7 @@ static const NSString *ItemStatusContext;
         }
     });
 
-    [self performSegueWithIdentifier:@"ShareVideoSegue" sender:self];
+    [self performSegueWithIdentifier:@"MediaAddedSegue" sender:self];
 }
 
 

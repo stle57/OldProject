@@ -34,6 +34,7 @@ typedef enum {
 @property (nonatomic) NSString *photoPath;
 @property (nonatomic) NSString *videoPath;
 @property (nonatomic) NSString *comment;
+@property (nonatomic) NSNumber *isPR;
 @property (nonatomic) NSString *finalVideoName;
 @property (nonatomic) NSString *finalPhotoName;
 @property (nonatomic) BOOL hasReceivedComment;
@@ -151,6 +152,7 @@ typedef enum {
         debug NSLog(@"Received correct comment notification");
         self.hasReceivedComment = YES;
         self.comment = [notification.userInfo objectForKey:@"comment"];
+        self.isPR = [notification.userInfo objectForKey:@"pr"];
         [self finalizeUpload];
     }
 }
@@ -209,7 +211,7 @@ typedef enum {
 
         debug NSLog(@"FINALIZING %@", self.filename);
         self.postStatus = UploadStarted;
-        [[TDPostAPI sharedInstance] addPost:self.filename comment:self.comment kind:(self.videoUpload ? @"video" : @"photo") success:^{
+        [[TDPostAPI sharedInstance] addPost:self.filename comment:self.comment isPR:[self.isPR boolValue] kind:(self.videoUpload ? @"video" : @"photo") success:^{
             self.postStatus = UploadCompleted;
             [self uploadComplete];
         } failure:^{

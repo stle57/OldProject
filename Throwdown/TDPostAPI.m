@@ -87,10 +87,17 @@
 #pragma mark - posts get/add/remove
 
 
-- (void)addPost:(NSString *)filename comment:(NSString *)comment kind:(NSString *)kind success:(void (^)(void))success failure:(void (^)(void))failure {
+- (void)addPost:(NSString *)filename comment:(NSString *)comment isPR:(BOOL)pr kind:(NSString *)kind success:(void (^)(void))success failure:(void (^)(void))failure {
+    NSMutableDictionary *post = [@{ @"kind": kind, @"personal_record": [NSNumber numberWithBool:pr]} mutableCopy];
+    if (filename) {
+        [post addEntriesFromDictionary:@{@"filename": filename}];
+    }
+    if (comment) {
+        [post addEntriesFromDictionary:@{@"comment": comment}];
+    }
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts.json"];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager POST:url parameters:@{ @"post": @{@"filename": filename, @"comment": comment, @"kind": kind}, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager POST:url parameters:@{ @"post": post, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
         debug NSLog(@"JSON: %@", [responseObject class]);
         // Not the best way to do this but for now...
         [self fetchPostsUpstreamWithErrorHandlerStart:nil error:nil];
@@ -103,10 +110,8 @@
         if (failure) {
             failure();
         }
-        if (error) {
-            if ([operation.response statusCode] == 401) {
-                [self logOutUser];
-            }
+        if (error && [operation.response statusCode] == 401) {
+            [self logOutUser];
         }
     }];
 }

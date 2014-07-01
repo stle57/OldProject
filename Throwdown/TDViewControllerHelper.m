@@ -15,12 +15,20 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
 @implementation TDViewControllerHelper
 
 + (UIButton *)navBackButton {
-    UIImage *image = [UIImage imageNamed:@"nav_back.png"];
+    return [self navBarButton:@"nav_back" hit:@"nav_back_hit"];
+}
+
++ (UIButton *)navCloseButton {
+    return [self navBarButton:@"nav_close" hit:@"nav_close_hit"];
+}
+
++ (UIButton *)navBarButton:(NSString *)normal hit:(NSString *)hit {
+    UIImage *image = [UIImage imageNamed:normal];
     CGRect buttonFrame = CGRectMake(0, 0, image.size.width, image.size.height);
 
     UIButton *button = [[UIButton alloc] initWithFrame:buttonFrame];
     [button setImage:image forState:UIControlStateNormal];
-    [button setImage:[UIImage imageNamed:@"nav_back_hit.png"] forState:UIControlStateHighlighted];
+    [button setImage:[UIImage imageNamed:hit] forState:UIControlStateHighlighted];
     return button;
 }
 

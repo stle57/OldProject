@@ -12,6 +12,7 @@
 @interface TDViewControllerHelper : NSObject
 
 + (UIButton *)navBackButton;
++ (UIButton *)navCloseButton;
 + (void)showAlertMessage:(NSString *)message withTitle:(NSString *)title;
 + (void)navigateToHomeFrom:(UIViewController *)fromController;
 + (BOOL)validateEmail:(NSString *)email;

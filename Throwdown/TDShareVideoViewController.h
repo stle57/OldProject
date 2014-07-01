@@ -9,5 +9,5 @@
 #import <UIKit/UIKit.h>
 
 @interface TDShareVideoViewController : UIViewController
-- (void)shareVideo:(NSString *)filename withThumbnail:(NSString *)thumbnailPath;
+- (void)shareVideo:(NSString *)filename withThumbnail:(NSString *)thumbnailPath isOriginal:(BOOL)original;
 @end

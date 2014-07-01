@@ -25,7 +25,7 @@
 - (void)uploadVideo:(NSString *)localVideoPath withThumbnail:(NSString *)localPhotoPath withName:(NSString *)newName;
 - (void)uploadPhoto:(NSString *)localPhotoPath withName:(NSString *)newName;
 
-- (void)addPost:(NSString *)filename comment:(NSString *)comment kind:(NSString *)kind success:(void (^)(void))success failure:(void (^)(void))failure;
+- (void)addPost:(NSString *)filename comment:(NSString *)comment isPR:(BOOL)pr kind:(NSString *)kind success:(void (^)(void))success failure:(void (^)(void))failure;
 - (NSArray *)getPosts;
 - (void)likePostWithId:(NSNumber *)postId;
 - (void)unLikePostWithId:(NSNumber *)postId;
