@@ -117,7 +117,6 @@
 		A1BB463018F5FDD700BD9527 /* UIAlertView+TDBlockAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = A1BB462F18F5FDD700BD9527 /* UIAlertView+TDBlockAlert.m */; };
 		A1BB463318F7767200BD9527 /* TDActivityViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1BB463218F7767200BD9527 /* TDActivityViewController.m */; };
 		A1BC0B3F18BE825200F507B3 /* TDSlideLeftSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = A1BC0B3E18BE825200F507B3 /* TDSlideLeftSegue.m */; };
-		A1C1D0F318A02FAB00666D2A /* TDPostView.xib in Resources */ = {isa = PBXBuildFile; fileRef = A1C1D0F218A02FAA00666D2A /* TDPostView.xib */; };
 		A1C1D0F618A0387B00666D2A /* TDPostView.m in Sources */ = {isa = PBXBuildFile; fileRef = A1C1D0F518A0387B00666D2A /* TDPostView.m */; };
 		A1C2481118C6B9CA00F187D9 /* TDProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = A1C2481018C6B9CA00F187D9 /* TDProgressIndicator.m */; };
 		A1C2481418C7D4B000F187D9 /* URLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = A1C2481318C7D4B000F187D9 /* URLConnection.m */; };
@@ -322,7 +321,6 @@
 		A1BB463218F7767200BD9527 /* TDActivityViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDActivityViewController.m; sourceTree = "<group>"; };
 		A1BC0B3D18BE825200F507B3 /* TDSlideLeftSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSlideLeftSegue.h; sourceTree = "<group>"; };
 		A1BC0B3E18BE825200F507B3 /* TDSlideLeftSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSlideLeftSegue.m; sourceTree = "<group>"; };
-		A1C1D0F218A02FAA00666D2A /* TDPostView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDPostView.xib; sourceTree = "<group>"; };
 		A1C1D0F418A0387B00666D2A /* TDPostView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDPostView.h; sourceTree = "<group>"; };
 		A1C1D0F518A0387B00666D2A /* TDPostView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDPostView.m; sourceTree = "<group>"; };
 		A1C2480F18C6B9CA00F187D9 /* TDProgressIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDProgressIndicator.h; sourceTree = "<group>"; };
@@ -725,7 +723,6 @@
 				A1E3A16B18FCC7F40038A8A4 /* Activities */,
 				A11999D718D9290300C39ABF /* Components */,
 				A1D13FF81905F963000980E0 /* Onboarding */,
-				A1C1D0F218A02FAA00666D2A /* TDPostView.xib */,
 				A1C1D0F418A0387B00666D2A /* TDPostView.h */,
 				A1C1D0F518A0387B00666D2A /* TDPostView.m */,
 			);
@@ -917,7 +914,6 @@
 				A10F9C241909B01600D2CAB0 /* NewMessage.caf in Resources */,
 				2DA5F05B18D37C70003D2F99 /* BebasNeue Book.otf in Resources */,
 				2D83200519116D9000A91282 /* TDUserPushNotificationsEditViewController.xib in Resources */,
-				A1C1D0F318A02FAB00666D2A /* TDPostView.xib in Resources */,
 				2DA420DD18E63E1A006F4D9C /* TDActivityCell.xib in Resources */,
 				2D63FA881909D22200FEBA3C /* TDActivityIndicator.xib in Resources */,
 				2D83200A1911740A00A91282 /* TDPushEditCell.xib in Resources */,

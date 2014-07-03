@@ -14,63 +14,38 @@
 @synthesize delegate;
 @synthesize row;
 
-- (void)dealloc
-{
+- (void)dealloc {
     delegate = nil;
 }
 
-- (id)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code
-    }
-    return self;
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    if (self) {
-    }
-    return self;
-}
-
--(void)awakeFromNib {
+- (void)awakeFromNib {
     CGRect bottomLineRect = self.bottomPaddingLine.frame;
     bottomLineRect.size.height = 1 / [[UIScreen mainScreen] scale];
     bottomLineRect.origin.y += 1 / [[UIScreen mainScreen] scale];
     self.bottomPaddingLine.frame = bottomLineRect;
+
+    CGRect buttonBorderRect = self.buttonBorder.frame;
+    buttonBorderRect.size.height = 1 / [[UIScreen mainScreen] scale];
+    self.buttonBorder.frame = buttonBorderRect;
 }
 
-- (IBAction)likeButtonPressed:(UIButton *)sender
-{
+- (IBAction)likeButtonPressed:(UIButton *)sender {
     debug NSLog(@"likeButtonPressed");
-    if (like) {
-        if (delegate) {
-            if ([delegate respondsToSelector:@selector(unLikeButtonPressedFromRow:)]) {
-                [delegate unLikeButtonPressedFromRow:row];
-
-                [self setLike:NO];
-            }
-        }
-    } else {
-        if (delegate) {
-            if ([delegate respondsToSelector:@selector(likeButtonPressedFromRow:)]) {
-                [delegate likeButtonPressedFromRow:row];
-
-                [self setLike:YES];
-            }
-        }
+    if (!delegate) {
+        return;
     }
+
+    if (like && [delegate respondsToSelector:@selector(unLikeButtonPressedFromRow:)]) {
+        [delegate unLikeButtonPressedFromRow:row];
+    } else if (!like && [delegate respondsToSelector:@selector(likeButtonPressedFromRow:)]) {
+        [delegate likeButtonPressedFromRow:row];
+    }
+    [self setLike:!like];
 }
 
-- (IBAction)commentButtonPressed:(UIButton *)sender
-{
-    if (delegate) {
-        if ([delegate respondsToSelector:@selector(commentButtonPressedFromRow:)]) {
-            [delegate commentButtonPressedFromRow:row];
-        }
+- (IBAction)commentButtonPressed:(UIButton *)sender {
+    if (delegate && [delegate respondsToSelector:@selector(commentButtonPressedFromRow:)]) {
+        [delegate commentButtonPressedFromRow:row];
     }
 }
 

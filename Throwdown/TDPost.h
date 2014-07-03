@@ -13,23 +13,27 @@
 typedef enum {
     TDPostKindUnknown,
     TDPostKindVideo,
-    TDPostKindPhoto
+    TDPostKindPhoto,
+    TDPostKindText
 } TDPostKind;
 
 
 @interface TDPost : NSObject
 
-@property (strong, nonatomic, readonly) NSNumber *postId;
+@property (nonatomic, readonly) NSNumber *postId;
 @property (nonatomic, copy, readonly) NSString *filename;
 @property (nonatomic, copy, readonly) NSString *slug;
+@property (nonatomic, copy, readonly) NSString *comment;
 @property (nonatomic, readonly) TDPostKind kind;
 @property (nonatomic, readonly) TDUser *user;
 @property (nonatomic, readonly) NSDate *createdAt;
+@property (nonatomic, assign) BOOL personalRecord;
 @property (nonatomic, assign) BOOL liked;
-@property (strong, nonatomic, readonly) NSArray *likers;
-@property (strong, nonatomic, readonly) NSArray *comments;
-@property (strong, nonatomic, readonly) NSNumber *commentsTotalCount;
-@property (strong, nonatomic, readonly) NSNumber *likersTotalCount;
+@property (nonatomic, copy, readonly) NSArray *mentions;
+@property (nonatomic, readonly) NSArray *likers;
+@property (nonatomic, readonly) NSArray *comments;
+@property (nonatomic, readonly) NSNumber *commentsTotalCount;
+@property (nonatomic, readonly) NSNumber *likersTotalCount;
 
 - (id)initWithDictionary:(NSDictionary *)dict;
 - (void)loadUpFromDict:(NSDictionary *)dict;

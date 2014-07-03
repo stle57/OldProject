@@ -11,6 +11,7 @@
 #import "TDConstants.h"
 #import "TDCurrentUser.h"
 #import "TDFileSystemHelper.h"
+#import "TDDeviceInfo.h"
 #import "UIImage+Resizing.h"
 
 @interface TDAPIClient ()
@@ -289,8 +290,10 @@
 
 - (void)getActivityForUserToken:(NSString *)userToken success:(void (^)(NSArray *activities))success failure:(void (^)(void))failure {
     NSString *url = [NSString stringWithFormat:@"%@/api/v1/activities.json?user_token=%@", [TDConstants getBaseURL], userToken];
-    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
-    [self.httpManager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [manager.requestSerializer setValue:TDDeviceInfo.bundleVersion forHTTPHeaderField:kHTTPHeaderBundleVersion];
+    [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if (success) {
             success([responseObject objectForKey:@"activities"]);
         }

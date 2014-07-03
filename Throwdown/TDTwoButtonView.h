@@ -28,6 +28,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *likeButton;
 @property (weak, nonatomic) IBOutlet UIButton *commentButton;
 @property (weak, nonatomic) IBOutlet UIView *bottomPaddingLine;
+@property (weak, nonatomic) IBOutlet UIView *buttonBorder;
 
 - (IBAction)likeButtonPressed:(UIButton *)sender;
 - (IBAction)commentButtonPressed:(UIButton *)sender;

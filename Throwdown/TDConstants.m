@@ -88,6 +88,10 @@ static NSString *const kCDNStreamingServer = @"http://139bc8fb83b0918931ad-a6f56
     return [UIColor colorWithRed:237./255. green:237./255. blue:237./255. alpha:1.0];  // ededed
 }
 
++ (UIColor *)darkBackgroundColor {
+    return [UIColor colorWithRed:211./255. green:211./255. blue:211./255. alpha:1.0]; // d3d3d3
+}
+
 + (UIColor *)borderColor {
     return [UIColor colorWithRed:200./255. green:200./255. blue:200./255. alpha:1.0]; // c8c8c8
 }

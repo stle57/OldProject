@@ -23,5 +23,6 @@
 + (NSAttributedString *)makeParagraphedTextWithString:(NSString *)text;
 + (void)linkUsernamesInLabel:(TTTAttributedLabel *)label users:(NSArray *)users;
 + (void)linkUsernamesInLabel:(TTTAttributedLabel *)label users:(NSArray *)users pattern:(NSString *)pattern;
++ (CGFloat)heightForComment:(NSString *)text withMentions:(NSArray *)mentions;
 
 @end

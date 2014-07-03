@@ -14,29 +14,24 @@
 
 @protocol TDPostViewDelegate <NSObject>
 @optional
--(void)postTouchedFromRow:(NSInteger)row;
--(void)userButtonPressedFromRow:(NSInteger)row;
+- (void)postTouchedFromRow:(NSInteger)row;
+- (void)userButtonPressedFromRow:(NSInteger)row;
+- (void)userProfilePressedWithId:(NSNumber *)userId;
 @end
 
 @interface TDPostView : UITableViewCell
-{
-    id <TDPostViewDelegate> __unsafe_unretained delegate;
-    CGRect origRectOfUserButton;
-}
 
 @property (nonatomic, assign) id <TDPostViewDelegate> __unsafe_unretained delegate;
-@property (weak, nonatomic) IBOutlet UILabel *usernameLabel;
-@property (weak, nonatomic) IBOutlet UIImageView *previewImage;
-@property (weak, nonatomic) IBOutlet UIImageView *userProfileImage;
-@property (weak, nonatomic) IBOutlet TDUpdatingDateLabel *createdLabel;
-@property (weak, nonatomic) IBOutlet TDLikeView *likeView;
-@property (weak, nonatomic) IBOutlet UIView *bottomPaddingLine;
-@property (weak, nonatomic) IBOutlet UIButton *userNameButton;
+@property (nonatomic) UILabel *usernameLabel;
+@property (nonatomic) UIImageView *previewImage;
+@property (nonatomic) UIImageView *userProfileImage;
+@property (nonatomic) TDUpdatingDateLabel *createdLabel;
 @property (nonatomic, assign) NSInteger row;
 @property (strong, nonatomic) NSString *filename;
 @property (strong, nonatomic) NSString *userPicture;
 
 - (void)setPost:(TDPost *)post;
-- (IBAction)userButtonPressed:(UIButton *)sender;
+
++ (CGFloat)heightForPost:(TDPost *)post;
 
 @end

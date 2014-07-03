@@ -151,4 +151,19 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     }];
 }
 
++ (CGFloat)heightForComment:(NSString *)text withMentions:(NSArray *)mentions {
+    // Slow but the most accurate way to calculate the size
+    TTTAttributedLabel *label = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(0, 0, COMMENT_MESSAGE_WIDTH, 18)];
+    label.font = COMMENT_MESSAGE_FONT;
+    label.verticalAlignment = TTTAttributedLabelVerticalAlignmentTop;
+    [label setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
+    [TDViewControllerHelper linkUsernamesInLabel:label users:mentions];
+    label.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:label.attributedText];
+    label.numberOfLines = 0;
+
+    // Adding 2 covers an edge case where emoji would get cut off
+    CGSize size = [label sizeThatFits:CGSizeMake(COMMENT_MESSAGE_WIDTH, MAXFLOAT)];
+    return size.height == 0. ? 0 : size.height + 2;
+}
+
 @end

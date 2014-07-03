@@ -12,6 +12,8 @@
 #import "NSDate+TimeAgo.h"
 #import "TDAppDelegate.h"
 #import "TDAPIClient.h"
+#import "TDViewControllerHelper.h"
+#import <TTTAttributedLabel/TTTAttributedLabel.h>
 #import <QuartzCore/QuartzCore.h>
 
 typedef enum {
@@ -30,18 +32,23 @@ typedef enum {
     PlayerStateReachedEnd
 } PlayerState;
 
-@interface TDPostView ()
+static CGFloat const kHeightOfProfileRow = 42.;
+static CGFloat const kCommentBottomPadding = 10.;
+static CGFloat const kHeightOfMedia = 320.;
+static CGFloat const kWidthOfMedia = 320.;
 
-@property (weak, nonatomic) IBOutlet UIView *videoHolderView;
-@property (weak, nonatomic) IBOutlet UIImageView *controlView;
-@property (weak, nonatomic) IBOutlet UIView *topLine;
+@interface TDPostView () <TTTAttributedLabelDelegate>
 
-@property (strong, nonatomic) UIImageView *controlImage;
-@property (strong, nonatomic) UIImageView *playerSpinner;
-@property (strong, nonatomic) AVPlayer *player;
-@property (strong, nonatomic) AVPlayerItem *playerItem;
-@property (strong, nonatomic) AVPlayerLayer *playerLayer;
-@property (strong, nonatomic) TDPost *aPost;
+@property (nonatomic) UIView *videoHolderView;
+@property (nonatomic) TTTAttributedLabel *commentLabel;
+@property (nonatomic) UIImageView *controlView;
+@property (nonatomic) UIImageView *prStar;
+@property (nonatomic) UIImageView *controlImage;
+@property (nonatomic) UIImageView *playerSpinner;
+@property (nonatomic) AVPlayer *player;
+@property (nonatomic) AVPlayerItem *playerItem;
+@property (nonatomic) AVPlayerLayer *playerLayer;
+@property (nonatomic) TDPost *post;
 @property (nonatomic) PlayerState state;
 @property (nonatomic) NSTimer *loadingTimeout;
 @property (nonatomic) UITapGestureRecognizer *tapGestureRecognizer;
@@ -51,43 +58,73 @@ typedef enum {
 
 @implementation TDPostView
 
-@synthesize delegate;
-
 - (void)dealloc {
-    delegate = nil;
+    self.delegate = nil;
+    if (self.controlView && self.tapGestureRecognizer) {
+        [self.controlView removeGestureRecognizer:self.tapGestureRecognizer];
+    }
+    for (UIGestureRecognizer *g in self.usernameLabel.gestureRecognizers) {
+        [self.usernameLabel removeGestureRecognizer:g];
+    }
+    for (UIGestureRecognizer *g in self.userProfileImage.gestureRecognizers) {
+        [self.userProfileImage removeGestureRecognizer:g];
+    }
+    self.usernameLabel = nil;
+    self.post = nil;
+    self.commentLabel.delegate = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void)awakeFromNib {
-    [self.previewImage setMultipleTouchEnabled:YES];
-    [self.previewImage setUserInteractionEnabled:YES];
-    self.userInteractionEnabled=YES;
+- (instancetype)init {
+    self = [super init];
+    if (self) {
 
-    self.usernameLabel.font = [TDConstants fontSemiBoldSized:17.0];
-    self.createdLabel.font = [TDConstants fontLightSized:14.0];
+        self.userInteractionEnabled = YES;
 
-    self.userProfileImage.layer.cornerRadius = self.userProfileImage.layer.frame.size.width / 2;
-    self.userProfileImage.clipsToBounds = YES;
+        // add pr star at lowest level
+        self.prStar = [[UIImageView alloc] initWithFrame:CGRectMake(235, 0, 85, 90.5)];
+        self.prStar.image = [UIImage imageNamed:@"pr_star_in_feed_170x181"];
+        self.prStar.hidden = YES;
+        [self addSubview:self.prStar];
 
-    // top line to 0.5 high on retina
-    CGRect topLineRect = self.topLine.frame;
-    topLineRect.size.height = 1 / [[UIScreen mainScreen] scale];
-    self.topLine.frame = topLineRect;
+        self.usernameLabel = [[UILabel alloc] initWithFrame:CGRectMake(42, 5, 215, 32)];
+        self.usernameLabel.font = [TDConstants fontSemiBoldSized:17.0];
+        self.usernameLabel.textColor = [TDConstants brandingRedColor];
+        self.usernameLabel.numberOfLines = 1;
+        self.usernameLabel.userInteractionEnabled = YES;
+        UITapGestureRecognizer *usernameTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(usernamePressed:)];
+        [self.usernameLabel addGestureRecognizer:usernameTap];
+        [self addSubview:self.usernameLabel];
 
-    origRectOfUserButton = self.userNameButton.frame;
+        self.commentLabel = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(7, 42, COMMENT_MESSAGE_WIDTH, 0)];
+        self.commentLabel.textColor = [TDConstants commentTextColor];
+        self.commentLabel.font  = COMMENT_MESSAGE_FONT;
+        self.commentLabel.delegate = self;
+        self.commentLabel.hidden = YES;
+        self.commentLabel.numberOfLines = 0;
+        [self addSubview:self.commentLabel];
 
-    self.tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapFrom:)];
-    [self.controlView addGestureRecognizer:self.tapGestureRecognizer];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pauseTapGesture:) name:TDNotificationPauseTapGesture object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resumeTapGesture:) name:TDNotificationResumeTapGesture object:nil];
-}
+        self.createdLabel = [[TDUpdatingDateLabel alloc] initWithFrame:CGRectMake(260, 5, 53, 32)];
+        self.createdLabel.textColor = [TDConstants commentTimeTextColor];
+        self.createdLabel.font = [TDConstants fontLightSized:14.0];
+        self.createdLabel.textAlignment = NSTextAlignmentRight;
+        [self addSubview:self.createdLabel];
 
-- (void)pauseTapGesture:(NSNotification *)n {
-    [self.controlView removeGestureRecognizer:self.tapGestureRecognizer];
-}
+        self.userProfileImage = [[UIImageView alloc] initWithFrame:CGRectMake(7, 7, 28, 28)];
+        self.userProfileImage.image = [UIImage imageNamed:@"prof_pic_default"];
+        self.userProfileImage.backgroundColor = [TDConstants darkBackgroundColor];
+        self.userProfileImage.layer.cornerRadius = self.userProfileImage.layer.frame.size.width / 2;
+        self.userProfileImage.clipsToBounds = YES;
+        self.userProfileImage.userInteractionEnabled = YES;
+        UITapGestureRecognizer *userProfileTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(usernamePressed:)];
+        [self.userProfileImage addGestureRecognizer:userProfileTap];
+        [self addSubview:self.userProfileImage];
 
-- (void)resumeTapGesture:(NSNotification *)n {
-    [self.controlView addGestureRecognizer:self.tapGestureRecognizer];
+        UIView *topLine = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 1 / [[UIScreen mainScreen] scale])];
+        topLine.backgroundColor = [TDConstants borderColor];
+        [self addSubview:topLine];
+    }
+    return self;
 }
 
 - (void)setPost:(TDPost *)post {
@@ -102,17 +139,19 @@ typedef enum {
     self.userPicture = post.user.picture;
 
     // If it's the same (eg table was refreshed), bail so that we don't stop video playback
-    if (self.state == PlayerStatePlaying && [self.aPost isEqual:post]) {
+    if (self.state == PlayerStatePlaying && [self.post isEqual:post]) {
         return;
     }
 
+    _post = post;
     self.state = PlayerStateNotLoaded;
-    self.aPost = post;
+
+    // Set username label and size (for tap area)
     self.usernameLabel.text = post.user.username;
-    self.userNameButton.frame = CGRectMake(origRectOfUserButton.origin.x,
-                                           origRectOfUserButton.origin.y,
-                                           [TDAppDelegate minWidthOfThisLabel:self.usernameLabel] + self.usernameLabel.frame.origin.x,
-                                           origRectOfUserButton.size.height);
+    CGSize size = [self.usernameLabel sizeThatFits:CGSizeMake(215, 32)];
+    CGRect frame = self.usernameLabel.frame;
+    frame.size.width = size.width;
+    self.usernameLabel.frame = frame;
 
     // Set first to not show the wrong image while loading or if load fails
     [self.userProfileImage setImage:[UIImage imageNamed:@"prof_pic_default"]];
@@ -126,77 +165,124 @@ typedef enum {
     self.createdLabel.labelDate = post.createdAt;
     self.createdLabel.text = [post.createdAt timeAgo];
 
-    self.filename = post.filename;
+    // We re-add the video every time it's needed
+    [self removeVideo];
 
-    if (post.kind == TDPostKindVideo) {
-        [self updateControlImage:ControlStatePlay];
+    if (post.comment) {
+        // Comment body
+        CGRect commentFrame = self.commentLabel.frame;
+        commentFrame.size.width = COMMENT_MESSAGE_WIDTH;
+        self.commentLabel.frame = commentFrame;
+        self.commentLabel.font = COMMENT_MESSAGE_FONT;
+        self.commentLabel.verticalAlignment = TTTAttributedLabelVerticalAlignmentTop;
+
+        [self.commentLabel setText:post.comment afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
+        [TDViewControllerHelper linkUsernamesInLabel:self.commentLabel users:post.mentions];
+        self.commentLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:self.commentLabel.attributedText];
+        CGFloat commentHeight = [TDViewControllerHelper heightForComment:post.comment withMentions:post.mentions];
+        CGRect frame = self.commentLabel.frame;
+        frame.size.height = commentHeight == 0 ? 0 : commentHeight + kCommentBottomPadding;
+        self.commentLabel.frame = frame;
+        self.commentLabel.hidden = NO;
     } else {
-        [self updateControlImage:ControlStateNone];
+        self.commentLabel.hidden = YES;
     }
 
-    // Likes & Comments
-    [self.likeView setLike:post.liked];
-    [self.likeView setLikesArray:post.likers totalLikersCount:888];
-    [self.likeView setCommentsArray:post.comments];
+    self.prStar.hidden = !post.personalRecord;
 
-    [self.previewImage setImage:nil];
+    switch (post.kind) {
+        case TDPostKindPhoto:
+            self.filename = post.filename;
+            [self setupPreview];
+            break;
+
+        case TDPostKindVideo:
+            self.filename = post.filename;
+            [self setupPreview];
+            [self setupVideo];
+            [self updateControlImage:ControlStatePlay];
+            break;
+
+        case TDPostKindText:
+            [self removePreview];
+            break;
+
+        default:
+            break;
+    }
+}
+
+- (CGFloat)getMediaOffset {
+    return kHeightOfProfileRow + (self.commentLabel.hidden ? 0 : self.commentLabel.frame.size.height);
+}
+
+- (void)setupPreview {
+    if (!self.previewImage) {
+        self.previewImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, [self getMediaOffset], kHeightOfMedia, kWidthOfMedia)];
+        self.previewImage.backgroundColor = [TDConstants darkBackgroundColor];
+        [self.previewImage setUserInteractionEnabled:YES];
+        [self.previewImage setImage:nil];
+        [self addSubview:self.previewImage];
+    }
     [self hideLoadingError];
 
     if (self.filename) {
-        [[TDAPIClient sharedInstance] setImage:@{@"imageView":self.previewImage, @"filename":[self.filename stringByAppendingString:FTImage]}];
+        [[TDAPIClient sharedInstance] setImage:@{ @"imageView":self.previewImage, @"filename":[self.filename stringByAppendingString:FTImage] }];
     }
+}
 
+- (void)removePreview {
+    if (self.previewImage) {
+        [self.previewImage removeFromSuperview];
+        self.previewImage = nil;
+    }
+}
+
+- (void)setupVideo {
+    if (!self.controlView) {
+        self.videoHolderView = [[UIView alloc] initWithFrame:CGRectMake(0, [self getMediaOffset], kHeightOfMedia, kWidthOfMedia)];
+        self.controlView = [[UIImageView alloc] initWithFrame:CGRectMake(0, [self getMediaOffset], kHeightOfMedia, kWidthOfMedia)];
+        self.controlView.contentMode = UIViewContentModeCenter;
+        self.tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapFrom:)];
+        [self.controlView addGestureRecognizer:self.tapGestureRecognizer];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pauseTapGesture:) name:TDNotificationPauseTapGesture object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resumeTapGesture:) name:TDNotificationResumeTapGesture object:nil];
+        [self addSubview:self.controlView];
+    }
+}
+
+- (void)removeVideo {
     if (self.player != nil) {
-        [self removeObservers];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationPauseTapGesture object:nil];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationResumeTapGesture object:nil];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationStopPlayers object:self];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemDidPlayToEndTimeNotification object:self.playerItem];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemPlaybackStalledNotification object:self.playerItem];
+
+        [self.playerItem removeObserver:self forKeyPath:@"status" context:nil];
+        [self.playerLayer removeFromSuperlayer];
+        [self.videoHolderView removeFromSuperview];
+        [self.controlView removeFromSuperview];
+        self.player = nil;
+        self.playerItem = nil;
+        self.playerLayer = nil;
+        self.videoHolderView = nil;
+        self.controlView = nil;
     }
 }
 
-- (void)removeObservers {
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:TDNotificationStopPlayers
-                                                  object:self];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:AVPlayerItemDidPlayToEndTimeNotification
-                                                  object:self.playerItem];
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:AVPlayerItemPlaybackStalledNotification
-                                                  object:self.playerItem];
+#pragma mark - UI callbacks
 
-    [self.playerItem removeObserver:self forKeyPath:@"status" context:nil];
-    //        [self.playerItem removeObserver:self forKeyPath:@"playbackBufferEmpty" context:nil];
-    //        [self.playerItem removeObserver:self forKeyPath:@"playbackLikelyToKeepUp" context:nil];
-    [self.playerLayer removeFromSuperlayer];
-    self.player = nil;
-    self.playerItem = nil;
-    self.playerLayer = nil;
+- (void)pauseTapGesture:(NSNotification *)n {
+    [self.controlView removeGestureRecognizer:self.tapGestureRecognizer];
 }
 
-- (void)updateControlImage:(ControlState)controlState {
-    if (!self.playerSpinner) {
-        self.playerSpinner = [[UIImageView alloc] initWithFrame:CGRectMake(290.0, 332.0, 20.0, 20.0)];
-        [self addSubview:self.playerSpinner];
-    }
-    [self stopSpinner];
-    debug NSLog(@"update control state to: %d", controlState);
-    switch (controlState) {
-        case ControlStatePlay:
-            [self.playerSpinner setImage:[UIImage imageNamed:@"video_status_play"]];
-            break;
-        case ControlStatePaused:
-            [self.playerSpinner setImage:[UIImage imageNamed:@"video_status_pause"]];
-            break;
-        case ControlStateLoading:
-            [self.playerSpinner setImage:[UIImage imageNamed:@"video_status_spinner"]];
-            [self startSpinner];
-            break;
-        case ControlStateNone:
-            [self.playerSpinner setImage:nil];
-            break;
-    }
+- (void)resumeTapGesture:(NSNotification *)n {
+    [self.controlView addGestureRecognizer:self.tapGestureRecognizer];
 }
 
 - (void)handleTapFrom:(UITapGestureRecognizer *)tap {
-    if (self.aPost.kind == TDPostKindVideo) {
+    if (self.post.kind == TDPostKindVideo) {
 
         switch (self.state) {
             case PlayerStateNotLoaded:
@@ -225,6 +311,32 @@ typedef enum {
     }
 }
 
+#pragma mark - video handling
+
+- (void)updateControlImage:(ControlState)controlState {
+    if (!self.playerSpinner) {
+        self.playerSpinner = [[UIImageView alloc] initWithFrame:CGRectMake(290.0, 332.0, 20.0, 20.0)];
+        [self addSubview:self.playerSpinner];
+    }
+    [self stopSpinner];
+    debug NSLog(@"update control state to: %d", controlState);
+    switch (controlState) {
+        case ControlStatePlay:
+            [self.playerSpinner setImage:[UIImage imageNamed:@"video_status_play"]];
+            break;
+        case ControlStatePaused:
+            [self.playerSpinner setImage:[UIImage imageNamed:@"video_status_pause"]];
+            break;
+        case ControlStateLoading:
+            [self.playerSpinner setImage:[UIImage imageNamed:@"video_status_spinner"]];
+            [self startSpinner];
+            break;
+        case ControlStateNone:
+            [self.playerSpinner setImage:nil];
+            break;
+    }
+}
+
 - (void)stopVideo {
     self.state = PlayerStatePaused;
     [self.player pause];
@@ -241,10 +353,6 @@ typedef enum {
     // Stop any previous players
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:self.filename];
 
-    if (self.player != nil) {
-        [self removeObservers];
-    }
-
     self.state = PlayerStateLoading;
     [self hideLoadingError];
 
@@ -252,7 +360,7 @@ typedef enum {
     debug NSLog(@"Loading movie from: %@", location);
 
     self.playerLayer = [AVPlayerLayer layer];
-    [self.playerLayer setFrame:CGRectMake(0, 0, 320, 320)];
+    [self.playerLayer setFrame:CGRectMake(0, 0, kHeightOfMedia, kWidthOfMedia)];
     [self.playerLayer setBackgroundColor:[UIColor blackColor].CGColor];
     [self.playerLayer setVideoGravity:AVLayerVideoGravityResize];
     [self.videoHolderView.layer addSublayer:self.playerLayer];
@@ -378,8 +486,10 @@ typedef enum {
 }
 
 - (void)hideLoadingError {
-    self.controlView.backgroundColor = [UIColor clearColor];
-    [self.controlView setImage:nil];
+    if (self.controlView) {
+        self.controlView.backgroundColor = [UIColor clearColor];
+        [self.controlView setImage:nil];
+    }
 }
 
 - (void)startSpinner {
@@ -399,9 +509,39 @@ typedef enum {
 }
 
 #pragma mark - User Name Button
-- (IBAction)userButtonPressed:(UIButton *)sender {
-    if (delegate && [delegate respondsToSelector:@selector(userButtonPressedFromRow:)]) {
-        [delegate userButtonPressedFromRow:self.row];
+
+- (void)usernamePressed:(UITapGestureRecognizer *)g {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(userButtonPressedFromRow:)]) {
+        [self.delegate userButtonPressedFromRow:self.row];
     }
 }
+
++ (CGFloat)heightForPost:(TDPost *)post {
+    CGFloat commentHeight = [TDViewControllerHelper heightForComment:post.comment withMentions:post.mentions];
+    commentHeight = commentHeight == 0 ? 0 : commentHeight + kCommentBottomPadding;
+    switch (post.kind) {
+        case TDPostKindPhoto:
+        case TDPostKindVideo:
+            return kHeightOfProfileRow + kHeightOfMedia + commentHeight;
+            break;
+            
+        case TDPostKindText:
+            return kHeightOfProfileRow + commentHeight;
+            break;
+
+        case TDPostKindUnknown:
+            return kHeightOfProfileRow;
+            break;
+    }
+}
+
+#pragma mark - TTTAttributedLabelDelegate
+
+- (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithURL:(NSURL *)url {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(userProfilePressedWithId:)]) {
+        [self.delegate userProfilePressedWithId:[NSNumber numberWithInteger:[[url path] integerValue]]];
+    }
+}
+
+
 @end

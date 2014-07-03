@@ -11,6 +11,7 @@
 
 static NSString *const kKindVideo = @"video";
 static NSString *const kKindPhoto = @"photo";
+static NSString *const kKindText  = @"text";
 
 @implementation TDPost
 
@@ -29,19 +30,29 @@ static NSString *const kKindPhoto = @"photo";
 - (void)loadUpFromDict:(NSDictionary *)dict {
     _postId   = [dict objectForKey:@"id"];
     _user = [[TDUser alloc] initWithDictionary:[dict objectForKey:@"user"]];
-    _filename = [dict objectForKey:@"filename"];
+    if ([dict objectForKey:@"filename"] && ![[dict objectForKey:@"filename"] isEqual:[NSNull null]]) {
+        _filename = [dict objectForKey:@"filename"];
+    }
     _createdAt = [TDViewControllerHelper dateForRFC3339DateTimeString:[dict objectForKey:@"created_at"]];
     _liked = [[dict objectForKey:@"liked"] boolValue];
     _likers = [dict objectForKey:@"likers"];
     _commentsTotalCount = [dict objectForKey:@"comment_count"];
     _likersTotalCount = [dict objectForKey:@"like_count"];
     _slug = [dict objectForKey:@"slug"];
+    _personalRecord = [[dict objectForKey:@"personal_record"] boolValue];
+    if ([dict objectForKey:@"comment"] && ![[dict objectForKey:@"comment"] isEqual:[NSNull null]]) {
+        _comment = [[dict objectForKey:@"comment"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    }
+    _mentions = [dict objectForKey:@"mentions"];
 
-    NSString *kind = [dict objectForKey:@"kind"];
+    // Covers NSNull cases
+    NSString *kind = [NSString stringWithFormat:@"%@", [dict objectForKey:@"kind"]];
     if ([kind isEqualToString:kKindPhoto]) {
         _kind = TDPostKindPhoto;
     } else if ([kind isEqualToString:kKindVideo]) {
         _kind = TDPostKindVideo;
+    } else if ([kind isEqualToString:kKindText]) {
+        _kind = TDPostKindText;
     }
 
     TDComment *comment = nil;

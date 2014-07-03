@@ -28,7 +28,7 @@
 @property (weak, nonatomic) IBOutlet UIView *topLineView;
 @property (weak, nonatomic) IBOutlet UIView *optionsView;
 
-@property (nonatomic) BOOL isOriginal;
+//@property (nonatomic) BOOL isOriginal;
 @property (nonatomic) BOOL isPR;
 @property (nonatomic) NSString *filename;
 @property (nonatomic) NSString *thumbnailPath;
@@ -108,7 +108,7 @@
 - (void)shareVideo:(NSString *)filename withThumbnail:(NSString *)thumbnailPath isOriginal:(BOOL)original {
     self.thumbnailPath = thumbnailPath;
     self.filename = filename;
-    self.isOriginal = original;
+//    self.isOriginal = original;
     [self.previewImage setImage:[UIImage imageWithContentsOfFile:self.thumbnailPath]];
     self.previewImage.hidden = NO;
     [self updatePostButton:YES];
@@ -191,7 +191,7 @@
                 [self cancelUpload];
                 self.thumbnailPath = nil;
                 self.filename = nil;
-                self.isOriginal = nil;
+//                self.isOriginal = NO;
                 self.previewImage.image = nil;
                 self.previewImage.hidden = YES;
                 [self updatePostButton:[[self.commentTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0];

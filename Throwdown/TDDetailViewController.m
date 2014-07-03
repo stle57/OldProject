@@ -31,7 +31,6 @@ static float const kMaxInputHeight = 100.;
 @property (weak, nonatomic) UIView *currentKeyboardView;
 
 @property (nonatomic) UITapGestureRecognizer *tapGesture;
-@property (nonatomic) CGFloat postViewHeight;
 @property (nonatomic) CGFloat minLikeheight;
 @property (nonatomic) BOOL liking;
 @property (nonatomic) BOOL isEditing;
@@ -77,12 +76,7 @@ static float const kMaxInputHeight = 100.;
     self.navigationItem.rightBarButtonItem = deleteBarButton;
 
     // Cell heights
-    NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_POST_VIEW owner:self options:nil];
-    TDPostView *cell = [topLevelObjects objectAtIndex:0];
-    self.postViewHeight = cell.frame.size.height;
-    cell = nil;
-    topLevelObjects = nil;
-    topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDDetailsLikesCell" owner:self options:nil];
+    NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDDetailsLikesCell" owner:self options:nil];
     TDDetailsLikesCell *cell1 = [topLevelObjects objectAtIndex:0];
     self.minLikeheight = cell1.frame.size.height;
     cell1 = nil;
@@ -258,16 +252,12 @@ static float const kMaxInputHeight = 100.;
     if (indexPath.row == 0) {
         TDPostView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_POST_VIEW];
         if (!cell) {
-            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_POST_VIEW owner:self options:nil];
-            cell = [topLevelObjects objectAtIndex:0];
+            cell = [[TDPostView alloc] init];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
-            cell.bottomPaddingLine.hidden = YES;
-            cell.likeView.hidden = YES;
             cell.delegate = self;
         }
 
         [cell setPost:self.post];
-        cell.likeView.row = indexPath.row;
         return cell;
     }
 
@@ -307,7 +297,7 @@ static float const kMaxInputHeight = 100.;
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     // Post
     if (indexPath.row == 0) {
-        return self.postViewHeight;
+        return [TDPostView heightForPost:self.post];
     }
 
     // Likes row
@@ -389,6 +379,12 @@ static float const kMaxInputHeight = 100.;
     [self showUserProfile:self.post.user.userId];
 }
 
+#pragma mark - TDPostViewDelegate and TDDetailsCommentsCellDelegate
+
+- (void)userProfilePressedWithId:(NSNumber *)userId {
+    [self showUserProfile:userId];
+}
+
 #pragma mark - TDDetailsCommentsCellDelegate
 
 - (void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber {
@@ -398,10 +394,6 @@ static float const kMaxInputHeight = 100.;
         TDComment *comment = [self.post.comments objectAtIndex:commentNumber];
         [self showUserProfile:comment.user.userId];
     }
-}
-
-- (void)userProfilePressedWithId:(NSNumber *)userId {
-    [self showUserProfile:userId];
 }
 
 - (void)showUserProfile:(NSNumber *)userId {

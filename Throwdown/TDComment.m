@@ -30,7 +30,7 @@
         _body = body;
         _mentions = @[];
         _createdAt = date;
-        [self figureOutMessageLabelHeightForThisMessage:_body];
+        _messageHeight = [TDViewControllerHelper heightForComment:_body withMentions:_mentions];
     }
     return self;
 }
@@ -40,23 +40,7 @@
     _body = [dict objectForKey:@"body"];
     _mentions = [dict objectForKey:@"mentions"];
     _createdAt = [TDViewControllerHelper dateForRFC3339DateTimeString:[dict objectForKey:@"created_at"]];
-    [self figureOutMessageLabelHeightForThisMessage:_body];
-}
-
-- (void)figureOutMessageLabelHeightForThisMessage:(NSString *)text {
-
-    // Slow but the most accurate way to calculate the size
-    TTTAttributedLabel *label = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(0, 0, COMMENT_MESSAGE_WIDTH, 18)];
-    label.font = COMMENT_MESSAGE_FONT;
-    label.verticalAlignment = TTTAttributedLabelVerticalAlignmentTop;
-    [label setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
-    [TDViewControllerHelper linkUsernamesInLabel:label users:_mentions];
-    label.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:label.attributedText];
-    label.numberOfLines = 0;
-
-    // Adding 2 covers an edge case where emoji would get cut off
-    CGSize size = [label sizeThatFits:CGSizeMake(COMMENT_MESSAGE_WIDTH, MAXFLOAT)];
-    _messageHeight = size.height + 2;
+    _messageHeight = [TDViewControllerHelper heightForComment:_body withMentions:_mentions];
 }
 
 - (void)replaceUser:(TDUser *)newUser {

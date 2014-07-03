@@ -34,7 +34,6 @@
     BOOL goneDownstream;
     CGPoint origRecordButtonCenter;
     UIDynamicAnimator *animator;
-    CGFloat postViewHeight;
     CGFloat likeHeight;
     CGFloat commentButtonsHeight;
     CGFloat commentRowHeight;

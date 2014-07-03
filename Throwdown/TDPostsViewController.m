@@ -24,12 +24,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     [super viewDidLoad];
 
     // Cell heights
-    NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_POST_VIEW owner:self options:nil];
-    TDPostView *cell = [topLevelObjects objectAtIndex:0];
-    postViewHeight = cell.frame.size.height;
-    cell = nil;
-    topLevelObjects = nil;
-    topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_LIKE_VIEW owner:self options:nil];
+    NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_LIKE_VIEW owner:self options:nil];
     TDLikeView *likeCell = [topLevelObjects objectAtIndex:0];
     likeHeight = likeCell.frame.size.height;
     likeCell = nil;
@@ -473,8 +468,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     if (indexPath.row == 0) {
         TDPostView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_POST_VIEW];
         if (!cell) {
-            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_POST_VIEW owner:self options:nil];
-            cell = [topLevelObjects objectAtIndex:0];
+            cell = [[TDPostView alloc] init];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             cell.delegate = self;
         }
@@ -505,7 +499,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
     // Like Comment Buttons - last row
     NSInteger totalRows = [self tableView:nil numberOfRowsInSection:indexPath.section];
-    NSInteger lastRow = totalRows-1;
+    NSInteger lastRow = totalRows - 1;
 
     if (indexPath.row == lastRow) {
         TDTwoButtonView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_COMMENT_VIEW];
@@ -518,12 +512,17 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
         [cell setLike:post.liked];
         cell.row = indexPath.section;
+        if (post.kind == TDPostKindText) {
+            cell.buttonBorder.hidden = NO;
+        } else {
+            cell.buttonBorder.hidden = [post.likersTotalCount intValue] == 0 && [post.commentsTotalCount intValue] == 0;
+        }
 
         return cell;
     }
 
     // More Comments Row
-    if ([post.commentsTotalCount intValue] > 2 && indexPath.row == (lastRow-1)) {
+    if ([post.commentsTotalCount intValue] > 2 && indexPath.row == (lastRow - 1)) {
         TDMoreComments *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_MORE_COMMENTS];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_MORE_COMMENTS owner:self options:nil];
@@ -589,21 +588,20 @@ static CGFloat const kHeightOfStatusBar = 65.0;
         return uploadMoreHeight;
     }
 
+    TDPost *post = [self postForRow:indexPath.section];
     if (indexPath.row == 0) {
-        return postViewHeight;
+        if (post) {
+            return [TDPostView heightForPost:post];
+        } else {
+            return 0;
+        }
     }
 
-    TDPost *post = [self postForRow:indexPath.section];
     if (indexPath.row == 1) {
         return [post.likers count] > 0 ? likeHeight : 0;
     }
 
     NSInteger lastRow = [self tableView:nil numberOfRowsInSection:indexPath.section] - 1;
-
-    // last row has to be 100 higher except on profile view to allow press on Like / Comment  <---extra height now in upload more cell
-    if (indexPath.row == lastRow && realRow == ([self.posts count] - 1)) {
-        return commentButtonsHeight; //(needsProfileHeader ? 0 : 0.0) + commentButtonsHeight;
-    }
 
     if (indexPath.row == lastRow) {
         return commentButtonsHeight;
@@ -658,7 +656,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     }
 }
 
-#pragma mark - TDPostView Delegate
+#pragma mark - TDPostViewDelegate
 
 - (void)postTouchedFromRow:(NSInteger)row {
     TDPost *post = [self postForRow:row];
@@ -670,16 +668,19 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 - (void)userButtonPressedFromRow:(NSInteger)row {
 }
 
-#pragma mark - TDDetailsCommentsCellDelegate
-
-- (void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber {
-}
+#pragma mark - TDPostViewDelegate and TDDetailsCommentsCellDelegate
 
 - (void)userProfilePressedWithId:(NSNumber *)userId {
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
     vc.userId = userId;
     vc.fromProfileType = kFromProfileScreenType_OtherUser;
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+
+#pragma mark - TDDetailsCommentsCellDelegate
+
+- (void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber {
 }
 
 #pragma mark - TDLikeCommentViewDelegates
@@ -803,7 +804,6 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     if (showBottomSpinner) {
         return;
     }
-
     showBottomSpinner = YES;
 
     // Add a bottom row
@@ -825,11 +825,9 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 - (void)replacePostId:(NSNumber *)postId withPost:(TDPost *)post {
     debug NSLog(@"replacePostID:%@ Post:%@", postId, post);
     NSMutableArray *newPostsArray = [NSMutableArray arrayWithArray:self.posts];
-    for (TDPost *aPost in self.posts)
-    {
+    for (TDPost *aPost in self.posts) {
         if ([aPost.postId isEqualToNumber:postId]) {
-            [newPostsArray replaceObjectAtIndex:[self.posts indexOfObject:aPost]
-                                     withObject:post];
+            [newPostsArray replaceObjectAtIndex:[self.posts indexOfObject:aPost] withObject:post];
             self.posts = [NSArray arrayWithArray:newPostsArray];
             [self.tableView reloadData];
             break;

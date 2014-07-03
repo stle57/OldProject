@@ -20,6 +20,5 @@
 
 - (id)initWithDictionary:(NSDictionary *)dict;
 - (id)initWithUser:(TDUser *)user body:(NSString *)body createdAt:(NSDate *)date;
-- (void)figureOutMessageLabelHeightForThisMessage:(NSString *)text;
 - (void)replaceUser:(TDUser *)newUser;
 @end
