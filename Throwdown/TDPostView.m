@@ -243,11 +243,12 @@ static CGFloat const kWidthOfMedia = 320.;
         self.videoHolderView = [[UIView alloc] initWithFrame:CGRectMake(0, [self getMediaOffset], kHeightOfMedia, kWidthOfMedia)];
         self.controlView = [[UIImageView alloc] initWithFrame:CGRectMake(0, [self getMediaOffset], kHeightOfMedia, kWidthOfMedia)];
         self.controlView.contentMode = UIViewContentModeCenter;
+        self.controlView.userInteractionEnabled = YES;
         self.tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapFrom:)];
         [self.controlView addGestureRecognizer:self.tapGestureRecognizer];
+        [self addSubview:self.controlView];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pauseTapGesture:) name:TDNotificationPauseTapGesture object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resumeTapGesture:) name:TDNotificationResumeTapGesture object:nil];
-        [self addSubview:self.controlView];
     }
 }
 
@@ -315,7 +316,7 @@ static CGFloat const kWidthOfMedia = 320.;
 
 - (void)updateControlImage:(ControlState)controlState {
     if (!self.playerSpinner) {
-        self.playerSpinner = [[UIImageView alloc] initWithFrame:CGRectMake(290.0, 332.0, 20.0, 20.0)];
+        self.playerSpinner = [[UIImageView alloc] initWithFrame:CGRectMake(290.0, [self getMediaOffset] + kHeightOfMedia - 30, 20.0, 20.0)];
         [self addSubview:self.playerSpinner];
     }
     [self stopSpinner];
