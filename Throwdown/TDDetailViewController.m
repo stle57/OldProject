@@ -1,4 +1,4 @@
-//
+ //
 //  TDDetailViewController.m
 //  Throwdown
 //
@@ -7,7 +7,9 @@
 //
 
 #import "TDDetailViewController.h"
+#import "TDTextViewControllerHelper.h"
 #import "TDPostAPI.h"
+#import "TDAPIClient.h"
 #import "TDConstants.h"
 #import "TDComment.h"
 #import "TDViewControllerHelper.h"
@@ -15,6 +17,7 @@
 #import "TDUserProfileViewController.h"
 #import "TDAnalytics.h"
 #import "UIPlaceHolderTextView.h"
+#import "TDUserListViewController.h"
 
 static float const kInputLineSpacing = 3;
 static float const kMinInputHeight = 33.;
@@ -23,6 +26,7 @@ static float const kMaxInputHeight = 100.;
 @interface TDDetailViewController () <UITextViewDelegate, NSLayoutManagerDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UITableView *filteredUserNameView;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UIView *commentView;
 @property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *textView;
@@ -35,7 +39,8 @@ static float const kMaxInputHeight = 100.;
 @property (nonatomic) BOOL liking;
 @property (nonatomic) BOOL isEditing;
 @property (nonatomic) NSString *cachedText;
-
+@property (nonatomic) NSString *userNameFilter;
+@property (nonatomic) TDUserListViewController *filteredUserNameController;
 @end
 
 @implementation TDDetailViewController
@@ -48,7 +53,9 @@ static float const kMaxInputHeight = 100.;
     self.tableView.dataSource = nil;
     self.tableView = nil;
     self.textView.delegate = nil;
-
+    self.filteredUserNameView.delegate = nil;
+    self.filteredUserNameView = nil;
+    self.filteredUserNameController = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -91,6 +98,18 @@ static float const kMaxInputHeight = 100.;
     self.textView.layer.borderColor = [UIColor colorWithRed:178./255. green:178./255. blue:178./255. alpha:1].CGColor;
     self.textView.contentInset = UIEdgeInsetsMake(0, 0, -10, 0);
     self.textView.placeholder = kCommentDefaultText;
+
+    // User name filter table view
+    if (self.filteredUserNameController == nil) {
+        self.filteredUserNameController = [[TDUserListViewController alloc] init];
+        // Set this delegate so that data comes back to this controller.
+        self.filteredUserNameController.delegate = self;
+    }
+    self.filteredUserNameView.delegate = self.filteredUserNameController;
+    self.filteredUserNameView.dataSource = self.filteredUserNameController;
+    [self.view addSubview:self.filteredUserNameView];
+    self.filteredUserNameView.hidden = YES;
+
     self.sendButton.titleLabel.font = [TDConstants fontSemiBoldSized:18.];
     self.sendButton.enabled = NO;
     self.topLineView.frame = CGRectMake(0, 0, 320, 1.0 / [[UIScreen mainScreen] scale]);
@@ -117,6 +136,9 @@ static float const kMaxInputHeight = 100.;
 
     CGFloat height = [UIScreen mainScreen].bounds.size.height - self.commentView.layer.frame.size.height;
     self.tableView.frame = CGRectMake(0, 0, 320, height);
+
+
+    [self.filteredUserNameView setContentInset:UIEdgeInsetsMake(64, 0, 0, 0)];
 
     // TODO: only when user didn't go downstream
     // Get the full post info
@@ -233,6 +255,7 @@ static float const kMaxInputHeight = 100.;
             [self.tableView reloadData];
         }
     }
+
 }
 
 - (void)postDeleted:(NSNotification*)notification {
@@ -242,12 +265,15 @@ static float const kMaxInputHeight = 100.;
 
 #pragma mark - TableView delegates
 
+- (NSInteger)tableView:(UITableView*)tableView numberOfSectionsInTableView:(NSInteger)section {
+    return 1;
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return 2 + [self.post.comments count];   // PostView, Like Cell, +Comments.count
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-
     // Post View
     if (indexPath.row == 0) {
         TDPostView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_POST_VIEW];
@@ -256,8 +282,8 @@ static float const kMaxInputHeight = 100.;
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             cell.delegate = self;
         }
-
         [cell setPost:self.post];
+        cell.likeView.row = indexPath.row;
         return cell;
     }
 
@@ -487,6 +513,7 @@ static float const kMaxInputHeight = 100.;
         self.commentView.frame = commentFrame;
         self.sendButton.frame = buttonFrame;
         self.tableView.frame = tableFrame;
+        self.filteredUserNameView.frame = tableFrame;
     } completion:nil];
 }
 
@@ -539,8 +566,43 @@ static float const kMaxInputHeight = 100.;
 
 - (void)textViewDidChange:(UITextView *)textView {
     CGFloat height = MAX(MIN(textView.contentSize.height - kInputLineSpacing, kMaxInputHeight), kMinInputHeight);
+
+    NSString *currentText = self.textView.text;
+    int userNameLength = [TDTextViewControllerHelper findUsernameLength:(currentText)];
+
+    if(userNameLength != 0) {
+        self.userNameFilter = [TDTextViewControllerHelper getUserNameList:currentText length:userNameLength];
+        if ([self.userNameFilter length] != 0) {
+            [self.filteredUserNameController showTableView:self.userNameFilter];
+            if(self.filteredUserNameController.filteredList != 0){
+                self.filteredUserNameView.hidden = NO;
+                [self.filteredUserNameView reloadData];
+            } else {
+                self.filteredUserNameView.hidden = YES;
+            }
+        } else {
+            self.filteredUserNameView.hidden = YES;
+        }
+
+    } else {
+        self.filteredUserNameView.hidden = YES;
+    }
+
     [self updateCommentSize:height];
     debug NSLog(@"H: %f / %f", height, textView.contentSize.height);
+}
+
+
+
+- (void)updateTextView:(NSDictionary*) user {
+    NSString *currentText = self.textView.text;
+    NSString *userName = [[user objectForKey:@"username"] stringByAppendingString:@" "];
+    debug NSLog(@"concatenate with %@", userName);
+    NSString *newText = [currentText substringToIndex:(currentText.length-self.userNameFilter.length)];
+
+    self.textView.text = [newText stringByAppendingString:userName];
+
+    self.filteredUserNameView.hidden = YES;
 }
 
 - (void)updateCommentSize:(CGFloat)height {
@@ -619,6 +681,12 @@ static float const kMaxInputHeight = 100.;
 
 - (CGFloat)layoutManager:(NSLayoutManager *)layoutManager lineSpacingAfterGlyphAtIndex:(NSUInteger)glyphIndex withProposedLineFragmentRect:(CGRect)rect {
     return kInputLineSpacing;
+}
+
+#pragma mark - TDUserListViewControllerDelegate
+
+- (void)addItemViewController:(TDUserListViewController *)controller didFinishEnteringItem:(NSDictionary *)item {
+    [self updateTextView:item];
 }
 
 @end

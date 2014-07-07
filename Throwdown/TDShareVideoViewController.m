@@ -8,12 +8,16 @@
 
 #import "TDShareVideoViewController.h"
 #import "TDViewControllerHelper.h"
+#import "TDTextViewControllerHelper.h"
 #import "UIPlaceHolderTextView.h"
 #import "TDConstants.h"
 #import "TDAnalytics.h"
 #import "TDPostAPI.h"
 #import "TDSlideUpSegue.h"
 #import "UIAlertView+TDBlockAlert.h"
+#import "TDUserAPI.h"
+#import "TDAPIClient.h"
+#import "TDUserListViewController.h"
 
 @interface TDShareVideoViewController () <UITextViewDelegate, NSLayoutManagerDelegate>
 
@@ -28,11 +32,14 @@
 @property (weak, nonatomic) IBOutlet UIButton *prButton;
 @property (weak, nonatomic) IBOutlet UIView *topLineView;
 @property (weak, nonatomic) IBOutlet UIView *optionsView;
+@property (weak, nonatomic) IBOutlet UITableView *filteredUserNameView;
 
 @property (nonatomic) BOOL isOriginal;
 @property (nonatomic) BOOL isPR;
 @property (nonatomic) NSString *filename;
 @property (nonatomic) NSString *thumbnailPath;
+@property (nonatomic) NSString *userNameFilter;
+@property (nonatomic) TDUserListViewController *filteredUserNameController;
 
 @property (nonatomic) UIImage *prOnImage;
 @property (nonatomic) UIImage *prOffImage;
@@ -79,6 +86,18 @@
     if ([UIScreen mainScreen].bounds.size.height == 480.0) {
         self.optionsView.center = CGPointMake(self.optionsView.center.x, 445);
     }
+
+    // User name filter table view
+	if (self.filteredUserNameController == nil) {
+		self.filteredUserNameController = [[TDUserListViewController alloc] init];
+        self.filteredUserNameController.delegate = self;
+        [[self navigationController] pushViewController:self.filteredUserNameController animated:YES];
+	}
+    self.filteredUserNameView.delegate = self.filteredUserNameController;
+    self.filteredUserNameView.dataSource = self.filteredUserNameController;
+    [self.view addSubview:self.filteredUserNameView];
+    self.filteredUserNameView.hidden = YES;
+
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -94,8 +113,16 @@
     [self.commentTextView resignFirstResponder];
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self.filteredUserNameView setContentInset:UIEdgeInsetsMake(0, 0, 0, 0)];
+}
+
 - (void)dealloc {
     self.commentTextView.delegate = nil;
+    self.filteredUserNameView.delegate = nil;
+    self.filteredUserNameView = nil;
+    self.filteredUserNameController = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -121,6 +148,7 @@
     [self.mediaButton setImage:nil forState:UIControlStateHighlighted];
     [self.mediaButton setImage:nil forState:UIControlStateSelected];
 }
+#pragma mark - Keyboard / TextView management
 
 - (void)removeMedia {
     [self cancelUpload];
@@ -141,7 +169,6 @@
     // Empty on purpose
 }
 
-
 - (UIStoryboardSegue *)segueForUnwindingToViewController:(UIViewController *)toViewController fromViewController:(UIViewController *)fromViewController identifier:(NSString *)identifier {
     debug NSLog(@"share video unwind segue: %@", identifier);
 
@@ -153,7 +180,6 @@
                                              identifier:identifier];
     }
 }
-
 
 #pragma mark - Keyboard handling
 
@@ -209,6 +235,41 @@
     self.postButton.enabled = (self.filename || [[textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0);
 }
 
+- (void)updateTextView:(NSDictionary*) user {
+    NSString *currentText = self.commentTextView.text;
+    NSString *userName = [[user objectForKey:@"username"] stringByAppendingString:@" "];
+    NSString *newText = [currentText substringToIndex:(currentText.length-self.userNameFilter.length)] ;
+
+    self.commentTextView.text = [newText stringByAppendingString:userName];
+
+    self.filteredUserNameView.hidden = YES;
+}
+
+- (void)textViewDidChange:(UITextView *)textView {
+    NSString *currentText = self.commentTextView.text;
+
+    int userNameLength = [TDTextViewControllerHelper findUsernameLength:(currentText)];
+
+    if(userNameLength != 0) {
+
+        self.userNameFilter = [TDTextViewControllerHelper getUserNameList:currentText length:userNameLength];
+        if ([self.userNameFilter length] != 0) {
+            [self.filteredUserNameController showTableView:self.userNameFilter];
+            if(self.filteredUserNameController.filteredList != 0){
+                self.filteredUserNameView.hidden = NO;
+                [self.filteredUserNameView reloadData];
+            } else {
+                self.filteredUserNameView.hidden = YES;
+            }
+        } else {
+            self.filteredUserNameView.hidden = YES;
+        }
+
+    } else {
+        self.filteredUserNameView.hidden = YES;
+    }
+
+}
 #pragma mark - NSLayoutManagerDelegate
 
 - (CGFloat)layoutManager:(NSLayoutManager *)layoutManager lineSpacingAfterGlyphAtIndex:(NSUInteger)glyphIndex withProposedLineFragmentRect:(CGRect)rect {
@@ -268,6 +329,12 @@
     }
     [self performSegueWithIdentifier:@"VideoCloseSegue" sender:self];
     [[TDAnalytics sharedInstance] logEvent:@"camera_shared"];
+}
+
+#pragma mark - TDUserListViewDelegate
+
+- (void)addItemViewController:(TDUserListViewController *)controller didFinishEnteringItem:(NSDictionary *)item {
+    [self updateTextView:item];
 }
 
 @end

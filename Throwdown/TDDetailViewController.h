@@ -11,6 +11,7 @@
 #import "TDDetailsLikesCell.h"
 #import "TDDetailsCommentsCell.h"
 #import "TDPostView.h"
+#import "TDUserListViewController.h"
 
 @protocol TDDetailViewControllerDelegate <NSObject>
 
@@ -19,12 +20,11 @@
 -(void)replacePostId:(NSNumber *)postId withPost:(TDPost *)post;
 @end
 
-@interface TDDetailViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, TDDetailsLikesCellDelegate, TDDetailsCommentsCellDelegate, UIAlertViewDelegate, UIActionSheetDelegate, TDPostViewDelegate>
+@interface TDDetailViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, TDDetailsLikesCellDelegate, TDDetailsCommentsCellDelegate, UIAlertViewDelegate, UIActionSheetDelegate, TDPostViewDelegate, TDUserListViewDelegate>
 
 @property (nonatomic, assign) id <TDDetailViewControllerDelegate> __unsafe_unretained delegate;
 @property (nonatomic, retain) TDPost *post;
 @property (nonatomic) NSNumber *postId;
-
 - (void)unwindToRoot;
 
 @end

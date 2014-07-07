@@ -10,6 +10,7 @@
 #import "TDAPIClient.h"
 #import "RSClient.h"
 #import "TDConstants.h"
+#import "AFNetworking.h"
 #import <Crashlytics/Crashlytics.h>
 
 @implementation TDUserAPI
@@ -144,5 +145,26 @@
     }
  }
 
+-(void)getCommunityUserList:(void (^)(BOOL success, NSDictionary* communityList))callback {
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    TDCurrentUser *currentUser = [TDCurrentUser sharedInstance];
 
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/users.json?user_token=%@", currentUser.authToken]];
+
+    debug NSLog(@"url= %@", url);
+
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            debug NSLog (@"calling callback");
+            NSDictionary *response = (NSDictionary*)responseObject;
+            callback(YES, [response objectForKey:@"users"]);
+        } else {
+            debug NSLog(@"did not get userlist");
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"Get full HTTP Error: %@", error);
+    }];
+
+}
 @end

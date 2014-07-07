@@ -8,6 +8,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TDDetailViewController">
             <connections>
                 <outlet property="commentView" destination="EXs-eB-bRD" id="ky5-g6-A9b"/>
+                <outlet property="filteredUserNameView" destination="k8J-br-bqL" id="tQn-bI-gVD"/>
                 <outlet property="sendButton" destination="LGq-DU-Msl" id="0W0-qN-tDv"/>
                 <outlet property="tableView" destination="mrO-ge-eiY" id="M4D-jz-UHL"/>
                 <outlet property="textView" destination="GxY-n0-OSg" id="Vpb-14-Sea"/>
@@ -83,5 +84,13 @@
             <color key="textColor" red="0.19607843137254902" green="0.19607843137254902" blue="0.19607843137254902" alpha="1" colorSpace="calibratedRGB"/>
             <nil key="highlightedColor"/>
         </label>
+        <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="k8J-br-bqL">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+            <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+            <color key="sectionIndexColor" red="1" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+            <color key="sectionIndexBackgroundColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+        </tableView>
     </objects>
 </document>

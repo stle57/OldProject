@@ -61,6 +61,10 @@
 		2DE4653318F605DC0042D81C /* TDUserProfileEditViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE4653118F605DC0042D81C /* TDUserProfileEditViewController.xib */; };
 		2DE4653718F614150042D81C /* TDUserEditCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE4653518F614150042D81C /* TDUserEditCell.m */; };
 		2DE4653818F614150042D81C /* TDUserEditCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE4653618F614150042D81C /* TDUserEditCell.xib */; };
+		4D1F8395196F89FB00B5DB76 /* TDUserList.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D1F8394196F89FB00B5DB76 /* TDUserList.m */; };
+		4DC2C9981968F69C00A210CF /* TDTextViewControllerHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC2C9971968F69C00A210CF /* TDTextViewControllerHelper.m */; };
+		4DC2C9A31969F72600A210CF /* TDUserListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC2C9A11969F72600A210CF /* TDUserListViewController.m */; };
+		4DC2C9A41969F72600A210CF /* TDUserListViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DC2C9A21969F72600A210CF /* TDUserListViewController.xib */; };
 		579149E08F7B4EE789901248 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E657ABE418B84EA68554F855 /* libPods.a */; };
 		A102FEA118ECF43C00139606 /* libFlurry_4.4.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A102FEA018ECF43C00139606 /* libFlurry_4.4.0.a */; };
 		A109FF351909C76000506F88 /* TDAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = A109FF341909C76000506F88 /* TDAnalytics.m */; };
@@ -229,6 +233,13 @@
 		2DE4653418F614150042D81C /* TDUserEditCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserEditCell.h; sourceTree = "<group>"; };
 		2DE4653518F614150042D81C /* TDUserEditCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUserEditCell.m; sourceTree = "<group>"; };
 		2DE4653618F614150042D81C /* TDUserEditCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDUserEditCell.xib; sourceTree = "<group>"; };
+		4D1F8393196F89FB00B5DB76 /* TDUserList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserList.h; sourceTree = "<group>"; };
+		4D1F8394196F89FB00B5DB76 /* TDUserList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUserList.m; sourceTree = "<group>"; };
+		4DC2C9961968F69C00A210CF /* TDTextViewControllerHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTextViewControllerHelper.h; sourceTree = "<group>"; };
+		4DC2C9971968F69C00A210CF /* TDTextViewControllerHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTextViewControllerHelper.m; sourceTree = "<group>"; };
+		4DC2C9A01969F72600A210CF /* TDUserListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserListViewController.h; sourceTree = "<group>"; };
+		4DC2C9A11969F72600A210CF /* TDUserListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUserListViewController.m; sourceTree = "<group>"; };
+		4DC2C9A21969F72600A210CF /* TDUserListViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDUserListViewController.xib; sourceTree = "<group>"; };
 		A102FE9F18ECF43C00139606 /* Flurry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flurry.h; sourceTree = "<group>"; };
 		A102FEA018ECF43C00139606 /* libFlurry_4.4.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry_4.4.0.a; sourceTree = "<group>"; };
 		A109FF331909C76000506F88 /* TDAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDAnalytics.h; sourceTree = "<group>"; };
@@ -641,6 +652,8 @@
 				A1432D1F18AA02990073E492 /* TDViewControllerHelper.m */,
 				A11999DB18DC0D4200C39ABF /* TDFileSystemHelper.h */,
 				A11999DC18DC0D4200C39ABF /* TDFileSystemHelper.m */,
+				4DC2C9961968F69C00A210CF /* TDTextViewControllerHelper.h */,
+				4DC2C9971968F69C00A210CF /* TDTextViewControllerHelper.m */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -712,6 +725,8 @@
 				A1B1191F190E030700FE7102 /* TDDeviceInfo.m */,
 				A1B3EF40193F9B5D0014B619 /* TDNotice.h */,
 				A1B3EF41193F9B5D0014B619 /* TDNotice.m */,
+				4D1F8393196F89FB00B5DB76 /* TDUserList.h */,
+				4D1F8394196F89FB00B5DB76 /* TDUserList.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -758,6 +773,9 @@
 				2D1AEE6F18C937560055C315 /* TDDetailsLikesCell.xib */,
 				2D1AEE6D18C937560055C315 /* TDDetailsLikesCell.h */,
 				2D1AEE6E18C937560055C315 /* TDDetailsLikesCell.m */,
+				4DC2C9A01969F72600A210CF /* TDUserListViewController.h */,
+				4DC2C9A11969F72600A210CF /* TDUserListViewController.m */,
+				4DC2C9A21969F72600A210CF /* TDUserListViewController.xib */,
 			);
 			name = "Detail View";
 			sourceTree = "<group>";
@@ -964,6 +982,7 @@
 				2DA5F05218D36745003D2F99 /* ProximaNova-Light.otf in Resources */,
 				A10F9C251909B01600D2CAB0 /* SingleBellDing.caf in Resources */,
 				2D1AEE7118C937560055C315 /* TDDetailsLikesCell.xib in Resources */,
+				4DC2C9A41969F72600A210CF /* TDUserListViewController.xib in Resources */,
 				2D648A1718C9415D002FE0AD /* TDDetailsCommentsCell.xib in Resources */,
 				2DA5354518F35E4300031128 /* TDUserProfileViewController.xib in Resources */,
 				A1D13FF21905F2BE000980E0 /* Podfile in Resources */,
@@ -1063,6 +1082,7 @@
 				A1BB463018F5FDD700BD9527 /* UIAlertView+TDBlockAlert.m in Sources */,
 				A19FF5E718932868001A0AD0 /* TDUserAPI.m in Sources */,
 				A1D6BB1619775492007983F8 /* TDTextUpload.m in Sources */,
+				4DC2C9A31969F72600A210CF /* TDUserListViewController.m in Sources */,
 				2D648A1618C9415D002FE0AD /* TDDetailsCommentsCell.m in Sources */,
 				2DE4653718F614150042D81C /* TDUserEditCell.m in Sources */,
 				A129BAF9197B5BEE00F6FC2B /* TDCustomRefreshControl.m in Sources */,
@@ -1083,10 +1103,12 @@
 				2DE2C6A51908657F00E51156 /* TDUserPasswordEditViewController.m in Sources */,
 				2DA41156191006450099617B /* TDResetPasswordViewController.m in Sources */,
 				A150F08A18A31B14009A72AD /* TDConstants.m in Sources */,
+				4D1F8395196F89FB00B5DB76 /* TDUserList.m in Sources */,
 				2D8320091911740A00A91282 /* TDPushEditCell.m in Sources */,
 				A14B2B8818B8351E00980A31 /* TDCurrentUser.m in Sources */,
 				A182D830188B60CD00F794A5 /* SAResizibleBubble.m in Sources */,
 				A182D8261889E8D900F794A5 /* TDEditVideoViewController.m in Sources */,
+				4DC2C9981968F69C00A210CF /* TDTextViewControllerHelper.m in Sources */,
 				A11E04E81888CB79002F981A /* main.m in Sources */,
 				A19FF5E41891FEEF001A0AD0 /* TDPost.m in Sources */,
 				A109FF351909C76000506F88 /* TDAnalytics.m in Sources */,
