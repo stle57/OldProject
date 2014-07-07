@@ -3,12 +3,12 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "nav_notif_hit.png"
+      "filename" : "nav_notif_new_hit.png"
     },
     {
       "idiom" : "universal",
       "scale" : "2x",
-      "filename" : "nav_notif_hit@2x.png"
+      "filename" : "nav_notif_new_hit@2x.png"
     }
   ],
   "info" : {
