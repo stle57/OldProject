@@ -13,6 +13,9 @@
 #import "TDAPIClient.h"
 #import <QuartzCore/QuartzCore.h>
 
+static CGFloat const kCommentWidthWithPreview = 248.;
+static CGFloat const kCommentWidthNoPreview = 306.;
+
 @interface TDActivitiesCell () <TTTAttributedLabelDelegate>
 
 @property (weak, nonatomic) IBOutlet TTTAttributedLabel *activityLabel;
@@ -43,36 +46,41 @@
     NSString *username = [user objectForKey:@"username"];
 
     [self.previewImage setImage:nil];
-    [[TDAPIClient sharedInstance] setImage:@{@"imageView":self.previewImage,
-                                             @"filename":[[post objectForKey:@"filename"] stringByAppendingString:FTImage],
-                                             @"width":@54,
-                                             @"height":@54}];
+    if ([[post objectForKey:@"filename"] isEqual:[NSNull null]]) {
+        self.previewImage.hidden = YES;
+    } else {
+        self.previewImage.hidden = NO;
+        [[TDAPIClient sharedInstance] setImage:@{@"imageView":self.previewImage,
+                                                 @"filename":[[post objectForKey:@"filename"] stringByAppendingString:FTImage],
+                                                 @"width":@54,
+                                                 @"height":@54}];
+    }
 
     NSString *text;
     NSArray *users;
     if ([@"comment" isEqualToString:[activity objectForKey:@"action"]]) {
         NSString *body = [[activity objectForKey:@"comment"] objectForKey:@"body"];
         users = [[activity objectForKey:@"comment"] objectForKey:@"mentions"];
-        text = [NSString stringWithFormat:@"%@ said: \"%@\"",
-                                          username,
-                                          body];
+        text = [NSString stringWithFormat:@"%@ said: \"%@\"", username, body];
     } else if ([@"like" isEqualToString:[activity objectForKey:@"action"]]) {
         text = [NSString stringWithFormat:@"%@ liked your post", username];
     }
 
-    [self.activityLabel setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
-    if (users) {
-        [TDViewControllerHelper linkUsernamesInLabel:self.activityLabel users:users];
+    if (text) {
+        [self.activityLabel setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
+        if (users) {
+            [TDViewControllerHelper linkUsernamesInLabel:self.activityLabel users:users];
+        }
+
+        // Link and bold the initial username
+        NSMutableAttributedString *mutableAttributedString = [self.activityLabel.attributedText mutableCopy];
+        [TDViewControllerHelper linkUsernamesInLabel:self.activityLabel users:@[user] pattern:@"(^\\w+\\b)"];
+        NSDictionary *userAttributes = @{ NSForegroundColorAttributeName:[TDConstants brandingRedColor], NSFontAttributeName: [TDConstants fontBoldSized:COMMENT_MESSAGE_FONT_SIZE] };
+        [mutableAttributedString addAttributes:userAttributes range:NSMakeRange(0, [username length])];
+        self.activityLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:mutableAttributedString withMultiple:1.f];
     }
 
-    // Link and bold the initial username
-    NSMutableAttributedString *mutableAttributedString = [self.activityLabel.attributedText mutableCopy];
-    [TDViewControllerHelper linkUsernamesInLabel:self.activityLabel users:@[user] pattern:@"(^\\w+\\b)"];
-    NSDictionary *userAttributes = @{ NSForegroundColorAttributeName:[TDConstants brandingRedColor], NSFontAttributeName: [TDConstants fontBoldSized:COMMENT_MESSAGE_FONT_SIZE] };
-    [mutableAttributedString addAttributes:userAttributes range:NSMakeRange(0, [username length])];
-    self.activityLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:mutableAttributedString withMultiple:1.f];
-
-    CGSize labelSize = [self.activityLabel sizeThatFits:CGSizeMake(248, MAXFLOAT)];
+    CGSize labelSize = [self.activityLabel sizeThatFits:CGSizeMake(self.previewImage.hidden ? kCommentWidthNoPreview : kCommentWidthWithPreview, MAXFLOAT)];
     CGSize timeSize  = self.timeLabel.frame.size;
     labelSize.height = labelSize.height + 7;
 

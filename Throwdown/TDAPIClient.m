@@ -400,6 +400,40 @@
     [operation start];
 }
 
+- (void)getVideo:(NSString *)filename callback:(void(^)(NSURL *videoLocation))callback error:(void(^)(void))errorCallback {
+
+    if ([TDFileSystemHelper videoExists:filename]) {
+        if (callback) {
+            callback([TDFileSystemHelper getVideoLocation:filename]);
+        }
+        return;
+    }
+
+    NSURL *imageURL = [NSURL URLWithString:[RSHost stringByAppendingFormat:@"/%@", filename]];
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[NSURLRequest alloc] initWithURL:imageURL]];
+    operation.responseSerializer = [AFHTTPResponseSerializer serializer];
+    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
+        // Because it could have been downloaded twice (hopefully not)
+        if (responseObject && [responseObject isKindOfClass:[NSData class]]) {
+            if (![TDFileSystemHelper videoExists:filename]) {
+                [TDFileSystemHelper saveData:responseObject filename:filename];
+            }
+            if (callback) {
+                callback([TDFileSystemHelper getVideoLocation:filename]);
+            }
+        } else if (errorCallback) {
+            errorCallback();
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"Video error: %@, %@", filename, error);
+        if (errorCallback) {
+            errorCallback();
+        }
+    }];
+    [operation start];
+}
+
+
 #pragma mark - Events
 - (void)logEvent:(NSString *)event sessionId:(NSNumber *)sessionId {
     NSString *url = [NSString stringWithFormat:@"%@/api/v1/events.json", [TDConstants getBaseURL]];

@@ -82,6 +82,14 @@
     return [TDFileSystemHelper fileExistsAtPath:[[self getCachePath] stringByAppendingFormat:@"/%@", filename]];
 }
 
++ (BOOL)videoExists:(NSString *)filename {
+    return [TDFileSystemHelper fileExistsAtPath:[[self getCachePath] stringByAppendingFormat:@"/%@", filename]];
+}
+
++ (NSURL *)getVideoLocation:(NSString *)filename {
+    return [[NSURL alloc] initFileURLWithPath:[[self getCachePath] stringByAppendingFormat:@"/%@", filename]];
+}
+
 + (UIImage *)getImage:(NSString *)filename {
     filename = [[self getCachePath] stringByAppendingFormat:@"/%@", filename];
     NSData *data = [NSData dataWithContentsOfFile:filename];

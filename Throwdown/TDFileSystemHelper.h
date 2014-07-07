@@ -20,6 +20,8 @@
 // getting and saving cached files
 
 + (BOOL)imageExists:(NSString *)filename;
++ (BOOL)videoExists:(NSString *)filename;
++ (NSURL *)getVideoLocation:(NSString *)filename;
 + (void)saveImage:(UIImage*)image filename:(NSString*)filename;
 + (void)saveData:(NSData *)data filename:(NSString*)filename;
 + (UIImage *)getImage:(NSString *)imageName;

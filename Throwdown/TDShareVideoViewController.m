@@ -62,7 +62,7 @@
     // Set font for "Post" button and sneacky way to hide the button when keyboard is down (same color as background)
     [self.postButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[TDConstants brandingRedColor], NSFontAttributeName:[TDConstants fontSemiBoldSized:18] } forState:UIControlStateNormal];
     [self.postButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[TDConstants disabledTextColor], NSFontAttributeName:[TDConstants fontSemiBoldSized:18] } forState:UIControlStateDisabled];
-    [self updatePostButton:NO];
+    self.postButton.enabled = NO;
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
@@ -91,11 +91,6 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-
-- (void)updatePostButton:(BOOL)enabled {
-    self.postButton.enabled = enabled;
-}
-
 - (void)cancelUpload {
     if (self.filename) {
         [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUploadCancelled object:nil userInfo:@{ @"filename":[self.filename copy] }];
@@ -111,7 +106,7 @@
 //    self.isOriginal = original;
     [self.previewImage setImage:[UIImage imageWithContentsOfFile:self.thumbnailPath]];
     self.previewImage.hidden = NO;
-    [self updatePostButton:YES];
+    self.postButton.enabled = YES;
     self.labelMedia.textColor = [TDConstants headerTextColor];
     self.labelMedia.text = @"Remove";
     [self.mediaButton setImage:nil forState:UIControlStateNormal];
@@ -143,9 +138,13 @@
     CGPoint center = self.optionsView.center;
     center.y = screenHeight - keyboardHeight - (self.optionsView.layer.frame.size.height / 2);
 
+    CGRect textFrame = self.commentTextView.frame;
+    textFrame.size.height = screenHeight - keyboardHeight - self.optionsView.layer.frame.size.height - 64 - 28; // 64 == status + toolbar, 28 is for paddings
+
     // animationCurve << 16 to convert it from a view animation curve to a view animation option
     [UIView animateWithDuration:animationDuration delay:0.0 options:(animationCurve << 16) animations:^{
         self.optionsView.center = center;
+        self.commentTextView.frame = textFrame;
     } completion:nil];
 }
 
@@ -158,16 +157,20 @@
     CGPoint center = self.optionsView.center;
     center.y = [UIScreen mainScreen].bounds.size.height - (self.optionsView.layer.frame.size.height / 2);
 
+    CGRect textFrame = self.commentTextView.frame;
+    textFrame.size.height = [UIScreen mainScreen].bounds.size.height - self.optionsView.layer.frame.size.height - 64 - 28; // 64 == status + toolbar, 28 is for paddings
+
     // animationCurve << 16 to convert it from a view animation curve to a view animation option
     [UIView animateWithDuration:animationDuration delay:0.0 options:(animationCurve << 16) animations:^{
         self.optionsView.center = center;
+        self.commentTextView.frame = textFrame;
     } completion:nil];
 }
 
 #pragma mark UITextViewDelegate
 
 - (void)textViewDidChange:(UITextView *)textView {
-    [self updatePostButton:(self.filename || [[textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0)];
+    self.postButton.enabled = (self.filename || [[textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0);
 }
 
 #pragma mark - NSLayoutManagerDelegate
@@ -194,7 +197,7 @@
 //                self.isOriginal = NO;
                 self.previewImage.image = nil;
                 self.previewImage.hidden = YES;
-                [self updatePostButton:[[self.commentTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0];
+                self.postButton.enabled = [[self.commentTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0;
                 self.labelMedia.textColor = [TDConstants disabledTextColor];
                 self.labelMedia.text = @"Add Media";
                 [self.mediaButton setImage:[UIImage imageNamed:@"camera_grey_88x55"] forState:UIControlStateNormal];

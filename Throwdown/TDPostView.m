@@ -36,6 +36,22 @@ static CGFloat const kHeightOfProfileRow = 42.;
 static CGFloat const kCommentBottomPadding = 10.;
 static CGFloat const kHeightOfMedia = 320.;
 static CGFloat const kWidthOfMedia = 320.;
+static NSString *const kTracksKey = @"tracks";
+
+@interface TDAsset : AVURLAsset
+@end
+
+@implementation TDAsset
+
+- (void)dealloc {
+    NSLog(@"dealloc asset %@ : %@", self.URL, self.tracks);
+}
+
+@end
+
+
+
+
 
 @interface TDPostView () <TTTAttributedLabelDelegate>
 
@@ -45,6 +61,7 @@ static CGFloat const kWidthOfMedia = 320.;
 @property (nonatomic) UIImageView *prStar;
 @property (nonatomic) UIImageView *controlImage;
 @property (nonatomic) UIImageView *playerSpinner;
+@property (nonatomic) AVURLAsset *videoAsset;
 @property (nonatomic) AVPlayer *player;
 @property (nonatomic) AVPlayerItem *playerItem;
 @property (nonatomic) AVPlayerLayer *playerLayer;
@@ -59,6 +76,7 @@ static CGFloat const kWidthOfMedia = 320.;
 @implementation TDPostView
 
 - (void)dealloc {
+    [self removeVideo];
     self.delegate = nil;
     if (self.controlView && self.tapGestureRecognizer) {
         [self.controlView removeGestureRecognizer:self.tapGestureRecognizer];
@@ -143,6 +161,9 @@ static CGFloat const kWidthOfMedia = 320.;
         return;
     }
 
+    // We re-add the video every time it's needed
+    [self removeVideo];
+
     _post = post;
     self.state = PlayerStateNotLoaded;
 
@@ -164,9 +185,6 @@ static CGFloat const kWidthOfMedia = 320.;
 
     self.createdLabel.labelDate = post.createdAt;
     self.createdLabel.text = [post.createdAt timeAgo];
-
-    // We re-add the video every time it's needed
-    [self removeVideo];
 
     if (post.comment) {
         // Comment body
@@ -247,13 +265,16 @@ static CGFloat const kWidthOfMedia = 320.;
         self.tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapFrom:)];
         [self.controlView addGestureRecognizer:self.tapGestureRecognizer];
         [self addSubview:self.controlView];
+        [self addSubview:self.videoHolderView];
+        [self insertSubview:self.videoHolderView aboveSubview:self.previewImage];
+        [self insertSubview:self.controlView aboveSubview:self.videoHolderView];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pauseTapGesture:) name:TDNotificationPauseTapGesture object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resumeTapGesture:) name:TDNotificationResumeTapGesture object:nil];
     }
 }
 
 - (void)removeVideo {
-    if (self.player != nil) {
+    if (self.player) {
         [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationPauseTapGesture object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationResumeTapGesture object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationStopPlayers object:self];
@@ -284,7 +305,6 @@ static CGFloat const kWidthOfMedia = 320.;
 
 - (void)handleTapFrom:(UITapGestureRecognizer *)tap {
     if (self.post.kind == TDPostKindVideo) {
-
         switch (self.state) {
             case PlayerStateNotLoaded:
                 [self loadVideo];
@@ -357,29 +377,21 @@ static CGFloat const kWidthOfMedia = 320.;
     self.state = PlayerStateLoading;
     [self hideLoadingError];
 
-    NSURL *location = [TDConstants getStreamingUrlFor:self.filename];
-    debug NSLog(@"Loading movie from: %@", location);
-
-    self.playerLayer = [AVPlayerLayer layer];
-    [self.playerLayer setFrame:CGRectMake(0, 0, kHeightOfMedia, kWidthOfMedia)];
-    [self.playerLayer setBackgroundColor:[UIColor blackColor].CGColor];
-    [self.playerLayer setVideoGravity:AVLayerVideoGravityResize];
-    [self.videoHolderView.layer addSublayer:self.playerLayer];
-    self.playerLayer.hidden = YES;
+    NSURL *videoLocation = [TDConstants getStreamingUrlFor:self.filename];
+//    NSString *filename = [NSString stringWithFormat:@"%@.mp4", self.filename];
+//    debug NSLog(@"Video load: %@", filename);
 
     [self updateControlImage:ControlStateLoading];
     [self startLoadingTimeout];
 
-    AVURLAsset *asset = [AVURLAsset URLAssetWithURL:location options:nil];
-    NSString *tracksKey = @"tracks";
-
-    [asset loadValuesAsynchronouslyForKeys:@[tracksKey] completionHandler:^{
+    self.videoAsset = [[AVURLAsset alloc] initWithURL:videoLocation options:nil];
+    [self.videoAsset loadValuesAsynchronouslyForKeys:@[kTracksKey] completionHandler:^{
         dispatch_async(dispatch_get_main_queue(), ^{
             NSError *error;
-            AVKeyValueStatus status = [asset statusOfValueForKey:tracksKey error:&error];
+            AVKeyValueStatus status = [self.videoAsset statusOfValueForKey:kTracksKey error:&error];
 
             if (status == AVKeyValueStatusLoaded) {
-                self.playerItem = [AVPlayerItem playerItemWithAsset:asset];
+                self.playerItem = [AVPlayerItem playerItemWithAsset:self.videoAsset];
                 [self.playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
 
                 [[NSNotificationCenter defaultCenter] addObserver:self
@@ -395,7 +407,14 @@ static CGFloat const kWidthOfMedia = 320.;
                                                              name:AVPlayerItemPlaybackStalledNotification
                                                            object:self.playerItem];
 
-                self.player = [AVPlayer playerWithPlayerItem:self.playerItem];
+                self.playerLayer = [AVPlayerLayer layer];
+                [self.playerLayer setFrame:CGRectMake(0, 0, kHeightOfMedia, kWidthOfMedia)];
+                [self.playerLayer setBackgroundColor:[UIColor clearColor].CGColor];
+                [self.playerLayer setVideoGravity:AVLayerVideoGravityResize];
+                [self.videoHolderView.layer addSublayer:self.playerLayer];
+
+                self.player = [[AVPlayer alloc] initWithPlayerItem:self.playerItem];
+                [self.player setActionAtItemEnd:AVPlayerActionAtItemEndPause];
                 [self.playerLayer setPlayer:self.player];
 
                 // Not sure why we have to specify this specifically, since this value is defined as default
@@ -429,7 +448,6 @@ static CGFloat const kWidthOfMedia = 320.;
         debug NSLog(@"PLAYBACK: status at state %d", self.state);
         dispatch_async(dispatch_get_main_queue(), ^{
             if (self.playerItem.status == AVPlayerItemStatusReadyToPlay) {
-                self.playerLayer.hidden = NO;
                 // Only play once it's been loaded
                 // status change is called every time the player is reset
                 if (self.state == PlayerStateLoading) {
@@ -477,7 +495,7 @@ static CGFloat const kWidthOfMedia = 320.;
     debug NSLog(@"PLAYBACK: reached end");
     self.state = PlayerStateReachedEnd;
     [self updateControlImage:ControlStatePlay];
-   [self hideLoadingError];
+    [self hideLoadingError];
 }
 
 - (void)showLoadingError {
