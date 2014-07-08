@@ -28,7 +28,7 @@
 @property (weak, nonatomic) IBOutlet UIView *topLineView;
 @property (weak, nonatomic) IBOutlet UIView *optionsView;
 
-//@property (nonatomic) BOOL isOriginal;
+@property (nonatomic) BOOL isOriginal;
 @property (nonatomic) BOOL isPR;
 @property (nonatomic) NSString *filename;
 @property (nonatomic) NSString *thumbnailPath;
@@ -100,10 +100,10 @@
 
 #pragma mark - segue / vc to vc interface
 
-- (void)shareVideo:(NSString *)filename withThumbnail:(NSString *)thumbnailPath isOriginal:(BOOL)original {
+- (void)addMedia:(NSString *)filename thumbnail:(NSString *)thumbnailPath isOriginal:(BOOL)original {
     self.thumbnailPath = thumbnailPath;
     self.filename = filename;
-//    self.isOriginal = original;
+    self.isOriginal = original;
     [self.previewImage setImage:[UIImage imageWithContentsOfFile:self.thumbnailPath]];
     self.previewImage.hidden = NO;
     self.postButton.enabled = YES;
@@ -112,6 +112,21 @@
     [self.mediaButton setImage:nil forState:UIControlStateNormal];
     [self.mediaButton setImage:nil forState:UIControlStateHighlighted];
     [self.mediaButton setImage:nil forState:UIControlStateSelected];
+}
+
+- (void)removeMedia {
+    [self cancelUpload];
+    self.thumbnailPath = nil;
+    self.filename = nil;
+    self.isOriginal = NO;
+    self.previewImage.image = nil;
+    self.previewImage.hidden = YES;
+    self.postButton.enabled = [[self.commentTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0;
+    self.labelMedia.textColor = [TDConstants disabledTextColor];
+    self.labelMedia.text = @"Add Media";
+    [self.mediaButton setImage:[UIImage imageNamed:@"camera_grey_88x55"] forState:UIControlStateNormal];
+    [self.mediaButton setImage:[UIImage imageNamed:@"camera_grey_88x55_hit"] forState:UIControlStateHighlighted];
+    [self.mediaButton setImage:[UIImage imageNamed:@"camera_grey_88x55_hit"] forState:UIControlStateSelected];
 }
 
 - (IBAction)unwindToShareView:(UIStoryboardSegue *)sender {
@@ -188,23 +203,16 @@
 
 - (IBAction)mediaButtonPressed:(id)sender {
     if (self.filename) {
-        UIAlertView *confirm = [[UIAlertView alloc] initWithTitle:@"Delete?" message:nil delegate:self cancelButtonTitle:@"Keep" otherButtonTitles:@"Delete", nil];
-        [confirm showWithCompletionBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
-            if (alertView.cancelButtonIndex != buttonIndex) {
-                [self cancelUpload];
-                self.thumbnailPath = nil;
-                self.filename = nil;
-//                self.isOriginal = NO;
-                self.previewImage.image = nil;
-                self.previewImage.hidden = YES;
-                self.postButton.enabled = [[self.commentTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0;
-                self.labelMedia.textColor = [TDConstants disabledTextColor];
-                self.labelMedia.text = @"Add Media";
-                [self.mediaButton setImage:[UIImage imageNamed:@"camera_grey_88x55"] forState:UIControlStateNormal];
-                [self.mediaButton setImage:[UIImage imageNamed:@"camera_grey_88x55_hit"] forState:UIControlStateHighlighted];
-                [self.mediaButton setImage:[UIImage imageNamed:@"camera_grey_88x55_hit"] forState:UIControlStateSelected];
-            }
-        }];
+        if (self.isOriginal) {
+            UIAlertView *confirm = [[UIAlertView alloc] initWithTitle:@"Delete?" message:nil delegate:self cancelButtonTitle:@"Keep" otherButtonTitles:@"Delete", nil];
+            [confirm showWithCompletionBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
+                if (alertView.cancelButtonIndex != buttonIndex) {
+                    [self removeMedia];
+                }
+            }];
+        } else {
+            [self removeMedia];
+        }
     } else {
         [self.commentTextView resignFirstResponder];
         [self performSegueWithIdentifier:@"OpenRecordViewSegue" sender:self];
@@ -215,13 +223,13 @@
     self.isPR = !self.isPR;
     if (self.isPR) {
         [self.prButton setImage:[UIImage imageNamed:@"pr_star_on_74x74"] forState:UIControlStateNormal];
-        [self.prButton setImage:[UIImage imageNamed:@"pr_star_on_74x74_hit"] forState:UIControlStateHighlighted];
-        [self.prButton setImage:[UIImage imageNamed:@"pr_star_on_74x74_hit"] forState:UIControlStateSelected];
+        [self.prButton setImage:[UIImage imageNamed:@"pr_star_on_74x74"] forState:UIControlStateHighlighted];
+        [self.prButton setImage:[UIImage imageNamed:@"pr_star_on_74x74"] forState:UIControlStateSelected];
         self.labelPR.textColor = [TDConstants brandingRedColor];
     } else {
         [self.prButton setImage:[UIImage imageNamed:@"pr_star_off_74x74"] forState:UIControlStateNormal];
-        [self.prButton setImage:[UIImage imageNamed:@"pr_star_off_74x74_hit"] forState:UIControlStateHighlighted];
-        [self.prButton setImage:[UIImage imageNamed:@"pr_star_off_74x74_hit"] forState:UIControlStateSelected];
+        [self.prButton setImage:[UIImage imageNamed:@"pr_star_off_74x74"] forState:UIControlStateHighlighted];
+        [self.prButton setImage:[UIImage imageNamed:@"pr_star_off_74x74"] forState:UIControlStateSelected];
         self.labelPR.textColor = [TDConstants disabledTextColor];
     }
 }

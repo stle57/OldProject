@@ -372,6 +372,8 @@
                                         <state key="normal" image="pr_star_off_74x74">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
+                                        <state key="selected" image="pr_star_off_74x74"/>
+                                        <state key="highlighted" image="pr_star_off_74x74"/>
                                         <connections>
                                             <action selector="prButtonPressed:" destination="yPB-2g-BQK" eventType="touchUpInside" id="bSl-qn-RDo"/>
                                         </connections>

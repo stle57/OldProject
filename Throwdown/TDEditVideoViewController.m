@@ -218,7 +218,7 @@ static const NSString *ItemStatusContext;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"MediaAddedSegue"]) {
         TDShareVideoViewController *vc = [segue destinationViewController];
-        [vc shareVideo:self.filename withThumbnail:self.thumbnailPath isOriginal:self.isOriginal];
+        [vc addMedia:self.filename thumbnail:self.thumbnailPath isOriginal:self.isOriginal];
     }
 }
 

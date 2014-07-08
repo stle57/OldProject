@@ -535,15 +535,25 @@ static NSString *const kTracksKey = @"tracks";
     }
 }
 
+#pragma mark - TTTAttributedLabelDelegate
+
+- (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithURL:(NSURL *)url {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(userProfilePressedWithId:)]) {
+        [self.delegate userProfilePressedWithId:[NSNumber numberWithInteger:[[url path] integerValue]]];
+    }
+}
+
+#pragma mark - table cell height calculation
+
 + (CGFloat)heightForPost:(TDPost *)post {
     CGFloat commentHeight = [TDViewControllerHelper heightForComment:post.comment withMentions:post.mentions];
     commentHeight = commentHeight == 0 ? 0 : commentHeight + kCommentBottomPadding;
     switch (post.kind) {
         case TDPostKindPhoto:
         case TDPostKindVideo:
-            return kHeightOfProfileRow + kHeightOfMedia + commentHeight;
+            return kHeightOfProfileRow + kHeightOfMedia + commentHeight + ([post.commentsTotalCount intValue] > 0 ? 5 : 0);
             break;
-            
+
         case TDPostKindText:
             return kHeightOfProfileRow + commentHeight;
             break;
@@ -551,14 +561,6 @@ static NSString *const kTracksKey = @"tracks";
         case TDPostKindUnknown:
             return kHeightOfProfileRow;
             break;
-    }
-}
-
-#pragma mark - TTTAttributedLabelDelegate
-
-- (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithURL:(NSURL *)url {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(userProfilePressedWithId:)]) {
-        [self.delegate userProfilePressedWithId:[NSNumber numberWithInteger:[[url path] integerValue]]];
     }
 }
 
