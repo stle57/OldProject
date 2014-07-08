@@ -14,7 +14,6 @@
 #import "TDConstants.h"
 #import "TDUserAPI.h"
 #import "VideoButtonSegue.h"
-#import "VideoCloseSegue.h"
 #import "TDHomeHeaderView.h"
 #import "TDActivityCell.h"
 #import "TDUserProfileViewController.h"

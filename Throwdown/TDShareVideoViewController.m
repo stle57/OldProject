@@ -12,6 +12,7 @@
 #import "TDConstants.h"
 #import "TDAnalytics.h"
 #import "TDPostAPI.h"
+#import "TDSlideUpSegue.h"
 #import "UIAlertView+TDBlockAlert.h"
 
 @interface TDShareVideoViewController () <UITextViewDelegate, NSLayoutManagerDelegate>
@@ -131,6 +132,19 @@
 
 - (IBAction)unwindToShareView:(UIStoryboardSegue *)sender {
     // Empty on purpose
+}
+
+
+- (UIStoryboardSegue *)segueForUnwindingToViewController:(UIViewController *)toViewController fromViewController:(UIViewController *)fromViewController identifier:(NSString *)identifier {
+    debug NSLog(@"share video unwind segue: %@", identifier);
+
+    if ([@"MediaCloseSegue" isEqualToString:identifier]) {
+        return [[TDSlideUpSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
+    } else {
+        return [super segueForUnwindingToViewController:toViewController
+                                     fromViewController:fromViewController
+                                             identifier:identifier];
+    }
 }
 
 

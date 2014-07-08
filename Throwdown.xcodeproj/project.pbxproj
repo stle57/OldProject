@@ -126,6 +126,9 @@
 		A1D13FEE1905E931000980E0 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1D13FED1905E931000980E0 /* QuartzCore.framework */; };
 		A1D13FF01905E93A000980E0 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1D13FEF1905E93A000980E0 /* CoreImage.framework */; };
 		A1D13FF21905F2BE000980E0 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = A1D13FF11905F2BE000980E0 /* Podfile */; };
+		A1D6BB0D196BBAE9007983F8 /* TDSlideDownSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = A1D6BB0C196BBAE9007983F8 /* TDSlideDownSegue.m */; };
+		A1D6BB10196BC1FD007983F8 /* TDStoryboardSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = A1D6BB0F196BC1FD007983F8 /* TDStoryboardSegue.m */; };
+		A1D6BB13196BC7AC007983F8 /* TDSlideUpSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = A1D6BB12196BC7AC007983F8 /* TDSlideUpSegue.m */; };
 		A1DAEEB318EB79FA00742949 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1DAEEB218EB79FA00742949 /* Crashlytics.framework */; };
 		A1E3A16D18FCC8630038A8A4 /* TDActivitiesCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A1E3A16C18FCC8630038A8A4 /* TDActivitiesCell.xib */; };
 		A1E3A17018FCCF2B0038A8A4 /* TDActivitiesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E3A16F18FCCF2B0038A8A4 /* TDActivitiesCell.m */; };
@@ -333,6 +336,12 @@
 		A1D13FED1905E931000980E0 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		A1D13FEF1905E93A000980E0 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 		A1D13FF11905F2BE000980E0 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = SOURCE_ROOT; };
+		A1D6BB0B196BBAE9007983F8 /* TDSlideDownSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSlideDownSegue.h; sourceTree = "<group>"; };
+		A1D6BB0C196BBAE9007983F8 /* TDSlideDownSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSlideDownSegue.m; sourceTree = "<group>"; };
+		A1D6BB0E196BC1FD007983F8 /* TDStoryboardSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDStoryboardSegue.h; sourceTree = "<group>"; };
+		A1D6BB0F196BC1FD007983F8 /* TDStoryboardSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDStoryboardSegue.m; sourceTree = "<group>"; };
+		A1D6BB11196BC7AC007983F8 /* TDSlideUpSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSlideUpSegue.h; sourceTree = "<group>"; };
+		A1D6BB12196BC7AC007983F8 /* TDSlideUpSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSlideUpSegue.m; sourceTree = "<group>"; };
 		A1DAEEB218EB79FA00742949 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		A1E3A16C18FCC8630038A8A4 /* TDActivitiesCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDActivitiesCell.xib; sourceTree = "<group>"; };
 		A1E3A16E18FCCF2B0038A8A4 /* TDActivitiesCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDActivitiesCell.h; sourceTree = "<group>"; };
@@ -391,6 +400,12 @@
 				A1BC0B3E18BE825200F507B3 /* TDSlideLeftSegue.m */,
 				A180D4E318C33D26003B9378 /* TDUnwindSlideLeftSegue.h */,
 				A180D4E418C33D26003B9378 /* TDUnwindSlideLeftSegue.m */,
+				A1D6BB0B196BBAE9007983F8 /* TDSlideDownSegue.h */,
+				A1D6BB0C196BBAE9007983F8 /* TDSlideDownSegue.m */,
+				A1D6BB0E196BC1FD007983F8 /* TDStoryboardSegue.h */,
+				A1D6BB0F196BC1FD007983F8 /* TDStoryboardSegue.m */,
+				A1D6BB11196BC7AC007983F8 /* TDSlideUpSegue.h */,
+				A1D6BB12196BC7AC007983F8 /* TDSlideUpSegue.m */,
 			);
 			name = Segues;
 			sourceTree = "<group>";
@@ -661,13 +676,13 @@
 				A11999D318D90D2E00C39ABF /* Recording */,
 				A1432CDE18A99D500073E492 /* Onboarding */,
 				2DA41A5218C7D85F00B21C74 /* Detail */,
+				2D5714C718BD9A5800AF0B4D /* Segues */,
 				2DA5354618F36EF800031128 /* TDPostsViewController.h */,
 				2DA5354718F36EF800031128 /* TDPostsViewController.m */,
 				A182D837188F2C2D00F794A5 /* TDHomeViewController.h */,
 				A182D838188F2C2D00F794A5 /* TDHomeViewController.m */,
 				A1BB463118F7767200BD9527 /* TDActivityViewController.h */,
 				A1BB463218F7767200BD9527 /* TDActivityViewController.m */,
-				2D5714C718BD9A5800AF0B4D /* Segues */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -1052,6 +1067,7 @@
 				A19FF60E18970BBB001A0AD0 /* RSClient.m in Sources */,
 				A182D833188B60CD00F794A5 /* SAVideoRangeSlider.m in Sources */,
 				A182D832188B60CD00F794A5 /* SASliderRight.m in Sources */,
+				A1D6BB13196BC7AC007983F8 /* TDSlideUpSegue.m in Sources */,
 				2DE2C6A51908657F00E51156 /* TDUserPasswordEditViewController.m in Sources */,
 				2DA41156191006450099617B /* TDResetPasswordViewController.m in Sources */,
 				A150F08A18A31B14009A72AD /* TDConstants.m in Sources */,
@@ -1069,10 +1085,12 @@
 				2DA5354818F36EF800031128 /* TDPostsViewController.m in Sources */,
 				2D83200419116D9000A91282 /* TDUserPushNotificationsEditViewController.m in Sources */,
 				A1B9002E18CC316800012A1F /* TDHomeHeaderView.m in Sources */,
+				A1D6BB10196BC1FD007983F8 /* TDStoryboardSegue.m in Sources */,
 				2D5714CD18BD9AB300AF0B4D /* VideoCloseSegue.m in Sources */,
 				A1E90CDD18B445FC0046D281 /* TDSignupStepTwoViewController.m in Sources */,
 				A1432CE718A99DB30073E492 /* TDLoginViewController.m in Sources */,
 				A1432CE118A99D750073E492 /* TDWelcomeViewController.m in Sources */,
+				A1D6BB0D196BBAE9007983F8 /* TDSlideDownSegue.m in Sources */,
 				2DA420DC18E63E1A006F4D9C /* TDActivityCell.m in Sources */,
 				A1C2481418C7D4B000F187D9 /* URLConnection.m in Sources */,
 				2DC12118190F281C00835AAF /* TDUpdatingDateLabel.m in Sources */,

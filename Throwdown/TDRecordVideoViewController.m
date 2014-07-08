@@ -11,7 +11,6 @@
 #import "TDSlideLeftSegue.h"
 #import "TDUnwindSlideLeftSegue.h"
 #import "GPUImage.h"
-#import "VideoCloseSegue.h"
 #import <QuartzCore/QuartzCore.h>
 #import <QuartzCore/CAAnimation.h>
 #import <MobileCoreServices/MobileCoreServices.h>
@@ -373,7 +372,7 @@
                     case AVAssetExportSessionStatusCompleted:
                         // This is to allow camera to stop properly before running animations
                         // Especially lets the microphone usage warning go away in time.
-                        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void){
+                        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void){
                             [self performSegueWithIdentifier:@"EditVideoSegue" sender:nil];
                         });
                         break;
@@ -606,10 +605,16 @@
 
 - (IBAction)cancelButtonPressed:(id)sender {
     [self showPreviewCover];
+    if (self.photoMode) {
+        [self stopPhotoCamera];
+    } else {
+        [self stopVideoCamera];
+    }
+
     // This is to allow camera to stop properly before running animations
     // Especially lets the microphone usage warning go away in time.
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.2 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void){
-        [self performSegueWithIdentifier:@"VideoCloseSegue" sender:nil];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^(void){
+        [self performSegueWithIdentifier:@"MediaCloseSegue" sender:nil];
     });
 }
 

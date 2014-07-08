@@ -216,7 +216,7 @@ static const NSString *ItemStatusContext;
 # pragma mark - segues
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:@"MediaAddedSegue"]) {
+    if ([segue.identifier isEqualToString:@"MediaCloseSegue"]) {
         TDShareVideoViewController *vc = [segue destinationViewController];
         [vc addMedia:self.filename thumbnail:self.thumbnailPath isOriginal:self.isOriginal];
     }
@@ -313,7 +313,7 @@ static const NSString *ItemStatusContext;
     [UIImageJPEGRepresentation(smaller, 0.97) writeToFile:self.thumbnailPath atomically:YES];
     [[TDPostAPI sharedInstance] uploadPhoto:self.thumbnailPath withName:self.filename];
 
-    [self performSegueWithIdentifier:@"MediaAddedSegue" sender:self];
+    [self performSegueWithIdentifier:@"MediaCloseSegue" sender:self];
 }
 
 - (UIImage *)imageRotatedByRadian:(UIImage *)image radian:(CGFloat)radian {
@@ -565,7 +565,7 @@ static const NSString *ItemStatusContext;
         }
     });
 
-    [self performSegueWithIdentifier:@"MediaAddedSegue" sender:self];
+    [self performSegueWithIdentifier:@"MediaCloseSegue" sender:self];
 }
 
 

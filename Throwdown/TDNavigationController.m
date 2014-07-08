@@ -8,10 +8,8 @@
 
 #import "TDNavigationController.h"
 #import "VideoCloseSegue.h"
-
-@interface TDNavigationController ()
-
-@end
+#import "TDSlideUpSegue.h"
+#import "TDSlideDownSegue.h"
 
 @implementation TDNavigationController
 
@@ -20,6 +18,10 @@
 
     if ([@"VideoCloseSegue" isEqualToString:identifier]) {
         return [[VideoCloseSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
+    } else if ([@"OpenRecordViewSegue" isEqualToString:identifier]) {
+        return [[TDSlideUpSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
+    } else if ([@"MediaCloseSegue" isEqualToString:identifier]) {
+        return [[TDSlideDownSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
     } else {
         return [super segueForUnwindingToViewController:toViewController
                                      fromViewController:fromViewController
