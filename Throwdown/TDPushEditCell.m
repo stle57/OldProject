@@ -13,27 +13,9 @@
 
 @implementation TDPushEditCell
 
-@synthesize delegate;
-@synthesize bottomLineOrigY;
-@synthesize rowNumber;
-
 - (void)dealloc {
-    delegate = nil;
-}
-
-- (id)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code
-    }
-    return self;
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder {
-    self = [super initWithCoder:aDecoder];
-    if (self) {
-    }
-    return self;
+    self.delegate = nil;
+    self.indexPath = nil;
 }
 
 - (void)awakeFromNib {
@@ -44,16 +26,18 @@
     lineRect = self.topLine.frame;
     lineRect.size.height = 0.5;
     self.topLine.frame = lineRect;
-    bottomLineOrigY = self.bottomLine.frame.origin.y;
+    self.bottomLineOrigY = self.bottomLine.frame.origin.y;
+}
+
+- (IBAction)segmentChanged:(id)sender {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(switchValue:forIndexPath:)]) {
+        [self.delegate switchValue:[NSNumber numberWithInteger:self.segmentControl.selectedSegmentIndex] forIndexPath:self.indexPath];
+    }
 }
 
 - (IBAction)switch:(id)sender {
-    if (self.aSwitch.on) {
-        if (delegate && [delegate respondsToSelector:@selector(switchOnFromRow:)]) {
-            [delegate switchOnFromRow:rowNumber];
-        }
-    } else if (delegate && [delegate respondsToSelector:@selector(switchOffFromRow:)]) {
-        [delegate switchOffFromRow:rowNumber];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(switchValue:forIndexPath:)]) {
+        [self.delegate switchValue:[NSNumber numberWithBool:self.aSwitch.on] forIndexPath:self.indexPath];
     }
 }
 

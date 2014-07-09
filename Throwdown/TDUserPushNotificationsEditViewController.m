@@ -16,29 +16,67 @@
 #import "TDUserAPI.h"
 #import "NBPhoneNumberUtil.h"
 #import "TDAPIClient.h"
+#import "UIAlertView+TDBlockAlert.h"
 
-@interface TDUserPushNotificationsEditViewController ()
 
+static CGFloat const kMinRowHeight = 42.;
+
+/*
+{
+settings: [
+    {
+    name: "Get push Notification When Someone:",
+    keys: [
+        {
+        key: "post_likes",
+        value: true,
+        name: "Likes your post"
+        },
+        {
+        key: "post_comments",
+        value: true,
+        name: "Comments on your post"
+        },
+        {
+        key: "mentions",
+        value: true,
+        name: "Mentions you"
+        },
+        {
+        key: "comment_followup",
+        value: false,
+        name: "Comments on a post you've commented on"
+        }
+    ]
+    }
+]
+}
+*/
+
+@interface TDUserPushNotificationsEditViewController () <UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate, UINavigationControllerDelegate, TDPushEditCellDelegate>
+
+@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet TDActivityIndicator *activityIndicator;
+
+@property (nonatomic) NSArray *settings;
+@property (nonatomic) NSMutableDictionary *pushSettings;
 @property (nonatomic) NSDictionary *originalSettings;
+@property (nonatomic) BOOL gotFromServer;
+@property (nonatomic) UIButton *backButton;
 
 @end
 
 
 @implementation TDUserPushNotificationsEditViewController
 
-@synthesize pushSettingsDict;
-@synthesize headerView;
-
 - (void)dealloc {
-    self.pushSettingsDict = nil;
+    self.pushSettings = nil;
     self.originalSettings = nil;
-    self.headerView = nil;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    statusBarFrame = [self.view convertRect: [UIApplication sharedApplication].statusBarFrame fromView: nil];
 
     // Title
     self.titleLabel.text = @"Push Notifications";
@@ -55,54 +93,57 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:NO animated:NO];
+    [self loadSettings];
+}
 
+- (void)loadSettings {
     self.activityIndicator.text.text = @"Loading";
     [self showActivity];
-
-    [[TDAPIClient sharedInstance] getPushNotificationSettingsForUserToken:[TDCurrentUser sharedInstance].authToken success:^(NSDictionary *pushNotifications) {
-
-        if ([pushNotifications isKindOfClass:[NSDictionary class]]) {
-            self.pushSettingsDict = [pushNotifications mutableCopy];
-            self.originalSettings = [pushNotifications copy];
-            gotFromServer = YES;
+    [[TDAPIClient sharedInstance] getPushNotificationSettingsForUserToken:[TDCurrentUser sharedInstance].authToken success:^(id settings) {
+        if ([settings isKindOfClass:[NSArray class]]) {
+            self.settings = settings;
+            self.pushSettings = [@{} mutableCopy];
+            for (NSDictionary *group in settings) {
+                for (NSDictionary *setting in [group objectForKey:@"keys"]) {
+                    [self.pushSettings addEntriesFromDictionary:@{[setting objectForKey:@"key"]: [setting objectForKey:@"value"]}];
+                }
+            }
+            self.originalSettings = [self.pushSettings copy];
+            self.gotFromServer = YES;
             [self.tableView reloadData];
             [self hideActivity];
         }
-
     } failure:^{
-        debug NSLog(@"error on push notifications");
-        gotFromServer = NO;
+        self.gotFromServer = NO;
         [self.tableView reloadData];
         [self hideActivity];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                        message:@"Sorry, there was an unexpected error while loading the settings"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"Cancel"
+                                              otherButtonTitles:@"Try Again", nil];
+        [alert showWithCompletionBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
+            if (alertView.cancelButtonIndex == buttonIndex) {
+                [self leave];
+            } else {
+                [self loadSettings];
+            }
+        }];
     }];
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
+- (NSDictionary *)settingFor:(NSIndexPath *)indexPath {
+    if (!self.gotFromServer) {
+        return nil;
+    }
+    return [[[self.settings objectAtIndex:indexPath.section] objectForKey:@"keys"] objectAtIndex:indexPath.row];
 }
 
 - (void)backButtonHit:(id)sender {
-    if ([self.pushSettingsDict isEqualToDictionary:self.originalSettings]) {
+    if ([self.pushSettings isEqualToDictionary:self.originalSettings]) {
         [self leave];
     } else {
-        self.activityIndicator.text.text = @"Saving";
-        [self showActivity];
-        [[TDAPIClient sharedInstance] sendPushNotificationSettings:self.pushSettingsDict callback:^(BOOL success) {
-            if (success) {
-                [self hideActivity];
-                [self leave];
-            } else {
-                [self.tableView reloadData];
-                [self hideActivity];
-
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Push Settings"
-                                                                message:@"Something went wrong, please try again."
-                                                               delegate:nil
-                                                      cancelButtonTitle:@"OK"
-                                                      otherButtonTitles:nil];
-                [alert show];
-            }
-        }];
+        [self save];
     }
 }
 
@@ -110,37 +151,64 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-#pragma mark - AlertView
-- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+- (void)save {
+    self.activityIndicator.text.text = @"Saving";
+    [self showActivity];
+    [[TDAPIClient sharedInstance] sendPushNotificationSettings:self.pushSettings callback:^(BOOL success) {
+        [self hideActivity];
+        if (success) {
+            [self leave];
+        } else {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                            message:@"Sorry, there was an unexpected error while saving your changes"
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"Cancel"
+                                                  otherButtonTitles:@"Try Again", nil];
+            [alert showWithCompletionBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
+                if (alertView.cancelButtonIndex == buttonIndex) {
+                    [self leave];
+                } else {
+                    [self save];
+                }
+            }];
+        }
+    }];
 }
 
-#pragma mark - TableView Delegates
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    self.sectionHeaderLabel.text = @"Get Push Notification When Someone:";
-    self.sectionHeaderLabel.font = [TDConstants fontRegularSized:15.0];
-    self.sectionHeaderLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
+#pragma mark - TableViewDelegate
 
-    if (!self.headerView) {
-        self.headerView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, self.view.frame.size.width, 40.0)];
-        CGRect headerLabelFrame = self.sectionHeaderLabel.frame;
-        headerLabelFrame.origin.x = 5.0;
-        headerLabelFrame.origin.y = 12.0;
-        self.sectionHeaderLabel.frame = headerLabelFrame;
-        [self.headerView addSubview:self.sectionHeaderLabel];
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 35.0)];
+
+    if (self.gotFromServer && section < [self.settings count]) {
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(5, 7, 320, 18)];
+        label.text = [[self.settings objectAtIndex:section] objectForKey:@"name"];
+        label.font = [TDConstants fontRegularSized:15.0];
+        label.textColor = [TDConstants headerTextColor];
+        [header addSubview:label];
     }
-    return self.headerView;
+
+    return header;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return 40.0;
+    return 30.;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
+    if (self.gotFromServer) {
+        return [self.settings count];
+    } else {
+        return 0;
+    }
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 4;
+    if (self.gotFromServer) {
+        return [[[self.settings objectAtIndex:section] objectForKey:@"keys"] count];
+    } else {
+        return 0;
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -154,7 +222,7 @@
         cell.delegate = self;
     }
 
-    cell.rowNumber = indexPath.row;
+    cell.indexPath = indexPath;
     cell.longTitleLabel.text = @"";
     cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
                                        [self tableView:self.tableView heightForRowAtIndexPath:indexPath],
@@ -164,89 +232,48 @@
                                            cell.longTitleLabel.frame.origin.y,
                                            cell.longTitleLabel.frame.size.width,
                                            [self tableView:self.tableView heightForRowAtIndexPath:indexPath]);
-    cell.aSwitch.hidden = NO;
-    if (!gotFromServer) {
-        cell.aSwitch.hidden = YES;
-    }
 
-    switch (indexPath.row) {
-        case 0:
-            cell.longTitleLabel.text = @"Mentions you";
-            if ([self.pushSettingsDict objectForKey:@"mentions"]) {
-                cell.aSwitch.on = [[self.pushSettingsDict objectForKey:@"mentions"] boolValue];
-            }
-            break;
-        case 1:
-            cell.longTitleLabel.text = @"Likes your post";
-            if ([self.pushSettingsDict objectForKey:@"post_likes"]) {
-                cell.aSwitch.on = [[self.pushSettingsDict objectForKey:@"post_likes"] boolValue];
-            }
-            break;
-        case 2:
-            cell.longTitleLabel.text = @"Comments on your post";
-            if ([self.pushSettingsDict objectForKey:@"post_comments"]) {
-                cell.aSwitch.on = [[self.pushSettingsDict objectForKey:@"post_comments"] boolValue];
-            }
-            break;
-        case 3:
-            cell.longTitleLabel.text = @"Comments on a post you've\ncommented on";
-            if ([self.pushSettingsDict objectForKey:@"comment_followup"]) {
-                cell.aSwitch.on = [[self.pushSettingsDict objectForKey:@"comment_followup"] boolValue];
-            }
-            break;
+    cell.longTitleLabel.text = [[self settingFor:indexPath] objectForKey:@"name"];
+    if ([[self settingFor:indexPath] objectForKey:@"options"]) {
+        cell.segmentControl.hidden = NO;
+        cell.aSwitch.hidden = YES;
+        cell.segmentControl.selectedSegmentIndex =[[[self settingFor:indexPath] objectForKey:@"value"] integerValue];
+        NSUInteger index = 0;
+        for (NSString *opt in [[self settingFor:indexPath] objectForKey:@"options"]) {
+            [cell.segmentControl setTitle:opt forSegmentAtIndex:index];
+            index++;
+        }
+    } else {
+        cell.segmentControl.hidden = YES;
+        cell.aSwitch.hidden = NO;
+        cell.aSwitch.on = [[[self settingFor:indexPath] objectForKey:@"value"] boolValue];
     }
 
     return cell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.row == 3) {
-        return 58.0;
+    if (self.gotFromServer) {
+        NSString *text = [[self settingFor:indexPath] objectForKey:@"name"];
+        UILabel *label = [[UILabel alloc] init];
+        label.text = text;
+        CGFloat height = [label sizeThatFits:CGSizeMake(242., MAXFLOAT)].height;
+        return height > kMinRowHeight ? height : kMinRowHeight;
     }
-    return 42.0;
+    return 0;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
 }
 
-#pragma mark - TDPushEdit Cell delegate
-- (void)switchOnFromRow:(NSInteger)row {
-    switch (row) {
-        case 0:
-            [self.pushSettingsDict setObject:[NSNumber numberWithBool:YES] forKey:@"mentions"];
-            break;
-        case 1:
-            [self.pushSettingsDict setObject:[NSNumber numberWithBool:YES] forKey:@"post_likes"];
-            break;
-        case 2:
-            [self.pushSettingsDict setObject:[NSNumber numberWithBool:YES] forKey:@"post_comments"];
-            break;
-        case 3:
-            [self.pushSettingsDict setObject:[NSNumber numberWithBool:YES] forKey:@"comment_followup"];
-            break;
-    }
+#pragma mark - TDPushEditCellDelegate
 
-    debug NSLog(@"DICT:%@", self.pushSettingsDict);
-}
+- (void)switchValue:(NSNumber *)value forIndexPath:(NSIndexPath *)indexPath {
+    NSString *key = [[self settingFor:indexPath] objectForKey:@"key"];
+    [self.pushSettings setObject:value forKey:key];
+    debug NSLog(@"DICT:%@", self.pushSettings);
 
-- (void)switchOffFromRow:(NSInteger)row {
-    switch (row) {
-        case 0:
-            [self.pushSettingsDict setObject:[NSNumber numberWithBool:NO] forKey:@"mentions"];
-            break;
-        case 1:
-            [self.pushSettingsDict setObject:[NSNumber numberWithBool:NO] forKey:@"post_likes"];
-            break;
-        case 2:
-            [self.pushSettingsDict setObject:[NSNumber numberWithBool:NO] forKey:@"post_comments"];
-            break;
-        case 3:
-            [self.pushSettingsDict setObject:[NSNumber numberWithBool:NO] forKey:@"comment_followup"];
-            break;
-    }
-
-    debug NSLog(@"DICT:%@", self.pushSettingsDict);
 }
 
 #pragma mark - Activity

@@ -10,25 +10,20 @@
 
 @protocol TDPushEditCellDelegate <NSObject>
 @optional
--(void)switchOnFromRow:(NSInteger)row;
--(void)switchOffFromRow:(NSInteger)row;
+- (void)switchValue:(NSNumber *)value forIndexPath:(NSIndexPath *)indexPath;
 @end
 
 @interface TDPushEditCell : UITableViewCell
-{
-    id <TDPushEditCellDelegate> __unsafe_unretained delegate;
-    CGFloat bottomLineOrigY;
-    NSInteger rowNumber;
-}
 
 @property (nonatomic, assign) id <TDPushEditCellDelegate> __unsafe_unretained delegate;
 @property (weak, nonatomic) IBOutlet UILabel *longTitleLabel;
 @property (weak, nonatomic) IBOutlet UIView *bottomLine;
 @property (weak, nonatomic) IBOutlet UIView *topLine;
 @property (weak, nonatomic) IBOutlet UISwitch *aSwitch;
-@property (nonatomic, assign) CGFloat bottomLineOrigY;
-@property (nonatomic, assign) NSInteger rowNumber;
+@property (nonatomic) CGFloat bottomLineOrigY;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *segmentControl;
+@property (nonatomic) NSIndexPath *indexPath;
 
--(IBAction)switch:(id)sender;
+- (IBAction)switch:(id)sender;
 
 @end

@@ -18,21 +18,6 @@
 #import "TDConstants.h"
 #import "TDActivityIndicator.h"
 
-@interface TDUserPushNotificationsEditViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate, UINavigationControllerDelegate, TDPushEditCellDelegate>
-{
-    CGRect origTableViewFrame;
-    CGRect statusBarFrame;
-    BOOL gotFromServer;
-    NSMutableDictionary *pushSettingsDict;
-    UIView *headerView;
-}
-
-@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
-@property (weak, nonatomic) IBOutlet UILabel *sectionHeaderLabel;
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (weak, nonatomic) IBOutlet TDActivityIndicator *activityIndicator;
-@property (nonatomic) UIButton *backButton;
-@property (nonatomic, retain) NSMutableDictionary *pushSettingsDict;
-@property (nonatomic, retain) UIView *headerView;
+@interface TDUserPushNotificationsEditViewController : UIViewController
 
 @end
