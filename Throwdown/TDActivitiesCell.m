@@ -64,6 +64,9 @@ static CGFloat const kCommentWidthNoPreview = 306.;
         text = [NSString stringWithFormat:@"%@ said: \"%@\"", username, body];
     } else if ([@"like" isEqualToString:[activity objectForKey:@"action"]]) {
         text = [NSString stringWithFormat:@"%@ liked your post", username];
+    } else if ([@"activity" isEqualToString:[activity objectForKey:@"action"]]) {
+        users = [activity objectForKey:@"mentions"];
+        text = [activity objectForKey:@"text"];
     }
 
     if (text) {
