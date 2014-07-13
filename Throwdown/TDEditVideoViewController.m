@@ -514,34 +514,30 @@ static const NSString *ItemStatusContext;
     [self stopExistingUploads];
 
     AVAsset *asset = [[AVURLAsset alloc] initWithURL:self.recordedVideoUrl options:nil];
-    NSArray *compatiblePresets = [AVAssetExportSession exportPresetsCompatibleWithAsset:asset];
-    if ([compatiblePresets containsObject:AVAssetExportPresetMediumQuality]) {
+    AVAssetExportSession *exportSession = [[AVAssetExportSession alloc] initWithAsset:asset presetName:AVAssetExportPresetPassthrough];
+    exportSession.outputURL = self.editingVideoUrl;
+    exportSession.outputFileType = AVFileTypeMPEG4;
 
-        AVAssetExportSession *exportSession = [[AVAssetExportSession alloc]
-                              initWithAsset:asset presetName:AVAssetExportPresetPassthrough];
-        exportSession.outputURL = self.editingVideoUrl;
-        exportSession.outputFileType = AVFileTypeQuickTimeMovie;
+    CMTime start = CMTimeMakeWithSeconds(self.startTime, asset.duration.timescale);
+    CMTime duration = CMTimeMakeWithSeconds(self.stopTime - self.startTime - kGlobalVideoTrimTime, asset.duration.timescale);
+    CMTimeRange range = CMTimeRangeMake(start, duration);
+    exportSession.timeRange = range;
 
-        CMTime start = CMTimeMakeWithSeconds(self.startTime, asset.duration.timescale);
-        CMTime duration = CMTimeMakeWithSeconds(self.stopTime - self.startTime - kGlobalVideoTrimTime, asset.duration.timescale);
-        CMTimeRange range = CMTimeRangeMake(start, duration);
-        exportSession.timeRange = range;
 
-        [exportSession exportAsynchronouslyWithCompletionHandler:^{
-            switch ([exportSession status]) {
-                case AVAssetExportSessionStatusFailed:
-                case AVAssetExportSessionStatusCancelled:
-                    debug NSLog(@"Export failed: %@", [[exportSession error] localizedDescription]);
-                    [self.slider setLeftPosition:0.0];
-                    [self.slider setRightPosition:320.0];
-                    [self setPlayerAssetFromUrl:self.recordedVideoUrl];
-                    break;
-                default:
-                    [self setPlayerAssetFromUrl:self.editingVideoUrl];
-                    break;
-            }
-        }];
-    }
+    [exportSession exportAsynchronouslyWithCompletionHandler:^{
+        switch ([exportSession status]) {
+            case AVAssetExportSessionStatusFailed:
+            case AVAssetExportSessionStatusCancelled:
+                debug NSLog(@"Export failed: %@", [[exportSession error] localizedDescription]);
+                [self.slider setLeftPosition:0.0];
+                [self.slider setRightPosition:320.0];
+                [self setPlayerAssetFromUrl:self.recordedVideoUrl];
+                break;
+            default:
+                [self setPlayerAssetFromUrl:self.editingVideoUrl];
+                break;
+        }
+    }];
 }
 
 - (void)processVideo {
@@ -672,7 +668,7 @@ static const NSString *ItemStatusContext;
     [TDFileSystemHelper removeFileAt:exportPath];
 
     NSError *werror = nil;
-    self.videoWriter = [[AVAssetWriter alloc] initWithURL:self.exportedVideoUrl fileType:AVFileTypeQuickTimeMovie error:&werror];
+    self.videoWriter = [[AVAssetWriter alloc] initWithURL:self.exportedVideoUrl fileType:AVFileTypeMPEG4 error:&werror];
 
     // Video input
     AVAssetWriterInput* videoWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo outputSettings:[TDConstants defaultVideoCompressionSettings]];
@@ -717,7 +713,7 @@ static const NSString *ItemStatusContext;
                 }
             } else {
                 [videoWriterInput markAsFinished];
-                debug NSLog(@"video writing finished");
+                debug NSLog(@"video writing finished, with start %f duration %f", CMTimeGetSeconds(videoTrack.timeRange.start), CMTimeGetSeconds(videoTrack.timeRange.duration));
 
                 switch ([videoReader status]) {
                     case AVAssetReaderStatusReading:
@@ -746,7 +742,7 @@ static const NSString *ItemStatusContext;
                                 }
 
                             } else {
-                                debug NSLog(@"audio writing finished, with start %f duration %f", CMTimeGetSeconds(videoTrack.timeRange.start), CMTimeGetSeconds(videoTrack.timeRange.duration));
+                                debug NSLog(@"audio writing finished, with start %f duration %f", CMTimeGetSeconds(audioTrack.timeRange.start), CMTimeGetSeconds(audioTrack.timeRange.duration));
 
                                 [audioWriterInput markAsFinished];
                                 [self.videoWriter endSessionAtSourceTime:videoTrack.timeRange.duration];

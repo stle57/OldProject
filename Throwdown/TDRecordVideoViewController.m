@@ -342,7 +342,6 @@
     [self.movieWriter finishRecordingWithCompletionHandler:^{
         [self stopVideoCamera];
         [self.movieWriter endProcessing];
-
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             // Crop out black frames at start of recording
             NSString *assetPath = [NSHomeDirectory() stringByAppendingPathComponent:kRecordedTrimmedMovieFilePath];
@@ -352,7 +351,7 @@
             AVAsset *asset = [[AVURLAsset alloc] initWithURL:self.recordedURL options:nil];
             self.exportSession = [[AVAssetExportSession alloc] initWithAsset:asset presetName:AVAssetExportPresetPassthrough];
             self.exportSession.outputURL = self.croppedURL;
-            self.exportSession.outputFileType = AVFileTypeQuickTimeMovie;
+            self.exportSession.outputFileType = AVFileTypeMPEG4;
 
             CGFloat durationSeconds = CMTimeGetSeconds([asset duration]);
             CMTime start = CMTimeMakeWithSeconds(kGlobalVideoTrimTime, asset.duration.timescale);

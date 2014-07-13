@@ -41,13 +41,13 @@ static NSString *const kAnalyticsLogfile = @"analyticsLogfile.bin";
 static NSString *const kApplicationUUIDKey = @"TDApplicationUUIDKey";
 
 // File locations
-static NSString *const kVideoTrimmedFilePath = @"Documents/current_trimmed_video.m4v";
-static NSString *const kVideoExportedFilePath = @"Documents/current_exported_video.m4v";
+static NSString *const kVideoTrimmedFilePath = @"Documents/current_trimmed_video.mp4";
+static NSString *const kVideoExportedFilePath = @"Documents/current_exported_video.mp4";
 static NSString *const kThumbnailExportFilePath = @"Documents/current_thumbnail.jpg";
 
 static NSString *const kPhotoFilePath = @"Documents/current_photo.jpg";
-static NSString *const kRecordedMovieFilePath = @"Documents/current_recorded_video.m4v";
-static NSString *const kRecordedTrimmedMovieFilePath = @"Documents/current_recorded_trimmed_video.m4v";
+static NSString *const kRecordedMovieFilePath = @"Documents/current_recorded_video.mp4";
+static NSString *const kRecordedTrimmedMovieFilePath = @"Documents/current_recorded_trimmed_video.mp4";
 
 // Recording settings
 static int const kMaxRecordingSeconds = 30;
