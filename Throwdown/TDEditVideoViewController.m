@@ -53,7 +53,7 @@ static const NSString *ItemStatusContext;
 @property (nonatomic) UIView *videoContainerView;
 
 // These need to be retained with a strong pointer
-@property (nonatomic) AVAssetWriter *videoWriter;
+@property (nonatomic) AVAssetWriter *assetWriter;
 @property (nonatomic) TDPostUpload *currentUpload;
 
 @property (weak, nonatomic) IBOutlet UIButton *cancelButton;
@@ -78,7 +78,7 @@ static const NSString *ItemStatusContext;
 }
 
 - (void)dealloc {
-    self.videoWriter = nil;
+    self.assetWriter = nil;
     if (self.recordedVideoUrl) {
         [self removePlayerItemObserver];
     }
@@ -668,12 +668,12 @@ static const NSString *ItemStatusContext;
     [TDFileSystemHelper removeFileAt:exportPath];
 
     NSError *werror = nil;
-    self.videoWriter = [[AVAssetWriter alloc] initWithURL:self.exportedVideoUrl fileType:AVFileTypeMPEG4 error:&werror];
+    self.assetWriter = [[AVAssetWriter alloc] initWithURL:self.exportedVideoUrl fileType:AVFileTypeMPEG4 error:&werror];
 
     // Video input
     AVAssetWriterInput* videoWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo outputSettings:[TDConstants defaultVideoCompressionSettings]];
     videoWriterInput.expectsMediaDataInRealTime = YES;
-    [self.videoWriter addInput:videoWriterInput];
+    [self.assetWriter addInput:videoWriterInput];
 
     NSError *verror = nil;
     AVAssetReader *videoReader = [[AVAssetReader alloc] initWithAsset:asset error:&verror];
@@ -682,17 +682,25 @@ static const NSString *ItemStatusContext;
     [videoReader addOutput:assetVideoReaderOutput];
 
     // Audio
+    // format description is required when passing through to mpeg4
+    // could crash if we don't get a format back here.
+    AVAssetTrack* audioTrack = [[asset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
+    CMFormatDescriptionRef formatDescription = NULL;
+    NSArray *audioFormatDescriptions = [audioTrack formatDescriptions];
+    if ([audioFormatDescriptions count] > 0) {
+        formatDescription = (__bridge CMFormatDescriptionRef)[audioFormatDescriptions objectAtIndex:0];
+    }
+
     NSError *aerror = nil;
-    AVAssetWriterInput* audioWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio outputSettings:nil];
+    AVAssetWriterInput* audioWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio outputSettings:nil sourceFormatHint:formatDescription];
     audioWriterInput.expectsMediaDataInRealTime = YES;
     AVAssetReader *audioReader = [AVAssetReader assetReaderWithAsset:asset error:&aerror];
-    AVAssetTrack* audioTrack = [[asset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
     AVAssetReaderOutput *readerOutput = [AVAssetReaderTrackOutput assetReaderTrackOutputWithTrack:audioTrack outputSettings:nil];
     [audioReader addOutput:readerOutput];
 
-    [self.videoWriter addInput:audioWriterInput];
-    [self.videoWriter startWriting];
-    [self.videoWriter startSessionAtSourceTime:kCMTimeZero];
+    [self.assetWriter addInput:audioWriterInput];
+    [self.assetWriter startWriting];
+    [self.assetWriter startSessionAtSourceTime:kCMTimeZero];
     [videoReader startReading];
     dispatch_queue_t _processingQueue = dispatch_queue_create("assetAudioWriterQueue", NULL);
     [videoWriterInput requestMediaDataWhenReadyOnQueue:_processingQueue usingBlock:^{
@@ -725,7 +733,7 @@ static const NSString *ItemStatusContext;
                         // video compression done
                         // Hook up audio
                         [audioReader startReading];
-                        [self.videoWriter startSessionAtSourceTime:kCMTimeZero];
+                        [self.assetWriter startSessionAtSourceTime:kCMTimeZero];
 
                         while ([audioWriterInput isReadyForMoreMediaData]) {
                             CMSampleBufferRef nextBuffer;
@@ -745,12 +753,12 @@ static const NSString *ItemStatusContext;
                                 debug NSLog(@"audio writing finished, with start %f duration %f", CMTimeGetSeconds(audioTrack.timeRange.start), CMTimeGetSeconds(audioTrack.timeRange.duration));
 
                                 [audioWriterInput markAsFinished];
-                                [self.videoWriter endSessionAtSourceTime:videoTrack.timeRange.duration];
-                                [self.videoWriter finishWritingWithCompletionHandler:^{
+                                [self.assetWriter endSessionAtSourceTime:videoTrack.timeRange.duration];
+                                [self.assetWriter finishWritingWithCompletionHandler:^{
                                     debug NSLog(@"Finished writing to file");
                                     [self.currentUpload attachVideo:exportPath];
                                     self.currentUpload = nil;
-                                    self.videoWriter = nil;
+                                    self.assetWriter = nil;
                                 }];
                             }
                         }
@@ -758,8 +766,8 @@ static const NSString *ItemStatusContext;
                     break;
                     case AVAssetReaderStatusFailed:
                         NSLog(@"ERROR: AVAssetReaderStatusFailed: %@", videoReader.error);
-                        [self.videoWriter cancelWriting];
-                        self.videoWriter = nil;
+                        [self.assetWriter cancelWriting];
+                        self.assetWriter = nil;
                         break;
                 }
                 break;
