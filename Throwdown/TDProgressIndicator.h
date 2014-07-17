@@ -8,12 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import "TDPostUpload.h"
+#import "TDUploadProgressDelegate.h"
 #import "TDHomeHeaderUploadDelegate.h"
 
 @interface TDProgressIndicator : UIView
 
 @property (strong, nonatomic) UIImageView *thumbnailView;
 
-- (id)initWithUpload:(TDPostUpload *)upload delegate:(id<TDHomeHeaderUploadDelegate>)delegate;
+- (id)initWithItem:(id<TDUploadProgressUIDelegate>)item delegate:(id<TDHomeHeaderUploadDelegate>)delegate;
 
 @end

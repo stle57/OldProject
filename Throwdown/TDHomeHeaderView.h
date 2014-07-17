@@ -12,6 +12,6 @@
 @interface TDHomeHeaderView : UIView
 
 - (id)initWithTableView:(UITableView *)tableView;
-- (void)addUpload:(TDPostUpload *)upload;
+- (void)addUpload:(id<TDUploadProgressUIDelegate>)upload;
 
 @end

@@ -45,8 +45,9 @@
     return self;
 }
 
-- (void)addUpload:(TDPostUpload *)upload {
-    TDProgressIndicator *progress = [[TDProgressIndicator alloc] initWithUpload:upload delegate:self];
+- (void)addUpload:(id<TDUploadProgressUIDelegate>)upload {
+    TDProgressIndicator *progress = [[TDProgressIndicator alloc] initWithItem:upload delegate:self];
+
     [self.currentUploads addObject:progress];
     [self addSubview:progress];
     [self layout];

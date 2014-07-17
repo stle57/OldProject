@@ -10,6 +10,7 @@
 #import "TDPost.h"
 #import "TDCurrentUser.h"
 #import "TDPostUpload.h"
+#import "TDTextUpload.h"
 #import "TDNotice.h"
 
 @interface TDPostAPI : NSObject
@@ -24,6 +25,7 @@
 - (TDPostUpload *)initializeVideoUploadwithThumnail:(NSString *)localPhotoPath withName:(NSString *)newName;
 - (void)uploadVideo:(NSString *)localVideoPath withThumbnail:(NSString *)localPhotoPath withName:(NSString *)newName;
 - (void)uploadPhoto:(NSString *)localPhotoPath withName:(NSString *)newName;
+- (void)addTextPost:(NSString *)comment isPR:(BOOL)isPR;
 
 - (void)addPost:(NSString *)filename comment:(NSString *)comment isPR:(BOOL)pr kind:(NSString *)kind success:(void (^)(void))success failure:(void (^)(void))failure;
 - (NSArray *)getPosts;

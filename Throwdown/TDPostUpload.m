@@ -168,27 +168,6 @@ typedef enum {
 
 # pragma mark - progress updates, delegates
 
-- (CGFloat)totalProgress {
-    CGFloat progress;
-    if (self.videoUpload) {
-        progress = (CGFloat)(self.videoFileSize * self.videoProgress + self.photoFileSize * self.photoProgress) / (self.videoFileSize + self.photoFileSize);
-    } else {
-        progress = (CGFloat)(self.photoFileSize * self.photoProgress) / self.photoFileSize;
-    }
-    // - 0.05 is for the application server post to register the post
-    if (progress > 0.0 && progress < 0.05) {
-        progress = 0;
-    } else {
-        progress -= 0.05;
-    }
-
-    // Random occurance of progress being NaN found (not sure why)
-    if (isnan(progress)) {
-        progress = 0;
-    }
-    return progress;
-}
-
 - (void)updateProgress:(UploadType)uploadType percentage:(float)progress {
     if (uploadType == UploadTypeVideo) {
         self.videoProgress = progress;
@@ -247,10 +226,6 @@ typedef enum {
     if ([self.delegate respondsToSelector:@selector(uploadFailed)]) {
         [self.delegate uploadFailed];
     }
-}
-
-- (void)retryUpload {
-    [self startUploads];
 }
 
 - (void)startUploads {
@@ -315,6 +290,45 @@ typedef enum {
     if (![fm copyItemAtPath:originalLocation toPath:newLocation error:&error]) {
         NSLog(@"Couldn't copy file %@ to %@: %@", originalLocation, newLocation, [error localizedDescription]);
     }
+}
+
+#pragma mark - TDUploadProgressUIDelegate
+
+- (void)setUploadProgressDelegate:(id<TDUploadProgressDelegate>)delegate {
+    self.delegate = delegate;
+}
+
+- (BOOL)displayProgressBar {
+    return YES;
+}
+
+- (UIImage *)previewImage {
+    return [UIImage imageWithContentsOfFile:self.persistedPhotoPath];
+}
+
+- (CGFloat)totalProgress {
+    CGFloat progress;
+    if (self.videoUpload) {
+        progress = (CGFloat)(self.videoFileSize * self.videoProgress + self.photoFileSize * self.photoProgress) / (self.videoFileSize + self.photoFileSize);
+    } else {
+        progress = (CGFloat)(self.photoFileSize * self.photoProgress) / self.photoFileSize;
+    }
+    // - 0.05 is for the application server post to register the post
+    if (progress > 0.0 && progress < 0.05) {
+        progress = 0;
+    } else {
+        progress -= 0.05;
+    }
+
+    // Random occurance of progress being NaN found (not sure why)
+    if (isnan(progress)) {
+        progress = 0;
+    }
+    return progress;
+}
+
+- (void)uploadRetry {
+    [self startUploads];
 }
 
 @end

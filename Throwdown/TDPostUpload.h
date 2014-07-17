@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "TDUploadProgressDelegate.h"
 
-@interface TDPostUpload : NSObject
+@interface TDPostUpload : NSObject <TDUploadProgressUIDelegate>
 
 @property (nonatomic) NSString *persistedVideoPath;
 @property (nonatomic) NSString *persistedPhotoPath;
@@ -19,8 +19,12 @@
 - (instancetype)initWithPhotoPath:(NSString *)photoPath newName:(NSString *)filename;
 - (instancetype)initWithVideoPath:(NSString *)videoPath thumbnailPath:(NSString *)thumbnailPath newName:(NSString *)newName;
 - (void)attachVideo:(NSString *)videoPath;
-- (void)retryUpload;
-- (void)setDelegate:(id<TDUploadProgressDelegate>)delegate;
+
+#pragma mark TDUploadProgressUIDelegate
+- (void)setUploadProgressDelegate:(id<TDUploadProgressDelegate>)delegate;
+- (BOOL)displayProgressBar;
+- (UIImage *)previewImage;
 - (CGFloat)totalProgress;
+- (void)uploadRetry;
 
 @end

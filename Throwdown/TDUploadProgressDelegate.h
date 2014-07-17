@@ -9,9 +9,18 @@
 #import <Foundation/Foundation.h>
 
 @protocol TDUploadProgressDelegate <NSObject>
-
-- (void)uploadDidUpdate:(CGFloat)progress;
 - (void)uploadFailed;
 - (void)uploadComplete;
+@optional
+- (void)uploadDidUpdate:(CGFloat)progress;
+@end
 
+@protocol TDUploadProgressUIDelegate <NSObject>
+- (void)setUploadProgressDelegate:(id<TDUploadProgressDelegate>)delegate;
+- (BOOL)displayProgressBar;
+- (void)uploadRetry;
+@optional
+- (CGFloat)totalProgress;
+- (UIImage *)previewImage;
+- (NSString *)progressTitle;
 @end

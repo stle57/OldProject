@@ -129,6 +129,7 @@
 		A1D6BB0D196BBAE9007983F8 /* TDSlideDownSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = A1D6BB0C196BBAE9007983F8 /* TDSlideDownSegue.m */; };
 		A1D6BB10196BC1FD007983F8 /* TDStoryboardSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = A1D6BB0F196BC1FD007983F8 /* TDStoryboardSegue.m */; };
 		A1D6BB13196BC7AC007983F8 /* TDSlideUpSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = A1D6BB12196BC7AC007983F8 /* TDSlideUpSegue.m */; };
+		A1D6BB1619775492007983F8 /* TDTextUpload.m in Sources */ = {isa = PBXBuildFile; fileRef = A1D6BB1519775492007983F8 /* TDTextUpload.m */; };
 		A1DAEEB318EB79FA00742949 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1DAEEB218EB79FA00742949 /* Crashlytics.framework */; };
 		A1E3A16D18FCC8630038A8A4 /* TDActivitiesCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A1E3A16C18FCC8630038A8A4 /* TDActivitiesCell.xib */; };
 		A1E3A17018FCCF2B0038A8A4 /* TDActivitiesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E3A16F18FCCF2B0038A8A4 /* TDActivitiesCell.m */; };
@@ -342,6 +343,8 @@
 		A1D6BB0F196BC1FD007983F8 /* TDStoryboardSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDStoryboardSegue.m; sourceTree = "<group>"; };
 		A1D6BB11196BC7AC007983F8 /* TDSlideUpSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSlideUpSegue.h; sourceTree = "<group>"; };
 		A1D6BB12196BC7AC007983F8 /* TDSlideUpSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSlideUpSegue.m; sourceTree = "<group>"; };
+		A1D6BB1419775492007983F8 /* TDTextUpload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTextUpload.h; sourceTree = "<group>"; };
+		A1D6BB1519775492007983F8 /* TDTextUpload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTextUpload.m; sourceTree = "<group>"; };
 		A1DAEEB218EB79FA00742949 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		A1E3A16C18FCC8630038A8A4 /* TDActivitiesCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDActivitiesCell.xib; sourceTree = "<group>"; };
 		A1E3A16E18FCCF2B0038A8A4 /* TDActivitiesCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDActivitiesCell.h; sourceTree = "<group>"; };
@@ -650,6 +653,8 @@
 				A14B2B7E18B5308000980A31 /* TDAPIClient.m */,
 				A1F02FD218C92277002FEB2F /* TDPostUpload.h */,
 				A1F02FD318C92277002FEB2F /* TDPostUpload.m */,
+				A1D6BB1419775492007983F8 /* TDTextUpload.h */,
+				A1D6BB1519775492007983F8 /* TDTextUpload.m */,
 			);
 			name = API;
 			sourceTree = "<group>";
@@ -1052,6 +1057,7 @@
 				2DE2C70419087AA900E51156 /* TDUploadMoreCell.m in Sources */,
 				A1BB463018F5FDD700BD9527 /* UIAlertView+TDBlockAlert.m in Sources */,
 				A19FF5E718932868001A0AD0 /* TDUserAPI.m in Sources */,
+				A1D6BB1619775492007983F8 /* TDTextUpload.m in Sources */,
 				2D648A1618C9415D002FE0AD /* TDDetailsCommentsCell.m in Sources */,
 				2DE4653718F614150042D81C /* TDUserEditCell.m in Sources */,
 				A11999DA18D929E200C39ABF /* UIPlaceHolderTextView.m in Sources */,

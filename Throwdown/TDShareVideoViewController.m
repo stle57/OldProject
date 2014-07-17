@@ -257,8 +257,7 @@
                                                                       @"comment":comment,
                                                                       @"pr": [NSNumber numberWithBool:self.isPR] }];
     } else {
-        // Text post only
-        [[TDPostAPI sharedInstance] addPost:nil comment:comment isPR:self.isPR kind:@"text" success:nil failure:nil];
+        [[TDPostAPI sharedInstance] addTextPost:comment isPR:self.isPR];
     }
     [self performSegueWithIdentifier:@"VideoCloseSegue" sender:self];
     [[TDAnalytics sharedInstance] logEvent:@"camera_shared"];

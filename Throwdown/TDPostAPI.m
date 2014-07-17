@@ -433,6 +433,11 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:TDPostUploadStarted object:upload userInfo:nil];
 }
 
+- (void)addTextPost:(NSString *)comment isPR:(BOOL)isPR {
+    TDTextUpload *upload = [[TDTextUpload alloc] initWithComment:comment isPR:isPR];
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDPostUploadStarted object:upload userInfo:nil];
+}
+
 #pragma mark - Failures
 
 - (void)logOutUser {
