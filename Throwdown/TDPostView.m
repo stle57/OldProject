@@ -336,14 +336,22 @@ static NSString *const kTracksKey = @"tracks";
 
 - (void)updateControlImage:(ControlState)controlState {
     if (!self.playerSpinner) {
-        self.playerSpinner = [[UIImageView alloc] initWithFrame:CGRectMake(290.0, [self getMediaOffset] + kHeightOfMedia - 30, 20.0, 20.0)];
+        self.playerSpinner = [[UIImageView alloc] init];
         [self addSubview:self.playerSpinner];
     }
     [self stopSpinner];
     debug NSLog(@"update control state to: %d", controlState);
+
+    if (controlState == ControlStatePlay) {
+        // 35 == half of 70 on play button
+        self.playerSpinner.frame = CGRectMake(125, [self getMediaOffset] + (kHeightOfMedia / 2) - 35, 70, 70);
+    } else {
+        self.playerSpinner.frame = CGRectMake(290.0, [self getMediaOffset] + kHeightOfMedia - 30, 20.0, 20.0);
+    }
+
     switch (controlState) {
         case ControlStatePlay:
-            [self.playerSpinner setImage:[UIImage imageNamed:@"video_status_play"]];
+            [self.playerSpinner setImage:[UIImage imageNamed:@"play_button_140x140"]];
             break;
         case ControlStatePaused:
             [self.playerSpinner setImage:[UIImage imageNamed:@"video_status_pause"]];
