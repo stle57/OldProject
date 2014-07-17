@@ -100,12 +100,12 @@ static NSString *const kTracksKey = @"tracks";
         self.userInteractionEnabled = YES;
 
         // add pr star at lowest level
-        self.prStar = [[UIImageView alloc] initWithFrame:CGRectMake(235, 0, 85, 90.5)];
-        self.prStar.image = [UIImage imageNamed:@"pr_star_in_feed_170x181"];
+        self.prStar = [[UIImageView alloc] initWithFrame:CGRectMake(247, 5, 32, 32)];
+        self.prStar.image = [UIImage imageNamed:@"trophy_64x64"];
         self.prStar.hidden = YES;
         [self addSubview:self.prStar];
 
-        self.usernameLabel = [[UILabel alloc] initWithFrame:CGRectMake(42, 5, 215, 32)];
+        self.usernameLabel = [[UILabel alloc] initWithFrame:CGRectMake(45, 5, 215, 32)];
         self.usernameLabel.font = [TDConstants fontSemiBoldSized:17.0];
         self.usernameLabel.textColor = [TDConstants brandingRedColor];
         self.usernameLabel.numberOfLines = 1;
@@ -128,7 +128,7 @@ static NSString *const kTracksKey = @"tracks";
         self.createdLabel.textAlignment = NSTextAlignmentRight;
         [self addSubview:self.createdLabel];
 
-        self.userProfileImage = [[UIImageView alloc] initWithFrame:CGRectMake(7, 7, 28, 28)];
+        self.userProfileImage = [[UIImageView alloc] initWithFrame:CGRectMake(7, 6, 32, 32)];
         self.userProfileImage.image = [UIImage imageNamed:@"prof_pic_default"];
         self.userProfileImage.backgroundColor = [TDConstants darkBackgroundColor];
         self.userProfileImage.layer.cornerRadius = self.userProfileImage.layer.frame.size.width / 2;

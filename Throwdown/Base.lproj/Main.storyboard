@@ -369,7 +369,7 @@
                                         <rect key="frame" x="160" y="0.0" width="160" height="70"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <inset key="contentEdgeInsets" minX="14" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                        <state key="normal" image="pr_star_off_74x74">
+                                        <state key="normal" image="trophy_off_74x74">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <state key="selected" image="pr_star_off_74x74"/>
@@ -1050,6 +1050,7 @@
         <image name="reg_signup_hit" width="285" height="42"/>
         <image name="send_feedback_button" width="320" height="50"/>
         <image name="send_feedback_button_hit" width="320" height="50"/>
+        <image name="trophy_off_74x74" width="37" height="37"/>
         <image name="v_checkbutton" width="30" height="30"/>
         <image name="v_checkbutton_hit" width="30" height="30"/>
         <image name="v_closebutton" width="30" height="30"/>

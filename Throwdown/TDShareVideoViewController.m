@@ -236,14 +236,14 @@
 - (IBAction)prButtonPressed:(id)sender {
     self.isPR = !self.isPR;
     if (self.isPR) {
-        [self.prButton setImage:[UIImage imageNamed:@"pr_star_on_74x74"] forState:UIControlStateNormal];
-        [self.prButton setImage:[UIImage imageNamed:@"pr_star_on_74x74"] forState:UIControlStateHighlighted];
-        [self.prButton setImage:[UIImage imageNamed:@"pr_star_on_74x74"] forState:UIControlStateSelected];
+        [self.prButton setImage:[UIImage imageNamed:@"trophy_74x74"] forState:UIControlStateNormal];
+        [self.prButton setImage:[UIImage imageNamed:@"trophy_74x74"] forState:UIControlStateHighlighted];
+        [self.prButton setImage:[UIImage imageNamed:@"trophy_74x74"] forState:UIControlStateSelected];
         self.labelPR.textColor = [TDConstants brandingRedColor];
     } else {
-        [self.prButton setImage:[UIImage imageNamed:@"pr_star_off_74x74"] forState:UIControlStateNormal];
-        [self.prButton setImage:[UIImage imageNamed:@"pr_star_off_74x74"] forState:UIControlStateHighlighted];
-        [self.prButton setImage:[UIImage imageNamed:@"pr_star_off_74x74"] forState:UIControlStateSelected];
+        [self.prButton setImage:[UIImage imageNamed:@"trophy_off_74x74"] forState:UIControlStateNormal];
+        [self.prButton setImage:[UIImage imageNamed:@"trophy_off_74x74"] forState:UIControlStateHighlighted];
+        [self.prButton setImage:[UIImage imageNamed:@"trophy_off_74x74"] forState:UIControlStateSelected];
         self.labelPR.textColor = [TDConstants disabledTextColor];
     }
 }
