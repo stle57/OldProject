@@ -9,10 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface TDUpdatingDateLabel : UILabel
-{
-    NSTimer *timeStampUpdateTimer;
-    CGRect origFrame;
-}
 
 @property (nonatomic, retain) NSTimer *timeStampUpdateTimer;
 @property (nonatomic, retain) NSDate *labelDate;

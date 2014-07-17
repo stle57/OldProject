@@ -12,8 +12,6 @@
 
 @implementation TDUpdatingDateLabel
 
-@synthesize timeStampUpdateTimer;
-
 - (void)dealloc {
     self.labelDate = nil;
     [self.timeStampUpdateTimer invalidate];
@@ -22,7 +20,6 @@
 
 - (void)awakeFromNib {
     [super awakeFromNib];
-    origFrame = self.frame;
 }
 
 - (void)setLabelDate:(NSDate *)date {
@@ -41,12 +38,11 @@
     [self.timeStampUpdateTimer invalidate];
     self.timeStampUpdateTimer = nil;
 
-    self.timeStampUpdateTimer = [NSTimer timerWithTimeInterval:[self workOutTimerGap]
-                                                        target:self
-                                                      selector:@selector(timeStampUpdate)
-                                                      userInfo:nil
-                                                       repeats:NO];
-    [[NSRunLoop mainRunLoop] addTimer:self.timeStampUpdateTimer forMode:NSRunLoopCommonModes];
+    self.timeStampUpdateTimer = [NSTimer scheduledTimerWithTimeInterval:[self workOutTimerGap]
+                                                                 target:self
+                                                               selector:@selector(timeStampUpdate)
+                                                               userInfo:nil
+                                                                repeats:NO];
 }
 
 - (NSTimeInterval)workOutTimerGap {
@@ -61,15 +57,7 @@
 }
 
 - (void)timeStampUpdate {
-    self.frame = origFrame;
     self.text = [self.labelDate timeAgo];
-
-    if (self.textAlignment == NSTextAlignmentRight) {
-        CGRect timeFrame = self.frame;
-        timeFrame.origin.x = CGRectGetMaxX(origFrame)-timeFrame.size.width;
-        self.frame = timeFrame;
-    }
-
     // Do again, adjusting interval as necessary
     [self startUpdateTimer];
 }

@@ -21,7 +21,7 @@ NSLocalizedStringFromTableInBundle(key, @"NSDateTimeAgo", [NSBundle bundleWithPa
 
     if(deltaSeconds < 60)
     {
-        return [self stringFromFormat:@"%%d%@s" withValue:deltaSeconds];
+        return @"now";
     }
     else if(deltaSeconds < 120)
     {
