@@ -23,7 +23,7 @@
 
     [UIView animateWithDuration:0.2
                           delay:0.0
-                        options:UIViewAnimationOptionCurveEaseInOut
+                        options:UIViewAnimationOptionCurveEaseIn
                      animations:^{
                          self.screenShotSource.center = sourceCenter;
                          self.screenShotDestination.transform = CGAffineTransformMakeScale(1, 1);
