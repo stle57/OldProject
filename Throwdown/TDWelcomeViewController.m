@@ -9,71 +9,110 @@
 #import "TDWelcomeViewController.h"
 #import "TDAppDelegate.h"
 #import <QuartzCore/QuartzCore.h>
+#import <TTTAttributedLabel/TTTAttributedLabel.h>
 
-@interface TDWelcomeViewController ()
+@interface TDWelcomeViewController () <UIScrollViewDelegate>
 @property (weak, nonatomic) IBOutlet UIButton *signupButton;
 @property (weak, nonatomic) IBOutlet UIButton *loginButton;
-
+@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (weak, nonatomic) IBOutlet UIView *introSlide;
+@property (weak, nonatomic) IBOutlet UIView *slide1;
+@property (weak, nonatomic) IBOutlet UIView *slide2;
+@property (weak, nonatomic) IBOutlet UIView *slide3;
+@property (weak, nonatomic) IBOutlet UIView *indicatorView;
+@property (weak, nonatomic) IBOutlet UIScrollView *backgroundScrollView;
 @end
 
 @implementation TDWelcomeViewController
 
-- (void)viewWillAppear:(BOOL)animated
-{
-//    [self.navigationController setNavigationBarHidden:YES animated:animated];
-//    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:NO];
+- (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 }
 
-- (void) viewWillDisappear:(BOOL)animated
-{
+- (void) viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-//    [self.navigationController setNavigationBarHidden:NO animated:animated];
-//    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:NO];
 }
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
-/*    self.signupButton.layer.cornerRadius = 4;
-    self.signupButton.clipsToBounds = YES;
-    self.loginButton.layer.cornerRadius = 4;
-    self.loginButton.clipsToBounds = YES; */
 
-    // Position title and snippet and 2 buttons
-    self.titleLabel.font = [UIFont fontWithName:@"BebasNeueRegular" size:62.0];
-    [TDAppDelegate fixHeightOfThisLabel:self.titleLabel];
-    CGRect textFrame = self.titleLabel.frame;
-    textFrame.origin.y = 50.0;
-    self.titleLabel.frame = textFrame;
-    self.snippetLabel.text = @"A community that\ncelebrates fitness";
-    self.snippetLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:24.0];
-    [TDAppDelegate fixHeightOfThisLabel:self.snippetLabel];
-    textFrame = self.snippetLabel.frame;
-    textFrame.origin.y = CGRectGetMaxY(self.titleLabel.frame)+30.0;
-    self.snippetLabel.frame = textFrame;
-    CGRect buttonFrame = self.signupButton.frame;
-    buttonFrame.origin.y = CGRectGetMaxY(self.snippetLabel.frame)+120.0;
-    self.signupButton.frame = buttonFrame;
-    buttonFrame = self.loginButton.frame;
-    buttonFrame.origin.y = CGRectGetMaxY(self.signupButton.frame)+10.0;
-    self.loginButton.frame = buttonFrame;
-}
+    CGRect pagingScrollViewFrame = [[UIScreen mainScreen] bounds];
+    pagingScrollViewFrame.origin.x -= 10;
+    pagingScrollViewFrame.size.width += 20;
+    self.scrollView.frame = pagingScrollViewFrame;
+    self.scrollView.contentSize = CGSizeMake(340 * 4, pagingScrollViewFrame.size.height);
+    self.scrollView.delegate = self;
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    // Move slides to the right
+    CGRect frame = [[UIScreen mainScreen] bounds];
+    frame.origin.x += 10;
+    self.introSlide.frame = frame;
+    frame.origin.x += frame.size.width + 20;
+    self.slide1.frame = frame;
+    frame.origin.x += frame.size.width + 20;
+    self.slide2.frame = frame;
+    frame.origin.x += frame.size.width + 20;
+    self.slide3.frame = frame;
+
+    // Intro slide
+    self.titleLabel.font = [UIFont fontWithName:@"BebasNeueRegular" size:68.0];
+    self.snippetLabel.font = [TDConstants fontSemiBoldSized:20];
+    self.loginButton.titleLabel.font = [TDConstants fontSemiBoldSized:14];
+
+    self.indicatorView.hidden = YES;
+
+    // labels on slide 1 & 2
+    for (NSNumber *tag in @[@12, @22]) {
+        TTTAttributedLabel *text = (TTTAttributedLabel *)[self.view viewWithTag:[tag integerValue]];
+        text.font = [TDConstants fontRegularSized:19];
+        text.verticalAlignment = TTTAttributedLabelVerticalAlignmentTop;
+        text.text = text.text; //reset the text to get the styling
+    }
+
+    // slide 3
+    for (NSNumber *tag in @[@31, @34]) {
+        TTTAttributedLabel *text = (TTTAttributedLabel *)[self.view viewWithTag:[tag integerValue]];
+        text.font = [TDConstants fontSemiBoldSized:21];
+        text.verticalAlignment = TTTAttributedLabelVerticalAlignmentTop;
+        text.text = text.text; //reset the text to get the styling
+    }
+    for (NSNumber *tag in @[@32, @33]) {
+        TTTAttributedLabel *text = (TTTAttributedLabel *)[self.view viewWithTag:[tag integerValue]];
+        text.font = [TDConstants fontRegularSized:21];
+        text.verticalAlignment = TTTAttributedLabelVerticalAlignmentTop;
+        text.text = text.text; //reset the text to get the styling
+    }
 }
 
 - (BOOL)prefersStatusBarHidden {
     return YES;
 }
 
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    int offset = (int)scrollView.contentOffset.x;
+    int page = offset / 340;
+
+    // Hide indicator on first slide
+    self.indicatorView.hidden = offset < 170;
+
+    [self.backgroundScrollView setContentOffset:CGPointMake((offset - 340) / 4.f, 0)];
+
+    if (offset % 340 == 0 && page > 0) {
+        for (NSNumber *num in @[@41, @42, @43]) {
+            UIImageView *indicator = (UIImageView *)[self.view viewWithTag:[num integerValue]];
+            if ([num intValue] == 40 + page) {
+                [indicator setImage:[UIImage imageNamed:@"page-circle-orange"]];
+            } else {
+                [indicator setImage:[UIImage imageNamed:@"page-circle-white"]];
+            }
+        }
+    }
+}
+
+
 # pragma mark - navigation
 
-- (void)showHomeController
-{
+- (void)showHomeController {
     [self dismissViewControllerAnimated:NO completion:nil];
 
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
@@ -82,6 +121,12 @@
     TDAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
     delegate.window.rootViewController = homeViewController;
     [self.navigationController popToRootViewControllerAnimated:NO];
+}
+
+- (IBAction)getStartedPressed:(id)sender {
+    CGRect frame = self.slide1.frame;
+    frame.origin.x += 10;
+    [self.scrollView scrollRectToVisible:frame animated:YES];
 }
 
 @end
