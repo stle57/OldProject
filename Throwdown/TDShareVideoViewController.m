@@ -34,6 +34,9 @@
 @property (nonatomic) NSString *filename;
 @property (nonatomic) NSString *thumbnailPath;
 
+@property (nonatomic) UIImage *prOnImage;
+@property (nonatomic) UIImage *prOffImage;
+
 @end
 
 @implementation TDShareVideoViewController
@@ -52,6 +55,10 @@
     self.commentTextView.font = [TDConstants fontRegularSized:17];
     self.commentTextView.layoutManager.delegate = self;
     [self.commentTextView setPlaceholder:@"What's happening?"];
+
+    // preloading images
+    self.prOffImage = [UIImage imageNamed:@"trophy_off_74x74"];
+    self.prOnImage =  [UIImage imageNamed:@"trophy_74x74"];
 
     self.isPR = false;
 
@@ -236,14 +243,14 @@
 - (IBAction)prButtonPressed:(id)sender {
     self.isPR = !self.isPR;
     if (self.isPR) {
-        [self.prButton setImage:[UIImage imageNamed:@"trophy_74x74"] forState:UIControlStateNormal];
-        [self.prButton setImage:[UIImage imageNamed:@"trophy_74x74"] forState:UIControlStateHighlighted];
-        [self.prButton setImage:[UIImage imageNamed:@"trophy_74x74"] forState:UIControlStateSelected];
+        [self.prButton setImage:self.prOnImage forState:UIControlStateNormal];
+        [self.prButton setImage:self.prOnImage forState:UIControlStateHighlighted];
+        [self.prButton setImage:self.prOnImage forState:UIControlStateSelected];
         self.labelPR.textColor = [TDConstants brandingRedColor];
     } else {
-        [self.prButton setImage:[UIImage imageNamed:@"trophy_off_74x74"] forState:UIControlStateNormal];
-        [self.prButton setImage:[UIImage imageNamed:@"trophy_off_74x74"] forState:UIControlStateHighlighted];
-        [self.prButton setImage:[UIImage imageNamed:@"trophy_off_74x74"] forState:UIControlStateSelected];
+        [self.prButton setImage:self.prOffImage forState:UIControlStateNormal];
+        [self.prButton setImage:self.prOffImage forState:UIControlStateHighlighted];
+        [self.prButton setImage:self.prOffImage forState:UIControlStateSelected];
         self.labelPR.textColor = [TDConstants disabledTextColor];
     }
 }

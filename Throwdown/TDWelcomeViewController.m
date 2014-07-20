@@ -66,20 +66,24 @@
         TTTAttributedLabel *text = (TTTAttributedLabel *)[self.view viewWithTag:[tag integerValue]];
         text.font = [TDConstants fontRegularSized:19];
         text.verticalAlignment = TTTAttributedLabelVerticalAlignmentTop;
+        text.minimumLineHeight = 27;
         text.text = text.text; //reset the text to get the styling
     }
 
-    // slide 3
+    // slide 3 titles
     for (NSNumber *tag in @[@31, @34]) {
         TTTAttributedLabel *text = (TTTAttributedLabel *)[self.view viewWithTag:[tag integerValue]];
         text.font = [TDConstants fontSemiBoldSized:21];
         text.verticalAlignment = TTTAttributedLabelVerticalAlignmentTop;
+        text.minimumLineHeight = 29;
         text.text = text.text; //reset the text to get the styling
     }
+    // slide 3 bullets
     for (NSNumber *tag in @[@32, @33]) {
         TTTAttributedLabel *text = (TTTAttributedLabel *)[self.view viewWithTag:[tag integerValue]];
         text.font = [TDConstants fontRegularSized:21];
         text.verticalAlignment = TTTAttributedLabelVerticalAlignmentTop;
+        text.minimumLineHeight = 29;
         text.text = text.text; //reset the text to get the styling
     }
 }

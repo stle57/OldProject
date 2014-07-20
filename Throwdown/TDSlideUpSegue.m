@@ -11,7 +11,7 @@
 @implementation TDSlideUpSegue
 
 - (void)perform {
-    debug NSLog(@"PERFORM-SlideDownSegue");
+    debug NSLog(@"PERFORM-SlideUpSegue");
 
     [super perform];
     [super popDestination];

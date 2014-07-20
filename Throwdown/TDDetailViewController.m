@@ -297,7 +297,12 @@ static float const kMaxInputHeight = 100.;
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     // Post
     if (indexPath.row == 0) {
-        return [TDPostView heightForPost:self.post];
+        // Adding 5 for margin between like button, if there are no comments (if there are comments 5 is already added in the method)
+        CGFloat height = [TDPostView heightForPost:self.post];
+        if (self.post.comments) {
+            height += [self.post.comments count] > 0 ? 0 : 5;
+        }
+        return height;
     }
 
     // Likes row

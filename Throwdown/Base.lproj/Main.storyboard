@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13D65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="DPQ-qf-8sb">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="DPQ-qf-8sb">
     <dependencies>
         <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
@@ -372,8 +372,8 @@
                                         <state key="normal" image="trophy_off_74x74">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
-                                        <state key="selected" image="pr_star_off_74x74"/>
-                                        <state key="highlighted" image="pr_star_off_74x74"/>
+                                        <state key="selected" image="trophy_off_74x74"/>
+                                        <state key="highlighted" image="trophy_off_74x74"/>
                                         <connections>
                                             <action selector="prButtonPressed:" destination="yPB-2g-BQK" eventType="touchUpInside" id="bSl-qn-RDo"/>
                                         </connections>
@@ -473,11 +473,11 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" delaysContentTouches="NO" canCancelContentTouches="NO" bouncesZoom="NO" id="tca-ai-Mgq">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <rect key="frame" x="0.0" y="-1" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="intro-background" id="cbM-Aj-zSp" userLabel="Background Image View">
-                                        <rect key="frame" x="0.0" y="0.0" width="512" height="909"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="490" height="568"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
                                 </subviews>
@@ -545,8 +545,8 @@
                                                 <rect key="frame" x="65" y="22" width="191" height="402"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             </imageView>
-                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="12" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Express yourself through photos and videos. Be proud and share fitness accomlishments." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="MxW-EF-ini" customClass="TTTAttributedLabel">
-                                                <rect key="frame" x="15" y="450" width="290" height="118"/>
+                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="12" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Express yourself through photos and videos. Be proud and share your accomlishments." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="MxW-EF-ini" customClass="TTTAttributedLabel">
+                                                <rect key="frame" x="15" y="446" width="290" height="118"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -562,9 +562,12 @@
                                                 <rect key="frame" x="64" y="22" width="191" height="402"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             </imageView>
-                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="22" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Give props with likes and comments. Encourage each other to improve." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="QiD-Oj-LJM" customClass="TTTAttributedLabel">
-                                                <rect key="frame" x="15" y="450" width="290" height="118"/>
+                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="22" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="QiD-Oj-LJM" customClass="TTTAttributedLabel">
+                                                <rect key="frame" x="15" y="446" width="290" height="118"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                <string key="text">Give props with likes and
+comments. Encourage each
+other to improve.</string>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <nil key="highlightedColor"/>
@@ -601,9 +604,10 @@
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             </imageView>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="32" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="wQl-aa-ZVE" userLabel="First NO Label" customClass="TTTAttributedLabel">
-                                                <rect key="frame" x="73" y="148" width="232" height="50"/>
+                                                <rect key="frame" x="73" y="144" width="232" height="50"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <string key="text">No inappropriate selfiesor other posts.</string>
+                                                <string key="text">No inappropriate selfies
+or other posts.</string>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <nil key="highlightedColor"/>
@@ -612,8 +616,8 @@
                                                 <rect key="frame" x="30" y="235" width="28" height="28"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             </imageView>
-                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="33" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No direct advertisements." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="MGZ-1f-YRx" userLabel="Second NO Label" customClass="TTTAttributedLabel">
-                                                <rect key="frame" x="73" y="239" width="240" height="50"/>
+                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="33" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No direct advertising." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="MGZ-1f-YRx" userLabel="Second NO Label" customClass="TTTAttributedLabel">
+                                                <rect key="frame" x="73" y="235" width="240" height="50"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -622,7 +626,8 @@
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="34" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="CCO-45-a3P" userLabel="Thank you Label" customClass="TTTAttributedLabel">
                                                 <rect key="frame" x="15" y="332" width="290" height="50"/>
                                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                <string key="text">Thank you!The Throwdown Community</string>
+                                                <string key="text">Thank you!
+The Throwdown Community</string>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <nil key="highlightedColor"/>
@@ -632,7 +637,7 @@
                                 </subviews>
                             </scrollView>
                             <view autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" id="Cg8-Gr-JJ0" userLabel="Page Indicator View">
-                                <rect key="frame" x="140" y="533" width="59" height="9"/>
+                                <rect key="frame" x="138.5" y="532" width="43" height="9"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" tag="41" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="page-circle-white" id="m5t-hc-QmI" userLabel="indicator 1">
@@ -640,11 +645,11 @@
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     </imageView>
                                     <imageView userInteractionEnabled="NO" tag="42" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="page-circle-white" id="mje-NY-pcU" userLabel="indicator 2">
-                                        <rect key="frame" x="25" y="0.0" width="9" height="9"/>
+                                        <rect key="frame" x="17" y="0.0" width="9" height="9"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     </imageView>
                                     <imageView userInteractionEnabled="NO" tag="43" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="page-circle-white" id="eTV-im-aeG" userLabel="indicator 3">
-                                        <rect key="frame" x="50" y="0.0" width="9" height="9"/>
+                                        <rect key="frame" x="34" y="0.0" width="9" height="9"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     </imageView>
                                 </subviews>
@@ -1160,7 +1165,7 @@
         <image name="camera_grey_88x55" width="44" height="27"/>
         <image name="camera_grey_88x55_hit" width="44" height="27"/>
         <image name="icon-cross" width="28" height="28"/>
-        <image name="intro-background" width="320" height="568"/>
+        <image name="intro-background" width="490" height="568"/>
         <image name="iphone-1" width="191" height="402"/>
         <image name="iphone-2" width="191" height="402"/>
         <image name="nav_close" width="20" height="21"/>
@@ -1176,7 +1181,6 @@
         <image name="photo_library_pre_96x96_hit" width="48" height="48"/>
         <image name="plus_button_122x122" width="61" height="61"/>
         <image name="plus_button_122x122_hit" width="61" height="61"/>
-        <image name="pr_star_off_74x74" width="37" height="37"/>
         <image name="reg_bg1_568" width="320" height="568"/>
         <image name="reg_bg2_568" width="320" height="568"/>
         <image name="reg_bg3_568" width="320" height="568"/>
