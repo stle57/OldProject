@@ -23,6 +23,7 @@
 @property (nonatomic) NSMutableArray *posts;
 @property (nonatomic) NSArray *notices;
 @property (nonatomic) BOOL noMorePosts;
+@property (nonatomic) BOOL fetchingUpstream;
 
 @end
 
@@ -45,6 +46,7 @@
     self = [super init];
     if (self) {
         self.posts = [[NSMutableArray alloc] init];
+        self.fetchingUpstream = NO;
     }
     return self;
 }
@@ -121,6 +123,10 @@
 }
 
 - (void)fetchPostsUpstreamWithErrorHandlerStart:(NSNumber *)start success:(void (^)(NSDictionary*response))successHandler error:(void (^)(void))errorHandler {
+    if (self.fetchingUpstream) {
+        return;
+    }
+    self.fetchingUpstream = YES;
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
     if ([TDCurrentUser sharedInstance].authToken) {
         [params addEntriesFromDictionary:@{@"user_token": [TDCurrentUser sharedInstance].authToken}];
@@ -134,6 +140,7 @@
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager.requestSerializer setValue:TDDeviceInfo.bundleVersion forHTTPHeaderField:kHTTPHeaderBundleVersion];
     [manager GET:[[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts.json"] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        self.fetchingUpstream = NO;
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             if (!start) {
                 [self.posts removeAllObjects];
@@ -163,6 +170,7 @@
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"HTTP Error: %@", error);
+        self.fetchingUpstream = NO;
 
         if (errorHandler) {
             errorHandler();

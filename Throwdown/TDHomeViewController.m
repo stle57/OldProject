@@ -28,7 +28,7 @@
 
 @interface TDHomeViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *badgeCountLabel;
-@property (weak, nonatomic) IBOutlet NSNumber *badgeCount;
+@property (nonatomic) NSNumber *badgeCount;
 
 @property (nonatomic) BOOL didUpload;
 

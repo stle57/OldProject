@@ -143,7 +143,6 @@
     debug NSLog(@"userprofile-fetchPostsUpStream");
     [[TDPostAPI sharedInstance] fetchPostsUpstreamForUser:self.userId success:^(NSDictionary *response) {
         [self handlePostsResponse:response fromStart:YES];
-        [self endRefreshControl];
     } error:^{
         [self endRefreshControl];
         [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastIconType_Warning payload:@{} delegate:nil];
@@ -168,8 +167,6 @@
 }
 
 - (void)handlePostsResponse:(NSDictionary *)response fromStart:(BOOL)start {
-    [self endRefreshControl];
-
     self.loaded = YES;
     self.errorLoading = NO;
 

@@ -29,7 +29,6 @@
 
 @interface TDPostsViewController : UIViewController <TDLikeViewDelegate, TDPostViewDelegate, TDTwoButtonViewDelegate, TDDetailsCommentsCellDelegate, TDMoreCommentsDelegate, UIActionSheetDelegate, TDDetailViewControllerDelegate, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate, TDUserProfileCellDelegate>
 {
-    UIRefreshControl *refreshControl;
     BOOL goneDownstream;
     CGPoint origRecordButtonCenter;
     UIDynamicAnimator *animator;
@@ -55,7 +54,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *recordButton;
 @property (weak, nonatomic) IBOutlet UIButton *notificationButton;
 @property (weak, nonatomic) IBOutlet UIButton *profileButton;
-@property (nonatomic, retain) UIRefreshControl *refreshControl;
 @property (nonatomic, retain) UIDynamicAnimator *animator;
 @property (strong, nonatomic) TDHomeHeaderView *headerView;
 @property (strong, nonatomic) UIActivityIndicatorView *playerSpinner;

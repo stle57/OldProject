@@ -11,13 +11,19 @@
 #import "TDViewControllerHelper.h"
 #import "TDAPIClient.h"
 #import "TDHomeViewController.h"
+#import "TDCustomRefreshControl.h"
 
 static CGFloat const kHeightOfStatusBar = 65.0;
+
+@interface TDPostsViewController ()
+
+@property (nonatomic) TDCustomRefreshControl *customRefreshControl;
+
+@end
 
 @implementation TDPostsViewController
 
 @synthesize posts;
-@synthesize refreshControl;
 @synthesize animator;
 
 - (void)viewDidLoad {
@@ -65,19 +71,16 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
 
+    // Add refresh control
+    self.customRefreshControl = [[TDCustomRefreshControl alloc] init];
+    [self.customRefreshControl addTarget:self action:@selector(refreshControlUsed) forControlEvents:UIControlEventValueChanged];
+    [self.tableView addSubview:self.customRefreshControl];
+
     // Remember here so we don't lose this during statusBar animations
-    statusBarFrame = [self.view convertRect: [UIApplication sharedApplication].statusBarFrame fromView: nil];
+    statusBarFrame = [self.view convertRect:[UIApplication sharedApplication].statusBarFrame fromView: nil];
 
     // Stop any current playbacks
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
-
-    // Add refresh control
-    self.refreshControl = [[UIRefreshControl alloc] init];
-    [self.refreshControl addTarget:self
-                            action:@selector(refreshControlUsed)
-                  forControlEvents:UIControlEventValueChanged];
-    [self.tableView addSubview:self.refreshControl];
-    [self.refreshControl setTintColor:[UIColor blackColor]];
 
     if ([self class] == [TDHomeViewController class]) {
         self.headerView = [[TDHomeHeaderView alloc] initWithTableView:self.tableView];
@@ -96,6 +99,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+
     // If we're coming back from the details screen, we need to
     // order the comments to only the most recent 2
     if ([self.posts count] > 0) {
@@ -123,7 +127,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     self.tableView.dataSource = nil;
     self.posts = nil;
     self.removingPosts = nil;
-    self.refreshControl = nil;
+    self.customRefreshControl = nil;
     self.animator = nil;
     self.userId = nil;
 }
@@ -253,11 +257,8 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 }
 
 - (void)endRefreshControl {
-    // uirefreshcontrol should be attached to a uitableviewcontroller - this stops a slight jutter
-    [self.refreshControl performSelector:@selector(endRefreshing)
-                              withObject:nil
-                              afterDelay:0.1];
-
+    debug NSLog(@"endRefreshControl");
+    [self.customRefreshControl endRefreshing];
 }
 
 # pragma mark - table view delegate
@@ -647,7 +648,15 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     }
 }
 
+#pragma mark - UIScrollViewDelegate
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    [self.customRefreshControl containingScrollViewDidEndDragging:scrollView];
+}
+
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    [self.customRefreshControl containingScrollViewDidEndDragging:scrollView];
+
     if (!self.posts || [self.posts count] == 0) {
         return;
     }

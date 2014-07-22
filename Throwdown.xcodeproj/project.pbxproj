@@ -84,6 +84,7 @@
 		A11E05051888CB79002F981A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A11E05031888CB79002F981A /* InfoPlist.strings */; };
 		A11E05071888CB79002F981A /* ThrowdownTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A11E05061888CB79002F981A /* ThrowdownTests.m */; };
 		A11E05121889293C002F981A /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11E05111889293C002F981A /* AssetsLibrary.framework */; };
+		A129BAF9197B5BEE00F6FC2B /* TDCustomRefreshControl.m in Sources */ = {isa = PBXBuildFile; fileRef = A129BAF8197B5BEE00F6FC2B /* TDCustomRefreshControl.m */; };
 		A1432CE118A99D750073E492 /* TDWelcomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1432CE018A99D750073E492 /* TDWelcomeViewController.m */; };
 		A1432CE418A99DA40073E492 /* TDSignupStepOneViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1432CE318A99DA40073E492 /* TDSignupStepOneViewController.m */; };
 		A1432CE718A99DB30073E492 /* TDLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1432CE618A99DB30073E492 /* TDLoginViewController.m */; };
@@ -260,6 +261,8 @@
 		A11E05041888CB79002F981A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A11E05061888CB79002F981A /* ThrowdownTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ThrowdownTests.m; sourceTree = "<group>"; };
 		A11E05111889293C002F981A /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		A129BAF7197B5BEE00F6FC2B /* TDCustomRefreshControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDCustomRefreshControl.h; sourceTree = "<group>"; };
+		A129BAF8197B5BEE00F6FC2B /* TDCustomRefreshControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDCustomRefreshControl.m; sourceTree = "<group>"; };
 		A1432CDF18A99D750073E492 /* TDWelcomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDWelcomeViewController.h; sourceTree = "<group>"; };
 		A1432CE018A99D750073E492 /* TDWelcomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDWelcomeViewController.m; sourceTree = "<group>"; };
 		A1432CE218A99DA40073E492 /* TDSignupStepOneViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSignupStepOneViewController.h; sourceTree = "<group>"; };
@@ -780,6 +783,8 @@
 				2DE2C70319087AA900E51156 /* TDUploadMoreCell.xib */,
 				2DE2C70119087AA900E51156 /* TDUploadMoreCell.h */,
 				2DE2C70219087AA900E51156 /* TDUploadMoreCell.m */,
+				A129BAF7197B5BEE00F6FC2B /* TDCustomRefreshControl.h */,
+				A129BAF8197B5BEE00F6FC2B /* TDCustomRefreshControl.m */,
 			);
 			name = Feed;
 			sourceTree = "<group>";
@@ -1060,6 +1065,7 @@
 				A1D6BB1619775492007983F8 /* TDTextUpload.m in Sources */,
 				2D648A1618C9415D002FE0AD /* TDDetailsCommentsCell.m in Sources */,
 				2DE4653718F614150042D81C /* TDUserEditCell.m in Sources */,
+				A129BAF9197B5BEE00F6FC2B /* TDCustomRefreshControl.m in Sources */,
 				A11999DA18D929E200C39ABF /* UIPlaceHolderTextView.m in Sources */,
 				A1B3EF42193F9B5D0014B619 /* TDNotice.m in Sources */,
 				2D63FA871909D22200FEBA3C /* TDActivityIndicator.m in Sources */,
