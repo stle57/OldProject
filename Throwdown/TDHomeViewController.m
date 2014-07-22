@@ -127,6 +127,7 @@
     } error:^{
         self.loaded = YES;
         self.errorLoading = YES;
+        [self endRefreshControl];
         [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastIconType_Warning payload:@{} delegate:nil];
         [self.tableView reloadData];
     }];
