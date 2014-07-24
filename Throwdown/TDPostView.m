@@ -195,6 +195,7 @@ static NSString *const kTracksKey = @"tracks";
         case TDPostKindPhoto:
             self.filename = post.filename;
             [self setupPreview];
+            [self updateControlImage:ControlStateNone];
             break;
 
         case TDPostKindVideo:
@@ -206,6 +207,7 @@ static NSString *const kTracksKey = @"tracks";
 
         case TDPostKindText:
             [self removePreview];
+            [self updateControlImage:ControlStateNone];
             break;
 
         default:
@@ -322,18 +324,20 @@ static NSString *const kTracksKey = @"tracks";
         self.playerSpinner = [[UIImageView alloc] init];
         [self addSubview:self.playerSpinner];
     }
+    if (self.videoHolderView) {
+        [self insertSubview:self.playerSpinner aboveSubview:self.videoHolderView];
+    }
     [self stopSpinner];
     debug NSLog(@"update control state to: %d", controlState);
 
-    if (controlState == ControlStatePlay) {
-        // 35 == half of 70 on play button
-        self.playerSpinner.frame = CGRectMake(125, [self getMediaOffset] + (kHeightOfMedia / 2) - 35, 70, 70);
-    } else {
+    if (controlState != ControlStatePlay) {
         self.playerSpinner.frame = CGRectMake(290.0, [self getMediaOffset] + kHeightOfMedia - 30, 20.0, 20.0);
     }
 
     switch (controlState) {
         case ControlStatePlay:
+            // 35 == half of 70 on play button
+            self.playerSpinner.frame = CGRectMake(125, [self getMediaOffset] + (kHeightOfMedia / 2) - 35, 70, 70);
             [self.playerSpinner setImage:[UIImage imageNamed:@"play_button_140x140"]];
             break;
         case ControlStatePaused:
@@ -369,9 +373,6 @@ static NSString *const kTracksKey = @"tracks";
     [self hideLoadingError];
 
     NSURL *videoLocation = [TDConstants getStreamingUrlFor:self.filename];
-//    NSString *filename = [NSString stringWithFormat:@"%@.mp4", self.filename];
-//    debug NSLog(@"Video load: %@", filename);
-
     [self updateControlImage:ControlStateLoading];
     [self startLoadingTimeout];
 
