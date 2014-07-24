@@ -11,7 +11,7 @@
 #import "TDDetailsLikesCell.h"
 #import "TDDetailsCommentsCell.h"
 #import "TDPostView.h"
-#import "TDUserListViewController.h"
+#import "TDUserListView.h"
 
 @protocol TDDetailViewControllerDelegate <NSObject>
 

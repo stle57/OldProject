@@ -17,7 +17,7 @@
 #import "UIAlertView+TDBlockAlert.h"
 #import "TDUserAPI.h"
 #import "TDAPIClient.h"
-#import "TDUserListViewController.h"
+#import "TDUserListView.h"
 
 @interface TDShareVideoViewController () <UITextViewDelegate, NSLayoutManagerDelegate>
 
@@ -32,17 +32,16 @@
 @property (weak, nonatomic) IBOutlet UIButton *prButton;
 @property (weak, nonatomic) IBOutlet UIView *topLineView;
 @property (weak, nonatomic) IBOutlet UIView *optionsView;
-@property (weak, nonatomic) IBOutlet UITableView *filteredUserNameView;
 
 @property (nonatomic) BOOL isOriginal;
 @property (nonatomic) BOOL isPR;
 @property (nonatomic) NSString *filename;
 @property (nonatomic) NSString *thumbnailPath;
-@property (nonatomic) NSString *userNameFilter;
-@property (nonatomic) TDUserListViewController *filteredUserNameController;
+@property (nonatomic) TDUserListView *userListView;
 
 @property (nonatomic) UIImage *prOnImage;
 @property (nonatomic) UIImage *prOffImage;
+@property (nonatomic) CGFloat frameHeight;
 
 @end
 
@@ -88,16 +87,11 @@
     }
 
     // User name filter table view
-	if (self.filteredUserNameController == nil) {
-		self.filteredUserNameController = [[TDUserListViewController alloc] init];
-        self.filteredUserNameController.delegate = self;
-        [[self navigationController] pushViewController:self.filteredUserNameController animated:YES];
+	if (self.userListView == nil) {
+		self.userListView = [[TDUserListView alloc] initWithFrame:CGRectMake(0, 140, 320, 320)];
+        self.userListView.delegate = self;
+        [self.view addSubview:self.userListView];
 	}
-    self.filteredUserNameView.delegate = self.filteredUserNameController;
-    self.filteredUserNameView.dataSource = self.filteredUserNameController;
-    [self.view addSubview:self.filteredUserNameView];
-    self.filteredUserNameView.hidden = YES;
-
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -115,14 +109,13 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self.filteredUserNameView setContentInset:UIEdgeInsetsMake(0, 0, 0, 0)];
 }
 
 - (void)dealloc {
     self.commentTextView.delegate = nil;
-    self.filteredUserNameView.delegate = nil;
-    self.filteredUserNameView = nil;
-    self.filteredUserNameController = nil;
+    [self.userListView removeFromSuperview];
+    self.userListView.delegate = nil;
+    self.userListView = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -191,17 +184,17 @@
 
     BOOL isPortrait = UIDeviceOrientationIsPortrait([UIApplication sharedApplication].statusBarOrientation);
     CGFloat keyboardHeight = isPortrait ? keyboardFrame.size.height : keyboardFrame.size.width;
-    CGFloat screenHeight = self.view.bounds.size.height;
+    self.frameHeight = self.view.bounds.size.height - keyboardHeight;
 
     NSNumber *curveValue = [info objectForKey:UIKeyboardAnimationCurveUserInfoKey];
     UIViewAnimationCurve animationCurve = curveValue.intValue;
     NSTimeInterval animationDuration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
 
     CGPoint center = self.optionsView.center;
-    center.y = screenHeight - keyboardHeight - (self.optionsView.layer.frame.size.height / 2);
+    center.y = self.frameHeight - (self.optionsView.layer.frame.size.height / 2);
 
     CGRect textFrame = self.commentTextView.frame;
-    textFrame.size.height = screenHeight - keyboardHeight - self.optionsView.layer.frame.size.height - 64 - 28; // 64 == status + toolbar, 28 is for paddings
+    textFrame.size.height = self.frameHeight - self.optionsView.layer.frame.size.height - 64 - 28; // 64 == status + toolbar, 28 is for paddings
 
     // animationCurve << 16 to convert it from a view animation curve to a view animation option
     [UIView animateWithDuration:animationDuration delay:0.0 options:(animationCurve << 16) animations:^{
@@ -216,11 +209,13 @@
     UIViewAnimationCurve animationCurve = curveValue.intValue;
     NSTimeInterval animationDuration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
 
+    self.frameHeight = [UIScreen mainScreen].bounds.size.height;
+
     CGPoint center = self.optionsView.center;
-    center.y = [UIScreen mainScreen].bounds.size.height - (self.optionsView.layer.frame.size.height / 2);
+    center.y = self.frameHeight - (self.optionsView.layer.frame.size.height / 2);
 
     CGRect textFrame = self.commentTextView.frame;
-    textFrame.size.height = [UIScreen mainScreen].bounds.size.height - self.optionsView.layer.frame.size.height - 64 - 28; // 64 == status + toolbar, 28 is for paddings
+    textFrame.size.height = self.frameHeight - self.optionsView.layer.frame.size.height - 64 - 28; // 64 == status + toolbar, 28 is for paddings
 
     // animationCurve << 16 to convert it from a view animation curve to a view animation option
     [UIView animateWithDuration:animationDuration delay:0.0 options:(animationCurve << 16) animations:^{
@@ -233,43 +228,36 @@
 
 - (void)textViewDidChange:(UITextView *)textView {
     self.postButton.enabled = (self.filename || [[textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0);
-}
-
-- (void)updateTextView:(NSDictionary*) user {
-    NSString *currentText = self.commentTextView.text;
-    NSString *userName = [[user objectForKey:@"username"] stringByAppendingString:@" "];
-    NSString *newText = [currentText substringToIndex:(currentText.length-self.userNameFilter.length)] ;
-
-    self.commentTextView.text = [newText stringByAppendingString:userName];
-
-    self.filteredUserNameView.hidden = YES;
-}
-
-- (void)textViewDidChange:(UITextView *)textView {
-    NSString *currentText = self.commentTextView.text;
-
-    int userNameLength = [TDTextViewControllerHelper findUsernameLength:(currentText)];
-
-    if(userNameLength != 0) {
-
-        self.userNameFilter = [TDTextViewControllerHelper getUserNameList:currentText length:userNameLength];
-        if ([self.userNameFilter length] != 0) {
-            [self.filteredUserNameController showTableView:self.userNameFilter];
-            if(self.filteredUserNameController.filteredList != 0){
-                self.filteredUserNameView.hidden = NO;
-                [self.filteredUserNameView reloadData];
-            } else {
-                self.filteredUserNameView.hidden = YES;
-            }
-        } else {
-            self.filteredUserNameView.hidden = YES;
-        }
-
+    if ([self.userListView shouldShowUserSuggestions:textView.text]) {
+        NSLog(@"height: %f", self.frameHeight);
+        [self.userListView updateFrame:CGRectMake(0, 140, 320, self.frameHeight - 140)];
+        CGRect frame = textView.frame;
+        frame.size.height = 140 - frame.origin.y;
+        textView.frame = frame;
+        [self alignCarretInTextView:textView];
     } else {
-        self.filteredUserNameView.hidden = YES;
+        [self resetTextViewSize];
     }
-
 }
+
+- (void)alignCarretInTextView:(UITextView *)textView {
+    CGRect caretRect = [textView caretRectForPosition:textView.selectedTextRange.start];
+    CGFloat offscreen = caretRect.origin.y + caretRect.size.height - (textView.contentOffset.y + textView.bounds.size.height - textView.contentInset.bottom - textView.contentInset.top);
+    CGPoint offsetP = textView.contentOffset;
+    offsetP.y += offscreen + 3; // 3 px -- margin puts caret 3 px above bottom
+    if (offsetP.y >= 0) {
+        [textView setContentOffset:offsetP];
+    }
+}
+
+- (void)resetTextViewSize {
+    CGRect frame = self.commentTextView.frame;
+    frame.size.height = self.frameHeight - self.optionsView.layer.frame.size.height - 64 - 28; // 64 == status + toolbar, 28 is for paddings
+    self.commentTextView.frame = frame;
+    [self alignCarretInTextView:self.commentTextView];
+}
+
+
 #pragma mark - NSLayoutManagerDelegate
 
 - (CGFloat)layoutManager:(NSLayoutManager *)layoutManager lineSpacingAfterGlyphAtIndex:(NSUInteger)glyphIndex withProposedLineFragmentRect:(CGRect)rect {
@@ -333,8 +321,14 @@
 
 #pragma mark - TDUserListViewDelegate
 
-- (void)addItemViewController:(TDUserListViewController *)controller didFinishEnteringItem:(NSDictionary *)item {
-    [self updateTextView:item];
+- (void)selectedUser:(NSDictionary *)user forUserNameFilter:(NSString *)userNameFilter {
+    NSString *currentText = self.commentTextView.text;
+    NSString *userName = [[user objectForKey:@"username"] stringByAppendingString:@" "];
+    NSString *newText = [currentText substringToIndex:(currentText.length - userNameFilter.length)] ;
+
+    self.commentTextView.text = [newText stringByAppendingString:userName];
+    self.userListView.hidden = YES;
+    [self resetTextViewSize];
 }
 
 @end

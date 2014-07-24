@@ -407,18 +407,13 @@
                                 <color key="tintColor" red="0.0" green="0.47450980390000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <color key="textColor" red="0.29803921570000003" green="0.29803921570000003" blue="0.29803921570000003" alpha="1" colorSpace="calibratedRGB"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" keyboardType="twitter"/>
                             </textView>
                             <view contentMode="scaleToFill" id="dNx-C4-ku4">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="20"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.92941176469999998" green="0.92941176469999998" blue="0.92941176469999998" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="9tX-M4-vxc">
-                                <rect key="frame" x="0.0" y="140" width="320" height="377"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                            </tableView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -429,7 +424,6 @@
                         <outlet property="labelMedia" destination="Ful-ET-chj" id="cgc-aN-fPD"/>
                         <outlet property="labelPR" destination="eTs-OU-161" id="JhS-oM-xZz"/>
                         <outlet property="mediaButton" destination="3bl-UR-ozz" id="WKY-t0-JtL"/>
-                        <outlet property="filteredUserNameView" destination="9tX-M4-vxc" id="J4r-JF-e3r"/>
                         <outlet property="navigationBar" destination="NRt-ff-Rwo" id="Um1-0K-Nuk"/>
                         <outlet property="navigationBarItem" destination="wri-hY-2pa" id="GVv-mZ-fFQ"/>
                         <outlet property="optionsView" destination="dkj-mq-ZcI" id="v5C-wg-etQ"/>
@@ -643,7 +637,7 @@ The Throwdown Community</string>
                                 </subviews>
                             </scrollView>
                             <view autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" id="Cg8-Gr-JJ0" userLabel="Page Indicator View">
-                                <rect key="frame" x="138.5" y="532" width="43" height="9"/>
+                                <rect key="frame" x="139" y="532" width="43" height="9"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" tag="41" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="page-circle-white" id="m5t-hc-QmI" userLabel="indicator 1">

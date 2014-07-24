@@ -10,6 +10,6 @@
 
 @interface TDTextViewControllerHelper : NSObject
 
-+(int)findUsernameLength:(NSString*)currentText;
-+(NSString*)getUserNameList:(NSString*)text length:(int)userNameLength;
++ (NSString *)findUsernameInText:(NSString *)text;
+
 @end

@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TDUserListViewController.h"
+#import "TDUserListView.h"
 
 @interface TDShareVideoViewController : UIViewController<UITableViewDelegate, TDUserListViewDelegate>
 - (void)addMedia:(NSString *)filename thumbnail:(NSString *)thumbnailPath isOriginal:(BOOL)original;

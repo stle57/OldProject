@@ -25,8 +25,7 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
 
         if (_sharedInstance == nil) {
             _sharedInstance = [[TDUserList alloc] init];
-        }
-        else {
+        } else {
             // The object already instantiated, retrieve the list
             [_sharedInstance getCommunityUserList];
         }
@@ -88,16 +87,12 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
 
 - (void) getCommunityUserList {
     [[TDUserAPI sharedInstance] getCommunityUserList:^(BOOL success, NSDictionary *returnList) {
-        if(success && returnList && returnList.count > 0) {
-            // Print out array ofnames
+        if (success && returnList && returnList.count > 0) {
             _userList = [returnList copy];
-            debug NSLog(@"_userList=%@", _userList);
             [self save];
-
         } else {
             debug NSLog(@"no list");
         }
-
         // Fire off timer to retrieve data again
 //        _timer = [NSTimer scheduledTimerWithTimeInterval:kReloadUserListTime target:self selector:@selector(getCommunityUserList) userInfo:nil repeats:NO];
 
