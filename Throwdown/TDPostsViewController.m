@@ -464,12 +464,12 @@ static CGFloat const kHeightOfStatusBar = 65.0;
         return cell;
     }
 
-    // The video
+    // The post
     TDPost *post = [self postForRow:indexPath.section];
     if (indexPath.row == 0) {
         TDPostView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_POST_VIEW];
         if (!cell) {
-            cell = [[TDPostView alloc] init];
+            cell = [[TDPostView alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CELL_IDENTIFIER_POST_VIEW];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             cell.delegate = self;
         }

@@ -27,8 +27,8 @@
 @property (nonatomic) UIImageView *userProfileImage;
 @property (nonatomic) TDUpdatingDateLabel *createdLabel;
 @property (nonatomic, assign) NSInteger row;
-@property (strong, nonatomic) NSString *filename;
-@property (strong, nonatomic) NSString *userPicture;
+@property (nonatomic, copy) NSString *filename;
+@property (nonatomic, copy) NSString *userPicture;
 
 - (void)setPost:(TDPost *)post;
 

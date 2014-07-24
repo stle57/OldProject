@@ -38,21 +38,6 @@ static CGFloat const kHeightOfMedia = 320.;
 static CGFloat const kWidthOfMedia = 320.;
 static NSString *const kTracksKey = @"tracks";
 
-@interface TDAsset : AVURLAsset
-@end
-
-@implementation TDAsset
-
-- (void)dealloc {
-    NSLog(@"dealloc asset %@ : %@", self.URL, self.tracks);
-}
-
-@end
-
-
-
-
-
 @interface TDPostView () <TTTAttributedLabelDelegate>
 
 @property (nonatomic) UIView *videoHolderView;
@@ -93,10 +78,9 @@ static NSString *const kTracksKey = @"tracks";
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (instancetype)init {
-    self = [super init];
+- (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-
         self.userInteractionEnabled = YES;
 
         // add pr star at lowest level
@@ -151,13 +135,11 @@ static NSString *const kTracksKey = @"tracks";
     }
 
     // Only update if this isn't the same post or username or picture has changed
-    if ([self.filename isEqualToString:post.filename] && [self.usernameLabel.text isEqualToString:post.user.username] && [self.userPicture isEqualToString:post.user.picture]) {
+    if ([self.post.postId isEqual:post.postId] && [self.usernameLabel.text isEqualToString:post.user.username] && [self.userPicture isEqualToString:post.user.picture]) {
         return;
     }
-    self.userPicture = post.user.picture;
-
     // If it's the same (eg table was refreshed), bail so that we don't stop video playback
-    if (self.state == PlayerStatePlaying && [self.post isEqual:post]) {
+    if ([self.post.postId isEqual:post.postId] && (self.state == PlayerStatePlaying || self.post)) {
         return;
     }
 
@@ -165,6 +147,7 @@ static NSString *const kTracksKey = @"tracks";
     [self removeVideo];
 
     _post = post;
+    self.userPicture = post.user.picture;
     self.state = PlayerStateNotLoaded;
 
     // Set username label and size (for tap area)

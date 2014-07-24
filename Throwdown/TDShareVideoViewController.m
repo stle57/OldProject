@@ -229,7 +229,6 @@
 - (void)textViewDidChange:(UITextView *)textView {
     self.postButton.enabled = (self.filename || [[textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0);
     if ([self.userListView shouldShowUserSuggestions:textView.text]) {
-        NSLog(@"height: %f", self.frameHeight);
         [self.userListView updateFrame:CGRectMake(0, 140, 320, self.frameHeight - 140)];
         CGRect frame = textView.frame;
         frame.size.height = 140 - frame.origin.y;

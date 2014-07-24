@@ -341,9 +341,7 @@
     UIViewController *top = [TDAppDelegate topMostController];
     if ([top class] == [UINavigationController class] || [top class] == [TDNavigationController class]) {
         for (UIViewController *vc in [((UINavigationController *)top) viewControllers]) {
-            NSLog(@"testing %@", [vc class]);
             if ([vc respondsToSelector:@selector(unwindToRoot)]) {
-                NSLog(@"closing %@", [vc class]);
                 [vc performSelector:@selector(unwindToRoot)];
             }
         }

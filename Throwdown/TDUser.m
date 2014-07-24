@@ -51,7 +51,7 @@
 }
 
 - (BOOL)hasDefaultPicture {
-    return !!(!self.picture || [self.picture isKindOfClass:[NSNull class]] || [self.picture isEqualToString:@"default"]);
+    return !!(!self.picture || [self.picture isKindOfClass:[NSNull class]] || [self.picture length] == 0 || [self.picture isEqualToString:@"default"]);
 }
 
 @end
