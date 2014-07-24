@@ -226,6 +226,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="feedbackButton" destination="aqV-xQ-E5K" id="45W-M3-dGj"/>
                         <outlet property="tableView" destination="qzV-nw-fmu" id="kLl-Hs-HVt"/>
                     </connections>
                 </viewController>

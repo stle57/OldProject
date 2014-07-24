@@ -39,13 +39,16 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.feedbackButton.titleLabel.font = [TDConstants fontBoldSized:19.0];
-    self.tableView.delegate = self;
-    self.tableView.dataSource = self;
+    if (![MFMailComposeViewController canSendMail]) {
+        self.feedbackButton.hidden = YES;
+    }
 
     CGRect frame = self.tableView.frame;
-    frame.size.height = [UIScreen mainScreen].bounds.size.height - self.feedbackButton.frame.size.height;
+    frame.size.height = [UIScreen mainScreen].bounds.size.height - (self.feedbackButton.hidden ? 0 : self.feedbackButton.frame.size.height);
     self.tableView.frame = frame;
+
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
     self.activities = @[];
     self.navigationController.navigationBar.titleTextAttributes = @{
                                                                     NSForegroundColorAttributeName: [UIColor colorWithRed:.223529412 green:.223529412 blue:.223529412 alpha:1.0],
@@ -54,11 +57,9 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 
     // Add refresh control
     self.refreshControl = [[UIRefreshControl alloc] init];
-    [self.refreshControl addTarget:self
-                            action:@selector(refreshControlUsed)
-                  forControlEvents:UIControlEventValueChanged];
-    [self.tableView addSubview:self.refreshControl];
+    [self.refreshControl addTarget:self action:@selector(refreshControlUsed) forControlEvents:UIControlEventValueChanged];
     [self.refreshControl setTintColor:[UIColor blackColor]];
+    [self.tableView addSubview:self.refreshControl];
 
     [self refresh];
 }
@@ -174,8 +175,11 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 	return platform;
 }
 
--(void)displayFeedbackEmail
-{
+- (void)displayFeedbackEmail {
+    if (![MFMailComposeViewController canSendMail]) {
+        // can't send email, don't try!
+        return;
+    }
     MFMailComposeViewController *picker = [[MFMailComposeViewController alloc] init];
     picker.mailComposeDelegate = self;
 
@@ -201,9 +205,9 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
     [picker setMessageBody:emailBody isHTML:NO];
 
     // Present the mail composition interface.
-    [self presentViewController:picker
-                       animated:YES
-                     completion:nil];
+    if (picker) {
+        [self presentViewController:picker animated:YES completion:nil];
+    }
 }
 
 // The mail compose view controller delegate method
