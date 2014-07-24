@@ -46,7 +46,7 @@ static CGFloat const kCommentWidthNoPreview = 306.;
     NSString *username = [user objectForKey:@"username"];
 
     [self.previewImage setImage:nil];
-    if ([[post objectForKey:@"filename"] isEqual:[NSNull null]]) {
+    if ([[post objectForKey:@"filename"] isEqual:[NSNull null]] || [[post objectForKey:@"filename"] length] == 0) {
         self.previewImage.hidden = YES;
     } else {
         self.previewImage.hidden = NO;
