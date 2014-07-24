@@ -27,7 +27,6 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-
         self.frame = CGRectMake(0., -100., 320., 100.);
         self.isRefreshing = NO;
 
@@ -72,7 +71,7 @@
 }
 
 - (void)containingScrollViewDidEndDragging:(UIScrollView *)containingScrollView {
-    CGFloat minOffsetToTriggerRefresh = self.frame.size.height + containingScrollView.contentInset.top;
+    CGFloat minOffsetToTriggerRefresh = 80 + containingScrollView.contentInset.top;
     if (!self.isRefreshing && !containingScrollView.isDragging && containingScrollView.contentOffset.y <= -minOffsetToTriggerRefresh) {
         [self.refreshView startAnimating];
         self.scrollView = containingScrollView;
@@ -81,7 +80,7 @@
         self.minAnimationReached = NO;
         self.originalInset = containingScrollView.contentInset;
         [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
-            containingScrollView.contentInset = UIEdgeInsetsMake(minOffsetToTriggerRefresh, self.originalInset.left, self.originalInset.bottom, self.originalInset.right);
+            containingScrollView.contentInset = UIEdgeInsetsMake(self.frame.size.height + containingScrollView.contentInset.top, self.originalInset.left, self.originalInset.bottom, self.originalInset.right);
         } completion:^(BOOL finished) {
             [self sendActionsForControlEvents:UIControlEventValueChanged];
             [NSTimer scheduledTimerWithTimeInterval:.75 target:self selector:@selector(endRefreshing) userInfo:nil repeats:NO];
