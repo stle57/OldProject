@@ -637,7 +637,7 @@ The Throwdown Community</string>
                                 </subviews>
                             </scrollView>
                             <view autoresizesSubviews="NO" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" id="Cg8-Gr-JJ0" userLabel="Page Indicator View">
-                                <rect key="frame" x="139" y="532" width="43" height="9"/>
+                                <rect key="frame" x="138.5" y="532" width="43" height="9"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" tag="41" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="page-circle-white" id="m5t-hc-QmI" userLabel="indicator 1">

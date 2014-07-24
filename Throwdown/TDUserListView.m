@@ -59,14 +59,14 @@
 
     TDUserListCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[TDUserListCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+        cell = [[TDUserListCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     }
     NSDictionary* user = [self.filteredList objectAtIndex:indexPath.row];
 
     // Don't need to update if it's the same user, avoids UI flashing
     if (cell.userId != [[user objectForKey:@"id"] integerValue]) {
-        cell.textLabel.text = [user objectForKey:@"username"];
-        cell.detailTextLabel.text = [user objectForKey:@"name"];
+        cell.name.text = [user objectForKey:@"name"];
+        cell.username.text = [@"@" stringByAppendingString:[user objectForKey:@"username"]];
         if ([user objectForKey:@"picture"] != [NSNull null] && ![[user objectForKey:@"picture"] isEqualToString:@"default"]) {
             cell.profileImage.image = nil;
             [[TDAPIClient sharedInstance] setImage:@{@"imageView":cell.profileImage,
@@ -98,9 +98,8 @@
     self.userNameFilter = [TDTextViewControllerHelper findUsernameInText:text];
     if (self.userNameFilter != nil && [self.userNameFilter length] > 0) {
         [self.filteredList removeAllObjects];
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(SELF.username like[c] %@) OR (SELF.name like[c] %@)",
-                                  [NSString stringWithFormat:@"%@*", self.userNameFilter],
-                                  [NSString stringWithFormat:@"*%@*", self.userNameFilter]];
+        NSString *regexString = [NSString stringWithFormat:@".*\\B%@.*", self.userNameFilter];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(SELF.username matches[c] %@) OR (SELF.name matches[c] %@)", regexString, regexString];
         self.filteredList = [NSMutableArray arrayWithArray:[self.communityInfo.userList filteredArrayUsingPredicate:predicate]];
         if ([self.filteredList count] != 0){
             [self.tableView reloadData];

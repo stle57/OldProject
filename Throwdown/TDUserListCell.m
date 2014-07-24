@@ -9,6 +9,9 @@
 #import "TDUserListCell.h"
 #import "TDConstants.h"
 
+static int const kIndentenation = 68;
+static int const kWidth = 252;
+
 @interface TDUserListCell ()
 
 @property (nonatomic) UIView *bottomLine;
@@ -21,12 +24,20 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        self.textLabel.font = [TDConstants fontBoldSized:14.0];
-        self.detailTextLabel.font = [TDConstants fontLightSized:12.0];
-        self.indentationLevel = 5;
-        self.indentationWidth = 6;
+        self.textLabel.hidden = YES;
+        self.detailTextLabel.hidden = YES;
 
-        self.profileImage = [[UIImageView alloc] initWithFrame:CGRectMake(5, 5, 30, 30)];
+        self.name = [[UILabel alloc] initWithFrame:CGRectMake(kIndentenation, 5, kWidth, 15)];
+        self.name.font = COMMENT_MESSAGE_FONT;
+        self.name.textColor = [TDConstants headerTextColor];
+        [self addSubview:self.name];
+
+        self.username = [[UILabel alloc] initWithFrame:CGRectMake(kIndentenation, 20, kWidth, 13)];
+        self.username.font = [TDConstants fontRegularSized:13.0];
+        self.username.textColor = [TDConstants disabledTextColor];
+        [self addSubview:self.username];
+
+        self.profileImage = [[UIImageView alloc] initWithFrame:CGRectMake(18, 4, 32, 32)];
         self.profileImage.backgroundColor = [TDConstants darkBackgroundColor];
         self.profileImage.contentMode = UIViewContentModeScaleAspectFit;
         [self.profileImage.layer setCornerRadius:self.profileImage.frame.size.height/2.f];
@@ -35,7 +46,7 @@
         self.profileImage.image = [UIImage imageNamed:@"prof_pic_default"];
         [self.contentView addSubview:self.profileImage];
 
-        self.bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, self.frame.size.height - 5, 320, 1.0 / [[UIScreen mainScreen] scale])];
+        self.bottomLine = [[UIView alloc] initWithFrame:CGRectMake(kIndentenation, self.frame.size.height - 5, kWidth, 1.0 / [[UIScreen mainScreen] scale])];
         self.bottomLine.backgroundColor = [TDConstants borderColor];
         [self addSubview:self.bottomLine];
     }

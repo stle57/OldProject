@@ -10,6 +10,8 @@
 
 @interface TDUserListCell : UITableViewCell
 
+@property (nonatomic) UILabel *name;
+@property (nonatomic) UILabel *username;
 @property (nonatomic) UIImageView *profileImage;
 @property (nonatomic, assign) NSInteger userId;
 

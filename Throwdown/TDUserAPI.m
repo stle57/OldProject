@@ -8,6 +8,7 @@
 
 #import "TDUserAPI.h"
 #import "TDAPIClient.h"
+#import "TDUserList.h"
 #import "RSClient.h"
 #import "TDConstants.h"
 #import "AFNetworking.h"
@@ -100,6 +101,7 @@
 - (void)logout {
     [[TDAPIClient sharedInstance] logoutUserWithDeviceToken:self.currentUser.deviceToken];
     [self.currentUser logout];
+    [[TDUserList sharedInstance] clearList];
     [self setCrashlyticsMeta];
 }
 

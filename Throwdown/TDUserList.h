@@ -10,10 +10,10 @@
 
 @interface TDUserList : NSObject <NSCoding>
 @property (strong, nonatomic, readonly) NSArray *userList;
-//@property (strong, nonatomic) NSTimer *timer;
 
-+ (TDUserList*) sharedInstance;
-- (void) getCommunityUserList;
++ (TDUserList *)sharedInstance;
+- (void)getCommunityUserList;
+- (void)clearList;
 - (id)initWithDictionary:(NSDictionary *)dict;
-- (id)initWithUser:(NSNumber*)communityId userList:(NSDictionary *)userList;
+
 @end
