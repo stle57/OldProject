@@ -549,6 +549,10 @@ static float const kMaxInputHeight = 100.;
     self.commentView.center = current;
 }
 
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+    return [TDTextViewControllerHelper textView:textView shouldChangeTextInRange:range replacementText:text];
+}
+
 - (void)textViewDidChange:(UITextView *)textView {
     CGFloat height = MAX(MIN(textView.contentSize.height - kInputLineSpacing, kMaxInputHeight), kMinInputHeight);
     [self updateCommentSize:height];

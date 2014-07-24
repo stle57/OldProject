@@ -7,6 +7,7 @@
 //
 
 #import "TDTextViewControllerHelper.h"
+#import "TDConstants.h"
 
 @implementation TDTextViewControllerHelper
 
@@ -30,6 +31,14 @@
     }
     // if the loop didn't return anything, nothing was found so return nil:
     return nil;
+}
+
++ (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+    // Allow pasting longer texts but cut the text to max limit
+    if ([text length] + [textView.text length] > kCommentMaxCharacters) {
+        textView.text = [[textView.text stringByAppendingString:text] substringToIndex:kCommentMaxCharacters];
+    }
+    return textView.text.length + (text.length - range.length) <= kCommentMaxCharacters;
 }
 
 @end

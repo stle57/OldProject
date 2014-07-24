@@ -11,5 +11,6 @@
 @interface TDTextViewControllerHelper : NSObject
 
 + (NSString *)findUsernameInText:(NSString *)text;
++ (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text;
 
 @end

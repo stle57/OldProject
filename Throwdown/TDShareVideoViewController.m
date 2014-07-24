@@ -226,6 +226,10 @@
 
 #pragma mark UITextViewDelegate
 
+- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+    return [TDTextViewControllerHelper textView:textView shouldChangeTextInRange:range replacementText:text];
+}
+
 - (void)textViewDidChange:(UITextView *)textView {
     self.postButton.enabled = (self.filename || [[textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0);
     if ([self.userListView shouldShowUserSuggestions:textView.text]) {

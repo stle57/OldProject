@@ -80,6 +80,8 @@ static NSString *const TDFontProximaNovaSemibold = @"ProximaNova-Semibold";
 static CGFloat const kCommentCellUserHeight = 18.0;
 static CGFloat const kCommentPadding = 3; // padding between comments
 static CGFloat const kCommentLastPadding = 8; // bottom padding of comments
+static NSInteger const kCommentMaxCharacters = 500; // MAX number of characters allowed in a comment or post
+
 
 // 1.27 is the lowest we can go without cutting off the emoji
 static CGFloat const kTextLineHeight = 1.27;
