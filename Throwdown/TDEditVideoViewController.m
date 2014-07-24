@@ -105,7 +105,7 @@ static const NSString *ItemStatusContext;
         self.coverView.center = CGPointMake(self.coverView.center.x, 212);
     }
     self.helpLabel.frame = CGRectMake(0, 44, 320, self.coverView.frame.origin.y - 44);
-    self.helpLabel.font = [TDConstants fontRegularSized:19];
+    self.helpLabel.font = [TDConstants fontSemiBoldSized:17];
 
     [[UIApplication sharedApplication] setStatusBarHidden:YES
                                             withAnimation:UIStatusBarAnimationFade];
