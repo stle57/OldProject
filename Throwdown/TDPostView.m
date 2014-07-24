@@ -84,7 +84,7 @@ static NSString *const kTracksKey = @"tracks";
         self.userInteractionEnabled = YES;
 
         // add pr star at lowest level
-        self.prStar = [[UIImageView alloc] initWithFrame:CGRectMake(247, 5, 32, 32)];
+        self.prStar = [[UIImageView alloc] initWithFrame:CGRectMake(249, 6, 32, 32)];
         self.prStar.image = [UIImage imageNamed:@"trophy_64x64"];
         self.prStar.hidden = YES;
         [self addSubview:self.prStar];
