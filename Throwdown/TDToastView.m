@@ -67,8 +67,8 @@
             break;
         case kToastIconType_Info:
             iconImage = [UIImage imageNamed:@"td_info_toast_icon"];
-            self.backgroundColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:0.8];
-            self.label.textColor =[UIColor darkGrayColor];
+            self.backgroundColor = [TDConstants headerTextColor];
+            self.label.textColor = [UIColor whiteColor];
             break;
 
         default:

@@ -56,6 +56,11 @@
         [self openPushNotification:[launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]];
     }
 
+    [[TDAppDelegate appDelegate] showToastWithText:@"TEXT for testing"
+                                              type:kToastIconType_Info
+                                           payload:nil
+                                          delegate:nil];
+
     debug NSLog(@"app launched with options: %@", launchOptions);
     return YES;
 }
@@ -237,8 +242,7 @@
 #pragma clang diagnostic pop
 }
 
-+(void)fixWidthOfThisLabel:(UILabel *)aLabel
-{
++ (void)fixWidthOfThisLabel:(UILabel *)aLabel {
     aLabel.frame = CGRectMake(aLabel.frame.origin.x,
                               aLabel.frame.origin.y,
                               [TDAppDelegate widthOfTextForString:aLabel.text
@@ -247,11 +251,9 @@
                               aLabel.frame.size.height);
 }
 
-+(CGFloat)widthOfTextForString:(NSString *)aString andFont:(UIFont *)aFont maxSize:(CGSize)aSize
-{
++ (CGFloat)widthOfTextForString:(NSString *)aString andFont:(UIFont *)aFont maxSize:(CGSize)aSize {
     // iOS7
-    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0)
-    {
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0) {
         CGSize sizeOfText = [aString boundingRectWithSize: aSize
                                                   options: (NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading)
                                                attributes: [NSDictionary dictionaryWithObject:aFont
@@ -333,9 +335,7 @@
         toastView.delegate = delegate;
     }
 
-    [toastView text:text
-               icon:type
-       payload:payload];
+    [toastView text:text icon:type payload:payload];
     [toastView showToast];
 }
 
