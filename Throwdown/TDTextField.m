@@ -152,12 +152,9 @@
     }
 }
 
-- (void)textFieldDidChange:(UITextField *)textField
-{
+- (void)textFieldDidChange:(UITextField *)textField {
     self.valid = NO;    // Invalidated by change of text
-
-    if ([textField.text length] == 0)
-    {
+    if ([textField.text length] == 0) {
         [self status:NO];
         self.xmarkImageView.hidden = YES;
         self.checkmarkImageView.hidden = YES;
@@ -167,16 +164,9 @@
                               delay: 0.0
                             options: UIViewAnimationOptionCurveLinear
                          animations:^{
-
-                             self.placeholderLabel.alpha = 1.0;
-
+                             self.placeholderLabel.alpha = .8;
                          }
-                         completion:^(BOOL animDone){
-                             
-                             if (animDone)
-                             {
-                             }
-                         }];
+                         completion:nil];
     } else {
         self.placeholderLabel.hidden = YES;
     }

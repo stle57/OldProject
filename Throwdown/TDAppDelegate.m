@@ -56,11 +56,6 @@
         [self openPushNotification:[launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]];
     }
 
-    [[TDAppDelegate appDelegate] showToastWithText:@"TEXT for testing"
-                                              type:kToastIconType_Info
-                                           payload:nil
-                                          delegate:nil];
-
     debug NSLog(@"app launched with options: %@", launchOptions);
     return YES;
 }
