@@ -295,6 +295,13 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
+                            <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="je0-Cy-kEP" userLabel="Help Label">
+                                <rect key="frame" x="0.0" y="44" width="320" height="53"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
@@ -306,6 +313,7 @@
                         <outlet property="controlsView" destination="8fL-Se-Rbe" id="NNZ-Ns-uai"/>
                         <outlet property="coverView" destination="a3R-mv-ker" id="WQc-ad-hd9"/>
                         <outlet property="doneButton" destination="Njs-Cf-zmw" id="G2z-1M-X0y"/>
+                        <outlet property="helpLabel" destination="je0-Cy-kEP" id="m2Q-8e-ruU"/>
                         <outlet property="playButton" destination="jCp-Qn-DFT" id="JSd-wq-CUZ"/>
                         <segue destination="Mi2-Xw-H7z" kind="unwind" identifier="MediaCloseSegue" unwindAction="unwindToShareView:" id="aGd-fI-rfI"/>
                         <segue destination="Mi2-Xw-H7z" kind="unwind" identifier="UnwindSlideLeftSegue" unwindAction="unwindToRecordVideo:" id="gKJ-OT-eqX"/>

@@ -61,6 +61,7 @@ static const NSString *ItemStatusContext;
 @property (weak, nonatomic) IBOutlet UIButton *doneButton;
 @property (weak, nonatomic) IBOutlet UIView *controlsView;
 @property (weak, nonatomic) IBOutlet UIView *coverView;
+@property (weak, nonatomic) IBOutlet UILabel *helpLabel;
 
 - (IBAction)playButtonPressed:(UIButton *)sender;
 - (IBAction)doneButtonPressed:(UIButton *)sender;
@@ -103,6 +104,8 @@ static const NSString *ItemStatusContext;
         self.controlsView.center = CGPointMake(self.controlsView.center.x, 430);
         self.coverView.center = CGPointMake(self.coverView.center.x, 212);
     }
+    self.helpLabel.frame = CGRectMake(0, 44, 320, self.coverView.frame.origin.y - 44);
+    self.helpLabel.font = [TDConstants fontRegularSized:19];
 
     [[UIApplication sharedApplication] setStatusBarHidden:YES
                                             withAnimation:UIStatusBarAnimationFade];
@@ -360,6 +363,8 @@ static const NSString *ItemStatusContext;
 }
 
 - (void)setupPhotoEditing {
+    self.helpLabel.text = @"Position & Zoom Image";
+    self.helpLabel.hidden = NO;
     self.playButton.hidden = YES;
     self.previewImageView = [[UIImageView alloc] initWithFrame:[self previewRect]];
     if (self.assetImage) {
@@ -417,6 +422,11 @@ static const NSString *ItemStatusContext;
     [self.slider setMinGap:.1f];
     [self.slider setMaxGap:30];
     [self.view addSubview:self.slider];
+
+    if (!self.isOriginal) {
+        self.helpLabel.text = @"Position & Crop Video";
+        self.helpLabel.hidden = NO;
+    }
 
     self.currentVideoAsset = [AVURLAsset URLAssetWithURL:self.recordedVideoUrl options:nil];
     NSString *tracksKey = @"tracks";
