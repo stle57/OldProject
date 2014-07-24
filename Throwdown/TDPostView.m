@@ -32,7 +32,7 @@ typedef enum {
     PlayerStateReachedEnd
 } PlayerState;
 
-static CGFloat const kHeightOfProfileRow = 42.;
+static CGFloat const kHeightOfProfileRow = 44.;
 static CGFloat const kCommentBottomPadding = 10.;
 static CGFloat const kHeightOfMedia = 320.;
 static CGFloat const kWidthOfMedia = 320.;
@@ -98,7 +98,7 @@ static NSString *const kTracksKey = @"tracks";
         [self.usernameLabel addGestureRecognizer:usernameTap];
         [self addSubview:self.usernameLabel];
 
-        self.commentLabel = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(7, 42, COMMENT_MESSAGE_WIDTH, 0)];
+        self.commentLabel = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(7, kHeightOfProfileRow, COMMENT_MESSAGE_WIDTH, 0)];
         self.commentLabel.textColor = [TDConstants commentTextColor];
         self.commentLabel.font  = COMMENT_MESSAGE_FONT;
         self.commentLabel.delegate = self;
