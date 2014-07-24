@@ -32,11 +32,20 @@
         self.isRefreshing = NO;
 
         self.animationImages = [[NSMutableArray alloc] init];
-        for (int x = 0; x < 2; x++) {
-            for (int i = 0; i < 30; i++) {
-                NSString *imageName = [NSString stringWithFormat:@"ptr-%02d%02d", x, i];
-                [self.animationImages addObject:[UIImage imageNamed:imageName]];
-            }
+        // first add 0008-0029
+        for (int i = 8; i < 30; i++) {
+            NSString *imageName = [NSString stringWithFormat:@"ptr-00%02d", i];
+            [self.animationImages addObject:[UIImage imageNamed:imageName]];
+        }
+        // then add 0100-0029
+        for (int i = 0; i < 30; i++) {
+            NSString *imageName = [NSString stringWithFormat:@"ptr-01%02d", i];
+            [self.animationImages addObject:[UIImage imageNamed:imageName]];
+        }
+        // last add 0000-0007
+        for (int i = 0; i < 8; i++) {
+            NSString *imageName = [NSString stringWithFormat:@"ptr-00%02d", i];
+            [self.animationImages addObject:[UIImage imageNamed:imageName]];
         }
         self.refreshView = [[UIImageView alloc] initWithFrame:CGRectMake(125, 10, 70, 70)];
         self.refreshView.image = [UIImage imageNamed:@"ptr-0000"];
@@ -71,9 +80,12 @@
         self.releaseText.hidden = YES;
         self.minAnimationReached = NO;
         self.originalInset = containingScrollView.contentInset;
-        [containingScrollView setContentInset:UIEdgeInsetsMake(minOffsetToTriggerRefresh, self.originalInset.left, self.originalInset.bottom, self.originalInset.right)];
-        [self sendActionsForControlEvents:UIControlEventValueChanged];
-        [NSTimer scheduledTimerWithTimeInterval:1.5 target:self selector:@selector(endRefreshing) userInfo:nil repeats:NO];
+        [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
+            containingScrollView.contentInset = UIEdgeInsetsMake(minOffsetToTriggerRefresh, self.originalInset.left, self.originalInset.bottom, self.originalInset.right);
+        } completion:^(BOOL finished) {
+            [self sendActionsForControlEvents:UIControlEventValueChanged];
+            [NSTimer scheduledTimerWithTimeInterval:.75 target:self selector:@selector(endRefreshing) userInfo:nil repeats:NO];
+        }];
     } else if (containingScrollView.contentOffset.y < 0) {
         if (!self.isRefreshing && containingScrollView.contentOffset.y <= -minOffsetToTriggerRefresh) {
             self.releaseText.hidden = NO;
