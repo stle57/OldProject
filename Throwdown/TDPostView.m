@@ -195,7 +195,6 @@ static NSString *const kTracksKey = @"tracks";
         case TDPostKindPhoto:
             self.filename = post.filename;
             [self setupPreview];
-            [self updateControlImage:ControlStateNone];
             break;
 
         case TDPostKindVideo:
@@ -207,7 +206,6 @@ static NSString *const kTracksKey = @"tracks";
 
         case TDPostKindText:
             [self removePreview];
-            [self updateControlImage:ControlStateNone];
             break;
 
         default:
@@ -243,23 +241,26 @@ static NSString *const kTracksKey = @"tracks";
 
 - (void)setupVideo {
     if (!self.controlView) {
+        self.playerSpinner = [[UIImageView alloc] init];
         self.videoHolderView = [[UIView alloc] initWithFrame:CGRectMake(0, [self getMediaOffset], kHeightOfMedia, kWidthOfMedia)];
         self.controlView = [[UIImageView alloc] initWithFrame:CGRectMake(0, [self getMediaOffset], kHeightOfMedia, kWidthOfMedia)];
         self.controlView.contentMode = UIViewContentModeCenter;
         self.controlView.userInteractionEnabled = YES;
         self.tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapFrom:)];
         [self.controlView addGestureRecognizer:self.tapGestureRecognizer];
-        [self addSubview:self.controlView];
         [self addSubview:self.videoHolderView];
+        [self addSubview:self.playerSpinner];
+        [self addSubview:self.controlView];
         [self insertSubview:self.videoHolderView aboveSubview:self.previewImage];
-        [self insertSubview:self.controlView aboveSubview:self.videoHolderView];
+        [self insertSubview:self.playerSpinner aboveSubview:self.videoHolderView];
+        [self insertSubview:self.controlView aboveSubview:self.playerSpinner];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pauseTapGesture:) name:TDNotificationPauseTapGesture object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resumeTapGesture:) name:TDNotificationResumeTapGesture object:nil];
     }
 }
 
 - (void)removeVideo {
-    if (self.player) {
+    if (self.videoHolderView) {
         [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationPauseTapGesture object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationResumeTapGesture object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationStopPlayers object:self];
@@ -270,11 +271,13 @@ static NSString *const kTracksKey = @"tracks";
         [self.playerLayer removeFromSuperlayer];
         [self.videoHolderView removeFromSuperview];
         [self.controlView removeFromSuperview];
+        [self.playerSpinner removeFromSuperview];
         self.player = nil;
         self.playerItem = nil;
         self.playerLayer = nil;
         self.videoHolderView = nil;
         self.controlView = nil;
+        self.playerSpinner = nil;
     }
 }
 
@@ -321,12 +324,9 @@ static NSString *const kTracksKey = @"tracks";
 
 - (void)updateControlImage:(ControlState)controlState {
     if (!self.playerSpinner) {
-        self.playerSpinner = [[UIImageView alloc] init];
-        [self addSubview:self.playerSpinner];
+        return;
     }
-    if (self.videoHolderView) {
-        [self insertSubview:self.playerSpinner aboveSubview:self.videoHolderView];
-    }
+
     [self stopSpinner];
     debug NSLog(@"update control state to: %d", controlState);
 
