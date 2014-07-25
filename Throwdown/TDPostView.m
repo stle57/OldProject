@@ -54,6 +54,7 @@ static NSString *const kTracksKey = @"tracks";
 @property (nonatomic) PlayerState state;
 @property (nonatomic) NSTimer *loadingTimeout;
 @property (nonatomic) UITapGestureRecognizer *tapGestureRecognizer;
+@property (nonatomic) CGFloat mediaOffset;
 
 @end
 
@@ -100,7 +101,7 @@ static NSString *const kTracksKey = @"tracks";
 
         self.commentLabel = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(7, kHeightOfProfileRow, COMMENT_MESSAGE_WIDTH, 0)];
         self.commentLabel.textColor = [TDConstants commentTextColor];
-        self.commentLabel.font  = COMMENT_MESSAGE_FONT;
+        self.commentLabel.font = COMMENT_MESSAGE_FONT;
         self.commentLabel.delegate = self;
         self.commentLabel.hidden = YES;
         self.commentLabel.numberOfLines = 0;
@@ -180,13 +181,17 @@ static NSString *const kTracksKey = @"tracks";
         [self.commentLabel setText:post.comment afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
         [TDViewControllerHelper linkUsernamesInLabel:self.commentLabel users:post.mentions];
         self.commentLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:self.commentLabel.attributedText];
+
         CGFloat commentHeight = [TDViewControllerHelper heightForComment:post.comment withMentions:post.mentions];
+        commentHeight = commentHeight == 0 ? 0 : commentHeight + kCommentBottomPadding;
         CGRect frame = self.commentLabel.frame;
-        frame.size.height = commentHeight == 0 ? 0 : commentHeight + kCommentBottomPadding;
+        frame.size.height = commentHeight;
         self.commentLabel.frame = frame;
         self.commentLabel.hidden = NO;
+        self.mediaOffset = kHeightOfProfileRow + commentHeight;
     } else {
         self.commentLabel.hidden = YES;
+        self.mediaOffset = kHeightOfProfileRow;
     }
 
     self.prStar.hidden = !post.personalRecord;
@@ -213,18 +218,15 @@ static NSString *const kTracksKey = @"tracks";
     }
 }
 
-- (CGFloat)getMediaOffset {
-    return kHeightOfProfileRow + (self.commentLabel.hidden ? 0 : self.commentLabel.frame.size.height);
-}
-
 - (void)setupPreview {
     if (!self.previewImage) {
-        self.previewImage = [[UIImageView alloc] initWithFrame:CGRectMake(0, [self getMediaOffset], kHeightOfMedia, kWidthOfMedia)];
+        self.previewImage = [[UIImageView alloc] init];
         self.previewImage.backgroundColor = [TDConstants darkBackgroundColor];
         [self.previewImage setUserInteractionEnabled:YES];
-        [self.previewImage setImage:nil];
         [self addSubview:self.previewImage];
     }
+    self.previewImage.image = nil;
+    self.previewImage.frame = CGRectMake(0, self.mediaOffset, kWidthOfMedia, kHeightOfMedia);
     [self hideLoadingError];
 
     if (self.filename) {
@@ -242,8 +244,8 @@ static NSString *const kTracksKey = @"tracks";
 - (void)setupVideo {
     if (!self.controlView) {
         self.playerSpinner = [[UIImageView alloc] init];
-        self.videoHolderView = [[UIView alloc] initWithFrame:CGRectMake(0, [self getMediaOffset], kHeightOfMedia, kWidthOfMedia)];
-        self.controlView = [[UIImageView alloc] initWithFrame:CGRectMake(0, [self getMediaOffset], kHeightOfMedia, kWidthOfMedia)];
+        self.videoHolderView = [[UIView alloc] initWithFrame:CGRectMake(0, self.mediaOffset, kWidthOfMedia, kHeightOfMedia)];
+        self.controlView = [[UIImageView alloc] initWithFrame:CGRectMake(0, self.mediaOffset, kWidthOfMedia, kHeightOfMedia)];
         self.controlView.contentMode = UIViewContentModeCenter;
         self.controlView.userInteractionEnabled = YES;
         self.tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapFrom:)];
@@ -331,13 +333,13 @@ static NSString *const kTracksKey = @"tracks";
     debug NSLog(@"update control state to: %d", controlState);
 
     if (controlState != ControlStatePlay) {
-        self.playerSpinner.frame = CGRectMake(290.0, [self getMediaOffset] + kHeightOfMedia - 30, 20.0, 20.0);
+        self.playerSpinner.frame = CGRectMake(290.0, self.mediaOffset + kHeightOfMedia - 30, 20.0, 20.0);
     }
 
     switch (controlState) {
         case ControlStatePlay:
             // 35 == half of 70 on play button
-            self.playerSpinner.frame = CGRectMake(125, [self getMediaOffset] + (kHeightOfMedia / 2) - 35, 70, 70);
+            self.playerSpinner.frame = CGRectMake(125, self.mediaOffset + (kHeightOfMedia / 2) - 35, 70, 70);
             [self.playerSpinner setImage:[UIImage imageNamed:@"play_button_140x140"]];
             break;
         case ControlStatePaused:
