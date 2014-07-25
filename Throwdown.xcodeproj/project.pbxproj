@@ -141,6 +141,7 @@
 		A1E90CDD18B445FC0046D281 /* TDSignupStepTwoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E90CDC18B445FC0046D281 /* TDSignupStepTwoViewController.m */; };
 		A1F02FD418C92277002FEB2F /* TDPostUpload.m in Sources */ = {isa = PBXBuildFile; fileRef = A1F02FD318C92277002FEB2F /* TDPostUpload.m */; };
 		A1F3B3681907821800CDA9F5 /* Dring.caf in Resources */ = {isa = PBXBuildFile; fileRef = A1F3B3671907819000CDA9F5 /* Dring.caf */; };
+		A1FBA27D1981C57D00C65E04 /* TDPRSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = A1FBA27C1981C57D00C65E04 /* TDPRSegue.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -369,6 +370,8 @@
 		A1F02FD218C92277002FEB2F /* TDPostUpload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDPostUpload.h; sourceTree = "<group>"; };
 		A1F02FD318C92277002FEB2F /* TDPostUpload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDPostUpload.m; sourceTree = "<group>"; };
 		A1F3B3671907819000CDA9F5 /* Dring.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Dring.caf; path = ../Dring.caf; sourceTree = "<group>"; };
+		A1FBA27B1981C57D00C65E04 /* TDPRSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDPRSegue.h; sourceTree = "<group>"; };
+		A1FBA27C1981C57D00C65E04 /* TDPRSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDPRSegue.m; sourceTree = "<group>"; };
 		BC8AD58EF48B41289E5CE49E /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 		E657ABE418B84EA68554F855 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -424,6 +427,8 @@
 				A1D6BB0F196BC1FD007983F8 /* TDStoryboardSegue.m */,
 				A1D6BB11196BC7AC007983F8 /* TDSlideUpSegue.h */,
 				A1D6BB12196BC7AC007983F8 /* TDSlideUpSegue.m */,
+				A1FBA27B1981C57D00C65E04 /* TDPRSegue.h */,
+				A1FBA27C1981C57D00C65E04 /* TDPRSegue.m */,
 			);
 			name = Segues;
 			sourceTree = "<group>";
@@ -1116,6 +1121,7 @@
 				A109FF351909C76000506F88 /* TDAnalytics.m in Sources */,
 				A1432CE418A99DA40073E492 /* TDSignupStepOneViewController.m in Sources */,
 				A17567901891C7F20034AD05 /* TDPostAPI.m in Sources */,
+				A1FBA27D1981C57D00C65E04 /* TDPRSegue.m in Sources */,
 				2DC7B6AA18FF3D8500261BF7 /* TDToastView.m in Sources */,
 				A182D831188B60CD00F794A5 /* SASliderLeft.m in Sources */,
 				2DA5354818F36EF800031128 /* TDPostsViewController.m in Sources */,

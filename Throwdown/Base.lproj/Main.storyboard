@@ -442,6 +442,7 @@
                         <outlet property="topLineView" destination="GEl-Bw-n2B" id="Mw7-su-29x"/>
                         <segue destination="wbX-js-8Nr" kind="unwind" identifier="VideoCloseSegue" unwindAction="unwindToHome:" id="8Fq-KE-QYm"/>
                         <segue destination="vXZ-lx-hvc" kind="custom" identifier="OpenRecordViewSegue" customClass="TDSlideDownSegue" id="tGN-r2-ECE"/>
+                        <segue destination="wbX-js-8Nr" kind="unwind" identifier="PRSegue" unwindAction="unwindToHome:" id="zRL-cg-wxQ"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6gq-Mf-yfy" userLabel="First Responder" sceneMemberID="firstResponder"/>

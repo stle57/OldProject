@@ -10,6 +10,7 @@
 #import "VideoCloseSegue.h"
 #import "TDSlideUpSegue.h"
 #import "TDSlideDownSegue.h"
+#import "TDPRSegue.h"
 
 @implementation TDNavigationController
 
@@ -18,6 +19,8 @@
 
     if ([@"VideoCloseSegue" isEqualToString:identifier]) {
         return [[VideoCloseSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
+    } else if ([@"PRSegue" isEqualToString:identifier]) {
+        return [[TDPRSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
     } else if ([@"OpenRecordViewSegue" isEqualToString:identifier]) {
         return [[TDSlideUpSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
     } else if ([@"MediaCloseSegue" isEqualToString:identifier]) {

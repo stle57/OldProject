@@ -318,7 +318,11 @@
     } else {
         [[TDPostAPI sharedInstance] addTextPost:comment isPR:self.isPR];
     }
-    [self performSegueWithIdentifier:@"VideoCloseSegue" sender:self];
+    if (self.isPR) {
+        [self performSegueWithIdentifier:@"PRSegue" sender:self];
+    } else {
+        [self performSegueWithIdentifier:@"VideoCloseSegue" sender:self];
+    }
     [[TDAnalytics sharedInstance] logEvent:@"camera_shared"];
 }
 
