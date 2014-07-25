@@ -10,6 +10,8 @@
 #import "TDConstants.h"
 #import <TTTAttributedLabel/TTTAttributedLabel.h>
 
+static CGFloat const kShowPRTime = 1.5;
+
 @implementation TDPRSegue
 
 - (void)perform {
@@ -47,38 +49,36 @@
         NSString *imageName = [NSString stringWithFormat:@"trophy-in-%d", i];
         [images addObject:[UIImage imageNamed:imageName]];
     }
-
+    imageView.image = [images lastObject];
     imageView.animationImages = images;
-    imageView.animationDuration = 1.5;
+    imageView.animationDuration = (36. / 24.); // 24 fps
+    imageView.animationRepeatCount = 1;
     [background addSubview:imageView];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [imageView stopAnimating];
-        imageView.image = [UIImage imageNamed:@"trophy-in-36"];
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(((36. / 24.) + kShowPRTime) * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [images removeAllObjects];
+        for (int i = 1; i < 9; i++) {
+            NSString *imageName = [NSString stringWithFormat:@"trophy-out-%d", i];
+            [images addObject:[UIImage imageNamed:imageName]];
+        }
+        imageView.image = [images lastObject];
+        imageView.animationImages = images;
+        imageView.animationDuration = 8. / 24.; // 24fps
+        imageView.animationRepeatCount = 1;
+        [imageView startAnimating];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)((8./24.) * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            imageView.image = nil;
             [images removeAllObjects];
-            for (int i = 1; i < 9; i++) {
-                NSString *imageName = [NSString stringWithFormat:@"trophy-out-%d", i];
-                [images addObject:[UIImage imageNamed:imageName]];
-            }
-            imageView.animationImages = images;
-            imageView.animationDuration = .333;
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.333 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [imageView stopAnimating];
-                imageView.image = nil;
-                [images removeAllObjects];
-                [UIView animateWithDuration:0.25
-                                      delay:0.208
-                                    options:UIViewAnimationOptionCurveEaseIn
-                                 animations:^{
-                                     background.alpha = 0.;
-                                 } completion:^(BOOL finished) {
-                                     [imageView removeFromSuperview];
-                                     [background removeFromSuperview];
-                                     [self.screenShotDestination removeFromSuperview];
-                                     [self.destinationViewController view].hidden = NO;
-                                 }];
-            });
-            [imageView startAnimating];
+            [UIView animateWithDuration:0.25
+                                  delay:0.208
+                                options:UIViewAnimationOptionCurveEaseIn
+                             animations:^{
+                                 background.alpha = 0.;
+                             } completion:^(BOOL finished) {
+                                 [imageView removeFromSuperview];
+                                 [background removeFromSuperview];
+                                 [self.screenShotDestination removeFromSuperview];
+                                 [self.destinationViewController view].hidden = NO;
+                             }];
         });
     });
     [imageView startAnimating];
@@ -113,7 +113,7 @@
                          text.alpha = 1.;
                      } completion:^(BOOL finished) {
                          [UIView animateWithDuration:0.208
-                                               delay:1.383
+                                               delay:.3 + kShowPRTime
                                              options:UIViewAnimationOptionCurveEaseIn
                                           animations:^{
                                               text.alpha = 0.;
