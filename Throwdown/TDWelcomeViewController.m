@@ -8,6 +8,7 @@
 
 #import "TDWelcomeViewController.h"
 #import "TDAppDelegate.h"
+#import "TDAnalytics.h"
 #import <QuartzCore/QuartzCore.h>
 #import <TTTAttributedLabel/TTTAttributedLabel.h>
 
@@ -102,6 +103,7 @@
     [self.backgroundScrollView setContentOffset:CGPointMake((offset - 340) / 4.f, 0)];
 
     if (offset % 340 == 0 && page > 0) {
+        [[TDAnalytics sharedInstance] logEvent:[NSString stringWithFormat:@"intro_page_%d", page]];
         for (NSNumber *num in @[@41, @42, @43]) {
             UIImageView *indicator = (UIImageView *)[self.view viewWithTag:[num integerValue]];
             if ([num intValue] == 40 + page) {
