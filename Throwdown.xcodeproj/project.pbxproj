@@ -87,6 +87,7 @@
 		A11E05051888CB79002F981A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A11E05031888CB79002F981A /* InfoPlist.strings */; };
 		A11E05071888CB79002F981A /* ThrowdownTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A11E05061888CB79002F981A /* ThrowdownTests.m */; };
 		A11E05121889293C002F981A /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11E05111889293C002F981A /* AssetsLibrary.framework */; };
+		A1280629198ADE6E0038AC2E /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1280628198ADE6E0038AC2E /* FacebookSDK.framework */; };
 		A129BAF9197B5BEE00F6FC2B /* TDCustomRefreshControl.m in Sources */ = {isa = PBXBuildFile; fileRef = A129BAF8197B5BEE00F6FC2B /* TDCustomRefreshControl.m */; };
 		A129BAFC197F231700F6FC2B /* TDUserListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A129BAFB197F231700F6FC2B /* TDUserListCell.m */; };
 		A1432CE118A99D750073E492 /* TDWelcomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1432CE018A99D750073E492 /* TDWelcomeViewController.m */; };
@@ -272,6 +273,7 @@
 		A11E05041888CB79002F981A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A11E05061888CB79002F981A /* ThrowdownTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ThrowdownTests.m; sourceTree = "<group>"; };
 		A11E05111889293C002F981A /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		A1280628198ADE6E0038AC2E /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = FacebookSDK.framework; sourceTree = "<group>"; };
 		A129BAF7197B5BEE00F6FC2B /* TDCustomRefreshControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDCustomRefreshControl.h; sourceTree = "<group>"; };
 		A129BAF8197B5BEE00F6FC2B /* TDCustomRefreshControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDCustomRefreshControl.m; sourceTree = "<group>"; };
 		A129BAFA197F231700F6FC2B /* TDUserListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserListCell.h; sourceTree = "<group>"; };
@@ -394,6 +396,7 @@
 				579149E08F7B4EE789901248 /* libPods.a in Frameworks */,
 				A102FEA118ECF43C00139606 /* libFlurry_4.4.0.a in Frameworks */,
 				A1DAEEB318EB79FA00742949 /* Crashlytics.framework in Frameworks */,
+				A1280629198ADE6E0038AC2E /* FacebookSDK.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -559,6 +562,7 @@
 		A11E04DA1888CB79002F981A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A1280628198ADE6E0038AC2E /* FacebookSDK.framework */,
 				A1D13FEF1905E93A000980E0 /* CoreImage.framework */,
 				A1D13FED1905E931000980E0 /* QuartzCore.framework */,
 				A1D13FEB1905E923000980E0 /* MobileCoreServices.framework */,
