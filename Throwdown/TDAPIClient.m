@@ -13,6 +13,7 @@
 #import "TDFileSystemHelper.h"
 #import "TDDeviceInfo.h"
 #import "UIImage+Resizing.h"
+#import "TDViewControllerHelper.h"
 
 @interface TDAPIClient ()
 
@@ -285,6 +286,40 @@
         debug NSLog(@"device token registered");
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"device token failed registration");
+    }];
+}
+
+#pragma mark - Social Networks registration
+
+- (void)registerFacebookAccessToken:(NSString *)token expiresAt:(NSDate *)expiresAt userId:(NSString *)userId identifier:(NSString *)identifier forUserToken:(NSString *)userToken {
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/identities.json"];
+
+    NSDictionary *identity = @{
+                              @"provider": @"facebook",
+                              @"uid": userId,
+                              @"access_token": token,
+                              @"expires_at": [TDViewControllerHelper getUTCFormatedDate:expiresAt],
+                              @"identifier": identifier
+                              };
+    NSLog(@"sending: %@", identity);
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [self.httpManager POST:url parameters:@{@"user_token": userToken, @"identity": identity} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        debug NSLog(@"device token registered");
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"device token failed registration");
+    }];
+}
+
+- (void)deleteFacebookAccessTokenForUID:(NSString *)userId forUserToken:(NSString *)userToken {
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/identities.json"];
+
+    NSDictionary *params = @{ @"user_token": userToken, @"identity": @{ @"provider": @"facebook", @"uid": userId } };
+    debug NSLog(@"deleting token: %@", params);
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [self.httpManager DELETE:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"device token deleted");
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"device token delete failed");
     }];
 }
 

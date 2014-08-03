@@ -14,6 +14,7 @@
 
 @property (nonatomic) NSString *comment;
 @property (nonatomic) BOOL isPR;
+@property (nonatomic) NSDictionary *postOptions;
 
 @end
 
@@ -38,16 +39,41 @@
 }
 
 - (void)upload {
-    [[TDPostAPI sharedInstance] addPost:nil comment:self.comment isPR:self.isPR kind:@"text" success:^{
-        if (self.delegate) {
-            [self.delegate uploadComplete];
-        }
-        [self clean];
-    } failure:^{
-        if (self.delegate) {
-            [self.delegate uploadFailed];
-        }
-    }];
+    if (self.postOptions) {
+        [self shareOrComplete];
+    } else {
+        [[TDPostAPI sharedInstance] addPost:nil comment:self.comment isPR:self.isPR kind:@"text" userGenerated:NO success:^(NSDictionary *response) {
+            self.postOptions = [response objectForKey:@"share_options"];
+            [self shareOrComplete];
+        } failure:^{
+            [self uploadFailed];
+        }];
+    }
+}
+
+- (void)shareOrComplete {
+    if (self.shareOptions && [self.shareOptions count] > 0) {
+        [[TDPostAPI sharedInstance] sharePost:self.postOptions toNetworks:self.shareOptions success:^{
+            [self uploadComplete];
+        } failure:^{
+            [self uploadFailed];
+        }];
+    } else {
+        [self uploadComplete];
+    }
+}
+
+- (void)uploadComplete {
+    if (self.delegate) {
+        [self.delegate uploadComplete];
+    }
+    [self clean];
+}
+
+- (void)uploadFailed {
+    if (self.delegate) {
+        [self.delegate uploadFailed];
+    }
 }
 
 #pragma mark TDUploadProgressUIDelegate

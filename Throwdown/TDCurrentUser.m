@@ -41,6 +41,12 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     [aCoder encodeObject:self.phoneNumber forKey:@"phone_number"];
     [aCoder encodeObject:self.bio forKey:@"bio"];
     [aCoder encodeObject:self.picture forKey:@"picture"];
+
+    [aCoder encodeObject:self.fbToken forKey:@"fb_token"];
+    [aCoder encodeObject:self.fbUID forKey:@"fb_uid"];
+    [aCoder encodeObject:self.fbIdentifier forKey:@"fb_identifer"];
+    [aCoder encodeObject:self.fbTokenExpiration forKey:@"fb_token_expiration"];
+    [aCoder encodeObject:[NSNumber numberWithBool:self.fbPublishPermission] forKey:@"fb_publish_permission"];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -60,6 +66,12 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
         if ([self nullcheck:[aDecoder decodeObjectForKey:@"picture"]]) {
             _picture = [aDecoder decodeObjectForKey:@"picture"];
         }
+
+        _fbToken           = [aDecoder decodeObjectForKey:@"fb_token"];
+        _fbUID             = [aDecoder decodeObjectForKey:@"fb_uid"];
+        _fbIdentifier      = [aDecoder decodeObjectForKey:@"fb_identifer"];
+        _fbTokenExpiration = [aDecoder decodeObjectForKey:@"fb_token_expiration"];
+        _fbPublishPermission = [[aDecoder decodeObjectForKey:@"fb_publish_permission"] boolValue];
     }
     return self;
 }
@@ -79,6 +91,7 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
         _picture     = [dictionary objectForKey:@"picture"];
     }
     // _deviceToken not part of dictionary
+    // fb info never recovered from dictionary (potentially in the future?)
 
     [self save];
 
@@ -102,6 +115,11 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     _deviceToken = nil;
     _picture = nil;
     _bio = nil;
+    _fbToken = nil;
+    _fbUID = nil;
+    _fbIdentifier = nil;
+    _fbTokenExpiration = nil;
+    _fbPublishPermission = NO;
     [TDFileSystemHelper removeFileAt:[NSHomeDirectory() stringByAppendingString:DATA_LOCATION]];
 }
 
@@ -124,6 +142,40 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
          picture:self.picture
              bio:self.bio];
     return user;
+}
+
+#pragma mark - Facebook integrations
+
+- (void)registerFacebookAccessToken:(NSString *)token expiresAt:(NSDate *)expiresAt userId:(NSString *)userId identifier:(NSString *)identifier {
+    // send to api and cache values
+    _fbToken           = token;
+    _fbUID             = userId;
+    _fbIdentifier      = identifier;
+    _fbTokenExpiration = expiresAt;
+    [self save];
+    [[TDAPIClient sharedInstance] registerFacebookAccessToken:token expiresAt:expiresAt userId:userId identifier:identifier forUserToken:self.authToken];
+}
+
+- (void)unlinkFacebook {
+    // This method might get called from the AppDelegate when a session is already closed
+    if (self.fbUID) {
+        [[TDAPIClient sharedInstance] deleteFacebookAccessTokenForUID:[self.fbUID copy] forUserToken:self.authToken];
+        _fbToken           = nil;
+        _fbUID             = nil;
+        _fbIdentifier      = nil;
+        _fbTokenExpiration = nil;
+        _fbPublishPermission = NO;
+        [self save];
+    }
+}
+
+- (BOOL)canPostToFacebook {
+    return (self.fbToken != nil && self.fbPublishPermission);
+}
+
+- (void)setFbPublishPermission:(BOOL)on {
+    _fbPublishPermission = on;
+    [self save];
 }
 
 #pragma mark - push notification device token

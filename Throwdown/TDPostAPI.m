@@ -89,8 +89,8 @@
 #pragma mark - posts get/add/remove
 
 
-- (void)addPost:(NSString *)filename comment:(NSString *)comment isPR:(BOOL)pr kind:(NSString *)kind success:(void (^)(void))success failure:(void (^)(void))failure {
-    NSMutableDictionary *post = [@{ @"kind": kind, @"personal_record": [NSNumber numberWithBool:pr]} mutableCopy];
+- (void)addPost:(NSString *)filename comment:(NSString *)comment isPR:(BOOL)pr kind:(NSString *)kind userGenerated:(BOOL)ug success:(void (^)(NSDictionary *response))success failure:(void (^)(void))failure {
+    NSMutableDictionary *post = [@{ @"kind": kind, @"personal_record": [NSNumber numberWithBool:pr], @"user_generated": [NSNumber numberWithBool:ug]} mutableCopy];
     if (filename) {
         [post addEntriesFromDictionary:@{@"filename": filename}];
     }
@@ -100,11 +100,10 @@
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts.json"];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager POST:url parameters:@{ @"post": post, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        debug NSLog(@"JSON: %@", [responseObject class]);
-        // Not the best way to do this but for now...
+        // Should just put the post in the feed but this is easier to implement for now + takes care of any other new posts in the feed.
         [self fetchPostsUpstreamWithErrorHandlerStart:nil error:nil];
         if (success) {
-            success();
+            success(responseObject);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"Error: %@", error);
@@ -441,10 +440,101 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:TDPostUploadStarted object:upload userInfo:nil];
 }
 
-- (void)addTextPost:(NSString *)comment isPR:(BOOL)isPR {
+- (void)addTextPost:(NSString *)comment isPR:(BOOL)isPR shareOptions:(NSArray *)shareOptions {
     TDTextUpload *upload = [[TDTextUpload alloc] initWithComment:comment isPR:isPR];
+    upload.shareOptions = shareOptions;
     [[NSNotificationCenter defaultCenter] postNotificationName:TDPostUploadStarted object:upload userInfo:nil];
 }
+
+#pragma mark - Sharing
+
+/**
+ * If this method is called async make sure we already have the correct permissions
+ */
+- (void)sharePost:(NSDictionary *)shareData toNetworks:(NSArray *)networks success:(void (^)(void))success failure:(void (^)(void))failure {
+    debug NSLog(@"Share data: %@", shareData);
+    if ([networks containsObject:@"facebook"]) {
+        if (FBSession.activeSession.isOpen) {
+            [self sharePostToFacebook:shareData success:success failure:failure];
+        } else {
+            debug NSLog(@"FB permissions: %@", [FBSession.activeSession permissions]);
+            [FBSession openActiveSessionWithPublishPermissions:@[@"public_profile", @"publish_actions"]
+                                               defaultAudience:FBSessionDefaultAudienceFriends
+                                                  allowLoginUI:YES
+                                             completionHandler:^(FBSession *session, FBSessionState state, NSError *error) {
+                // Call the app delegate's sessionStateChanged:state:error method to handle session state changes
+                [[TDAppDelegate appDelegate] sessionStateChanged:session state:state error:error success:^{
+                    [self sharePostToFacebook:shareData success:success failure:failure];
+                } failure:^{
+                    if (failure) {
+                        failure();
+                    }
+                }];
+            }];
+        }
+    }
+}
+
+- (void)sharePostToFacebook:(NSDictionary *)shareData success:(void (^)(void))success failure:(void (^)(void))failure {
+    NSMutableDictionary<FBOpenGraphObject> *object = [FBGraphObject openGraphObjectForPost];
+    for (NSString *key in @[@"type", @"title", @"description", @"url", @"image"]) {
+        if ([shareData objectForKey:key]) {
+            object[key] = [shareData objectForKey:key];
+        }
+    }
+
+    // Post the Open Graph object
+    // TODO: What happens if we call this twice?
+    [FBRequestConnection startForPostOpenGraphObject:object completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+        if (!error) {
+            // get the object ID for the Open Graph object that is now stored in the Object API
+            NSString *objectId = [result objectForKey:@"id"];
+            NSLog(@"FB::OG object id: %@", objectId);
+
+            // create an Open Graph action
+            id<FBOpenGraphAction> action = (id<FBOpenGraphAction>)[FBGraphObject graphObject];
+            [action setObject:objectId forKey:[shareData objectForKey:@"object"]];
+            [action setObject:@YES forKey:@"fb:explicitly_shared"];
+
+            // Create the Open Graph Action referencing user owned object
+            [FBRequestConnection startForPostWithGraphPath:[@"/me/" stringByAppendingString:[shareData objectForKey:@"action"]]
+                                               graphObject:action
+                                         completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+                if (!error) {
+                    NSLog(@"FB::OG story posted, story id: %@", [result objectForKey:@"id"]);
+                    [self registerFacebookStoryForPost:((NSNumber *)[shareData objectForKey:@"post_id"]) objectId:objectId actionId:[result objectForKey:@"id"]];
+                    if (success) {
+                        success();
+                    }
+                } else {
+                    NSLog(@"FB::Error posting OG action: %@", error.description);
+                    if (failure) {
+                        failure();
+                    }
+                }
+            }];
+        } else {
+            NSLog(@"FB::Error posting OG object: %@", error.description);
+            if (failure) {
+                failure();
+            }
+        }
+    }];
+}
+
+- (void)registerFacebookStoryForPost:(NSNumber *)postId objectId:(NSString *)objectId actionId:(NSString *)actionId {
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/facebook_actions.json"];
+    NSDictionary *params = @{ @"user_token": [TDCurrentUser sharedInstance].authToken, @"facebook_action": @{ @"post_id": postId, @"fb_object_id": objectId, @"fb_action_id": actionId } };
+    debug NSLog(@"saving fb story: %@", params);
+    AFHTTPRequestOperationManager *httpManager = [AFHTTPRequestOperationManager manager];
+    httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [httpManager POST:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSLog(@"fb story saved");
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"fb story failed");
+    }];
+}
+
 
 #pragma mark - Failures
 

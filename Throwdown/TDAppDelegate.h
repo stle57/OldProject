@@ -10,6 +10,7 @@
 #import "TDPost.h"
 #import "TDConstants.h"
 #import "TDToastView.h"
+#import <FacebookSDK/FacebookSDK.h>
 
 @interface TDAppDelegate : UIResponder <UIApplicationDelegate>
 
@@ -26,4 +27,9 @@
 
 - (TDPost *)postWithPostId:(NSNumber *)postId;
 - (void)showToastWithText:(NSString *)text type:(kToastIconType)type payload:(NSDictionary *)payload delegate:(id<TDToastViewDelegate>)delegate;
+
+#pragma mark - Facebook
+- (void)sessionStateChanged:(FBSession *)session state:(FBSessionState)state error:(NSError *)error;
+- (void)sessionStateChanged:(FBSession *)session state:(FBSessionState)state error:(NSError *)error success:(void (^)(void))success failure:(void (^)(void))failure;
+
 @end

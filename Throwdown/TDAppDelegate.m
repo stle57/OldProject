@@ -44,6 +44,20 @@
         [TestFlight takeOff:@"6fef227c-c5cb-4505-9502-9052e2819f45"];
     }
 
+    // Whenever a person opens the app, check for a cached session
+    if (FBSession.activeSession.state == FBSessionStateCreatedTokenLoaded) {
+        // If there's one, just open the session silently, without showing the user the login UI
+        [FBSession openActiveSessionWithReadPermissions:@[@"public_profile"]
+                                           allowLoginUI:NO
+                                      completionHandler:^(FBSession *session, FBSessionState state, NSError *error) {
+                                          // Handler for session state changes
+                                          // This method will be called EACH time the session state changes,
+                                          // also for intermediate states and NOT just when the session open
+                                          [self sessionStateChanged:session state:state error:error];
+                                      }];
+    }
+
+
     NSString *storyboardId = [[TDUserAPI sharedInstance] isLoggedIn] ? @"HomeViewController" : @"WelcomeViewController";
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *initViewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
@@ -81,6 +95,10 @@
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+
+    // Handle the user leaving the app while the Facebook login dialog is being shown
+    // For example: when the user presses the iOS "home" button while the login dialog is active
+    [FBAppCall handleDidBecomeActive];
 
     if (!self.lastSeen || (CFAbsoluteTimeGetCurrent() - self.lastSeen) > kAutomaticRefreshTimeout) {
         debug NSLog(@"Refreshing feed after reopen");
@@ -164,6 +182,112 @@
 
     [homeViewController openPushNotification:notification];
 }
+
+#pragma mark - Facebook handling callbacks
+
+// During the Facebook login flow, your app passes control to the Facebook iOS app or Facebook in a mobile browser.
+// After authentication, your app will be called back with the session information.
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    // Call FBAppCall's handleOpenURL:sourceApplication to handle Facebook app responses
+    BOOL wasHandled = [FBAppCall handleOpenURL:url sourceApplication:sourceApplication];
+    return wasHandled;
+}
+
+// This method will handle ALL the Facebook session state changes in the app
+- (void)sessionStateChanged:(FBSession *)session state:(FBSessionState)state error:(NSError *)error success:(void (^)(void))success failure:(void (^)(void))failure {
+
+    // If the session was opened successfully
+    if (!error && state == FBSessionStateOpen) {
+        NSLog(@"FB::Session opened");
+
+        // Get the user's name
+        [FBRequestConnection startForMeWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
+            // Result includes:
+            //            "first_name" = Andrew;
+            //            gender = male;
+            //            id = 339540109545923;
+            //            "last_name" = Throwers;
+            //            link = "https://www.facebook.com/app_scoped_user_id/339540109545923/";
+            //            locale = "en_US";
+            //            name = "Andrew Throwers";
+            //            timezone = "-7";
+            //            "updated_time" = "2014-06-26T19:27:41+0000";
+            //            verified = 1;
+
+            NSString *name;
+            if (!error && [result isKindOfClass:[NSDictionary class]]) {
+                name = [result objectForKey:@"name"];
+            } else {
+                // See: https://developers.facebook.com/docs/ios/errors
+                NSLog(@"FB::Error %@", error);
+            }
+            if (!name) {
+                name = @"Facebook";
+            }
+
+            NSString *accessToken = [FBSession activeSession].accessTokenData.accessToken;
+            NSString *facebookId = [FBSession activeSession].accessTokenData.userID;
+            NSDate *expiresAt = [FBSession activeSession].accessTokenData.expirationDate;
+            [[TDCurrentUser sharedInstance] registerFacebookAccessToken:accessToken expiresAt:expiresAt userId:facebookId identifier:name];
+            if (success) {
+                success();
+            }
+        }];
+        return;
+    }
+
+    // If the session was closed
+    if (state == FBSessionStateClosed || state == FBSessionStateClosedLoginFailed){
+        NSLog(@"FB::Session closed");
+        [[TDCurrentUser sharedInstance] unlinkFacebook];
+    }
+
+    if (error) {
+        NSString *alertText;
+        NSString *alertTitle;
+
+        // If the error requires people using an app to make an action outside of the app in order to recover
+        if ([FBErrorUtility shouldNotifyUserForError:error] == YES){
+            alertTitle = @"Facebook returned unknown error";
+            alertText = [FBErrorUtility userMessageForError:error];
+            [self showToastWithText:alertTitle type:kToastIconType_Warning payload:nil delegate:nil];
+        } else {
+
+            if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryUserCancelled) {
+                // If the user cancelled login, do nothing
+                NSLog(@"User cancelled login");
+            } else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryAuthenticationReopenSession){
+                // Handle session closures that happen outside of the app
+                alertText = @"Facebook: Please log in again.";
+                [self showToastWithText:alertText type:kToastIconType_Warning payload:nil delegate:nil];
+
+            } else {
+                // Here we will handle all other errors with a generic error message.
+                // We recommend you check our Handling Errors guide for more information
+                // https://developers.facebook.com/docs/ios/errors/
+
+                //Get more error information from the error
+                NSDictionary *errorInformation = [[[error.userInfo objectForKey:@"com.facebook.sdk:ParsedJSONResponseKey"] objectForKey:@"body"] objectForKey:@"error"];
+
+                // Show the user an error message
+                alertText = [NSString stringWithFormat:@"Facebook: Please retry. Error:%@", [errorInformation objectForKey:@"message"]];
+                [self showToastWithText:alertText type:kToastIconType_Warning payload:nil delegate:nil];
+            }
+        }
+        NSLog(@"FB::Error %@\n%@", alertTitle, alertText);
+
+        [FBSession.activeSession closeAndClearTokenInformation];
+
+        if (failure) {
+            failure();
+        }
+    }
+}
+
+- (void)sessionStateChanged:(FBSession *)session state:(FBSessionState)state error:(NSError *)error {
+    [self sessionStateChanged:session state:state error:error success:nil failure:nil];
+}
+
 
 #pragma mark - app delegate
 

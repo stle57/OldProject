@@ -20,6 +20,7 @@
 #import "TDAPIClient.h"
 #import "UIAlertView+TDBlockAlert.h"
 #import "TDUserPushNotificationsEditViewController.h"
+#import "TDSocialNetworksViewController.h"
 
 @interface TDUserProfileEditViewController ()
 
@@ -503,8 +504,8 @@
         case 1: // private
             return 2;
             break;
-        case 2: // push / password
-            return 2;
+        case 2: // push / social / password
+            return 3;
             break;
         case 3: // log out
             return 1;
@@ -633,6 +634,13 @@
                 case 1:
                     cell.topLine.hidden = YES;
                     cell.longTitleLabel.hidden = NO;
+                    cell.longTitleLabel.text = @"Social Networks";
+                    cell.selectionStyle = UITableViewCellSelectionStyleGray;
+                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                    break;
+                case 2:
+                    cell.topLine.hidden = YES;
+                    cell.longTitleLabel.hidden = NO;
                     cell.longTitleLabel.text = @"Change Password";
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -689,9 +697,10 @@
                     [self gotoEditPushNotifications];
                     break;
                 case 1:
-                    [self showEditPassword];
+                    [self showSocialNetworks];
                     break;
-                default:
+                case 2:
+                    [self showEditPassword];
                     break;
             }
         break;
@@ -716,6 +725,12 @@
         default:
             break;
     }
+}
+
+#pragma mark - Edit Password
+- (void)showSocialNetworks {
+    TDSocialNetworksViewController *vc = [[TDSocialNetworksViewController alloc] init];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma mark - Edit Password

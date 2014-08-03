@@ -22,32 +22,15 @@
     delegate = nil;
 }
 
-- (id)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code
-    }
-    return self;
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    if (self) {
-    }
-    return self;
-}
-
 - (void)awakeFromNib {
-    self.titleLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:19.0];
-    self.longTitleLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:19.0];
-    self.middleLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:19.0];
-    self.leftMiddleLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:19.0];
-    self.textField.font = [UIFont fontWithName:@"ProximaNova-Regular" size:18.0];
-    self.textView.font = [UIFont fontWithName:@"ProximaNova-Regular" size:18.0];
-    self.textField.textColor = [UIColor colorWithRed:(22.0/255.0) green:(22.0/255.0) blue:(22.0/255.0) alpha:1.0];
-    self.textView.textColor = [UIColor colorWithRed:(22.0/255.0) green:(22.0/255.0) blue:(22.0/255.0) alpha:1.0];
+    self.titleLabel.font      = [TDConstants fontRegularSized:19.0];
+    self.longTitleLabel.font  = [TDConstants fontRegularSized:19.0];
+    self.middleLabel.font     = [TDConstants fontRegularSized:19.0];
+    self.leftMiddleLabel.font = [TDConstants fontRegularSized:19.0];
+    self.textField.font       = [TDConstants fontRegularSized:18.0];
+    self.textView.font        = [TDConstants fontRegularSized:18.0];
+    self.textField.textColor  = [UIColor colorWithRed:(22.0/255.0) green:(22.0/255.0) blue:(22.0/255.0) alpha:1.0];
+    self.textView.textColor   = [UIColor colorWithRed:(22.0/255.0) green:(22.0/255.0) blue:(22.0/255.0) alpha:1.0];
     self.leftMiddleLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
     self.middleLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
     CGRect lineRect = self.bottomLine.frame;
@@ -60,7 +43,7 @@
     self.userImageView.clipsToBounds = YES;
 
     textViewdOrigRect = self.textView.frame;
-    bottomLineOrigY = self.bottomLine.frame.origin.y;
+    bottomLineOrigY = self.bottomLine.frame.origin.y + 0.5;
 }
 
 @end

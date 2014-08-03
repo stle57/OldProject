@@ -17,6 +17,7 @@
 + (void)navigateToHomeFrom:(UIViewController *)fromController;
 + (BOOL)validateEmail:(NSString *)email;
 + (NSDate *)dateForRFC3339DateTimeString:(NSString *)rfc3339DateTimeString;
++ (NSString *)getUTCFormatedDate:(NSDate *)date;
 + (BOOL)textAttributeTapped:(NSString *)attribute inTap:(UITapGestureRecognizer *)recognizer action:(void (^)(id value))actionBlock;
 + (NSAttributedString *)makeParagraphedTextWithAttributedString:(NSAttributedString *)attributedString;
 + (NSAttributedString *)makeParagraphedTextWithAttributedString:(NSAttributedString *)attributedString withMultiple:(CGFloat)multiple;

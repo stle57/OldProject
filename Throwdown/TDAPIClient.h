@@ -35,4 +35,8 @@
 - (void)updateSession:(NSNumber *)sessionId duration:(double)duration;
 
 - (void)callURL:(NSString *)url;
+
+- (void)registerFacebookAccessToken:(NSString *)token expiresAt:(NSDate *)expiresAt userId:(NSString *)userId identifier:(NSString *)identifier forUserToken:(NSString *)userToken;
+- (void)deleteFacebookAccessTokenForUID:(NSString *)userId forUserToken:(NSString *)userToken;
+
 @end

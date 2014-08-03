@@ -16,7 +16,9 @@
 @property (weak, nonatomic) IBOutlet UILabel *text;
 @property (weak, nonatomic) IBOutlet UIView *backgroundView;
 
--(void)startSpinner;
--(void)stopSpinner;
+- (void)startSpinner;
+- (void)stopSpinner;
+- (void)setMessage:(NSString *)text;
+- (void)startSpinnerWithMessage:(NSString *)text;
 
 @end

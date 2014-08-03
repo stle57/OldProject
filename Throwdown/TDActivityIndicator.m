@@ -12,12 +12,7 @@
 
 @implementation TDActivityIndicator
 
-- (void)dealloc
-{
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
+- (id)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
         NSArray *nibContents = [[NSBundle mainBundle] loadNibNamed:@"TDActivityIndicator" owner:self options:nil];
@@ -30,14 +25,23 @@
     return self;
 }
 
--(void)startSpinner
-{
+- (void)startSpinner {
+    self.hidden = NO;
     [self.spinner startAnimating];
 }
 
--(void)stopSpinner
-{
+- (void)stopSpinner {
     [self.spinner stopAnimating];
+    self.hidden = YES;
+}
+
+- (void)setMessage:(NSString *)text {
+    self.text.text = text;
+}
+
+- (void)startSpinnerWithMessage:(NSString *)text {
+    self.text.text = text;
+    [self startSpinner];
 }
 
 @end

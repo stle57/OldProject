@@ -21,6 +21,12 @@
 @property (nonatomic, copy, readonly) NSString *deviceToken;
 @property (strong, nonatomic, readonly) NSString *picture;
 
+@property (nonatomic, copy, readonly) NSString *fbToken;
+@property (nonatomic, copy, readonly) NSString *fbUID;
+@property (nonatomic, copy, readonly) NSString *fbIdentifier;
+@property (nonatomic, copy, readonly) NSDate *fbTokenExpiration;
+@property (nonatomic) BOOL fbPublishPermission;
+
 + (TDCurrentUser *)sharedInstance;
 - (void)updateFromDictionary:(NSDictionary *)dictionary;
 - (BOOL)isRegisteredForPush;
@@ -28,6 +34,9 @@
 - (void)logout;
 - (void)registerForPushNotifications:(NSString *)message;
 - (void)registerDeviceToken:(NSString *)token;
--(TDUser *)currentUserObject;
+- (TDUser *)currentUserObject;
+- (void)registerFacebookAccessToken:(NSString *)token expiresAt:(NSDate *)expiresAt userId:(NSString *)userId identifier:(NSString *)identifier;
+- (void)unlinkFacebook;
+- (BOOL)canPostToFacebook;
 
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "TDShareVideoViewController.h"
+#import "TDShareWithViewController.h"
 #import "TDViewControllerHelper.h"
 #import "TDTextViewControllerHelper.h"
 #import "UIPlaceHolderTextView.h"
@@ -14,6 +15,7 @@
 #import "TDAnalytics.h"
 #import "TDPostAPI.h"
 #import "TDSlideUpSegue.h"
+#import "TDUnwindSlideLeftSegue.h"
 #import "UIAlertView+TDBlockAlert.h"
 #import "TDUserAPI.h"
 #import "TDAPIClient.h"
@@ -167,6 +169,8 @@
 
     if ([@"MediaCloseSegue" isEqualToString:identifier]) {
         return [[TDSlideUpSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
+    } else if ([@"ReturnToComposeView" isEqualToString:identifier]) {
+        return [[TDUnwindSlideLeftSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
     } else {
         return [super segueForUnwindingToViewController:toViewController
                                      fromViewController:fromViewController
@@ -308,22 +312,15 @@
 }
 
 - (IBAction)postButtonPressed:(id)sender {
-    NSString *comment = [self.commentTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-    if (self.filename) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUploadComments
-                                                            object:nil
-                                                          userInfo:@{ @"filename":self.filename,
-                                                                      @"comment":comment,
-                                                                      @"pr": [NSNumber numberWithBool:self.isPR] }];
-    } else {
-        [[TDPostAPI sharedInstance] addTextPost:comment isPR:self.isPR];
+    [self performSegueWithIdentifier:@"OpenShareWithViewSegue" sender:self];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([@"OpenShareWithViewSegue" isEqualToString:segue.identifier]) {
+        NSString *comment = [self.commentTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        TDShareWithViewController *vc = [segue destinationViewController];
+        [vc setValuesForSharing:self.filename withComment:comment isPR:self.isPR userGenerated:self.isOriginal];
     }
-    if (self.isPR) {
-        [self performSegueWithIdentifier:@"PRSegue" sender:self];
-    } else {
-        [self performSegueWithIdentifier:@"VideoCloseSegue" sender:self];
-    }
-    [[TDAnalytics sharedInstance] logEvent:@"camera_shared"];
 }
 
 #pragma mark - TDUserListViewDelegate
