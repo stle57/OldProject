@@ -46,6 +46,9 @@
 
     // Move slides to the right
     CGRect frame = [[UIScreen mainScreen] bounds];
+
+    CGFloat screenHeight = frame.size.height;
+
     frame.origin.x += 10;
     self.introSlide.frame = frame;
     frame.origin.x += frame.size.width + 20;
@@ -59,6 +62,23 @@
     self.titleLabel.font = [UIFont fontWithName:@"BebasNeueRegular" size:68.0];
     self.snippetLabel.font = [TDConstants fontSemiBoldSized:20];
     self.loginButton.titleLabel.font = [TDConstants fontSemiBoldSized:14];
+
+    if (screenHeight == 480.) {
+        [self fixPosition:self.titleLabel];
+        [self fixPosition:self.snippetLabel];
+        [self fixPosition:self.loginButton];
+        [self fixPosition:self.signupButton];
+        [self fixPosition:self.indicatorView withHeight:88];
+        for (UIView *view in [self.slide1 subviews]) {
+            [self fixPosition:view withHeight:88];
+        }
+        for (UIView *view in [self.slide2 subviews]) {
+            [self fixPosition:view withHeight:88];
+        }
+        for (UIView *view in [self.slide3 subviews]) {
+            [self fixPosition:view];
+        }
+    }
 
     self.indicatorView.hidden = YES;
 
@@ -87,6 +107,16 @@
         text.minimumLineHeight = 29;
         text.text = text.text; //reset the text to get the styling
     }
+}
+
+- (void)fixPosition:(UIView *)view {
+    [self fixPosition:view withHeight:44];
+}
+
+- (void)fixPosition:(UIView *)view withHeight:(CGFloat)height {
+    CGRect frame = view.layer.frame;
+    frame.origin.y -= height;
+    view.frame = frame;
 }
 
 - (BOOL)prefersStatusBarHidden {
