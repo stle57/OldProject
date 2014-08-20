@@ -90,7 +90,7 @@
 		A125493B1999715D001C5CD1 /* TDSocialConnectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A125493A1999715D001C5CD1 /* TDSocialConnectViewController.m */; };
 		A125493F1999742B001C5CD1 /* TDSocialConnectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A125493D1999742B001C5CD1 /* TDSocialConnectCell.m */; };
 		A12549401999742B001C5CD1 /* TDSocialConnectCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A125493E1999742B001C5CD1 /* TDSocialConnectCell.xib */; };
-		A12549431999BD32001C5CD1 /* TDShareWithViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A12549421999BD32001C5CD1 /* TDShareWithViewController.m */; };
+		A12549431999BD32001C5CD1 /* TDSharePostViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A12549421999BD32001C5CD1 /* TDSharePostViewController.m */; };
 		A12549481999D72D001C5CD1 /* TDShareViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A12549461999D72D001C5CD1 /* TDShareViewCell.m */; };
 		A12549491999D72E001C5CD1 /* TDShareViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A12549471999D72D001C5CD1 /* TDShareViewCell.xib */; };
 		A1280629198ADE6E0038AC2E /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1280628198ADE6E0038AC2E /* FacebookSDK.framework */; };
@@ -287,8 +287,8 @@
 		A125493C1999742B001C5CD1 /* TDSocialConnectCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSocialConnectCell.h; sourceTree = "<group>"; };
 		A125493D1999742B001C5CD1 /* TDSocialConnectCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSocialConnectCell.m; sourceTree = "<group>"; };
 		A125493E1999742B001C5CD1 /* TDSocialConnectCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDSocialConnectCell.xib; sourceTree = "<group>"; };
-		A12549411999BD32001C5CD1 /* TDShareWithViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDShareWithViewController.h; sourceTree = "<group>"; };
-		A12549421999BD32001C5CD1 /* TDShareWithViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDShareWithViewController.m; sourceTree = "<group>"; };
+		A12549411999BD32001C5CD1 /* TDSharePostViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSharePostViewController.h; sourceTree = "<group>"; };
+		A12549421999BD32001C5CD1 /* TDSharePostViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSharePostViewController.m; sourceTree = "<group>"; };
 		A12549451999D72D001C5CD1 /* TDShareViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDShareViewCell.h; sourceTree = "<group>"; };
 		A12549461999D72D001C5CD1 /* TDShareViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDShareViewCell.m; sourceTree = "<group>"; };
 		A12549471999D72D001C5CD1 /* TDShareViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDShareViewCell.xib; sourceTree = "<group>"; };
@@ -546,8 +546,8 @@
 				A11E04F11888CB79002F981A /* TDRecordVideoViewController.m */,
 				A11999D418D90D5200C39ABF /* TDCreatePostViewController.h */,
 				A11999D518D90D5200C39ABF /* TDCreatePostViewController.m */,
-				A12549411999BD32001C5CD1 /* TDShareWithViewController.h */,
-				A12549421999BD32001C5CD1 /* TDShareWithViewController.m */,
+				A12549411999BD32001C5CD1 /* TDSharePostViewController.h */,
+				A12549421999BD32001C5CD1 /* TDSharePostViewController.m */,
 			);
 			name = Recording;
 			sourceTree = "<group>";
@@ -1171,7 +1171,7 @@
 				A150F08A18A31B14009A72AD /* TDConstants.m in Sources */,
 				4D1F8395196F89FB00B5DB76 /* TDUserList.m in Sources */,
 				2D8320091911740A00A91282 /* TDPushEditCell.m in Sources */,
-				A12549431999BD32001C5CD1 /* TDShareWithViewController.m in Sources */,
+				A12549431999BD32001C5CD1 /* TDSharePostViewController.m in Sources */,
 				A14B2B8818B8351E00980A31 /* TDCurrentUser.m in Sources */,
 				A182D830188B60CD00F794A5 /* SAResizibleBubble.m in Sources */,
 				A182D8261889E8D900F794A5 /* TDEditVideoViewController.m in Sources */,

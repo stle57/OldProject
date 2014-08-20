@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TDShareWithViewController : UIViewController
+@interface TDSharePostViewController : UIViewController
 
 - (void)setValuesForSharing:(NSString *)filename withComment:(NSString *)comment isPR:(BOOL)isPR userGenerated:(BOOL)ug;
 

@@ -7,7 +7,7 @@
 //
 
 #import "TDCreatePostViewController.h"
-#import "TDShareWithViewController.h"
+#import "TDSharePostViewController.h"
 #import "TDViewControllerHelper.h"
 #import "TDTextViewControllerHelper.h"
 #import "UIPlaceHolderTextView.h"
@@ -318,7 +318,7 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([@"OpenShareWithViewSegue" isEqualToString:segue.identifier]) {
         NSString *comment = [self.commentTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-        TDShareWithViewController *vc = [segue destinationViewController];
+        TDSharePostViewController *vc = [segue destinationViewController];
         [vc setValuesForSharing:self.filename withComment:comment isPR:self.isPR userGenerated:self.isOriginal];
     }
 }

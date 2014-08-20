@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Throwdown. All rights reserved.
 //
 
-#import "TDShareWithViewController.h"
+#import "TDSharePostViewController.h"
 #import "TDViewControllerHelper.h"
 #import "TDAnalytics.h"
 #import "TDConstants.h"
@@ -17,7 +17,7 @@
 #import "TDActivityIndicator.h"
 #import <FacebookSDK/FacebookSDK.h>
 
-@interface TDShareWithViewController () <UITableViewDataSource, UITableViewDelegate>
+@interface TDSharePostViewController () <UITableViewDataSource, UITableViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UINavigationBar *navigationBar;
 @property (weak, nonatomic) IBOutlet UINavigationItem *navigationBarItem;
@@ -32,7 +32,7 @@
 
 @end
 
-@implementation TDShareWithViewController
+@implementation TDSharePostViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

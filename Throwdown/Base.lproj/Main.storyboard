@@ -450,10 +450,10 @@
             </objects>
             <point key="canvasLocation" x="-857" y="1113"/>
         </scene>
-        <!--Share With View Controller-->
+        <!--Share Post View Controller-->
         <scene sceneID="AjY-or-Gpq">
             <objects>
-                <viewController id="GNX-te-i5r" customClass="TDShareWithViewController" sceneMemberID="viewController">
+                <viewController id="GNX-te-i5r" customClass="TDSharePostViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="P9F-Gb-fhS">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
