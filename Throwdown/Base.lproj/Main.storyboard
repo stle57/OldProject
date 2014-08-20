@@ -325,10 +325,10 @@
             </objects>
             <point key="canvasLocation" x="248" y="1645"/>
         </scene>
-        <!--Share Video View Controller-->
+        <!--Create Post View Controller-->
         <scene sceneID="7CD-ei-BPl">
             <objects>
-                <viewController title="New Post" id="yPB-2g-BQK" userLabel="Share Video View Controller" customClass="TDShareVideoViewController" sceneMemberID="viewController">
+                <viewController title="New Post" id="yPB-2g-BQK" userLabel="Create Post View Controller" customClass="TDCreatePostViewController" sceneMemberID="viewController">
                     <view key="view" autoresizesSubviews="NO" contentMode="scaleToFill" id="MOU-MM-eli">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>

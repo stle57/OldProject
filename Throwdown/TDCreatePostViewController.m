@@ -1,12 +1,12 @@
 //
-//  TDShareVideoViewController.m
+//  TDCreatePostViewController.m
 //  Throwdown
 //
 //  Created by Andrew C on 3/18/14.
 //  Copyright (c) 2014 Throwdown. All rights reserved.
 //
 
-#import "TDShareVideoViewController.h"
+#import "TDCreatePostViewController.h"
 #import "TDShareWithViewController.h"
 #import "TDViewControllerHelper.h"
 #import "TDTextViewControllerHelper.h"
@@ -21,7 +21,7 @@
 #import "TDAPIClient.h"
 #import "TDUserListView.h"
 
-@interface TDShareVideoViewController () <UITextViewDelegate, NSLayoutManagerDelegate>
+@interface TDCreatePostViewController () <UITextViewDelegate, NSLayoutManagerDelegate>
 
 @property (weak, nonatomic) IBOutlet UINavigationBar *navigationBar;
 @property (weak, nonatomic) IBOutlet UINavigationItem *navigationBarItem;
@@ -47,7 +47,7 @@
 
 @end
 
-@implementation TDShareVideoViewController
+@implementation TDCreatePostViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

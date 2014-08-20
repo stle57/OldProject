@@ -14,7 +14,7 @@
 #import "AssetsLibrary/ALAssetsLibrary.h"
 #import "TDPostAPI.h"
 #import "TDSlideLeftSegue.h"
-#import "TDShareVideoViewController.h"
+#import "TDCreatePostViewController.h"
 #import "TDUnwindSlideLeftSegue.h"
 #import "TDConstants.h"
 #import "TDFileSystemHelper.h"
@@ -220,7 +220,7 @@ static const NSString *ItemStatusContext;
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"MediaCloseSegue"]) {
-        TDShareVideoViewController *vc = [segue destinationViewController];
+        TDCreatePostViewController *vc = [segue destinationViewController];
         [vc addMedia:self.filename thumbnail:self.thumbnailPath isOriginal:self.isOriginal];
     }
 }

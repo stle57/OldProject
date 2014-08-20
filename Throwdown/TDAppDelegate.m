@@ -19,7 +19,7 @@
 // Used for class reference:
 #import "TDRecordVideoViewController.h"
 #import "TDEditVideoViewController.h"
-#import "TDShareVideoViewController.h"
+#import "TDCreatePostViewController.h"
 
 @interface TDAppDelegate ()
 @property (nonatomic) double lastSeen;
@@ -153,7 +153,7 @@
         NSArray *const kControllersNotElegibleForNotification = @[
             [TDRecordVideoViewController class],
             [TDEditVideoViewController class],
-            [TDShareVideoViewController class]];
+            [TDCreatePostViewController class]];
         UIViewController *controller = [TDAppDelegate topMostController];
         if ([kControllersNotElegibleForNotification containsObject:[controller class]]) {
             // containsObject should be returning YES or NO but returns nil !?

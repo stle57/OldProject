@@ -1,5 +1,5 @@
 //
-//  TDShareVideoViewController.h
+//  TDCreatePostViewController.h
 //  Throwdown
 //
 //  Created by Andrew C on 3/18/14.
@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "TDUserListView.h"
 
-@interface TDShareVideoViewController : UIViewController<UITableViewDelegate, TDUserListViewDelegate>
+@interface TDCreatePostViewController : UIViewController<UITableViewDelegate, TDUserListViewDelegate>
 - (void)addMedia:(NSString *)filename thumbnail:(NSString *)thumbnailPath isOriginal:(BOOL)original;
 @end
