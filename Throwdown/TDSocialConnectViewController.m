@@ -118,11 +118,13 @@
                                           completionHandler:
              ^(FBSession *session, FBSessionState state, NSError *error) {
                  // Retrieve the app delegate
-                 TDAppDelegate *appDelegate = (TDAppDelegate *)[UIApplication sharedApplication].delegate;
                  // Call the app delegate's sessionStateChanged:state:error method to handle session state changes
-                 [appDelegate sessionStateChanged:session state:state error:error];
-
-                 [self.tableView reloadData];
+                 [[TDAppDelegate appDelegate] sessionStateChanged:session state:state error:error success:^{
+                     [self.tableView reloadData];
+                     [self.navigationController popViewControllerAnimated:YES];
+                 } failure:^(NSString *error) {
+                     [self.tableView reloadData];
+                 }];
              }];
         }
     }
