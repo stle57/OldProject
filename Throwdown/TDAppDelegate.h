@@ -30,6 +30,6 @@
 
 #pragma mark - Facebook
 - (void)sessionStateChanged:(FBSession *)session state:(FBSessionState)state error:(NSError *)error;
-- (void)sessionStateChanged:(FBSession *)session state:(FBSessionState)state error:(NSError *)error success:(void (^)(void))success failure:(void (^)(void))failure;
+- (void)sessionStateChanged:(FBSession *)session state:(FBSessionState)state error:(NSError *)error success:(void (^)(void))success failure:(void (^)(NSString *error))failure;
 
 @end

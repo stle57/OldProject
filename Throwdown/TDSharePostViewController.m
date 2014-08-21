@@ -226,10 +226,14 @@
                                                        otherButtonTitles:nil];
                  [alert show];
              } else {
+                 [self.activityIndicator showMessage:@"Connected" forSeconds:1.];
                  [self setFacebookPermission:YES];
              }
-         } failure:^{
+         } failure:^(NSString *error) {
              [self.activityIndicator stopSpinner];
+             if (error) {
+                 [self.activityIndicator showMessage:error forSeconds:1.5];
+             }
              [self setFacebookPermission:NO];
          }];
      }];

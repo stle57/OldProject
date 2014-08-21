@@ -194,7 +194,7 @@
 }
 
 // This method will handle ALL the Facebook session state changes in the app
-- (void)sessionStateChanged:(FBSession *)session state:(FBSessionState)state error:(NSError *)error success:(void (^)(void))success failure:(void (^)(void))failure {
+- (void)sessionStateChanged:(FBSession *)session state:(FBSessionState)state error:(NSError *)error success:(void (^)(void))success failure:(void (^)(NSString *error))failure {
 
     // If the session was opened successfully
     if (!error && state == FBSessionStateOpen) {
@@ -244,42 +244,30 @@
 
     if (error) {
         NSString *alertText;
-        NSString *alertTitle;
 
-        // If the error requires people using an app to make an action outside of the app in order to recover
         if ([FBErrorUtility shouldNotifyUserForError:error] == YES){
-            alertTitle = @"Facebook returned unknown error";
+            // If the error requires people using an app to make an action outside of the app in order to recover
             alertText = [FBErrorUtility userMessageForError:error];
-            [self showToastWithText:alertTitle type:kToastIconType_Warning payload:nil delegate:nil];
+        } else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryUserCancelled) {
+            // If the user canceled login, no error.
+            NSLog(@"FB::Login User cancelled login");
+            alertText = @"Canceled";
+        } else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryAuthenticationReopenSession){
+            // Handle session closures that happen outside of the app
+            alertText = @"Login error. Please log in again.";
         } else {
-
-            if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryUserCancelled) {
-                // If the user cancelled login, do nothing
-                NSLog(@"User cancelled login");
-            } else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryAuthenticationReopenSession){
-                // Handle session closures that happen outside of the app
-                alertText = @"Facebook: Please log in again.";
-                [self showToastWithText:alertText type:kToastIconType_Warning payload:nil delegate:nil];
-
-            } else {
-                // Here we will handle all other errors with a generic error message.
-                // We recommend you check our Handling Errors guide for more information
-                // https://developers.facebook.com/docs/ios/errors/
-
-                //Get more error information from the error
-                NSDictionary *errorInformation = [[[error.userInfo objectForKey:@"com.facebook.sdk:ParsedJSONResponseKey"] objectForKey:@"body"] objectForKey:@"error"];
-
-                // Show the user an error message
-                alertText = [NSString stringWithFormat:@"Facebook: Please retry. Error:%@", [errorInformation objectForKey:@"message"]];
-                [self showToastWithText:alertText type:kToastIconType_Warning payload:nil delegate:nil];
-            }
+            // Get more error information from the error
+            // https://developers.facebook.com/docs/ios/errors/
+            NSDictionary *errorInformation = [[[error.userInfo objectForKey:@"com.facebook.sdk:ParsedJSONResponseKey"] objectForKey:@"body"] objectForKey:@"error"];
+            NSLog(@"FB::Error %@", errorInformation);
+            alertText = [NSString stringWithFormat:@"Facebook: Unknown Error. Please retry."];
         }
-        NSLog(@"FB::Error %@\n%@", alertTitle, alertText);
+        NSLog(@"FB::Error %@", alertText);
 
         [FBSession.activeSession closeAndClearTokenInformation];
 
         if (failure) {
-            failure();
+            failure(alertText);
         }
     }
 }

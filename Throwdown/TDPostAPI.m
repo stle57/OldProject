@@ -465,7 +465,7 @@
                 // Call the app delegate's sessionStateChanged:state:error method to handle session state changes
                 [[TDAppDelegate appDelegate] sessionStateChanged:session state:state error:error success:^{
                     [self sharePostToFacebook:shareData success:success failure:failure];
-                } failure:^{
+                } failure:^(NSString *error) {
                     if (failure) {
                         failure();
                     }
@@ -484,7 +484,6 @@
     }
 
     // Post the Open Graph object
-    // TODO: What happens if we call this twice?
     [FBRequestConnection startForPostOpenGraphObject:object completionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
         if (!error) {
             // get the object ID for the Open Graph object that is now stored in the Object API
