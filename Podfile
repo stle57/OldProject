@@ -8,6 +8,7 @@ pod 'libPhoneNumber-iOS'
 pod 'NSDate+TimeAgo'
 pod 'NYXImagesKit'
 pod 'TTTAttributedLabel'
+pod 'FLEX'
 
 # target "Throwdown" do
 # 
