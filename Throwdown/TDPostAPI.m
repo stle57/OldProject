@@ -476,8 +476,12 @@
 }
 
 - (void)sharePostToFacebook:(NSDictionary *)shareData success:(void (^)(void))success failure:(void (^)(void))failure {
+    if (![shareData objectForKey:@"object_keys"] && ![shareData objectForKey:@"action_keys"]) {
+        failure();
+        return;
+    }
     NSMutableDictionary<FBOpenGraphObject> *object = [FBGraphObject openGraphObjectForPost];
-    for (NSString *key in @[@"type", @"title", @"description", @"url", @"image"]) {
+    for (NSString *key in [shareData objectForKey:@"object_keys"]) {
         if ([shareData objectForKey:key]) {
             object[key] = [shareData objectForKey:key];
         }
@@ -493,7 +497,11 @@
             // create an Open Graph action
             id<FBOpenGraphAction> action = (id<FBOpenGraphAction>)[FBGraphObject graphObject];
             [action setObject:objectId forKey:[shareData objectForKey:@"object"]];
-            [action setObject:@YES forKey:@"fb:explicitly_shared"];
+            for (NSString *key in [shareData objectForKey:@"action_keys"]) {
+                if ([shareData objectForKey:key]) {
+                    [action setObject:[shareData objectForKey:key] forKey:key];
+                }
+            }
 
             // Create the Open Graph Action referencing user owned object
             [FBRequestConnection startForPostWithGraphPath:[@"/me/" stringByAppendingString:[shareData objectForKey:@"action"]]
