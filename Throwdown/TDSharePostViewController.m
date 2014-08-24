@@ -178,7 +178,7 @@
                 if ([[TDCurrentUser sharedInstance] canPostToFacebook]) {
                     self.shareToFacebook = YES;
                     [self.tableView reloadData];
-                } else if (FBSession.activeSession.state == FBSessionStateOpen || FBSession.activeSession.state == FBSessionStateOpenTokenExtended) {
+                } else if ([TDCurrentUser sharedInstance].fbUID && (FBSession.activeSession.state == FBSessionStateOpen || FBSession.activeSession.state == FBSessionStateOpenTokenExtended)) {
                     [self checkFacebookPermissions];
                 } else {
                     [self loginToFacebook];
@@ -233,7 +233,10 @@
 }
 
 - (void)loginToFacebook {
-    // TODO: listen for app became active and remove the activity indicator - this happens if user leaves fb and comes back without clicking buttons
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(willEnterForegroundCallback:)
+                                                 name:UIApplicationWillEnterForegroundNotification
+                                               object:nil];
     [self.activityIndicator startSpinnerWithMessage:@"Connecting"];
     [FBSession openActiveSessionWithPublishPermissions:@[@"public_profile", @"publish_actions"]
                                        defaultAudience:FBSessionDefaultAudienceFriends
@@ -263,6 +266,11 @@
              [self setFacebookPermission:NO];
          }];
      }];
+}
+
+- (void)willEnterForegroundCallback:(NSNotification *)notification {
+    [self.activityIndicator stopSpinner];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
 }
 
 - (void)showFacebookError {

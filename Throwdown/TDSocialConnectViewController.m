@@ -98,7 +98,7 @@
 
     switch (self.network) {
         case TDSocialNetworkFacebook:
-            if (FBSession.activeSession.state == FBSessionStateOpen || FBSession.activeSession.state == FBSessionStateOpenTokenExtended) {
+            if ([TDCurrentUser sharedInstance].fbUID && (FBSession.activeSession.state == FBSessionStateOpen || FBSession.activeSession.state == FBSessionStateOpenTokenExtended)) {
                 cell.connectLabel.textColor = [TDConstants brandingRedColor];
                 cell.connectLabel.text = @"Unlink";
             } else {
@@ -139,9 +139,15 @@
 
 #pragma mark - Facebook
 
+- (void)willEnterForegroundCallback:(NSNotification *)notification {
+    [self.activityIndicator stopSpinner];
+    [self.tableView reloadData];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
+}
+
 - (void)handleFacebook {
     // If the session state is any of the two "open" states when the button is clicked
-    if (FBSession.activeSession.state == FBSessionStateOpen || FBSession.activeSession.state == FBSessionStateOpenTokenExtended) {
+    if ([TDCurrentUser sharedInstance].fbUID && (FBSession.activeSession.state == FBSessionStateOpen || FBSession.activeSession.state == FBSessionStateOpenTokenExtended)) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Unlink?" message:@"Unlink your Facebook account?" delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"Yes", nil];
         [alert showWithCompletionBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
             if (buttonIndex != alertView.cancelButtonIndex) {
@@ -155,6 +161,10 @@
     } else {
         // Open a session showing the user the login UI
         // You must ALWAYS ask for public_profile permissions when opening a session
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(willEnterForegroundCallback:)
+                                                     name:UIApplicationWillEnterForegroundNotification
+                                                   object:nil];
         [self.activityIndicator startSpinnerWithMessage:@"Connecting"];
         [FBSession openActiveSessionWithReadPermissions:@[@"public_profile"]
                                            allowLoginUI:YES
