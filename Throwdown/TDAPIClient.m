@@ -291,7 +291,7 @@
 
 #pragma mark - Social Networks registration
 
-- (void)registerFacebookAccessToken:(NSString *)token expiresAt:(NSDate *)expiresAt userId:(NSString *)userId identifier:(NSString *)identifier {
+- (void)registerFacebookAccessToken:(NSString *)token expiresAt:(NSDate *)expiresAt userId:(NSString *)userId identifier:(NSString *)identifier callback:(void (^)(BOOL success))callback {
     NSDictionary *identity = @{
                               @"provider": @"facebook",
                               @"uid": userId,
@@ -299,7 +299,7 @@
                               @"expires_at": [TDViewControllerHelper getUTCFormatedDate:expiresAt],
                               @"identifier": identifier
                               };
-    [self registerIdentity:identity callback:nil];
+    [self registerIdentity:identity callback:callback];
 }
 
 - (void)deleteFacebookAccessTokenForUID:(NSString *)userId {

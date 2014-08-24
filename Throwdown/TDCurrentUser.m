@@ -161,14 +161,14 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
 
 #pragma mark - Facebook integrations
 
-- (void)registerFacebookAccessToken:(NSString *)token expiresAt:(NSDate *)expiresAt userId:(NSString *)userId identifier:(NSString *)identifier {
+- (void)registerFacebookAccessToken:(NSString *)token expiresAt:(NSDate *)expiresAt userId:(NSString *)userId identifier:(NSString *)identifier callback:(void (^)(BOOL success))callback {
     // send to api and cache values
     _fbToken           = token;
     _fbUID             = userId;
     _fbIdentifier      = identifier;
     _fbTokenExpiration = expiresAt;
     [self save];
-    [[TDAPIClient sharedInstance] registerFacebookAccessToken:token expiresAt:expiresAt userId:userId identifier:identifier];
+    [[TDAPIClient sharedInstance] registerFacebookAccessToken:token expiresAt:expiresAt userId:userId identifier:identifier callback:(void (^)(BOOL success))callback];
 }
 
 - (void)unlinkFacebook {

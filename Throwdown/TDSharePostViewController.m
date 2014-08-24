@@ -317,8 +317,15 @@
                     });
                 }
             } else {
-                // not authed, show error to try again
-                debug NSLog(@"Failed");
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.activityIndicator stopSpinner];
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                                    message:@"Please enable Twitter for Throwdown in iOS Settings > Privacy > Twitter"
+                                                                   delegate:nil
+                                                          cancelButtonTitle:@"OK"
+                                                          otherButtonTitles:nil];
+                    [alert show];
+                });
             }
         }];
     }

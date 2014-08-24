@@ -215,8 +215,10 @@
             //            verified = 1;
 
             NSString *name;
+            NSString *facebookId;
             if (!error && [result isKindOfClass:[NSDictionary class]]) {
                 name = [result objectForKey:@"name"];
+                facebookId = [result objectForKey:@"id"];
             } else {
                 // See: https://developers.facebook.com/docs/ios/errors
                 NSLog(@"FB::Error %@", error);
@@ -224,14 +226,23 @@
             if (!name) {
                 name = @"Facebook";
             }
-
-            NSString *accessToken = [FBSession activeSession].accessTokenData.accessToken;
-            NSString *facebookId = [FBSession activeSession].accessTokenData.userID;
-            NSDate *expiresAt = [FBSession activeSession].accessTokenData.expirationDate;
-            [[TDCurrentUser sharedInstance] registerFacebookAccessToken:accessToken expiresAt:expiresAt userId:facebookId identifier:name];
-            if (success) {
-                success();
+            if (!facebookId) {
+                if (failure) {
+                    failure(@"Unknown error");
+                }
+                return;
             }
+
+            NSString *accessToken = FBSession.activeSession.accessTokenData.accessToken;
+            NSDate *expiresAt = FBSession.activeSession.accessTokenData.expirationDate;
+            [[TDCurrentUser sharedInstance] registerFacebookAccessToken:accessToken expiresAt:expiresAt userId:facebookId identifier:name callback:^(BOOL registered) {
+                if (registered && success) {
+                    success();
+                } else if (!registered && failure) {
+                    failure(@"Unknown error");
+                }
+
+            }];
         }];
         return;
     }
@@ -240,6 +251,9 @@
     if (state == FBSessionStateClosed || state == FBSessionStateClosedLoginFailed){
         NSLog(@"FB::Session closed");
         [[TDCurrentUser sharedInstance] unlinkFacebook];
+        if (failure) {
+            failure(@"Session closed");
+        }
     }
 
     if (error) {

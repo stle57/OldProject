@@ -40,7 +40,7 @@
 - (void)registerForPushNotifications:(NSString *)message;
 - (void)registerDeviceToken:(NSString *)token;
 - (TDUser *)currentUserObject;
-- (void)registerFacebookAccessToken:(NSString *)token expiresAt:(NSDate *)expiresAt userId:(NSString *)userId identifier:(NSString *)identifier;
+- (void)registerFacebookAccessToken:(NSString *)token expiresAt:(NSDate *)expiresAt userId:(NSString *)userId identifier:(NSString *)identifier callback:(void (^)(BOOL success))callback;
 - (void)unlinkFacebook;
 - (BOOL)canPostToFacebook;
 
