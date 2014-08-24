@@ -50,7 +50,6 @@ typedef enum {
 @property (nonatomic) RSClient *client;
 @property (nonatomic) RSContainer *container;
 @property (nonatomic) NSArray *shareOptions;
-@property (nonatomic) NSDictionary *postDetails;
 
 
 @end
@@ -141,7 +140,6 @@ typedef enum {
 }
 
 - (void)cleanup {
-    self.postDetails = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     if ([self.delegate respondsToSelector:@selector(uploadComplete)]) {
         [self.delegate uploadComplete];
@@ -206,25 +204,12 @@ typedef enum {
                                     success:^(NSDictionary *response) {
 
             self.postStatus = UploadCompleted;
-            self.postDetails = [response objectForKey:@"share_options"];
-            [self shareOrComplete];
+            [self uploadComplete];
         } failure:^{
             self.postStatus = UploadFailed;
             [self uploadFailed];
         }];
     } else if (self.postStatus == UploadCompleted) {
-        [self shareOrComplete];
-    }
-}
-
-- (void)shareOrComplete {
-    if (self.postDetails && self.shareOptions && [self.shareOptions count] > 0) {
-        [[TDPostAPI sharedInstance] sharePost:self.postDetails toNetworks:self.shareOptions success:^{
-            [self uploadComplete];
-        } failure:^{
-            [self uploadFailed];
-        }];
-    } else {
         [self uploadComplete];
     }
 }

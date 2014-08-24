@@ -14,7 +14,6 @@
 
 @property (nonatomic) NSString *comment;
 @property (nonatomic) BOOL isPR;
-@property (nonatomic) NSDictionary *postOptions;
 
 @end
 
@@ -39,28 +38,11 @@
 }
 
 - (void)upload {
-    if (self.postOptions) {
-        [self shareOrComplete];
-    } else {
-        [[TDPostAPI sharedInstance] addPost:nil comment:self.comment isPR:self.isPR kind:@"text" userGenerated:NO sharingTo:self.shareOptions success:^(NSDictionary *response) {
-            self.postOptions = [response objectForKey:@"share_options"];
-            [self shareOrComplete];
-        } failure:^{
-            [self uploadFailed];
-        }];
-    }
-}
-
-- (void)shareOrComplete {
-    if (self.shareOptions && [self.shareOptions count] > 0) {
-        [[TDPostAPI sharedInstance] sharePost:self.postOptions toNetworks:self.shareOptions success:^{
-            [self uploadComplete];
-        } failure:^{
-            [self uploadFailed];
-        }];
-    } else {
+    [[TDPostAPI sharedInstance] addPost:nil comment:self.comment isPR:self.isPR kind:@"text" userGenerated:NO sharingTo:self.shareOptions success:^(NSDictionary *response) {
         [self uploadComplete];
-    }
+    } failure:^{
+        [self uploadFailed];
+    }];
 }
 
 - (void)uploadComplete {
