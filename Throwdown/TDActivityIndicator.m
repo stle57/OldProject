@@ -18,19 +18,32 @@
 
 @implementation TDActivityIndicator
 
+- (id)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:(CGRect)frame];
+    if (self) {
+        [self setup];
+    }
+    return self;
+}
+
 - (id)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
     if (self) {
-        NSArray *nibContents = [[NSBundle mainBundle] loadNibNamed:@"TDActivityIndicator" owner:self options:nil];
-        self.backgroundColor = [UIColor clearColor];
-        [self addSubview:[nibContents lastObject]];
-
-        self.backgroundView.layer.cornerRadius = 8;
-        self.text.font = [TDConstants fontSemiBoldSized:20];
-        self.originalTextLocation = self.text.frame;
-        self.text.verticalAlignment = TTTAttributedLabelVerticalAlignmentCenter;
+        [self setup];
     }
     return self;
+}
+
+- (void)setup {
+    NSArray *nibContents = [[NSBundle mainBundle] loadNibNamed:@"TDActivityIndicator" owner:self options:nil];
+    self.backgroundColor = [UIColor clearColor];
+    [self addSubview:[nibContents lastObject]];
+
+    self.backgroundView.layer.cornerRadius = 8;
+    self.text.font = [TDConstants fontSemiBoldSized:20];
+    self.originalTextLocation = self.text.frame;
+    self.text.verticalAlignment = TTTAttributedLabelVerticalAlignmentCenter;
+    self.hidden = YES;
 }
 
 - (void)startSpinner {

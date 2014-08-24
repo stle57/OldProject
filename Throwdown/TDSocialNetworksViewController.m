@@ -44,6 +44,7 @@
     self.tableView = [[UITableView alloc] initWithFrame:[[UIScreen mainScreen] bounds] style:UITableViewStyleGrouped];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
+    self.tableView.separatorInset = UIEdgeInsetsMake(0, 60, 0, 0);
     [self.view addSubview:self.tableView];
 }
 
@@ -59,7 +60,7 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 1;
+    return 2;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -84,20 +85,31 @@
                 cell.iconView.image = [UIImage imageNamed:@"fb_inactive_48x48"];
             }
             break;
+        case 1:
+            if ([[TDCurrentUser sharedInstance] canPostToTwitter]) {
+                cell.titleLabel.text = [TDCurrentUser sharedInstance].twitterIdentifier;
+                cell.iconView.image = [UIImage imageNamed:@"twitter_active_48x38"];
+            } else {
+                cell.titleLabel.text = @"Twitter";
+                cell.iconView.image = [UIImage imageNamed:@"twitter_inactive_48x38"];
+            }
+            break;
     }
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
+    TDSocialConnectViewController *vc = [[TDSocialConnectViewController alloc] init];
     switch (indexPath.row) {
-        case 0: {
-            TDSocialConnectViewController *vc = [[TDSocialConnectViewController alloc] init];
+        case 0:
             vc.network = TDSocialNetworkFacebook;
-            [self.navigationController pushViewController:vc animated:YES];
             break;
-        }
+        case 1:
+            vc.network = TDSocialNetworkTwitter;
+            break;
     }
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)backButtonHit:(id)sender {

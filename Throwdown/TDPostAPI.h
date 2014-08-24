@@ -28,7 +28,7 @@
 - (void)addTextPost:(NSString *)comment isPR:(BOOL)isPR shareOptions:(NSArray *)shareOptions;
 - (void)sharePost:(NSDictionary *)shareData toNetworks:(NSArray *)networks success:(void (^)(void))success failure:(void (^)(void))failure;
 
-- (void)addPost:(NSString *)filename comment:(NSString *)comment isPR:(BOOL)pr kind:(NSString *)kind userGenerated:(BOOL)ug success:(void (^)(NSDictionary *response))success failure:(void (^)(void))failure;
+- (void)addPost:(NSString *)filename comment:(NSString *)comment isPR:(BOOL)pr kind:(NSString *)kind userGenerated:(BOOL)ug sharingTo:(NSArray *)sharing success:(void (^)(NSDictionary *response))success failure:(void (^)(void))failure;
 - (NSArray *)getPosts;
 - (void)likePostWithId:(NSNumber *)postId;
 - (void)unLikePostWithId:(NSNumber *)postId;

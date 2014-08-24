@@ -10,6 +10,7 @@
 
 typedef enum {
     TDSocialNetworkFacebook,
+    TDSocialNetworkTwitter
 } TDSocialNetwork;
 
 @interface TDSocialConnectViewController : UIViewController

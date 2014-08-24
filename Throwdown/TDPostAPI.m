@@ -89,7 +89,7 @@
 #pragma mark - posts get/add/remove
 
 
-- (void)addPost:(NSString *)filename comment:(NSString *)comment isPR:(BOOL)pr kind:(NSString *)kind userGenerated:(BOOL)ug success:(void (^)(NSDictionary *response))success failure:(void (^)(void))failure {
+- (void)addPost:(NSString *)filename comment:(NSString *)comment isPR:(BOOL)pr kind:(NSString *)kind userGenerated:(BOOL)ug sharingTo:(NSArray *)sharing success:(void (^)(NSDictionary *response))success failure:(void (^)(void))failure {
     NSMutableDictionary *post = [@{ @"kind": kind, @"personal_record": [NSNumber numberWithBool:pr], @"user_generated": [NSNumber numberWithBool:ug]} mutableCopy];
     if (filename) {
         [post addEntriesFromDictionary:@{@"filename": filename}];
@@ -97,9 +97,12 @@
     if (comment) {
         [post addEntriesFromDictionary:@{@"comment": comment}];
     }
+    if (!sharing) {
+        sharing = @[];
+    }
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts.json"];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager POST:url parameters:@{ @"post": post, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [manager POST:url parameters:@{ @"post": post, @"share_to": sharing, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
         // Should just put the post in the feed but this is easier to implement for now + takes care of any other new posts in the feed.
         [self fetchPostsUpstreamWithErrorHandlerStart:nil error:nil];
         if (success) {
@@ -472,6 +475,8 @@
                 }];
             }];
         }
+    } else if (success) {
+        success();
     }
 }
 

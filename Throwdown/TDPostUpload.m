@@ -202,6 +202,7 @@ typedef enum {
                                        isPR:self.isPR
                                        kind:(self.videoUpload ? @"video" : @"photo")
                               userGenerated:self.userGenerated
+                                  sharingTo:self.shareOptions
                                     success:^(NSDictionary *response) {
 
             self.postStatus = UploadCompleted;

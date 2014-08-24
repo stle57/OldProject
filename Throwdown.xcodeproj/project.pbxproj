@@ -100,6 +100,12 @@
 		A1432CE418A99DA40073E492 /* TDSignupStepOneViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1432CE318A99DA40073E492 /* TDSignupStepOneViewController.m */; };
 		A1432CE718A99DB30073E492 /* TDLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1432CE618A99DB30073E492 /* TDLoginViewController.m */; };
 		A1432D2018AA02990073E492 /* TDViewControllerHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = A1432D1F18AA02990073E492 /* TDViewControllerHelper.m */; };
+		A14483B619A7F05300B3BC8D /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A14483B519A7F05200B3BC8D /* Social.framework */; };
+		A14483BE19A8026000B3BC8D /* NSData+Base64.m in Sources */ = {isa = PBXBuildFile; fileRef = A14483B919A8026000B3BC8D /* NSData+Base64.m */; };
+		A14483BF19A8026000B3BC8D /* OAuth+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = A14483BB19A8026000B3BC8D /* OAuth+Additions.m */; };
+		A14483C019A8026000B3BC8D /* OAuthCore.m in Sources */ = {isa = PBXBuildFile; fileRef = A14483BD19A8026000B3BC8D /* OAuthCore.m */; };
+		A14483C619A807C900B3BC8D /* TWTAPIManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A14483C319A807C900B3BC8D /* TWTAPIManager.m */; };
+		A14483C719A807C900B3BC8D /* TWTSignedRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = A14483C519A807C900B3BC8D /* TWTSignedRequest.m */; };
 		A14B2B7F18B5308000980A31 /* TDAPIClient.m in Sources */ = {isa = PBXBuildFile; fileRef = A14B2B7E18B5308000980A31 /* TDAPIClient.m */; };
 		A14B2B8818B8351E00980A31 /* TDCurrentUser.m in Sources */ = {isa = PBXBuildFile; fileRef = A14B2B8718B8351E00980A31 /* TDCurrentUser.m */; };
 		A14E38E81992B5ED001B46AF /* TDSocialNetworksViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A14E38E71992B5ED001B46AF /* TDSocialNetworksViewController.m */; };
@@ -305,6 +311,18 @@
 		A1432CE618A99DB30073E492 /* TDLoginViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDLoginViewController.m; sourceTree = "<group>"; };
 		A1432D1E18AA02990073E492 /* TDViewControllerHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDViewControllerHelper.h; sourceTree = "<group>"; };
 		A1432D1F18AA02990073E492 /* TDViewControllerHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDViewControllerHelper.m; sourceTree = "<group>"; };
+		A14483B319A7F04400B3BC8D /* Twitter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Twitter.framework; path = System/Library/Frameworks/Twitter.framework; sourceTree = SDKROOT; };
+		A14483B519A7F05200B3BC8D /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
+		A14483B819A8026000B3BC8D /* NSData+Base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Base64.h"; sourceTree = "<group>"; };
+		A14483B919A8026000B3BC8D /* NSData+Base64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Base64.m"; sourceTree = "<group>"; };
+		A14483BA19A8026000B3BC8D /* OAuth+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OAuth+Additions.h"; sourceTree = "<group>"; };
+		A14483BB19A8026000B3BC8D /* OAuth+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OAuth+Additions.m"; sourceTree = "<group>"; };
+		A14483BC19A8026000B3BC8D /* OAuthCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OAuthCore.h; sourceTree = "<group>"; };
+		A14483BD19A8026000B3BC8D /* OAuthCore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OAuthCore.m; sourceTree = "<group>"; };
+		A14483C219A807C900B3BC8D /* TWTAPIManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWTAPIManager.h; sourceTree = "<group>"; };
+		A14483C319A807C900B3BC8D /* TWTAPIManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWTAPIManager.m; sourceTree = "<group>"; };
+		A14483C419A807C900B3BC8D /* TWTSignedRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TWTSignedRequest.h; sourceTree = "<group>"; };
+		A14483C519A807C900B3BC8D /* TWTSignedRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TWTSignedRequest.m; sourceTree = "<group>"; };
 		A14B2B7D18B5308000980A31 /* TDAPIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDAPIClient.h; sourceTree = "<group>"; };
 		A14B2B7E18B5308000980A31 /* TDAPIClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDAPIClient.m; sourceTree = "<group>"; };
 		A14B2B8618B8351D00980A31 /* TDCurrentUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDCurrentUser.h; sourceTree = "<group>"; };
@@ -407,6 +425,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A14483B619A7F05300B3BC8D /* Social.framework in Frameworks */,
 				A1D13FF01905E93A000980E0 /* CoreImage.framework in Frameworks */,
 				A1D13FEE1905E931000980E0 /* QuartzCore.framework in Frameworks */,
 				A1D13FEC1905E923000980E0 /* MobileCoreServices.framework in Frameworks */,
@@ -592,17 +611,21 @@
 		A11E04DA1888CB79002F981A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A14483B719A8026000B3BC8D /* ABOAuthCore */,
+				A102FE9E18ECF43C00139606 /* Flurry */,
+				A182D827188B60CD00F794A5 /* SAVideoRangeSlider */,
+				A19FF5FB18970BBA001A0AD0 /* RSCloudFiles */,
+				A14483C119A807C900B3BC8D /* TWReverseAuth */,
+				A14483B519A7F05200B3BC8D /* Social.framework */,
+				A14483B319A7F04400B3BC8D /* Twitter.framework */,
 				A1280628198ADE6E0038AC2E /* FacebookSDK.framework */,
 				A1D13FEF1905E93A000980E0 /* CoreImage.framework */,
 				A1D13FED1905E931000980E0 /* QuartzCore.framework */,
 				A1D13FEB1905E923000980E0 /* MobileCoreServices.framework */,
 				A1D13FE91905E919000980E0 /* ImageIO.framework */,
 				A1D13FE71905E913000980E0 /* Accelerate.framework */,
-				A102FE9E18ECF43C00139606 /* Flurry */,
 				A1DAEEB218EB79FA00742949 /* Crashlytics.framework */,
 				2D531ED818E38A47006CA088 /* MessageUI.framework */,
-				A19FF5FB18970BBA001A0AD0 /* RSCloudFiles */,
-				A182D827188B60CD00F794A5 /* SAVideoRangeSlider */,
 				A11E05111889293C002F981A /* AssetsLibrary.framework */,
 				A11E04DB1888CB79002F981A /* Foundation.framework */,
 				A11E04DD1888CB79002F981A /* CoreGraphics.framework */,
@@ -706,6 +729,30 @@
 				4DC2C9971968F69C00A210CF /* TDTextViewControllerHelper.m */,
 			);
 			name = Helpers;
+			sourceTree = "<group>";
+		};
+		A14483B719A8026000B3BC8D /* ABOAuthCore */ = {
+			isa = PBXGroup;
+			children = (
+				A14483B819A8026000B3BC8D /* NSData+Base64.h */,
+				A14483B919A8026000B3BC8D /* NSData+Base64.m */,
+				A14483BA19A8026000B3BC8D /* OAuth+Additions.h */,
+				A14483BB19A8026000B3BC8D /* OAuth+Additions.m */,
+				A14483BC19A8026000B3BC8D /* OAuthCore.h */,
+				A14483BD19A8026000B3BC8D /* OAuthCore.m */,
+			);
+			path = ABOAuthCore;
+			sourceTree = "<group>";
+		};
+		A14483C119A807C900B3BC8D /* TWReverseAuth */ = {
+			isa = PBXGroup;
+			children = (
+				A14483C219A807C900B3BC8D /* TWTAPIManager.h */,
+				A14483C319A807C900B3BC8D /* TWTAPIManager.m */,
+				A14483C419A807C900B3BC8D /* TWTSignedRequest.h */,
+				A14483C519A807C900B3BC8D /* TWTSignedRequest.m */,
+			);
+			path = TWReverseAuth;
 			sourceTree = "<group>";
 		};
 		A175678D1891C20A0034AD05 /* API */ = {
@@ -1136,7 +1183,9 @@
 				A14B2B7F18B5308000980A31 /* TDAPIClient.m in Sources */,
 				A182D839188F2C2D00F794A5 /* TDHomeViewController.m in Sources */,
 				2DBA430118DA455500366737 /* TDTextField.m in Sources */,
+				A14483BF19A8026000B3BC8D /* OAuth+Additions.m in Sources */,
 				A12549481999D72D001C5CD1 /* TDShareViewCell.m in Sources */,
+				A14483BE19A8026000B3BC8D /* NSData+Base64.m in Sources */,
 				A180D4E518C33D26003B9378 /* TDUnwindSlideLeftSegue.m in Sources */,
 				A1432D2018AA02990073E492 /* TDViewControllerHelper.m in Sources */,
 				A11999D618D90D5200C39ABF /* TDCreatePostViewController.m in Sources */,
@@ -1155,6 +1204,7 @@
 				2D63FA871909D22200FEBA3C /* TDActivityIndicator.m in Sources */,
 				2DA73D7718BFCC2E00D87370 /* TDLikeView.m in Sources */,
 				A14E38E81992B5ED001B46AF /* TDSocialNetworksViewController.m in Sources */,
+				A14483C719A807C900B3BC8D /* TWTSignedRequest.m in Sources */,
 				A11E04F21888CB79002F981A /* TDRecordVideoViewController.m in Sources */,
 				A1B3EF3B193E8D240014B619 /* TDNoticeViewCell.m in Sources */,
 				A11E04EC1888CB79002F981A /* TDAppDelegate.m in Sources */,
@@ -1174,6 +1224,7 @@
 				A12549431999BD32001C5CD1 /* TDSharePostViewController.m in Sources */,
 				A14B2B8818B8351E00980A31 /* TDCurrentUser.m in Sources */,
 				A182D830188B60CD00F794A5 /* SAResizibleBubble.m in Sources */,
+				A14483C619A807C900B3BC8D /* TWTAPIManager.m in Sources */,
 				A182D8261889E8D900F794A5 /* TDEditVideoViewController.m in Sources */,
 				4DC2C9981968F69C00A210CF /* TDTextViewControllerHelper.m in Sources */,
 				A11E04E81888CB79002F981A /* main.m in Sources */,
@@ -1192,6 +1243,7 @@
 				A1E90CDD18B445FC0046D281 /* TDSignupStepTwoViewController.m in Sources */,
 				A1432CE718A99DB30073E492 /* TDLoginViewController.m in Sources */,
 				A1432CE118A99D750073E492 /* TDWelcomeViewController.m in Sources */,
+				A14483C019A8026000B3BC8D /* OAuthCore.m in Sources */,
 				A1D6BB0D196BBAE9007983F8 /* TDSlideDownSegue.m in Sources */,
 				2DA420DC18E63E1A006F4D9C /* TDActivityCell.m in Sources */,
 				A1C2481418C7D4B000F187D9 /* URLConnection.m in Sources */,
@@ -1349,6 +1401,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SCHEME_SUFFIX = "-development";
 				TARGETED_DEVICE_FAMILY = 1;
+				TWITTER_CONSUMER_KEY = xiqfRpqHtyEPL9yA1mmNaopZu;
+				TWITTER_CONSUMER_SECRET = YFgGasvDmrXHRLaeCz1aAvMlZcrqYKkVXb3hxLXd4RrRrvasv9;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -1380,6 +1434,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SCHEME_SUFFIX = "";
 				TARGETED_DEVICE_FAMILY = 1;
+				TWITTER_CONSUMER_KEY = oHcrGnh5KKgef3Nsgl4Ftkk9e;
+				TWITTER_CONSUMER_SECRET = oeRIa31ZPyJ8cG0fWYNiZ1N0IwSgkavbwygZLw54spOA0No6q1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -1493,6 +1549,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SCHEME_SUFFIX = "-staging";
 				TARGETED_DEVICE_FAMILY = 1;
+				TWITTER_CONSUMER_KEY = xiqfRpqHtyEPL9yA1mmNaopZu;
+				TWITTER_CONSUMER_SECRET = YFgGasvDmrXHRLaeCz1aAvMlZcrqYKkVXb3hxLXd4RrRrvasv9;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Staging;

@@ -47,6 +47,11 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     [aCoder encodeObject:self.fbIdentifier forKey:@"fb_identifer"];
     [aCoder encodeObject:self.fbTokenExpiration forKey:@"fb_token_expiration"];
     [aCoder encodeObject:[NSNumber numberWithBool:self.fbPublishPermission] forKey:@"fb_publish_permission"];
+
+    [aCoder encodeObject:self.twitterToken forKey:@"tw_token"];
+    [aCoder encodeObject:self.twitterSecret forKey:@"tw_secret"];
+    [aCoder encodeObject:self.twitterUID forKey:@"tw_uid"];
+    [aCoder encodeObject:self.twitterIdentifier forKey:@"tw_identifier"];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -72,6 +77,12 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
         _fbIdentifier      = [aDecoder decodeObjectForKey:@"fb_identifer"];
         _fbTokenExpiration = [aDecoder decodeObjectForKey:@"fb_token_expiration"];
         _fbPublishPermission = [[aDecoder decodeObjectForKey:@"fb_publish_permission"] boolValue];
+
+        _twitterToken      = [aDecoder decodeObjectForKey:@"tw_token"];
+        _twitterSecret     = [aDecoder decodeObjectForKey:@"tw_secret"];
+        _twitterUID        = [aDecoder decodeObjectForKey:@"tw_uid"];
+        _twitterIdentifier = [aDecoder decodeObjectForKey:@"tw_identifier"];
+
     }
     return self;
 }
@@ -120,6 +131,10 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     _fbIdentifier = nil;
     _fbTokenExpiration = nil;
     _fbPublishPermission = NO;
+    _twitterToken = nil;
+    _twitterSecret = nil;
+    _twitterUID = nil;
+    _twitterIdentifier = nil;
     [TDFileSystemHelper removeFileAt:[NSHomeDirectory() stringByAppendingString:DATA_LOCATION]];
 }
 
@@ -153,13 +168,13 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     _fbIdentifier      = identifier;
     _fbTokenExpiration = expiresAt;
     [self save];
-    [[TDAPIClient sharedInstance] registerFacebookAccessToken:token expiresAt:expiresAt userId:userId identifier:identifier forUserToken:self.authToken];
+    [[TDAPIClient sharedInstance] registerFacebookAccessToken:token expiresAt:expiresAt userId:userId identifier:identifier];
 }
 
 - (void)unlinkFacebook {
     // This method might get called from the AppDelegate when a session is already closed
     if (self.fbUID) {
-        [[TDAPIClient sharedInstance] deleteFacebookAccessTokenForUID:[self.fbUID copy] forUserToken:self.authToken];
+        [[TDAPIClient sharedInstance] deleteFacebookAccessTokenForUID:[self.fbUID copy]];
         _fbToken           = nil;
         _fbUID             = nil;
         _fbIdentifier      = nil;
@@ -176,6 +191,57 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
 - (void)setFbPublishPermission:(BOOL)on {
     _fbPublishPermission = on;
     [self save];
+}
+
+#pragma mark - Twitter integration
+
+- (void)registerTwitterAccessToken:(NSString *)token secret:(NSString *)secret uid:(NSString *)uid identifier:(NSString *)identifier callback:(void (^)(BOOL success))callback {
+    [[TDAPIClient sharedInstance] registerTwitterAccessToken:token
+                                                 tokenSecret:secret
+                                                      userId:uid
+                                                  identifier:identifier
+                                                    callback:^(BOOL success) {
+                                                        if (success) {
+                                                            _twitterToken = token;
+                                                            _twitterSecret = secret;
+                                                            _twitterUID = uid;
+                                                            _twitterIdentifier = identifier;
+                                                            [self save];
+                                                        }
+                                                        if (callback) {
+                                                            callback(success);
+                                                        }
+                                                    }];
+}
+
+- (void)unlinkTwitter {
+    if (self.twitterUID) {
+        [[TDAPIClient sharedInstance] deleteTwitterAccessTokenForUID:[self.twitterUID copy]];
+        _twitterToken      = nil;
+        _twitterSecret     = nil;
+        _twitterUID        = nil;
+        _twitterIdentifier = nil;
+        [self save];
+    }
+}
+
+- (BOOL)canPostToTwitter {
+    return self.twitterUID != nil;
+}
+
+- (void)handleTwitterResponseData:(NSData *)data callback:(void (^)(BOOL success))callback {
+    NSString *responseStr = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSMutableDictionary *credentials = [[NSMutableDictionary alloc] init];
+    for (NSString *pair in [responseStr componentsSeparatedByString:@"&"]) {
+        NSArray *keyvalue = [pair componentsSeparatedByString:@"="];
+        [credentials setObject:[keyvalue lastObject] forKey:[keyvalue firstObject]];
+    }
+    [[TDCurrentUser sharedInstance] registerTwitterAccessToken:[credentials objectForKey:@"oauth_token"]
+                                                        secret:[credentials objectForKey:@"oauth_token_secret"]
+                                                           uid:[credentials objectForKey:@"user_id"]
+                                                    identifier:[@"@" stringByAppendingString:[credentials objectForKey:@"screen_name"]]
+                                                      callback:callback];
+
 }
 
 #pragma mark - push notification device token

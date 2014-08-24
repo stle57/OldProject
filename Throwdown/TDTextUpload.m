@@ -42,7 +42,7 @@
     if (self.postOptions) {
         [self shareOrComplete];
     } else {
-        [[TDPostAPI sharedInstance] addPost:nil comment:self.comment isPR:self.isPR kind:@"text" userGenerated:NO success:^(NSDictionary *response) {
+        [[TDPostAPI sharedInstance] addPost:nil comment:self.comment isPR:self.isPR kind:@"text" userGenerated:NO sharingTo:self.shareOptions success:^(NSDictionary *response) {
             self.postOptions = [response objectForKey:@"share_options"];
             [self shareOrComplete];
         } failure:^{

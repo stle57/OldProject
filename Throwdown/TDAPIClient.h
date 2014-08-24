@@ -36,7 +36,9 @@
 
 - (void)callURL:(NSString *)url;
 
-- (void)registerFacebookAccessToken:(NSString *)token expiresAt:(NSDate *)expiresAt userId:(NSString *)userId identifier:(NSString *)identifier forUserToken:(NSString *)userToken;
-- (void)deleteFacebookAccessTokenForUID:(NSString *)userId forUserToken:(NSString *)userToken;
+- (void)registerFacebookAccessToken:(NSString *)token expiresAt:(NSDate *)expiresAt userId:(NSString *)userId identifier:(NSString *)identifier;
+- (void)deleteFacebookAccessTokenForUID:(NSString *)userId;
 
+- (void)registerTwitterAccessToken:(NSString *)token tokenSecret:(NSString *)secret userId:(NSString *)userId identifier:(NSString *)identifier callback:(void (^)(BOOL success))callback;
+- (void)deleteTwitterAccessTokenForUID:(NSString *)userId;
 @end

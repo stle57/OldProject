@@ -291,9 +291,7 @@
 
 #pragma mark - Social Networks registration
 
-- (void)registerFacebookAccessToken:(NSString *)token expiresAt:(NSDate *)expiresAt userId:(NSString *)userId identifier:(NSString *)identifier forUserToken:(NSString *)userToken {
-    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/identities.json"];
-
+- (void)registerFacebookAccessToken:(NSString *)token expiresAt:(NSDate *)expiresAt userId:(NSString *)userId identifier:(NSString *)identifier {
     NSDictionary *identity = @{
                               @"provider": @"facebook",
                               @"uid": userId,
@@ -301,27 +299,56 @@
                               @"expires_at": [TDViewControllerHelper getUTCFormatedDate:expiresAt],
                               @"identifier": identifier
                               };
-    NSLog(@"sending: %@", identity);
-    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
-    [self.httpManager POST:url parameters:@{@"user_token": userToken, @"identity": identity} success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        debug NSLog(@"device token registered");
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        debug NSLog(@"device token failed registration");
-    }];
+    [self registerIdentity:identity callback:nil];
 }
 
-- (void)deleteFacebookAccessTokenForUID:(NSString *)userId forUserToken:(NSString *)userToken {
+- (void)deleteFacebookAccessTokenForUID:(NSString *)userId {
+    [self deleteIdentity:@{ @"provider": @"facebook", @"uid": userId }];
+}
+
+- (void)registerTwitterAccessToken:(NSString *)token tokenSecret:(NSString *)secret userId:(NSString *)userId identifier:(NSString *)identifier callback:(void (^)(BOOL success))callback {
+    NSDictionary *identity = @{
+                               @"provider": @"twitter",
+                               @"uid": userId,
+                               @"access_token": token,
+                               @"token_secret": secret,
+                               @"identifier": identifier
+                               };
+    [self registerIdentity:identity callback:callback];
+}
+
+- (void)deleteTwitterAccessTokenForUID:(NSString *)userId {
+    [self deleteIdentity:@{ @"provider": @"twitter", @"uid": userId }];
+}
+
+- (void)registerIdentity:(NSDictionary *)identity callback:(void (^)(BOOL success))callback {
+    debug NSLog(@"registering identity: %@", identity);
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/identities.json"];
-
-    NSDictionary *params = @{ @"user_token": userToken, @"identity": @{ @"provider": @"facebook", @"uid": userId } };
-    debug NSLog(@"deleting token: %@", params);
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
-    [self.httpManager DELETE:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        NSLog(@"device token deleted");
+    [self.httpManager POST:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken, @"identity": identity} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        debug NSLog(@"identity registered");
+        if (callback) {
+            callback(YES);
+        }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"device token delete failed");
+        NSLog(@"identity failed registration %@", error);
+        if (callback) {
+            callback(NO);
+        }
     }];
 }
+
+- (void)deleteIdentity:(NSDictionary *)identity {
+    debug NSLog(@"deleting token: %@", identity);
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/identities.json"];
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [self.httpManager DELETE:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken, @"identity": identity } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        debug NSLog(@"identity deleted");
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"identity delete failed %@", error);
+    }];
+}
+
 
 #pragma mark - Activity / Notifications
 
