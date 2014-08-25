@@ -106,7 +106,13 @@ NSString *TDURLUnescapedString(NSString *string) {
 
 - (void)logEvent:(NSString *)event {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
-        [[TDAPIClient sharedInstance] logEvent:event sessionId:self.sessionId];
+        [[TDAPIClient sharedInstance] logEvent:event sessionId:self.sessionId withInfo:nil source:nil];
+    });
+}
+
+- (void)logEvent:(NSString *)event withInfo:(NSString *)info source:(NSString *)source {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        [[TDAPIClient sharedInstance] logEvent:event sessionId:self.sessionId withInfo:info source:source];
     });
 }
 

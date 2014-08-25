@@ -326,6 +326,36 @@
     }
 }
 
+#pragma mark - Handle URL's
+
+- (void)openURL:(NSURL *)url {
+    [self unwindAllViewControllers];
+    NSString *modelId = [[url pathComponents] objectAtIndex:1]; // 0 is the first slash
+    if ([@"post" isEqualToString:[url host]]) {
+        TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil];
+        vc.slug = modelId;
+        vc.delegate = self;
+        [self.navigationController pushViewController:vc animated:YES];
+    } else if ([@"user" isEqualToString:[url host]]) {
+        TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
+        vc.username = modelId;
+
+        if ([modelId isEqualToString:[[TDCurrentUser sharedInstance] currentUserObject].username] ||
+            [modelId isEqualToString:[[TDCurrentUser sharedInstance].currentUserObject.userId stringValue]]) {
+            vc.fromProfileType = kFromProfileScreenType_OwnProfileButton;
+            vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+            UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
+            navController.navigationBar.barStyle = UIBarStyleDefault;
+            navController.navigationBar.translucent = YES;
+            [self.navigationController presentViewController:navController animated:YES completion:nil];
+
+        } else {
+            vc.fromProfileType = kFromProfileScreenType_OtherUser;
+            [self.navigationController pushViewController:vc animated:YES];
+        }
+    }
+}
+
 #pragma mark - Notifications and sub view
 
 - (void)openPushNotification:(NSDictionary *)notification {
@@ -338,6 +368,7 @@
 }
 
 - (void)unwindAllViewControllers {
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
     UIViewController *top = [TDAppDelegate topMostController];
     if ([top class] == [UINavigationController class] || [top class] == [TDNavigationController class]) {
         for (UIViewController *vc in [((UINavigationController *)top) viewControllers]) {

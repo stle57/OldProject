@@ -32,6 +32,7 @@
 - (void)likePostWithId:(NSNumber *)postId;
 - (void)unLikePostWithId:(NSNumber *)postId;
 - (void)getFullPostInfoForPostId:(NSNumber *)postId;
+- (void)getFullPostInfoForPostSlug:(NSString *)slug;
 - (void)postNewComment:(NSString *)messageBody forPost:(NSNumber *)postId;
 - (void)reportPostWithId:(NSNumber *)postId;
 - (void)deletePostWithId:(NSNumber *)postId;
@@ -39,7 +40,8 @@
 - (void)fetchPostsUpstreamWithErrorHandlerStart:(NSNumber *)start error:(void (^)(void))errorHandler;
 - (void)fetchPostsUpstreamWithErrorHandlerStart:(NSNumber *)start success:(void (^)(NSDictionary*response))successHandler error:(void (^)(void))errorHandler;
 - (void)fetchPostsUpstreamForUser:(NSNumber *)userId success:(void(^)(NSDictionary *response))successHandler error:(void(^)(void))errorHandler;
+- (void)fetchPostsUpstreamForUsername:(NSString *)username success:(void(^)(NSDictionary *response))successHandler error:(void(^)(void))errorHandler;
 - (void)fetchPostsDownstreamForUser:(NSNumber *)userId lowestId:(NSNumber *)lowestId success:(void(^)(NSDictionary *))successHandler;
-- (void)fetchPostsForUserUpstreamWithErrorHandlerStart:(NSNumber *)start userId:(NSNumber *)userId error:(void (^)(void))errorHandler success:(void(^)(NSDictionary *response))successHandler;
+- (void)fetchPostsForUserUpstreamWithErrorHandlerStart:(NSNumber *)start username:(NSString *)username error:(void (^)(void))errorHandler success:(void(^)(NSDictionary *response))successHandler;
 
 @end

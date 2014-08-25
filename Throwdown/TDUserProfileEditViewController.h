@@ -32,7 +32,7 @@
     CGRect origTableViewFrame;
     CGRect statusBarFrame;
     BOOL keybdUp;
-    kFromProfileScreenType fromFrofileType;
+    kFromProfileScreenType fromProfileType;
     UIImage *editedProfileImage;
     UIImageView *tempFlyInImageView;
 }
@@ -51,7 +51,7 @@
 @property (nonatomic, retain) NSString *password;
 @property (nonatomic, retain) NSString *pictureFileName;
 @property (nonatomic, retain) TDUser *profileUser;
-@property (nonatomic, assign) kFromProfileScreenType fromFrofileType;
+@property (nonatomic, assign) kFromProfileScreenType fromProfileType;
 @property (nonatomic, retain) UIImage *editedProfileImage;
 @property (nonatomic, retain) UIImageView *tempFlyInImageView;
 @property (nonatomic) UIButton *backButton;

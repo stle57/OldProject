@@ -39,7 +39,7 @@
 @synthesize password;
 @synthesize bio;
 @synthesize pictureFileName;
-@synthesize fromFrofileType;
+@synthesize fromProfileType;
 @synthesize editedProfileImage;
 @synthesize tempFlyInImageView;
 
@@ -240,7 +240,7 @@
 }
 
 - (void)leave {
-    switch (fromFrofileType) {
+    switch (fromProfileType) {
         case kFromProfileScreenType_OwnProfile:
         {
             [self.navigationController popViewControllerAnimated:YES];
@@ -444,7 +444,7 @@
 #pragma mark - AlertView
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if (alertView.tag == 89892 && buttonIndex == 0) {
-        switch (fromFrofileType) {
+        switch (fromProfileType) {
             case kFromProfileScreenType_OwnProfile:
                 [self.navigationController popViewControllerAnimated:YES];
             break;

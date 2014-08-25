@@ -49,6 +49,8 @@
 	<string>${TWITTER_CONSUMER_KEY}</string>
 	<key>TWITTER_CONSUMER_SECRET</key>
 	<string>${TWITTER_CONSUMER_SECRET}</string>
+	<key>ThrowdownURL</key>
+	<string>throwdown${SCHEME_SUFFIX}</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>ProximaNova-Bold.otf</string>

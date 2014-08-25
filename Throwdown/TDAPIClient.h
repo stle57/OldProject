@@ -30,7 +30,7 @@
 - (void)setImage:(NSDictionary *)options;
 - (void)getVideo:(NSString *)filename callback:(void(^)(NSURL *videoLocation))callback error:(void(^)(void))errorCallback;
 
-- (void)logEvent:(NSString *)event sessionId:(NSNumber *)sessionId;
+- (void)logEvent:(NSString *)event sessionId:(NSNumber *)sessionId withInfo:(NSString *)info source:(NSString *)source;
 - (void)startSession:(NSDictionary *)metrics callback:(void(^)(NSNumber *sessionId))callback;
 - (void)updateSession:(NSNumber *)sessionId duration:(double)duration;
 

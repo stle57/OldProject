@@ -191,16 +191,21 @@
 
 
 #pragma mark posts for a particular user
+
+- (void)fetchPostsUpstreamForUsername:(NSString *)username success:(void(^)(NSDictionary *response))successHandler error:(void(^)(void))errorHandler {
+    [self fetchPostsForUserUpstreamWithErrorHandlerStart:nil username:username error:errorHandler success:successHandler];
+}
+
 - (void)fetchPostsUpstreamForUser:(NSNumber *)userId success:(void(^)(NSDictionary *response))successHandler error:(void(^)(void))errorHandler {
-    [self fetchPostsForUserUpstreamWithErrorHandlerStart:nil userId:userId error:errorHandler success:successHandler];
+    [self fetchPostsForUserUpstreamWithErrorHandlerStart:nil username:[userId stringValue] error:errorHandler success:successHandler];
 }
 
 - (void)fetchPostsDownstreamForUser:(NSNumber *)userId lowestId:(NSNumber *)lowestId success:(void(^)(NSDictionary *))successHandler {
-    [self fetchPostsForUserUpstreamWithErrorHandlerStart:lowestId userId:userId error:nil success:successHandler];
+    [self fetchPostsForUserUpstreamWithErrorHandlerStart:lowestId username:[userId stringValue] error:nil success:successHandler];
 }
 
-- (void)fetchPostsForUserUpstreamWithErrorHandlerStart:(NSNumber *)start userId:(NSNumber *)userId error:(void (^)(void))errorHandler success:(void(^)(NSDictionary *response))successHandler {
-    NSMutableString *url = [NSMutableString stringWithFormat:@"/api/v1/users/%@.json?user_token=%@", [userId stringValue], [TDCurrentUser sharedInstance].authToken];
+- (void)fetchPostsForUserUpstreamWithErrorHandlerStart:(NSNumber *)start username:(NSString *)username error:(void (^)(void))errorHandler success:(void(^)(NSDictionary *response))successHandler {
+    NSMutableString *url = [NSMutableString stringWithFormat:@"/api/v1/users/%@.json?user_token=%@", username, [TDCurrentUser sharedInstance].authToken];
 
     if (start) {
         [url appendString:[NSString stringWithFormat:@"&start=%@", start]];
@@ -369,10 +374,11 @@
 }
 
 - (void)getFullPostInfoForPostId:(NSNumber *)postId {
-    //  /api/v1/posts/{post-id}.json
-    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts/[POST_ID].json"];
-    url = [url stringByReplacingOccurrencesOfString:@"[POST_ID]"
-                                         withString:[postId stringValue]];
+    [self getFullPostInfoForPostSlug:[postId stringValue]];
+}
+
+- (void)getFullPostInfoForPostSlug:(NSString *)slug {
+    NSString *url = [NSString stringWithFormat:@"%@/api/v1/posts/%@.json", [TDConstants getBaseURL], slug];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager.requestSerializer setValue:TDDeviceInfo.bundleVersion forHTTPHeaderField:kHTTPHeaderBundleVersion];
     [manager GET:url parameters:@{@"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {

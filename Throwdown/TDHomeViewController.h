@@ -19,4 +19,5 @@
 
 @interface TDHomeViewController : TDPostsViewController<TDToastViewDelegate>
 - (void)openPushNotification:(NSDictionary *)notification;
+- (void)openURL:(NSURL *)url;
 @end

@@ -190,6 +190,17 @@
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
     // Call FBAppCall's handleOpenURL:sourceApplication to handle Facebook app responses
     BOOL wasHandled = [FBAppCall handleOpenURL:url sourceApplication:sourceApplication];
+    if (!wasHandled) {
+        NSDictionary *bundleInfo = [[NSBundle mainBundle] infoDictionary];
+        NSString *scheme = [bundleInfo objectForKey:@"ThrowdownURL"];
+        if ([scheme isEqualToString:[url scheme]]) {
+            UINavigationController *navigationController = (UINavigationController *)_window.rootViewController;
+            TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
+            [homeViewController openURL:url];
+            wasHandled = YES;
+            [[TDAnalytics sharedInstance] logEvent:@"open_url" withInfo:[url path] source:sourceApplication];
+        }
+    }
     return wasHandled;
 }
 

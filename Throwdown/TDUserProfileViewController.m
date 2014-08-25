@@ -25,6 +25,7 @@
 
 - (void)dealloc {
     self.user = nil;
+    self.username = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -38,18 +39,33 @@
     self.titleLabel.font = [TDConstants fontRegularSized:20];
     [self.navigationItem setTitleView:self.titleLabel];
 
+//    if (!self.fromProfileType) {
+//        if (self.userId) {
+//            if ([self.userId isEqualToNumber:[[TDCurrentUser sharedInstance] currentUserObject].userId]) {
+//                self.fromProfileType = kFromProfileScreenType_OwnProfile;
+//            } else {
+//                self.fromProfileType = kFromProfileScreenType_OtherUser;
+//            }
+//        } else {
+//            if ([self.username isEqualToString:[[TDCurrentUser sharedInstance] currentUserObject].username]) {
+//                self.fromProfileType = kFromProfileScreenType_OwnProfile;
+//            } else {
+//                self.fromProfileType = kFromProfileScreenType_OtherUser;
+//            }
+//        }
+//    }
+
+
     // Bar Button Items
     switch (self.fromProfileType) {
-        case kFromProfileScreenType_OwnProfileButton:
-        {
+        case kFromProfileScreenType_OwnProfileButton: {
             UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.closeButton];     // 'X'
             self.navigationItem.leftBarButtonItem = leftBarButton;
             UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.settingsButton]; // Settings
             self.navigationItem.rightBarButtonItem = rightBarButton;
         }
         break;
-        case kFromProfileScreenType_OwnProfile:
-        {
+        case kFromProfileScreenType_OwnProfile: {
             UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];    // <
             self.navigationItem.leftBarButtonItem = leftBarButton;
             self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
@@ -58,15 +74,14 @@
             self.navigationItem.rightBarButtonItem = rightBarButton;
         }
         break;
+
         case kFromProfileScreenType_OtherUser:
+        default:
         {
             UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];    // <
             self.navigationItem.leftBarButtonItem = leftBarButton;
             self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
         }
-        break;
-
-        default:
         break;
     }
 
@@ -107,7 +122,7 @@
 
     TDUserProfileEditViewController *vc = [[TDUserProfileEditViewController alloc] initWithNibName:@"TDUserProfileEditViewController" bundle:nil ];
     vc.profileUser = [[TDCurrentUser sharedInstance] currentUserObject];
-    vc.fromFrofileType = self.fromProfileType;
+    vc.fromProfileType = self.fromProfileType;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -116,9 +131,7 @@
 }
 
 - (IBAction)closeButtonHit:(id)sender {
-    self.closeButton.enabled = NO;
-    [self.navigationController dismissViewControllerAnimated:YES
-                                                  completion:nil];
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)unwindToRoot {
@@ -141,7 +154,8 @@
 
 - (void)fetchPostsUpStream {
     debug NSLog(@"userprofile-fetchPostsUpStream");
-    [[TDPostAPI sharedInstance] fetchPostsUpstreamForUser:self.userId success:^(NSDictionary *response) {
+    NSString *fetch = self.username ? self.username : [self.userId stringValue];
+    [[TDPostAPI sharedInstance] fetchPostsUpstreamForUsername:fetch success:^(NSDictionary *response) {
         [self handlePostsResponse:response fromStart:YES];
     } error:^{
         [self endRefreshControl];
@@ -157,7 +171,8 @@
         return NO;
     }
     debug NSLog(@"userprofile-fetchPostsDownStream");
-    [[TDPostAPI sharedInstance] fetchPostsForUserUpstreamWithErrorHandlerStart:[super lowestIdOfPosts] userId:self.userId error:^{
+    NSString *fetch = self.username ? self.username : [self.userId stringValue];
+    [[TDPostAPI sharedInstance] fetchPostsForUserUpstreamWithErrorHandlerStart:[super lowestIdOfPosts] username:fetch error:^{
         self.loaded = YES;
         self.errorLoading = YES;
     } success:^(NSDictionary *response) {

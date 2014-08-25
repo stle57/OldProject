@@ -759,13 +759,17 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
     vc.userId = userId;
 
-    if (userId == [TDCurrentUser sharedInstance].userId)
-    vc.fromProfileType = kFromProfileScreenType_OwnProfileButton;
-    vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
-    navController.navigationBar.barStyle = UIBarStyleDefault;
-    navController.navigationBar.translucent = YES;
-    [self.navigationController presentViewController:navController animated:YES completion:nil];
+    if ([userId isEqualToNumber:[TDCurrentUser sharedInstance].userId]) {
+        vc.fromProfileType = kFromProfileScreenType_OwnProfileButton;
+        vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
+        navController.navigationBar.barStyle = UIBarStyleDefault;
+        navController.navigationBar.translucent = YES;
+        [self.navigationController presentViewController:navController animated:YES completion:nil];
+    } else {
+        vc.fromProfileType = kFromProfileScreenType_OtherUser;
+        [self.navigationController pushViewController:vc animated:YES];
+    }
 }
 
 #pragma mark - Log Out User Notification

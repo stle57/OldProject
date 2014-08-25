@@ -499,15 +499,21 @@
 
 
 #pragma mark - Events
-- (void)logEvent:(NSString *)event sessionId:(NSNumber *)sessionId {
+- (void)logEvent:(NSString *)event sessionId:(NSNumber *)sessionId withInfo:(NSString *)info source:(NSString *)source {
     NSString *url = [NSString stringWithFormat:@"%@/api/v1/events.json", [TDConstants getBaseURL]];
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
 
-    NSDictionary *eventDetails;
+    NSMutableDictionary *eventDetails;
     if (sessionId) {
-        eventDetails = @{@"device_session_id": sessionId, @"action": event};
+        eventDetails = [@{@"device_session_id": sessionId, @"action": event} mutableCopy];
     } else {
-        eventDetails = @{@"action": event};
+        eventDetails = [@{@"action": event} mutableCopy];
+    }
+    if (info) {
+        [eventDetails setObject:info forKey:@"extras"];
+    }
+    if (source) {
+        [eventDetails setObject:source forKey:@"source"];
     }
     NSMutableDictionary *params = [@{@"event": eventDetails} mutableCopy];
     if ([TDCurrentUser sharedInstance].authToken) {

@@ -12,4 +12,5 @@
 + (TDAnalytics *)sharedInstance;
 - (void)start;
 - (void)logEvent:(NSString *)event;
+- (void)logEvent:(NSString *)event withInfo:(NSString *)info source:(NSString *)source;
 @end
