@@ -291,14 +291,17 @@
 
 #pragma mark - Social Networks registration
 
-- (void)registerFacebookAccessToken:(NSString *)token expiresAt:(NSDate *)expiresAt userId:(NSString *)userId identifier:(NSString *)identifier callback:(void (^)(BOOL success))callback {
-    NSDictionary *identity = @{
+- (void)registerFacebookAccessToken:(NSString *)token expiresAt:(NSDate *)expiresAt userId:(NSString *)userId identifier:(NSString *)identifier permissions:(NSArray *)permissions callback:(void (^)(BOOL success))callback {
+    NSMutableDictionary *identity = [@{
                               @"provider": @"facebook",
                               @"uid": userId,
                               @"access_token": token,
                               @"expires_at": [TDViewControllerHelper getUTCFormatedDate:expiresAt],
                               @"identifier": identifier
-                              };
+                              } mutableCopy];
+    if (permissions) {
+        [identity setObject:[permissions componentsJoinedByString:@"|"] forKey:@"permissions"];
+    }
     [self registerIdentity:identity callback:callback];
 }
 
@@ -340,7 +343,7 @@
 
 - (void)deleteIdentity:(NSDictionary *)identity {
     debug NSLog(@"deleting token: %@", identity);
-    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/identities.json"];
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/identities/identity.json"];
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
     [self.httpManager DELETE:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken, @"identity": identity } success:^(AFHTTPRequestOperation *operation, id responseObject) {
         debug NSLog(@"identity deleted");

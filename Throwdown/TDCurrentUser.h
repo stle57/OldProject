@@ -25,7 +25,7 @@
 @property (nonatomic, copy, readonly) NSString *fbUID;
 @property (nonatomic, copy, readonly) NSString *fbIdentifier;
 @property (nonatomic, copy, readonly) NSDate *fbTokenExpiration;
-@property (nonatomic) BOOL fbPublishPermission;
+@property (nonatomic, copy, readonly) NSArray *fbPermissions;
 
 @property (nonatomic, copy, readonly) NSString *twitterUID;
 @property (nonatomic, copy, readonly) NSString *twitterToken;
@@ -42,7 +42,10 @@
 - (TDUser *)currentUserObject;
 - (void)registerFacebookAccessToken:(NSString *)token expiresAt:(NSDate *)expiresAt userId:(NSString *)userId identifier:(NSString *)identifier callback:(void (^)(BOOL success))callback;
 - (void)unlinkFacebook;
+- (void)updateFacebookPermissions;
 - (BOOL)canPostToFacebook;
+- (BOOL)hasCachedFacebookToken;
+- (void)authenticateFacebookWithCachedToken:(void (^)(BOOL success))callback;
 
 - (void)registerTwitterAccessToken:(NSString *)token secret:(NSString *)secret uid:(NSString *)uid identifier:(NSString *)identifier callback:(void (^)(BOOL success))callback;
 - (void)unlinkTwitter;

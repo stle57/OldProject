@@ -180,6 +180,14 @@
                     [self.tableView reloadData];
                 } else if ([TDCurrentUser sharedInstance].fbUID && (FBSession.activeSession.state == FBSessionStateOpen || FBSession.activeSession.state == FBSessionStateOpenTokenExtended)) {
                     [self checkFacebookPermissions];
+                } else if ([[TDCurrentUser sharedInstance] hasCachedFacebookToken]) {
+                    [[TDCurrentUser sharedInstance] authenticateFacebookWithCachedToken:^(BOOL success) {
+                        if (success) {
+                            [self checkFacebookPermissions];
+                        } else {
+                            [self loginToFacebook];
+                        }
+                    }];
                 } else {
                     [self loginToFacebook];
                 }
@@ -195,7 +203,7 @@
             NSDictionary *permissions= [(NSArray *)[result data] objectAtIndex:0];
             if (![permissions objectForKey:@"publish_actions"]) {
                 [self.activityIndicator setMessage:@"Requesting permissions"];
-                [FBSession.activeSession requestNewPublishPermissions:@[@"", @"publish_actions"]
+                [FBSession.activeSession requestNewPublishPermissions:@[@"publish_actions"]
                                                       defaultAudience:FBSessionDefaultAudienceFriends
                                                     completionHandler:^(FBSession *session, NSError *error) {
                                                         [self.activityIndicator stopSpinner];
@@ -284,7 +292,7 @@
 
 - (void)setFacebookPermission:(BOOL)on {
     self.shareToFacebook = on;
-    [[TDCurrentUser sharedInstance] setFbPublishPermission:on];
+    [[TDCurrentUser sharedInstance] updateFacebookPermissions];
     [self.tableView reloadData];
 }
 

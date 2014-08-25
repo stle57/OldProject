@@ -86,7 +86,7 @@
             }
             break;
         case 1:
-            if (FBSession.activeSession.state == FBSessionStateOpen || FBSession.activeSession.state == FBSessionStateOpenTokenExtended) {
+            if ([[TDCurrentUser sharedInstance] hasCachedFacebookToken]) {
                 cell.titleLabel.text = [TDCurrentUser sharedInstance].fbIdentifier;
                 cell.iconView.image = [UIImage imageNamed:@"fb_active_48x48"];
             } else {

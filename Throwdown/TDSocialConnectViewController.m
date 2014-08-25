@@ -98,7 +98,7 @@
 
     switch (self.network) {
         case TDSocialNetworkFacebook:
-            if ([TDCurrentUser sharedInstance].fbUID && (FBSession.activeSession.state == FBSessionStateOpen || FBSession.activeSession.state == FBSessionStateOpenTokenExtended)) {
+            if ([[TDCurrentUser sharedInstance] hasCachedFacebookToken]) {
                 cell.connectLabel.textColor = [TDConstants brandingRedColor];
                 cell.connectLabel.text = @"Unlink";
             } else {
@@ -146,8 +146,7 @@
 }
 
 - (void)handleFacebook {
-    // If the session state is any of the two "open" states when the button is clicked
-    if ([TDCurrentUser sharedInstance].fbUID && (FBSession.activeSession.state == FBSessionStateOpen || FBSession.activeSession.state == FBSessionStateOpenTokenExtended)) {
+    if ([[TDCurrentUser sharedInstance] hasCachedFacebookToken]) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Unlink?" message:@"Unlink your Facebook account?" delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"Yes", nil];
         [alert showWithCompletionBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
             if (buttonIndex != alertView.cancelButtonIndex) {

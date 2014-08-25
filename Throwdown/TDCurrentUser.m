@@ -11,6 +11,7 @@
 #import "TDAPIClient.h"
 #import "UIAlertView+TDBlockAlert.h"
 #import "TDAnalytics.h"
+#import <FacebookSDK/FacebookSDK.h>
 
 static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
 
@@ -46,7 +47,7 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     [aCoder encodeObject:self.fbUID forKey:@"fb_uid"];
     [aCoder encodeObject:self.fbIdentifier forKey:@"fb_identifer"];
     [aCoder encodeObject:self.fbTokenExpiration forKey:@"fb_token_expiration"];
-    [aCoder encodeObject:[NSNumber numberWithBool:self.fbPublishPermission] forKey:@"fb_publish_permission"];
+    [aCoder encodeObject:self.fbPermissions forKey:@"fb_permissions"];
 
     [aCoder encodeObject:self.twitterToken forKey:@"tw_token"];
     [aCoder encodeObject:self.twitterSecret forKey:@"tw_secret"];
@@ -76,7 +77,7 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
         _fbUID             = [aDecoder decodeObjectForKey:@"fb_uid"];
         _fbIdentifier      = [aDecoder decodeObjectForKey:@"fb_identifer"];
         _fbTokenExpiration = [aDecoder decodeObjectForKey:@"fb_token_expiration"];
-        _fbPublishPermission = [[aDecoder decodeObjectForKey:@"fb_publish_permission"] boolValue];
+        _fbPermissions     = [aDecoder decodeObjectForKey:@"fb_permissions"];
 
         _twitterToken      = [aDecoder decodeObjectForKey:@"tw_token"];
         _twitterSecret     = [aDecoder decodeObjectForKey:@"tw_secret"];
@@ -101,13 +102,61 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     if ([self nullcheck:[dictionary objectForKey:@"picture"]]) {
         _picture     = [dictionary objectForKey:@"picture"];
     }
-    // _deviceToken not part of dictionary
-    // fb info never recovered from dictionary (potentially in the future?)
 
+    if ([dictionary objectForKey:@"identities"] && [[dictionary objectForKey:@"identities"] count] > 0) {
+        for (NSDictionary *identity in [dictionary objectForKey:@"identities"]) {
+            if ([[identity objectForKey:@"provider"] isEqualToString:@"twitter"]) {
+                _twitterUID        = [identity objectForKey:@"uid"];
+                _twitterIdentifier = [identity objectForKey:@"identifier"];
+                _twitterSecret     = [identity objectForKey:@"token_secret"];
+                _twitterToken      = [identity objectForKey:@"access_token"];
+            } else if ([[identity objectForKey:@"provider"] isEqualToString:@"facebook"]) {
+                _fbUID             = [identity objectForKey:@"uid"];
+                _fbIdentifier      = [identity objectForKey:@"identifier"];
+                _fbToken           = [identity objectForKey:@"access_token"];
+                _fbTokenExpiration = [identity objectForKey:@"expires_at"];
+                _fbPermissions     = [[identity objectForKey:@"permissions"] componentsSeparatedByString:@"|"];
+            }
+        }
+    }
+
+    // FYI: _deviceToken not part of dictionary
     [self save];
 
     if ([self isLoggedIn] && [self didAskForPush]) {
         [self registerForRemoteNotificationTypes];
+    }
+}
+
+- (BOOL)hasCachedFacebookToken {
+    return self.fbToken != nil;
+}
+
+// Call this when session is closed but we have it cached from the server
+- (void)authenticateFacebookWithCachedToken:(void (^)(BOOL success))callback {
+    FBAccessTokenData *tokenData = [FBAccessTokenData createTokenFromString:self.fbToken
+                                                                permissions:self.fbPermissions
+                                                             expirationDate:self.fbTokenExpiration
+                                                                  loginType:FBSessionLoginTypeNone
+                                                                refreshDate:[NSDate date]];
+    if (tokenData) {
+        FBSessionTokenCachingStrategy *tokenCache = [[FBSessionTokenCachingStrategy alloc] init];
+        [tokenCache cacheFBAccessTokenData:tokenData];
+
+        NSString *fbAppId = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"FacebookAppID"];
+
+        FBSession *session = [[FBSession alloc] initWithAppID:fbAppId
+                                                  permissions:self.fbPermissions
+                                              urlSchemeSuffix:nil
+                                           tokenCacheStrategy:tokenCache];
+
+
+        [session openWithCompletionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
+            if (callback) {
+                callback(error == nil && (status == FBSessionStateOpen || status == FBSessionStateOpenTokenExtended));
+            }
+        }];
+        [FBSession setActiveSession:session];
     }
 }
 
@@ -130,7 +179,7 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     _fbUID = nil;
     _fbIdentifier = nil;
     _fbTokenExpiration = nil;
-    _fbPublishPermission = NO;
+    _fbPermissions = NO;
     _twitterToken = nil;
     _twitterSecret = nil;
     _twitterUID = nil;
@@ -167,8 +216,9 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     _fbUID             = userId;
     _fbIdentifier      = identifier;
     _fbTokenExpiration = expiresAt;
+    _fbPermissions     = [FBSession activeSession].permissions;
     [self save];
-    [[TDAPIClient sharedInstance] registerFacebookAccessToken:token expiresAt:expiresAt userId:userId identifier:identifier callback:(void (^)(BOOL success))callback];
+    [[TDAPIClient sharedInstance] registerFacebookAccessToken:token expiresAt:expiresAt userId:userId identifier:identifier permissions:self.fbPermissions callback:(void (^)(BOOL success))callback];
 }
 
 - (void)unlinkFacebook {
@@ -179,17 +229,17 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
         _fbUID             = nil;
         _fbIdentifier      = nil;
         _fbTokenExpiration = nil;
-        _fbPublishPermission = NO;
+        _fbPermissions     = nil;
         [self save];
     }
 }
 
 - (BOOL)canPostToFacebook {
-    return (self.fbToken != nil && self.fbPublishPermission);
+    return (self.fbToken != nil && self.fbPermissions && [self.fbPermissions containsObject:@"publish_actions"]);
 }
 
-- (void)setFbPublishPermission:(BOOL)on {
-    _fbPublishPermission = on;
+- (void)updateFacebookPermissions {
+    _fbPermissions = [FBSession activeSession].permissions;
     [self save];
 }
 
