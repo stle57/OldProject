@@ -77,21 +77,21 @@
 
     switch (indexPath.row) {
         case 0:
-            if (FBSession.activeSession.state == FBSessionStateOpen || FBSession.activeSession.state == FBSessionStateOpenTokenExtended) {
-                cell.titleLabel.text = [TDCurrentUser sharedInstance].fbIdentifier;
-                cell.iconView.image = [UIImage imageNamed:@"fb_active_48x48"];
-            } else {
-                cell.titleLabel.text = @"Facebook";
-                cell.iconView.image = [UIImage imageNamed:@"fb_inactive_48x48"];
-            }
-            break;
-        case 1:
             if ([[TDCurrentUser sharedInstance] canPostToTwitter]) {
                 cell.titleLabel.text = [TDCurrentUser sharedInstance].twitterIdentifier;
                 cell.iconView.image = [UIImage imageNamed:@"twitter_active_48x38"];
             } else {
                 cell.titleLabel.text = @"Twitter";
                 cell.iconView.image = [UIImage imageNamed:@"twitter_inactive_48x38"];
+            }
+            break;
+        case 1:
+            if (FBSession.activeSession.state == FBSessionStateOpen || FBSession.activeSession.state == FBSessionStateOpenTokenExtended) {
+                cell.titleLabel.text = [TDCurrentUser sharedInstance].fbIdentifier;
+                cell.iconView.image = [UIImage imageNamed:@"fb_active_48x48"];
+            } else {
+                cell.titleLabel.text = @"Facebook";
+                cell.iconView.image = [UIImage imageNamed:@"fb_inactive_48x48"];
             }
             break;
     }
@@ -103,10 +103,10 @@
     TDSocialConnectViewController *vc = [[TDSocialConnectViewController alloc] init];
     switch (indexPath.row) {
         case 0:
-            vc.network = TDSocialNetworkFacebook;
+            vc.network = TDSocialNetworkTwitter;
             break;
         case 1:
-            vc.network = TDSocialNetworkTwitter;
+            vc.network = TDSocialNetworkFacebook;
             break;
     }
     [self.navigationController pushViewController:vc animated:YES];
