@@ -143,12 +143,12 @@
     switch (indexPath.row) {
         case 0:
             cell.titleLabel.text  = [TDCurrentUser sharedInstance].twitterIdentifier ? [TDCurrentUser sharedInstance].twitterIdentifier : @"Twitter";
-            cell.iconView.image   = [UIImage imageNamed:@"twitter_active_48x38"];
+            cell.iconView.image   = [UIImage imageNamed:([TDCurrentUser sharedInstance].twitterIdentifier ? @"twitter_active_48x38" : @"twitter_inactive_48x38")];
             cell.buttonView.image = [UIImage imageNamed:(self.shareToTwitter ? @"checkbox_on" : @"checkbox")];
             break;
         case 1:
             cell.titleLabel.text  = [TDCurrentUser sharedInstance].fbIdentifier ? [TDCurrentUser sharedInstance].fbIdentifier : @"Facebook";
-            cell.iconView.image   = [UIImage imageNamed:@"fb_active_48x48"];
+            cell.iconView.image   = [UIImage imageNamed:([TDCurrentUser sharedInstance].fbIdentifier ? @"fb_active_48x48" : @"fb_inactive_48x48")];
             cell.buttonView.image = [UIImage imageNamed:(self.shareToFacebook ? @"checkbox_on" : @"checkbox")];
             break;
     }
@@ -355,13 +355,15 @@
     [self.apiManager performReverseAuthForAccount:account withHandler:^(NSData *responseData, NSError *error) {
         if (responseData) {
             [[TDCurrentUser sharedInstance] handleTwitterResponseData:responseData callback:^(BOOL success) {
-                if (success) {
-                    [self.activityIndicator stopSpinner];
-                    self.shareToTwitter = YES;
-                    [self.tableView reloadData];
-                } else {
-                    [self showUnknownError];
-                }
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (success) {
+                        [self.activityIndicator stopSpinner];
+                        self.shareToTwitter = YES;
+                        [self.tableView reloadData];
+                    } else {
+                        [self showUnknownError];
+                    }
+                });
             }];
         } else {
             dispatch_async(dispatch_get_main_queue(), ^{
