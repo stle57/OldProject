@@ -1399,7 +1399,7 @@
 					"$(PROJECT_DIR)/Flurry",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SCHEME_SUFFIX = "-development";
+				SCHEME_SUFFIX = development;
 				TARGETED_DEVICE_FAMILY = 1;
 				TWITTER_CONSUMER_KEY = xiqfRpqHtyEPL9yA1mmNaopZu;
 				TWITTER_CONSUMER_SECRET = YFgGasvDmrXHRLaeCz1aAvMlZcrqYKkVXb3hxLXd4RrRrvasv9;
@@ -1547,7 +1547,7 @@
 					"$(PROJECT_DIR)/Flurry",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SCHEME_SUFFIX = "-staging";
+				SCHEME_SUFFIX = staging;
 				TARGETED_DEVICE_FAMILY = 1;
 				TWITTER_CONSUMER_KEY = xiqfRpqHtyEPL9yA1mmNaopZu;
 				TWITTER_CONSUMER_SECRET = YFgGasvDmrXHRLaeCz1aAvMlZcrqYKkVXb3hxLXd4RrRrvasv9;
