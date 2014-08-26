@@ -458,17 +458,16 @@
 #pragma mark - TableView Delegates
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     if (section == 1) {
-        self.sectionHeaderLabel.text = @"PRIVATE INFORMATION";
-        self.sectionHeaderLabel.font = [UIFont fontWithName:TDFontProximaNovaSemibold size:15.0];
-        self.sectionHeaderLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
-        UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0.0,
-                                                                      0.0,
-                                                                      self.view.frame.size.width,
-                                                                      self.sectionHeaderLabel.frame.size.height)];
-        CGRect headerLabelFrame = self.sectionHeaderLabel.frame;
+        UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, 320, 40)];
+        UILabel *sectionHeaderLabel = [[UILabel alloc] initWithFrame:headerView.layer.frame];
+        sectionHeaderLabel.text = @"PRIVATE INFORMATION";
+        sectionHeaderLabel.font = [UIFont fontWithName:TDFontProximaNovaSemibold size:15.0];
+        sectionHeaderLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
+        CGRect headerLabelFrame = sectionHeaderLabel.frame;
         headerLabelFrame.origin.x = 12.0;
-        self.sectionHeaderLabel.frame = headerLabelFrame;
-        [headerView addSubview:self.sectionHeaderLabel];
+        headerLabelFrame.origin.y += 8;
+        sectionHeaderLabel.frame = headerLabelFrame;
+        [headerView addSubview:sectionHeaderLabel];
         return headerView;
     }
 
@@ -478,7 +477,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     switch (section) {
         case 1:
-            return self.sectionHeaderLabel.frame.size.height;
+            return 40;
         break;
         case 0:
         case 2:
