@@ -55,8 +55,8 @@
 		2DC7B6AB18FF3D8500261BF7 /* TDToastView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DC7B6A918FF3D8500261BF7 /* TDToastView.xib */; };
 		2DE2C6A51908657F00E51156 /* TDUserPasswordEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE2C6A31908657F00E51156 /* TDUserPasswordEditViewController.m */; };
 		2DE2C6A61908657F00E51156 /* TDUserPasswordEditViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE2C6A41908657F00E51156 /* TDUserPasswordEditViewController.xib */; };
-		2DE2C70419087AA900E51156 /* TDUploadMoreCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE2C70219087AA900E51156 /* TDUploadMoreCell.m */; };
-		2DE2C70519087AA900E51156 /* TDUploadMoreCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE2C70319087AA900E51156 /* TDUploadMoreCell.xib */; };
+		2DE2C70419087AA900E51156 /* TDNoMorePostsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE2C70219087AA900E51156 /* TDNoMorePostsCell.m */; };
+		2DE2C70519087AA900E51156 /* TDNoMorePostsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE2C70319087AA900E51156 /* TDNoMorePostsCell.xib */; };
 		2DE4653218F605DC0042D81C /* TDUserProfileEditViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE4653018F605DC0042D81C /* TDUserProfileEditViewController.m */; };
 		2DE4653318F605DC0042D81C /* TDUserProfileEditViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE4653118F605DC0042D81C /* TDUserProfileEditViewController.xib */; };
 		2DE4653718F614150042D81C /* TDUserEditCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE4653518F614150042D81C /* TDUserEditCell.m */; };
@@ -241,9 +241,9 @@
 		2DE2C6A21908657F00E51156 /* TDUserPasswordEditViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserPasswordEditViewController.h; sourceTree = "<group>"; };
 		2DE2C6A31908657F00E51156 /* TDUserPasswordEditViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUserPasswordEditViewController.m; sourceTree = "<group>"; };
 		2DE2C6A41908657F00E51156 /* TDUserPasswordEditViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDUserPasswordEditViewController.xib; sourceTree = "<group>"; };
-		2DE2C70119087AA900E51156 /* TDUploadMoreCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUploadMoreCell.h; sourceTree = "<group>"; };
-		2DE2C70219087AA900E51156 /* TDUploadMoreCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUploadMoreCell.m; sourceTree = "<group>"; };
-		2DE2C70319087AA900E51156 /* TDUploadMoreCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDUploadMoreCell.xib; sourceTree = "<group>"; };
+		2DE2C70119087AA900E51156 /* TDNoMorePostsCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDNoMorePostsCell.h; sourceTree = "<group>"; };
+		2DE2C70219087AA900E51156 /* TDNoMorePostsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDNoMorePostsCell.m; sourceTree = "<group>"; };
+		2DE2C70319087AA900E51156 /* TDNoMorePostsCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDNoMorePostsCell.xib; sourceTree = "<group>"; };
 		2DE4652F18F605DC0042D81C /* TDUserProfileEditViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserProfileEditViewController.h; sourceTree = "<group>"; };
 		2DE4653018F605DC0042D81C /* TDUserProfileEditViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUserProfileEditViewController.m; sourceTree = "<group>"; };
 		2DE4653118F605DC0042D81C /* TDUserProfileEditViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDUserProfileEditViewController.xib; sourceTree = "<group>"; };
@@ -897,9 +897,9 @@
 				2DA39FD518E0B2570004A9C7 /* TDMoreComments.xib */,
 				2DA39FD318E0B2570004A9C7 /* TDMoreComments.h */,
 				2DA39FD418E0B2570004A9C7 /* TDMoreComments.m */,
-				2DE2C70319087AA900E51156 /* TDUploadMoreCell.xib */,
-				2DE2C70119087AA900E51156 /* TDUploadMoreCell.h */,
-				2DE2C70219087AA900E51156 /* TDUploadMoreCell.m */,
+				2DE2C70319087AA900E51156 /* TDNoMorePostsCell.xib */,
+				2DE2C70119087AA900E51156 /* TDNoMorePostsCell.h */,
+				2DE2C70219087AA900E51156 /* TDNoMorePostsCell.m */,
 				A129BAF7197B5BEE00F6FC2B /* TDCustomRefreshControl.h */,
 				A129BAF8197B5BEE00F6FC2B /* TDCustomRefreshControl.m */,
 			);
@@ -1085,7 +1085,7 @@
 				2DA8639418F49D190089B048 /* TDUserProfileCell.xib in Resources */,
 				2D3F8DF718CFC81E00333F0B /* TDTwoButtonView.xib in Resources */,
 				2D01951D1901DAF4000CBF74 /* TDNoPostsCell.xib in Resources */,
-				2DE2C70519087AA900E51156 /* TDUploadMoreCell.xib in Resources */,
+				2DE2C70519087AA900E51156 /* TDNoMorePostsCell.xib in Resources */,
 				2DBA430218DA455500366737 /* TDTextField.xib in Resources */,
 				2DA5F05218D36745003D2F99 /* ProximaNova-Light.otf in Resources */,
 				A10F9C251909B01600D2CAB0 /* SingleBellDing.caf in Resources */,
@@ -1190,7 +1190,7 @@
 				A1432D2018AA02990073E492 /* TDViewControllerHelper.m in Sources */,
 				A11999D618D90D5200C39ABF /* TDCreatePostViewController.m in Sources */,
 				A125493F1999742B001C5CD1 /* TDSocialConnectCell.m in Sources */,
-				2DE2C70419087AA900E51156 /* TDUploadMoreCell.m in Sources */,
+				2DE2C70419087AA900E51156 /* TDNoMorePostsCell.m in Sources */,
 				A1BB463018F5FDD700BD9527 /* UIAlertView+TDBlockAlert.m in Sources */,
 				A19FF5E718932868001A0AD0 /* TDUserAPI.m in Sources */,
 				A125493B1999715D001C5CD1 /* TDSocialConnectViewController.m in Sources */,
