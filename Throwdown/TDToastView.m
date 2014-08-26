@@ -77,8 +77,7 @@
             break;
         case kToastType_RateUs:
             iconImage = [UIImage imageNamed:@"td_rateus_icon"];
-            self.backgroundColor = [UIColor colorWithWhite:.99f alpha:.99f];
-            //self.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:.90f];
+            self.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:.95f];
             [self.label setFont:[UIFont systemFontOfSize:14]];
             self.label.textColor = [TDConstants headerTextColor];
             self.closeButton.hidden = FALSE;
