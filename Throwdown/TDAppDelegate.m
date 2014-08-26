@@ -173,14 +173,17 @@
     // Reset app badge count when user opens directly
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
 
-    UINavigationController *navigationController = (UINavigationController*)_window.rootViewController;
-    TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
+    if ([[TDCurrentUser sharedInstance] isLoggedIn]) {
 
-    if ([notification objectForKey:@"activity_id"]) {
-        [[TDAPIClient sharedInstance] updateActivity:[notification objectForKey:@"activity_id"] seen:YES clicked:YES];
+        UINavigationController *navigationController = (UINavigationController*)_window.rootViewController;
+        TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
+
+        if ([notification objectForKey:@"activity_id"]) {
+            [[TDAPIClient sharedInstance] updateActivity:[notification objectForKey:@"activity_id"] seen:YES clicked:YES];
+        }
+
+        [homeViewController openPushNotification:notification];
     }
-
-    [homeViewController openPushNotification:notification];
 }
 
 #pragma mark - Facebook handling callbacks
@@ -190,7 +193,7 @@
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
     // Call FBAppCall's handleOpenURL:sourceApplication to handle Facebook app responses
     BOOL wasHandled = [FBAppCall handleOpenURL:url sourceApplication:sourceApplication];
-    if (!wasHandled) {
+    if (!wasHandled && [[TDCurrentUser sharedInstance] isLoggedIn]) {
         NSDictionary *bundleInfo = [[NSBundle mainBundle] infoDictionary];
         NSString *scheme = [bundleInfo objectForKey:@"ThrowdownURL"];
         if ([scheme isEqualToString:[url scheme]]) {
