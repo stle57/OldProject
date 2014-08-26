@@ -37,6 +37,7 @@ static NSString *const CTImage = @"image/jpeg";
 
 static double const kAutomaticRefreshTimeout = 30; // in seconds - minium time between reloading feed after opening app
 static double const kMaxSessionLength = 30; // in seconds
+static double const kReloadUserListTime = 300; // seconds
 static NSString *const kAnalyticsLogfile = @"analyticsLogfile.bin";
 static NSString *const kApplicationUUIDKey = @"TDApplicationUUIDKey";
 
@@ -53,7 +54,6 @@ static NSString *const kRecordedTrimmedMovieFilePath = @"Documents/current_recor
 static int const kMaxRecordingSeconds = 30;
 static double const kMinFileSpaceForRecording = 50 * 1024^2; // 50mb
 static double const kGlobalVideoTrimTime = 0.05; // seconds
-static int const kReloadUserListTime = 300; // seconds
 
 // NSNotification types
 static NSString *const TDNotificationReloadHome = @"TDNotificationReloadHome";

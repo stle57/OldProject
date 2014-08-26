@@ -236,15 +236,17 @@
 
 - (void)textViewDidChange:(UITextView *)textView {
     self.postButton.enabled = (self.filename || [[textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0);
-    if ([self.userListView shouldShowUserSuggestions:textView.text]) {
-        [self.userListView updateFrame:CGRectMake(0, 140, 320, self.frameHeight - 140)];
-        CGRect frame = textView.frame;
-        frame.size.height = 140 - frame.origin.y;
-        textView.frame = frame;
-        [self alignCarretInTextView:textView];
-    } else {
-        [self resetTextViewSize];
-    }
+    [self.userListView showUserSuggestions:textView callback:^(BOOL success) {
+        if (success) {
+            [self.userListView updateFrame:CGRectMake(0, 140, 320, self.frameHeight - 140)];
+            CGRect frame = textView.frame;
+            frame.size.height = 140 - frame.origin.y;
+            textView.frame = frame;
+            [self alignCarretInTextView:textView];
+        } else {
+            [self resetTextViewSize];
+        }
+    }];
 }
 
 - (void)alignCarretInTextView:(UITextView *)textView {

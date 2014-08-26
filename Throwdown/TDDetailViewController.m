@@ -561,10 +561,12 @@ static float const kMaxInputHeight = 100.;
     [self updateCommentSize:height];
     debug NSLog(@"H: %f / %f", height, textView.contentSize.height);
 
-    if ([self.userListView shouldShowUserSuggestions:textView.text]) {
-        // Make sure we do this after updateCommentSize
-        [self.userListView updateFrame:CGRectMake(0, 64, 320, self.commentView.frame.origin.y - 64)];
-    }
+    [self.userListView showUserSuggestions:textView callback:^(BOOL success) {
+        if (success) {
+            // Make sure we do this after updateCommentSize
+            [self.userListView updateFrame:CGRectMake(0, 64, 320, self.commentView.frame.origin.y - 64)];
+        }
+    }];
 }
 
 - (void)updateCommentSize:(CGFloat)height {

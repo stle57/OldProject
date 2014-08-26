@@ -13,6 +13,13 @@
 
 static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
 
+@interface TDUserList ()
+
+@property (nonatomic) NSArray *userList;
+@property (nonatomic) NSDate *lastFetched;
+
+@end
+
 @implementation TDUserList
 
 + (TDUserList*) sharedInstance {
@@ -39,12 +46,14 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:self.userList forKey:@"users"];
+    [aCoder encodeObject:self.lastFetched forKey:@"last_fetched"];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
     self = [super init];
     if (self) {
-       _userList = [aDecoder decodeObjectForKey:@"users"];
+        self.userList = [aDecoder decodeObjectForKey:@"users"];
+        self.lastFetched = [aDecoder decodeObjectForKey:@"last_fetched"];
     }
     return self;
 }
@@ -60,12 +69,21 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
 - (id)initWithDictionary:(NSDictionary *)dict {
     self = [super init];
     if (self) {
-        _userList = [dict objectForKey:@"userList"];
-        if (!_userList || [_userList count] == 0) {
+        self.userList = [dict objectForKey:@"userList"];
+        if (!self.userList || [self.userList count] == 0) {
             [self getCommunityUserList];
         }
     }
     return self;
+}
+
+
+- (void)getListWithCallback:(void (^)(NSArray *list))callback {
+    if (!self.lastFetched || fabs([self.lastFetched timeIntervalSinceNow]) > kReloadUserListTime) {
+        [self getCommunityUserListWithCallback:callback];
+    } else {
+        callback(self.userList);
+    }
 }
 
 - (void)save {
@@ -82,13 +100,25 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
 
 #pragma Requests to servers
 
-- (void) getCommunityUserList {
+- (void)getCommunityUserList {
+    [self getCommunityUserListWithCallback:nil];
+}
+
+- (void)getCommunityUserListWithCallback:(void (^)(NSArray *list))callback {
+    debug NSLog(@"Fetching user list for mentions");
     [[TDUserAPI sharedInstance] getCommunityUserList:^(BOOL success, NSDictionary *returnList) {
         if (success && returnList && returnList.count > 0) {
-            _userList = [returnList copy];
+            self.userList = [returnList copy];
+            self.lastFetched = [NSDate date];
             [self save];
+            if (callback) {
+                callback(self.userList);
+            }
         } else {
             debug NSLog(@"no list");
+            if (callback) {
+                callback(@[]);
+            }
         }
     }];
 }

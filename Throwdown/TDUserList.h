@@ -9,11 +9,10 @@
 #import <Foundation/Foundation.h>
 
 @interface TDUserList : NSObject <NSCoding>
-@property (strong, nonatomic, readonly) NSArray *userList;
 
 + (TDUserList *)sharedInstance;
-- (void)getCommunityUserList;
 - (void)clearList;
 - (id)initWithDictionary:(NSDictionary *)dict;
+- (void)getListWithCallback:(void (^)(NSArray *list))callback;
 
 @end
