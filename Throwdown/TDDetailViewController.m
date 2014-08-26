@@ -205,7 +205,7 @@ static float const kMaxInputHeight = 100.;
         // index 1 = Copy Share Link
         [[TDAnalytics sharedInstance] logEvent:@"copied_share_url"];
         [[UIPasteboard generalPasteboard] setString:[TDConstants getShareURL:self.post.slug]];
-        [[TDAppDelegate appDelegate] showToastWithText:@"Share link copied to clipboard" type:kToastIconType_Info payload:nil delegate:nil];
+        [[TDAppDelegate appDelegate] showToastWithText:@"Share link copied to clipboard" type:kToastType_Info payload:nil delegate:nil];
     }
 }
 

@@ -128,7 +128,7 @@
         self.loaded = YES;
         self.errorLoading = YES;
         [self endRefreshControl];
-        [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastIconType_Warning payload:@{} delegate:nil];
+        [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastType_Warning payload:@{} delegate:nil];
         [self.tableView reloadData];
     }];
 }
@@ -154,7 +154,7 @@
     debug NSLog(@"home-refreshControlUsed");
     [[TDPostAPI sharedInstance] fetchPostsUpstreamWithErrorHandlerStart:nil error:^{
         [self endRefreshControl];
-        [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastIconType_Warning payload:@{} delegate:nil];
+        [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastType_Warning payload:@{} delegate:nil];
     }];
 }
 
@@ -316,6 +316,7 @@
 #pragma mark - TDToastViewDelegate
 
 - (void)toastNotificationTappedPayload:(NSDictionary *)payload {
+    debug NSLog(@"Inside toastNotificationTappedPayload");
     [self openPushNotification:payload];
 
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUpdate

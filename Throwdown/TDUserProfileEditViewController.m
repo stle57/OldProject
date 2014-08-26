@@ -503,8 +503,8 @@
         case 1: // private
             return 2;
             break;
-        case 2: // push / password
-            return 2;
+        case 2: // push / password / app rate
+            return 3;
             break;
         case 3: // log out
             return 1;
@@ -631,12 +631,20 @@
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                     break;
                 case 1:
-                    cell.topLine.hidden = YES;
+                    cell.topLine.hidden = NO;
                     cell.longTitleLabel.hidden = NO;
                     cell.longTitleLabel.text = @"Change Password";
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                     break;
+                case 2:
+                    cell.topLine.hidden = YES;
+                    cell.longTitleLabel.hidden = NO;
+                    cell.longTitleLabel.text = @"Rate Throwdown in App Store";
+                    cell.selectionStyle = UITableViewCellSelectionStyleGray;
+                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                    break;
+
                 default:
                     break;
             }
@@ -691,6 +699,9 @@
                 case 1:
                     [self showEditPassword];
                     break;
+                case 2:
+                    [self gotoRateAppLink];
+                    break;
                 default:
                     break;
             }
@@ -722,6 +733,18 @@
 - (void)showEditPassword {
     TDUserPasswordEditViewController *vc = [[TDUserPasswordEditViewController alloc] initWithNibName:@"TDUserPasswordEditViewController" bundle:nil ];
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+#pragma mark - Rate App Link
+- (void)gotoRateAppLink {
+    NSLog(@"Inside gotoRateAppLink");
+    debug NSLog(@"===>Inside toastNotificationTappedRateUs for iRate");
+    //mark as rated
+    [iRate sharedInstance].ratedThisVersion = YES;
+    
+    //launch app store
+    [[iRate sharedInstance] openRatingsPageInAppStore];
+    //[NSURL URLWithString:[NSString stringWithFormat:([[UIDevice currentDevice].systemVersion floatValue] >= 7.0f)? //iOS7AppStoreURLFormat: iOSAppStoreURLFormat, APP_STORE_ID]]; // Would contain the right link
 }
 
 #pragma mark - Log Out

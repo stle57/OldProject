@@ -145,7 +145,7 @@
         [self handlePostsResponse:response fromStart:YES];
     } error:^{
         [self endRefreshControl];
-        [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastIconType_Warning payload:@{} delegate:nil];
+        [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastType_Warning payload:@{} delegate:nil];
         self.loaded = YES;
         self.errorLoading = YES;
         [self.tableView reloadData];

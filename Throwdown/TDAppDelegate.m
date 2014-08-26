@@ -51,7 +51,9 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.rootViewController = initViewController;
     [self.window makeKeyAndVisible];
-
+    
+    self.rateUsController = [[TDRateUsController alloc] init];
+    
     if ([launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
         [self openPushNotification:[launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]];
     }
@@ -93,6 +95,29 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
+#pragma mark - iRate override
++ (void)initialize
+{
+    //set the bundle ID. normally you wouldn't need to do this
+    //as it is picked up automatically from your Info.plist file
+    //but we want to test with an app that's actually on the store
+    [iRate sharedInstance].applicationBundleID = @"us.throwdown.throwdown";
+    [iRate sharedInstance].usesUntilPrompt = 15;
+    [iRate sharedInstance].daysUntilPrompt = 15;
+    
+	[iRate sharedInstance].onlyPromptIfLatestVersion = NO;
+    
+    //enable preview mode
+    [iRate sharedInstance].previewMode = YES;
+}
+
+- (BOOL)iRateShouldPromptForRating
+{
+    if (self.rateUsController != nil) {
+        [[TDAppDelegate appDelegate] showToastWithText:@"Like Throwdown? Tap here to rate us!" type:kToastType_RateUs payload:nil delegate:self.rateUsController];
+    }
+    return NO;
+}
 
 #pragma mark - Push notifications
 
@@ -143,7 +168,7 @@
             NSDictionary *aps = [userInfo objectForKey:@"aps"];
             if (aps && [aps objectForKey:@"alert"]) {
                 [[TDAppDelegate appDelegate] showToastWithText:[aps objectForKey:@"alert"]
-                                                          type:kToastIconType_Info
+                                                          type:kToastType_Info
                                                        payload:userInfo
                                                       delegate:homeViewController];
             }
@@ -318,7 +343,7 @@
 }
 
 #pragma mark - Toast
-- (void)showToastWithText:(NSString *)text type:(kToastIconType)type payload:(NSDictionary *)payload delegate:(id<TDToastViewDelegate>)delegate {
+- (void)showToastWithText:(NSString *)text type:(kToastType)type payload:(NSDictionary *)payload delegate:(id<TDToastViewDelegate>)delegate {
     // Remove old ones
     [TDToastView removeOldToasts];
 
@@ -330,7 +355,7 @@
         toastView.delegate = delegate;
     }
 
-    [toastView text:text icon:type payload:payload];
+    [toastView text:text type:type payload:payload];
     [toastView showToast];
 }
 

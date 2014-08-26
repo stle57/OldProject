@@ -10,10 +10,13 @@
 #import "TDPost.h"
 #import "TDConstants.h"
 #import "TDToastView.h"
+#import "iRate.h"
+#import "TDRateUsController.h"
 
 @interface TDAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
+@property (strong, nonatomic) TDRateUsController * rateUsController;
 
 + (TDAppDelegate*)appDelegate;
 + (UIColor *)randomColor;
@@ -23,7 +26,8 @@
 + (CGFloat)minWidthOfThisLabel:(UILabel *)aLabel;
 + (UIImage *)squareImageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize;
 + (UIViewController *)topMostController;
-
 - (TDPost *)postWithPostId:(NSNumber *)postId;
-- (void)showToastWithText:(NSString *)text type:(kToastIconType)type payload:(NSDictionary *)payload delegate:(id<TDToastViewDelegate>)delegate;
+- (void)showToastWithText:(NSString *)text type:(kToastType)type payload:(NSDictionary *)payload delegate:(id<TDToastViewDelegate>)delegate;
+
+
 @end
