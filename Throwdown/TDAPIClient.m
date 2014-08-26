@@ -325,7 +325,7 @@
 }
 
 - (void)registerIdentity:(NSDictionary *)identity callback:(void (^)(BOOL success))callback {
-    debug NSLog(@"registering identity: %@", identity);
+    debug NSLog(@"registering identity");
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/identities.json"];
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
     [self.httpManager POST:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken, @"identity": identity} success:^(AFHTTPRequestOperation *operation, id responseObject) {

@@ -358,6 +358,7 @@
                 dispatch_async(dispatch_get_main_queue(), ^{
                     if (success) {
                         [self.activityIndicator stopSpinner];
+                        [self.activityIndicator showMessage:@"Connected" forSeconds:1.];
                         self.shareToTwitter = YES;
                         [self.tableView reloadData];
                     } else {
