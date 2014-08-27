@@ -106,6 +106,7 @@ static NSString *const kTracksKey = @"tracks";
         [self addSubview:self.usernameLabel];
 
         self.commentLabel = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(7, kHeightOfProfileRow, COMMENT_MESSAGE_WIDTH, 0)];
+        self.commentLabel.enabledTextCheckingTypes = NSTextCheckingTypeLink;
         self.commentLabel.textColor = [TDConstants commentTextColor];
         self.commentLabel.font = COMMENT_MESSAGE_FONT;
         self.commentLabel.delegate = self;
@@ -542,8 +543,10 @@ static NSString *const kTracksKey = @"tracks";
 #pragma mark - TTTAttributedLabelDelegate
 
 - (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithURL:(NSURL *)url {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(userProfilePressedWithId:)]) {
-        [self.delegate userProfilePressedWithId:[NSNumber numberWithInteger:[[url path] integerValue]]];
+    if ([TDViewControllerHelper isThrowdownURL:url] && self.delegate && [self.delegate respondsToSelector:@selector(userProfilePressedWithId:)]) {
+        [self.delegate userProfilePressedWithId:[NSNumber numberWithInteger:[[[url path] lastPathComponent] integerValue]]];
+    } else {
+        [TDViewControllerHelper askUserToOpenInSafari:url];
     }
 }
 

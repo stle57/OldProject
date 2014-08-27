@@ -194,9 +194,7 @@
     // Call FBAppCall's handleOpenURL:sourceApplication to handle Facebook app responses
     BOOL wasHandled = [FBAppCall handleOpenURL:url sourceApplication:sourceApplication];
     if (!wasHandled && [[TDCurrentUser sharedInstance] isLoggedIn]) {
-        NSDictionary *bundleInfo = [[NSBundle mainBundle] infoDictionary];
-        NSString *scheme = [bundleInfo objectForKey:@"ThrowdownURL"];
-        if ([scheme isEqualToString:[url scheme]]) {
+        if ([[TDConstants appScheme] isEqualToString:[url scheme]]) {
             UINavigationController *navigationController = (UINavigationController *)_window.rootViewController;
             TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
             [homeViewController openURL:url];

@@ -118,8 +118,8 @@ static NSString *const kUserIdAttribute = @"user_id";
 #pragma mark - TTTAttributedLabelDelegate
 
 - (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithURL:(NSURL *)url {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(usernamePressedForLiker:)]) {
-        [self.delegate usernamePressedForLiker:[NSNumber numberWithInteger:[[url absoluteString] integerValue]]];
+    if ([TDViewControllerHelper isThrowdownURL:url] && self.delegate && [self.delegate respondsToSelector:@selector(usernamePressedForLiker:)]) {
+        [self.delegate usernamePressedForLiker:[NSNumber numberWithInteger:[[[url path] lastPathComponent] integerValue]]];
     }
 }
 

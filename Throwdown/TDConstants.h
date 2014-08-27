@@ -113,6 +113,7 @@ static NSString *const kSpinningAnimation = @"rotationAnimation";
 #define LOG_OUT_NOTIFICATION            @"TDLogOutNotification"
 
 + (TDEnvironment)environment;
++ (NSString *)appScheme;
 + (NSString *)getBaseURL;
 + (NSString *)getShareURL:(NSString *)slug;
 + (NSString *)flurryKey;

@@ -29,6 +29,11 @@ static NSString *const kCDNStreamingServer = @"http://139bc8fb83b0918931ad-a6f56
     }
 }
 
++ (NSString *)appScheme {
+    NSDictionary *bundleInfo = [[NSBundle mainBundle] infoDictionary];
+    return [bundleInfo objectForKey:@"ThrowdownURL"];
+}
+
 + (NSString *)getBaseURL {
     switch ([self environment]) {
         case TDEnvDevelopment:
