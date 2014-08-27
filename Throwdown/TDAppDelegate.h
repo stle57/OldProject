@@ -24,6 +24,7 @@
 + (CGFloat)minWidthOfThisLabel:(UILabel *)aLabel;
 + (UIImage *)squareImageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize;
 + (UIViewController *)topMostController;
++ (CGFloat)widthOfTextForString:(NSString *)aString andFont:(UIFont *)aFont maxSize:(CGSize)aSize;
 
 - (TDPost *)postWithPostId:(NSNumber *)postId;
 - (void)showToastWithText:(NSString *)text type:(kToastIconType)type payload:(NSDictionary *)payload delegate:(id<TDToastViewDelegate>)delegate;

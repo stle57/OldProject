@@ -1,18 +1,20 @@
 //
-//  TDShareViewCell.m
+//  TDRadioButtonRowCell.m
 //  Throwdown
 //
-//  Created by Andrew C on 8/11/14.
+//  Created by Andrew C on 8/26/14.
 //  Copyright (c) 2014 Throwdown. All rights reserved.
 //
 
-#import "TDShareViewCell.h"
+#import "TDRadioButtonRowCell.h"
 #import "TDConstants.h"
 
-@implementation TDShareViewCell
+@implementation TDRadioButtonRowCell
 
-- (void)awakeFromNib {
+- (void)awakeFromNib
+{
     self.titleLabel.font = [TDConstants fontRegularSized:18.];
+    self.separatorInset = UIEdgeInsetsMake(0, 18, 0, 0);
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated

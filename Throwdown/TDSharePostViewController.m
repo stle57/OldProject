@@ -12,11 +12,17 @@
 #import "TDConstants.h"
 #import "TDCurrentUser.h"
 #import "TDShareViewCell.h"
+#import "TDRadioButtonRowCell.h"
 #import "TDAppDelegate.h"
 #import "TDPostAPI.h"
 #import "TDActivityIndicator.h"
 #import <FacebookSDK/FacebookSDK.h>
 #import "TWTAPIManager.h"
+
+typedef NS_ENUM(NSUInteger, TDPostPrivacy) {
+    TDPostPrivacyPublic,
+    TDPostPrivacyPrivate
+};
 
 @interface TDSharePostViewController () <UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate>
 
@@ -31,6 +37,7 @@
 @property (nonatomic) NSString *comment;
 @property (nonatomic) BOOL isPR;
 @property (nonatomic) BOOL userGenerated;
+@property (nonatomic) TDPostPrivacy privacy;
 
 @property (nonatomic) ACAccountStore *accountStore;
 @property (nonatomic) TWTAPIManager *apiManager;
@@ -54,6 +61,7 @@
     self.tableView.delegate = self;
     self.shareToFacebook = NO;
     self.shareToTwitter = NO;
+    self.privacy = TDPostPrivacyPublic;
 }
 
 - (void)backButtonPressed {
@@ -84,10 +92,11 @@
                                                                       @"comment":self.comment,
                                                                       @"pr": [NSNumber numberWithBool:self.isPR],
                                                                       @"userGenerated": [NSNumber numberWithBool:self.userGenerated],
-                                                                      @"shareOptions": shareOptions
+                                                                      @"shareOptions": shareOptions,
+                                                                      @"private": [NSNumber numberWithBool:(self.privacy == TDPostPrivacyPrivate)]
                                                                       }];
     } else {
-        [[TDPostAPI sharedInstance] addTextPost:self.comment isPR:self.isPR shareOptions:shareOptions];
+        [[TDPostAPI sharedInstance] addTextPost:self.comment isPR:self.isPR isPrivate:(self.privacy == TDPostPrivacyPrivate) shareOptions:shareOptions];
     }
     if (self.isPR) {
         [self performSegueWithIdentifier:@"PRSegue" sender:self];
@@ -101,13 +110,16 @@
 #pragma mark - TableViewDelegates
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 40.0)];
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(18, 15, 320, 18)];
+    UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, section == 1 ? 50 : 20)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(18, 28, 320, 18)];
     label.font = [TDConstants fontRegularSized:15.0];
     label.textColor = [TDConstants headerTextColor];
 
     switch (section) {
         case 0:
+            label.text = @"";
+            break;
+        case 1:
             label.text = @"SOCIAL";
             break;
     }
@@ -117,11 +129,11 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return 40.;
+    return section == 1 ? 50 : 20;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
+    return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -133,66 +145,110 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    TDShareViewCell *cell = (TDShareViewCell *)[tableView dequeueReusableCellWithIdentifier:@"TDShareViewCell"];
-    if (!cell) {
-        NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDShareViewCell" owner:self options:nil];
-        cell = [topLevelObjects objectAtIndex:0];
-        cell.titleLabel.font = [TDConstants fontRegularSized:18];
+    UITableViewCell *finalCell;
+    if (indexPath.section == 0) {
+        TDRadioButtonRowCell *cell = (TDRadioButtonRowCell *)[tableView dequeueReusableCellWithIdentifier:@"TDRadioButtonRowCell"];
+        if (!cell) {
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDRadioButtonRowCell" owner:self options:nil];
+            cell = [topLevelObjects objectAtIndex:0];
+        }
+        switch (indexPath.row) {
+            case 0:
+                cell.titleLabel.text = @"Everyone";
+                cell.icon.hidden = YES;
+                cell.checkmark.hidden = (self.privacy != TDPostPrivacyPublic);
+                break;
+            case 1:
+                cell.titleLabel.text = @"Just me";
+                CGFloat width = [TDAppDelegate widthOfTextForString:cell.titleLabel.text
+                                                            andFont:cell.titleLabel.font
+                                                            maxSize:CGSizeMake(MAXFLOAT, cell.titleLabel.frame.size.height)];
+                CGRect frame = cell.icon.frame;
+                frame.origin.x = cell.titleLabel.frame.origin.x + width + 8;
+                cell.icon.frame = frame;
+                cell.icon.hidden = NO;
+                cell.checkmark.hidden = (self.privacy != TDPostPrivacyPrivate);
+                break;
+        }
+        finalCell = cell;
+    } else {
+        TDShareViewCell *cell = (TDShareViewCell *)[tableView dequeueReusableCellWithIdentifier:@"TDShareViewCell"];
+        if (!cell) {
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDShareViewCell" owner:self options:nil];
+            cell = [topLevelObjects objectAtIndex:0];
+        }
+        switch (indexPath.row) {
+            case 0:
+                cell.titleLabel.text  = [TDCurrentUser sharedInstance].twitterIdentifier ? [TDCurrentUser sharedInstance].twitterIdentifier : @"Twitter";
+                cell.iconView.image   = [UIImage imageNamed:([TDCurrentUser sharedInstance].twitterIdentifier ? @"twitter_active_48x38" : @"twitter_inactive_48x38")];
+                cell.buttonView.image = [UIImage imageNamed:(self.shareToTwitter ? @"checkbox_on" : @"checkbox")];
+                break;
+            case 1:
+                cell.titleLabel.text  = [TDCurrentUser sharedInstance].fbIdentifier ? [TDCurrentUser sharedInstance].fbIdentifier : @"Facebook";
+                cell.iconView.image   = [UIImage imageNamed:([TDCurrentUser sharedInstance].fbIdentifier ? @"fb_active_48x48" : @"fb_inactive_48x48")];
+                cell.buttonView.image = [UIImage imageNamed:(self.shareToFacebook ? @"checkbox_on" : @"checkbox")];
+                break;
+        }
+        finalCell = cell;
     }
-
-    switch (indexPath.row) {
-        case 0:
-            cell.titleLabel.text  = [TDCurrentUser sharedInstance].twitterIdentifier ? [TDCurrentUser sharedInstance].twitterIdentifier : @"Twitter";
-            cell.iconView.image   = [UIImage imageNamed:([TDCurrentUser sharedInstance].twitterIdentifier ? @"twitter_active_48x38" : @"twitter_inactive_48x38")];
-            cell.buttonView.image = [UIImage imageNamed:(self.shareToTwitter ? @"checkbox_on" : @"checkbox")];
-            break;
-        case 1:
-            cell.titleLabel.text  = [TDCurrentUser sharedInstance].fbIdentifier ? [TDCurrentUser sharedInstance].fbIdentifier : @"Facebook";
-            cell.iconView.image   = [UIImage imageNamed:([TDCurrentUser sharedInstance].fbIdentifier ? @"fb_active_48x48" : @"fb_inactive_48x48")];
-            cell.buttonView.image = [UIImage imageNamed:(self.shareToFacebook ? @"checkbox_on" : @"checkbox")];
-            break;
-    }
-    return cell;
+    return finalCell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
-    switch (indexPath.row) {
-        case 0:
-            if (self.shareToTwitter) {
-                self.shareToTwitter = NO;
-                [self.tableView reloadData];
-            } else if ([[TDCurrentUser sharedInstance] canPostToTwitter]) {
-                self.shareToTwitter = YES;
-                [self.tableView reloadData];
-            } else {
-                [self connectToTwitter];
-            }
-            break;
-        case 1:
-            if (self.shareToFacebook) {
-                self.shareToFacebook = NO;
-                [self.tableView reloadData];
-            } else {
-                // first check the cached permission
-                if ([[TDCurrentUser sharedInstance] canPostToFacebook]) {
-                    self.shareToFacebook = YES;
+    if (indexPath.section == 0) {
+        BOOL reload = NO;
+        switch (indexPath.row) {
+            case 0:
+                reload = (self.privacy != TDPostPrivacyPublic);
+                self.privacy = TDPostPrivacyPublic;
+                break;
+            case 1:
+                reload = (self.privacy != TDPostPrivacyPrivate);
+                self.privacy = TDPostPrivacyPrivate;
+                break;
+        }
+        if (reload) {
+            [self.tableView reloadData];
+        }
+    } else {
+        switch (indexPath.row) {
+            case 0:
+                if (self.shareToTwitter) {
+                    self.shareToTwitter = NO;
                     [self.tableView reloadData];
-                } else if ([TDCurrentUser sharedInstance].fbUID && (FBSession.activeSession.state == FBSessionStateOpen || FBSession.activeSession.state == FBSessionStateOpenTokenExtended)) {
-                    [self checkFacebookPermissions];
-                } else if ([[TDCurrentUser sharedInstance] hasCachedFacebookToken]) {
-                    [[TDCurrentUser sharedInstance] authenticateFacebookWithCachedToken:^(BOOL success) {
-                        if (success) {
-                            [self checkFacebookPermissions];
-                        } else {
-                            [self loginToFacebook];
-                        }
-                    }];
+                } else if ([[TDCurrentUser sharedInstance] canPostToTwitter]) {
+                    self.shareToTwitter = YES;
+                    [self.tableView reloadData];
                 } else {
-                    [self loginToFacebook];
+                    [self connectToTwitter];
                 }
-            }
-            break;
+                break;
+            case 1:
+                if (self.shareToFacebook) {
+                    self.shareToFacebook = NO;
+                    [self.tableView reloadData];
+                } else {
+                    // first check the cached permission
+                    if ([[TDCurrentUser sharedInstance] canPostToFacebook]) {
+                        self.shareToFacebook = YES;
+                        [self.tableView reloadData];
+                    } else if ([TDCurrentUser sharedInstance].fbUID && (FBSession.activeSession.state == FBSessionStateOpen || FBSession.activeSession.state == FBSessionStateOpenTokenExtended)) {
+                        [self checkFacebookPermissions];
+                    } else if ([[TDCurrentUser sharedInstance] hasCachedFacebookToken]) {
+                        [[TDCurrentUser sharedInstance] authenticateFacebookWithCachedToken:^(BOOL success) {
+                            if (success) {
+                                [self checkFacebookPermissions];
+                            } else {
+                                [self loginToFacebook];
+                            }
+                        }];
+                    } else {
+                        [self loginToFacebook];
+                    }
+                }
+                break;
+        }
     }
 }
 

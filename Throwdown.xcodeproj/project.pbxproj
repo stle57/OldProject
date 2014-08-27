@@ -156,6 +156,8 @@
 		A1E3A17018FCCF2B0038A8A4 /* TDActivitiesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E3A16F18FCCF2B0038A8A4 /* TDActivitiesCell.m */; };
 		A1E90CDD18B445FC0046D281 /* TDSignupStepTwoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E90CDC18B445FC0046D281 /* TDSignupStepTwoViewController.m */; };
 		A1F02FD418C92277002FEB2F /* TDPostUpload.m in Sources */ = {isa = PBXBuildFile; fileRef = A1F02FD318C92277002FEB2F /* TDPostUpload.m */; };
+		A1F13C6719AD5D7E000DD890 /* TDRadioButtonRowCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A1F13C6519AD5D7E000DD890 /* TDRadioButtonRowCell.m */; };
+		A1F13C6819AD5D7E000DD890 /* TDRadioButtonRowCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A1F13C6619AD5D7E000DD890 /* TDRadioButtonRowCell.xib */; };
 		A1F3B3681907821800CDA9F5 /* Dring.caf in Resources */ = {isa = PBXBuildFile; fileRef = A1F3B3671907819000CDA9F5 /* Dring.caf */; };
 		A1FBA27D1981C57D00C65E04 /* TDPRSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = A1FBA27C1981C57D00C65E04 /* TDPRSegue.m */; };
 /* End PBXBuildFile section */
@@ -413,6 +415,9 @@
 		A1E90CDC18B445FC0046D281 /* TDSignupStepTwoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSignupStepTwoViewController.m; sourceTree = "<group>"; };
 		A1F02FD218C92277002FEB2F /* TDPostUpload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDPostUpload.h; sourceTree = "<group>"; };
 		A1F02FD318C92277002FEB2F /* TDPostUpload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDPostUpload.m; sourceTree = "<group>"; };
+		A1F13C6419AD5D7E000DD890 /* TDRadioButtonRowCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDRadioButtonRowCell.h; sourceTree = "<group>"; };
+		A1F13C6519AD5D7E000DD890 /* TDRadioButtonRowCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDRadioButtonRowCell.m; sourceTree = "<group>"; };
+		A1F13C6619AD5D7E000DD890 /* TDRadioButtonRowCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDRadioButtonRowCell.xib; sourceTree = "<group>"; };
 		A1F3B3671907819000CDA9F5 /* Dring.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Dring.caf; path = ../Dring.caf; sourceTree = "<group>"; };
 		A1FBA27B1981C57D00C65E04 /* TDPRSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDPRSegue.h; sourceTree = "<group>"; };
 		A1FBA27C1981C57D00C65E04 /* TDPRSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDPRSegue.m; sourceTree = "<group>"; };
@@ -691,14 +696,17 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		A12549441999D6B5001C5CD1 /* Recording */ = {
+		A12549441999D6B5001C5CD1 /* Posting */ = {
 			isa = PBXGroup;
 			children = (
 				A12549451999D72D001C5CD1 /* TDShareViewCell.h */,
 				A12549461999D72D001C5CD1 /* TDShareViewCell.m */,
 				A12549471999D72D001C5CD1 /* TDShareViewCell.xib */,
+				A1F13C6419AD5D7E000DD890 /* TDRadioButtonRowCell.h */,
+				A1F13C6519AD5D7E000DD890 /* TDRadioButtonRowCell.m */,
+				A1F13C6619AD5D7E000DD890 /* TDRadioButtonRowCell.xib */,
 			);
-			name = Recording;
+			name = Posting;
 			sourceTree = "<group>";
 		};
 		A1432CDE18A99D500073E492 /* Onboarding */ = {
@@ -849,7 +857,7 @@
 		A1C1D0A5189ADAED00666D2A /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				A12549441999D6B5001C5CD1 /* Recording */,
+				A12549441999D6B5001C5CD1 /* Posting */,
 				A1D13FF61905F92A000980E0 /* Home view */,
 				A1D13FF51905F8FE000980E0 /* User Profile */,
 				A1D13FF71905F938000980E0 /* Edit User Profile */,
@@ -1062,6 +1070,7 @@
 				2DA39FD718E0B2570004A9C7 /* TDMoreComments.xib in Resources */,
 				A10F9C241909B01600D2CAB0 /* NewMessage.caf in Resources */,
 				A14E38F01992E71B001B46AF /* TDSocialNetworkCell.xib in Resources */,
+				A1F13C6819AD5D7E000DD890 /* TDRadioButtonRowCell.xib in Resources */,
 				2DA5F05B18D37C70003D2F99 /* BebasNeue Book.otf in Resources */,
 				2D83200519116D9000A91282 /* TDUserPushNotificationsEditViewController.xib in Resources */,
 				2DA420DD18E63E1A006F4D9C /* TDActivityCell.xib in Resources */,
@@ -1211,6 +1220,7 @@
 				2DA8639318F49D190089B048 /* TDUserProfileCell.m in Sources */,
 				2D1AEE7018C937560055C315 /* TDDetailsLikesCell.m in Sources */,
 				A1C1D0F618A0387B00666D2A /* TDPostView.m in Sources */,
+				A1F13C6719AD5D7E000DD890 /* TDRadioButtonRowCell.m in Sources */,
 				A19FF60E18970BBB001A0AD0 /* RSClient.m in Sources */,
 				A182D833188B60CD00F794A5 /* SAVideoRangeSlider.m in Sources */,
 				A182D832188B60CD00F794A5 /* SASliderRight.m in Sources */,

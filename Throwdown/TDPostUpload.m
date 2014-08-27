@@ -35,6 +35,7 @@ typedef enum {
 @property (nonatomic) NSString *videoPath;
 @property (nonatomic) NSString *comment;
 @property (nonatomic) BOOL isPR;
+@property (nonatomic) BOOL isPrivate;
 @property (nonatomic) BOOL userGenerated;
 @property (nonatomic) NSString *finalVideoName;
 @property (nonatomic) NSString *finalPhotoName;
@@ -156,6 +157,7 @@ typedef enum {
         self.hasReceivedComment = YES;
         self.comment = [notification.userInfo objectForKey:@"comment"];
         self.isPR = [[notification.userInfo objectForKey:@"pr"] boolValue];
+        self.isPrivate = [[notification.userInfo objectForKey:@"private"] boolValue];
         self.userGenerated = [[notification.userInfo objectForKey:@"userGenerated"] boolValue];
         self.shareOptions = [notification.userInfo objectForKey:@"shareOptions"];
         [self finalizeUpload];
@@ -201,6 +203,7 @@ typedef enum {
                                        kind:(self.videoUpload ? @"video" : @"photo")
                               userGenerated:self.userGenerated
                                   sharingTo:self.shareOptions
+                                  isPrivate:self.isPrivate
                                     success:^(NSDictionary *response) {
 
             self.postStatus = UploadCompleted;

@@ -89,8 +89,13 @@
 #pragma mark - posts get/add/remove
 
 
-- (void)addPost:(NSString *)filename comment:(NSString *)comment isPR:(BOOL)pr kind:(NSString *)kind userGenerated:(BOOL)ug sharingTo:(NSArray *)sharing success:(void (^)(NSDictionary *response))success failure:(void (^)(void))failure {
-    NSMutableDictionary *post = [@{ @"kind": kind, @"personal_record": [NSNumber numberWithBool:pr], @"user_generated": [NSNumber numberWithBool:ug]} mutableCopy];
+- (void)addPost:(NSString *)filename comment:(NSString *)comment isPR:(BOOL)pr kind:(NSString *)kind userGenerated:(BOOL)ug sharingTo:(NSArray *)sharing isPrivate:(BOOL)isPrivate success:(void (^)(NSDictionary *response))success failure:(void (^)(void))failure {
+    NSMutableDictionary *post = [@{
+                                   @"kind": kind,
+                                   @"personal_record": [NSNumber numberWithBool:pr],
+                                   @"user_generated": [NSNumber numberWithBool:ug],
+                                   @"private": [NSNumber numberWithBool:isPrivate]
+                                } mutableCopy];
     if (filename) {
         [post addEntriesFromDictionary:@{@"filename": filename}];
     }
@@ -449,8 +454,8 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:TDPostUploadStarted object:upload userInfo:nil];
 }
 
-- (void)addTextPost:(NSString *)comment isPR:(BOOL)isPR shareOptions:(NSArray *)shareOptions {
-    TDTextUpload *upload = [[TDTextUpload alloc] initWithComment:comment isPR:isPR];
+- (void)addTextPost:(NSString *)comment isPR:(BOOL)isPR isPrivate:(BOOL)isPrivate shareOptions:(NSArray *)shareOptions {
+    TDTextUpload *upload = [[TDTextUpload alloc] initWithComment:comment isPR:isPR isPrivate:isPrivate];
     upload.shareOptions = shareOptions;
     [[NSNotificationCenter defaultCenter] postNotificationName:TDPostUploadStarted object:upload userInfo:nil];
 }
