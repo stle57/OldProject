@@ -113,8 +113,8 @@ typedef NS_ENUM(NSUInteger, TDPostPrivacy) {
 #pragma mark - TableViewDelegates
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, section == 1 ? 50 : 20)];
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(18, 28, 320, 18)];
+    UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, section == 1 ? 40 : 20)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(18, 18, 320, 18)];
     label.font = [TDConstants fontRegularSized:15.0];
     label.textColor = [TDConstants headerTextColor];
 
@@ -132,7 +132,7 @@ typedef NS_ENUM(NSUInteger, TDPostPrivacy) {
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return section == 1 ? 50 : 20;
+    return section == 1 ? 40 : 20;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -167,7 +167,7 @@ typedef NS_ENUM(NSUInteger, TDPostPrivacy) {
                                                             andFont:cell.titleLabel.font
                                                             maxSize:CGSizeMake(MAXFLOAT, cell.titleLabel.frame.size.height)];
                 CGRect frame = cell.icon.frame;
-                frame.origin.x = cell.titleLabel.frame.origin.x + width + 8;
+                frame.origin.x = cell.titleLabel.frame.origin.x + width + 6;
                 cell.icon.frame = frame;
                 cell.icon.hidden = NO;
                 cell.checkmark.hidden = (self.privacy != TDPostPrivacyPrivate);

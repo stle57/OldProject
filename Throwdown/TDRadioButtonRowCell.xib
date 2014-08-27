@@ -28,7 +28,7 @@
                         </accessibility>
                     </imageView>
                     <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="lock_icon_30x30" id="lgh-QZ-XZZ" userLabel="icon">
-                        <rect key="frame" x="152" y="13" width="15" height="15"/>
+                        <rect key="frame" x="152" y="12" width="15" height="15"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <accessibility key="accessibilityConfiguration">
                             <accessibilityTraits key="traits" none="YES" image="YES" notEnabled="YES"/>
