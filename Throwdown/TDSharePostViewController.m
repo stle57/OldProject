@@ -30,6 +30,7 @@ typedef NS_ENUM(NSUInteger, TDPostPrivacy) {
 @property (weak, nonatomic) IBOutlet UINavigationItem *navigationBarItem;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet TDActivityIndicator *activityIndicator;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *saveButton;
 
 @property (nonatomic) BOOL shareToFacebook;
 @property (nonatomic) BOOL shareToTwitter;
@@ -56,7 +57,9 @@ typedef NS_ENUM(NSUInteger, TDPostPrivacy) {
 
     [self.navigationBar setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontRegularSized:20],
                                                   NSForegroundColorAttributeName: [TDConstants headerTextColor] }];
-    
+
+    [self.saveButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[TDConstants brandingRedColor], NSFontAttributeName:[TDConstants fontSemiBoldSized:18] } forState:UIControlStateNormal];
+
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     self.shareToFacebook = NO;
