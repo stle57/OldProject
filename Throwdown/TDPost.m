@@ -40,6 +40,7 @@ static NSString *const kKindText  = @"text";
     _likersTotalCount = [dict objectForKey:@"like_count"];
     _slug = [dict objectForKey:@"slug"];
     _personalRecord = [[dict objectForKey:@"personal_record"] boolValue];
+    _isPrivate = [[dict objectForKey:@"private"] boolValue];
     if ([dict objectForKey:@"comment"] && ![[dict objectForKey:@"comment"] isEqual:[NSNull null]]) {
         _comment = [[dict objectForKey:@"comment"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     }

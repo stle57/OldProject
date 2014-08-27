@@ -44,6 +44,7 @@ static NSString *const kTracksKey = @"tracks";
 @property (nonatomic) TTTAttributedLabel *commentLabel;
 @property (nonatomic) UIImageView *controlView;
 @property (nonatomic) UIImageView *prStar;
+@property (nonatomic) UIImageView *privatePost;
 @property (nonatomic) UIImageView *controlImage;
 @property (nonatomic) UIImageView *playerSpinner;
 @property (nonatomic) AVURLAsset *videoAsset;
@@ -89,6 +90,11 @@ static NSString *const kTracksKey = @"tracks";
         self.prStar.image = [UIImage imageNamed:@"trophy_64x64"];
         self.prStar.hidden = YES;
         [self addSubview:self.prStar];
+
+        self.privatePost = [[UIImageView alloc] initWithFrame:CGRectMake(200, 9, 20, 20)];
+        self.privatePost.image = [UIImage imageNamed:@"lock_icon"];
+        self.privatePost.hidden = YES;
+        [self addSubview:self.privatePost];
 
         self.usernameLabel = [[UILabel alloc] initWithFrame:CGRectMake(45, 5, 215, 32)];
         self.usernameLabel.font = [TDConstants fontSemiBoldSized:17.0];
@@ -157,6 +163,12 @@ static NSString *const kTracksKey = @"tracks";
     CGRect frame = self.usernameLabel.frame;
     frame.size.width = size.width;
     self.usernameLabel.frame = frame;
+    if (post.isPrivate) {
+        self.privatePost.center = CGPointMake(frame.origin.x + size.width + 16, self.privatePost.center.y); // icon size = 20 / 2  margin: 6 = 16
+    }
+
+    self.prStar.hidden = !post.personalRecord;
+    self.privatePost.hidden = !post.isPrivate;
 
     // Set first to not show the wrong image while loading or if load fails
     [self.userProfileImage setImage:[UIImage imageNamed:@"prof_pic_default"]];
@@ -193,8 +205,6 @@ static NSString *const kTracksKey = @"tracks";
         self.commentLabel.hidden = YES;
         self.mediaOffset = kHeightOfProfileRow;
     }
-
-    self.prStar.hidden = !post.personalRecord;
 
     switch (post.kind) {
         case TDPostKindPhoto:

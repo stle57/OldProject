@@ -28,6 +28,7 @@ typedef enum {
 @property (nonatomic, readonly) TDUser *user;
 @property (nonatomic, readonly) NSDate *createdAt;
 @property (nonatomic, assign) BOOL personalRecord;
+@property (nonatomic, assign) BOOL isPrivate;
 @property (nonatomic, assign) BOOL liked;
 @property (nonatomic, copy, readonly) NSArray *mentions;
 @property (nonatomic, readonly) NSArray *likers;
