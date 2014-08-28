@@ -80,6 +80,13 @@ static NSString *const kTracksKey = @"tracks";
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+- (void)removeFromSuperview {
+    // remove any observers if this view is killed
+    [self removeVideo];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [super removeFromSuperview];
+}
+
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
@@ -273,20 +280,22 @@ static NSString *const kTracksKey = @"tracks";
 }
 
 - (void)removeVideo {
-    if (self.videoHolderView) {
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationPauseTapGesture object:nil];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationResumeTapGesture object:nil];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationStopPlayers object:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationPauseTapGesture object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationResumeTapGesture object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationStopPlayers object:self];
+
+    if (self.playerItem) {
+        [self.playerItem removeObserver:self forKeyPath:@"status" context:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemDidPlayToEndTimeNotification object:self.playerItem];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemPlaybackStalledNotification object:self.playerItem];
-
-        [self.playerItem removeObserver:self forKeyPath:@"status" context:nil];
+        self.playerItem = nil;
+    }
+    if (self.videoHolderView) {
         [self.playerLayer removeFromSuperlayer];
         [self.videoHolderView removeFromSuperview];
         [self.controlView removeFromSuperview];
         [self.playerSpinner removeFromSuperview];
         self.player = nil;
-        self.playerItem = nil;
         self.playerLayer = nil;
         self.videoHolderView = nil;
         self.controlView = nil;
@@ -449,7 +458,7 @@ static NSString *const kTracksKey = @"tracks";
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if (object == self.playerItem && [keyPath isEqualToString:@"status"]) {
+    if ([keyPath isEqualToString:@"status"]) {
         debug NSLog(@"PLAYBACK: status at state %d", self.state);
         dispatch_async(dispatch_get_main_queue(), ^{
             if (self.playerItem.status == AVPlayerItemStatusReadyToPlay) {
