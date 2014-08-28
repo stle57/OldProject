@@ -17,6 +17,7 @@
 #import "UIImage+Resizing.h"
 #import "TDFileSystemHelper.h"
 #import "TDDeviceInfo.h"
+#import "iRate.h"
 
 @interface TDPostAPI ()
 
@@ -24,6 +25,7 @@
 @property (nonatomic) NSArray *notices;
 @property (nonatomic) BOOL noMorePosts;
 @property (nonatomic) BOOL fetchingUpstream;
+@property (weak, nonatomic) NSNumber* lastLikedPostId;
 
 @end
 
@@ -294,8 +296,14 @@
 
 #pragma mark - like & comment
 - (void)likePostWithId:(NSNumber *)postId {
+    debug NSLog(@"inside likePostWithId");
     //  /api/v1/posts/{post's id}/like.json
-
+    if( self.lastLikedPostId == nil || (self.lastLikedPostId != nil && self.lastLikedPostId != postId)) {
+        debug NSLog(@"setting event count inside like post");
+        [iRate sharedInstance].eventCount = [iRate sharedInstance].eventCount + TD_LIKE_EVENT_COUNT;
+        self.lastLikedPostId = postId;
+    }
+    
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts/[POST_ID]/like.json"];
     url = [url stringByReplacingOccurrencesOfString:@"[POST_ID]"
                                          withString:[postId stringValue]];
@@ -333,7 +341,14 @@
 
 - (void)unLikePostWithId:(NSNumber *)postId {
     //  /api/v1/posts/{post's id}/like.json
-
+    if( self.lastLikedPostId == nil || (self.lastLikedPostId != nil && self.lastLikedPostId != postId)) {
+        debug NSLog(@"setting event count");
+        // This takes care of the scenario where the user liked a post and then immediately disliked
+        // it.
+        [iRate sharedInstance].eventCount = [iRate sharedInstance].eventCount + TD_LIKE_EVENT_COUNT;
+        self.lastLikedPostId = postId;
+    }
+    
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts/[POST_ID]/like.json"];
     url = [url stringByReplacingOccurrencesOfString:@"[POST_ID]"
                                          withString:[postId stringValue]];
@@ -396,7 +411,8 @@
     if (!messageBody || !postId) {
         return;
     }
-
+    [iRate sharedInstance].eventCount = [iRate sharedInstance].eventCount + TD_COMMENT_EVENT_COUNT;
+    
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/comments.json"];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager POST:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken , @"comment[body]" : messageBody, @"comment[post_id]" : postId} success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -432,16 +448,21 @@
 }
 
 - (void)uploadVideo:(NSString *)localVideoPath withThumbnail:(NSString *)localPhotoPath withName:(NSString *)newName {
+    [iRate sharedInstance].eventCount = [iRate sharedInstance].eventCount + TD_POST_EVENT_COUNT;
     TDPostUpload *upload = [[TDPostUpload alloc] initWithVideoPath:localVideoPath thumbnailPath:localPhotoPath newName:newName];
     [[NSNotificationCenter defaultCenter] postNotificationName:TDPostUploadStarted object:upload userInfo:nil];
 }
 
 - (void)uploadPhoto:(NSString *)localPhotoPath withName:(NSString *)newName {
+    [iRate sharedInstance].eventCount = [iRate sharedInstance].eventCount + TD_POST_EVENT_COUNT;
+
     TDPostUpload *upload = [[TDPostUpload alloc] initWithPhotoPath:localPhotoPath newName:newName];
     [[NSNotificationCenter defaultCenter] postNotificationName:TDPostUploadStarted object:upload userInfo:nil];
 }
 
 - (void)addTextPost:(NSString *)comment isPR:(BOOL)isPR {
+    [iRate sharedInstance].eventCount = [iRate sharedInstance].eventCount + TD_POST_EVENT_COUNT;
+
     TDTextUpload *upload = [[TDTextUpload alloc] initWithComment:comment isPR:isPR];
     [[NSNotificationCenter defaultCenter] postNotificationName:TDPostUploadStarted object:upload userInfo:nil];
 }

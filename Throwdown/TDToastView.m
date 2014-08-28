@@ -23,7 +23,6 @@
 @implementation TDToastView
 
 @synthesize toastType;
-//@synthesize delegate;
 
 - (void)dealloc {
     self.delegate = nil;

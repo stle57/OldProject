@@ -39,8 +39,6 @@ static double const kAutomaticRefreshTimeout = 30; // in seconds - minium time b
 static double const kMaxSessionLength = 30; // in seconds
 static NSString *const kAnalyticsLogfile = @"analyticsLogfile.bin";
 static NSString *const kApplicationUUIDKey = @"TDApplicationUUIDKey";
-static NSString *const iOS7AppStoreURLFormat = @"itm-apps://itunes.apple.com/app/id%d";
-static NSString *const iOSAppStoreURLFormat = @"itm-apps://itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%d";
 
 // File locations
 static NSString *const kVideoTrimmedFilePath = @"Documents/current_trimmed_video.mp4";
@@ -113,6 +111,9 @@ static NSString *const kSpinningAnimation = @"rotationAnimation";
 #define START_MAIN_SPINNER_NOTIFICATION @"TDMainSpinnerStart"
 #define STOP_MAIN_SPINNER_NOTIFICATION  @"TDMainSpinnerStop"
 #define LOG_OUT_NOTIFICATION            @"TDLogOutNotification"
+#define TD_COMMENT_EVENT_COUNT          5
+#define TD_LIKE_EVENT_COUNT             2
+#define TD_POST_EVENT_COUNT             10
 
 + (TDEnvironment)environment;
 + (NSString *)getBaseURL;

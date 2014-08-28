@@ -102,13 +102,16 @@
     //as it is picked up automatically from your Info.plist file
     //but we want to test with an app that's actually on the store
     [iRate sharedInstance].applicationBundleID = @"us.throwdown.throwdown";
-    [iRate sharedInstance].usesUntilPrompt = 15;
-    [iRate sharedInstance].daysUntilPrompt = 15;
+   // [iRate sharedInstance].usesUntilPrompt = 15;
+    [iRate sharedInstance].daysUntilPrompt = 2;
+    [iRate sharedInstance].eventsUntilPrompt = 20;
     
 	[iRate sharedInstance].onlyPromptIfLatestVersion = NO;
     
     //enable preview mode
-    [iRate sharedInstance].previewMode = YES;
+    [iRate sharedInstance].previewMode = NO;
+    
+    debug NSLog(@"iRate events=%lu", [iRate sharedInstance].eventCount);
 }
 
 - (BOOL)iRateShouldPromptForRating
