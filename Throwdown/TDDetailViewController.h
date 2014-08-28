@@ -25,6 +25,7 @@
 @property (nonatomic, assign) id <TDDetailViewControllerDelegate> __unsafe_unretained delegate;
 @property (nonatomic, retain) TDPost *post;
 @property (nonatomic) NSNumber *postId;
+@property (nonatomic) NSString *slug;
 - (void)unwindToRoot;
 
 @end

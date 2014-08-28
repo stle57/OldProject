@@ -32,11 +32,25 @@
 				<string>throwdown${SCHEME_SUFFIX}</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb${FACEBOOK_APP_ID}</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>11</string>
+	<key>FacebookAppID</key>
+	<string>${FACEBOOK_APP_ID}</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>TWITTER_CONSUMER_KEY</key>
+	<string>${TWITTER_CONSUMER_KEY}</string>
+	<key>TWITTER_CONSUMER_SECRET</key>
+	<string>${TWITTER_CONSUMER_SECRET}</string>
+	<key>ThrowdownURL</key>
+	<string>throwdown${SCHEME_SUFFIX}</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>ProximaNova-Bold.otf</string>

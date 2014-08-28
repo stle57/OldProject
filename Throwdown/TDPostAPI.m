@@ -91,22 +91,29 @@
 #pragma mark - posts get/add/remove
 
 
-- (void)addPost:(NSString *)filename comment:(NSString *)comment isPR:(BOOL)pr kind:(NSString *)kind success:(void (^)(void))success failure:(void (^)(void))failure {
-    NSMutableDictionary *post = [@{ @"kind": kind, @"personal_record": [NSNumber numberWithBool:pr]} mutableCopy];
+- (void)addPost:(NSString *)filename comment:(NSString *)comment isPR:(BOOL)pr kind:(NSString *)kind userGenerated:(BOOL)ug sharingTo:(NSArray *)sharing isPrivate:(BOOL)isPrivate success:(void (^)(NSDictionary *response))success failure:(void (^)(void))failure {
+    NSMutableDictionary *post = [@{
+                                   @"kind": kind,
+                                   @"personal_record": [NSNumber numberWithBool:pr],
+                                   @"user_generated": [NSNumber numberWithBool:ug],
+                                   @"private": [NSNumber numberWithBool:isPrivate]
+                                } mutableCopy];
     if (filename) {
         [post addEntriesFromDictionary:@{@"filename": filename}];
     }
     if (comment) {
         [post addEntriesFromDictionary:@{@"comment": comment}];
     }
+    if (!sharing) {
+        sharing = @[];
+    }
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts.json"];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [manager POST:url parameters:@{ @"post": post, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        debug NSLog(@"JSON: %@", [responseObject class]);
-        // Not the best way to do this but for now...
+    [manager POST:url parameters:@{ @"post": post, @"share_to": sharing, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        // Should just put the post in the feed but this is easier to implement for now + takes care of any other new posts in the feed.
         [self fetchPostsUpstreamWithErrorHandlerStart:nil error:nil];
         if (success) {
-            success();
+            success(responseObject);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"Error: %@", error);
@@ -186,21 +193,26 @@
 }
 
 - (NSArray *)getPosts {
-    return [self.posts mutableCopy];
+    return self.posts;
 }
 
 
 #pragma mark posts for a particular user
+
+- (void)fetchPostsUpstreamForUsername:(NSString *)username success:(void(^)(NSDictionary *response))successHandler error:(void(^)(void))errorHandler {
+    [self fetchPostsForUserUpstreamWithErrorHandlerStart:nil username:username error:errorHandler success:successHandler];
+}
+
 - (void)fetchPostsUpstreamForUser:(NSNumber *)userId success:(void(^)(NSDictionary *response))successHandler error:(void(^)(void))errorHandler {
-    [self fetchPostsForUserUpstreamWithErrorHandlerStart:nil userId:userId error:errorHandler success:successHandler];
+    [self fetchPostsForUserUpstreamWithErrorHandlerStart:nil username:[userId stringValue] error:errorHandler success:successHandler];
 }
 
 - (void)fetchPostsDownstreamForUser:(NSNumber *)userId lowestId:(NSNumber *)lowestId success:(void(^)(NSDictionary *))successHandler {
-    [self fetchPostsForUserUpstreamWithErrorHandlerStart:lowestId userId:userId error:nil success:successHandler];
+    [self fetchPostsForUserUpstreamWithErrorHandlerStart:lowestId username:[userId stringValue] error:nil success:successHandler];
 }
 
-- (void)fetchPostsForUserUpstreamWithErrorHandlerStart:(NSNumber *)start userId:(NSNumber *)userId error:(void (^)(void))errorHandler success:(void(^)(NSDictionary *response))successHandler {
-    NSMutableString *url = [NSMutableString stringWithFormat:@"/api/v1/users/%@.json?user_token=%@", [userId stringValue], [TDCurrentUser sharedInstance].authToken];
+- (void)fetchPostsForUserUpstreamWithErrorHandlerStart:(NSNumber *)start username:(NSString *)username error:(void (^)(void))errorHandler success:(void(^)(NSDictionary *response))successHandler {
+    NSMutableString *url = [NSMutableString stringWithFormat:@"/api/v1/users/%@.json?user_token=%@", username, [TDCurrentUser sharedInstance].authToken];
 
     if (start) {
         [url appendString:[NSString stringWithFormat:@"&start=%@", start]];
@@ -315,13 +327,12 @@
                 if ([[returnDict objectForKey:@"success"] boolValue]) {
                     debug NSLog(@"Like Success!");
 
+                    // removed temporarily b/c it doesn't work anyway!
                     // Change the like in that post
-                    TDPost *post = (TDPost *)[[TDAppDelegate appDelegate] postWithPostId:postId];
-
-                    if (post) {
-                        post.liked = YES;
-                       // [self notifyPostsRefreshed];
-                    }
+//                    TDPost *post = [[TDAppDelegate appDelegate] postWithPostId:postId];
+//                    if (post) {
+//                        post.liked = YES;
+//                    }
                 }
             }
         }
@@ -382,10 +393,11 @@
 }
 
 - (void)getFullPostInfoForPostId:(NSNumber *)postId {
-    //  /api/v1/posts/{post-id}.json
-    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts/[POST_ID].json"];
-    url = [url stringByReplacingOccurrencesOfString:@"[POST_ID]"
-                                         withString:[postId stringValue]];
+    [self getFullPostInfoForPostSlug:[postId stringValue]];
+}
+
+- (void)getFullPostInfoForPostSlug:(NSString *)slug {
+    NSString *url = [NSString stringWithFormat:@"%@/api/v1/posts/%@.json", [TDConstants getBaseURL], slug];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager.requestSerializer setValue:TDDeviceInfo.bundleVersion forHTTPHeaderField:kHTTPHeaderBundleVersion];
     [manager GET:url parameters:@{@"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -460,10 +472,11 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:TDPostUploadStarted object:upload userInfo:nil];
 }
 
-- (void)addTextPost:(NSString *)comment isPR:(BOOL)isPR {
+- (void)addTextPost:(NSString *)comment isPR:(BOOL)isPR isPrivate:(BOOL)isPrivate shareOptions:(NSArray *)shareOptions {
     [iRate sharedInstance].eventCount = [iRate sharedInstance].eventCount + TD_POST_EVENT_COUNT;
 
-    TDTextUpload *upload = [[TDTextUpload alloc] initWithComment:comment isPR:isPR];
+    TDTextUpload *upload = [[TDTextUpload alloc] initWithComment:comment isPR:isPR isPrivate:isPrivate];
+    upload.shareOptions = shareOptions;
     [[NSNotificationCenter defaultCenter] postNotificationName:TDPostUploadStarted object:upload userInfo:nil];
 }
 

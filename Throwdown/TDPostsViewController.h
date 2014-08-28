@@ -24,7 +24,7 @@
 #import "TDActivityCell.h"
 #import "TDUserProfileCell.h"
 #import "TDNoPostsCell.h"
-#import "TDUploadMoreCell.h"
+#import "TDNoMorePostsCell.h"
 #import "TDNoticeViewCell.h"
 
 @interface TDPostsViewController : UIViewController <TDLikeViewDelegate, TDPostViewDelegate, TDTwoButtonViewDelegate, TDDetailsCommentsCellDelegate, TDMoreCommentsDelegate, UIActionSheetDelegate, TDDetailViewControllerDelegate, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate, TDUserProfileCellDelegate>
@@ -58,6 +58,7 @@
 @property (strong, nonatomic) TDHomeHeaderView *headerView;
 @property (strong, nonatomic) UIActivityIndicatorView *playerSpinner;
 @property (nonatomic, retain) NSNumber *userId;
+@property (nonatomic, retain) NSString *username;
 @property (nonatomic) BOOL loaded;
 @property (nonatomic) BOOL errorLoading;
 

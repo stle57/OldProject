@@ -9,6 +9,7 @@
 #import "TDViewControllerHelper.h"
 #import "TDWelcomeViewController.h"
 #import "TDConstants.h"
+#import "UIAlertView+TDBlockAlert.h"
 
 static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*";
 
@@ -62,6 +63,15 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
 	// Convert the RFC 3339 date time string to an NSDate.
 	NSDate *result = [rfc3339DateFormatter dateFromString:rfc3339DateTimeString];
 	return result;
+}
+
++ (NSString *)getUTCFormatedDate:(NSDate *)date {
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    NSTimeZone *timeZone = [NSTimeZone timeZoneWithName:@"UTC"];
+    [dateFormatter setTimeZone:timeZone];
+    [dateFormatter setDateFormat:@"yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'SSS'Z'"];
+    NSString *dateString = [dateFormatter stringFromDate:date];
+    return dateString;
 }
 
 
@@ -144,7 +154,7 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
         }
         for (NSDictionary *user in users) {
             if ([username isEqualToString:[user objectForKey:@"username"]]) {
-                NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@", [user objectForKey:@"id"]]];
+                NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@://user/%@", [TDConstants appScheme], [user objectForKey:@"id"]]];
                 [label addLinkToURL:url withRange:usernameRange];
             }
         }
@@ -164,6 +174,31 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     // Adding 2 covers an edge case where emoji would get cut off
     CGSize size = [label sizeThatFits:CGSizeMake(COMMENT_MESSAGE_WIDTH, MAXFLOAT)];
     return size.height == 0. ? 0 : size.height + 2;
+}
+
++ (BOOL)isThrowdownURL:(NSURL *)url {
+    return [[url scheme] caseInsensitiveCompare:[TDConstants appScheme]] == NSOrderedSame;
+}
+
++ (BOOL)isSafariURL:(NSURL *)url {
+    return (([[url scheme] caseInsensitiveCompare:@"http"] == NSOrderedSame || [[url scheme] caseInsensitiveCompare:@"https"] == NSOrderedSame) && [[UIApplication sharedApplication] canOpenURL:url]);
+}
+
++ (BOOL)askUserToOpenInSafari:(NSURL *)url {
+    BOOL isSafariURL = [self isSafariURL:url];
+    if (isSafariURL) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Open link in Safari?"
+                                                        message:nil
+                                                       delegate:nil
+                                              cancelButtonTitle:@"No"
+                                              otherButtonTitles:@"Yes", nil];
+        [alert showWithCompletionBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
+            if (buttonIndex != alertView.cancelButtonIndex) {
+                [[UIApplication sharedApplication] openURL:url];
+            }
+        }];
+    }
+    return isSafariURL;
 }
 
 @end

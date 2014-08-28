@@ -153,8 +153,6 @@
 
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/users.json?user_token=%@", currentUser.authToken]];
 
-    debug NSLog(@"url= %@", url);
-
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {

@@ -10,34 +10,75 @@
 #import <QuartzCore/QuartzCore.h>
 #import "TDConstants.h"
 
+@interface TDActivityIndicator()
+
+@property (nonatomic) CGRect originalTextLocation;
+
+@end
+
 @implementation TDActivityIndicator
 
-- (void)dealloc
-{
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-    self = [super initWithCoder:aDecoder];
+- (id)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:(CGRect)frame];
     if (self) {
-        NSArray *nibContents = [[NSBundle mainBundle] loadNibNamed:@"TDActivityIndicator" owner:self options:nil];
-        self.backgroundColor = [UIColor clearColor];
-        [self addSubview:[nibContents lastObject]];
-
-        self.backgroundView.layer.cornerRadius = 8;
-        self.text.font = [TDConstants fontSemiBoldSized:20];
+        [self setup];
     }
     return self;
 }
 
--(void)startSpinner
-{
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        [self setup];
+    }
+    return self;
+}
+
+- (void)setup {
+    NSArray *nibContents = [[NSBundle mainBundle] loadNibNamed:@"TDActivityIndicator" owner:self options:nil];
+    self.backgroundColor = [UIColor clearColor];
+    [self addSubview:[nibContents lastObject]];
+
+    self.backgroundView.layer.cornerRadius = 8;
+    self.text.font = [TDConstants fontSemiBoldSized:20];
+    self.originalTextLocation = self.text.frame;
+    self.text.verticalAlignment = TTTAttributedLabelVerticalAlignmentCenter;
+    self.hidden = YES;
+}
+
+- (void)startSpinner {
+    self.hidden = NO;
+    self.spinner.hidden = NO;
     [self.spinner startAnimating];
 }
 
--(void)stopSpinner
-{
+- (void)stopSpinner {
     [self.spinner stopAnimating];
+    self.hidden = YES;
+}
+
+- (void)setMessage:(NSString *)text {
+    self.text.text = text;
+}
+
+- (void)startSpinnerWithMessage:(NSString *)text {
+    self.text.text = text;
+    [self startSpinner];
+}
+
+- (void)showMessage:(NSString *)text forSeconds:(NSUInteger)seconds {
+    CGRect frame = self.backgroundView.frame;
+    frame.origin.x = 0;
+    frame.origin.y = 0;
+    self.text.frame = frame;
+    self.text.text = text;
+    self.spinner.hidden = YES;
+    self.hidden = NO;
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(seconds * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        self.hidden = YES;
+        self.text.frame = self.originalTextLocation;
+    });
 }
 
 @end

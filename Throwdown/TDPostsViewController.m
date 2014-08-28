@@ -59,8 +59,8 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     TDNoPostsCell *noPostsCell = [topLevelObjects objectAtIndex:0];
     noPostsHeight = noPostsCell.frame.size.height - (needsProfileHeader ? profileHeaderHeight + kHeightOfStatusBar : 0);
     noPostsCell = nil;
-    topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDUploadMoreCell" owner:self options:nil];
-    TDUploadMoreCell *uploadMoreCell = [topLevelObjects objectAtIndex:0];
+    topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_NO_MORE_POSTS owner:self options:nil];
+    TDNoMorePostsCell *uploadMoreCell = [topLevelObjects objectAtIndex:0];
     uploadMoreHeight = uploadMoreCell.frame.size.height;
     uploadMoreCell = nil;
 
@@ -327,7 +327,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
         return 1;
     }
 
-    // Last row with Upload More
+    // Last row with no more posts
     if (noMorePostsAtBottom && section == row) {
         return 1;
     }
@@ -454,13 +454,12 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     // Last row if no more
     if (noMorePostsAtBottom && indexPath.section == realRow) {
 
-        TDUploadMoreCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDUploadMoreCell"];
+        TDNoMorePostsCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_NO_MORE_POSTS];
         if (!cell) {
-            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDUploadMoreCell" owner:self options:nil];
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_NO_MORE_POSTS owner:self options:nil];
             cell = [topLevelObjects objectAtIndex:0];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
         }
-        cell.uploadMoreArrow.hidden = needsProfileHeader;
         return cell;
     }
 
@@ -699,14 +698,9 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
     TDPost *post = [self postForRow:row];
     if (post && post.postId) {
-        // Add the like for the update
         [post addLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
-
-        [self reloadAllRowsButTopForSection:row];
-
-        // Send to server
-        TDPostAPI *api = [TDPostAPI sharedInstance];
-        [api likePostWithId:post.postId];
+        [self.tableView reloadData];
+        [[TDPostAPI sharedInstance] likePostWithId:post.postId];
     }
 }
 
@@ -715,25 +709,10 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
     TDPost *post = [self postForRow:row];
     if (post && post.postId) {
-
-        // Remove the like for the update
         [post removeLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
-
-        [self reloadAllRowsButTopForSection:row];
-
-        TDPostAPI *api = [TDPostAPI sharedInstance];
-        [api unLikePostWithId:post.postId];
+        [self.tableView reloadData];
+        [[TDPostAPI sharedInstance] unLikePostWithId:post.postId];
     }
-}
-
-- (void)reloadAllRowsButTopForSection:(NSInteger)section {
-    NSInteger totalRows = [self tableView:nil numberOfRowsInSection:section];
-    NSMutableArray *rowArray = [NSMutableArray array];
-    for (int i = 1; i < totalRows; i++) {
-        [rowArray addObject:[NSIndexPath indexPathForRow:i
-                                               inSection:section]];
-    }
-    [self.tableView reloadRowsAtIndexPaths:rowArray withRowAnimation:UITableViewRowAnimationFade];
 }
 
 - (void)commentButtonPressedFromRow:(NSInteger)row {
@@ -759,13 +738,17 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
     vc.userId = userId;
 
-    if (userId == [TDCurrentUser sharedInstance].userId)
-    vc.fromProfileType = kFromProfileScreenType_OwnProfileButton;
-    vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
-    navController.navigationBar.barStyle = UIBarStyleDefault;
-    navController.navigationBar.translucent = YES;
-    [self.navigationController presentViewController:navController animated:YES completion:nil];
+    if ([userId isEqualToNumber:[TDCurrentUser sharedInstance].userId]) {
+        vc.fromProfileType = kFromProfileScreenType_OwnProfileButton;
+        vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
+        navController.navigationBar.barStyle = UIBarStyleDefault;
+        navController.navigationBar.translucent = YES;
+        [self.navigationController presentViewController:navController animated:YES completion:nil];
+    } else {
+        vc.fromProfileType = kFromProfileScreenType_OtherUser;
+        [self.navigationController pushViewController:vc animated:YES];
+    }
 }
 
 #pragma mark - Log Out User Notification

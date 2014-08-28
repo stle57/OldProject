@@ -34,7 +34,9 @@ typedef enum {
 @property (nonatomic) NSString *photoPath;
 @property (nonatomic) NSString *videoPath;
 @property (nonatomic) NSString *comment;
-@property (nonatomic) NSNumber *isPR;
+@property (nonatomic) BOOL isPR;
+@property (nonatomic) BOOL isPrivate;
+@property (nonatomic) BOOL userGenerated;
 @property (nonatomic) NSString *finalVideoName;
 @property (nonatomic) NSString *finalPhotoName;
 @property (nonatomic) BOOL hasReceivedComment;
@@ -48,6 +50,8 @@ typedef enum {
 @property (nonatomic) unsigned long long photoFileSize;
 @property (nonatomic) RSClient *client;
 @property (nonatomic) RSContainer *container;
+@property (nonatomic) NSArray *shareOptions;
+
 
 @end
 
@@ -152,7 +156,10 @@ typedef enum {
         debug NSLog(@"Received correct comment notification");
         self.hasReceivedComment = YES;
         self.comment = [notification.userInfo objectForKey:@"comment"];
-        self.isPR = [notification.userInfo objectForKey:@"pr"];
+        self.isPR = [[notification.userInfo objectForKey:@"pr"] boolValue];
+        self.isPrivate = [[notification.userInfo objectForKey:@"private"] boolValue];
+        self.userGenerated = [[notification.userInfo objectForKey:@"userGenerated"] boolValue];
+        self.shareOptions = [notification.userInfo objectForKey:@"shareOptions"];
         [self finalizeUpload];
     }
 }
@@ -190,13 +197,23 @@ typedef enum {
 
         debug NSLog(@"FINALIZING %@", self.filename);
         self.postStatus = UploadStarted;
-        [[TDPostAPI sharedInstance] addPost:self.filename comment:self.comment isPR:[self.isPR boolValue] kind:(self.videoUpload ? @"video" : @"photo") success:^{
+        [[TDPostAPI sharedInstance] addPost:self.filename
+                                    comment:self.comment
+                                       isPR:self.isPR
+                                       kind:(self.videoUpload ? @"video" : @"photo")
+                              userGenerated:self.userGenerated
+                                  sharingTo:self.shareOptions
+                                  isPrivate:self.isPrivate
+                                    success:^(NSDictionary *response) {
+
             self.postStatus = UploadCompleted;
             [self uploadComplete];
         } failure:^{
             self.postStatus = UploadFailed;
             [self uploadFailed];
         }];
+    } else if (self.postStatus == UploadCompleted) {
+        [self uploadComplete];
     }
 }
 

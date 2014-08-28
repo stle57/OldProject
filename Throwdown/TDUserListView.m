@@ -18,6 +18,7 @@
 
 @property (nonatomic) UITableView *tableView;
 @property (nonatomic) NSString *userNameFilter;
+@property (nonatomic) BOOL isWaitingForCallback;
 
 @end
 
@@ -38,8 +39,9 @@
         topLine.backgroundColor = [TDConstants borderColor];
         [self addSubview:topLine];
 
-        self.communityInfo = [TDUserList sharedInstance];
+        self.userList = [TDUserList sharedInstance];
         self.hidden = YES;
+        self.isWaitingForCallback = NO;
     }
     return self;
 }
@@ -63,10 +65,11 @@
     }
     NSDictionary* user = [self.filteredList objectAtIndex:indexPath.row];
 
-    // Don't need to update if it's the same user, avoids UI flashing
-    if (cell.userId != [[user objectForKey:@"id"] integerValue]) {
+    // Don't need to update if it's the same name/username, avoids UI flashing
+    NSString *username = [@"@" stringByAppendingString:[user objectForKey:@"username"]];
+    if (![cell.name.text isEqualToString:[user objectForKey:@"name"]] || ![cell.username.text isEqualToString:username]) {
         cell.name.text = [user objectForKey:@"name"];
-        cell.username.text = [@"@" stringByAppendingString:[user objectForKey:@"username"]];
+        cell.username.text = username;
         if ([user objectForKey:@"picture"] != [NSNull null] && ![[user objectForKey:@"picture"] isEqualToString:@"default"]) {
             cell.profileImage.image = nil;
             [[TDAPIClient sharedInstance] setImage:@{@"imageView":cell.profileImage,
@@ -94,21 +97,42 @@
     return 40;
 }
 
-- (BOOL)shouldShowUserSuggestions:(NSString *)text {
-    self.userNameFilter = [TDTextViewControllerHelper findUsernameInText:text];
+- (void)showUserSuggestions:(UITextView *)textView callback:(void (^)(BOOL success))callback {
+    self.userNameFilter = [TDTextViewControllerHelper findUsernameInText:textView.text];
     if (self.userNameFilter != nil && [self.userNameFilter length] > 0) {
-        [self.filteredList removeAllObjects];
-        NSString *regexString = [NSString stringWithFormat:@".*\\B%@.*", self.userNameFilter];
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(SELF.username matches[c] %@) OR (SELF.name matches[c] %@)", regexString, regexString];
-        self.filteredList = [NSMutableArray arrayWithArray:[self.communityInfo.userList filteredArrayUsingPredicate:predicate]];
-        if ([self.filteredList count] != 0){
-            [self.tableView reloadData];
-            self.hidden = NO;
-            return YES;
+        textView.autocorrectionType = UITextAutocorrectionTypeNo;
+        textView.autocapitalizationType = UITextAutocapitalizationTypeNone;
+        if (!self.isWaitingForCallback) {
+            self.isWaitingForCallback = YES;
+            [self.userList getListWithCallback:^(NSArray *list) {
+                self.isWaitingForCallback = NO;
+                [self.filteredList removeAllObjects];
+                NSString *regexString = [NSString stringWithFormat:@".*\\B%@.*", self.userNameFilter];
+                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(SELF.username matches[c] %@) OR (SELF.name matches[c] %@)", regexString, regexString];
+                self.filteredList = [NSMutableArray arrayWithArray:[list filteredArrayUsingPredicate:predicate]];
+                if ([self.filteredList count] != 0){
+                    [self.tableView reloadData];
+                    self.hidden = NO;
+                    if (callback) {
+                        callback(YES);
+                    }
+                } else {
+                    self.hidden = YES;
+                    if (callback) {
+                        callback(NO);
+                    }
+                }
+            }];
+        }
+    } else {
+        textView.autocorrectionType = UITextAutocorrectionTypeYes;
+        textView.autocapitalizationType = UITextAutocapitalizationTypeSentences;
+
+        self.hidden = YES;
+        if (callback) {
+            callback(NO);
         }
     }
-    self.hidden = YES;
-    return NO;
 }
 
 - (void)updateFrame:(CGRect)frame {

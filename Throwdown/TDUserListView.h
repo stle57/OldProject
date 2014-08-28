@@ -17,13 +17,13 @@
 
 @interface TDUserListView : UIView<UITableViewDelegate, UITableViewDataSource>
 
-@property (nonatomic, strong) TDUserList *communityInfo;
+@property (nonatomic, strong) TDUserList *userList;
 @property (nonatomic, strong) NSMutableArray *filteredList;
 @property (nonatomic) NSMutableArray  *userNames;
 @property (nonatomic, weak) id <TDUserListViewDelegate> delegate;
 
 - (instancetype)initWithFrame:(CGRect)frame;
-- (BOOL)shouldShowUserSuggestions:(NSString *)text;
+- (void)showUserSuggestions:(UITextView *)textView callback:(void (^)(BOOL success))callback;
 - (void)updateFrame:(CGRect)frame;
 
 @end

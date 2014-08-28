@@ -112,8 +112,8 @@ static CGFloat const kCommentWidthNoPreview = 306.;
 #pragma mark - TTTAttributedLabelDelegate
 
 - (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithURL:(NSURL *)url {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(userProfilePressedWithId:)]) {
-        [self.delegate userProfilePressedWithId:[NSNumber numberWithInteger:[[url path] integerValue]]];
+    if ([TDViewControllerHelper isThrowdownURL:url] && self.delegate && [self.delegate respondsToSelector:@selector(userProfilePressedWithId:)]) {
+        [self.delegate userProfilePressedWithId:[NSNumber numberWithInteger:[[[url path] lastPathComponent] integerValue]]];
     }
     if (self.delegate && [self.delegate respondsToSelector:@selector(activityPressedFromRow:)]) {
         [self.delegate activityPressedFromRow:[NSNumber numberWithInteger:self.row]];

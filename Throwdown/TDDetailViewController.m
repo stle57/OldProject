@@ -47,6 +47,7 @@ static float const kMaxInputHeight = 100.;
     self.delegate = nil;
     self.post = nil;
     self.postId = nil;
+    self.slug = nil;
     self.tableView.delegate = nil;
     self.tableView.dataSource = nil;
     self.tableView = nil;
@@ -139,6 +140,8 @@ static float const kMaxInputHeight = 100.;
     }
     if (self.postId) {
         [[TDPostAPI sharedInstance] getFullPostInfoForPostId:self.postId];
+    } else if (self.slug) {
+        [[TDPostAPI sharedInstance] getFullPostInfoForPostSlug:self.slug];
     }
 }
 
@@ -240,12 +243,12 @@ static float const kMaxInputHeight = 100.;
 - (void)fullPostReturn:(NSNotification*)notification {
     if ([notification.userInfo isKindOfClass:[NSDictionary class]]) {
         TDPost *newPost = [[TDPost alloc] initWithDictionary:notification.userInfo];
-        if ([newPost.postId isEqualToNumber:self.postId]) {
+        if ((self.postId && [newPost.postId isEqualToNumber:self.postId]) || (self.slug && ([newPost.slug isEqualToString:self.slug] || [[newPost.postId stringValue] isEqualToString:self.slug]))) {
             [self.post loadUpFromDict:notification.userInfo];
+            self.postId = self.post.postId;
             [self.tableView reloadData];
         }
     }
-
 }
 
 - (void)postDeleted:(NSNotification*)notification {
@@ -558,10 +561,12 @@ static float const kMaxInputHeight = 100.;
     [self updateCommentSize:height];
     debug NSLog(@"H: %f / %f", height, textView.contentSize.height);
 
-    if ([self.userListView shouldShowUserSuggestions:textView.text]) {
-        // Make sure we do this after updateCommentSize
-        [self.userListView updateFrame:CGRectMake(0, 64, 320, self.commentView.frame.origin.y - 64)];
-    }
+    [self.userListView showUserSuggestions:textView callback:^(BOOL success) {
+        if (success) {
+            // Make sure we do this after updateCommentSize
+            [self.userListView updateFrame:CGRectMake(0, 64, 320, self.commentView.frame.origin.y - 64)];
+        }
+    }];
 }
 
 - (void)updateCommentSize:(CGFloat)height {

@@ -50,6 +50,7 @@
         self.refreshView.image = [UIImage imageNamed:@"ptr-0000"];
         self.refreshView.animationImages = self.animationImages;
         self.refreshView.animationDuration = 2;
+        self.refreshView.hidden = YES;
         [self addSubview:self.refreshView];
 
         self.releaseText = [[UILabel alloc] initWithFrame:CGRectMake(0, 82, 320, 15)];
@@ -79,6 +80,7 @@
         self.releaseText.hidden = YES;
         self.minAnimationReached = NO;
         self.originalInset = containingScrollView.contentInset;
+        self.refreshView.hidden = NO;
         [UIView animateWithDuration:0.2 delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
             containingScrollView.contentInset = UIEdgeInsetsMake(self.frame.size.height + containingScrollView.contentInset.top, self.originalInset.left, self.originalInset.bottom, self.originalInset.right);
         } completion:^(BOOL finished) {
@@ -91,7 +93,10 @@
         } else {
             self.releaseText.hidden = YES;
         }
-        int pic = (abs(containingScrollView.contentOffset.y) - 40) / 10;
+        int pic = (abs(containingScrollView.contentOffset.y) - containingScrollView.contentInset.top - 20) / 10;
+        if (!self.isRefreshing) {
+            self.refreshView.hidden = pic < 0;
+        }
         if (pic > 7) {
             pic = 7;
         }
@@ -111,6 +116,7 @@
             [self.refreshView stopAnimating];
             self.refreshView.image = [UIImage imageNamed:@"ptr-0000"];
             self.scrollView = nil;
+            self.refreshView.hidden = YES;
         }];
     } else {
         self.minAnimationReached = YES;

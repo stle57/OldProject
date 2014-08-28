@@ -60,12 +60,12 @@ NSLocalizedStringFromTableInBundle(key, @"NSDateTimeAgo", [NSBundle bundleWithPa
     }
     else if (deltaMinutes < (24 * 60 * 61))
     {
-        return NSDateTimeAgoLocalizedStrings(@"1m");
+        return NSDateTimeAgoLocalizedStrings(@"1mo");
     }
     else if (deltaMinutes < (24 * 60 * 365.25))
     {
         minutes = (int)floor(deltaMinutes/(60 * 24 * 30));
-        return [self stringFromFormat:@"%%d%@m" withValue:minutes];
+        return [self stringFromFormat:@"%%d%@mo" withValue:minutes];
     }
     else if (deltaMinutes < (24 * 60 * 731))
     {

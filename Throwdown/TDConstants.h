@@ -37,6 +37,7 @@ static NSString *const CTImage = @"image/jpeg";
 
 static double const kAutomaticRefreshTimeout = 30; // in seconds - minium time between reloading feed after opening app
 static double const kMaxSessionLength = 30; // in seconds
+static double const kReloadUserListTime = 300; // seconds
 static NSString *const kAnalyticsLogfile = @"analyticsLogfile.bin";
 static NSString *const kApplicationUUIDKey = @"TDApplicationUUIDKey";
 
@@ -53,7 +54,6 @@ static NSString *const kRecordedTrimmedMovieFilePath = @"Documents/current_recor
 static int const kMaxRecordingSeconds = 30;
 static double const kMinFileSpaceForRecording = 50 * 1024^2; // 50mb
 static double const kGlobalVideoTrimTime = 0.05; // seconds
-static int const kReloadUserListTime = 300; // seconds
 
 // NSNotification types
 static NSString *const TDNotificationReloadHome = @"TDNotificationReloadHome";
@@ -98,6 +98,7 @@ static NSString *const kSpinningAnimation = @"rotationAnimation";
 #define CELL_IDENTIFIER_ACTIVITY        @"TDActivityCell"
 #define CELL_IDENTIFIER_PROFILE         @"TDUserProfileCell"
 #define CELL_IDENTIFIER_EDITPROFILE     @"TDUserEditCell"
+#define CELL_NO_MORE_POSTS              @"TDNoMorePostsCell"
 #define TOAST_TAG                       87352
 #define COMMENT_MESSAGE_WIDTH           306.0
 #define COMMENT_MESSAGE_FONT_SIZE       15.0
@@ -116,6 +117,7 @@ static NSString *const kSpinningAnimation = @"rotationAnimation";
 #define TD_POST_EVENT_COUNT             10
 
 + (TDEnvironment)environment;
++ (NSString *)appScheme;
 + (NSString *)getBaseURL;
 + (NSString *)getShareURL:(NSString *)slug;
 + (NSString *)flurryKey;

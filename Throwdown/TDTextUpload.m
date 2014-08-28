@@ -14,16 +14,18 @@
 
 @property (nonatomic) NSString *comment;
 @property (nonatomic) BOOL isPR;
+@property (nonatomic) BOOL isPrivate;
 
 @end
 
 @implementation TDTextUpload
 
-- (instancetype)initWithComment:(NSString *)comment isPR:(BOOL)isPR {
+- (instancetype)initWithComment:(NSString *)comment isPR:(BOOL)isPR isPrivate:(BOOL)isPrivate {
     self = [super init];
     if (self) {
         self.comment = comment;
         self.isPR = isPR;
+        self.isPrivate = isPrivate;
     }
     return self;
 }
@@ -38,16 +40,24 @@
 }
 
 - (void)upload {
-    [[TDPostAPI sharedInstance] addPost:nil comment:self.comment isPR:self.isPR kind:@"text" success:^{
-        if (self.delegate) {
-            [self.delegate uploadComplete];
-        }
-        [self clean];
+    [[TDPostAPI sharedInstance] addPost:nil comment:self.comment isPR:self.isPR kind:@"text" userGenerated:NO sharingTo:self.shareOptions isPrivate:self.isPrivate success:^(NSDictionary *response) {
+        [self uploadComplete];
     } failure:^{
-        if (self.delegate) {
-            [self.delegate uploadFailed];
-        }
+        [self uploadFailed];
     }];
+}
+
+- (void)uploadComplete {
+    if (self.delegate) {
+        [self.delegate uploadComplete];
+    }
+    [self clean];
+}
+
+- (void)uploadFailed {
+    if (self.delegate) {
+        [self.delegate uploadFailed];
+    }
 }
 
 #pragma mark TDUploadProgressUIDelegate

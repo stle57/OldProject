@@ -12,6 +12,7 @@
 #import "TDToastView.h"
 #import "iRate.h"
 #import "TDRateUsController.h"
+#import <FacebookSDK/FacebookSDK.h>
 
 @interface TDAppDelegate : UIResponder <UIApplicationDelegate>
 
@@ -26,8 +27,12 @@
 + (CGFloat)minWidthOfThisLabel:(UILabel *)aLabel;
 + (UIImage *)squareImageWithImage:(UIImage *)image scaledToSize:(CGSize)newSize;
 + (UIViewController *)topMostController;
++ (CGFloat)widthOfTextForString:(NSString *)aString andFont:(UIFont *)aFont maxSize:(CGSize)aSize;
 - (TDPost *)postWithPostId:(NSNumber *)postId;
 - (void)showToastWithText:(NSString *)text type:(kToastType)type payload:(NSDictionary *)payload delegate:(id<TDToastViewDelegate>)delegate;
 
+#pragma mark - Facebook
+- (void)sessionStateChanged:(FBSession *)session state:(FBSessionState)state error:(NSError *)error;
+- (void)sessionStateChanged:(FBSession *)session state:(FBSessionState)state error:(NSError *)error success:(void (^)(void))success failure:(void (^)(NSString *error))failure;
 
 @end

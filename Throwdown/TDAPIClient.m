@@ -13,6 +13,7 @@
 #import "TDFileSystemHelper.h"
 #import "TDDeviceInfo.h"
 #import "UIImage+Resizing.h"
+#import "TDViewControllerHelper.h"
 
 @interface TDAPIClient ()
 
@@ -288,6 +289,70 @@
     }];
 }
 
+#pragma mark - Social Networks registration
+
+- (void)registerFacebookAccessToken:(NSString *)token expiresAt:(NSDate *)expiresAt userId:(NSString *)userId identifier:(NSString *)identifier permissions:(NSArray *)permissions callback:(void (^)(BOOL success))callback {
+    NSMutableDictionary *identity = [@{
+                              @"provider": @"facebook",
+                              @"uid": userId,
+                              @"access_token": token,
+                              @"expires_at": [TDViewControllerHelper getUTCFormatedDate:expiresAt],
+                              @"identifier": identifier
+                              } mutableCopy];
+    if (permissions) {
+        [identity setObject:[permissions componentsJoinedByString:@"|"] forKey:@"permissions"];
+    }
+    [self registerIdentity:identity callback:callback];
+}
+
+- (void)deleteFacebookAccessTokenForUID:(NSString *)userId {
+    [self deleteIdentity:@{ @"provider": @"facebook", @"uid": userId }];
+}
+
+- (void)registerTwitterAccessToken:(NSString *)token tokenSecret:(NSString *)secret userId:(NSString *)userId identifier:(NSString *)identifier callback:(void (^)(BOOL success))callback {
+    NSDictionary *identity = @{
+                               @"provider": @"twitter",
+                               @"uid": userId,
+                               @"access_token": token,
+                               @"token_secret": secret,
+                               @"identifier": identifier
+                               };
+    [self registerIdentity:identity callback:callback];
+}
+
+- (void)deleteTwitterAccessTokenForUID:(NSString *)userId {
+    [self deleteIdentity:@{ @"provider": @"twitter", @"uid": userId }];
+}
+
+- (void)registerIdentity:(NSDictionary *)identity callback:(void (^)(BOOL success))callback {
+    debug NSLog(@"registering identity");
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/identities.json"];
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [self.httpManager POST:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken, @"identity": identity} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        debug NSLog(@"identity registered");
+        if (callback) {
+            callback(YES);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"identity failed registration %@", error);
+        if (callback) {
+            callback(NO);
+        }
+    }];
+}
+
+- (void)deleteIdentity:(NSDictionary *)identity {
+    debug NSLog(@"deleting token: %@", identity);
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/identities/identity.json"];
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [self.httpManager DELETE:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken, @"identity": identity } success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        debug NSLog(@"identity deleted");
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        NSLog(@"identity delete failed %@", error);
+    }];
+}
+
+
 #pragma mark - Activity / Notifications
 
 - (void)getActivityForUserToken:(NSString *)userToken success:(void (^)(NSArray *activities))success failure:(void (^)(void))failure {
@@ -437,15 +502,21 @@
 
 
 #pragma mark - Events
-- (void)logEvent:(NSString *)event sessionId:(NSNumber *)sessionId {
+- (void)logEvent:(NSString *)event sessionId:(NSNumber *)sessionId withInfo:(NSString *)info source:(NSString *)source {
     NSString *url = [NSString stringWithFormat:@"%@/api/v1/events.json", [TDConstants getBaseURL]];
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
 
-    NSDictionary *eventDetails;
+    NSMutableDictionary *eventDetails;
     if (sessionId) {
-        eventDetails = @{@"device_session_id": sessionId, @"action": event};
+        eventDetails = [@{@"device_session_id": sessionId, @"action": event} mutableCopy];
     } else {
-        eventDetails = @{@"action": event};
+        eventDetails = [@{@"action": event} mutableCopy];
+    }
+    if (info) {
+        [eventDetails setObject:info forKey:@"extras"];
+    }
+    if (source) {
+        [eventDetails setObject:source forKey:@"source"];
     }
     NSMutableDictionary *params = [@{@"event": eventDetails} mutableCopy];
     if ([TDCurrentUser sharedInstance].authToken) {

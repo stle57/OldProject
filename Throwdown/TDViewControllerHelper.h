@@ -17,6 +17,7 @@
 + (void)navigateToHomeFrom:(UIViewController *)fromController;
 + (BOOL)validateEmail:(NSString *)email;
 + (NSDate *)dateForRFC3339DateTimeString:(NSString *)rfc3339DateTimeString;
++ (NSString *)getUTCFormatedDate:(NSDate *)date;
 + (BOOL)textAttributeTapped:(NSString *)attribute inTap:(UITapGestureRecognizer *)recognizer action:(void (^)(id value))actionBlock;
 + (NSAttributedString *)makeParagraphedTextWithAttributedString:(NSAttributedString *)attributedString;
 + (NSAttributedString *)makeParagraphedTextWithAttributedString:(NSAttributedString *)attributedString withMultiple:(CGFloat)multiple;
@@ -24,5 +25,8 @@
 + (void)linkUsernamesInLabel:(TTTAttributedLabel *)label users:(NSArray *)users;
 + (void)linkUsernamesInLabel:(TTTAttributedLabel *)label users:(NSArray *)users pattern:(NSString *)pattern;
 + (CGFloat)heightForComment:(NSString *)text withMentions:(NSArray *)mentions;
++ (BOOL)isThrowdownURL:(NSURL *)url;
++ (BOOL)isSafariURL:(NSURL *)url;
++ (BOOL)askUserToOpenInSafari:(NSURL *)url;
 
 @end

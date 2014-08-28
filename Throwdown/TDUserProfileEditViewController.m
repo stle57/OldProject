@@ -20,6 +20,7 @@
 #import "TDAPIClient.h"
 #import "UIAlertView+TDBlockAlert.h"
 #import "TDUserPushNotificationsEditViewController.h"
+#import "TDSocialNetworksViewController.h"
 
 @interface TDUserProfileEditViewController ()
 
@@ -38,7 +39,7 @@
 @synthesize password;
 @synthesize bio;
 @synthesize pictureFileName;
-@synthesize fromFrofileType;
+@synthesize fromProfileType;
 @synthesize editedProfileImage;
 @synthesize tempFlyInImageView;
 
@@ -239,7 +240,7 @@
 }
 
 - (void)leave {
-    switch (fromFrofileType) {
+    switch (fromProfileType) {
         case kFromProfileScreenType_OwnProfile:
         {
             [self.navigationController popViewControllerAnimated:YES];
@@ -443,7 +444,7 @@
 #pragma mark - AlertView
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if (alertView.tag == 89892 && buttonIndex == 0) {
-        switch (fromFrofileType) {
+        switch (fromProfileType) {
             case kFromProfileScreenType_OwnProfile:
                 [self.navigationController popViewControllerAnimated:YES];
             break;
@@ -457,17 +458,16 @@
 #pragma mark - TableView Delegates
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     if (section == 1) {
-        self.sectionHeaderLabel.text = @"PRIVATE INFORMATION";
-        self.sectionHeaderLabel.font = [UIFont fontWithName:TDFontProximaNovaSemibold size:15.0];
-        self.sectionHeaderLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
-        UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0.0,
-                                                                      0.0,
-                                                                      self.view.frame.size.width,
-                                                                      self.sectionHeaderLabel.frame.size.height)];
-        CGRect headerLabelFrame = self.sectionHeaderLabel.frame;
+        UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, 320, 40)];
+        UILabel *sectionHeaderLabel = [[UILabel alloc] initWithFrame:headerView.layer.frame];
+        sectionHeaderLabel.text = @"PRIVATE INFORMATION";
+        sectionHeaderLabel.font = [UIFont fontWithName:TDFontProximaNovaSemibold size:15.0];
+        sectionHeaderLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
+        CGRect headerLabelFrame = sectionHeaderLabel.frame;
         headerLabelFrame.origin.x = 12.0;
-        self.sectionHeaderLabel.frame = headerLabelFrame;
-        [headerView addSubview:self.sectionHeaderLabel];
+        headerLabelFrame.origin.y += 8;
+        sectionHeaderLabel.frame = headerLabelFrame;
+        [headerView addSubview:sectionHeaderLabel];
         return headerView;
     }
 
@@ -477,7 +477,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     switch (section) {
         case 1:
-            return self.sectionHeaderLabel.frame.size.height;
+            return 40;
         break;
         case 0:
         case 2:
@@ -503,8 +503,8 @@
         case 1: // private
             return 2;
             break;
-        case 2: // push / password / app rate
-            return 3;
+        case 2: // push / social / password / app rate
+            return 4;
             break;
         case 3: // log out
             return 1;
@@ -633,11 +633,18 @@
                 case 1:
                     cell.topLine.hidden = NO;
                     cell.longTitleLabel.hidden = NO;
-                    cell.longTitleLabel.text = @"Change Password";
+                    cell.longTitleLabel.text = @"Social Networks";
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                     break;
                 case 2:
+                    cell.topLine.hidden = YES;
+                    cell.longTitleLabel.hidden = NO;
+                    cell.longTitleLabel.text = @"Change Password";
+                    cell.selectionStyle = UITableViewCellSelectionStyleGray;
+                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                    break;
+                case 3:
                     cell.topLine.hidden = YES;
                     cell.longTitleLabel.hidden = NO;
                     cell.longTitleLabel.text = @"Rate Throwdown in App Store";
@@ -697,12 +704,14 @@
                     [self gotoEditPushNotifications];
                     break;
                 case 1:
-                    [self showEditPassword];
+                    [self showSocialNetworks];
                     break;
                 case 2:
+                    [self showEditPassword];
+                case 3:
                     [self gotoRateAppLink];
                     break;
-                default:
+                  default:
                     break;
             }
         break;
@@ -727,6 +736,12 @@
         default:
             break;
     }
+}
+
+#pragma mark - Edit Password
+- (void)showSocialNetworks {
+    TDSocialNetworksViewController *vc = [[TDSocialNetworksViewController alloc] init];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma mark - Edit Password

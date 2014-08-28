@@ -44,6 +44,7 @@ static NSString *const kTracksKey = @"tracks";
 @property (nonatomic) TTTAttributedLabel *commentLabel;
 @property (nonatomic) UIImageView *controlView;
 @property (nonatomic) UIImageView *prStar;
+@property (nonatomic) UIImageView *privatePost;
 @property (nonatomic) UIImageView *controlImage;
 @property (nonatomic) UIImageView *playerSpinner;
 @property (nonatomic) AVURLAsset *videoAsset;
@@ -79,6 +80,13 @@ static NSString *const kTracksKey = @"tracks";
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+- (void)removeFromSuperview {
+    // remove any observers if this view is killed
+    [self removeVideo];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [super removeFromSuperview];
+}
+
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
@@ -90,6 +98,11 @@ static NSString *const kTracksKey = @"tracks";
         self.prStar.hidden = YES;
         [self addSubview:self.prStar];
 
+        self.privatePost = [[UIImageView alloc] initWithFrame:CGRectMake(200, 9, 20, 20)];
+        self.privatePost.image = [UIImage imageNamed:@"lock_icon"];
+        self.privatePost.hidden = YES;
+        [self addSubview:self.privatePost];
+
         self.usernameLabel = [[UILabel alloc] initWithFrame:CGRectMake(45, 5, 215, 32)];
         self.usernameLabel.font = [TDConstants fontSemiBoldSized:17.0];
         self.usernameLabel.textColor = [TDConstants brandingRedColor];
@@ -100,6 +113,7 @@ static NSString *const kTracksKey = @"tracks";
         [self addSubview:self.usernameLabel];
 
         self.commentLabel = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(7, kHeightOfProfileRow, COMMENT_MESSAGE_WIDTH, 0)];
+        self.commentLabel.enabledTextCheckingTypes = NSTextCheckingTypeLink;
         self.commentLabel.textColor = [TDConstants commentTextColor];
         self.commentLabel.font = COMMENT_MESSAGE_FONT;
         self.commentLabel.delegate = self;
@@ -157,6 +171,12 @@ static NSString *const kTracksKey = @"tracks";
     CGRect frame = self.usernameLabel.frame;
     frame.size.width = size.width;
     self.usernameLabel.frame = frame;
+    if (post.isPrivate) {
+        self.privatePost.center = CGPointMake(frame.origin.x + size.width + 16, self.privatePost.center.y); // icon size = 20 / 2  margin: 6 = 16
+    }
+
+    self.prStar.hidden = !post.personalRecord;
+    self.privatePost.hidden = !post.isPrivate;
 
     // Set first to not show the wrong image while loading or if load fails
     [self.userProfileImage setImage:[UIImage imageNamed:@"prof_pic_default"]];
@@ -193,8 +213,6 @@ static NSString *const kTracksKey = @"tracks";
         self.commentLabel.hidden = YES;
         self.mediaOffset = kHeightOfProfileRow;
     }
-
-    self.prStar.hidden = !post.personalRecord;
 
     switch (post.kind) {
         case TDPostKindPhoto:
@@ -262,20 +280,22 @@ static NSString *const kTracksKey = @"tracks";
 }
 
 - (void)removeVideo {
-    if (self.videoHolderView) {
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationPauseTapGesture object:nil];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationResumeTapGesture object:nil];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationStopPlayers object:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationPauseTapGesture object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationResumeTapGesture object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationStopPlayers object:self];
+
+    if (self.playerItem) {
+        [self.playerItem removeObserver:self forKeyPath:@"status" context:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemDidPlayToEndTimeNotification object:self.playerItem];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemPlaybackStalledNotification object:self.playerItem];
-
-        [self.playerItem removeObserver:self forKeyPath:@"status" context:nil];
+        self.playerItem = nil;
+    }
+    if (self.videoHolderView) {
         [self.playerLayer removeFromSuperlayer];
         [self.videoHolderView removeFromSuperview];
         [self.controlView removeFromSuperview];
         [self.playerSpinner removeFromSuperview];
         self.player = nil;
-        self.playerItem = nil;
         self.playerLayer = nil;
         self.videoHolderView = nil;
         self.controlView = nil;
@@ -438,7 +458,7 @@ static NSString *const kTracksKey = @"tracks";
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if (object == self.playerItem && [keyPath isEqualToString:@"status"]) {
+    if ([keyPath isEqualToString:@"status"]) {
         debug NSLog(@"PLAYBACK: status at state %d", self.state);
         dispatch_async(dispatch_get_main_queue(), ^{
             if (self.playerItem.status == AVPlayerItemStatusReadyToPlay) {
@@ -532,8 +552,10 @@ static NSString *const kTracksKey = @"tracks";
 #pragma mark - TTTAttributedLabelDelegate
 
 - (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithURL:(NSURL *)url {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(userProfilePressedWithId:)]) {
-        [self.delegate userProfilePressedWithId:[NSNumber numberWithInteger:[[url path] integerValue]]];
+    if ([TDViewControllerHelper isThrowdownURL:url] && self.delegate && [self.delegate respondsToSelector:@selector(userProfilePressedWithId:)]) {
+        [self.delegate userProfilePressedWithId:[NSNumber numberWithInteger:[[[url path] lastPathComponent] integerValue]]];
+    } else {
+        [TDViewControllerHelper askUserToOpenInSafari:url];
     }
 }
 

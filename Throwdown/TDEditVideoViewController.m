@@ -14,7 +14,7 @@
 #import "AssetsLibrary/ALAssetsLibrary.h"
 #import "TDPostAPI.h"
 #import "TDSlideLeftSegue.h"
-#import "TDShareVideoViewController.h"
+#import "TDCreatePostViewController.h"
 #import "TDUnwindSlideLeftSegue.h"
 #import "TDConstants.h"
 #import "TDFileSystemHelper.h"
@@ -220,7 +220,7 @@ static const NSString *ItemStatusContext;
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"MediaCloseSegue"]) {
-        TDShareVideoViewController *vc = [segue destinationViewController];
+        TDCreatePostViewController *vc = [segue destinationViewController];
         [vc addMedia:self.filename thumbnail:self.thumbnailPath isOriginal:self.isOriginal];
     }
 }
@@ -435,7 +435,7 @@ static const NSString *ItemStatusContext;
         dispatch_async(dispatch_get_main_queue(), ^{
             if (status == AVKeyValueStatusLoaded) {
 
-                // TODO: What to do when there is no videoTrack?
+                // Will crash if there is no videoTrack
                 AVAssetTrack* videoTrack = [[self.currentVideoAsset tracksWithMediaType:AVMediaTypeVideo] objectAtIndex:0];
                 CGSize videoSize = videoTrack.naturalSize;
 
@@ -453,8 +453,8 @@ static const NSString *ItemStatusContext;
                 rect.origin.x = 0;
                 rect.origin.y = 0;
 
-                UIInterfaceOrientation orientation = [self orientationForTrack:videoTrack];
-                if (orientation == UIInterfaceOrientationPortrait || orientation == UIInterfaceOrientationPortraitUpsideDown) {
+                UIImageOrientation orientation = [self orientationForTrack:videoTrack];
+                if (orientation == UIImageOrientationRight || orientation == UIImageOrientationLeft) {
                     rect.size.width = videoSize.height * scale;
                     rect.size.height = videoSize.width * scale;
                 } else {
@@ -497,24 +497,21 @@ static const NSString *ItemStatusContext;
                 debug NSLog(@"content size %@", NSStringFromCGSize(self.scrollView.contentSize));
                 debug NSLog(@"player layer size %@", NSStringFromCGRect(self.playerLayer.frame));
                 debug NSLog(@"container size %@", NSStringFromCGRect(self.videoContainerView.frame));
+                debug NSLog(@"Gravity: %@ Rect: %@ Size: %@", self.playerLayer.videoGravity, NSStringFromCGRect(self.playerLayer.videoRect), NSStringFromCGSize(self.playerItem.presentationSize));
             }
         });
     }];
 }
 
-- (UIInterfaceOrientation)orientationForTrack:(AVAssetTrack *)videoTrack {
-    CGSize size = [videoTrack naturalSize];
+- (UIImageOrientation)orientationForTrack:(AVAssetTrack *)videoTrack {
     CGAffineTransform txf = [videoTrack preferredTransform];
 
-    if (size.width == txf.tx && size.height == txf.ty) {
-        return UIInterfaceOrientationLandscapeLeft;
-    } else if (txf.tx == 0 && txf.ty == 0) {
-        return UIInterfaceOrientationLandscapeRight;
-    } else if (txf.tx == 0 && txf.ty == size.width) {
-        return UIInterfaceOrientationPortraitUpsideDown;
-    } else {
-        return UIInterfaceOrientationPortrait;
-    }
+    if(txf.a == 0    && txf.b == 1.0  && txf.c == -1.0 && txf.d == 0)    { return UIImageOrientationRight; } // or UIInterfaceOrientationPortrait = bome button at the bottom
+    if(txf.a == 0    && txf.b == -1.0 && txf.c == 1.0  && txf.d == 0)    { return UIImageOrientationLeft; } // or UIInterfaceOrientationPortraitUpsideDown = home button at top
+    if(txf.a == 1.0  && txf.b == 0    && txf.c == 0    && txf.d == 1.0)  { return UIImageOrientationUp; } // or UIInterfaceOrientationLandscapeRight = home button on the right
+    if(txf.a == -1.0 && txf.b == 0    && txf.c == 0    && txf.d == -1.0) { return UIImageOrientationDown; } // or UIInterfaceOrientationLandscapeLeft = home button on the left
+    // default to home button at the bottom
+    return UIImageOrientationRight;
 }
 
 - (void)trimVideo {
@@ -624,31 +621,38 @@ static const NSString *ItemStatusContext;
     CGFloat shorter = MIN(videoSize.height, videoSize.width);
     CGFloat longer = MAX(videoSize.height, videoSize.width);
     CGFloat rotation, tx, ty;
-    UIInterfaceOrientation orientation = [self orientationForTrack:videoTrack];
+    UIImageOrientation orientation = [self orientationForTrack:videoTrack];
     switch (orientation) {
-        case UIInterfaceOrientationPortrait:
+        case UIImageOrientationRight:
             rotation = M_PI_2;
             tx = -(rect.origin.y * videoSize.height / self.scrollView.frame.size.height);
             ty = -shorter;
             break;
 
-        case UIInterfaceOrientationPortraitUpsideDown:
+        case UIImageOrientationLeft:
             rotation = -M_PI_2;
             tx = 0 - (longer - (rect.origin.y * videoSize.height / self.scrollView.frame.size.height));
             ty = 0;
             break;
 
-        case UIInterfaceOrientationLandscapeLeft: // home button on the left
+        case UIImageOrientationDown:
             rotation = M_PI;
             tx = 0 - (longer - (rect.origin.x * videoSize.height / self.scrollView.frame.size.height));
             ty = -shorter;
             break;
 
-        case UIInterfaceOrientationLandscapeRight: // home button on the right
+        case UIImageOrientationUp:
             rotation = 0;
             tx = -(rect.origin.x * videoSize.height / self.scrollView.frame.size.height);
             ty = 0;
             break;
+
+        default:
+            rotation = 0;
+            tx = 0;
+            ty = 0;
+            break;
+
     }
 
     //create a video instruction
@@ -692,23 +696,32 @@ static const NSString *ItemStatusContext;
     [videoReader addOutput:assetVideoReaderOutput];
 
     // Audio
-    // format description is required when passing through to mpeg4
-    // could crash if we don't get a format back here.
-    AVAssetTrack* audioTrack = [[asset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
-    CMFormatDescriptionRef formatDescription = NULL;
-    NSArray *audioFormatDescriptions = [audioTrack formatDescriptions];
-    if ([audioFormatDescriptions count] > 0) {
-        formatDescription = (__bridge CMFormatDescriptionRef)[audioFormatDescriptions objectAtIndex:0];
+    AVAssetTrack *audioTrack;
+    AVAssetWriterInput* audioWriterInput;
+    AVAssetReader *audioReader;
+    AVAssetReaderOutput *readerOutput;
+    if ([[asset tracksWithMediaType:AVMediaTypeAudio] count] > 0) {
+        audioTrack = [[asset tracksWithMediaType:AVMediaTypeAudio] objectAtIndex:0];
+
+        // format description is required when passing through to mpeg4
+        // could crash if we don't get a format back here.
+        NSArray *audioFormatDescriptions = [audioTrack formatDescriptions];
+        CMFormatDescriptionRef formatDescription = NULL;
+        if ([audioFormatDescriptions count] > 0) {
+            formatDescription = (__bridge CMFormatDescriptionRef)[audioFormatDescriptions objectAtIndex:0];
+        }
+
+        NSError *aerror = nil;
+        audioWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio outputSettings:nil sourceFormatHint:formatDescription];
+        audioWriterInput.expectsMediaDataInRealTime = YES;
+        audioReader = [AVAssetReader assetReaderWithAsset:asset error:&aerror];
+
+        readerOutput = [AVAssetReaderTrackOutput assetReaderTrackOutputWithTrack:audioTrack outputSettings:nil];
+        [audioReader addOutput:readerOutput];
+
+        [self.assetWriter addInput:audioWriterInput];
     }
 
-    NSError *aerror = nil;
-    AVAssetWriterInput* audioWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio outputSettings:nil sourceFormatHint:formatDescription];
-    audioWriterInput.expectsMediaDataInRealTime = YES;
-    AVAssetReader *audioReader = [AVAssetReader assetReaderWithAsset:asset error:&aerror];
-    AVAssetReaderOutput *readerOutput = [AVAssetReaderTrackOutput assetReaderTrackOutputWithTrack:audioTrack outputSettings:nil];
-    [audioReader addOutput:readerOutput];
-
-    [self.assetWriter addInput:audioWriterInput];
     [self.assetWriter startWriting];
     [self.assetWriter startSessionAtSourceTime:kCMTimeZero];
     [videoReader startReading];
@@ -742,35 +755,45 @@ static const NSString *ItemStatusContext;
                     case AVAssetReaderStatusCompleted: {
                         // video compression done
                         // Hook up audio
-                        [audioReader startReading];
-                        [self.assetWriter startSessionAtSourceTime:kCMTimeZero];
+                        if (audioTrack) {
+                            [audioReader startReading];
+                            [self.assetWriter startSessionAtSourceTime:kCMTimeZero];
 
-                        while ([audioWriterInput isReadyForMoreMediaData]) {
-                            CMSampleBufferRef nextBuffer;
-                            if ([audioReader status] == AVAssetReaderStatusReading &&
-                                (nextBuffer = [readerOutput copyNextSampleBuffer])) {
+                            while ([audioWriterInput isReadyForMoreMediaData]) {
+                                CMSampleBufferRef nextBuffer;
+                                if ([audioReader status] == AVAssetReaderStatusReading &&
+                                    (nextBuffer = [readerOutput copyNextSampleBuffer])) {
 
-                                BOOL result = [audioWriterInput appendSampleBuffer:nextBuffer];
-                                CFRelease(nextBuffer);
-                                debug NSLog(@"Writing audio buffer");
-                                if (!result) {
-                                    NSLog(@"Audio reading cancelled!");
-                                    [audioReader cancelReading];
-                                    break;
+                                    BOOL result = [audioWriterInput appendSampleBuffer:nextBuffer];
+                                    CFRelease(nextBuffer);
+                                    debug NSLog(@"Writing audio buffer");
+                                    if (!result) {
+                                        NSLog(@"Audio reading cancelled!");
+                                        [audioReader cancelReading];
+                                        break;
+                                    }
+
+                                } else {
+                                    debug NSLog(@"audio writing finished, with start %f duration %f", CMTimeGetSeconds(audioTrack.timeRange.start), CMTimeGetSeconds(audioTrack.timeRange.duration));
+
+                                    [audioWriterInput markAsFinished];
+                                    [self.assetWriter endSessionAtSourceTime:videoTrack.timeRange.duration];
+                                    [self.assetWriter finishWritingWithCompletionHandler:^{
+                                        debug NSLog(@"Finished writing to file");
+                                        [self.currentUpload attachVideo:exportPath];
+                                        self.currentUpload = nil;
+                                        self.assetWriter = nil;
+                                    }];
                                 }
-
-                            } else {
-                                debug NSLog(@"audio writing finished, with start %f duration %f", CMTimeGetSeconds(audioTrack.timeRange.start), CMTimeGetSeconds(audioTrack.timeRange.duration));
-
-                                [audioWriterInput markAsFinished];
-                                [self.assetWriter endSessionAtSourceTime:videoTrack.timeRange.duration];
-                                [self.assetWriter finishWritingWithCompletionHandler:^{
-                                    debug NSLog(@"Finished writing to file");
-                                    [self.currentUpload attachVideo:exportPath];
-                                    self.currentUpload = nil;
-                                    self.assetWriter = nil;
-                                }];
                             }
+                        } else {
+                            [self.assetWriter endSessionAtSourceTime:videoTrack.timeRange.duration];
+                            [self.assetWriter finishWritingWithCompletionHandler:^{
+                                debug NSLog(@"Finished writing to file");
+                                [self.currentUpload attachVideo:exportPath];
+                                self.currentUpload = nil;
+                                self.assetWriter = nil;
+                            }];
                         }
                     }
                     break;
