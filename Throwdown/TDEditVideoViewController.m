@@ -453,8 +453,8 @@ static const NSString *ItemStatusContext;
                 rect.origin.x = 0;
                 rect.origin.y = 0;
 
-                UIInterfaceOrientation orientation = [self orientationForTrack:videoTrack];
-                if (orientation == UIInterfaceOrientationPortrait || orientation == UIInterfaceOrientationPortraitUpsideDown) {
+                UIImageOrientation orientation = [self orientationForTrack:videoTrack];
+                if (orientation == UIImageOrientationRight || orientation == UIImageOrientationLeft) {
                     rect.size.width = videoSize.height * scale;
                     rect.size.height = videoSize.width * scale;
                 } else {
@@ -497,24 +497,21 @@ static const NSString *ItemStatusContext;
                 debug NSLog(@"content size %@", NSStringFromCGSize(self.scrollView.contentSize));
                 debug NSLog(@"player layer size %@", NSStringFromCGRect(self.playerLayer.frame));
                 debug NSLog(@"container size %@", NSStringFromCGRect(self.videoContainerView.frame));
+                debug NSLog(@"Gravity: %@ Rect: %@ Size: %@", self.playerLayer.videoGravity, NSStringFromCGRect(self.playerLayer.videoRect), NSStringFromCGSize(self.playerItem.presentationSize));
             }
         });
     }];
 }
 
-- (UIInterfaceOrientation)orientationForTrack:(AVAssetTrack *)videoTrack {
-    CGSize size = [videoTrack naturalSize];
+- (UIImageOrientation)orientationForTrack:(AVAssetTrack *)videoTrack {
     CGAffineTransform txf = [videoTrack preferredTransform];
 
-    if (size.width == txf.tx && size.height == txf.ty) {
-        return UIInterfaceOrientationLandscapeLeft;
-    } else if (txf.tx == 0 && txf.ty == 0) {
-        return UIInterfaceOrientationLandscapeRight;
-    } else if (txf.tx == 0 && txf.ty == size.width) {
-        return UIInterfaceOrientationPortraitUpsideDown;
-    } else {
-        return UIInterfaceOrientationPortrait;
-    }
+    if(txf.a == 0    && txf.b == 1.0  && txf.c == -1.0 && txf.d == 0)    { return UIImageOrientationRight; } // or UIInterfaceOrientationPortrait = bome button at the bottom
+    if(txf.a == 0    && txf.b == -1.0 && txf.c == 1.0  && txf.d == 0)    { return UIImageOrientationLeft; } // or UIInterfaceOrientationPortraitUpsideDown = home button at top
+    if(txf.a == 1.0  && txf.b == 0    && txf.c == 0    && txf.d == 1.0)  { return UIImageOrientationUp; } // or UIInterfaceOrientationLandscapeRight = home button on the right
+    if(txf.a == -1.0 && txf.b == 0    && txf.c == 0    && txf.d == -1.0) { return UIImageOrientationDown; } // or UIInterfaceOrientationLandscapeLeft = home button on the left
+    // default to home button at the bottom
+    return UIImageOrientationRight;
 }
 
 - (void)trimVideo {
@@ -624,31 +621,38 @@ static const NSString *ItemStatusContext;
     CGFloat shorter = MIN(videoSize.height, videoSize.width);
     CGFloat longer = MAX(videoSize.height, videoSize.width);
     CGFloat rotation, tx, ty;
-    UIInterfaceOrientation orientation = [self orientationForTrack:videoTrack];
+    UIImageOrientation orientation = [self orientationForTrack:videoTrack];
     switch (orientation) {
-        case UIInterfaceOrientationPortrait:
+        case UIImageOrientationRight:
             rotation = M_PI_2;
             tx = -(rect.origin.y * videoSize.height / self.scrollView.frame.size.height);
             ty = -shorter;
             break;
 
-        case UIInterfaceOrientationPortraitUpsideDown:
+        case UIImageOrientationLeft:
             rotation = -M_PI_2;
             tx = 0 - (longer - (rect.origin.y * videoSize.height / self.scrollView.frame.size.height));
             ty = 0;
             break;
 
-        case UIInterfaceOrientationLandscapeLeft: // home button on the left
+        case UIImageOrientationDown:
             rotation = M_PI;
             tx = 0 - (longer - (rect.origin.x * videoSize.height / self.scrollView.frame.size.height));
             ty = -shorter;
             break;
 
-        case UIInterfaceOrientationLandscapeRight: // home button on the right
+        case UIImageOrientationUp:
             rotation = 0;
             tx = -(rect.origin.x * videoSize.height / self.scrollView.frame.size.height);
             ty = 0;
             break;
+
+        default:
+            rotation = 0;
+            tx = 0;
+            ty = 0;
+            break;
+
     }
 
     //create a video instruction
