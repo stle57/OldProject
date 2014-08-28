@@ -24,6 +24,9 @@ typedef NS_ENUM(NSUInteger, TDPostPrivacy) {
     TDPostPrivacyPrivate
 };
 
+static NSString *const kFacebookShareKey = @"TDLastShareToFacebook";
+static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
+
 @interface TDSharePostViewController () <UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate>
 
 @property (weak, nonatomic) IBOutlet UINavigationBar *navigationBar;
@@ -62,8 +65,8 @@ typedef NS_ENUM(NSUInteger, TDPostPrivacy) {
 
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
-    self.shareToFacebook = NO;
-    self.shareToTwitter = NO;
+    self.shareToFacebook = ([[TDCurrentUser sharedInstance] canPostToFacebook] && [[[NSUserDefaults standardUserDefaults] objectForKey:kFacebookShareKey] boolValue]);
+    self.shareToTwitter = ([[TDCurrentUser sharedInstance] canPostToTwitter] && [[[NSUserDefaults standardUserDefaults] objectForKey:kTwitterShareKey] boolValue]);
     self.privacy = TDPostPrivacyPublic;
 }
 
@@ -84,10 +87,18 @@ typedef NS_ENUM(NSUInteger, TDPostPrivacy) {
     NSMutableArray *shareOptions = [[NSMutableArray alloc] init];
     if (self.shareToFacebook) {
         [shareOptions addObject:@"facebook"];
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:kFacebookShareKey];
+    } else if ([[TDCurrentUser sharedInstance] canPostToFacebook]) {
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:NO] forKey:kFacebookShareKey];
     }
     if (self.shareToTwitter) {
         [shareOptions addObject:@"twitter"];
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:kTwitterShareKey];
+    } else if ([[TDCurrentUser sharedInstance] canPostToTwitter]) {
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:NO] forKey:kTwitterShareKey];
     }
+    [[NSUserDefaults standardUserDefaults] synchronize];
+
     if (self.filename) {
         [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUploadComments
                                                             object:nil
