@@ -698,12 +698,8 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
     TDPost *post = [self postForRow:row];
     if (post && post.postId) {
-        // Add the like for the update
         [post addLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
-
-        [self reloadAllRowsButTopForSection:row];
-
-        // Send to server
+        [self.tableView reloadData];
         [[TDPostAPI sharedInstance] likePostWithId:post.postId];
     }
 }
@@ -713,24 +709,10 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
     TDPost *post = [self postForRow:row];
     if (post && post.postId) {
-
-        // Remove the like for the update
         [post removeLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
-
-        [self reloadAllRowsButTopForSection:row];
-
+        [self.tableView reloadData];
         [[TDPostAPI sharedInstance] unLikePostWithId:post.postId];
     }
-}
-
-- (void)reloadAllRowsButTopForSection:(NSInteger)section {
-    NSInteger totalRows = [self tableView:nil numberOfRowsInSection:section];
-    NSMutableArray *rowArray = [NSMutableArray array];
-    for (int i = 1; i < totalRows; i++) {
-        [rowArray addObject:[NSIndexPath indexPathForRow:i
-                                               inSection:section]];
-    }
-    [self.tableView reloadRowsAtIndexPaths:rowArray withRowAnimation:UITableViewRowAnimationFade];
 }
 
 - (void)commentButtonPressedFromRow:(NSInteger)row {
