@@ -121,6 +121,7 @@
     [[TDPostAPI sharedInstance] fetchPostsUpstreamWithErrorHandlerStart:nil success:^(NSDictionary *response) {
         self.loaded = YES;
         self.errorLoading = NO;
+        self.posts = [[TDPostAPI sharedInstance] getPosts];
         if ([response valueForKey:@"next_start"] == [NSNull null]) {
             noMorePostsAtBottom = YES;
         }
@@ -138,6 +139,7 @@
         return NO;
     }
     [[TDPostAPI sharedInstance] fetchPostsUpstreamWithErrorHandlerStart:[super lowestIdOfPosts] success:^(NSDictionary *response) {
+        self.posts = [[TDPostAPI sharedInstance] getPosts];
         if ([response valueForKey:@"next_start"] == [NSNull null]) {
             noMorePostsAtBottom = YES;
         }
@@ -146,7 +148,7 @@
 }
 
 - (NSArray *)postsForThisScreen {
-    return [[TDPostAPI sharedInstance] getPosts];
+    return self.posts;
 }
 
 #pragma mark - Refresh Control

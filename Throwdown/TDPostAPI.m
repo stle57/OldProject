@@ -191,7 +191,7 @@
 }
 
 - (NSArray *)getPosts {
-    return [self.posts mutableCopy];
+    return self.posts;
 }
 
 
