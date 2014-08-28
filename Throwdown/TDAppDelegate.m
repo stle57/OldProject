@@ -116,11 +116,12 @@
 #pragma mark - iRate override
 + (void)initialize
 {
-    //set the bundle ID. normally you wouldn't need to do this
-    //as it is picked up automatically from your Info.plist file
-    //but we want to test with an app that's actually on the store
-    [iRate sharedInstance].applicationBundleID = @"us.throwdown.throwdown";
-   // [iRate sharedInstance].usesUntilPrompt = 15;
+    if ([TDConstants environment] != TDEnvProduction) {
+        //set the bundle ID. normally you wouldn't need to do this
+        //as it is picked up automatically from your Info.plist file
+        //but we want to test with an app that's actually on the store
+        [iRate sharedInstance].applicationBundleID = @"us.throwdown.throwdown";
+    }
     [iRate sharedInstance].daysUntilPrompt = 2;
     [iRate sharedInstance].eventsUntilPrompt = 20;
     
@@ -129,13 +130,14 @@
     //enable preview mode
     [iRate sharedInstance].previewMode = NO;
     
-    debug NSLog(@"iRate events=%lu", [iRate sharedInstance].eventCount);
+    debug NSLog(@"iRate events=%lu", (unsigned long)[iRate sharedInstance].eventCount);
 }
 
 - (BOOL)iRateShouldPromptForRating
 {
     if (self.rateUsController != nil) {
         [[TDAppDelegate appDelegate] showToastWithText:@"Like Throwdown? Tap here to rate us!" type:kToastType_RateUs payload:nil delegate:self.rateUsController];
+        [[TDAnalytics sharedInstance] logEvent:@"rating_asked"];
     }
     return NO;
 }
@@ -239,6 +241,7 @@
     // If the session was opened successfully
     if (!error && state == FBSessionStateOpen) {
         NSLog(@"FB::Session opened");
+        [[TDAnalytics sharedInstance] logEvent:@"facebook_connected"];
 
         // Get the user's name
         [FBRequestConnection startForMeWithCompletionHandler:^(FBRequestConnection *connection, id result, NSError *error) {
@@ -262,12 +265,14 @@
             } else {
                 // See: https://developers.facebook.com/docs/ios/errors
                 NSLog(@"FB::Error %@", error);
+                [[TDAnalytics sharedInstance] logEvent:@"facebook_error" withInfo:[error description] source:nil];
             }
             if (!name) {
                 name = @"Facebook";
             }
             if (!facebookId) {
                 if (failure) {
+                    [[TDAnalytics sharedInstance] logEvent:@"facebook_error" withInfo:@"failed user info request" source:nil];
                     failure(@"Unknown error");
                 }
                 return;
@@ -302,18 +307,22 @@
         if ([FBErrorUtility shouldNotifyUserForError:error] == YES){
             // If the error requires people using an app to make an action outside of the app in order to recover
             alertText = [FBErrorUtility userMessageForError:error];
+            [[TDAnalytics sharedInstance] logEvent:@"facebook_error" withInfo:alertText source:nil];
         } else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryUserCancelled) {
             // If the user canceled login, no error.
             NSLog(@"FB::Login User cancelled login");
             alertText = @"Canceled";
+            [[TDAnalytics sharedInstance] logEvent:@"facebook_canceled"];
         } else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryAuthenticationReopenSession){
             // Handle session closures that happen outside of the app
             alertText = @"Login error. Please log in again.";
+            [[TDAnalytics sharedInstance] logEvent:@"facebook_error" withInfo:@"FBErrorCategoryAuthenticationReopenSession" source:nil];
         } else {
             // Get more error information from the error
             // https://developers.facebook.com/docs/ios/errors/
             NSDictionary *errorInformation = [[[error.userInfo objectForKey:@"com.facebook.sdk:ParsedJSONResponseKey"] objectForKey:@"body"] objectForKey:@"error"];
             NSLog(@"FB::Error %@", errorInformation);
+            [[TDAnalytics sharedInstance] logEvent:@"facebook_error" withInfo:[error.userInfo description] source:nil];
             alertText = [NSString stringWithFormat:@"Facebook: Unknown Error. Please retry."];
         }
         NSLog(@"FB::Error %@", alertText);

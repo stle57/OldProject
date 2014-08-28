@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Throwdown. All rights reserved.
 //
 #import "TDRateUsController.h"
+#import "TDAnalytics.h"
 
 @implementation TDRateUsController
 
@@ -13,10 +14,12 @@
     debug NSLog(@"inside TDRateUsDelegate:toastNotificationCloseButton");
     //ignore this version
     [iRate sharedInstance].declinedThisVersion = YES;
+    [[TDAnalytics sharedInstance] logEvent:@"rating_closed"];
 
 }
 - (void)toastNotificationTappedRateUs{
     debug NSLog(@"inside TDRateUsDelegate:toastNotificationTappedRateUs");
+    [[TDAnalytics sharedInstance] logEvent:@"rating_accepted"];
     //mark as rated
     [iRate sharedInstance].ratedThisVersion = YES;
     

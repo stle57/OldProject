@@ -305,6 +305,7 @@ typedef NS_ENUM(NSUInteger, TDPostPrivacy) {
                                                  name:UIApplicationWillEnterForegroundNotification
                                                object:nil];
     [self.activityIndicator startSpinnerWithMessage:@"Connecting"];
+    [[TDAnalytics sharedInstance] logEvent:@"facebook_request"];
     [FBSession openActiveSessionWithPublishPermissions:@[@"public_profile", @"publish_actions"]
                                        defaultAudience:FBSessionDefaultAudienceFriends
                                           allowLoginUI:YES
@@ -314,6 +315,7 @@ typedef NS_ENUM(NSUInteger, TDPostPrivacy) {
          [[TDAppDelegate appDelegate] sessionStateChanged:session state:state error:error success:^{
              [self.activityIndicator stopSpinner];
              if ([FBSession.activeSession.permissions indexOfObject:@"publish_actions"] == NSNotFound) {
+                 [[TDAnalytics sharedInstance] logEvent:@"facebook_missing_permissions"];
                  [self setFacebookPermission:NO];
                  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Facebook Error"
                                                                  message:@"Sharing permissions must be granted to share to Facebook. Please try again."
@@ -337,6 +339,7 @@ typedef NS_ENUM(NSUInteger, TDPostPrivacy) {
 
 - (void)willEnterForegroundCallback:(NSNotification *)notification {
     [self.activityIndicator stopSpinner];
+    [[TDAnalytics sharedInstance] logEvent:@"facebook_returned"];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
 }
 
@@ -362,6 +365,7 @@ typedef NS_ENUM(NSUInteger, TDPostPrivacy) {
 - (void)connectToTwitter {
     if (![TWTAPIManager isLocalTwitterAccountAvailable]) {
         // TODO: open up twitter auth in webview
+        [[TDAnalytics sharedInstance] logEvent:@"twitter_no_users"];
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"You have to add an account to the iOS Settings app first." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
     } else {
@@ -369,9 +373,11 @@ typedef NS_ENUM(NSUInteger, TDPostPrivacy) {
             self.accountStore =  [[ACAccountStore alloc] init];
         }
         [self.activityIndicator startSpinnerWithMessage:@"Connecting"];
+        [[TDAnalytics sharedInstance] logEvent:@"twitter_request"];
         ACAccountType *twitterAccountType = [self.accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
         [self.accountStore requestAccessToAccountsWithType:twitterAccountType options:NULL completion:^(BOOL granted, NSError *error) {
             if (granted) {
+                [[TDAnalytics sharedInstance] logEvent:@"twitter_accepted" withInfo:[NSString stringWithFormat:@"%lu", (unsigned long)[self.accounts count]] source:nil];
                 self.accounts = [self.accountStore accountsWithAccountType:twitterAccountType];
                 if ([self.accounts count] == 1) {
                     ACAccount *account = [self.accounts lastObject];
@@ -384,6 +390,7 @@ typedef NS_ENUM(NSUInteger, TDPostPrivacy) {
                     });
                 }
             } else {
+                [[TDAnalytics sharedInstance] logEvent:@"twitter_denied"];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.activityIndicator stopSpinner];
                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil

@@ -19,6 +19,7 @@
 #import "TWTAPIManager.h"
 #import "TDActivityIndicator.h"
 #import "TDAPIClient.h"
+#import "TDAnalytics.h"
 
 @interface TDSocialConnectViewController () <UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate>
 
@@ -142,6 +143,7 @@
 - (void)willEnterForegroundCallback:(NSNotification *)notification {
     [self.activityIndicator stopSpinner];
     [self.tableView reloadData];
+    [[TDAnalytics sharedInstance] logEvent:@"facebook_returned"];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
 }
 
@@ -155,6 +157,7 @@
                 [FBSession.activeSession closeAndClearTokenInformation];
                 [[TDCurrentUser sharedInstance] unlinkFacebook];
                 [self.tableView reloadData];
+                [[TDAnalytics sharedInstance] logEvent:@"facebook_unlink"];
             }
         }];
     } else {
@@ -165,6 +168,7 @@
                                                      name:UIApplicationWillEnterForegroundNotification
                                                    object:nil];
         [self.activityIndicator startSpinnerWithMessage:@"Connecting"];
+        [[TDAnalytics sharedInstance] logEvent:@"facebook_request"];
         [FBSession openActiveSessionWithReadPermissions:@[@"public_profile"]
                                            allowLoginUI:YES
                                       completionHandler:
@@ -192,10 +196,12 @@
             if (buttonIndex != alertView.cancelButtonIndex) {
                 [[TDCurrentUser sharedInstance] unlinkTwitter];
                 [self.tableView reloadData];
+                [[TDAnalytics sharedInstance] logEvent:@"twitter_unlink"];
             }
         }];
     } else if (![TWTAPIManager isLocalTwitterAccountAvailable]) {
         // TODO: open up twitter auth in webview
+        [[TDAnalytics sharedInstance] logEvent:@"twitter_no_users"];
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"You have to add an account to the iOS Settings app first." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
     } else {
@@ -203,10 +209,12 @@
             self.accountStore =  [[ACAccountStore alloc] init];
         }
         [self.activityIndicator startSpinnerWithMessage:@"Connecting"];
+        [[TDAnalytics sharedInstance] logEvent:@"twitter_request"];
         ACAccountType *twitterAccountType = [self.accountStore accountTypeWithAccountTypeIdentifier:ACAccountTypeIdentifierTwitter];
         [self.accountStore requestAccessToAccountsWithType:twitterAccountType options:NULL completion:^(BOOL granted, NSError *error) {
             if (granted) {
                 self.accounts = [self.accountStore accountsWithAccountType:twitterAccountType];
+                [[TDAnalytics sharedInstance] logEvent:@"twitter_accepted" withInfo:[NSString stringWithFormat:@"%lu", (unsigned long)[self.accounts count]] source:nil];
                 if ([self.accounts count] == 1) {
                     ACAccount *account = [self.accounts lastObject];
                     debug NSLog(@"%@\n%@\n%@", [[account credential] oauthToken], [account credential], account);
@@ -218,6 +226,7 @@
                     });
                 }
              } else {
+                 [[TDAnalytics sharedInstance] logEvent:@"twitter_denied"];
                  dispatch_async(dispatch_get_main_queue(), ^{
                      [self.activityIndicator stopSpinner];
                      UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
