@@ -319,13 +319,12 @@
                 if ([[returnDict objectForKey:@"success"] boolValue]) {
                     debug NSLog(@"Like Success!");
 
+                    // removed temporarily b/c it doesn't work anyway!
                     // Change the like in that post
-                    TDPost *post = (TDPost *)[[TDAppDelegate appDelegate] postWithPostId:postId];
-
-                    if (post) {
-                        post.liked = YES;
-                       // [self notifyPostsRefreshed];
-                    }
+//                    TDPost *post = [[TDAppDelegate appDelegate] postWithPostId:postId];
+//                    if (post) {
+//                        post.liked = YES;
+//                    }
                 }
             }
         }

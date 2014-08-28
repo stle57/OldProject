@@ -704,8 +704,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
         [self reloadAllRowsButTopForSection:row];
 
         // Send to server
-        TDPostAPI *api = [TDPostAPI sharedInstance];
-        [api likePostWithId:post.postId];
+        [[TDPostAPI sharedInstance] likePostWithId:post.postId];
     }
 }
 
@@ -720,8 +719,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
 
         [self reloadAllRowsButTopForSection:row];
 
-        TDPostAPI *api = [TDPostAPI sharedInstance];
-        [api unLikePostWithId:post.postId];
+        [[TDPostAPI sharedInstance] unLikePostWithId:post.postId];
     }
 }
 

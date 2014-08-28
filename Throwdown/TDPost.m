@@ -68,36 +68,36 @@ static NSString *const kKindText  = @"text";
 }
 
 - (void)addLikerUser:(TDUser *)likerUser {
-    NSMutableDictionary *likerDict = [NSMutableDictionary dictionaryWithCapacity:0];
-    [likerDict setObject:likerUser.userId forKey:@"id"];
-    [likerDict setObject:likerUser.username forKey:@"username"];
-    [likerDict setObject:likerUser.name forKey:@"name"];
-    if (likerUser.picture) {
-        [likerDict setObject:likerUser.picture forKey:@"picture"];
+    if (!self.liked) {
+        NSMutableDictionary *likerDict = [NSMutableDictionary dictionaryWithCapacity:0];
+        [likerDict setObject:likerUser.userId forKey:@"id"];
+        [likerDict setObject:likerUser.username forKey:@"username"];
+        [likerDict setObject:likerUser.name forKey:@"name"];
+        if (likerUser.picture) {
+            [likerDict setObject:likerUser.picture forKey:@"picture"];
+        }
+        NSMutableArray *newArray = [NSMutableArray arrayWithArray:self.likers];
+        [newArray addObject:likerDict];
+        _likers = newArray;
+        _likersTotalCount = [NSNumber numberWithInt:([_likersTotalCount intValue] + 1)];
+        _liked = YES;
     }
-    NSMutableArray *newArray = [NSMutableArray arrayWithArray:self.likers];
-    [newArray addObject:likerDict];
-    _likers = newArray;
-    _likersTotalCount = [NSNumber numberWithInteger:[newArray count]];
-
-    // Assume it's current user
-    _liked = YES;
 }
 
 - (void)removeLikerUser:(TDUser *)likerUser {
-    for (NSDictionary *likerDict in [NSArray arrayWithArray:self.likers]) {
-        if ([[likerDict objectForKey:@"id"] isEqualToNumber:likerUser.userId]) {
-            // Remove it
-            NSMutableArray *newArray = [NSMutableArray arrayWithArray:self.likers];
-            [newArray removeObject:likerDict];
-            _likers = newArray;
-            _likersTotalCount = [NSNumber numberWithInteger:[newArray count]];
-            break;
+    if (self.liked) {
+        for (NSDictionary *likerDict in [NSArray arrayWithArray:self.likers]) {
+            if ([[likerDict objectForKey:@"id"] isEqualToNumber:likerUser.userId]) {
+                // Remove it
+                NSMutableArray *newArray = [NSMutableArray arrayWithArray:self.likers];
+                [newArray removeObject:likerDict];
+                _likers = newArray;
+                _likersTotalCount = [NSNumber numberWithInt:([_likersTotalCount intValue] - 1)];
+                break;
+            }
         }
+        _liked = NO;
     }
-
-    // Assume it's current user
-    _liked = NO;
 }
 
 - (void)addComment:(TDComment *)newComment {
