@@ -482,6 +482,7 @@
         case 0:
         case 2:
         case 3:
+        case 4:
             return 5.;
         break;
         default:
@@ -491,7 +492,7 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 4;
+    return 5;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -503,10 +504,13 @@
         case 1: // private
             return 2;
             break;
-        case 2: // push / social / password / app rate
-            return 4;
+        case 2: // push / social / password
+            return 3;
             break;
-        case 3: // log out
+        case 3: // app rate / buy shirt
+            return 2;
+            break;
+        case 4: // log out
             return 1;
             break;
         default:
@@ -631,7 +635,7 @@
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                     break;
                 case 1:
-                    cell.topLine.hidden = NO;
+                    cell.topLine.hidden = YES;
                     cell.longTitleLabel.hidden = NO;
                     cell.longTitleLabel.text = @"Social Networks";
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
@@ -644,20 +648,30 @@
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                     break;
-                case 3:
+            }
+            break;
+        case 3:
+            switch (indexPath.row) {
+                case 0:
+                    cell.topLine.hidden = NO;
+                    cell.longTitleLabel.hidden = NO;
+                    cell.longTitleLabel.text = @"Buy a Throwdown T-Shirt";
+                    cell.selectionStyle = UITableViewCellSelectionStyleGray;
+                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                    break;
+                case 1:
                     cell.topLine.hidden = YES;
                     cell.longTitleLabel.hidden = NO;
                     cell.longTitleLabel.text = @"Rate Throwdown in App Store";
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                     break;
-
                 default:
                     break;
             }
             break;
 
-        case 3: // Log out
+        case 4: // Log out
             switch (indexPath.row) {
                 case 0:
                     cell.topLine.hidden = NO;
@@ -708,14 +722,25 @@
                     break;
                 case 2:
                     [self showEditPassword];
-                case 3:
+            }
+            break;
+        case 3:
+            switch (indexPath.row) {
+                case 0: {
+                    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/store", [TDConstants getBaseURL]]];
+                    if ([[UIApplication sharedApplication] canOpenURL:url]) {
+                        [[UIApplication sharedApplication] openURL:url];
+                    }
+                }
+                    break;
+                case 1:
                     [self gotoRateAppLink];
                     break;
                   default:
                     break;
             }
         break;
-        case 3:
+        case 4:
             [self hideKeyboard];
             switch (indexPath.row) {
                 case 0: {
