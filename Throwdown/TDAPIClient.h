@@ -31,6 +31,7 @@
 - (void)getVideo:(NSString *)filename callback:(void(^)(NSURL *videoLocation))callback error:(void(^)(void))errorCallback;
 
 - (void)logEvent:(NSString *)event sessionId:(NSNumber *)sessionId withInfo:(NSString *)info source:(NSString *)source;
+- (void)logAppLinksVisit:(NSDictionary *)appLinks sourceApplication:(NSString *)sourceApplication;
 - (void)startSession:(NSDictionary *)metrics callback:(void(^)(NSNumber *sessionId))callback;
 - (void)updateSession:(NSNumber *)sessionId duration:(double)duration;
 

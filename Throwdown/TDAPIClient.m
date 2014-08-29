@@ -14,6 +14,7 @@
 #import "TDDeviceInfo.h"
 #import "UIImage+Resizing.h"
 #import "TDViewControllerHelper.h"
+#import "TDURLHelper.h"
 
 @interface TDAPIClient ()
 
@@ -527,8 +528,53 @@
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"event failed (%@) %@", event, [error localizedDescription]);
     }];
-
 }
+
+#pragma mark - AppLinks
+
+- (void)logAppLinksVisit:(NSDictionary *)appLinks sourceApplication:(NSString *)sourceApplication {
+
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    if (sourceApplication) {
+        [params setObject:sourceApplication forKey:@"source_application"];
+    }
+    if ([appLinks objectForKey:AppLinkTargetKeyName]) {
+        [params setObject:[[appLinks objectForKey:AppLinkTargetKeyName] absoluteString] forKey:@"target_url"];
+    }
+    if ([appLinks objectForKey:AppLinkRefererAppLink]) {
+        NSDictionary *referer = [appLinks objectForKey:AppLinkRefererAppLink];
+        if ([referer objectForKey:AppLinkRefererAppName]) {
+            [params setObject:[referer objectForKey:AppLinkRefererAppName] forKey:@"referer_app_name"];
+        }
+        if ([referer objectForKey:AppLinkRefererUrl]) {
+            [params setObject:[referer objectForKey:AppLinkRefererUrl] forKey:@"referer_url"];
+        }
+        if ([referer objectForKey:AppLinkRefererTargetUrl]) {
+            [params setObject:[referer objectForKey:AppLinkRefererTargetUrl] forKey:@"referer_target_url"];
+        }
+    }
+    if ([appLinks objectForKey:AppLinkUserAgentKeyName]) {
+        [params setObject:[appLinks objectForKey:AppLinkUserAgentKeyName] forKey:@"user_agent"];
+    }
+    if ([appLinks objectForKey:AppLinkExtrasKeyName]) {
+        [params setObject:[[appLinks objectForKey:AppLinkExtrasKeyName] description] forKey:@"extras"];
+    }
+
+    NSMutableDictionary *request = [[NSMutableDictionary alloc] init];
+    [request setObject:params forKey:@"app_links_referral"];
+    if ([TDCurrentUser sharedInstance].authToken) {
+        [request setObject:[TDCurrentUser sharedInstance].authToken forKey:@"user_token"];
+    }
+
+    NSString *url = [NSString stringWithFormat:@"%@/api/v1/app_links_referrals.json", [TDConstants getBaseURL]];
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [self.httpManager POST:url parameters:request success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        debug NSLog(@"app links logged");
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"app links failed (%@) %@", appLinks, [error localizedDescription]);
+    }];
+}
+
 
 #pragma mark - Device Sessions
 

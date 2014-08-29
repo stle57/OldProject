@@ -90,6 +90,7 @@
 		A11E05051888CB79002F981A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A11E05031888CB79002F981A /* InfoPlist.strings */; };
 		A11E05071888CB79002F981A /* ThrowdownTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A11E05061888CB79002F981A /* ThrowdownTests.m */; };
 		A11E05121889293C002F981A /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11E05111889293C002F981A /* AssetsLibrary.framework */; };
+		A124E93919B019A100DC65C1 /* TDURLHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = A124E93819B019A100DC65C1 /* TDURLHelper.m */; };
 		A125493B1999715D001C5CD1 /* TDSocialConnectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A125493A1999715D001C5CD1 /* TDSocialConnectViewController.m */; };
 		A125493F1999742B001C5CD1 /* TDSocialConnectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A125493D1999742B001C5CD1 /* TDSocialConnectCell.m */; };
 		A12549401999742B001C5CD1 /* TDSocialConnectCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A125493E1999742B001C5CD1 /* TDSocialConnectCell.xib */; };
@@ -298,6 +299,8 @@
 		A11E05041888CB79002F981A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A11E05061888CB79002F981A /* ThrowdownTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ThrowdownTests.m; sourceTree = "<group>"; };
 		A11E05111889293C002F981A /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		A124E93719B019A100DC65C1 /* TDURLHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDURLHelper.h; sourceTree = "<group>"; };
+		A124E93819B019A100DC65C1 /* TDURLHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDURLHelper.m; sourceTree = "<group>"; };
 		A12549391999715D001C5CD1 /* TDSocialConnectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSocialConnectViewController.h; sourceTree = "<group>"; };
 		A125493A1999715D001C5CD1 /* TDSocialConnectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSocialConnectViewController.m; sourceTree = "<group>"; };
 		A125493C1999742B001C5CD1 /* TDSocialConnectCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSocialConnectCell.h; sourceTree = "<group>"; };
@@ -748,6 +751,8 @@
 				4DC2C9971968F69C00A210CF /* TDTextViewControllerHelper.m */,
 				4DD0836E19AC585C00149968 /* TDRateUsController.h */,
 				4DD0836F19AC585C00149968 /* TDRateUsController.m */,
+				A124E93719B019A100DC65C1 /* TDURLHelper.h */,
+				A124E93819B019A100DC65C1 /* TDURLHelper.m */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -1195,6 +1200,7 @@
 				A1B11920190E030700FE7102 /* TDDeviceInfo.m in Sources */,
 				A19FF60F18970BBB001A0AD0 /* RSContainer.m in Sources */,
 				2DA41A5618C7D89C00B21C74 /* TDDetailViewController.m in Sources */,
+				A124E93919B019A100DC65C1 /* TDURLHelper.m in Sources */,
 				A11999DD18DC0D4200C39ABF /* TDFileSystemHelper.m in Sources */,
 				A1BB463318F7767200BD9527 /* TDActivityViewController.m in Sources */,
 				2D2E832E18CA579B00846B2E /* TDComment.m in Sources */,
