@@ -298,7 +298,7 @@
 - (void)likePostWithId:(NSNumber *)postId {
     debug NSLog(@"inside likePostWithId");
     //  /api/v1/posts/{post's id}/like.json
-    if( self.lastLikedPostId == nil || (self.lastLikedPostId != nil && self.lastLikedPostId != postId)) {
+    if( self.lastLikedPostId == nil ) {
         debug NSLog(@"setting event count inside like post");
         [iRate sharedInstance].eventCount = [iRate sharedInstance].eventCount + TD_LIKE_EVENT_COUNT;
         self.lastLikedPostId = postId;
@@ -341,7 +341,7 @@
 
 - (void)unLikePostWithId:(NSNumber *)postId {
     //  /api/v1/posts/{post's id}/like.json
-    if( self.lastLikedPostId == nil || (self.lastLikedPostId != nil && self.lastLikedPostId != postId)) {
+    if( self.lastLikedPostId == nil ) {
         debug NSLog(@"setting event count");
         // This takes care of the scenario where the user liked a post and then immediately disliked
         // it.
