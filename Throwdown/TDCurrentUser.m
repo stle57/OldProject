@@ -318,7 +318,7 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
             [self registerForRemoteNotificationTypes];
         } else {
             [[TDAnalytics sharedInstance] logEvent:@"notification_asked"];
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Turn on Notifications?" message:message delegate:nil cancelButtonTitle:@"Not now" otherButtonTitles:@"YES", nil];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Permission Requested" message:message delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"Ask me", nil];
             [alert showWithCompletionBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
                 if (buttonIndex != alertView.cancelButtonIndex) {
                     [[TDAnalytics sharedInstance] logEvent:@"notification_accept"];
