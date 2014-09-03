@@ -35,9 +35,11 @@
 + (TDCurrentUser *)sharedInstance;
 - (void)updateFromDictionary:(NSDictionary *)dictionary;
 - (BOOL)isRegisteredForPush;
+- (BOOL)didAskForPush;
 - (BOOL)isLoggedIn;
 - (void)logout;
 - (void)registerForPushNotifications:(NSString *)message;
+- (void)registerForRemoteNotificationTypes;
 - (void)registerDeviceToken:(NSString *)token;
 - (TDUser *)currentUserObject;
 - (void)registerFacebookAccessToken:(NSString *)token expiresAt:(NSDate *)expiresAt userId:(NSString *)userId identifier:(NSString *)identifier callback:(void (^)(BOOL success))callback;
