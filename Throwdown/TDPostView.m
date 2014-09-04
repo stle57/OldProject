@@ -154,7 +154,7 @@ static NSString *const kTracksKey = @"tracks";
         return;
     }
     // If it's the same (eg table was refreshed), bail so that we don't stop video playback
-    if ([self.post.postId isEqual:post.postId] && (self.state == PlayerStatePlaying || self.post)) {
+    if ([self.post.postId isEqual:post.postId] && self.state == PlayerStatePlaying ) {
         return;
     }
 
