@@ -611,6 +611,7 @@
                     cell.titleLabel.text = @"Phone";
                     cell.textField.text = self.phone;
                     cell.topLine.hidden = NO;
+                    cell.textField.keyboardType = UIKeyboardTypePhonePad;
                 break;
                 case 1:
                     cell.titleLabel.hidden = NO;
