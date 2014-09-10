@@ -38,6 +38,8 @@
     CGFloat moreCommentRowHeight;
     CGFloat activityRowHeight;
     CGFloat profileHeaderHeight;
+    CGFloat inviteButtonHeight;
+    CGFloat statButtonHeight;
     CGFloat noPostsHeight;
     CGFloat uploadMoreHeight;
     BOOL updatingAtBottom;
