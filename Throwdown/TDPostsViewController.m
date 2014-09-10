@@ -14,6 +14,11 @@
 #import "TDCustomRefreshControl.h"
 
 static CGFloat const kHeightOfStatusBar = 65.0;
+static NSInteger const kInviteButtonTag = 10001;
+static NSInteger const kFollowerButtonTag = 10002;
+static NSInteger const kFollowingButtonTag = 10003;
+static CGFloat const kBioLabelInviteButtonPadding = 14;
+static CGFloat const kInviteButtonStatButtonPadding = 25;
 
 @interface TDPostsViewController ()
 
@@ -54,6 +59,8 @@ static CGFloat const kHeightOfStatusBar = 65.0;
     TDUserProfileCell *profileCell = [topLevelObjects objectAtIndex:0];
     profileHeaderHeight = profileCell.frame.size.height;
     topOfBioLabelInProfileHeader = profileCell.bioLabel.frame.origin.y;
+    inviteButtonHeight = profileCell.inviteButton.frame.size.height;
+    statButtonHeight = profileCell.prButton.frame.size.height;
     profileCell = nil;
     topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoPostsCell" owner:self options:nil];
     TDNoPostsCell *noPostsCell = [topLevelObjects objectAtIndex:0];
@@ -358,6 +365,7 @@ static CGFloat const kHeightOfStatusBar = 65.0;
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_PROFILE owner:self options:nil];
             cell = [topLevelObjects objectAtIndex:0];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.delegate = self;
             cell.origBioLabelRect = cell.bioLabel.frame;
         }
 
@@ -369,23 +377,82 @@ static CGFloat const kHeightOfStatusBar = 65.0;
             TDUser *user = [self getUser];
             cell.userNameLabel.text = user.name;
             cell.userImageView.hidden = NO;
-
-            if (user.bio && ![user.bio isKindOfClass:[NSNull class]]) {
-                cell.bioLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithString:user.bio];
+            if (user.bio.length != 0) {
+               cell.bioLabel.attributedText = (NSMutableAttributedString*)[TDViewControllerHelper makeParagraphedTextWithBioString:user.bio];
                 [TDAppDelegate fixHeightOfThisLabel:cell.bioLabel];
                 cell.bioLabel.hidden = NO;
+                
+                // Move the bio label frame down to the correct y position
+                CGRect newBioLabelFrame = cell.bioLabel.frame;
+                newBioLabelFrame.origin.y = topOfBioLabelInProfileHeader;
+                cell.bioLabel.frame = newBioLabelFrame;
+                
+                // Now move the invite button down
+                CGRect newInviteButtonFrame = cell.inviteButton.frame;
+                newInviteButtonFrame.origin.y = cell.bioLabel.frame.origin.y + user.bioHeight+ kBioLabelInviteButtonPadding;
+                cell.inviteButton.frame = newInviteButtonFrame;
+                
+                // Move the stat buttons down
+                CGFloat yStatButtonPosition = newInviteButtonFrame.origin.y + newInviteButtonFrame.size.height + kInviteButtonStatButtonPadding;
+                CGRect newPostButtonFrame = cell.postButton.frame;
+                newPostButtonFrame.origin.y = yStatButtonPosition;
+                cell.postButton.frame = newPostButtonFrame;
+                
+                CGRect newPrButtonFrame = cell.prButton.frame;
+                newPrButtonFrame.origin.y = yStatButtonPosition;
+                cell.prButton.frame = newPrButtonFrame;
+                
+                CGRect newFollowersFrame = cell.followerButton.frame;
+                newFollowersFrame.origin.y = yStatButtonPosition;
+                cell.followerButton.frame = newFollowersFrame;
+                
+                CGRect newFollowingFrame = cell.followingButton.frame;
+                newFollowingFrame.origin.y = yStatButtonPosition;
+                cell.followingButton.frame = newFollowingFrame;
+                
+                // Resize the cell height.
+                CGRect newframe = cell.frame;
+                newframe.size.height = [self tableView:tableView heightForRowAtIndexPath:indexPath];
+                [cell setFrame:newframe];
             }
+            
             if (![user hasDefaultPicture]) {
                 [[TDAPIClient sharedInstance] setImage:@{@"imageView":cell.userImageView,
                                                          @"filename":user.picture,
-                                                         @"width":@60,
-                                                         @"height":@60}];
+                                                         @"width":@70,
+                                                         @"height":@70}];
             }
+
+            if( [self isKindOfClass:[TDUserProfileViewController class]]) {
+                TDUserProfileViewController *vc = (TDUserProfileViewController*)self;
+                if(vc.fromProfileType == kFromProfileScreenType_OtherUser) {
+                    if(YES) // we are following this persion
+                    {
+                        UIImage * buttonImage = [UIImage imageNamed:@"btn-following.png"];
+                        [cell.inviteButton setImage:buttonImage forState:UIControlStateNormal];
+                        [cell.inviteButton setTag:kFollowingButtonTag];
+                    } else {
+                        UIImage *buttonImage = [UIImage imageNamed:@"btn-follow.png"];
+                        [cell.inviteButton setImage:buttonImage forState:(UIControlStateNormal)];
+                        [cell.inviteButton setTag:kFollowerButtonTag];
+                    }
+                } else if (vc.fromProfileType == kFromProfileScreenType_OwnProfileButton) {
+                    UIImage *buttonImage = [UIImage imageNamed:@"btn-invite-friends.png"];
+                    [cell.inviteButton setImage:buttonImage forState:(UIControlStateNormal)];
+                    [cell.inviteButton setTag:kInviteButtonTag];
+                } else if (vc.fromProfileType == kFromProfileScreenType_OwnProfile) {
+                    UIImage *buttonImage = [UIImage imageNamed:@"btn-invite-friends.png"];
+                    [cell.inviteButton setImage:buttonImage forState:(UIControlStateNormal)];
+                    [cell.inviteButton setTag:kInviteButtonTag];
+                }
+            }
+
+            [cell modifyStatButtonAttributes:user];
 
             cell.whiteUnderView.frame = CGRectMake(cell.whiteUnderView.frame.origin.x,
                                                    cell.whiteUnderView.frame.origin.y,
                                                    cell.whiteUnderView.frame.size.width,
-                                                   [self tableView:tableView heightForRowAtIndexPath:indexPath] - 5.0);
+                                                   [self tableView:tableView heightForRowAtIndexPath:indexPath]-5);
             cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
                                                CGRectGetMaxY(cell.whiteUnderView.frame) - (1.0 / [[UIScreen mainScreen] scale]),
                                                cell.bottomLine.frame.size.width,
@@ -559,7 +626,10 @@ static CGFloat const kHeightOfStatusBar = 65.0;
         // min height is profileHeaderHeight
         if ([self getUser]) {
             CGFloat bioHeight = [self getUser].bioHeight;
-            CGFloat cellHeight = topOfBioLabelInProfileHeader + bioHeight + (bioHeight > 0 ? 20.0 : 15.0); // extra padding when we have a bio
+            CGFloat padding = kBioLabelInviteButtonPadding+inviteButtonHeight+ kInviteButtonStatButtonPadding + statButtonHeight +5; //spacing after bio, height of invite button, spacing after invite, height of stat buttons + extra padding for next section in view
+            debug NSLog(@"bioHeight=%f", bioHeight);
+            CGFloat cellHeight = topOfBioLabelInProfileHeader + bioHeight + (bioHeight > 0 ? padding : 5); // extra padding when we have a bio
+            debug NSLog(@"returning height for profileheader=%f, where cellHeight=%f and profileHeaderHeight=%f", fmaxf(profileHeaderHeight, cellHeight), cellHeight, profileHeaderHeight);
             return fmaxf(profileHeaderHeight, cellHeight);
         } else {
             return 1.0;
@@ -824,6 +894,39 @@ static CGFloat const kHeightOfStatusBar = 65.0;
             [self.tableView reloadData];
             break;
         }
+    }
+}
+
+#pragma mark - TDUserProfileCellDelegate
+
+- (void)postsStatButtonPressed {
+        debug NSLog(@"segue to posts button");
+}
+- (void)prStatButtonPressed {
+         debug NSLog(@"segue to PR lists");
+}
+ - (void)followingStatButtonPressed {
+         debug NSLog(@"segue to following list");
+}
+
+ - (void)followerStatButtonPressed {
+         debug NSLog(@"segue to follwers list");
+}
+
+- (void)inviteButtonPressedFromRow:(NSInteger)tag {
+    debug NSLog(@"invite button pressed with tag=%tu", tag);
+    if (tag == kFollowerButtonTag) {
+        debug NSLog(@"follow this person");
+        
+        // change the button
+    
+    } else if (tag == kFollowingButtonTag) {
+        debug NSLog(@"unfollow this person");
+        
+        //change the button
+        
+    } else if (tag == kInviteButtonTag) {
+        debug NSLog(@"Show the invite list");
     }
 }
 

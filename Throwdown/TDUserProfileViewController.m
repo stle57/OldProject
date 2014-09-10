@@ -30,31 +30,17 @@
 }
 
 - (void)viewDidLoad {
+    debug NSLog(@"inside TDUserProfileViewController:viewDidLoad");
     needsProfileHeader = YES;
 
     [super viewDidLoad];
 
+    self.navigationController.navigationBar.barTintColor = [TDConstants brandingRedColor];
+
     // Title
-    self.titleLabel.textColor = [TDConstants headerTextColor];
-    self.titleLabel.font = [TDConstants fontRegularSized:20];
+    self.titleLabel.textColor = [UIColor whiteColor];
+    self.titleLabel.font = [TDConstants fontSemiBoldSized:18];
     [self.navigationItem setTitleView:self.titleLabel];
-
-//    if (!self.fromProfileType) {
-//        if (self.userId) {
-//            if ([self.userId isEqualToNumber:[[TDCurrentUser sharedInstance] currentUserObject].userId]) {
-//                self.fromProfileType = kFromProfileScreenType_OwnProfile;
-//            } else {
-//                self.fromProfileType = kFromProfileScreenType_OtherUser;
-//            }
-//        } else {
-//            if ([self.username isEqualToString:[[TDCurrentUser sharedInstance] currentUserObject].username]) {
-//                self.fromProfileType = kFromProfileScreenType_OwnProfile;
-//            } else {
-//                self.fromProfileType = kFromProfileScreenType_OtherUser;
-//            }
-//        }
-//    }
-
 
     // Bar Button Items
     switch (self.fromProfileType) {

@@ -16,11 +16,15 @@
     self = [super init];
     if (self)
     {
-        _userId   = [dict objectForKey:@"id"];
-        _username = [dict objectForKey:@"username"];
-        _name     = [dict objectForKey:@"name"];
-        _picture  = [dict objectForKey:@"picture"];
-        _bio      = [dict objectForKey:@"bio"];
+        _userId         = [dict objectForKey:@"id"];
+        _username       = [dict objectForKey:@"username"];
+        _name           = [dict objectForKey:@"name"];
+        _picture        = [dict objectForKey:@"picture"];
+        _bio            = [dict objectForKey:@"bio"];
+        _postCount      = [dict objectForKey:@"post_count"];
+        _prCount        = [dict objectForKey:@"pr_count"];
+        _followerCount  = [dict objectForKey:@"follower_count"];
+        _followingCount = [dict objectForKey:@"following_count"];
         [self figureOutBioLabelHeightForThisMessage:_bio];
     }
     return self;
@@ -38,7 +42,7 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"TDUser-user:%@ %@ %@ %@ %@", _userId, _name, _username, _picture, _bio];
+    return [NSString stringWithFormat:@"TDUser-user:%@ %@ %@ %@ %@ %@ %@ %@ %@", _userId, _name, _username, _picture, _bio, _postCount, _prCount, _followerCount, _followingCount];
 }
 
 - (void)figureOutBioLabelHeightForThisMessage:(NSString *)text {

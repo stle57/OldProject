@@ -870,10 +870,10 @@
 
     UIImage *image = [info valueForKey:UIImagePickerControllerEditedImage];
 
-    // Scale to 120x120
+    // Scale to 140x140
     CGFloat shorterSide = image.size.width < image.size.height ? image.size.width : image.size.height;
     image = [image cropToSize:CGSizeMake(shorterSide, shorterSide) usingMode:NYXCropModeCenter];
-    image = [image scaleToSize:CGSizeMake(120.0, 120.0) usingMode:NYXResizeModeScaleToFill];
+    image = [image scaleToSize:CGSizeMake(140.0, 140.0) usingMode:NYXResizeModeScaleToFill];
     self.editedProfileImage = image;
 
     // Need to figure out where the avatar image is on the screen

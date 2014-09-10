@@ -7,9 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TDUser.h"
 
 @protocol TDUserProfileCellDelegate <NSObject>
 @optional
+-(void)inviteButtonPressedFromRow:(NSInteger)tag;
+-(void)postsStatButtonPressed;
+-(void)prStatButtonPressed;
+-(void)followerStatButtonPressed;
+-(void)followingStatButtonPressed;
 @end
 
 @interface TDUserProfileCell : UITableViewCell
@@ -23,6 +29,22 @@
 @property (weak, nonatomic) IBOutlet UILabel *bioLabel;
 @property (weak, nonatomic) IBOutlet UIView *whiteUnderView;
 @property (weak, nonatomic) IBOutlet UIView *bottomLine;
+@property (weak, nonatomic) IBOutlet UIButton *postButton;
+@property (weak, nonatomic) IBOutlet UIButton *prButton;
+@property (weak, nonatomic) IBOutlet UIButton *followerButton;
+@property (weak, nonatomic) IBOutlet UIButton *followingButton;
+@property (weak, nonatomic) IBOutlet UIButton *inviteButton;
+
 @property (nonatomic, assign) CGRect origBioLabelRect;
+
+
+@property (nonatomic, readonly) TDUser *user;
+
+- (void)modifyStatButtonAttributes:(TDUser*)user;
+- (IBAction)inviteButtonPressed:(UIButton*)sender;
+- (IBAction)postsButtonPressed:(UIButton*)sender;
+- (IBAction)prButtonPressed:(UIButton*)sender;
+- (IBAction)followerButtonPressed:(UIButton*)sender;
+- (IBAction)followingButtonPressed:(UIButton*)sender;
 
 @end

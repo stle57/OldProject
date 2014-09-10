@@ -16,6 +16,10 @@
 @property (strong, nonatomic, readonly) NSString *picture;
 @property (strong, nonatomic, readonly) NSString *bio;
 @property (nonatomic, assign) CGFloat bioHeight;
+@property (strong, nonatomic, readonly) NSNumber *postCount;
+@property (strong, nonatomic, readonly) NSNumber *prCount;
+@property (strong, nonatomic, readonly) NSNumber *followerCount;
+@property (strong, nonatomic, readonly) NSNumber *followingCount; 
 
 - (id)initWithDictionary:(NSDictionary *)dict;
 - (void)userId:(NSNumber *)userId userName:(NSString *)userName name:(NSString *)name picture:(NSString *)picture bio:(NSString *)bio;
