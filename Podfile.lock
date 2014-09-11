@@ -18,7 +18,7 @@ PODS:
   - AFNetworking/UIKit (2.1.0):
     - AFNetworking/NSURLConnection
   - FLEX (1.1.0)
-  - GPUImage (0.1.2)
+  - GPUImage (0.1.5)
   - libPhoneNumber-iOS (0.7.1)
   - NSDate+TimeAgo (1.0.2)
   - NYXImagesKit (2.3)
@@ -38,7 +38,7 @@ DEPENDENCIES:
 SPEC CHECKSUMS:
   AFNetworking: 7c33510b46f994bc75b75c6e63c1d83414ca40f2
   FLEX: fa5e81b7b25ba64afe4fad14deb27d4b95efd75e
-  GPUImage: c6f1d391d675c10d7782d28726043ec8aebc0923
+  GPUImage: 5114a47f5fc33eb312f3731550a3cea379416d04
   libPhoneNumber-iOS: a9ce7eaee294cd81beb5c3eb0e5b9f7a045007a1
   NSDate+TimeAgo: c01d6ac0b81add41f77f264fa4276d355723fcde
   NYXImagesKit: 1c9f228ae78fab475d267b3b3a1308e0fba11731
