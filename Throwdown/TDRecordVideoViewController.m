@@ -301,7 +301,7 @@
     NSString *pathToMovie = [NSHomeDirectory() stringByAppendingPathComponent:kRecordedMovieFilePath];
     [TDFileSystemHelper removeFileAt:pathToMovie];
     self.recordedURL = [NSURL fileURLWithPath:pathToMovie];
-    self.movieWriter = [[GPUImageMovieWriter alloc] initWithMovieURL:self.recordedURL size:CGSizeMake(640, 640) fileType:AVFileTypeMPEG4 outputSettings:[TDConstants defaultVideoCompressionSettings]];
+    self.movieWriter = [[GPUImageMovieWriter alloc] initWithMovieURL:self.recordedURL size:CGSizeMake(640, 640) fileType:AVFileTypeQuickTimeMovie outputSettings:[TDConstants defaultVideoCompressionSettings]];
     self.movieWriter.encodingLiveVideo = YES;
 
     [self.filter addTarget:self.movieWriter];
