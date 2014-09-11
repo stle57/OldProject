@@ -8,16 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
-NSString *const AppLinkDataParameterName = @"al_applink_data";
-NSString *const AppLinkTargetKeyName = @"target_url";
-NSString *const AppLinkUserAgentKeyName = @"user_agent";
-NSString *const AppLinkExtrasKeyName = @"extras";
-NSString *const AppLinkRefererAppLink = @"referer_app_link";
-NSString *const AppLinkRefererAppName = @"app_name";
-NSString *const AppLinkRefererUrl = @"url";
-NSString *const AppLinkRefererTargetUrl = @"target_url";
-NSString *const AppLinkVersionKeyName = @"version";
-NSString *const AppLinkVersion = @"1.0";
+static NSString *const AppLinkDataParameterName = @"al_applink_data";
+static NSString *const AppLinkTargetKeyName = @"target_url";
+static NSString *const AppLinkUserAgentKeyName = @"user_agent";
+static NSString *const AppLinkExtrasKeyName = @"extras";
+static NSString *const AppLinkRefererAppLink = @"referer_app_link";
+static NSString *const AppLinkRefererAppName = @"app_name";
+static NSString *const AppLinkRefererUrl = @"url";
+static NSString *const AppLinkRefererTargetUrl = @"target_url";
+static NSString *const AppLinkVersionKeyName = @"version";
+static NSString *const AppLinkVersion = @"1.0";
 
 @interface TDURLHelper : NSObject
 
