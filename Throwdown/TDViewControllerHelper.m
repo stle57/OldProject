@@ -16,11 +16,11 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
 @implementation TDViewControllerHelper
 
 + (UIButton *)navBackButton {
-    return [self navBarButton:@"nav_back" hit:@"nav_back_hit"];
+    return [self navBarButton:@"nav-back" hit:@"nav-back-hit"];
 }
 
 + (UIButton *)navCloseButton {
-    return [self navBarButton:@"nav_close" hit:@"nav_close_hit"];
+    return [self navBarButton:@"nav-close" hit:@"nav-close-hit"];
 }
 
 + (UIButton *)navBarButton:(NSString *)normal hit:(NSString *)hit {

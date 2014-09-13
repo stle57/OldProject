@@ -37,15 +37,19 @@
     debug NSLog(@"UserProfile:%@", self.profileUser);
 
     statusBarFrame = [self.view convertRect: [UIApplication sharedApplication].statusBarFrame fromView: nil];
-
+    // Background
+    self.tableView.backgroundColor = [TDConstants tableViewBackgroundColor];
+    UINavigationBar *navigationBar = self.navigationController.navigationBar;
+    [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
+    
     // Title
     self.titleLabel.text = @"Change Password";
-    self.titleLabel.textColor = [TDConstants headerTextColor];
-    self.titleLabel.font = [TDConstants fontRegularSized:20];
+    self.titleLabel.textColor = [UIColor whiteColor];
+    self.titleLabel.font = [TDConstants fontSemiBoldSized:18];
     [self.navigationItem setTitleView:self.titleLabel];
 
     // Buttons
-    self.doneButton.titleLabel.font = [TDConstants fontSemiBoldSized:18];
+    self.doneButton.titleLabel.font = [TDConstants fontRegularSized:18];
 
     // register for keyboard notifications
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -411,7 +415,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 44.0;
+    return 50.0;
 }
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {

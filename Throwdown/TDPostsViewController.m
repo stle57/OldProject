@@ -78,6 +78,11 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
 
+    // Background color
+    debug NSLog(@"bg color=%@", self.tableView.backgroundColor);
+    self.tableView.backgroundColor = [TDConstants postViewBackgroundColor];
+    debug NSLog(@"bg after color=%@", self.tableView.backgroundColor);
+    
     // Add refresh control
     self.customRefreshControl = [[TDCustomRefreshControl alloc] init];
     [self.customRefreshControl addTarget:self action:@selector(refreshControlUsed) forControlEvents:UIControlEventValueChanged];

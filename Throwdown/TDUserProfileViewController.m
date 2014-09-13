@@ -35,8 +35,14 @@
 
     [super viewDidLoad];
 
-    self.navigationController.navigationBar.barTintColor = [TDConstants brandingRedColor];
-
+    UINavigationBar *navigationBar = self.navigationController.navigationBar;
+    [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
+    
+    // Background color
+    debug NSLog(@"bg color=%@", self.tableView.backgroundColor);
+    self.tableView.backgroundColor = [TDConstants postViewBackgroundColor];
+    debug NSLog(@"bg after color=%@", self.tableView.backgroundColor);
+    
     // Title
     self.titleLabel.textColor = [UIColor whiteColor];
     self.titleLabel.font = [TDConstants fontSemiBoldSized:18];

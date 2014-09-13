@@ -51,9 +51,14 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
     self.tableView.dataSource = self;
     self.activities = @[];
     self.navigationController.navigationBar.titleTextAttributes = @{
-                                                                    NSForegroundColorAttributeName: [UIColor colorWithRed:.223529412 green:.223529412 blue:.223529412 alpha:1.0],
-                                                                    NSFontAttributeName: [TDConstants fontRegularSized:18.0]
+                                                                    NSForegroundColorAttributeName: [UIColor whiteColor],
+                                                                    NSFontAttributeName: [TDConstants fontSemiBoldSized:18.0]
                                                                     };
+
+    // Background
+    self.tableView.backgroundColor = [TDConstants tableViewBackgroundColor];
+    UINavigationBar *navigationBar = self.navigationController.navigationBar;
+    [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
 
     // Add refresh control
     self.refreshControl = [[UIRefreshControl alloc] init];

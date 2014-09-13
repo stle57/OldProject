@@ -65,12 +65,20 @@
 
     // Title
     self.titleLabel.text = @"Edit Profile";
-    self.titleLabel.textColor = [TDConstants headerTextColor];
-    self.titleLabel.font = [TDConstants fontRegularSized:20];
+    self.titleLabel.textColor = [UIColor whiteColor];
+    self.titleLabel.font = [TDConstants fontSemiBoldSized:18];
     [self.navigationItem setTitleView:self.titleLabel];
 
+    UINavigationBar *navigationBar = self.navigationController.navigationBar;
+    [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
+    
+    // Background color
+    debug NSLog(@"user edit bg color=%@", self.tableView.backgroundColor);
+    self.tableView.backgroundColor = [TDConstants tableViewBackgroundColor];
+    debug NSLog(@"  bg after color=%@", self.tableView.backgroundColor);
+
     // Buttons
-    self.saveButton.titleLabel.font = [TDConstants fontSemiBoldSized:18.0];
+    self.saveButton.titleLabel.font = [TDConstants fontRegularSized:18.0];
     UIBarButtonItem *saveBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.saveButton];
     self.navigationItem.rightBarButtonItem = saveBarButton;
 
@@ -457,19 +465,19 @@
 
 #pragma mark - TableView Delegates
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    if (section == 1) {
-        UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, 320, 40)];
-        UILabel *sectionHeaderLabel = [[UILabel alloc] initWithFrame:headerView.layer.frame];
-        sectionHeaderLabel.text = @"PRIVATE INFORMATION";
-        sectionHeaderLabel.font = [UIFont fontWithName:TDFontProximaNovaSemibold size:15.0];
-        sectionHeaderLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
-        CGRect headerLabelFrame = sectionHeaderLabel.frame;
-        headerLabelFrame.origin.x = 12.0;
-        headerLabelFrame.origin.y += 8;
-        sectionHeaderLabel.frame = headerLabelFrame;
-        [headerView addSubview:sectionHeaderLabel];
-        return headerView;
-    }
+//    if (section == 1) {
+//        UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, 320, 40)];
+//        UILabel *sectionHeaderLabel = [[UILabel alloc] initWithFrame:headerView.layer.frame];
+//        sectionHeaderLabel.text = @"PRIVATE INFORMATION";
+//        sectionHeaderLabel.font = [UIFont fontWithName:TDFontProximaNovaSemibold size:15.0];
+//        sectionHeaderLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
+//        CGRect headerLabelFrame = sectionHeaderLabel.frame;
+//        headerLabelFrame.origin.x = 12.0;
+//        headerLabelFrame.origin.y += 8;
+//        sectionHeaderLabel.frame = headerLabelFrame;
+//        [headerView addSubview:sectionHeaderLabel];
+//        return headerView;
+//    }
 
     return nil;
 }
@@ -477,13 +485,11 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     switch (section) {
         case 1:
-            return 40;
-        break;
         case 0:
         case 2:
         case 3:
         case 4:
-            return 5.;
+            return 40;
         break;
         default:
             return 0.;
@@ -499,7 +505,7 @@
 
     switch (section) {
         case 0: // profile
-            return 4;
+            return 5;
             break;
         case 1: // private
             return 2;
@@ -541,7 +547,7 @@
     cell.leftMiddleLabel.hidden = YES;
     cell.textView.hidden = YES;
     cell.textField.tag = 800+(10*indexPath.section)+indexPath.row;
-    UIColor *textFieldPlaceHolderColor = [UIColor colorWithRed:(189.0/255.0) green:(189.0/255.0) blue:(189.0/255.0) alpha:1.0];
+    UIColor *textFieldPlaceHolderColor = [TDConstants headerTextColor];
     cell.textView.frame = cell.textViewdOrigRect;
     cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
                                        cell.bottomLineOrigY,
@@ -564,6 +570,9 @@
                     cell.topLine.hidden = NO;
                     cell.leftMiddleLabel.hidden = NO;
                     cell.leftMiddleLabel.text = @"Edit Photo";
+                    CGRect labelFrame = cell.leftMiddleLabel.frame;
+                    labelFrame.origin.x = 100;
+                    cell.leftMiddleLabel.frame = labelFrame;
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
                     break;
                 case 1:
@@ -573,6 +582,9 @@
                                                                                            attributes:@{NSForegroundColorAttributeName: textFieldPlaceHolderColor}];
                     cell.titleLabel.text = @"Name";
                     cell.textField.text = self.name;
+                    CGRect cellFrame = cell.textField.frame;
+                    cellFrame.origin.x = 100;
+                    cell.textField.frame = cellFrame;
                     break;
                 case 2:
                     cell.titleLabel.hidden = NO;
@@ -581,14 +593,27 @@
                                                                                            attributes:@{NSForegroundColorAttributeName: textFieldPlaceHolderColor}];
                     cell.titleLabel.text = @"Username";
                     cell.textField.text = self.username;
+                    CGRect fieldFrame = cell.textField.frame;
+                    cellFrame.origin.x = 100;
+                    cell.textField.frame = fieldFrame;
                     break;
                 case 3:
+                    cell.titleLabel.hidden = NO;
+                    cell.textField.hidden = NO;
+
+                    cell.titleLabel.text = @"Location";
+                    cell.textField.text = @"San Francisco";
+                    cell.textField.textColor = [TDConstants commentTextColor];
+                    break;
+                    
+                case 4:
                     cell.titleLabel.hidden = NO;
                     cell.textView.hidden = NO;
                     cell.titleLabel.text = @"Bio";
                     cell.textView.text = self.bio;
                     CGRect newTextFrame = cell.textView.frame;
                     newTextFrame.size.height = [self tableView:tableView heightForRowAtIndexPath:indexPath];
+                    newTextFrame.origin.x = 100;
                     cell.textView.frame = newTextFrame;
                     cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
                                                        CGRectGetMaxY(newTextFrame),
@@ -678,7 +703,8 @@
                     cell.topLine.hidden = NO;
                     cell.middleLabel.hidden = NO;
                     cell.middleLabel.text = @"Log Out";
-                    cell.middleLabel.textColor = [TDConstants brandingRedColor];
+                    cell.middleLabel.textColor = [TDConstants brandingRedColor]; //TODO: #4c4c4c is grey but spec shows red
+                    debug NSLog(@"debug height=%f", cell.middleLabel.frame.size.height);
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
                     break;
             }
@@ -691,7 +717,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return indexPath.section == 0 && indexPath.row == 3 ? 90.0 : 42.0;
+    return indexPath.section == 0 && indexPath.row == 4 ? 90.0 : 50.0;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {

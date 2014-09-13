@@ -124,6 +124,17 @@ static NSString *const kCDNStreamingServer = @"http://139bc8fb83b0918931ad-a6f56
 + (UIColor *)activityUnseenColor {
     return [UIColor colorWithRed:(255.0/255.0) green:(238.0/255.0) blue:(224.0/255.0) alpha:1.0];   // #fff5ed
 }
++ (UIColor *)postViewBackgroundColor {
+    return [UIColor colorWithRed:(230./255.) green:(230./255.) blue:(230./255.) alpha:1.0];   // #e6e6e6
+
+}
++ (UIColor *)tableViewBackgroundColor {
+    return [UIColor colorWithRed:(245./255.) green:(245./255.) blue:(245./255.) alpha:1.0];   // #f5f5f5
+
+}
++ (UIColor *)cellBorderColor {
+    return [UIColor colorWithRed:(204./255.) green:(204./255.) blue:(204./255.) alpha:1.0];   // #cccccc
+}
 
 #pragma mark - Fonts
 

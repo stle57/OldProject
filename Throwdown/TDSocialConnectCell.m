@@ -7,12 +7,14 @@
 //
 
 #import "TDSocialConnectCell.h"
-
+#import "TDConstants.h"
 @implementation TDSocialConnectCell
 
 - (void)awakeFromNib
 {
     // Initialization code
+    self.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
+    self.layer.borderWidth = .5f;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated

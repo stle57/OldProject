@@ -20,6 +20,9 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
+        self.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
+        self.layer.borderWidth = .5f;
+
     }
     return self;
 }

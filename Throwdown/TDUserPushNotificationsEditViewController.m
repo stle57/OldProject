@@ -78,10 +78,15 @@ settings: [
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    // Background
+    self.tableView.backgroundColor = [TDConstants tableViewBackgroundColor];
+    UINavigationBar *navigationBar = self.navigationController.navigationBar;
+    [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
+    
     // Title
     self.titleLabel.text = @"Push Notifications";
-    self.titleLabel.textColor = [TDConstants headerTextColor];
-    self.titleLabel.font = [TDConstants fontRegularSized:20];
+    self.titleLabel.textColor = [UIColor whiteColor];
+    self.titleLabel.font = [TDConstants fontSemiBoldSized:18];
     [self.navigationItem setTitleView:self.titleLabel];
 
     self.backButton = [TDViewControllerHelper navBackButton];
@@ -183,7 +188,7 @@ settings: [
     if (self.gotFromServer && section < [self.settings count]) {
         UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(5, 7, 320, 18)];
         label.text = [[self.settings objectAtIndex:section] objectForKey:@"name"];
-        label.font = [TDConstants fontRegularSized:15.0];
+        label.font = [TDConstants fontRegularSized:16.0];
         label.textColor = [TDConstants headerTextColor];
         [header addSubview:label];
     }

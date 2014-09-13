@@ -26,13 +26,18 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [TDConstants backgroundColor];
-
+    
+    // Background
+    self.tableView.backgroundColor = [TDConstants tableViewBackgroundColor];
+    UINavigationBar *navigationBar = self.navigationController.navigationBar;
+    [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
+    
     // Title
     UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 200, 44)];
     titleLabel.textAlignment = NSTextAlignmentCenter;
     titleLabel.text = @"Social Networks";
-    titleLabel.textColor = [TDConstants headerTextColor];
-    titleLabel.font = [TDConstants fontRegularSized:20];
+    titleLabel.textColor = [UIColor whiteColor];
+    titleLabel.font = [TDConstants fontSemiBoldSized:18];
     [self.navigationItem setTitleView:titleLabel];
 
     self.backButton = [TDViewControllerHelper navBackButton];

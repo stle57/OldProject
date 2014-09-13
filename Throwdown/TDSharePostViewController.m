@@ -54,14 +54,19 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
 - (void)viewDidLoad {
     [super viewDidLoad];
     [[TDAnalytics sharedInstance] logEvent:@"camera_share_with_opened"];
+    // Background
+    self.tableView.backgroundColor = [TDConstants tableViewBackgroundColor];
+    UINavigationBar *navigationBar = self.navigationBar;
+    [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
+    
     UIButton *button = [TDViewControllerHelper navBackButton];
     [button addTarget:self action:@selector(backButtonPressed) forControlEvents:UIControlEventTouchUpInside];
     self.navigationBarItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
 
-    [self.navigationBar setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontRegularSized:20],
-                                                  NSForegroundColorAttributeName: [TDConstants headerTextColor] }];
+    [self.navigationBar setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontSemiBoldSized:18],
+                                                  NSForegroundColorAttributeName: [UIColor whiteColor] }];
 
-    [self.saveButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[TDConstants brandingRedColor], NSFontAttributeName:[TDConstants fontSemiBoldSized:18] } forState:UIControlStateNormal];
+    [self.saveButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[UIColor whiteColor], NSFontAttributeName:[TDConstants fontRegularSized:18] } forState:UIControlStateNormal];
 
     self.tableView.dataSource = self;
     self.tableView.delegate = self;

@@ -12,7 +12,7 @@
 @implementation TDShareViewCell
 
 - (void)awakeFromNib {
-    self.titleLabel.font = [TDConstants fontRegularSized:18.];
+    self.titleLabel.font = [TDConstants fontRegularSized:16.];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated

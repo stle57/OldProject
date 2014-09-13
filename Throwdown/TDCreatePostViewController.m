@@ -52,12 +52,17 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [[TDAnalytics sharedInstance] logEvent:@"camera_share_loaded"];
+    // Background
+
+    UINavigationBar *navigationBar = self.navigationBar;
+    [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
+    
     UIButton *button = [TDViewControllerHelper navCloseButton];
     [button addTarget:self action:@selector(closeButtonPressed) forControlEvents:UIControlEventTouchUpInside];
     self.navigationBarItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
 
-    [self.navigationBar setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontRegularSized:20],
-                                       NSForegroundColorAttributeName: [TDConstants headerTextColor] }];
+    [self.navigationBar setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontSemiBoldSized:18],
+                                       NSForegroundColorAttributeName: [UIColor whiteColor] }];
 
     self.commentTextView.delegate = self;
     self.commentTextView.font = [TDConstants fontRegularSized:17];
@@ -76,8 +81,8 @@
     self.labelPR.textColor = [TDConstants disabledTextColor];
 
     // Set font for "Post" button and sneacky way to hide the button when keyboard is down (same color as background)
-    [self.postButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[TDConstants brandingRedColor], NSFontAttributeName:[TDConstants fontSemiBoldSized:18] } forState:UIControlStateNormal];
-    [self.postButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[TDConstants disabledTextColor], NSFontAttributeName:[TDConstants fontSemiBoldSized:18] } forState:UIControlStateDisabled];
+    [self.postButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[UIColor whiteColor], NSFontAttributeName:[TDConstants fontRegularSized:18] } forState:UIControlStateNormal];
+    [self.postButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[TDConstants disabledTextColor], NSFontAttributeName:[TDConstants fontRegularSized:18] } forState:UIControlStateDisabled];
     self.postButton.enabled = NO;
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];

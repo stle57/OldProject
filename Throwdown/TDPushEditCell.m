@@ -27,6 +27,9 @@
     lineRect.size.height = 0.5;
     self.topLine.frame = lineRect;
     self.bottomLineOrigY = self.bottomLine.frame.origin.y;
+    
+    self.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
+    self.layer.borderWidth = .5f;
 }
 
 - (IBAction)segmentChanged:(id)sender {

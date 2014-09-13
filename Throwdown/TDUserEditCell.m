@@ -23,14 +23,16 @@
 }
 
 - (void)awakeFromNib {
-    self.titleLabel.font      = [TDConstants fontRegularSized:19.0];
-    self.longTitleLabel.font  = [TDConstants fontRegularSized:19.0];
-    self.middleLabel.font     = [TDConstants fontRegularSized:19.0];
-    self.leftMiddleLabel.font = [TDConstants fontRegularSized:19.0];
-    self.textField.font       = [TDConstants fontRegularSized:18.0];
-    self.textView.font        = [TDConstants fontRegularSized:18.0];
-    self.textField.textColor  = [UIColor colorWithRed:(22.0/255.0) green:(22.0/255.0) blue:(22.0/255.0) alpha:1.0];
-    self.textView.textColor   = [UIColor colorWithRed:(22.0/255.0) green:(22.0/255.0) blue:(22.0/255.0) alpha:1.0];
+    self.titleLabel.font      = [TDConstants fontRegularSized:16.0];
+    self.titleLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
+    self.longTitleLabel.font  = [TDConstants fontRegularSized:16.0];
+    self.longTitleLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
+    self.middleLabel.font     = [TDConstants fontRegularSized:16.0];
+    self.leftMiddleLabel.font = [TDConstants fontRegularSized:16.0];
+    self.textField.font       = [TDConstants fontRegularSized:16.0];
+    self.textView.font        = [TDConstants fontRegularSized:16.0];
+    self.textField.textColor  = [TDConstants headerTextColor]; //4c4c4c
+    self.textView.textColor   = [TDConstants headerTextColor]; //4c4c4c
     self.leftMiddleLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
     self.middleLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
     CGRect lineRect = self.bottomLine.frame;
@@ -43,7 +45,11 @@
     self.userImageView.clipsToBounds = YES;
 
     textViewdOrigRect = self.textView.frame;
+    debug NSLog(@"bottomLine.y=%f", self.bottomLine.frame.origin.y);
     bottomLineOrigY = self.bottomLine.frame.origin.y + 0.5;
+    
+    self.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
+    self.layer.borderWidth = .5f;
 }
 
 @end
