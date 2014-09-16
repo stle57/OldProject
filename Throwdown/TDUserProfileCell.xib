@@ -24,6 +24,8 @@
                                 <state key="normal" image="btn-invite-friends">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <state key="selected" image="btn-invite-friends-hit"/>
+                                <state key="highlighted" image="btn-invite-friends-hit"/>
                                 <connections>
                                     <action selector="inviteButtonPressed:" destination="wCZ-UE-T81" eventType="touchUpInside" id="Hje-ab-37K"/>
                                 </connections>
@@ -116,6 +118,7 @@
     </objects>
     <resources>
         <image name="btn-invite-friends" width="140" height="28"/>
+        <image name="btn-invite-friends-hit" width="140" height="28"/>
         <image name="prof_pic_default" width="70" height="70"/>
     </resources>
 </document>

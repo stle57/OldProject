@@ -26,6 +26,8 @@
 - (void)registerDeviceToken:(NSString *)token forUserToken:(NSString *)userToken;
 - (void)getActivityForUserToken:(NSString *)userToken success:(void (^)(NSArray *activities))success failure:(void (^)(void))failure;
 - (void)updateActivity:(NSNumber *)activityId seen:(BOOL)seen clicked:(BOOL)clicked;
+- (void)getFollowingSettings:(NSString *)userToken success:(void (^)(NSArray *users))success failure:(void (^)(void))failure;
+- (void)getFollowerSettings:(NSString *)userToken success:(void (^)(NSArray *users))success failure:(void (^)(void))failure;
 
 - (void)setImage:(NSDictionary *)options;
 - (void)getVideo:(NSString *)filename callback:(void(^)(NSURL *videoLocation))callback error:(void(^)(void))errorCallback;

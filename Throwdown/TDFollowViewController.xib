@@ -4,11 +4,10 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TDUserProfileEditViewController">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TDFollowViewController">
             <connections>
                 <outlet property="activityIndicator" destination="ded-Gi-FWr" id="367-l7-Rxq"/>
                 <outlet property="closeButton" destination="6Zl-1e-jyr" id="wFa-tu-wFU"/>
-                <outlet property="saveButton" destination="wsg-s7-A6a" id="nOj-2y-ARu"/>
                 <outlet property="tableView" destination="ypO-Yh-C3o" id="wiK-0Q-yvA"/>
                 <outlet property="titleLabel" destination="jlv-Tl-yT7" id="mkr-ND-hpo"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
@@ -40,25 +39,13 @@
             <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
         </view>
-        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Edit Profile" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="jlv-Tl-yT7">
+        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="jlv-Tl-yT7">
             <rect key="frame" x="0.0" y="0.0" width="180" height="38"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <fontDescription key="fontDescription" type="system" pointSize="18"/>
             <color key="textColor" red="0.29803921568627451" green="0.29803921568627451" blue="0.29803921568627451" alpha="1" colorSpace="calibratedRGB"/>
             <nil key="highlightedColor"/>
         </label>
-        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="wsg-s7-A6a">
-            <rect key="frame" x="0.0" y="0.0" width="48" height="30"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-            <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
-            <state key="normal" title="Save">
-                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-            </state>
-            <state key="selected" image="nav_close_hit"/>
-            <connections>
-                <action selector="saveButtonHit:" destination="-1" eventType="touchUpInside" id="H17-wO-IIX"/>
-            </connections>
-        </button>
         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="6Zl-1e-jyr">
             <rect key="frame" x="0.0" y="0.0" width="64" height="30"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>

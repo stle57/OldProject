@@ -25,4 +25,7 @@
 - (void)uploadAvatarImage:(NSString *)localImagePath withName:(NSString *)newName;
 - (void)setCrashlyticsMeta;
 - (void)getCommunityUserList:(void (^)(BOOL success, NSDictionary* communityList))callback;
+- (void)followUser:(NSNumber *)userID callback:(void (^)(BOOL success))callback;
+- (void)unFollowUser:(NSNumber *)userID callback:(void (^)(BOOL success))callback;
+
 @end

@@ -12,6 +12,7 @@
 #import "TDAPIClient.h"
 #import "TDHomeViewController.h"
 #import "TDCustomRefreshControl.h"
+#import "TDFollowViewController.h"
 
 static CGFloat const kHeightOfStatusBar = 65.0;
 static NSInteger const kInviteButtonTag = 10001;
@@ -382,7 +383,7 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
             TDUser *user = [self getUser];
             cell.userNameLabel.text = user.name;
             cell.userImageView.hidden = NO;
-            if (user.bio.length != 0) {
+            if ( (user.bio && ![user.bio isKindOfClass:[NSNull class]]) || user.bio.length != 0) {
                cell.bioLabel.attributedText = (NSMutableAttributedString*)[TDViewControllerHelper makeParagraphedTextWithBioString:user.bio];
                 [TDAppDelegate fixHeightOfThisLabel:cell.bioLabel];
                 cell.bioLabel.hidden = NO;
@@ -431,6 +432,7 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
             if( [self isKindOfClass:[TDUserProfileViewController class]]) {
                 TDUserProfileViewController *vc = (TDUserProfileViewController*)self;
                 if(vc.fromProfileType == kFromProfileScreenType_OtherUser) {
+                    //TODO: Fix invite button
                     if(YES) // we are following this persion
                     {
                         UIImage * buttonImage = [UIImage imageNamed:@"btn-following.png"];
@@ -910,12 +912,19 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
 - (void)prStatButtonPressed {
          debug NSLog(@"segue to PR lists");
 }
- - (void)followingStatButtonPressed {
-         debug NSLog(@"segue to following list");
+- (void)followingStatButtonPressed {
+     debug NSLog(@"segue to following list");
+     TDFollowViewController *vc = [[TDFollowViewController alloc] initWithNibName:@"TDFollowViewController" bundle:nil ];
+     vc.followControllerType = kUserListType_Following;
+     //vc.delegate = self;
+     [self.navigationController pushViewController:vc animated:YES];
 }
 
  - (void)followerStatButtonPressed {
-         debug NSLog(@"segue to follwers list");
+     debug NSLog(@"segue to follwers list");
+     TDFollowViewController *vc = [[TDFollowViewController alloc] initWithNibName:@"TDFollowViewController" bundle:nil ];
+     vc.followControllerType = kUserListType_Followers;
+     [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)inviteButtonPressedFromRow:(NSInteger)tag {

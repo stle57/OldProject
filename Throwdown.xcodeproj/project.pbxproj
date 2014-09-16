@@ -62,6 +62,12 @@
 		2DE4653718F614150042D81C /* TDUserEditCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE4653518F614150042D81C /* TDUserEditCell.m */; };
 		2DE4653818F614150042D81C /* TDUserEditCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE4653618F614150042D81C /* TDUserEditCell.xib */; };
 		4D1F8395196F89FB00B5DB76 /* TDUserList.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D1F8394196F89FB00B5DB76 /* TDUserList.m */; };
+		4D2843CE19C401C000E4A56C /* TDFollowViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D2843CC19C401C000E4A56C /* TDFollowViewController.m */; };
+		4D2843CF19C401C000E4A56C /* TDFollowViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D2843CD19C401C000E4A56C /* TDFollowViewController.xib */; };
+		4D2843D319C4082300E4A56C /* TDFollowProfileCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D2843D119C4082300E4A56C /* TDFollowProfileCell.m */; };
+		4D2843D419C4082300E4A56C /* TDFollowProfileCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D2843D219C4082300E4A56C /* TDFollowProfileCell.xib */; };
+		4D2843D819C649D600E4A56C /* TDNoFollowProfileCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D2843D619C649D600E4A56C /* TDNoFollowProfileCell.m */; };
+		4D2843D919C649D600E4A56C /* TDNoFollowProfileCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D2843D719C649D600E4A56C /* TDNoFollowProfileCell.xib */; };
 		4D3352D419A29CD8007B3E06 /* iRate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D3352D319A29CD8007B3E06 /* iRate.m */; };
 		4D3352D619A29CEC007B3E06 /* iRate.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4D3352D519A29CEC007B3E06 /* iRate.bundle */; };
 		4DC2C9981968F69C00A210CF /* TDTextViewControllerHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC2C9971968F69C00A210CF /* TDTextViewControllerHelper.m */; };
@@ -257,6 +263,15 @@
 		2DE4653618F614150042D81C /* TDUserEditCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDUserEditCell.xib; sourceTree = "<group>"; };
 		4D1F8393196F89FB00B5DB76 /* TDUserList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserList.h; sourceTree = "<group>"; };
 		4D1F8394196F89FB00B5DB76 /* TDUserList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUserList.m; sourceTree = "<group>"; };
+		4D2843CB19C401C000E4A56C /* TDFollowViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDFollowViewController.h; sourceTree = "<group>"; };
+		4D2843CC19C401C000E4A56C /* TDFollowViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDFollowViewController.m; sourceTree = "<group>"; };
+		4D2843CD19C401C000E4A56C /* TDFollowViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDFollowViewController.xib; sourceTree = "<group>"; };
+		4D2843D019C4082300E4A56C /* TDFollowProfileCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDFollowProfileCell.h; sourceTree = "<group>"; };
+		4D2843D119C4082300E4A56C /* TDFollowProfileCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDFollowProfileCell.m; sourceTree = "<group>"; };
+		4D2843D219C4082300E4A56C /* TDFollowProfileCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDFollowProfileCell.xib; sourceTree = "<group>"; };
+		4D2843D519C649D600E4A56C /* TDNoFollowProfileCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDNoFollowProfileCell.h; sourceTree = "<group>"; };
+		4D2843D619C649D600E4A56C /* TDNoFollowProfileCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDNoFollowProfileCell.m; sourceTree = "<group>"; };
+		4D2843D719C649D600E4A56C /* TDNoFollowProfileCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDNoFollowProfileCell.xib; sourceTree = "<group>"; };
 		4D3352D219A29CC4007B3E06 /* iRate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iRate.h; sourceTree = "<group>"; };
 		4D3352D319A29CD8007B3E06 /* iRate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iRate.m; sourceTree = "<group>"; };
 		4D3352D519A29CEC007B3E06 /* iRate.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = iRate.bundle; sourceTree = "<group>"; };
@@ -521,6 +536,9 @@
 				A14E38E71992B5ED001B46AF /* TDSocialNetworksViewController.m */,
 				A12549391999715D001C5CD1 /* TDSocialConnectViewController.h */,
 				A125493A1999715D001C5CD1 /* TDSocialConnectViewController.m */,
+				4D2843CB19C401C000E4A56C /* TDFollowViewController.h */,
+				4D2843CC19C401C000E4A56C /* TDFollowViewController.m */,
+				4D2843CD19C401C000E4A56C /* TDFollowViewController.xib */,
 			);
 			name = UserProfile;
 			sourceTree = "<group>";
@@ -933,6 +951,12 @@
 				2DA8639218F49D190089B048 /* TDUserProfileCell.xib */,
 				2DA8639018F49D190089B048 /* TDUserProfileCell.h */,
 				2DA8639118F49D190089B048 /* TDUserProfileCell.m */,
+				4D2843D019C4082300E4A56C /* TDFollowProfileCell.h */,
+				4D2843D119C4082300E4A56C /* TDFollowProfileCell.m */,
+				4D2843D219C4082300E4A56C /* TDFollowProfileCell.xib */,
+				4D2843D519C649D600E4A56C /* TDNoFollowProfileCell.h */,
+				4D2843D619C649D600E4A56C /* TDNoFollowProfileCell.m */,
+				4D2843D719C649D600E4A56C /* TDNoFollowProfileCell.xib */,
 			);
 			name = "User Profile";
 			sourceTree = "<group>";
@@ -1079,9 +1103,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				A12549401999742B001C5CD1 /* TDSocialConnectCell.xib in Resources */,
+				4D2843D919C649D600E4A56C /* TDNoFollowProfileCell.xib in Resources */,
 				A1F3B3681907821800CDA9F5 /* Dring.caf in Resources */,
 				2DA39FD718E0B2570004A9C7 /* TDMoreComments.xib in Resources */,
 				A10F9C241909B01600D2CAB0 /* NewMessage.caf in Resources */,
+				4D2843CF19C401C000E4A56C /* TDFollowViewController.xib in Resources */,
 				A14E38F01992E71B001B46AF /* TDSocialNetworkCell.xib in Resources */,
 				A1F13C6819AD5D7E000DD890 /* TDRadioButtonRowCell.xib in Resources */,
 				2DA5F05B18D37C70003D2F99 /* BebasNeue Book.otf in Resources */,
@@ -1105,6 +1131,7 @@
 				A11E04E61888CB79002F981A /* InfoPlist.strings in Resources */,
 				2DA5F05318D36745003D2F99 /* ProximaNova-Regular.otf in Resources */,
 				2DA8639418F49D190089B048 /* TDUserProfileCell.xib in Resources */,
+				4D2843D419C4082300E4A56C /* TDFollowProfileCell.xib in Resources */,
 				2D3F8DF718CFC81E00333F0B /* TDTwoButtonView.xib in Resources */,
 				2D01951D1901DAF4000CBF74 /* TDNoPostsCell.xib in Resources */,
 				2DE2C70519087AA900E51156 /* TDNoMorePostsCell.xib in Resources */,
@@ -1195,6 +1222,7 @@
 				A1B11920190E030700FE7102 /* TDDeviceInfo.m in Sources */,
 				A19FF60F18970BBB001A0AD0 /* RSContainer.m in Sources */,
 				2DA41A5618C7D89C00B21C74 /* TDDetailViewController.m in Sources */,
+				4D2843D819C649D600E4A56C /* TDNoFollowProfileCell.m in Sources */,
 				A11999DD18DC0D4200C39ABF /* TDFileSystemHelper.m in Sources */,
 				A1BB463318F7767200BD9527 /* TDActivityViewController.m in Sources */,
 				2D2E832E18CA579B00846B2E /* TDComment.m in Sources */,
@@ -1264,6 +1292,7 @@
 				2D83200419116D9000A91282 /* TDUserPushNotificationsEditViewController.m in Sources */,
 				A1B9002E18CC316800012A1F /* TDHomeHeaderView.m in Sources */,
 				A1D6BB10196BC1FD007983F8 /* TDStoryboardSegue.m in Sources */,
+				4D2843D319C4082300E4A56C /* TDFollowProfileCell.m in Sources */,
 				2D5714CD18BD9AB300AF0B4D /* VideoCloseSegue.m in Sources */,
 				A1E90CDD18B445FC0046D281 /* TDSignupStepTwoViewController.m in Sources */,
 				A1432CE718A99DB30073E492 /* TDLoginViewController.m in Sources */,
@@ -1273,6 +1302,7 @@
 				A1D6BB0D196BBAE9007983F8 /* TDSlideDownSegue.m in Sources */,
 				2DA420DC18E63E1A006F4D9C /* TDActivityCell.m in Sources */,
 				A1C2481418C7D4B000F187D9 /* URLConnection.m in Sources */,
+				4D2843CE19C401C000E4A56C /* TDFollowViewController.m in Sources */,
 				2DC12118190F281C00835AAF /* TDUpdatingDateLabel.m in Sources */,
 				A180D4DF18C14EA7003B9378 /* TDNavigationController.m in Sources */,
 				A1E3A17018FCCF2B0038A8A4 /* TDActivitiesCell.m in Sources */,

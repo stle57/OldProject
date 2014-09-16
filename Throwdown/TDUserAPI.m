@@ -147,7 +147,7 @@
     }
  }
 
--(void)getCommunityUserList:(void (^)(BOOL success, NSDictionary* communityList))callback {
+- (void)getCommunityUserList:(void (^)(BOOL success, NSDictionary* communityList))callback {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     TDCurrentUser *currentUser = [TDCurrentUser sharedInstance];
 
@@ -166,5 +166,32 @@
         debug NSLog(@"Get full HTTP Error: %@", error);
     }];
 
+}
+
+- (void)followUser:(NSNumber *)userID callback:(void (^)(BOOL))callback {
+    NSString *url = [NSString stringWithFormat:@"%@/api/v1/users/%@/follow.json", [TDConstants getBaseURL], userID];
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [manager POST:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken }
+          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+              NSLog(@"Following %@", userID);
+          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+              NSLog(@"Error following: %@ with error%@", userID, error);
+          }];
+
+}
+
+- (void)unFollowUser:(NSNumber *)userID callback:(void (^)(BOOL))callback {
+    NSString *url = [NSString stringWithFormat:@"%@/api/v1/users/%@/follow.json", [TDConstants getBaseURL], userID];
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [manager DELETE:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken }
+          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+              NSLog(@"Unfollowed %@", userID);
+          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+              NSLog(@"Error unfollowing: %@ with error%@", userID, error);
+          }];
 }
 @end

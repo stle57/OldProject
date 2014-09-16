@@ -73,9 +73,7 @@
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
     
     // Background color
-    debug NSLog(@"user edit bg color=%@", self.tableView.backgroundColor);
     self.tableView.backgroundColor = [TDConstants tableViewBackgroundColor];
-    debug NSLog(@"  bg after color=%@", self.tableView.backgroundColor);
 
     // Buttons
     self.saveButton.titleLabel.font = [TDConstants fontRegularSized:18.0];
@@ -489,7 +487,7 @@
         case 2:
         case 3:
         case 4:
-            return 40;
+            return 20;
         break;
         default:
             return 0.;

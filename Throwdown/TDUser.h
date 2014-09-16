@@ -20,6 +20,7 @@
 @property (strong, nonatomic, readonly) NSNumber *prCount;
 @property (strong, nonatomic, readonly) NSNumber *followerCount;
 @property (strong, nonatomic, readonly) NSNumber *followingCount; 
+@property (nonatomic, readonly) BOOL following;
 
 - (id)initWithDictionary:(NSDictionary *)dict;
 - (void)userId:(NSNumber *)userId userName:(NSString *)userName name:(NSString *)name picture:(NSString *)picture bio:(NSString *)bio;

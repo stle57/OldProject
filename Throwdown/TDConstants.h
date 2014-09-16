@@ -21,6 +21,12 @@ enum {
 };
 typedef NSUInteger kFromProfileScreenType;
 
+enum {
+    kUserListType_Followers,
+    kUserListType_Following
+};
+typedef NSUInteger kUserListType;
+
 // Cloud
 static NSString *const RSUsername = @"throwdown";
 static NSString *const RSApiKey = @"c93395c50887cf4926d2d24e1d9ed4e7";
@@ -91,30 +97,31 @@ static NSString *const kSpinningAnimation = @"rotationAnimation";
 @interface TDConstants : NSObject
 
 #define APP_STORE_ID 886061848
-#define CELL_IDENTIFIER_POST_VIEW       @"TDPostView"
-#define CELL_IDENTIFIER_LIKE_VIEW       @"TDLikeView"
-#define CELL_IDENTIFIER_COMMENT_VIEW    @"TDTwoButtonView"
-#define CELL_IDENTIFIER_MORE_COMMENTS   @"TDMoreComments"
-#define CELL_IDENTIFIER_ACTIVITY        @"TDActivityCell"
-#define CELL_IDENTIFIER_PROFILE         @"TDUserProfileCell"
-#define CELL_IDENTIFIER_EDITPROFILE     @"TDUserEditCell"
-#define CELL_NO_MORE_POSTS              @"TDNoMorePostsCell"
-#define TOAST_TAG                       87352
-#define COMMENT_MESSAGE_WIDTH           306.0
-#define COMMENT_MESSAGE_FONT_SIZE       15.0
-#define COMMENT_MESSAGE_FONT            [TDConstants fontRegularSized:COMMENT_MESSAGE_FONT_SIZE]
-#define BIO_FONT                        [TDConstants fontRegularSized:14.0]
-#define TITLE_FONT                      [TDConstants fontRegularSized:18.0]
-#define TIME_FONT                       [TDConstants fontLightSized:13.0]
-#define USERNAME_FONT                   [TDConstants fontBoldSized:16.0]
-#define kCommentDefaultText             @"Write a comment..."
-#define FULL_POST_INFO_NOTIFICATION     @"TDFullPostInfoNotification"
-#define START_MAIN_SPINNER_NOTIFICATION @"TDMainSpinnerStart"
-#define STOP_MAIN_SPINNER_NOTIFICATION  @"TDMainSpinnerStop"
-#define LOG_OUT_NOTIFICATION            @"TDLogOutNotification"
-#define TD_COMMENT_EVENT_COUNT          5
-#define TD_LIKE_EVENT_COUNT             2
-#define TD_POST_EVENT_COUNT             10
+#define CELL_IDENTIFIER_POST_VIEW        @"TDPostView"
+#define CELL_IDENTIFIER_LIKE_VIEW        @"TDLikeView"
+#define CELL_IDENTIFIER_COMMENT_VIEW     @"TDTwoButtonView"
+#define CELL_IDENTIFIER_MORE_COMMENTS    @"TDMoreComments"
+#define CELL_IDENTIFIER_ACTIVITY         @"TDActivityCell"
+#define CELL_IDENTIFIER_PROFILE          @"TDUserProfileCell"
+#define CELL_IDENTIFIER_EDITPROFILE      @"TDUserEditCell"
+#define CELL_NO_MORE_POSTS               @"TDNoMorePostsCell"
+#define CELL_IDENTIFIER_FOLLOWPROFILE    @"TDFollowProfileCell"
+#define TOAST_TAG                        87352
+#define COMMENT_MESSAGE_WIDTH            306.0
+#define COMMENT_MESSAGE_FONT_SIZE        15.0
+#define COMMENT_MESSAGE_FONT             [TDConstants fontRegularSized:COMMENT_MESSAGE_FONT_SIZE]
+#define BIO_FONT                         [TDConstants fontRegularSized:14.0]
+#define TITLE_FONT                       [TDConstants fontRegularSized:18.0]
+#define TIME_FONT                        [TDConstants fontLightSized:13.0]
+#define USERNAME_FONT                    [TDConstants fontBoldSized:16.0]
+#define kCommentDefaultText              @"Write a comment..."
+#define FULL_POST_INFO_NOTIFICATION      @"TDFullPostInfoNotification"
+#define START_MAIN_SPINNER_NOTIFICATION  @"TDMainSpinnerStart"
+#define STOP_MAIN_SPINNER_NOTIFICATION   @"TDMainSpinnerStop"
+#define LOG_OUT_NOTIFICATION             @"TDLogOutNotification"
+#define TD_COMMENT_EVENT_COUNT           5
+#define TD_LIKE_EVENT_COUNT              2
+#define TD_POST_EVENT_COUNT              10
 
 + (TDEnvironment)environment;
 + (NSString *)appScheme;

@@ -25,6 +25,7 @@
         _prCount        = [dict objectForKey:@"pr_count"];
         _followerCount  = [dict objectForKey:@"follower_count"];
         _followingCount = [dict objectForKey:@"following_count"];
+        _following      = [dict objectForKey:@"following"];
         [self figureOutBioLabelHeightForThisMessage:_bio];
     }
     return self;
@@ -42,7 +43,7 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"TDUser-user:%@ %@ %@ %@ %@ %@ %@ %@ %@", _userId, _name, _username, _picture, _bio, _postCount, _prCount, _followerCount, _followingCount];
+    return [NSString stringWithFormat:@"TDUser-user:%@ %@ %@ %@ %@ %@ %@ %@ %@ %d", _userId, _name, _username, _picture, _bio, _postCount, _prCount, _followerCount, _followingCount, _following];
 }
 
 - (void)figureOutBioLabelHeightForThisMessage:(NSString *)text {

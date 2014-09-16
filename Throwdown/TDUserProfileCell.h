@@ -38,7 +38,7 @@
 @property (nonatomic, assign) CGRect origBioLabelRect;
 
 
-@property (nonatomic, readonly) TDUser *user;
+//@property (nonatomic, readonly) TDUser *user;
 
 - (void)modifyStatButtonAttributes:(TDUser*)user;
 - (IBAction)inviteButtonPressed:(UIButton*)sender;
