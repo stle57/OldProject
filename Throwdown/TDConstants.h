@@ -115,7 +115,6 @@ static NSString *const kSpinningAnimation = @"rotationAnimation";
 #define TIME_FONT                        [TDConstants fontLightSized:13.0]
 #define USERNAME_FONT                    [TDConstants fontBoldSized:16.0]
 #define kCommentDefaultText              @"Write a comment..."
-#define FULL_POST_INFO_NOTIFICATION      @"TDFullPostInfoNotification"
 #define START_MAIN_SPINNER_NOTIFICATION  @"TDMainSpinnerStart"
 #define STOP_MAIN_SPINNER_NOTIFICATION   @"TDMainSpinnerStop"
 #define LOG_OUT_NOTIFICATION             @"TDLogOutNotification"

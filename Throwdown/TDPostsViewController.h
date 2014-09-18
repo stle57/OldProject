@@ -27,7 +27,7 @@
 #import "TDNoMorePostsCell.h"
 #import "TDNoticeViewCell.h"
 
-@interface TDPostsViewController : UIViewController <TDLikeViewDelegate, TDPostViewDelegate, TDTwoButtonViewDelegate, TDDetailsCommentsCellDelegate, TDMoreCommentsDelegate, UIActionSheetDelegate, TDDetailViewControllerDelegate, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate, TDUserProfileCellDelegate>
+@interface TDPostsViewController : UIViewController <TDLikeViewDelegate, TDPostViewDelegate, TDTwoButtonViewDelegate, TDDetailsCommentsCellDelegate, TDMoreCommentsDelegate, UIActionSheetDelegate, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate, TDUserProfileCellDelegate>
 {
     BOOL goneDownstream;
     CGPoint origRecordButtonCenter;
@@ -44,13 +44,11 @@
     CGFloat uploadMoreHeight;
     BOOL updatingAtBottom;
     BOOL showBottomSpinner;
-    BOOL noMorePostsAtBottom;
     CGRect statusBarFrame;
     BOOL needsProfileHeader;
     CGFloat topOfBioLabelInProfileHeader;
 }
 
-@property (nonatomic, retain) NSArray *posts;
 @property (nonatomic) NSMutableDictionary *removingPosts;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIButton *recordButton;
@@ -65,7 +63,6 @@
 @property (nonatomic) BOOL errorLoading;
 
 - (NSArray *)postsForThisScreen;
-- (NSNumber *)lowestIdOfPosts;
 - (TDUser *)getUser;
 - (void)reloadPosts;
 - (void)refreshPostsList;
@@ -74,7 +71,12 @@
 - (void)showWelcomeController;
 - (void)startSpinner:(NSNotification *)notification;
 - (void)stopSpinner:(NSNotification *)notification;
-- (void)stopSpinner;
+- (void)stopBottomLoadingSpinner;
 - (void)startLoadingSpinner;
 - (void)openDetailView:(NSNumber *)postId;
+
+- (NSUInteger)noticeCount;
+- (TDNotice *)getNoticeAt:(NSUInteger)index;
+- (BOOL)removeNoticeAt:(NSUInteger)index;
+
 @end

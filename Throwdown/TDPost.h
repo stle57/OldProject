@@ -32,20 +32,21 @@ typedef enum {
 @property (nonatomic, assign) BOOL liked;
 @property (nonatomic, copy, readonly) NSArray *mentions;
 @property (nonatomic, readonly) NSArray *likers;
-@property (nonatomic, readonly) NSArray *comments;
 @property (nonatomic, readonly) NSNumber *commentsTotalCount;
 @property (nonatomic, readonly) NSNumber *likersTotalCount;
 
 - (id)initWithDictionary:(NSDictionary *)dict;
+
+- (NSArray *)commentsForFeed;
+- (NSArray *)commentsForDetailView;
+- (TDComment *)commentAtIndex:(NSUInteger)index;
+
 - (void)loadUpFromDict:(NSDictionary *)dict;
 - (void)addLikerUser:(TDUser *)likerUser;
 - (void)removeLikerUser:(TDUser *)likerUser;
 - (void)addComment:(TDComment *)newComment;
 - (void)removeLastComment;
-- (void)orderCommentsForHomeScreen;
-- (void)orderCommentsForDetailsScreen;
 - (void)replaceUser:(TDUser *)newUser;
 - (void)replaceLikers:(NSArray *)newLikers;
-- (void)replaceComments:(NSArray *)newComments;
-- (void)replaceUserAndLikesAndCommentsWithUser:(TDUser *)newUser;
+- (void)updateUserInfoFor:(TDUser *)newUser;
 @end

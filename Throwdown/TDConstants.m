@@ -9,7 +9,7 @@
 #import "TDConstants.h"
 #import "AVFoundation/AVFoundation.h"
 
-static NSString *const kDevHost = @"http://localhost:3000";
+static NSString *const kDevHost = @"http://amber.local:3000";
 static NSString *const kStagingHost = @"http://staging.throwdown.us";
 static NSString *const kProductionHost = @"https://throwdown.us";
 static NSString *const kProductionSharingHost = @"http://tdwn.us";
@@ -86,7 +86,7 @@ static NSString *const kCDNStreamingServer = @"http://139bc8fb83b0918931ad-a6f56
 #pragma mark - Colors
 
 + (UIColor *)brandingRedColor {
-    return [UIColor colorWithRed:.929411765 green:.294117647 blue:.243137255 alpha:1.0];
+    return [UIColor colorWithRed:.929411765 green:.294117647 blue:.243137255 alpha:1.0]; // 237, 75, 62
 }
 
 + (UIColor *)backgroundColor {

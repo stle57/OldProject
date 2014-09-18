@@ -32,10 +32,6 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
     self.tableView.dataSource = nil;
 }
 
-- (UIStatusBarStyle)preferredStatusBarStyle {
-    return UIStatusBarStyleDefault;
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
 
@@ -59,6 +55,8 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
     self.tableView.backgroundColor = [TDConstants tableViewBackgroundColor];
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
+    navigationBar.barStyle = UIBarStyleBlack;
+    navigationBar.translucent = NO;
 
     // Add refresh control
     self.refreshControl = [[UIRefreshControl alloc] init];
@@ -72,7 +70,6 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [self.navigationController setNavigationBarHidden:NO animated:NO];
 }
 
 - (void)didReceiveMemoryWarning {

@@ -14,7 +14,7 @@
 #import "TDCustomRefreshControl.h"
 #import "TDFollowViewController.h"
 
-static CGFloat const kHeightOfStatusBar = 65.0;
+static CGFloat const kHeightOfStatusBar = 64.0;
 static NSInteger const kInviteButtonTag = 10001;
 static NSInteger const kFollowerButtonTag = 10002;
 static NSInteger const kFollowingButtonTag = 10003;
@@ -29,7 +29,6 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
 
 @implementation TDPostsViewController
 
-@synthesize posts;
 @synthesize animator;
 
 - (void)viewDidLoad {
@@ -65,7 +64,7 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
     profileCell = nil;
     topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoPostsCell" owner:self options:nil];
     TDNoPostsCell *noPostsCell = [topLevelObjects objectAtIndex:0];
-    noPostsHeight = noPostsCell.frame.size.height - (needsProfileHeader ? profileHeaderHeight + kHeightOfStatusBar : 0);
+    noPostsHeight = noPostsCell.frame.size.height - kHeightOfStatusBar;
     noPostsCell = nil;
     topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_NO_MORE_POSTS owner:self options:nil];
     TDNoMorePostsCell *uploadMoreCell = [topLevelObjects objectAtIndex:0];
@@ -101,31 +100,19 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(startSpinner:) name:START_MAIN_SPINNER_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(stopSpinner:) name:STOP_MAIN_SPINNER_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logOutUser:) name:LOG_OUT_NOTIFICATION object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshPostsList:) name:TDRefreshPostsNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removePost:) name:TDNotificationRemovePost object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removePostFailed:) name:TDNotificationRemovePostFailed object:nil];
 
     [self refreshPostsList];
-    [self fetchPostsUpStream];
+    [self fetchPostsRefresh];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-
-    // If we're coming back from the details screen, we need to
-    // order the comments to only the most recent 2
-    if ([self.posts count] > 0) {
-        for (TDPost *post in self.posts) {
-            [post orderCommentsForHomeScreen];
-        }
-    }
-
     [self.tableView reloadData];
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
-    return UIStatusBarStyleDefault;
+    return UIStatusBarStyleLightContent;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -138,51 +125,55 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
 
     self.tableView.delegate = nil;
     self.tableView.dataSource = nil;
-    self.posts = nil;
     self.removingPosts = nil;
     self.customRefreshControl = nil;
     self.animator = nil;
     self.userId = nil;
 }
 
-# pragma mark - Figure out what's on each row
-
-- (TDPost *)postForRow:(NSInteger)row {
-    NSInteger realRow = row - [self noticeCount] - (needsProfileHeader ? 1 : 0);
-    if (realRow <= self.posts.count) {
-        return [self.posts objectAtIndex:realRow];
-    } else {
-        return nil;
-    }
-}
+#pragma mark - Notices methods to override
 
 - (NSUInteger)noticeCount {
     return 0;
 }
 
-- (void)fetchPostsUpStream {
+- (TDNotice *)getNoticeAt:(NSUInteger)index {
+    return nil;
 }
 
-- (BOOL)fetchPostsDownStream {
+- (BOOL)removeNoticeAt:(NSUInteger)index {
     return NO;
 }
 
+
+# pragma mark - Figure out what's on each row
+
+// Override this to return the correct post for index row
+- (TDPost *)postForRow:(NSInteger)row {
+    return nil;
+}
+
+// Override this for updates at bottom of feed
+- (BOOL)hasMorePosts {
+    return NO;
+}
+
+// Override this to get posts from a pull-to-refresh
+- (void)fetchPostsRefresh {
+}
+
+// Override this to get more posts at the bottom of the feed
+// Returns BOOL, YES if fetch was initiated.
+- (BOOL)fetchMorePostsAtBottom {
+    return NO;
+}
+
+// Override this to return the current set of posts for the current feed
 - (NSArray *)postsForThisScreen {
     return nil;
 }
 
-- (NSNumber *)lowestIdOfPosts {
-    NSNumber *lowestId = [NSNumber numberWithLongLong:LONG_LONG_MAX];
-    for (TDPost *post in posts) {
-        if ([lowestId compare:post.postId] == NSOrderedDescending) {
-            lowestId = post.postId;
-        }
-    }
-    long lowest = [lowestId longValue]-1;
-    lowestId = [NSNumber numberWithLong:lowest];
-    return lowestId;
-}
-
+// Override to return user object if we're on profile view
 - (TDUser *)getUser {
     return nil;
 }
@@ -201,67 +192,15 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
     [self refreshPostsList];
 }
 
-/* Refreshes the list with currently downloaded posts */
+/* Refreshes the tableview with current posts list */
 - (void)refreshPostsList {
-    [self stopSpinner];
+    [self stopBottomLoadingSpinner];
 
     updatingAtBottom = NO;
 
     // If from refresh control
     [self endRefreshControl];
-
-    self.posts = [self postsForThisScreen];
     [self.tableView reloadData];
-}
-
-# pragma mark - handle removing posts
-
-- (void)removePost:(NSNotification *)n {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        BOOL changeMade = NO;
-        NSNumber *postId = (NSNumber *)[n.userInfo objectForKey:@"postId"];
-        NSMutableArray *newList = [[NSMutableArray array] init];
-        for (TDPost *post in self.posts) {
-            if ([post.postId isEqualToNumber:postId]) {
-                debug NSLog(@"removing post from vc with id %@", postId);
-                changeMade = YES;
-                if (!self.removingPosts) {
-                    self.removingPosts = [[NSMutableDictionary alloc] init];
-                }
-                [self.removingPosts setObject:post forKey:post.postId];
-            } else {
-                [newList addObject:post];
-            }
-        }
-        if (changeMade) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self.posts = [[NSArray alloc] initWithArray:newList];
-                [self.tableView reloadData];
-            });
-        }
-    });
-}
-
-- (void)removePostFailed:(NSNotification *)n {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        NSNumber *postId = (NSNumber *)[n.userInfo objectForKey:@"postId"];
-        if (self.removingPosts && [self.removingPosts objectForKey:postId]) {
-            NSMutableArray *newList = [[NSMutableArray array] initWithArray:self.posts];
-            [newList addObject:[self.removingPosts objectForKey:postId]];
-            NSSortDescriptor *valueDescriptor = [[NSSortDescriptor alloc] initWithKey:@"postId" ascending:NO];
-            self.posts = [newList sortedArrayUsingDescriptors:@[valueDescriptor]];
-            // clean up cache
-            [self.removingPosts removeObjectForKey:postId];
-            if ([self.removingPosts count] == 0) {
-                self.removingPosts = nil;
-            }
-
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.tableView reloadData];
-                [TDViewControllerHelper showAlertMessage:@"There was a problem deleting the post, please try again." withTitle:nil];
-            });
-        }
-    });
 }
 
 #pragma mark - refresh control
@@ -276,7 +215,7 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
 
 # pragma mark - table view delegate
 - (void)updatePostsAtBottom {
-    if (updatingAtBottom || noMorePostsAtBottom) {
+    if (updatingAtBottom || ![self hasMorePosts]) {
         return;
     }
     debug NSLog(@"updatePostsAtBottom");
@@ -284,10 +223,9 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
     updatingAtBottom = YES;
     [self startLoadingSpinner];
 
-    if (![self fetchPostsDownStream]) {
-        noMorePostsAtBottom = YES;
+    if (![self fetchMorePostsAtBottom]) {
         updatingAtBottom = NO;
-        [self stopSpinner];
+        [self stopBottomLoadingSpinner];
     }
 }
 
@@ -297,21 +235,22 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
 
 - (void)reloadPosts {
     debug NSLog(@"reload posts");
+    [self stopBottomLoadingSpinner];
     [self endRefreshControl];
-    self.posts = [self postsForThisScreen];
     [self.tableView reloadData];
 }
 
 // 1 section per post, +1 if we need the Profile Header cell
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    if ([self.posts count] == 0) {
+    NSArray *posts = [self postsForThisScreen];
+    if ([posts count] == 0) {
         if (!self.loaded || self.errorLoading) {
             return 1 + [self noticeCount];
         }
         return (needsProfileHeader ? 2 : 1) + [self noticeCount];
     }
 
-    return [self.posts count] + [self noticeCount] + (showBottomSpinner ? 1 : 0) + (noMorePostsAtBottom ? 1 : 0) + (needsProfileHeader ? 1 : 0);
+    return [posts count] + [self noticeCount] + (showBottomSpinner ? 1 : 0) + ([self hasMorePosts] ? 0 : 1) + (needsProfileHeader ? 1 : 0);
 }
 
 // Rows is 1 (for the video) + 1 for likes row + # of comments + 1 for like/comment buttons
@@ -329,11 +268,11 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
     }
 
     // 'No Posts'
-    if ([self.posts count] == 0) {
+    if ([[self postsForThisScreen] count] == 0) {
         return 1;
     }
 
-    NSInteger row = [self.posts count] + [self noticeCount] + (needsProfileHeader ? 1 : 0);
+    NSInteger row = [[self postsForThisScreen] count] + [self noticeCount] + (needsProfileHeader ? 1 : 0);
 
     // Last row with Activity
     if (showBottomSpinner && section == row) {
@@ -341,24 +280,20 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
     }
 
     // Last row with no more posts
-    if (noMorePostsAtBottom && section == row) {
+    if (![self hasMorePosts] && section == row) {
         return 1;
     }
 
     TDPost *post = [self postForRow:section];
     if (post) {
-        NSInteger count = 3 + ([post.comments count] > 2 ? 2 : [post.comments count]);
         // +1 if total comments count > 2
-        if ([post.commentsTotalCount intValue] > 2) {
-            count++;
-        }
-        return count;
+        return  3 + ([post.commentsTotalCount integerValue] > 2 ? 3 : [post.commentsTotalCount integerValue]);
     }
     return 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSInteger realRow = [self.posts count] + [self noticeCount] + (needsProfileHeader ? 1 : 0);
+    NSInteger realRow = [[self postsForThisScreen] count] + [self noticeCount] + (needsProfileHeader ? 1 : 0);
 
     // debugging these table view buggers:
     // NSInteger postRow = indexPath.section - [self noticeCount] - (needsProfileHeader ? 1 : 0);
@@ -383,7 +318,7 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
             TDUser *user = [self getUser];
             cell.userNameLabel.text = user.name;
             cell.userImageView.hidden = NO;
-            if ( (user.bio && ![user.bio isKindOfClass:[NSNull class]]) || user.bio.length != 0) {
+            if (user.bio && ![user.bio isKindOfClass:[NSNull class]] && user.bio.length != 0) {
                cell.bioLabel.attributedText = (NSMutableAttributedString*)[TDViewControllerHelper makeParagraphedTextWithBioString:user.bio];
                 [TDAppDelegate fixHeightOfThisLabel:cell.bioLabel];
                 cell.bioLabel.hidden = NO;
@@ -471,7 +406,7 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
 
     // Notices on Home Screen
     if ([self noticeCount] > 0 && indexPath.section < [self noticeCount]) {
-        TDNotice *notice = [[TDPostAPI sharedInstance] getNoticeAt:indexPath.section];
+        TDNotice *notice = [self getNoticeAt:indexPath.section];
         TDNoticeViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoticeViewCell"];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoticeViewCell" owner:self options:nil];
@@ -483,7 +418,7 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
     }
 
     // 'Loading' or 'No Posts' cell
-    if ([self.posts count] == 0) {
+    if ([[self postsForThisScreen] count] == 0) {
         TDNoPostsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoPostsCell"];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoPostsCell" owner:self options:nil];
@@ -526,7 +461,7 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
     }
 
     // Last row if no more
-    if (noMorePostsAtBottom && indexPath.section == realRow) {
+    if (![self hasMorePosts] && indexPath.section == realRow) {
 
         TDNoMorePostsCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_NO_MORE_POSTS];
         if (!cell) {
@@ -622,8 +557,10 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
     NSInteger commentNumber = indexPath.row - 2;
     cell.commentNumber = commentNumber;
     cell.row = indexPath.section;
-    TDComment *comment = [post.comments objectAtIndex:commentNumber];
-    [cell updateWithComment:comment];
+    TDComment *comment = [post commentAtIndex:commentNumber];
+    if (comment) {
+        [cell updateWithComment:comment];
+    }
     return cell;
 }
 
@@ -633,7 +570,8 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
         // min height is profileHeaderHeight
         if ([self getUser]) {
             CGFloat bioHeight = [self getUser].bioHeight;
-            CGFloat padding = kBioLabelInviteButtonPadding+inviteButtonHeight+ kInviteButtonStatButtonPadding + statButtonHeight +5; //spacing after bio, height of invite button, spacing after invite, height of stat buttons + extra padding for next section in view
+            //spacing after bio, height of invite button, spacing after invite, height of stat buttons + extra padding for next section in view
+            CGFloat padding = kBioLabelInviteButtonPadding + inviteButtonHeight + kInviteButtonStatButtonPadding + statButtonHeight + 5;
             debug NSLog(@"bioHeight=%f", bioHeight);
             CGFloat cellHeight = topOfBioLabelInProfileHeader + bioHeight + (bioHeight > 0 ? padding : 5); // extra padding when we have a bio
             debug NSLog(@"returning height for profileheader=%f, where cellHeight=%f and profileHeaderHeight=%f", fmaxf(profileHeaderHeight, cellHeight), cellHeight, profileHeaderHeight);
@@ -644,24 +582,25 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
     }
 
     if ([self noticeCount] > 0 && indexPath.section < [self noticeCount]) {
-        return [TDNoticeViewCell heightForNotice:[[TDPostAPI sharedInstance] getNoticeAt:indexPath.section]];
+        return [TDNoticeViewCell heightForNotice:[self getNoticeAt:indexPath.section]];
     }
 
+    NSUInteger postsCount = [[self postsForThisScreen] count];
+
     // Just 'No Posts' cell
-    if ([self.posts count] == 0) {
-        // 20 is for status bar height
-        return [UIScreen mainScreen].bounds.size.height - self.tableView.contentInset.top - (self.loaded ? profileHeaderHeight + 20 : 0);
+    if (postsCount == 0) {
+        return [UIScreen mainScreen].bounds.size.height - self.tableView.contentInset.top;
     }
 
     NSInteger realRow = indexPath.section - [self noticeCount] - (needsProfileHeader ? 1 : 0);
 
     // Last row with Activity
-    if (showBottomSpinner && realRow == [self.posts count]) {
+    if (showBottomSpinner && realRow == postsCount) {
         return activityRowHeight;
     }
 
     // Last row with Load More
-    if (noMorePostsAtBottom && realRow == [self.posts count]) {
+    if (![self hasMorePosts] && realRow == postsCount) {
         return uploadMoreHeight;
     }
 
@@ -690,21 +629,28 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
 
     // Comments
     NSInteger commentNumber = indexPath.row - 2;
-    TDComment *comment = [post.comments objectAtIndex:commentNumber];
+    NSArray *comments = [post commentsForFeed];
+    if ([comments count] > commentNumber) {
+        TDComment *comment = [comments objectAtIndex:commentNumber];
 
-    if ((indexPath.row - 2) == ([post.comments count] - 1)) {
-        return kCommentCellUserHeight + kCommentLastPadding + comment.messageHeight;
+        if ((indexPath.row - 2) == ([comments count] - 1)) {
+            return kCommentCellUserHeight + kCommentLastPadding + comment.messageHeight;
+        }
+        return kCommentCellUserHeight + kCommentPadding + comment.messageHeight;
+    } else {
+        return 0;
     }
-    return kCommentCellUserHeight + kCommentPadding + comment.messageHeight;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
+
     if ([self noticeCount] > 0 && indexPath.section < [self noticeCount]) {
-        TDNotice *notice = [[TDPostAPI sharedInstance] getNoticeAt:indexPath.section];
+        TDNotice *notice = [self getNoticeAt:indexPath.section];
         if (notice) {
             [notice callAction];
             if (notice.dismissOnCall) {
-                if ([[TDPostAPI sharedInstance] removeNoticeAt:indexPath.section]) {
+                if ([self removeNoticeAt:indexPath.section]) {
                     [self.tableView reloadData];
                 }
             }
@@ -712,11 +658,9 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
         return;
     }
 
-    if (!self.posts || [self.posts count] == 0 || (needsProfileHeader && indexPath.section == 0)) {
+    if (needsProfileHeader && indexPath.section == 0) {
         return;
     }
-
-    [tableView deselectRowAtIndexPath:indexPath animated:NO];
 
     TDPost *post = [self postForRow:indexPath.section];
     if (post) {
@@ -733,9 +677,10 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     [self.customRefreshControl containingScrollViewDidEndDragging:scrollView];
 
-    if (!self.posts || [self.posts count] == 0) {
+    if ([[self postsForThisScreen] count] == 0) {
         return;
     }
+
     if ((scrollView.contentOffset.y + scrollView.frame.size.height) >= scrollView.contentSize.height - 10.0) {
         [self updatePostsAtBottom];
     }
@@ -847,26 +792,13 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
     [self.navigationController popToRootViewControllerAnimated:NO];
 }
 
-#pragma mark - Update Posts After User Change Notification
-- (void)updatePostsAfterUserUpdate:(NSNotification *)notification {
-    debug NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
-
-    for (TDPost *aPost in self.posts) {
-        if ([[[TDCurrentUser sharedInstance] currentUserObject].userId isEqualToNumber:aPost.user.userId]) {
-            [aPost replaceUserAndLikesAndCommentsWithUser:[[TDCurrentUser sharedInstance] currentUserObject]];
-        }
-    }
-
-    [self.tableView reloadData];
-}
-
 #pragma mark - Loading Spinner
 - (void)startSpinner:(NSNotification *)notification {
     [self startLoadingSpinner];
 }
 
 - (void)stopSpinner:(NSNotification *)notification {
-    [self stopSpinner];
+    [self stopBottomLoadingSpinner];
 }
 
 - (void)startLoadingSpinner {
@@ -879,7 +811,7 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
     [self.tableView reloadData];
 }
 
-- (void)stopSpinner {
+- (void)stopBottomLoadingSpinner {
     showBottomSpinner = NO;
     [self.tableView reloadData];
 }
@@ -887,21 +819,7 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
 - (void)openDetailView:(NSNumber *)postId {
     TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil ];
     vc.postId = postId;
-    vc.delegate = self;
     [self.navigationController pushViewController:vc animated:YES];
-}
-
-- (void)replacePostId:(NSNumber *)postId withPost:(TDPost *)post {
-    debug NSLog(@"replacePostID:%@ Post:%@", postId, post);
-    NSMutableArray *newPostsArray = [NSMutableArray arrayWithArray:self.posts];
-    for (TDPost *aPost in self.posts) {
-        if ([aPost.postId isEqualToNumber:postId]) {
-            [newPostsArray replaceObjectAtIndex:[self.posts indexOfObject:aPost] withObject:post];
-            self.posts = [NSArray arrayWithArray:newPostsArray];
-            [self.tableView reloadData];
-            break;
-        }
-    }
 }
 
 #pragma mark - TDUserProfileCellDelegate

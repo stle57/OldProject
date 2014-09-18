@@ -18,6 +18,8 @@
 @interface TDUserProfileViewController ()
 
 @property (nonatomic) TDUser *user;
+@property (nonatomic) NSArray *posts;
+@property (nonatomic) NSNumber *nextStart;
 
 @end
 
@@ -37,6 +39,8 @@
 
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
+    navigationBar.barStyle = UIBarStyleBlack;
+    navigationBar.translucent = NO;
     
     // Background color
     debug NSLog(@"bg color=%@", self.tableView.backgroundColor);
@@ -78,6 +82,7 @@
     }
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removePost:) name:TDNotificationRemovePost object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -90,7 +95,7 @@
 
     if (!self.posts || goneDownstream) {
         [self refreshPostsList];
-        [self fetchPostsUpStream];
+        [self fetchPostsRefresh];
     }
     goneDownstream = NO;
 }
@@ -135,6 +140,10 @@
 
 #pragma mark - Posts
 
+- (BOOL)hasMorePosts {
+    return self.nextStart != nil;
+}
+
 - (TDPost *)postForRow:(NSInteger)row {
     NSInteger realRow = row - 1; // 1 is for the header
     if (realRow < self.posts.count) {
@@ -144,11 +153,14 @@
     }
 }
 
-- (void)fetchPostsUpStream {
-    debug NSLog(@"userprofile-fetchPostsUpStream");
+- (void)fetchPostsRefresh {
+    debug NSLog(@"userprofile-fetchPostsRefresh");
     NSString *fetch = self.username ? self.username : [self.userId stringValue];
-    [[TDPostAPI sharedInstance] fetchPostsUpstreamForUsername:fetch success:^(NSDictionary *response) {
+    [[TDPostAPI sharedInstance] fetchPostsForUser:fetch start:nil success:^(NSDictionary *response) {
+        [self handleNextStart:[response objectForKey:@"next_start"]];
         [self handlePostsResponse:response fromStart:YES];
+        self.user = [[TDUser alloc] initWithDictionary:[response valueForKeyPath:@"user"]];
+        self.titleLabel.text = self.user.username;
     } error:^{
         [self endRefreshControl];
         [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastType_Warning payload:@{} delegate:nil];
@@ -158,19 +170,13 @@
     }];
 }
 
-- (BOOL)fetchPostsDownStream {
-    if (noMorePostsAtBottom) {
-        return NO;
+- (void)handleNextStart:(NSNumber *)start {
+    // start can be [NSNull null] here
+    if (start && [[start class] isSubclassOfClass:[NSNumber class]]) {
+        self.nextStart = start;
+    } else {
+        self.nextStart = nil;
     }
-    debug NSLog(@"userprofile-fetchPostsDownStream");
-    NSString *fetch = self.username ? self.username : [self.userId stringValue];
-    [[TDPostAPI sharedInstance] fetchPostsForUserUpstreamWithErrorHandlerStart:[super lowestIdOfPosts] username:fetch error:^{
-        self.loaded = YES;
-        self.errorLoading = YES;
-    } success:^(NSDictionary *response) {
-        [self handlePostsResponse:response fromStart:NO];
-    }];
-    return YES;
 }
 
 - (void)handlePostsResponse:(NSDictionary *)response fromStart:(BOOL)start {
@@ -180,9 +186,6 @@
     if (start) {
         self.posts = nil;
         self.removingPosts = nil;
-        // TODO update user info
-        self.user = [[TDUser alloc] initWithDictionary:[response valueForKeyPath:@"user"]];
-        self.titleLabel.text = self.user.username;
     }
 
     NSMutableArray *newPosts;
@@ -193,14 +196,29 @@
     }
 
     for (NSDictionary *postObject in [response valueForKeyPath:@"posts"]) {
-        [newPosts addObject:[[TDPost alloc] initWithDictionary:postObject]];
-    }
-    if ([response valueForKey:@"next_start"] == [NSNull null]) {
-        noMorePostsAtBottom = YES;
+        TDPost *post = [[TDPost alloc] initWithDictionary:postObject];
+        [post replaceUser:self.user];
+        [newPosts addObject:post];
     }
 
     self.posts = newPosts;
     [self refreshPostsList];
+}
+
+- (BOOL)fetchMorePostsAtBottom {
+    if (![self hasMorePosts]) {
+        return NO;
+    }
+    debug NSLog(@"userprofile-fetchMorePostsAtBottom");
+    NSString *fetch = self.username ? self.username : [self.userId stringValue];
+    [[TDPostAPI sharedInstance] fetchPostsForUser:fetch start:self.nextStart success:^(NSDictionary *response) {
+        [self handleNextStart:[response objectForKey:@"next_start"]];
+        [self handlePostsResponse:response fromStart:NO];
+    } error:^{
+        self.loaded = YES;
+        self.errorLoading = YES;
+    }];
+    return YES;
 }
 
 #pragma mark - TDPostsViewController overrides
@@ -210,19 +228,13 @@
 }
 
 - (NSArray *)postsForThisScreen {
-    debug NSLog(@"userprofile-postsForThisScreen");
-    NSMutableArray *postsWithUsers = [NSMutableArray array];
-    for (TDPost *aPost in self.posts) {
-        [aPost replaceUser:self.user];
-        [postsWithUsers addObject:aPost];
-    }
-    return postsWithUsers;
+    return self.posts;
 }
 
 #pragma mark - Refresh Control
 
 - (void)refreshControlUsed {
-    [self fetchPostsUpStream];
+    [self fetchPostsRefresh];
 }
 
 #pragma mark - PostView Delegate
@@ -237,11 +249,12 @@
 
 - (void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber {
     debug NSLog(@"profile-userButtonPressedFromRow:%ld commentNumber:%ld, %@ %@", (long)row, (long)commentNumber, self.userId, [[TDCurrentUser sharedInstance] currentUserObject].userId);
-
     TDPost *post = [self postForRow:row];
-    if (post && post.comments && [post.comments count] > commentNumber) {
-        TDComment *comment = [post.comments objectAtIndex:commentNumber];
-        [self showUserProfile:comment.user];
+    if (post) {
+        TDComment *comment = [post commentAtIndex:commentNumber];
+        if (comment) {
+            [self showUserProfile:comment.user];
+        }
     }
 }
 
@@ -258,13 +271,38 @@
 }
 
 - (void)updatePostsAfterUserUpdate:(NSNotification *)notification {
-    debug NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
-
     if ([[[TDCurrentUser sharedInstance] currentUserObject].userId isEqualToNumber:self.userId]) {
         self.user = [[TDCurrentUser sharedInstance] currentUserObject];
     }
 
+    for (TDPost *aPost in self.posts) {
+        [aPost updateUserInfoFor:[[TDCurrentUser sharedInstance] currentUserObject]];
+    }
+
     [self.tableView reloadData];
+}
+
+
+- (void)removePost:(NSNotification *)n {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        BOOL changeMade = NO;
+        NSNumber *postId = (NSNumber *)[n.userInfo objectForKey:@"postId"];
+        NSMutableArray *newList = [[NSMutableArray array] init];
+        for (TDPost *post in self.posts) {
+            if ([post.postId isEqualToNumber:postId]) {
+                debug NSLog(@"removing post from vc with id %@", postId);
+                changeMade = YES;
+            } else {
+                [newList addObject:post];
+            }
+        }
+        if (changeMade) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.posts = [[NSArray alloc] initWithArray:newList];
+                [self.tableView reloadData];
+            });
+        }
+    });
 }
 
 @end

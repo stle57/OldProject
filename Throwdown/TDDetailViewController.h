@@ -13,16 +13,8 @@
 #import "TDPostView.h"
 #import "TDUserListView.h"
 
-@protocol TDDetailViewControllerDelegate <NSObject>
-
-@optional
--(void)postDeleted:(TDPost *)deletedPost;
--(void)replacePostId:(NSNumber *)postId withPost:(TDPost *)post;
-@end
-
 @interface TDDetailViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, TDDetailsLikesCellDelegate, TDDetailsCommentsCellDelegate, UIAlertViewDelegate, UIActionSheetDelegate, TDPostViewDelegate, TDUserListViewDelegate>
 
-@property (nonatomic, assign) id <TDDetailViewControllerDelegate> __unsafe_unretained delegate;
 @property (nonatomic, retain) TDPost *post;
 @property (nonatomic) NSNumber *postId;
 @property (nonatomic) NSString *slug;

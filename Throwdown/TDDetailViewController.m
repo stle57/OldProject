@@ -18,10 +18,14 @@
 #import "TDAnalytics.h"
 #import "UIPlaceHolderTextView.h"
 #import "TDUserListView.h"
+#import "TDActivityIndicator.h"
+#import <FLEX/FLEXManager.h>
 
 static float const kInputLineSpacing = 3;
 static float const kMinInputHeight = 33.;
 static float const kMaxInputHeight = 100.;
+static int const kCommentFieldPadding = 14;
+static int const kToolbarHeight = 64;
 
 @interface TDDetailViewController () <UITextViewDelegate, NSLayoutManagerDelegate>
 
@@ -37,14 +41,15 @@ static float const kMaxInputHeight = 100.;
 @property (nonatomic) CGFloat minLikeheight;
 @property (nonatomic) BOOL liking;
 @property (nonatomic) BOOL isEditing;
+@property (nonatomic) BOOL loaded;
 @property (nonatomic) NSString *cachedText;
 @property (nonatomic) TDUserListView *userListView;
+@property (nonatomic) TDActivityIndicator *activityIndicator;
 @end
 
 @implementation TDDetailViewController
 
 - (void)dealloc {
-    self.delegate = nil;
     self.post = nil;
     self.postId = nil;
     self.slug = nil;
@@ -60,9 +65,11 @@ static float const kMaxInputHeight = 100.;
     [super viewDidLoad];
 
     // Title
-    self.titleLabel.textColor = [TDConstants headerTextColor];
-    self.titleLabel.font = [TDConstants fontRegularSized:20];
+    self.titleLabel.textColor = [UIColor whiteColor];
+    self.titleLabel.font = [TDConstants fontSemiBoldSized:18];
     [self.navigationItem setTitleView:self.titleLabel];
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    self.navigationController.navigationBar.translucent = NO;
 
     UIButton *backButton = [TDViewControllerHelper navBackButton];
     [backButton addTarget:self action:@selector(back) forControlEvents:UIControlEventTouchUpInside];
@@ -108,10 +115,10 @@ static float const kMaxInputHeight = 100.;
         [self.view addSubview:self.userListView];
     }
 
+    self.loaded = NO;
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadPosts:) name:TDRefreshPostsNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fullPostReturn:) name:FULL_POST_INFO_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newCommentFailed:) name:TDNotificationNewCommentFailed object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postDeleted:) name:TDNotificationRemovePost object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidChange:) name:UIKeyboardDidChangeFrameNotification object:nil];
@@ -126,22 +133,21 @@ static float const kMaxInputHeight = 100.;
     // Stop any current playbacks
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
 
-    [self.navigationController setNavigationBarHidden:NO animated:NO];
-
     CGFloat height = [UIScreen mainScreen].bounds.size.height - self.commentView.layer.frame.size.height;
     self.tableView.frame = CGRectMake(0, 0, 320, height);
 
-    // TODO: only when user didn't go downstream
-    // Get the full post info
-    if (self.post && self.post.postId) {
-        self.postId = self.post.postId;
-    } else if (!self.post) {
-        self.post = [[TDPost alloc] init];
-    }
-    if (self.postId) {
-        [[TDPostAPI sharedInstance] getFullPostInfoForPostId:self.postId];
-    } else if (self.slug) {
-        [[TDPostAPI sharedInstance] getFullPostInfoForPostSlug:self.slug];
+    if (!self.loaded) {
+        if (self.post && self.post.postId) {
+            self.postId = self.post.postId;
+        } else if (!self.post) {
+            self.post = [[TDPost alloc] init];
+        }
+        NSString *identifier = self.postId ? [self.postId stringValue] : self.slug;
+        [[TDPostAPI sharedInstance] getFullPostInfoForPost:identifier success:^(NSDictionary *response) {
+            [self fullPostReturn:response];
+        } error:^{
+            [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastType_Warning payload:@{} delegate:nil];
+        }];
     }
 }
 
@@ -150,7 +156,6 @@ static float const kMaxInputHeight = 100.;
         [self.textView resignFirstResponder];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
-    [self.navigationController setNavigationBarHidden:YES animated:YES];
 }
 
 - (void)back {
@@ -216,7 +221,19 @@ static float const kMaxInputHeight = 100.;
     // Delete Yes is index 0
     if (alertView.tag == 89890 && buttonIndex != alertView.cancelButtonIndex) {
         self.navigationItem.rightBarButtonItem.enabled = NO;
+
         // Delete from server Server
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postDeleted:) name:TDNotificationRemovePost object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postDeleteFailed:) name:TDNotificationRemovePostFailed object:nil];
+
+        self.activityIndicator = [[TDActivityIndicator alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+        self.activityIndicator.hidden = NO;
+        self.activityIndicator.text.text = @"Removing post";
+        [self.view addSubview:self.activityIndicator];
+        [self.view bringSubviewToFront:self.activityIndicator];
+        [self.activityIndicator startSpinner];
+
+        self.navigationItem.rightBarButtonItem.enabled = NO;
         [[TDPostAPI sharedInstance] deletePostWithId:self.postId];
     } else if (alertView.tag == 18890 && buttonIndex != alertView.cancelButtonIndex) {
         // Report!
@@ -234,32 +251,40 @@ static float const kMaxInputHeight = 100.;
 
 - (void)reloadPosts:(NSNotification*)notification {
     if (!self.liking) {
-        TDPostAPI *api = [TDPostAPI sharedInstance];
-        [api getFullPostInfoForPostId:self.postId];
+        [[TDPostAPI sharedInstance] getFullPostInfoForPost:[self.postId stringValue] success:^(NSDictionary *response) {
+            [self fullPostReturn:response];
+        } error:^{
+            [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastType_Warning payload:@{} delegate:nil];
+        }];
     }
     self.liking = NO;
 }
 
-- (void)fullPostReturn:(NSNotification*)notification {
-    if ([notification.userInfo isKindOfClass:[NSDictionary class]]) {
-        TDPost *newPost = [[TDPost alloc] initWithDictionary:notification.userInfo];
-        if ((self.postId && [newPost.postId isEqualToNumber:self.postId]) || (self.slug && ([newPost.slug isEqualToString:self.slug] || [[newPost.postId stringValue] isEqualToString:self.slug]))) {
-            [self.post loadUpFromDict:notification.userInfo];
-            self.postId = self.post.postId;
-            [self.tableView reloadData];
-        }
+- (void)fullPostReturn:(NSDictionary *)post {
+    self.loaded = YES;
+    TDPost *newPost = [[TDPost alloc] initWithDictionary:post];
+    if ((self.postId && [newPost.postId isEqualToNumber:self.postId]) || (self.slug && ([newPost.slug isEqualToString:self.slug] || [[newPost.postId stringValue] isEqualToString:self.slug]))) {
+        [self.post loadUpFromDict:post];
+        self.postId = self.post.postId;
+        [self.tableView reloadData];
     }
 }
 
 - (void)postDeleted:(NSNotification*)notification {
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
+    [self back];
+}
+
+- (void)postDeleteFailed:(NSNotification*)notification {
     self.navigationItem.rightBarButtonItem.enabled = YES;
-    [self.navigationController popViewControllerAnimated:YES];
+    self.activityIndicator.hidden = YES;
+    [[[UIAlertView alloc] initWithTitle:@"Delete failed" message:@"Sorry, there was a problem communicating with the server. Please try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
 }
 
 #pragma mark - TableView delegates
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 2 + [self.post.comments count];   // PostView, Like Cell, +Comments.count
+    return self.loaded ? (2 + [self.post.commentsTotalCount intValue]) : 0;   // PostView, Like Cell, + Comments.count
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -300,22 +325,26 @@ static float const kMaxInputHeight = 100.;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
 
-    NSInteger commentNumber = (indexPath.row - 2);
-    TDComment *comment = [self.post.comments objectAtIndex:commentNumber];
-    cell.commentNumber = commentNumber;
-    [cell updateWithComment:comment];
+    NSUInteger commentNumber = (indexPath.row - 2);
+    TDComment *comment = [self.post commentAtIndex:commentNumber];
+    if (comment) {
+        cell.commentNumber = commentNumber;
+        [cell updateWithComment:comment];
+    }
 
     return cell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (!self.loaded) {
+        return 0;
+    }
+
     // Post
     if (indexPath.row == 0) {
         // Adding 5 for margin between like button, if there are no comments (if there are comments 5 is already added in the method)
         CGFloat height = [TDPostView heightForPost:self.post];
-        if (self.post.comments) {
-            height += [self.post.comments count] > 0 ? 0 : 5;
-        }
+        height += (self.loaded && [self.post.commentsTotalCount intValue]) > 0 ? 0 : 5;
         return height;
     }
 
@@ -332,12 +361,16 @@ static float const kMaxInputHeight = 100.;
 
     // Comments
     // A comment is at least 40+height for the message text
-    TDComment *comment = [self.post.comments objectAtIndex:(indexPath.row-2)];
-    // Last one?
-    if ((indexPath.row - 2) == ([self.post.comments count] - 1)) {
-        return kCommentCellUserHeight + kCommentLastPadding + comment.messageHeight;
+    TDComment *comment = [self.post commentAtIndex:(indexPath.row - 2)];
+    if (comment) {
+        // Last one?
+        if ((indexPath.row - 2) == ([self.post.commentsTotalCount intValue] - 1)) {
+            return kCommentCellUserHeight + kCommentLastPadding + comment.messageHeight;
+        }
+        return kCommentCellUserHeight + kCommentPadding + comment.messageHeight;
+    } else {
+        return 0;
     }
-    return kCommentCellUserHeight + kCommentPadding + comment.messageHeight;
 }
 
 #pragma mark - TDDetailsLikesCell Delegates
@@ -351,8 +384,6 @@ static float const kMaxInputHeight = 100.;
         [self updateAllRowsExceptTopOne];
 
         [[TDPostAPI sharedInstance] likePostWithId:self.post.postId];
-
-        [self tellDelegateToUpdateThisPost];
     }
 }
 
@@ -365,8 +396,6 @@ static float const kMaxInputHeight = 100.;
         [self updateAllRowsExceptTopOne];
 
         [[TDPostAPI sharedInstance] unLikePostWithId:self.post.postId];
-
-        [self tellDelegateToUpdateThisPost];
     }
 }
 
@@ -383,12 +412,6 @@ static float const kMaxInputHeight = 100.;
 
 - (void)usernamePressedForLiker:(NSNumber *)likerId {
     [self showUserProfile:likerId];
-}
-
-- (void)tellDelegateToUpdateThisPost {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(replacePostId:withPost:)]) {
-        [self.delegate replacePostId:self.postId withPost:self.post];
-    }
 }
 
 #pragma mark - TDPostViewDelegate
@@ -409,9 +432,11 @@ static float const kMaxInputHeight = 100.;
 - (void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber {
     debug NSLog(@"detail-userButtonPressedFromRow:%ld commentNumber:%ld, %@ %@", (long)row, (long)commentNumber, self.post.user.userId, [[TDCurrentUser sharedInstance] currentUserObject].userId);
 
-    if (self.post.comments && [self.post.comments count] > row) {
-        TDComment *comment = [self.post.comments objectAtIndex:commentNumber];
-        [self showUserProfile:comment.user.userId];
+    if ([self.post.commentsTotalCount intValue] > row) {
+        TDComment *comment = [self.post commentAtIndex:commentNumber];
+        if (comment) {
+            [self showUserProfile:comment.user.userId];
+        }
     }
 }
 
@@ -424,12 +449,7 @@ static float const kMaxInputHeight = 100.;
 
 #pragma mark - Update Posts After User Change Notification
 - (void)updatePostsAfterUserUpdate:(NSNotification *)notification {
-    debug NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
-
-    if ([[[TDCurrentUser sharedInstance] currentUserObject].userId isEqualToNumber:self.post.user.userId]) {
-        [self.post replaceUserAndLikesAndCommentsWithUser:[[TDCurrentUser sharedInstance] currentUserObject]];
-    }
-
+    [self.post updateUserInfoFor:[[TDCurrentUser sharedInstance] currentUserObject]];
     [self.tableView reloadData];
 }
 
@@ -465,6 +485,8 @@ static float const kMaxInputHeight = 100.;
 - (void)keyboardWillShow:(NSNotification *)notification {
     [self unregisterKeyboardObserver];
 
+    [[FLEXManager sharedManager] showExplorer];
+
     NSDictionary *info = [notification userInfo];
 
     NSValue *kbFrame = [info objectForKey:UIKeyboardFrameEndUserInfoKey];
@@ -486,14 +508,15 @@ static float const kMaxInputHeight = 100.;
     textFrame.size.height = height;
 
     CGRect commentFrame = self.commentView.frame;
-    commentFrame.size.height = textFrame.size.height + 14;
-    commentFrame.origin.y = bottom - (height + 14);
+    commentFrame.size.height = textFrame.size.height + kCommentFieldPadding;
+    commentFrame.origin.y = bottom - height - kCommentFieldPadding;
+    NSLog(@"show comment frame: %@", NSStringFromCGRect(commentFrame));
 
     CGRect tableFrame = self.tableView.layer.frame;
-    tableFrame.size.height = bottom - height - 14;
+    tableFrame.size.height = bottom - height - kCommentFieldPadding;
 
     CGRect buttonFrame = self.sendButton.frame;
-    buttonFrame.origin.y = (height + 14) - buttonFrame.size.height;
+    buttonFrame.origin.y = (height + kCommentFieldPadding) - buttonFrame.size.height;
 
     // animationCurve << 16 to convert it from a view animation curve to a view animation option
     [UIView animateWithDuration:animationDuration delay:0.0 options:(animationCurve << 16) animations:^{
@@ -501,7 +524,6 @@ static float const kMaxInputHeight = 100.;
         self.commentView.frame = commentFrame;
         self.sendButton.frame = buttonFrame;
         self.tableView.frame = tableFrame;
-
     } completion:nil];
 }
 
@@ -543,12 +565,13 @@ static float const kMaxInputHeight = 100.;
 }
 
 - (void)updateTextViewFromFrame:(CGRect)frame {
+    NSLog(@"textview from frame: %@", NSStringFromCGRect(frame));
     CGRect tableFrame = self.tableView.layer.frame;
     tableFrame.size.height = frame.origin.y - self.commentView.layer.frame.size.height;
     self.tableView.frame = tableFrame;
 
     CGPoint current = self.commentView.center;
-    current.y = frame.origin.y - (self.commentView.layer.frame.size.height /2);
+    current.y = frame.origin.y - (self.commentView.layer.frame.size.height / 2) - kToolbarHeight;
     self.commentView.center = current;
 }
 
@@ -564,7 +587,7 @@ static float const kMaxInputHeight = 100.;
     [self.userListView showUserSuggestions:textView callback:^(BOOL success) {
         if (success) {
             // Make sure we do this after updateCommentSize
-            [self.userListView updateFrame:CGRectMake(0, 64, 320, self.commentView.frame.origin.y - 64)];
+            [self.userListView updateFrame:CGRectMake(0, 64, 320, self.commentView.frame.origin.y - kToolbarHeight)];
         }
     }];
 }
@@ -576,18 +599,19 @@ static float const kMaxInputHeight = 100.;
     textFrame.size.height = height;
     self.textView.frame = textFrame;
 
-    CGFloat bottom = [UIScreen mainScreen].bounds.size.height;
+    CGFloat bottom = [UIScreen mainScreen].bounds.size.height - kToolbarHeight;
     if (self.currentKeyboardView) {
-        bottom = self.currentKeyboardView.frame.origin.y;
+        bottom = self.currentKeyboardView.layer.frame.origin.y - kToolbarHeight;
     }
 
     CGRect commentFrame = self.commentView.frame;
-    commentFrame.size.height = textFrame.size.height + 14;
-    commentFrame.origin.y = bottom - (height + 14);
+    commentFrame.size.height = textFrame.size.height + kCommentFieldPadding;
+    commentFrame.origin.y = bottom - height - kCommentFieldPadding;
     self.commentView.frame = commentFrame;
+    NSLog(@"comment frame : %@", NSStringFromCGRect(commentFrame));
 
     CGRect tableFrame = self.tableView.layer.frame;
-    tableFrame.size.height = bottom - height - 14;
+    tableFrame.size.height = bottom - height - kCommentFieldPadding;
     self.tableView.frame = tableFrame;
 
     CGRect buttonFrame = self.sendButton.frame;
@@ -612,15 +636,13 @@ static float const kMaxInputHeight = 100.;
         [self.post addComment:newComment];
 
         [self.tableView reloadData];
-        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow: (2 + [self.post.comments count]) - 1 inSection: 0]
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow: (2 + [self.post.commentsTotalCount intValue]) - 1 inSection: 0]
                               atScrollPosition:UITableViewScrollPositionBottom
                                       animated:NO];
 
         [self.textView resignFirstResponder];
 
         [[TDCurrentUser sharedInstance] registerForPushNotifications:@"Would you like to be notified of future replies?"];
-
-        [self tellDelegateToUpdateThisPost];
 
         [[TDPostAPI sharedInstance] postNewComment:body forPost:self.post.postId];
     }

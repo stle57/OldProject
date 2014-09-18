@@ -27,10 +27,16 @@
 #define CELL_IDENTIFIER @"TDPostView"
 
 @interface TDHomeViewController ()
+@property (weak, nonatomic) IBOutlet UISegmentedControl *feedSelectionControl;
 @property (weak, nonatomic) IBOutlet UILabel *badgeCountLabel;
 @property (nonatomic) NSNumber *badgeCount;
 
 @property (nonatomic) BOOL didUpload;
+@property (nonatomic) NSNumber *nextStartAll;
+@property (nonatomic) NSNumber *nextStartFollowing;
+@property (nonatomic) NSArray *posts;
+@property (nonatomic) NSArray *postsFollowing;
+@property (nonatomic) NSArray *notices;
 
 @end
 
@@ -40,32 +46,35 @@
     [super viewDidLoad];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadStarted:) name:TDPostUploadStarted object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshPostsNotification:) name:TDNotificationUpdate object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshNotificationCount:) name:TDNotificationUpdate object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadHome:) name:TDNotificationReloadHome object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removePost:) name:TDNotificationRemovePost object:nil];
 
     [self.badgeCountLabel setFont:[TDConstants fontSemiBoldSized:11]];
     [self.badgeCountLabel.layer setCornerRadius:9.0];
 
+    UINavigationBar *navigationBar = self.navigationController.navigationBar;
+    [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
+    [[UIApplication sharedApplication] setStatusBarHidden:NO];
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    self.navigationController.navigationBar.translucent = NO;
+
     // Fix buttons for 3.5" screens
-    int screenHeight = [UIScreen mainScreen].bounds.size.height;
+    int screenHeight = [UIScreen mainScreen].bounds.size.height - 64; // 64 for navigation + status bar height
     self.recordButton.center = CGPointMake(self.recordButton.center.x, screenHeight - self.recordButton.frame.size.height / 2.0);
     self.profileButton.center = CGPointMake(self.profileButton.center.x, screenHeight - self.profileButton.frame.size.height / 2.0);
     self.badgeCountLabel.center = CGPointMake(self.badgeCountLabel.center.x, screenHeight - 45);
     self.notificationButton.center = CGPointMake(self.notificationButton.center.x, screenHeight - self.notificationButton.frame.size.height / 2.0);
     origRecordButtonCenter = self.recordButton.center;
+
+    [self.feedSelectionControl setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontSemiBoldSized:14] } forState:UIControlStateNormal];
+    [self.feedSelectionControl setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontSemiBoldSized:14] } forState:UIControlStateHighlighted];
+    [self.feedSelectionControl setContentPositionAdjustment:UIOffsetMake(0, 2) forSegmentType:UISegmentedControlSegmentAny barMetrics:UIBarMetricsDefault];
 }
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-
-    [self.navigationController setNavigationBarHidden:YES animated:NO];
-
-    // Frosted behind status bar
-    [self addFrostedBehindForStatusBar];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -82,12 +91,6 @@
     }
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-
-    [self removeFrostedView];
-}
-
 - (void)viewDidLayoutSubviews {
     if (goneDownstream) {
         [self hideBottomButtons];
@@ -98,32 +101,73 @@
     [super didReceiveMemoryWarning];
 }
 
+
+#pragma mark - Notices
+
+- (NSUInteger)noticeCount {
+    if (self.notices) {
+        return [self.notices count];
+    }
+    return 0;
+}
+
+- (TDNotice *)getNoticeAt:(NSUInteger)index {
+    if (self.notices && index < [self.notices count]) {
+        return [self.notices objectAtIndex:index];
+    }
+    return nil;
+}
+
+- (BOOL)removeNoticeAt:(NSUInteger)index {
+    if (self.notices && index < [self.notices count]) {
+        NSMutableArray *list = [[NSMutableArray alloc] initWithArray:self.notices];
+        [list removeObjectAtIndex:index];
+        self.notices = [[NSArray alloc] initWithArray:list];
+        return YES;
+    }
+    return NO;
+}
+
+
 #pragma mark - Posts
 
 - (TDPost *)postForRow:(NSInteger)row {
+    NSArray *posts = [self onAllFeed] ? self.posts : self.postsFollowing;
     NSInteger realRow = row - [self noticeCount];
-    if (realRow < self.posts.count) {
-        return [self.posts objectAtIndex:realRow];
+    if (realRow < [posts count]) {
+        return [posts objectAtIndex:realRow];
     } else {
         return nil;
     }
 }
 
 - (void)reloadHome:(NSNotification *)notification {
-    [self fetchPostsUpStream];
+    [self fetchPostsRefresh];
 }
 
-- (NSUInteger)noticeCount {
-    return [[TDPostAPI sharedInstance] noticeCount];
-}
+- (void)fetchPostsRefresh {
+    [self stopBottomLoadingSpinner];
+    [[TDPostAPI sharedInstance] fetchPostsWithSuccess:^(NSDictionary *response) {
+        [self handleNextStarts:response];
+        [self handlePostsResponse:response fromStart:YES];
 
-- (void)fetchPostsUpStream {
-    [[TDPostAPI sharedInstance] fetchPostsUpstreamWithErrorHandlerStart:nil success:^(NSDictionary *response) {
-        self.loaded = YES;
-        self.errorLoading = NO;
-        self.posts = [[TDPostAPI sharedInstance] getPosts];
-        if ([response valueForKey:@"next_start"] == [NSNull null]) {
-            noMorePostsAtBottom = YES;
+        // Set notices (shows in both all and following on home feed)
+        if ([response objectForKey:@"notices"]) {
+            NSMutableArray *tmp = [[NSMutableArray alloc] init];
+            for (NSDictionary *dict in [response objectForKey:@"notices"]) {
+                [tmp addObject:[[TDNotice alloc] initWithDictionary:dict]];
+            }
+            self.notices = [NSArray arrayWithArray:tmp];
+        } else {
+            self.notices = nil;
+        }
+
+        // Update notification count from feed
+        // TODO: There's an inconsistency if user opens activity feed, this still gets set even though user has seen the notifications.
+        if ([response valueForKey:@"notification_count"]) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUpdate
+                                                                object:self
+                                                              userInfo:@{@"notificationCount": [response valueForKey:@"notification_count"]}];
         }
     } error:^{
         self.loaded = YES;
@@ -134,51 +178,172 @@
     }];
 }
 
-- (BOOL)fetchPostsDownStream {
-    if (noMorePostsAtBottom) {
+- (BOOL)fetchMorePostsAtBottom {
+    if (![self hasMorePosts]) {
         return NO;
     }
-    [[TDPostAPI sharedInstance] fetchPostsUpstreamWithErrorHandlerStart:[super lowestIdOfPosts] success:^(NSDictionary *response) {
-        self.posts = [[TDPostAPI sharedInstance] getPosts];
-        if ([response valueForKey:@"next_start"] == [NSNull null]) {
-            noMorePostsAtBottom = YES;
-        }
-    } error:nil];
+    if ([self onAllFeed]) {
+        debug NSLog(@"fetchPostsForAll");
+        [[TDPostAPI sharedInstance] fetchPostsForAll:self.nextStartAll success:^(NSDictionary *response) {
+            // if the request was aborted by another action
+            if (showBottomSpinner) {
+                [self handleNextStarts:response];
+                [self handlePostsResponse:response fromStart:NO];
+            }
+        } error:^{
+            [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastType_Warning payload:@{} delegate:nil];
+            [self stopBottomLoadingSpinner];
+        }];
+    } else {
+        debug NSLog(@"fetchPostsForFollowing");
+        [[TDPostAPI sharedInstance] fetchPostsForFollowing:self.nextStartFollowing success:^(NSDictionary *response) {
+            // if the request was aborted by another action
+            if (showBottomSpinner) {
+                [self handleNextStarts:response];
+                [self handlePostsResponse:response fromStart:NO];
+            }
+        } error:^{
+            [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastType_Warning payload:@{} delegate:nil];
+            [self stopBottomLoadingSpinner];
+        }];
+    }
     return YES;
 }
 
-- (NSArray *)postsForThisScreen {
-    return self.posts;
+- (void)handlePostsResponse:(NSDictionary *)response fromStart:(BOOL)start {
+    self.loaded = YES;
+    self.errorLoading = NO;
+
+    if (start) {
+        self.posts = nil;
+        self.postsFollowing = nil;
+        self.removingPosts = nil;
+    }
+
+    // All feed
+    if ([response valueForKeyPath:@"posts"]) {
+        NSMutableArray *newPosts;
+        if (self.posts) {
+            newPosts = [[NSMutableArray alloc] initWithArray:self.posts];
+        } else {
+            newPosts = [[NSMutableArray alloc] init];
+        }
+
+        for (NSDictionary *postObject in [response valueForKeyPath:@"posts"]) {
+            [newPosts addObject:[[TDPost alloc] initWithDictionary:postObject]];
+        }
+        self.posts = newPosts;
+    }
+
+    // Following feed
+    if ([response valueForKeyPath:@"following"]) {
+        NSMutableArray *newPosts;
+        if (self.postsFollowing) {
+            newPosts = [[NSMutableArray alloc] initWithArray:self.postsFollowing];
+        } else {
+            newPosts = [[NSMutableArray alloc] init];
+        }
+
+        for (NSDictionary *postObject in [response valueForKeyPath:@"following"]) {
+            [newPosts addObject:[[TDPost alloc] initWithDictionary:postObject]];
+        }
+        self.postsFollowing = newPosts;
+    }
+
+    [self refreshPostsList];
 }
+
+- (void)handleNextStarts:(NSDictionary *)response {
+    if ([response valueForKey:@"next_start"] && [[[response valueForKey:@"next_start"] class] isSubclassOfClass:[NSNumber class]]) {
+        self.nextStartAll = [response valueForKey:@"next_start"];
+    } else {
+        self.nextStartAll = nil;
+    }
+    if ([response valueForKey:@"following_next_start"] && [[[response valueForKey:@"following_next_start"] class] isSubclassOfClass:[NSNumber class]]) {
+        self.nextStartFollowing = [response valueForKey:@"following_next_start"];
+    } else {
+        self.nextStartFollowing = nil;
+    }
+}
+
+- (BOOL)onAllFeed {
+    return [self.feedSelectionControl selectedSegmentIndex] == 0;
+}
+
+- (NSArray *)postsForThisScreen {
+    return [self onAllFeed] ? self.posts : self.postsFollowing;
+}
+
+- (BOOL)hasMorePosts {
+    NSNumber *more = [self.feedSelectionControl selectedSegmentIndex] == 0 ? self.nextStartAll : self.nextStartFollowing;
+    return more != nil;
+}
+
+- (void)removePost:(NSNotification *)n {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        // Main posts
+        BOOL changeMade = NO;
+        NSNumber *postId = (NSNumber *)[n.userInfo objectForKey:@"postId"];
+        NSMutableArray *newList = [[NSMutableArray array] init];
+        for (TDPost *post in self.posts) {
+            if ([post.postId isEqualToNumber:postId]) {
+                debug NSLog(@"removing post from vc with id %@", postId);
+                changeMade = YES;
+            } else {
+                [newList addObject:post];
+            }
+        }
+        if (changeMade) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.posts = [[NSArray alloc] initWithArray:newList];
+                if ([self onAllFeed]) {
+                    [self.tableView reloadData];
+                }
+            });
+        }
+
+        // Following posts
+        changeMade = NO;
+        newList = [[NSMutableArray array] init];
+        for (TDPost *post in self.postsFollowing) {
+            if ([post.postId isEqualToNumber:postId]) {
+                debug NSLog(@"removing post from vc with id %@", postId);
+                changeMade = YES;
+            } else {
+                [newList addObject:post];
+            }
+        }
+        if (changeMade) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.postsFollowing = [[NSArray alloc] initWithArray:newList];
+                if (![self onAllFeed]) {
+                    [self.tableView reloadData];
+                }
+            });
+        }
+    });
+}
+
+#pragma mark - Update Posts After User Change Notification
+- (void)updatePostsAfterUserUpdate:(NSNotification *)notification {
+    debug NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
+
+    for (TDPost *aPost in self.posts) {
+        [aPost updateUserInfoFor:[[TDCurrentUser sharedInstance] currentUserObject]];
+    }
+
+    for (TDPost *aPost in self.postsFollowing) {
+        [aPost updateUserInfoFor:[[TDCurrentUser sharedInstance] currentUserObject]];
+    }
+
+    [self.tableView reloadData];
+}
+
 
 #pragma mark - Refresh Control
 - (void)refreshControlUsed {
     debug NSLog(@"home-refreshControlUsed");
-    [[TDPostAPI sharedInstance] fetchPostsUpstreamWithErrorHandlerStart:nil error:^{
-        [self endRefreshControl];
-        [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastType_Warning payload:@{} delegate:nil];
-    }];
-}
-
-#pragma mark - Frosted View behind Status bar
-- (void)addFrostedBehindForStatusBar {
-    if (statusBarFrame.size.height == 20) {
-        UINavigationBar *statusBarBackground = [[UINavigationBar alloc] initWithFrame:statusBarFrame];
-        statusBarBackground.barStyle = UIBarStyleDefault;
-        statusBarBackground.translucent = YES;
-        statusBarBackground.tag = 9920;
-        [self.view insertSubview:statusBarBackground aboveSubview:self.tableView];
-    }
-}
-
-- (void)removeFrostedView {
-    // Need to remove it on viewWillDisappear to stop a flash at the screen top
-    for (UIView *view in [NSArray arrayWithArray:self.view.subviews]) {
-        if (view.tag == 9920) {
-            [view removeFromSuperview];
-            break;
-        }
-    }
+    [self fetchPostsRefresh];
 }
 
 #pragma mark - video upload indicator
@@ -274,15 +439,16 @@
 - (void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber {
     TDPost *post = [self postForRow:row];
     if (post) {
-        TDComment *comment = [post.comments objectAtIndex:commentNumber];
-        TDUser *user = comment.user;
-        [self openProfile:user.userId];
+        TDComment *comment = [post commentAtIndex:commentNumber];
+        if (comment) {
+            [self openProfile:comment.user.userId];
+        }
     }
 }
 
 #pragma mark - Notification Badge Count
 
-- (void)refreshPostsNotification:(NSNotification *)notification {
+- (void)refreshNotificationCount:(NSNotification *)notification {
     if (notification.userInfo) {
         if ([notification.userInfo objectForKey:@"notificationCount"]) {
             self.badgeCount = (NSNumber *)[notification.userInfo objectForKey:@"notificationCount"];
@@ -294,6 +460,7 @@
         [self displayBadgeCount];
     }
 }
+
 - (void)displayBadgeCount {
     if ([self.badgeCount integerValue] > 0) {
         self.badgeCountLabel.hidden = NO;
@@ -337,7 +504,6 @@
     if ([@"post" isEqualToString:[url host]]) {
         TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil];
         vc.slug = modelId;
-        vc.delegate = self;
         [self.navigationController pushViewController:vc animated:YES];
     } else if ([@"user" isEqualToString:[url host]]) {
         TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
@@ -411,6 +577,12 @@
 
 - (void)openDetailView:(NSNumber *)postId {
     [super openDetailView:postId];
+}
+
+- (IBAction)feedSelectionControlChanged:(id)sender {
+    [self reloadPosts];
+    [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
+    NSLog(@"selection is %ld", (long)[self.feedSelectionControl selectedSegmentIndex]);
 }
 
 @end

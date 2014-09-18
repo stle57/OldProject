@@ -28,7 +28,7 @@
     // Put destination view controller and screen shot in place
     UIWindow *window = sourceViewController.view.window;
     [window addSubview:screenShot];
-    [sourceViewController presentViewController:destinationViewController animated:NO completion:NULL];
+    [sourceViewController.navigationController pushViewController:destinationViewController animated:NO];
 
     // Set and start animations
     screenShot.transform = CGAffineTransformMakeScale(1.0, 1.0);

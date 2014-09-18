@@ -13,6 +13,12 @@ static NSString *const kKindVideo = @"video";
 static NSString *const kKindPhoto = @"photo";
 static NSString *const kKindText  = @"text";
 
+@interface TDPost ()
+
+@property (nonatomic) NSArray *comments;
+
+@end
+
 @implementation TDPost
 
 - (id)initWithDictionary:(NSDictionary *)dict {
@@ -56,12 +62,9 @@ static NSString *const kKindText  = @"text";
         _kind = TDPostKindText;
     }
 
-    TDComment *comment = nil;
     NSMutableArray *commentsArray = [NSMutableArray arrayWithCapacity:0];
     for (NSDictionary *commentsDict in [dict objectForKey:@"comments"]) {
-        comment = [[TDComment alloc] initWithDictionary:commentsDict];
-        [commentsArray addObject:comment];
-        comment = nil;
+        [commentsArray addObject:[[TDComment alloc] initWithDictionary:commentsDict]];
     }
 
     _comments = commentsArray;
@@ -116,29 +119,41 @@ static NSString *const kKindText  = @"text";
     }
 }
 
-- (void)orderCommentsForHomeScreen {
-    NSMutableArray *sortingArray = [self.comments mutableCopy];
-
-    // Sort by dates - newest on bottom
-    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"createdAt"
-                                                               ascending:YES];
-    [sortingArray sortUsingDescriptors:[NSArray arrayWithObjects:descriptor,nil]];
-
-    // Only need the FIRST 2, including original comment on top
-    if ([sortingArray count] > 2) {
-        [sortingArray removeObjectsInRange:NSMakeRange(2, [sortingArray count]-2)];
+- (NSArray *)commentsForFeed {
+    if (!self.comments || [self.comments count] == 0) {
+        return @[];
     }
-    _comments = [NSArray arrayWithArray:sortingArray];
+    if ([self.comments count] < 3) {
+        return self.comments;
+    }
+
+    NSMutableArray *newList = [self.comments mutableCopy];
+    // Only need the FIRST 2
+    if ([newList count] > 2) {
+        [newList removeObjectsInRange:NSMakeRange(2, [newList count] - 2)];
+    }
+    return [NSArray arrayWithArray:newList];
 }
 
-- (void)orderCommentsForDetailsScreen {
-    NSMutableArray *sortingArray = [self.comments mutableCopy];
+- (NSArray *)commentsForDetailView {
+    if (!self.comments || [self.comments count] == 0) {
+        return @[];
+    }
+    return self.comments;
+}
 
-    // Sort by dates - newest on bottom
-    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"createdAt"
-                                                               ascending:YES];
+- (TDComment *)commentAtIndex:(NSUInteger)index {
+    if (self.comments && index < [self.comments count]) {
+        return [self.comments objectAtIndex:index];
+    }
+    return nil;
+}
+
+- (void)sortComments {
+    NSMutableArray *sortingArray = [self.comments mutableCopy];
+    NSSortDescriptor *descriptor = [[NSSortDescriptor alloc] initWithKey:@"createdAt" ascending:YES];
     [sortingArray sortUsingDescriptors:[NSArray arrayWithObjects:descriptor,nil]];
-    _comments = [NSArray arrayWithArray:sortingArray];
+    self.comments = [NSArray arrayWithArray:sortingArray];
 }
 
 - (BOOL)isEqual:(id)other {
@@ -160,13 +175,10 @@ static NSString *const kKindText  = @"text";
     _likers = newLikers;
 }
 
-- (void)replaceComments:(NSArray *)newComments {
-    _comments = newComments;
-}
-
-- (void)replaceUserAndLikesAndCommentsWithUser:(TDUser *)newUser {
-    // User
-    [self replaceUser:newUser];
+- (void)updateUserInfoFor:(TDUser *)newUser {
+    if ([self.user.userId isEqualToNumber:newUser.userId]) {
+        [self replaceUser:newUser];
+    }
 
     // Likers
     NSMutableArray *newLikers = [NSMutableArray arrayWithArray:self.likers];
@@ -200,14 +212,11 @@ static NSString *const kKindText  = @"text";
     [self replaceLikers:newLikers];
     newLikers = nil;
 
-    // Comments
     for (TDComment *comment in [NSArray arrayWithArray:self.comments]) {
         if ([comment.user.userId isEqualToNumber:newUser.userId]) {
-            // User
             [comment replaceUser:newUser];
         }
     }
-
 }
 
 @end

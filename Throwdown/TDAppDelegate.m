@@ -57,7 +57,6 @@
                                       }];
     }
 
-
     NSString *storyboardId = [[TDUserAPI sharedInstance] isLoggedIn] ? @"HomeViewController" : @"WelcomeViewController";
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *initViewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
@@ -345,19 +344,6 @@
 + (TDAppDelegate*)appDelegate {
 	return (TDAppDelegate*)[[UIApplication sharedApplication] delegate];
 }
-
-#pragma mark - Post Operations
-- (TDPost *)postWithPostId:(NSNumber *)postId {
-    NSArray *posts = [[TDPostAPI sharedInstance] getPosts];
-    for (TDPost *post in posts) {
-        if (post.postId == postId) {
-            return post;
-        }
-    }
-
-    return nil;
-}
-
 
 // TODO: These should be moved to helper class
 #pragma mark - Helpers

@@ -21,9 +21,10 @@
 #import "TDAPIClient.h"
 #import "TDUserListView.h"
 
+static int const kTextPadding = 28;
+
 @interface TDCreatePostViewController () <UITextViewDelegate, NSLayoutManagerDelegate>
 
-@property (weak, nonatomic) IBOutlet UINavigationBar *navigationBar;
 @property (weak, nonatomic) IBOutlet UINavigationItem *navigationBarItem;
 @property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *commentTextView;
 @property (weak, nonatomic) IBOutlet UIImageView *previewImage;
@@ -52,17 +53,17 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [[TDAnalytics sharedInstance] logEvent:@"camera_share_loaded"];
-    // Background
 
-    UINavigationBar *navigationBar = self.navigationBar;
+    UINavigationBar *navigationBar = self.navigationController.navigationBar;
+    navigationBar.barStyle = UIBarStyleBlack;
+    navigationBar.translucent = NO;
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
-    
+    [navigationBar setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontSemiBoldSized:18],
+                                             NSForegroundColorAttributeName: [UIColor whiteColor] }];
+
     UIButton *button = [TDViewControllerHelper navCloseButton];
     [button addTarget:self action:@selector(closeButtonPressed) forControlEvents:UIControlEventTouchUpInside];
     self.navigationBarItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
-
-    [self.navigationBar setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontSemiBoldSized:18],
-                                       NSForegroundColorAttributeName: [UIColor whiteColor] }];
 
     self.commentTextView.delegate = self;
     self.commentTextView.font = [TDConstants fontRegularSized:17];
@@ -80,18 +81,19 @@
     self.labelPR.font = [TDConstants fontSemiBoldSized:16];
     self.labelPR.textColor = [TDConstants disabledTextColor];
 
-    // Set font for "Post" button and sneacky way to hide the button when keyboard is down (same color as background)
-    [self.postButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[UIColor whiteColor], NSFontAttributeName:[TDConstants fontRegularSized:18] } forState:UIControlStateNormal];
-    [self.postButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[TDConstants disabledTextColor], NSFontAttributeName:[TDConstants fontRegularSized:18] } forState:UIControlStateDisabled];
+    [self.postButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[UIColor whiteColor], NSFontAttributeName:[TDConstants fontSemiBoldSized:18] } forState:UIControlStateNormal];
+    [self.postButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[UIColor colorWithWhite:1 alpha:0.5], NSFontAttributeName:[TDConstants fontSemiBoldSized:18] } forState:UIControlStateDisabled];
     self.postButton.enabled = NO;
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 
-    // For 3.5" screens
-    if ([UIScreen mainScreen].bounds.size.height == 480.0) {
-        self.optionsView.center = CGPointMake(self.optionsView.center.x, 445);
-    }
+    // Position the media / pr buttons
+    CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height - 64; // 64 == statusbar
+    self.optionsView.center = CGPointMake(self.optionsView.center.x, screenHeight - (self.optionsView.frame.size.height / 2));
+    CGRect textFrame = self.commentTextView.frame;
+    textFrame.size.height = screenHeight - self.optionsView.layer.frame.size.height - kTextPadding;
+    self.commentTextView.frame = textFrame;
 
     // User name filter table view
 	if (self.userListView == nil) {
@@ -116,6 +118,9 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
+    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
+    self.navigationController.navigationBar.translucent = NO;
 }
 
 - (void)dealloc {
@@ -203,7 +208,7 @@
     center.y = self.frameHeight - (self.optionsView.layer.frame.size.height / 2);
 
     CGRect textFrame = self.commentTextView.frame;
-    textFrame.size.height = self.frameHeight - self.optionsView.layer.frame.size.height - 64 - 28; // 64 == status + toolbar, 28 is for paddings
+    textFrame.size.height = self.frameHeight - self.optionsView.layer.frame.size.height - 64 - kTextPadding; // 64 == status + toolbar
 
     // animationCurve << 16 to convert it from a view animation curve to a view animation option
     [UIView animateWithDuration:animationDuration delay:0.0 options:(animationCurve << 16) animations:^{
@@ -224,7 +229,7 @@
     center.y = self.frameHeight - (self.optionsView.layer.frame.size.height / 2);
 
     CGRect textFrame = self.commentTextView.frame;
-    textFrame.size.height = self.frameHeight - self.optionsView.layer.frame.size.height - 64 - 28; // 64 == status + toolbar, 28 is for paddings
+    textFrame.size.height = self.frameHeight - self.optionsView.layer.frame.size.height - 64 - kTextPadding; // 64 == status + toolbar
 
     // animationCurve << 16 to convert it from a view animation curve to a view animation option
     [UIView animateWithDuration:animationDuration delay:0.0 options:(animationCurve << 16) animations:^{
@@ -266,7 +271,7 @@
 
 - (void)resetTextViewSize {
     CGRect frame = self.commentTextView.frame;
-    frame.size.height = self.frameHeight - self.optionsView.layer.frame.size.height - 64 - 28; // 64 == status + toolbar, 28 is for paddings
+    frame.size.height = self.frameHeight - self.optionsView.layer.frame.size.height - 64 - kTextPadding; // 64 == status + toolbar
     self.commentTextView.frame = frame;
     [self alignCarretInTextView:self.commentTextView];
 }
