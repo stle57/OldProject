@@ -10,6 +10,8 @@
 	<string>Throwdown</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
+		<key>684AC819D35143ABF5CA7F4D87EAF0C7FDD8A751</key>
+		<string>https://github.com/acrookston/throwdown_ios.git</string>
 		<key>974F44BD-C2B5-4D67-A664-4DF4A7589249</key>
 		<string>https://github.com/acrookston/throwdown_ios.git</string>
 	</dict>
@@ -17,17 +19,27 @@
 	<string>Throwdown.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
-		<key>974F44BD-C2B5-4D67-A664-4DF4A7589249</key>
+		<key>684AC819D35143ABF5CA7F4D87EAF0C7FDD8A751</key>
 		<string>..</string>
+		<key>974F44BD-C2B5-4D67-A664-4DF4A7589249</key>
+		<string>../../Throwdown</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/acrookston/throwdown_ios.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>974F44BD-C2B5-4D67-A664-4DF4A7589249</string>
+	<string>684AC819D35143ABF5CA7F4D87EAF0C7FDD8A751</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>684AC819D35143ABF5CA7F4D87EAF0C7FDD8A751</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ios</string>
+		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>
