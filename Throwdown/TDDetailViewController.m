@@ -19,7 +19,6 @@
 #import "UIPlaceHolderTextView.h"
 #import "TDUserListView.h"
 #import "TDActivityIndicator.h"
-#import <FLEX/FLEXManager.h>
 
 static float const kInputLineSpacing = 3;
 static float const kMinInputHeight = 33.;
@@ -493,8 +492,6 @@ static NSString *const kKeyboardKeyPath = @"position";
 
 - (void)keyboardWillShow:(NSNotification *)notification {
     [self unregisterKeyboardObserver];
-
-    [[FLEXManager sharedManager] showExplorer];
 
     NSDictionary *info = [notification userInfo];
 
