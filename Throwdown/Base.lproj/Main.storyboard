@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="DPQ-qf-8sb">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="DPQ-qf-8sb">
     <dependencies>
         <deployment defaultVersion="1792" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
     </dependencies>
     <scenes>
         <!--Record Video View Controller-->
@@ -13,20 +13,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lpd-Xk-QaL" userLabel="Video Container View">
-                                <rect key="frame" x="0.0" y="96" width="320" height="320"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <view hidden="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dBh-cg-coo" userLabel="GPUImage View" customClass="GPUImageView">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="320"/>
-                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                    </view>
-                                </subviews>
+                            <view contentMode="scaleToFill" id="VYp-zZ-cCO" userLabel="Camera Preview View" customClass="TDCameraPreviewView">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <view contentMode="scaleToFill" id="yCY-OC-yOW" userLabel="Black Cover View">
-                                <rect key="frame" x="0.0" y="96" width="320" height="320"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                             </view>
@@ -36,11 +29,11 @@
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="btn_camera_outerCircle_rightArrow_184x160" id="cnB-Wd-Stf" userLabel="Mode Indicator Image View">
                                         <rect key="frame" x="68" y="-42" width="184" height="184"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Jc-mN-hx2" userLabel="Record Button">
                                         <rect key="frame" x="120" y="0.0" width="80" height="100"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <accessibility key="accessibilityConfiguration">
                                             <bool key="isElement" value="NO"/>
                                         </accessibility>
@@ -56,7 +49,7 @@
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="adF-V8-fH8" userLabel="Photo Button">
                                         <rect key="frame" x="200" y="24" width="50" height="50"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <state key="normal" image="photo_cam_option_36x28">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
@@ -68,7 +61,7 @@
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="bR2-LG-wfE" userLabel="Video Button">
                                         <rect key="frame" x="70" y="25" width="50" height="50"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <state key="normal" image="video_cam_option_38x24">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
@@ -80,7 +73,7 @@
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="2a9-PF-90i" userLabel="Album Button">
                                         <rect key="frame" x="0.0" y="0.0" width="65" height="100"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <inset key="contentEdgeInsets" minX="12" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         <state key="normal" image="photo_library_pre_96x96">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -91,7 +84,7 @@
                                         </connections>
                                     </button>
                                 </subviews>
-                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <view userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cZv-bv-JN9" userLabel="Indicator background">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -101,7 +94,7 @@
                             <view userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="X0a-I3-x3Z" userLabel="Progress Indicator">
                                 <rect key="frame" x="-320" y="0.0" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.92549019610000005" green="0.2156862745" blue="0.14901960780000001" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" red="0.92549019610000005" green="0.2156862745" blue="0.14901960780000001" alpha="0.5" colorSpace="calibratedRGB"/>
                             </view>
                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="p2X-Qr-6Vj" userLabel="Flash Button">
                                 <rect key="frame" x="110" y="0.0" width="100" height="44"/>
@@ -151,7 +144,6 @@
                         <color key="backgroundColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstAttribute="top" secondItem="tgj-aS-c8v" secondAttribute="bottom" id="bqC-Z8-uEZ"/>
-                            <constraint firstAttribute="centerY" secondItem="lpd-Xk-QaL" secondAttribute="centerY" id="iae-5R-TZg"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="EPz-aL-cnP"/>
@@ -159,19 +151,19 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
                         <outlet property="albumButton" destination="2a9-PF-90i" id="x5p-0S-kMb"/>
+                        <outlet property="cameraPreview" destination="VYp-zZ-cCO" id="6L4-Xu-kdc"/>
                         <outlet property="closeButton" destination="6yY-RR-kvO" id="KIb-vu-e7J"/>
                         <outlet property="controlsView" destination="tgj-aS-c8v" id="gqB-1B-3Lx"/>
                         <outlet property="coverView" destination="yCY-OC-yOW" id="uOg-Vs-Ow7"/>
                         <outlet property="flashButton" destination="p2X-Qr-6Vj" id="DVl-BZ-K3W"/>
+                        <outlet property="indicatorBackgroundView" destination="cZv-bv-JN9" id="WMa-ss-v4V"/>
                         <outlet property="modeIndicator" destination="cnB-Wd-Stf" id="Psk-Za-gmy"/>
                         <outlet property="photoButton" destination="adF-V8-fH8" id="Wcd-66-ucI"/>
-                        <outlet property="previewLayer" destination="dBh-cg-coo" id="zyj-dO-c1J"/>
                         <outlet property="progressBarView" destination="X0a-I3-x3Z" id="N5z-24-RwP"/>
                         <outlet property="recordButton" destination="1Jc-mN-hx2" id="gEP-7f-AEm"/>
                         <outlet property="switchCamerabutton" destination="93b-E6-3u5" id="gdi-bG-RHF"/>
                         <outlet property="timeLabel" destination="Emc-Hw-KVu" id="gn9-Ls-Uxf"/>
                         <outlet property="videoButton" destination="bR2-LG-wfE" id="L5M-CU-w8p"/>
-                        <outlet property="videoContainerView" destination="lpd-Xk-QaL" id="a2l-m2-M2e"/>
                         <segue destination="mmN-3Z-6Sw" kind="custom" identifier="EditVideoSegue" customClass="TDSlideLeftSegue" id="dIK-mC-q5V"/>
                         <segue destination="YgZ-o0-OG3" kind="unwind" identifier="MediaCloseSegue" unwindAction="unwindToShareView:" id="9P0-1X-62J"/>
                     </connections>
@@ -181,7 +173,7 @@
             </objects>
             <point key="canvasLocation" x="-315" y="1645"/>
         </scene>
-        <!--Activity View Controller - Notifications-->
+        <!--Notifications-->
         <scene sceneID="e5Y-hG-4Fp">
             <objects>
                 <viewController storyboardIdentifier="ActivityViewController" id="ueK-a6-4lV" customClass="TDActivityViewController" sceneMemberID="viewController">
@@ -304,7 +296,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
-                        <color key="backgroundColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="rEL-OQ-X7b"/>
                     <nil key="simulatedStatusBarMetrics"/>
@@ -751,7 +743,7 @@ The Throwdown Community</string>
             </objects>
             <point key="canvasLocation" x="-1407" y="-67"/>
         </scene>
-        <!--Signup Step One View Controller - Sign up-->
+        <!--Sign up-->
         <scene sceneID="Lqq-I0-5YP">
             <objects>
                 <viewController autoresizesArchivedViewToFullSize="NO" id="95Y-qb-4HG" customClass="TDSignupStepOneViewController" sceneMemberID="viewController">
@@ -844,7 +836,7 @@ The Throwdown Community</string>
             </objects>
             <point key="canvasLocation" x="-866" y="-509"/>
         </scene>
-        <!--Signup Step Two View Controller - Choose a Username-->
+        <!--Choose a Username-->
         <scene sceneID="BUq-1Y-bN4">
             <objects>
                 <viewController autoresizesArchivedViewToFullSize="NO" id="Wha-r5-SVq" customClass="TDSignupStepTwoViewController" sceneMemberID="viewController">
@@ -953,7 +945,6 @@ The Throwdown Community</string>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="PCx-Gh-7D3">
-                        <rect key="frame" x="0.0" y="0.0" width="0.0" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" red="0.7843137255" green="0.7843137255" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="tintColor" red="0.19607843137254902" green="0.19607843137254902" blue="0.19607843137254902" alpha="1" colorSpace="calibratedRGB"/>
@@ -1054,7 +1045,7 @@ The Throwdown Community</string>
             </objects>
             <point key="canvasLocation" x="-1407" y="1113"/>
         </scene>
-        <!--Login View Controller - Log in-->
+        <!--Log in-->
         <scene sceneID="VBK-e9-V22">
             <objects>
                 <viewController autoresizesArchivedViewToFullSize="NO" id="fM6-ZJ-00P" customClass="TDLoginViewController" sceneMemberID="viewController">
@@ -1153,7 +1144,7 @@ The Throwdown Community</string>
             </objects>
             <point key="canvasLocation" x="-866" y="303"/>
         </scene>
-        <!--Reset Password View Controller - Log in-->
+        <!--Log in-->
         <scene sceneID="sqk-Bn-GBG">
             <objects>
                 <viewController autoresizesArchivedViewToFullSize="NO" id="3b8-WK-IkA" customClass="TDResetPasswordViewController" sceneMemberID="viewController">
@@ -1297,10 +1288,10 @@ The Throwdown Community</string>
         <image name="x_32x32" width="16" height="16"/>
         <image name="x_32x32_hit" width="16" height="16"/>
     </resources>
-    <color key="tintColor" red="0.92941176469999998" green="0.92941176469999998" blue="0.92941176469999998" alpha="1" colorSpace="calibratedRGB"/>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
+    <color key="tintColor" red="0.92941176469999998" green="0.92941176469999998" blue="0.92941176469999998" alpha="1" colorSpace="calibratedRGB"/>
 </document>
