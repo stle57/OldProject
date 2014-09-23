@@ -455,6 +455,7 @@ static const NSString *ItemStatusContext;
                 rect.origin.y = 0;
 
                 UIImageOrientation orientation = [self orientationForTrack:videoTrack];
+                NSLog(@"Orientation result: %ld", orientation);
                 if (orientation == UIImageOrientationRight || orientation == UIImageOrientationLeft) {
                     rect.size.width = videoSize.height * scale;
                     rect.size.height = videoSize.width * scale;
@@ -514,13 +515,25 @@ static const NSString *ItemStatusContext;
 
 - (UIImageOrientation)orientationForTrack:(AVAssetTrack *)videoTrack {
     CGAffineTransform txf = [videoTrack preferredTransform];
+    CGSize size = [videoTrack naturalSize];
 
-    if(txf.a == 0    && txf.b == 1.0  && txf.c == -1.0 && txf.d == 0)    { return UIImageOrientationRight; } // or UIInterfaceOrientationPortrait = bome button at the bottom
-    if(txf.a == 0    && txf.b == -1.0 && txf.c == 1.0  && txf.d == 0)    { return UIImageOrientationLeft; } // or UIInterfaceOrientationPortraitUpsideDown = home button at top
-    if(txf.a == 1.0  && txf.b == 0    && txf.c == 0    && txf.d == 1.0)  { return UIImageOrientationUp; } // or UIInterfaceOrientationLandscapeRight = home button on the right
-    if(txf.a == -1.0 && txf.b == 0    && txf.c == 0    && txf.d == -1.0) { return UIImageOrientationDown; } // or UIInterfaceOrientationLandscapeLeft = home button on the left
-    // default to home button at the bottom
-    return UIImageOrientationRight;
+    NSLog(@"Orientation: %f/%f/%f/%f Size: %@", txf.a, txf.b, txf.c, txf.d, NSStringFromCGSize(size));
+
+    if (txf.a == 0    && txf.b == 1.0  && txf.c == -1.0 && txf.d == 0)    { return UIImageOrientationRight; } // or UIInterfaceOrientationPortrait = home button at the bottom
+    if (txf.a == 0    && txf.b == -1.0 && txf.c == 1.0  && txf.d == 0)    { return UIImageOrientationLeft; } // or UIInterfaceOrientationPortraitUpsideDown = home button at top
+    if (txf.a == 1.0  && txf.b == 0    && txf.c == 0    && txf.d == 1.0)  { return UIImageOrientationUp; } // or UIInterfaceOrientationLandscapeRight = home button on the right
+    if (txf.a == -1.0 && txf.b == 0    && txf.c == 0    && txf.d == -1.0) { return UIImageOrientationDown; } // or UIInterfaceOrientationLandscapeLeft = home button on the left
+
+    if (size.width == txf.tx && size.height == txf.ty) {
+        return UIImageOrientationDown;
+    } else if (txf.tx == 0 && txf.ty == 0) {
+        return UIImageOrientationUp;
+    } else if (txf.tx == 0 && txf.ty == size.width) {
+        return UIImageOrientationLeft;
+    } else {
+        // default to home button at the bottom
+        return UIImageOrientationRight;
+    }
 }
 
 - (void)trimVideo {
@@ -626,6 +639,7 @@ static const NSString *ItemStatusContext;
     CGFloat longer = MAX(videoSize.height, videoSize.width);
     CGFloat rotation, tx, ty;
     UIImageOrientation orientation = [self orientationForTrack:videoTrack];
+    NSLog(@"Orientation result: %ld", orientation);
     switch (orientation) {
         case UIImageOrientationRight:
             rotation = M_PI_2;
