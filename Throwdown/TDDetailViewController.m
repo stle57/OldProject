@@ -673,7 +673,6 @@ static NSString *const kKeyboardKeyPath = @"position";
     NSString *newText = [currentText substringToIndex:(currentText.length-userNameFilter.length)];
 
     self.textView.text = [newText stringByAppendingString:userName];
-    self.userListView.hidden = YES;
 }
 
 @end

@@ -147,7 +147,9 @@
     }
  }
 
--(void)getCommunityUserList:(void (^)(BOOL success, NSDictionary* communityList))callback {
+- (void)getCommunityUserList:(void (^)(BOOL success, NSArray *communityList))callback {
+    NSAssert(callback != nil, @"getCommunityUserList callback required");
+
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     TDCurrentUser *currentUser = [TDCurrentUser sharedInstance];
 
@@ -161,10 +163,12 @@
             callback(YES, [response objectForKey:@"users"]);
         } else {
             debug NSLog(@"did not get userlist");
+            callback(NO, @[]);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"Get full HTTP Error: %@", error);
+        callback(NO, @[]);
     }];
-
 }
+
 @end

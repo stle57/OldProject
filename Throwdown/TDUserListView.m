@@ -19,6 +19,7 @@
 @property (nonatomic) UITableView *tableView;
 @property (nonatomic) NSString *userNameFilter;
 @property (nonatomic) BOOL isWaitingForCallback;
+@property (nonatomic) UITextView *currentTextView;
 
 @end
 
@@ -91,6 +92,8 @@
 
     // Pass data back to controller
     [self.delegate selectedUser:selectedUser forUserNameFilter:self.userNameFilter];
+
+    [self hideView];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -98,10 +101,19 @@
 }
 
 - (void)showUserSuggestions:(UITextView *)textView callback:(void (^)(BOOL success))callback {
+    // TODO: there's a small jumping effect when user types @aaaaaaaaa (example of missing username)
+    // We should just remove the autocorrection anytime we see an @-sign, now it requires a character and is therefore reset all the time
     self.userNameFilter = [TDTextViewControllerHelper findUsernameInText:textView.text];
     if (self.userNameFilter != nil && [self.userNameFilter length] > 0) {
-        textView.autocorrectionType = UITextAutocorrectionTypeNo;
-        textView.autocapitalizationType = UITextAutocapitalizationTypeNone;
+        if (self.hidden) {
+            self.currentTextView = textView;
+            if (textView.autocorrectionType != UITextAutocorrectionTypeNo) {
+                [textView resignFirstResponder];
+                textView.autocorrectionType = UITextAutocorrectionTypeNo;
+                textView.autocapitalizationType = UITextAutocapitalizationTypeNone;
+                [textView becomeFirstResponder];
+            }
+        }
         if (!self.isWaitingForCallback) {
             self.isWaitingForCallback = YES;
             [self.userList getListWithCallback:^(NSArray *list) {
@@ -110,29 +122,37 @@
                 NSString *regexString = [NSString stringWithFormat:@".*\\B%@.*", self.userNameFilter];
                 NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(SELF.username matches[c] %@) OR (SELF.name matches[c] %@)", regexString, regexString];
                 self.filteredList = [NSMutableArray arrayWithArray:[list filteredArrayUsingPredicate:predicate]];
-                if ([self.filteredList count] != 0){
+                if ([self.filteredList count] != 0) {
                     [self.tableView reloadData];
                     self.hidden = NO;
                     if (callback) {
                         callback(YES);
                     }
                 } else {
-                    self.hidden = YES;
+                    [self hideView];
                     if (callback) {
                         callback(NO);
                     }
                 }
             }];
         }
-    } else {
-        textView.autocorrectionType = UITextAutocorrectionTypeYes;
-        textView.autocapitalizationType = UITextAutocapitalizationTypeSentences;
-
-        self.hidden = YES;
+    } else if (!self.hidden) {
+        [self hideView];
         if (callback) {
             callback(NO);
         }
     }
+}
+
+- (void)hideView {
+    if (self.currentTextView) {
+        [self.currentTextView resignFirstResponder];
+        self.currentTextView.autocorrectionType = UITextAutocorrectionTypeYes;
+        self.currentTextView.autocapitalizationType = UITextAutocapitalizationTypeSentences;
+        [self.currentTextView becomeFirstResponder];
+        self.currentTextView = nil;
+    }
+    self.hidden = YES;
 }
 
 - (void)updateFrame:(CGRect)frame {

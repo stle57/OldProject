@@ -333,7 +333,6 @@
     NSString *newText = [currentText substringToIndex:(currentText.length - userNameFilter.length)] ;
 
     self.commentTextView.text = [newText stringByAppendingString:userName];
-    self.userListView.hidden = YES;
     [self resetTextViewSize];
 }
 
