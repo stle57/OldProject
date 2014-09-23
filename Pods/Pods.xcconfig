@@ -1,6 +1,7 @@
+CLANG_MODULES_AUTOLINK = YES
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
 HEADER_SEARCH_PATHS = "${PODS_ROOT}/Headers" "${PODS_ROOT}/Headers/AFNetworking" "${PODS_ROOT}/Headers/FLEX" "${PODS_ROOT}/Headers/GPUImage" "${PODS_ROOT}/Headers/NSDate+TimeAgo" "${PODS_ROOT}/Headers/NYXImagesKit" "${PODS_ROOT}/Headers/TTTAttributedLabel" "${PODS_ROOT}/Headers/TestFlightSDK" "${PODS_ROOT}/Headers/libPhoneNumber-iOS"
 LIBRARY_SEARCH_PATHS = "$(PODS_ROOT)/TestFlightSDK"
 OTHER_CFLAGS = $(inherited) -isystem "${PODS_ROOT}/Headers" -isystem "${PODS_ROOT}/Headers/AFNetworking" -isystem "${PODS_ROOT}/Headers/FLEX" -isystem "${PODS_ROOT}/Headers/GPUImage" -isystem "${PODS_ROOT}/Headers/NSDate+TimeAgo" -isystem "${PODS_ROOT}/Headers/NYXImagesKit" -isystem "${PODS_ROOT}/Headers/TTTAttributedLabel" -isystem "${PODS_ROOT}/Headers/TestFlightSDK" -isystem "${PODS_ROOT}/Headers/libPhoneNumber-iOS"
-OTHER_LDFLAGS = -ObjC -lTestFlight -lz -framework AVFoundation -framework Accelerate -framework AssetsLibrary -framework CoreGraphics -framework CoreImage -framework CoreMedia -framework CoreTelephony -framework CoreText -framework CoreVideo -framework ImageIO -framework MobileCoreServices -framework OpenGLES -framework QuartzCore -framework Security -framework SystemConfiguration -framework UIKit
+OTHER_LDFLAGS = -ObjC -lTestFlight -lz -framework AVFoundation -framework Accelerate -framework AssetsLibrary -framework CoreGraphics -framework CoreImage -framework CoreMedia -framework CoreTelephony -framework CoreText -framework ImageIO -framework MobileCoreServices -framework OpenGLES -framework QuartzCore -framework Security -framework SystemConfiguration -framework UIKit
 PODS_ROOT = ${SRCROOT}/Pods

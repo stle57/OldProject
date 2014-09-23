@@ -15,6 +15,7 @@
 #import "TDAPIClient.h"
 #import "TDHomeViewController.h"
 #import "TDAnalytics.h"
+#import "TDURLHelper.h"
 
 // Used for class reference:
 #import "TDRecordVideoViewController.h"
@@ -217,20 +218,35 @@
 
 #pragma mark - Facebook handling callbacks
 
-// During the Facebook login flow, your app passes control to the Facebook iOS app or Facebook in a mobile browser.
-// After authentication, your app will be called back with the session information.
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-    // Call FBAppCall's handleOpenURL:sourceApplication to handle Facebook app responses
-    BOOL wasHandled = [FBAppCall handleOpenURL:url sourceApplication:sourceApplication];
-    if (!wasHandled && [[TDCurrentUser sharedInstance] isLoggedIn]) {
-        if ([[TDConstants appScheme] isEqualToString:[url scheme]]) {
-            UINavigationController *navigationController = (UINavigationController *)_window.rootViewController;
-            TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
-            [homeViewController openURL:url];
-            wasHandled = YES;
-            [[TDAnalytics sharedInstance] logEvent:@"open_url" withInfo:[url path] source:sourceApplication];
+
+    NSDictionary *appLinks = [TDURLHelper decodeAppLinksURL:url];
+    if (appLinks) {
+        [[TDAPIClient sharedInstance] logAppLinksVisit:appLinks sourceApplication:sourceApplication];
+    } else {
+        [[TDAnalytics sharedInstance] logEvent:@"open_url" withInfo:[url absoluteString] source:sourceApplication];
+    }
+
+    BOOL wasHandled = NO;
+    if ([[TDCurrentUser sharedInstance] isLoggedIn]) {
+        UINavigationController *navigationController = (UINavigationController *)_window.rootViewController;
+        TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
+        if (appLinks) {
+            wasHandled = [homeViewController openURL:(NSURL *)[appLinks objectForKey:AppLinkTargetKeyName]];
+        }
+
+        if (!wasHandled) {
+            wasHandled = [homeViewController openURL:url];
         }
     }
+
+    if (!wasHandled) {
+        // During the Facebook login flow, your app passes control to the Facebook iOS app or Facebook in a mobile browser.
+        // After authentication, your app will be called back with the session information.
+        // Call FBAppCall's handleOpenURL:sourceApplication to handle Facebook app responses
+        wasHandled = [FBAppCall handleOpenURL:url sourceApplication:sourceApplication];
+    }
+
     return wasHandled;
 }
 

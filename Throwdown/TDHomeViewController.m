@@ -18,6 +18,7 @@
 #import "TDActivityCell.h"
 #import "TDUserProfileViewController.h"
 #import "TDNavigationController.h"
+#import "TDURLHelper.h"
 #import "TDFileSystemHelper.h"
 #import "UIAlertView+TDBlockAlert.h"
 #import <QuartzCore/QuartzCore.h>
@@ -498,14 +499,27 @@
 
 #pragma mark - Handle URL's
 
-- (void)openURL:(NSURL *)url {
-    [self unwindAllViewControllers];
-    NSString *modelId = [[url pathComponents] objectAtIndex:1]; // 0 is the first slash
-    if ([@"post" isEqualToString:[url host]]) {
+- (BOOL)openURL:(NSURL *)url {
+    NSArray *pair = [TDURLHelper parseThrowdownURL:url];
+
+    if (!pair) {
+        return NO;
+    }
+
+    NSString *model   = [pair firstObject];
+    NSString *modelId = [pair lastObject];
+
+    if ([model isEqualToString:@"post"]) {
+        [self unwindAllViewControllers];
+
         TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil];
         vc.slug = modelId;
         [self.navigationController pushViewController:vc animated:YES];
-    } else if ([@"user" isEqualToString:[url host]]) {
+        return YES;
+
+    } else if ([model isEqualToString:@"user"]) {
+        [self unwindAllViewControllers];
+
         TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
         vc.username = modelId;
 
@@ -517,12 +531,14 @@
             navController.navigationBar.barStyle = UIBarStyleDefault;
             navController.navigationBar.translucent = YES;
             [self.navigationController presentViewController:navController animated:YES completion:nil];
-
         } else {
             vc.fromProfileType = kFromProfileScreenType_OtherUser;
             [self.navigationController pushViewController:vc animated:YES];
+
         }
+        return YES;
     }
+    return NO;
 }
 
 #pragma mark - Notifications and sub view

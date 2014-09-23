@@ -53,8 +53,8 @@ static NSString *const kVideoExportedFilePath = @"Documents/current_exported_vid
 static NSString *const kThumbnailExportFilePath = @"Documents/current_thumbnail.jpg";
 
 static NSString *const kPhotoFilePath = @"Documents/current_photo.jpg";
-static NSString *const kRecordedMovieFilePath = @"Documents/current_recorded_video.mp4";
-static NSString *const kRecordedTrimmedMovieFilePath = @"Documents/current_recorded_trimmed_video.mp4";
+static NSString *const kRecordedMovieFilePath = @"Documents/current_recorded_video.mov";
+static NSString *const kRecordedTrimmedMovieFilePath = @"Documents/current_recorded_trimmed_video.mov";
 
 // Recording settings
 static int const kMaxRecordingSeconds = 30;

@@ -14,11 +14,24 @@
 + (void)removeFileAt:(NSString *)path {
     NSFileManager *fm = [NSFileManager defaultManager];
     if ([fm fileExistsAtPath:path]) {
-        NSError *err;
-        [fm removeItemAtPath:path error:&err];
-        if (err) {
-            debug NSLog(@"file remove error, %@", err.localizedDescription);
+        NSError *error;
+        [fm removeItemAtPath:path error:&error];
+        if (error) {
+            NSLog(@"file remove error, %@", error);
         }
+    }
+}
+
++ (void)copyFileFrom:(NSString *)from to:(NSString *)to {
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if ([fileManager fileExistsAtPath:to] == YES) {
+        [self removeFileAt:to];
+    }
+
+    NSError *error;
+    [fileManager copyItemAtPath:from toPath:to error:&error];
+    if (error) {
+        NSLog(@"file copy error, %@", error);
     }
 }
 

@@ -22,7 +22,7 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
 
 @implementation TDUserList
 
-+ (TDUserList*) sharedInstance {
++ (TDUserList *)sharedInstance {
     static TDUserList *_sharedInstance = nil;
     static dispatch_once_t oncePredicate;
     dispatch_once(&oncePredicate, ^{
@@ -77,7 +77,6 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
     return self;
 }
 
-
 - (void)getListWithCallback:(void (^)(NSArray *list))callback {
     if (!self.lastFetched || fabs([self.lastFetched timeIntervalSinceNow]) > kReloadUserListTime) {
         [self getCommunityUserListWithCallback:callback];
@@ -106,7 +105,7 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
 
 - (void)getCommunityUserListWithCallback:(void (^)(NSArray *list))callback {
     debug NSLog(@"Fetching user list for mentions");
-    [[TDUserAPI sharedInstance] getCommunityUserList:^(BOOL success, NSDictionary *returnList) {
+    [[TDUserAPI sharedInstance] getCommunityUserList:^(BOOL success, NSArray *returnList) {
         if (success && returnList && returnList.count > 0) {
             self.userList = [returnList copy];
             self.lastFetched = [NSDate date];

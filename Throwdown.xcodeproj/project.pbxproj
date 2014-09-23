@@ -96,6 +96,7 @@
 		A11E05051888CB79002F981A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A11E05031888CB79002F981A /* InfoPlist.strings */; };
 		A11E05071888CB79002F981A /* ThrowdownTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A11E05061888CB79002F981A /* ThrowdownTests.m */; };
 		A11E05121889293C002F981A /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11E05111889293C002F981A /* AssetsLibrary.framework */; };
+		A124E93919B019A100DC65C1 /* TDURLHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = A124E93819B019A100DC65C1 /* TDURLHelper.m */; };
 		A125493B1999715D001C5CD1 /* TDSocialConnectViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A125493A1999715D001C5CD1 /* TDSocialConnectViewController.m */; };
 		A125493F1999742B001C5CD1 /* TDSocialConnectCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A125493D1999742B001C5CD1 /* TDSocialConnectCell.m */; };
 		A12549401999742B001C5CD1 /* TDSocialConnectCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A125493E1999742B001C5CD1 /* TDSocialConnectCell.xib */; };
@@ -156,6 +157,7 @@
 		A1D13FEE1905E931000980E0 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1D13FED1905E931000980E0 /* QuartzCore.framework */; };
 		A1D13FF01905E93A000980E0 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1D13FEF1905E93A000980E0 /* CoreImage.framework */; };
 		A1D13FF21905F2BE000980E0 /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = A1D13FF11905F2BE000980E0 /* Podfile */; };
+		A1D36D5A19CCF66600AFE730 /* TDCameraPreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = A1D36D5919CCF66600AFE730 /* TDCameraPreviewView.m */; };
 		A1D6BB0D196BBAE9007983F8 /* TDSlideDownSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = A1D6BB0C196BBAE9007983F8 /* TDSlideDownSegue.m */; };
 		A1D6BB10196BC1FD007983F8 /* TDStoryboardSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = A1D6BB0F196BC1FD007983F8 /* TDStoryboardSegue.m */; };
 		A1D6BB13196BC7AC007983F8 /* TDSlideUpSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = A1D6BB12196BC7AC007983F8 /* TDSlideUpSegue.m */; };
@@ -313,6 +315,8 @@
 		A11E05041888CB79002F981A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A11E05061888CB79002F981A /* ThrowdownTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ThrowdownTests.m; sourceTree = "<group>"; };
 		A11E05111889293C002F981A /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		A124E93719B019A100DC65C1 /* TDURLHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDURLHelper.h; sourceTree = "<group>"; };
+		A124E93819B019A100DC65C1 /* TDURLHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDURLHelper.m; sourceTree = "<group>"; };
 		A12549391999715D001C5CD1 /* TDSocialConnectViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSocialConnectViewController.h; sourceTree = "<group>"; };
 		A125493A1999715D001C5CD1 /* TDSocialConnectViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSocialConnectViewController.m; sourceTree = "<group>"; };
 		A125493C1999742B001C5CD1 /* TDSocialConnectCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSocialConnectCell.h; sourceTree = "<group>"; };
@@ -422,6 +426,8 @@
 		A1D13FED1905E931000980E0 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		A1D13FEF1905E93A000980E0 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
 		A1D13FF11905F2BE000980E0 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = SOURCE_ROOT; };
+		A1D36D5819CCF66600AFE730 /* TDCameraPreviewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDCameraPreviewView.h; sourceTree = "<group>"; };
+		A1D36D5919CCF66600AFE730 /* TDCameraPreviewView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDCameraPreviewView.m; sourceTree = "<group>"; };
 		A1D6BB0B196BBAE9007983F8 /* TDSlideDownSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSlideDownSegue.h; sourceTree = "<group>"; };
 		A1D6BB0C196BBAE9007983F8 /* TDSlideDownSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSlideDownSegue.m; sourceTree = "<group>"; };
 		A1D6BB0E196BC1FD007983F8 /* TDStoryboardSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDStoryboardSegue.h; sourceTree = "<group>"; };
@@ -734,6 +740,8 @@
 				A1F13C6419AD5D7E000DD890 /* TDRadioButtonRowCell.h */,
 				A1F13C6519AD5D7E000DD890 /* TDRadioButtonRowCell.m */,
 				A1F13C6619AD5D7E000DD890 /* TDRadioButtonRowCell.xib */,
+				A1D36D5819CCF66600AFE730 /* TDCameraPreviewView.h */,
+				A1D36D5919CCF66600AFE730 /* TDCameraPreviewView.m */,
 			);
 			name = Posting;
 			sourceTree = "<group>";
@@ -766,6 +774,8 @@
 				4DC2C9971968F69C00A210CF /* TDTextViewControllerHelper.m */,
 				4DD0836E19AC585C00149968 /* TDRateUsController.h */,
 				4DD0836F19AC585C00149968 /* TDRateUsController.m */,
+				A124E93719B019A100DC65C1 /* TDURLHelper.h */,
+				A124E93819B019A100DC65C1 /* TDURLHelper.m */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -1214,6 +1224,7 @@
 				2D01951C1901DAF4000CBF74 /* TDNoPostsCell.m in Sources */,
 				A19FF61018970BBB001A0AD0 /* RSModel.m in Sources */,
 				A19FF61118970BBB001A0AD0 /* RSStorageObject.m in Sources */,
+				A1D36D5A19CCF66600AFE730 /* TDCameraPreviewView.m in Sources */,
 				A1F02FD418C92277002FEB2F /* TDPostUpload.m in Sources */,
 				A151958B18BAE8FD0050A45B /* TDUser.m in Sources */,
 				2DA39FD618E0B2570004A9C7 /* TDMoreComments.m in Sources */,
@@ -1223,6 +1234,7 @@
 				A19FF60F18970BBB001A0AD0 /* RSContainer.m in Sources */,
 				2DA41A5618C7D89C00B21C74 /* TDDetailViewController.m in Sources */,
 				4D2843D819C649D600E4A56C /* TDNoFollowProfileCell.m in Sources */,
+				A124E93919B019A100DC65C1 /* TDURLHelper.m in Sources */,
 				A11999DD18DC0D4200C39ABF /* TDFileSystemHelper.m in Sources */,
 				A1BB463318F7767200BD9527 /* TDActivityViewController.m in Sources */,
 				2D2E832E18CA579B00846B2E /* TDComment.m in Sources */,

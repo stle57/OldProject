@@ -12,20 +12,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lpd-Xk-QaL" userLabel="Video Container View">
-                                <rect key="frame" x="0.0" y="96" width="320" height="320"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <view hidden="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="dBh-cg-coo" userLabel="GPUImage View" customClass="GPUImageView">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="320"/>
-                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                                    </view>
-                                </subviews>
+                            <view contentMode="scaleToFill" id="VYp-zZ-cCO" userLabel="Camera Preview View" customClass="TDCameraPreviewView">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <view contentMode="scaleToFill" id="yCY-OC-yOW" userLabel="Black Cover View">
-                                <rect key="frame" x="0.0" y="96" width="320" height="320"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                             </view>
@@ -35,11 +28,11 @@
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="btn_camera_outerCircle_rightArrow_184x160" id="cnB-Wd-Stf" userLabel="Mode Indicator Image View">
                                         <rect key="frame" x="68" y="-42" width="184" height="184"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                                     </imageView>
                                     <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Jc-mN-hx2" userLabel="Record Button">
                                         <rect key="frame" x="120" y="0.0" width="80" height="100"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <accessibility key="accessibilityConfiguration">
                                             <bool key="isElement" value="NO"/>
                                         </accessibility>
@@ -55,7 +48,7 @@
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="adF-V8-fH8" userLabel="Photo Button">
                                         <rect key="frame" x="200" y="24" width="50" height="50"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <state key="normal" image="photo_cam_option_36x28">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
@@ -67,7 +60,7 @@
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="bR2-LG-wfE" userLabel="Video Button">
                                         <rect key="frame" x="70" y="25" width="50" height="50"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <state key="normal" image="video_cam_option_38x24">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
@@ -79,7 +72,7 @@
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="2a9-PF-90i" userLabel="Album Button">
                                         <rect key="frame" x="0.0" y="0.0" width="65" height="100"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <inset key="contentEdgeInsets" minX="12" minY="0.0" maxX="0.0" maxY="0.0"/>
                                         <state key="normal" image="photo_library_pre_96x96">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -90,7 +83,7 @@
                                         </connections>
                                     </button>
                                 </subviews>
-                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <view userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cZv-bv-JN9" userLabel="Indicator background">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -100,7 +93,7 @@
                             <view userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="X0a-I3-x3Z" userLabel="Progress Indicator">
                                 <rect key="frame" x="-320" y="0.0" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.92549019610000005" green="0.2156862745" blue="0.14901960780000001" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" red="0.92549019610000005" green="0.2156862745" blue="0.14901960780000001" alpha="0.5" colorSpace="calibratedRGB"/>
                             </view>
                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="p2X-Qr-6Vj" userLabel="Flash Button">
                                 <rect key="frame" x="110" y="0.0" width="100" height="44"/>
@@ -150,7 +143,6 @@
                         <color key="backgroundColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstAttribute="top" secondItem="tgj-aS-c8v" secondAttribute="bottom" id="bqC-Z8-uEZ"/>
-                            <constraint firstAttribute="centerY" secondItem="lpd-Xk-QaL" secondAttribute="centerY" id="iae-5R-TZg"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="EPz-aL-cnP"/>
@@ -158,19 +150,19 @@
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
                         <outlet property="albumButton" destination="2a9-PF-90i" id="x5p-0S-kMb"/>
+                        <outlet property="cameraPreview" destination="VYp-zZ-cCO" id="6L4-Xu-kdc"/>
                         <outlet property="closeButton" destination="6yY-RR-kvO" id="KIb-vu-e7J"/>
                         <outlet property="controlsView" destination="tgj-aS-c8v" id="gqB-1B-3Lx"/>
                         <outlet property="coverView" destination="yCY-OC-yOW" id="uOg-Vs-Ow7"/>
                         <outlet property="flashButton" destination="p2X-Qr-6Vj" id="DVl-BZ-K3W"/>
+                        <outlet property="indicatorBackgroundView" destination="cZv-bv-JN9" id="WMa-ss-v4V"/>
                         <outlet property="modeIndicator" destination="cnB-Wd-Stf" id="Psk-Za-gmy"/>
                         <outlet property="photoButton" destination="adF-V8-fH8" id="Wcd-66-ucI"/>
-                        <outlet property="previewLayer" destination="dBh-cg-coo" id="zyj-dO-c1J"/>
                         <outlet property="progressBarView" destination="X0a-I3-x3Z" id="N5z-24-RwP"/>
                         <outlet property="recordButton" destination="1Jc-mN-hx2" id="gEP-7f-AEm"/>
                         <outlet property="switchCamerabutton" destination="93b-E6-3u5" id="gdi-bG-RHF"/>
                         <outlet property="timeLabel" destination="Emc-Hw-KVu" id="gn9-Ls-Uxf"/>
                         <outlet property="videoButton" destination="bR2-LG-wfE" id="L5M-CU-w8p"/>
-                        <outlet property="videoContainerView" destination="lpd-Xk-QaL" id="a2l-m2-M2e"/>
                         <segue destination="mmN-3Z-6Sw" kind="custom" identifier="EditVideoSegue" customClass="TDSlideLeftSegue" id="dIK-mC-q5V"/>
                         <segue destination="YgZ-o0-OG3" kind="unwind" identifier="MediaCloseSegue" unwindAction="unwindToShareView:" id="9P0-1X-62J"/>
                     </connections>
@@ -304,7 +296,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
-                        <color key="backgroundColor" red="0.20000000000000001" green="0.20000000000000001" blue="0.20000000000000001" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="rEL-OQ-X7b"/>
                     <nil key="simulatedStatusBarMetrics"/>

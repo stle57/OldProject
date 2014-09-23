@@ -26,6 +26,7 @@ static float const kMinInputHeight = 33.;
 static float const kMaxInputHeight = 100.;
 static int const kCommentFieldPadding = 14;
 static int const kToolbarHeight = 64;
+static NSString *const kKeyboardKeyPath = @"position";
 
 @interface TDDetailViewController () <UITextViewDelegate, NSLayoutManagerDelegate>
 
@@ -465,17 +466,25 @@ static int const kToolbarHeight = 64;
 - (void)keyboardDidChange:(NSNotification *)notification {
     if (!self.currentKeyboardView) {
         for (UIWindow *window in [[UIApplication sharedApplication] windows]) {
-            //Because we cant get access to the UIPeripheral throught the SDK we will just use UIView.
-            //UIPeripheral is a subclass of UIView anyways
-            //Iterate though each view inside of the selected Window
-            for(int i = 0; i < [window.subviews count]; i++) {
-                //Get a reference of the current view
-                UIView *keyboard = [window.subviews objectAtIndex:i];
-                //Assuming this is for 4.0+, In 3.0 you would use "<UIKeyboard"
-                if([[keyboard description] hasPrefix:@"<UIPeripheral"] == YES) {
-                    //Keyboard is now a UIView reference to the UIPeripheral we want
-                    self.currentKeyboardView = keyboard;
-                    [self.currentKeyboardView addObserver:self forKeyPath:@"frame" options:NSKeyValueObservingOptionNew context:nil];
+            // Because we cant get access to the UIPeripheral throught the SDK we will just use its UIView.
+            // UIPeripheral is a subclass of UIView anyways
+            // For iOS 8 we have to look a level deeper
+            // UIPeripheral should work for 4.0+. In 3.0 you would use "<UIKeyboard"
+            // Keyboard will end up as a UIView reference to the UIPeripheral / UIInput we want
+            // Iterate though each view inside of the selected Window
+            for (UIView *keyboard in window.subviews) {
+                if ([[keyboard description] hasPrefix:@"<UIPeripheral"]) {
+                    // iOS7
+                    [self registerKeyboardObserver:keyboard];
+                    return;
+                } else if ([[keyboard description] hasPrefix:@"<UIInput"]) {
+                    // iOS8
+                    for (UIView *view in keyboard.subviews) {
+                        if ([view.description hasPrefix:@"<UIInputSetHostView"]) {
+                            [self registerKeyboardObserver:view];
+                            return;
+                        }
+                    }
                 }
             }
         }
@@ -548,16 +557,24 @@ static int const kToolbarHeight = 64;
     }
 }
 
+- (void)registerKeyboardObserver:(UIView *)view {
+    if (self.currentKeyboardView) {
+        [self unregisterKeyboardObserver];
+    }
+    self.currentKeyboardView = view;
+    [self.currentKeyboardView.layer addObserver:self forKeyPath:kKeyboardKeyPath options:NSKeyValueObservingOptionInitial context:nil];
+}
+
 - (void)unregisterKeyboardObserver {
     if (self.currentKeyboardView) {
-        [self.currentKeyboardView removeObserver:self forKeyPath:@"frame"];
+        [self.currentKeyboardView.layer removeObserver:self forKeyPath:kKeyboardKeyPath];
         self.currentKeyboardView = nil;
     }
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if (object == self.currentKeyboardView && [keyPath isEqualToString:@"frame"]) {
-        [self updateTextViewFromFrame:self.currentKeyboardView.frame];
+    if (object == self.currentKeyboardView.layer && [keyPath isEqualToString:kKeyboardKeyPath]) {
+        [self updateTextViewFromFrame:self.currentKeyboardView.layer.frame];
         return;
     }
     [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
@@ -678,7 +695,6 @@ static int const kToolbarHeight = 64;
     NSString *newText = [currentText substringToIndex:(currentText.length-userNameFilter.length)];
 
     self.textView.text = [newText stringByAppendingString:userName];
-    self.userListView.hidden = YES;
 }
 
 @end
