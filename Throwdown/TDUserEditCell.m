@@ -45,11 +45,9 @@
     self.userImageView.clipsToBounds = YES;
 
     textViewdOrigRect = self.textView.frame;
-    debug NSLog(@"bottomLine.y=%f", self.bottomLine.frame.origin.y);
     bottomLineOrigY = self.bottomLine.frame.origin.y + 0.5;
-    
+
     self.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
-    self.layer.borderWidth = .5f;
 }
 
 @end

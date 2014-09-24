@@ -23,7 +23,8 @@ typedef NSUInteger kFromProfileScreenType;
 
 enum {
     kUserListType_Followers,
-    kUserListType_Following
+    kUserListType_Following,
+    kUserListType_TDUsers
 };
 typedef NSUInteger kUserListType;
 
@@ -76,6 +77,8 @@ static NSString *const TDNotificationPauseTapGesture = @"TDNotificationPauseTapG
 static NSString *const TDNotificationResumeTapGesture = @"TDNotificationResumeTapGesture";
 static NSString *const TDRefreshPostsNotification = @"TDRefreshPostsNotification";
 static NSString *const TDUpdateWithUserChangeNotification = @"TDUpdateWithUserChangeNotification";
+static NSString *const TDUpdateFollowingCount = @"TDUpdateFollowingCount";
+static NSString *const TDUpdateFollowerCount = @"TDUpdateFollowerCount";
 static NSString *const TDUploadCompleteNotification = @"TDUploadCompleteOK";
 static NSString *const TDUploadFailedNotification = @"TDUploadCompleteFailed";
 static NSString *const TDAvatarUploadCompleteNotification = @"TDAvatarUploadCompleteOK";
@@ -87,7 +90,6 @@ static CGFloat const kCommentCellUserHeight = 18.0;
 static CGFloat const kCommentPadding = 3; // padding between comments
 static CGFloat const kCommentLastPadding = 8; // bottom padding of comments
 static NSInteger const kCommentMaxCharacters = 500; // MAX number of characters allowed in a comment or post
-
 
 // 1.27 is the lowest we can go without cutting off the emoji
 static CGFloat const kTextLineHeight = 1.27;
@@ -106,6 +108,7 @@ static NSString *const kSpinningAnimation = @"rotationAnimation";
 #define CELL_IDENTIFIER_EDITPROFILE      @"TDUserEditCell"
 #define CELL_NO_MORE_POSTS               @"TDNoMorePostsCell"
 #define CELL_IDENTIFIER_FOLLOWPROFILE    @"TDFollowProfileCell"
+#define CELL_IDENTIFIER_INVITE           @"TDInviteCell"
 #define TOAST_TAG                        87352
 #define COMMENT_MESSAGE_WIDTH            306.0
 #define COMMENT_MESSAGE_FONT_SIZE        15.0
@@ -121,6 +124,7 @@ static NSString *const kSpinningAnimation = @"rotationAnimation";
 #define TD_COMMENT_EVENT_COUNT           5
 #define TD_LIKE_EVENT_COUNT              2
 #define TD_POST_EVENT_COUNT              10
+#define TD_POTRAIT_CELL_HEIGHT           44
 
 + (TDEnvironment)environment;
 + (NSString *)appScheme;

@@ -13,6 +13,7 @@
 #import "TDHomeViewController.h"
 #import "TDCustomRefreshControl.h"
 #import "TDFollowViewController.h"
+#import "TDInviteViewController.h"
 
 static CGFloat const kHeightOfStatusBar = 64.0;
 static NSInteger const kInviteButtonTag = 10001;
@@ -253,6 +254,17 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
     return [posts count] + [self noticeCount] + (showBottomSpinner ? 1 : 0) + ([self hasMorePosts] ? 0 : 1) + (needsProfileHeader ? 1 : 0);
 }
 
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    switch (section) {
+        case 1:
+            return 15.0;
+            break;
+        default:
+            return 0.;
+            break;
+    }
+}
+
 // Rows is 1 (for the video) + 1 for likes row + # of comments + 1 for like/comment buttons
 // -1 if no likers
 // +1 if total comments count > 2
@@ -296,11 +308,12 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
     NSInteger realRow = [[self postsForThisScreen] count] + [self noticeCount] + (needsProfileHeader ? 1 : 0);
 
     // debugging these table view buggers:
-    // NSInteger postRow = indexPath.section - [self noticeCount] - (needsProfileHeader ? 1 : 0);
-    // debug NSLog(@"s: %ld r: %ld n: %ld p: %lu rr: %ld pr: %ld", (long)indexPath.section, (long)indexPath.row, (long)[self noticeCount], (long)[self.posts count], (long)realRow, (long)postRow);
-
+   // NSInteger postRow = indexPath.section - [self noticeCount] - (needsProfileHeader ? 1 : 0);
+    //debug NSLog(@"s: %ld r: %ld n: %ld p: %lu rr: %ld pr: %ld", (long)indexPath.section, (long)indexPath.row, (long)[self noticeCount], (long)[self.posts count], (long)realRow, (long)postRow);
+    
     // 1st row for Profile Header
     if (needsProfileHeader && indexPath.section == 0 && self.loaded && !self.errorLoading) {
+        debug NSLog(@"creating header");
         TDUserProfileCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_PROFILE];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_PROFILE owner:self options:nil];
@@ -313,12 +326,12 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
         cell.bioLabel.hidden = YES;
         cell.userImageView.hidden = YES;
         cell.bioLabel.frame = cell.origBioLabelRect;
-        
         if ([self getUser]) {
             TDUser *user = [self getUser];
             cell.userNameLabel.text = user.name;
             cell.userImageView.hidden = NO;
-            if (user.bio && ![user.bio isKindOfClass:[NSNull class]] && user.bio.length != 0) {
+
+            if ( (user.bio && ![user.bio isKindOfClass:[NSNull class]]) ) {
                cell.bioLabel.attributedText = (NSMutableAttributedString*)[TDViewControllerHelper makeParagraphedTextWithBioString:user.bio];
                 [TDAppDelegate fixHeightOfThisLabel:cell.bioLabel];
                 cell.bioLabel.hidden = NO;
@@ -368,7 +381,7 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
                 TDUserProfileViewController *vc = (TDUserProfileViewController*)self;
                 if(vc.fromProfileType == kFromProfileScreenType_OtherUser) {
                     //TODO: Fix invite button
-                    if(YES) // we are following this persion
+                    if(vc.getUser.following) // we are following this persion
                     {
                         UIImage * buttonImage = [UIImage imageNamed:@"btn-following.png"];
                         [cell.inviteButton setImage:buttonImage forState:UIControlStateNormal];
@@ -400,7 +413,7 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
                                                cell.bottomLine.frame.size.width,
                                                (1.0 / [[UIScreen mainScreen] scale]));
         }
-
+        
         return cell;
     }
 
@@ -443,7 +456,6 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
 
         // Center label (could be improved!)
         cell.noPostsLabel.center = CGPointMake(cell.view.center.x, cell.view.frame.size.height / 2);
-
         return cell;
     }
 
@@ -462,7 +474,6 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
 
     // Last row if no more
     if (![self hasMorePosts] && indexPath.section == realRow) {
-
         TDNoMorePostsCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_NO_MORE_POSTS];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_NO_MORE_POSTS owner:self options:nil];
@@ -526,7 +537,6 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
         } else {
             cell.buttonBorder.hidden = [post.likersTotalCount intValue] == 0 && [post.commentsTotalCount intValue] == 0;
         }
-
         return cell;
     }
 
@@ -573,8 +583,8 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
             //spacing after bio, height of invite button, spacing after invite, height of stat buttons + extra padding for next section in view
             CGFloat padding = kBioLabelInviteButtonPadding + inviteButtonHeight + kInviteButtonStatButtonPadding + statButtonHeight + 5;
             debug NSLog(@"bioHeight=%f", bioHeight);
+
             CGFloat cellHeight = topOfBioLabelInProfileHeader + bioHeight + (bioHeight > 0 ? padding : 5); // extra padding when we have a bio
-            debug NSLog(@"returning height for profileheader=%f, where cellHeight=%f and profileHeaderHeight=%f", fmaxf(profileHeaderHeight, cellHeight), cellHeight, profileHeaderHeight);
             return fmaxf(profileHeaderHeight, cellHeight);
         } else {
             return 1.0;
@@ -825,28 +835,29 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
 #pragma mark - TDUserProfileCellDelegate
 
 - (void)postsStatButtonPressed {
-        debug NSLog(@"segue to posts button");
+    debug NSLog(@"segue to posts button");
 }
 - (void)prStatButtonPressed {
-         debug NSLog(@"segue to PR lists");
+    debug NSLog(@"segue to PR lists");
 }
 - (void)followingStatButtonPressed {
-     debug NSLog(@"segue to following list");
-     TDFollowViewController *vc = [[TDFollowViewController alloc] initWithNibName:@"TDFollowViewController" bundle:nil ];
-     vc.followControllerType = kUserListType_Following;
-     //vc.delegate = self;
-     [self.navigationController pushViewController:vc animated:YES];
+    debug NSLog(@"segue to following list");
+    TDFollowViewController *vc = [[TDFollowViewController alloc] initWithNibName:@"TDFollowViewController" bundle:nil ];
+    vc.followControllerType = kUserListType_Following;
+    vc.profileUser = self.getUser;
+    //vc.delegate = self;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
  - (void)followerStatButtonPressed {
      debug NSLog(@"segue to follwers list");
      TDFollowViewController *vc = [[TDFollowViewController alloc] initWithNibName:@"TDFollowViewController" bundle:nil ];
+     vc.profileUser = self.getUser;
      vc.followControllerType = kUserListType_Followers;
      [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)inviteButtonPressedFromRow:(NSInteger)tag {
-    debug NSLog(@"invite button pressed with tag=%tu", tag);
     if (tag == kFollowerButtonTag) {
         debug NSLog(@"follow this person");
         
@@ -858,8 +869,13 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
         //change the button
         
     } else if (tag == kInviteButtonTag) {
-        debug NSLog(@"Show the invite list");
+        TDInviteViewController *vc = [[TDInviteViewController alloc] initWithNibName:@"TDInviteViewController" bundle:nil ];
+        vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
+        navController.navigationBar.barStyle = UIBarStyleDefault;
+        navController.navigationBar.translucent = NO;
+        [self.navigationController presentViewController:navController animated:YES completion:nil];
+
     }
 }
-
 @end

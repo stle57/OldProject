@@ -64,17 +64,20 @@
     statusBarFrame = [self.view convertRect:[UIApplication sharedApplication].statusBarFrame fromView: nil];
 
     // Title
-    self.titleLabel.text = @"Edit Profile";
+    self.titleLabel.text = @"Settings";
     self.titleLabel.textColor = [UIColor whiteColor];
     self.titleLabel.font = [TDConstants fontSemiBoldSized:18];
     [self.navigationItem setTitleView:self.titleLabel];
 
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
-    
+    [navigationBar setBarStyle:UIBarStyleBlack];
+    navigationBar.translucent = NO;
     // Background color
-    self.tableView.backgroundColor = [TDConstants tableViewBackgroundColor];
-
+    self.tableView.backgroundColor = [TDConstants tableViewBackgroundColor]; //f5f5f5f5
+    self.tableView.separatorColor = [UIColor clearColor];
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    
     // Buttons
     self.saveButton.titleLabel.font = [TDConstants fontRegularSized:18.0];
     UIBarButtonItem *saveBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.saveButton];
@@ -462,32 +465,24 @@
 }
 
 #pragma mark - TableView Delegates
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-//    if (section == 1) {
-//        UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, 320, 40)];
-//        UILabel *sectionHeaderLabel = [[UILabel alloc] initWithFrame:headerView.layer.frame];
-//        sectionHeaderLabel.text = @"PRIVATE INFORMATION";
-//        sectionHeaderLabel.font = [UIFont fontWithName:TDFontProximaNovaSemibold size:15.0];
-//        sectionHeaderLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
-//        CGRect headerLabelFrame = sectionHeaderLabel.frame;
-//        headerLabelFrame.origin.x = 12.0;
-//        headerLabelFrame.origin.y += 8;
-//        sectionHeaderLabel.frame = headerLabelFrame;
-//        [headerView addSubview:sectionHeaderLabel];
-//        return headerView;
-//    }
-
-    return nil;
-}
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     switch (section) {
-        case 1:
         case 0:
+            return 20.0;
+            break;
+        case 1:
+            return 20.0;
+            break;
         case 2:
+            return 20.0;
+            break;
         case 3:
+            return 20.0;
+            break;
         case 4:
             return 20;
+            break;
         break;
         default:
             return 0.;
@@ -569,7 +564,7 @@
                     cell.leftMiddleLabel.hidden = NO;
                     cell.leftMiddleLabel.text = @"Edit Photo";
                     CGRect labelFrame = cell.leftMiddleLabel.frame;
-                    labelFrame.origin.x = 100;
+                    labelFrame.origin.x = TD_TEXTFIELD_ORIGIN_X_POS;
                     cell.leftMiddleLabel.frame = labelFrame;
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
                     break;
@@ -581,7 +576,7 @@
                     cell.titleLabel.text = @"Name";
                     cell.textField.text = self.name;
                     CGRect cellFrame = cell.textField.frame;
-                    cellFrame.origin.x = 100;
+                    cellFrame.origin.x = TD_TEXTFIELD_ORIGIN_X_POS;
                     cell.textField.frame = cellFrame;
                     break;
                 case 2:
@@ -592,7 +587,7 @@
                     cell.titleLabel.text = @"Username";
                     cell.textField.text = self.username;
                     CGRect fieldFrame = cell.textField.frame;
-                    cellFrame.origin.x = 100;
+                    cellFrame.origin.x = TD_TEXTFIELD_ORIGIN_X_POS;
                     cell.textField.frame = fieldFrame;
                     break;
                 case 3:
@@ -611,13 +606,15 @@
                     cell.textView.text = self.bio;
                     CGRect newTextFrame = cell.textView.frame;
                     newTextFrame.size.height = [self tableView:tableView heightForRowAtIndexPath:indexPath];
-                    newTextFrame.origin.x = 100;
+                    newTextFrame.origin.x = TD_TEXTFIELD_ORIGIN_X_POS;
                     cell.textView.frame = newTextFrame;
                     cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
                                                        CGRectGetMaxY(newTextFrame),
                                                        cell.bottomLine.frame.size.width,
                                                        cell.bottomLine.frame.size.height);
 
+                    //cell.bottomLine.layer.borderColor = [[TDConstants brandingRedColor] CGColor];
+                    //cell.bottomLine.layer.borderWidth = 0.5f;
                     break;
                 default:
                     break;

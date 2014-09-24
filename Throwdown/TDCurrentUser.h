@@ -52,4 +52,7 @@
 - (BOOL)canPostToTwitter;
 - (void)handleTwitterResponseData:(NSData *)data callback:(void (^)(BOOL success))callback;
 
+- (BOOL)didAskForContacts;
+- (void)didAskForContacts:(BOOL)yes;
+
 @end

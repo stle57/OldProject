@@ -51,14 +51,14 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="vsg-V5-ezb">
-                                <rect key="frame" x="160" y="179" width="80" height="50"/>
+                                <rect key="frame" x="240" y="179" width="80" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <connections>
                                     <action selector="followerButtonPressed:" destination="wCZ-UE-T81" eventType="touchUpInside" id="tnY-82-PLk"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="lrM-Gv-80L">
-                                <rect key="frame" x="240" y="179" width="80" height="50"/>
+                                <rect key="frame" x="160" y="179" width="80" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>

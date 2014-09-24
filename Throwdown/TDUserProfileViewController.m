@@ -39,13 +39,12 @@
 
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
-    navigationBar.barStyle = UIBarStyleBlack;
+    [navigationBar setBarStyle:UIBarStyleBlack];
     navigationBar.translucent = NO;
-    
+    self.tableView.contentInset = UIEdgeInsetsZero;
+     
     // Background color
-    debug NSLog(@"bg color=%@", self.tableView.backgroundColor);
     self.tableView.backgroundColor = [TDConstants postViewBackgroundColor];
-    debug NSLog(@"bg after color=%@", self.tableView.backgroundColor);
     
     // Title
     self.titleLabel.textColor = [UIColor whiteColor];
@@ -83,11 +82,14 @@
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removePost:) name:TDNotificationRemovePost object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateUserFollowingCount:) name:TDUpdateFollowingCount object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    debug NSLog(@"inside TDUsersProfileViewController:viewWillAppear");
     [super viewWillAppear:animated];
-
+    
+    [self.tableView reloadData];
     // Stop any current playbacks
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
 
@@ -282,7 +284,6 @@
     [self.tableView reloadData];
 }
 
-
 - (void)removePost:(NSNotification *)n {
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         BOOL changeMade = NO;
@@ -305,4 +306,24 @@
     });
 }
 
+#pragma mark - Update Following Count after User follow notification
+- (void)updateUserFollowingCount:(NSNotification *)notification {
+     debug NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
+    if (notification.userInfo) {
+        if ([notification.userInfo objectForKey:@"incrementCount"]) {
+            self.getUser.followingCount = [NSNumber numberWithLong:[self.getUser.followingCount integerValue] + [((NSNumber *)[notification.userInfo objectForKey:@"incrementCount"]) integerValue]];
+        } else if ([notification.userInfo objectForKey:@"decreaseCount"]) {
+            self.getUser.followingCount = [NSNumber numberWithLong:[self.getUser.followingCount integerValue] - [((NSNumber *)[notification.userInfo objectForKey:@"decreaseCount"]) integerValue]];
+        }
+    }
+    
+    [self.tableView reloadData];
+}
+
+- (void)updateUserFollowerCount:(NSNotification *)notification {
+     debug NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
+    
+    self.getUser.followerCount = [[NSNumber alloc] initWithInt:(self.getUser.followerCount.intValue-1)];
+    [self.tableView reloadData];
+}
 @end

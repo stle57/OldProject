@@ -82,6 +82,19 @@
             self.closeButton.hidden = FALSE;
             self.closeButton.enabled = YES;
             break;
+        case kToastType_InviteSent:
+            iconImage = [UIImage imageNamed:@"td_info_toast_icon"];
+            self.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:.95f];
+            [self.label setFont:[UIFont systemFontOfSize:14]];
+            self.label.textColor = [TDConstants headerTextColor];
+            self.closeButton.hidden = YES;
+            break;
+        case kToastType_InviteWarning:
+            iconImage = [UIImage imageNamed:@"td_error_toast_icon"];
+            self.backgroundColor = [UIColor colorWithRed:(158./255) green:(11./255) blue:(15./255) alpha:0.85];
+            self.label.textColor = [UIColor whiteColor];
+            self.closeButton.hidden = YES;
+            break;
         default:
             break;
     }

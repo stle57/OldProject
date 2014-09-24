@@ -68,8 +68,19 @@
 		4D2843D419C4082300E4A56C /* TDFollowProfileCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D2843D219C4082300E4A56C /* TDFollowProfileCell.xib */; };
 		4D2843D819C649D600E4A56C /* TDNoFollowProfileCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D2843D619C649D600E4A56C /* TDNoFollowProfileCell.m */; };
 		4D2843D919C649D600E4A56C /* TDNoFollowProfileCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D2843D719C649D600E4A56C /* TDNoFollowProfileCell.xib */; };
+		4D2843E719C8A7A700E4A56C /* TDInviteViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D2843E519C8A7A700E4A56C /* TDInviteViewController.m */; };
+		4D2843E819C8A7A700E4A56C /* TDInviteViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D2843E619C8A7A700E4A56C /* TDInviteViewController.xib */; };
+		4D2843EC19C9F42200E4A56C /* TDInviteCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D2843EA19C9F42200E4A56C /* TDInviteCell.m */; };
+		4D2843ED19C9F42200E4A56C /* TDInviteCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D2843EB19C9F42200E4A56C /* TDInviteCell.xib */; };
+		4D2843EF19CA299900E4A56C /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D2843EE19CA299900E4A56C /* AddressBook.framework */; };
 		4D3352D419A29CD8007B3E06 /* iRate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D3352D319A29CD8007B3E06 /* iRate.m */; };
 		4D3352D619A29CEC007B3E06 /* iRate.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4D3352D519A29CEC007B3E06 /* iRate.bundle */; };
+		4D36F51519CCDB8100A279A5 /* UIActionSheet+Blocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D36F51419CCDB8100A279A5 /* UIActionSheet+Blocks.m */; };
+		4D36F51919CCE66700A279A5 /* TDSendInviteController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D36F51719CCE66700A279A5 /* TDSendInviteController.m */; };
+		4D36F51A19CCE66700A279A5 /* TDSendInviteController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D36F51819CCE66700A279A5 /* TDSendInviteController.xib */; };
+		4D4714B819CBF14F003AA69F /* TDContactInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4714B719CBF14F003AA69F /* TDContactInfo.m */; };
+		4D6FCC2419CAA34D00902719 /* TDContactsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D6FCC2219CAA34D00902719 /* TDContactsViewController.m */; };
+		4D6FCC2519CAA34D00902719 /* TDContactsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D6FCC2319CAA34D00902719 /* TDContactsViewController.xib */; };
 		4DC2C9981968F69C00A210CF /* TDTextViewControllerHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC2C9971968F69C00A210CF /* TDTextViewControllerHelper.m */; };
 		4DC2C9A31969F72600A210CF /* TDUserListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC2C9A11969F72600A210CF /* TDUserListView.m */; };
 		4DD0837019AC585C00149968 /* TDRateUsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DD0836F19AC585C00149968 /* TDRateUsController.m */; };
@@ -86,7 +97,7 @@
 		A11E04E01888CB79002F981A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11E04DF1888CB79002F981A /* UIKit.framework */; };
 		A11E04E61888CB79002F981A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A11E04E41888CB79002F981A /* InfoPlist.strings */; };
 		A11E04E81888CB79002F981A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A11E04E71888CB79002F981A /* main.m */; };
-		A11E04EC1888CB79002F981A /* TDAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A11E04EB1888CB79002F981A /* TDAppDelegate.m */; };
+                A11E04EC1888CB79002F981A /* TDAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A11E04EB1888CB79002F981A /* TDAppDelegate.m */; };
 		A11E04EF1888CB79002F981A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A11E04ED1888CB79002F981A /* Main.storyboard */; };
 		A11E04F21888CB79002F981A /* TDRecordVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A11E04F11888CB79002F981A /* TDRecordVideoViewController.m */; };
 		A11E04F41888CB79002F981A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A11E04F31888CB79002F981A /* Images.xcassets */; };
@@ -274,9 +285,26 @@
 		4D2843D519C649D600E4A56C /* TDNoFollowProfileCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDNoFollowProfileCell.h; sourceTree = "<group>"; };
 		4D2843D619C649D600E4A56C /* TDNoFollowProfileCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDNoFollowProfileCell.m; sourceTree = "<group>"; };
 		4D2843D719C649D600E4A56C /* TDNoFollowProfileCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDNoFollowProfileCell.xib; sourceTree = "<group>"; };
+		4D2843E419C8A7A700E4A56C /* TDInviteViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDInviteViewController.h; sourceTree = "<group>"; };
+		4D2843E519C8A7A700E4A56C /* TDInviteViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDInviteViewController.m; sourceTree = "<group>"; };
+		4D2843E619C8A7A700E4A56C /* TDInviteViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDInviteViewController.xib; sourceTree = "<group>"; };
+		4D2843E919C9F42200E4A56C /* TDInviteCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDInviteCell.h; sourceTree = "<group>"; };
+		4D2843EA19C9F42200E4A56C /* TDInviteCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDInviteCell.m; sourceTree = "<group>"; };
+		4D2843EB19C9F42200E4A56C /* TDInviteCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDInviteCell.xib; sourceTree = "<group>"; };
+		4D2843EE19CA299900E4A56C /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		4D3352D219A29CC4007B3E06 /* iRate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iRate.h; sourceTree = "<group>"; };
 		4D3352D319A29CD8007B3E06 /* iRate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iRate.m; sourceTree = "<group>"; };
 		4D3352D519A29CEC007B3E06 /* iRate.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = iRate.bundle; sourceTree = "<group>"; };
+		4D36F51319CCDB7800A279A5 /* UIActionSheet+Blocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIActionSheet+Blocks.h"; path = "../../../../../Downloads/UIActionSheet-Blocks-master/UIActionSheet+Blocks.h"; sourceTree = "<group>"; };
+		4D36F51419CCDB8100A279A5 /* UIActionSheet+Blocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIActionSheet+Blocks.m"; path = "../../../../../Downloads/UIActionSheet-Blocks-master/UIActionSheet+Blocks.m"; sourceTree = "<group>"; };
+		4D36F51619CCE66700A279A5 /* TDSendInviteController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSendInviteController.h; sourceTree = "<group>"; };
+		4D36F51719CCE66700A279A5 /* TDSendInviteController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSendInviteController.m; sourceTree = "<group>"; };
+		4D36F51819CCE66700A279A5 /* TDSendInviteController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDSendInviteController.xib; sourceTree = "<group>"; };
+		4D4714B619CBF14F003AA69F /* TDContactInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDContactInfo.h; sourceTree = "<group>"; };
+		4D4714B719CBF14F003AA69F /* TDContactInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDContactInfo.m; sourceTree = "<group>"; };
+		4D6FCC2119CAA34D00902719 /* TDContactsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDContactsViewController.h; sourceTree = "<group>"; };
+		4D6FCC2219CAA34D00902719 /* TDContactsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDContactsViewController.m; sourceTree = "<group>"; };
+		4D6FCC2319CAA34D00902719 /* TDContactsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDContactsViewController.xib; sourceTree = "<group>"; };
 		4DC2C9961968F69C00A210CF /* TDTextViewControllerHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTextViewControllerHelper.h; sourceTree = "<group>"; };
 		4DC2C9971968F69C00A210CF /* TDTextViewControllerHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTextViewControllerHelper.m; sourceTree = "<group>"; };
 		4DC2C9A01969F72600A210CF /* TDUserListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserListView.h; sourceTree = "<group>"; };
@@ -304,7 +332,7 @@
 		A11E04E71888CB79002F981A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A11E04E91888CB79002F981A /* Throwdown-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Throwdown-Prefix.pch"; sourceTree = "<group>"; };
 		A11E04EA1888CB79002F981A /* TDAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TDAppDelegate.h; sourceTree = "<group>"; };
-		A11E04EB1888CB79002F981A /* TDAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TDAppDelegate.m; sourceTree = "<group>"; };
+                A11E04EB1888CB79002F981A /* TDAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TDAppDelegate.m; sourceTree = "<group>"; };
 		A11E04EE1888CB79002F981A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A11E04F01888CB79002F981A /* TDRecordVideoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TDRecordVideoViewController.h; sourceTree = "<group>"; };
 		A11E04F11888CB79002F981A /* TDRecordVideoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TDRecordVideoViewController.m; sourceTree = "<group>"; };
@@ -459,6 +487,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D2843EF19CA299900E4A56C /* AddressBook.framework in Frameworks */,
 				A14483B619A7F05300B3BC8D /* Social.framework in Frameworks */,
 				A1D13FF01905E93A000980E0 /* CoreImage.framework in Frameworks */,
 				A1D13FEE1905E931000980E0 /* QuartzCore.framework in Frameworks */,
@@ -545,6 +574,15 @@
 				4D2843CB19C401C000E4A56C /* TDFollowViewController.h */,
 				4D2843CC19C401C000E4A56C /* TDFollowViewController.m */,
 				4D2843CD19C401C000E4A56C /* TDFollowViewController.xib */,
+				4D2843E419C8A7A700E4A56C /* TDInviteViewController.h */,
+				4D2843E519C8A7A700E4A56C /* TDInviteViewController.m */,
+				4D2843E619C8A7A700E4A56C /* TDInviteViewController.xib */,
+				4D6FCC2119CAA34D00902719 /* TDContactsViewController.h */,
+				4D6FCC2219CAA34D00902719 /* TDContactsViewController.m */,
+				4D6FCC2319CAA34D00902719 /* TDContactsViewController.xib */,
+				4D36F51619CCE66700A279A5 /* TDSendInviteController.h */,
+				4D36F51719CCE66700A279A5 /* TDSendInviteController.m */,
+				4D36F51819CCE66700A279A5 /* TDSendInviteController.xib */,
 			);
 			name = UserProfile;
 			sourceTree = "<group>";
@@ -648,6 +686,7 @@
 		A11E04DA1888CB79002F981A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4D2843EE19CA299900E4A56C /* AddressBook.framework */,
 				A14483B719A8026000B3BC8D /* ABOAuthCore */,
 				A102FE9E18ECF43C00139606 /* Flurry */,
 				A182D827188B60CD00F794A5 /* SAVideoRangeSlider */,
@@ -682,7 +721,7 @@
 				A175678D1891C20A0034AD05 /* API */,
 				A182D836188F2C0100F794A5 /* Controllers */,
 				A11E04EA1888CB79002F981A /* TDAppDelegate.h */,
-				A11E04EB1888CB79002F981A /* TDAppDelegate.m */,
+                                A11E04EB1888CB79002F981A /* TDAppDelegate.m */,
 				A11E04ED1888CB79002F981A /* Main.storyboard */,
 				A11E04F31888CB79002F981A /* Images.xcassets */,
 				2DA5F04C18D36736003D2F99 /* Fonts */,
@@ -695,6 +734,8 @@
 		A11E04E21888CB79002F981A /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				4D36F51419CCDB8100A279A5 /* UIActionSheet+Blocks.m */,
+				4D36F51319CCDB7800A279A5 /* UIActionSheet+Blocks.h */,
 				4D3352D519A29CEC007B3E06 /* iRate.bundle */,
 				4D3352D319A29CD8007B3E06 /* iRate.m */,
 				4D3352D219A29CC4007B3E06 /* iRate.h */,
@@ -873,6 +914,8 @@
 				A1B3EF41193F9B5D0014B619 /* TDNotice.m */,
 				4D1F8393196F89FB00B5DB76 /* TDUserList.h */,
 				4D1F8394196F89FB00B5DB76 /* TDUserList.m */,
+				4D4714B619CBF14F003AA69F /* TDContactInfo.h */,
+				4D4714B719CBF14F003AA69F /* TDContactInfo.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -967,6 +1010,9 @@
 				4D2843D519C649D600E4A56C /* TDNoFollowProfileCell.h */,
 				4D2843D619C649D600E4A56C /* TDNoFollowProfileCell.m */,
 				4D2843D719C649D600E4A56C /* TDNoFollowProfileCell.xib */,
+				4D2843E919C9F42200E4A56C /* TDInviteCell.h */,
+				4D2843EA19C9F42200E4A56C /* TDInviteCell.m */,
+				4D2843EB19C9F42200E4A56C /* TDInviteCell.xib */,
 			);
 			name = "User Profile";
 			sourceTree = "<group>";
@@ -1113,11 +1159,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				A12549401999742B001C5CD1 /* TDSocialConnectCell.xib in Resources */,
+				4D36F51A19CCE66700A279A5 /* TDSendInviteController.xib in Resources */,
 				4D2843D919C649D600E4A56C /* TDNoFollowProfileCell.xib in Resources */,
 				A1F3B3681907821800CDA9F5 /* Dring.caf in Resources */,
+				4D6FCC2519CAA34D00902719 /* TDContactsViewController.xib in Resources */,
 				2DA39FD718E0B2570004A9C7 /* TDMoreComments.xib in Resources */,
 				A10F9C241909B01600D2CAB0 /* NewMessage.caf in Resources */,
 				4D2843CF19C401C000E4A56C /* TDFollowViewController.xib in Resources */,
+				4D2843ED19C9F42200E4A56C /* TDInviteCell.xib in Resources */,
 				A14E38F01992E71B001B46AF /* TDSocialNetworkCell.xib in Resources */,
 				A1F13C6819AD5D7E000DD890 /* TDRadioButtonRowCell.xib in Resources */,
 				2DA5F05B18D37C70003D2F99 /* BebasNeue Book.otf in Resources */,
@@ -1135,6 +1184,7 @@
 				2DE4653318F605DC0042D81C /* TDUserProfileEditViewController.xib in Resources */,
 				A12549491999D72E001C5CD1 /* TDShareViewCell.xib in Resources */,
 				2DE4653818F614150042D81C /* TDUserEditCell.xib in Resources */,
+				4D2843E819C8A7A700E4A56C /* TDInviteViewController.xib in Resources */,
 				2DE2C6A61908657F00E51156 /* TDUserPasswordEditViewController.xib in Resources */,
 				2DA5F05418D36745003D2F99 /* ProximaNova-Semibold.otf in Resources */,
 				A1E3A16D18FCC8630038A8A4 /* TDActivitiesCell.xib in Resources */,
@@ -1225,6 +1275,7 @@
 				A19FF61018970BBB001A0AD0 /* RSModel.m in Sources */,
 				A19FF61118970BBB001A0AD0 /* RSStorageObject.m in Sources */,
 				A1D36D5A19CCF66600AFE730 /* TDCameraPreviewView.m in Sources */,
+				4D6FCC2419CAA34D00902719 /* TDContactsViewController.m in Sources */,
 				A1F02FD418C92277002FEB2F /* TDPostUpload.m in Sources */,
 				A151958B18BAE8FD0050A45B /* TDUser.m in Sources */,
 				2DA39FD618E0B2570004A9C7 /* TDMoreComments.m in Sources */,
@@ -1243,10 +1294,12 @@
 				2DA5354418F35E4300031128 /* TDUserProfileViewController.m in Sources */,
 				A1BC0B3F18BE825200F507B3 /* TDSlideLeftSegue.m in Sources */,
 				2D00148B18CFB57C0070DE16 /* TDTwoButtonView.m in Sources */,
+				4D36F51519CCDB8100A279A5 /* UIActionSheet+Blocks.m in Sources */,
 				A14B2B7F18B5308000980A31 /* TDAPIClient.m in Sources */,
 				A182D839188F2C2D00F794A5 /* TDHomeViewController.m in Sources */,
 				2DBA430118DA455500366737 /* TDTextField.m in Sources */,
 				A14483BF19A8026000B3BC8D /* OAuth+Additions.m in Sources */,
+				4D36F51919CCE66700A279A5 /* TDSendInviteController.m in Sources */,
 				A12549481999D72D001C5CD1 /* TDShareViewCell.m in Sources */,
 				A14483BE19A8026000B3BC8D /* NSData+Base64.m in Sources */,
 				A180D4E518C33D26003B9378 /* TDUnwindSlideLeftSegue.m in Sources */,
@@ -1270,7 +1323,7 @@
 				A14483C719A807C900B3BC8D /* TWTSignedRequest.m in Sources */,
 				A11E04F21888CB79002F981A /* TDRecordVideoViewController.m in Sources */,
 				A1B3EF3B193E8D240014B619 /* TDNoticeViewCell.m in Sources */,
-				A11E04EC1888CB79002F981A /* TDAppDelegate.m in Sources */,
+                                A11E04EC1888CB79002F981A /* TDAppDelegate.m in Sources */,
 				2DA8639318F49D190089B048 /* TDUserProfileCell.m in Sources */,
 				2D1AEE7018C937560055C315 /* TDDetailsLikesCell.m in Sources */,
 				A1C1D0F618A0387B00666D2A /* TDPostView.m in Sources */,
@@ -1297,12 +1350,14 @@
 				A109FF351909C76000506F88 /* TDAnalytics.m in Sources */,
 				A1432CE418A99DA40073E492 /* TDSignupStepOneViewController.m in Sources */,
 				A17567901891C7F20034AD05 /* TDPostAPI.m in Sources */,
+				4D2843EC19C9F42200E4A56C /* TDInviteCell.m in Sources */,
 				A1FBA27D1981C57D00C65E04 /* TDPRSegue.m in Sources */,
 				2DC7B6AA18FF3D8500261BF7 /* TDToastView.m in Sources */,
 				A182D831188B60CD00F794A5 /* SASliderLeft.m in Sources */,
 				2DA5354818F36EF800031128 /* TDPostsViewController.m in Sources */,
 				2D83200419116D9000A91282 /* TDUserPushNotificationsEditViewController.m in Sources */,
 				A1B9002E18CC316800012A1F /* TDHomeHeaderView.m in Sources */,
+				4D4714B819CBF14F003AA69F /* TDContactInfo.m in Sources */,
 				A1D6BB10196BC1FD007983F8 /* TDStoryboardSegue.m in Sources */,
 				4D2843D319C4082300E4A56C /* TDFollowProfileCell.m in Sources */,
 				2D5714CD18BD9AB300AF0B4D /* VideoCloseSegue.m in Sources */,
@@ -1317,6 +1372,7 @@
 				4D2843CE19C401C000E4A56C /* TDFollowViewController.m in Sources */,
 				2DC12118190F281C00835AAF /* TDUpdatingDateLabel.m in Sources */,
 				A180D4DF18C14EA7003B9378 /* TDNavigationController.m in Sources */,
+				4D2843E719C8A7A700E4A56C /* TDInviteViewController.m in Sources */,
 				A1E3A17018FCCF2B0038A8A4 /* TDActivitiesCell.m in Sources */,
 				A1C2481118C6B9CA00F187D9 /* TDProgressIndicator.m in Sources */,
 			);
@@ -1450,8 +1506,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_DISPLAY_NAME_SUFFIX = "-α";
 				BUNDLE_ID_SUFFIX = .dev;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Andy Crookston (4H23FB7AFD)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Andy Crookston (4H23FB7AFD)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Stephanie Le (PXQB9WK964)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Stephanie Le (PXQB9WK964)";
 				EXCLUDED_SOURCE_FILE_NAMES = "";
 				FACEBOOK_APP_ID = 1470514189854120;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1593,8 +1649,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_DISPLAY_NAME_SUFFIX = "-ß";
 				BUNDLE_ID_SUFFIX = .staging;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Stephanie Le (PXQB9WK964)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Stephanie Le (PXQB9WK964)";
 				EXCLUDED_SOURCE_FILE_NAMES = "";
 				FACEBOOK_APP_ID = 1470514189854120;
 				FRAMEWORK_SEARCH_PATHS = (

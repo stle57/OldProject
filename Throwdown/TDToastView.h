@@ -21,6 +21,8 @@ typedef enum {
     kToastType_Warning,
     kToastType_Info,
     kToastType_RateUs,
+    kToastType_InviteSent,
+    kToastType_InviteWarning
 } kToastType;
 
 @interface TDToastView : UIView <UIGestureRecognizerDelegate>

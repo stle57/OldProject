@@ -10,10 +10,10 @@
 #import "TDUser.h"
 
 @protocol TDFollowProfileCellDelegate <NSObject>
+@required
+- (void)actionButtonPressedFromRow:(NSInteger)row tag:(NSInteger)tag;
 @optional
--(void)actionButtonPressedFromRow:(NSInteger)row tag:(NSInteger)tag;
--(void)followerStatButtonPressed;
--(void)followingStatButtonPressed;
+- (void)userProfilePressedWithId:(NSNumber *)userId;
 @end
 
 @interface TDFollowProfileCell : UITableViewCell

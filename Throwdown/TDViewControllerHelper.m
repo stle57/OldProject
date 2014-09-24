@@ -142,6 +142,15 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     return attributedString;
 }
 
++ (NSAttributedString *)makeParagraphedTextWithString:(NSString *)text font:(UIFont*)font color:(UIColor*)color {
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:text];
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    [paragraphStyle setLineHeightMultiple:kTextLineHeight];
+    [attributedString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, text.length)];
+    [attributedString addAttribute:NSForegroundColorAttributeName value:[TDConstants commentTimeTextColor] range:NSMakeRange(0, text.length)];
+    return attributedString;
+}
+
 + (void)linkUsernamesInLabel:(TTTAttributedLabel *)label users:(NSArray *)users {
     // Standard pattern with @-sign prefixed username
     [self linkUsernamesInLabel:label users:users pattern:@"\\B(@[a-zA-Z0-9_]+)\\b"];

@@ -23,6 +23,7 @@
 + (NSAttributedString *)makeParagraphedTextWithAttributedString:(NSAttributedString *)attributedString withMultiple:(CGFloat)multiple;
 + (NSAttributedString *)makeParagraphedTextWithString:(NSString *)text;
 + (NSAttributedString *)makeParagraphedTextWithBioString:(NSString *)text;
++ (NSAttributedString *)makeParagraphedTextWithString:(NSString *)text font:(UIFont*)font color:(UIColor*)color;
 + (void)linkUsernamesInLabel:(TTTAttributedLabel *)label users:(NSArray *)users;
 + (void)linkUsernamesInLabel:(TTTAttributedLabel *)label users:(NSArray *)users pattern:(NSString *)pattern;
 + (CGFloat)heightForComment:(NSString *)text withMentions:(NSArray *)mentions;

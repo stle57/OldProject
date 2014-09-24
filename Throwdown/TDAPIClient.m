@@ -290,8 +290,8 @@
     }];
 }
 
-- (void)getFollowerSettings:(NSString *)userToken success:(void (^)(NSArray *users))success failure:(void (^)(void))failure {
-    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/users/%@/followers.json?user_token=%@", [TDCurrentUser sharedInstance].userId, userToken]];
+- (void)getFollowerSettings:(NSNumber*)userId currentUserToken:(NSString *)currentUserToken success:(void (^)(NSArray *users))success failure:(void (^)(void))failure {
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/users/%@/followers.json?user_token=%@", userId, currentUserToken]];
     debug NSLog(@"url to follower list=%@", url);
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
     [self.httpManager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -305,8 +305,8 @@
     }];
 }
 
-- (void)getFollowingSettings:(NSString *)userToken success:(void (^)(NSArray *users))success failure:(void (^)(void))failure {
-    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/users/%@/following.json?user_token=%@", [TDCurrentUser sharedInstance].userId, userToken]];
+- (void)getFollowingSettings:(NSNumber*)userId currentUserToken:(NSString *)currentUserToken success:(void (^)(NSArray *users))success failure:(void (^)(void))failure {
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/users/%@/following.json?user_token=%@", userId, currentUserToken]];
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
     [self.httpManager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if (success) {
@@ -319,6 +319,11 @@
     }];
 
 }
+
+- (void)sendInvites:(NSString*)senderName contactList:(NSArray*)contactList success:(void (^)())success failure:(void(^)())failure {
+    success();
+}
+
 #pragma mark - Social Networks registration
 
 - (void)registerFacebookAccessToken:(NSString *)token expiresAt:(NSDate *)expiresAt userId:(NSString *)userId identifier:(NSString *)identifier permissions:(NSArray *)permissions callback:(void (^)(BOOL success))callback {

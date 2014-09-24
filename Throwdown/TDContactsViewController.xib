@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5056" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TDContactsViewController">
+            <connections>
+                <outlet property="backButton" destination="zH0-Jw-wuD" id="CUe-2e-uZT"/>
+                <outlet property="inviteButton" destination="F59-KW-BpT" id="Syj-FP-LVo"/>
+                <outlet property="navLabel" destination="0qW-eD-NiQ" id="ueR-6O-Z9g"/>
+                <outlet property="searchDisplayController" destination="V06-TE-PiN" id="hG2-1Z-YLr"/>
+                <outlet property="suggestedLabel" destination="R95-rR-F2c" id="S4W-Xb-WXj"/>
+                <outlet property="tableView" destination="Lr9-X2-Dox" id="zCh-0o-aRe"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="64" width="320" height="504"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="Lr9-X2-Dox">
+                    <rect key="frame" x="0.0" y="44" width="320" height="504"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="8wx-iP-P3s"/>
+                        <outlet property="delegate" destination="-1" id="Y7B-LW-Ngz"/>
+                    </connections>
+                </tableView>
+                <searchBar contentMode="redraw" fixedFrame="YES" placeholderIntrinsicWidth="320" placeholderIntrinsicHeight="44" placeholder="Search Contacts" translatesAutoresizingMaskIntoConstraints="NO" id="cse-yb-WaZ">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
+                    <textInputTraits key="textInputTraits"/>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="hvn-Yd-Wki"/>
+                    </connections>
+                </searchBar>
+                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Suggested people to follow" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="R95-rR-F2c">
+                    <rect key="frame" x="7" y="44" width="320" height="25"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
+            <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
+            <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+        </view>
+        <searchDisplayController id="V06-TE-PiN">
+            <connections>
+                <outlet property="delegate" destination="-1" id="bhV-zZ-scW"/>
+                <outlet property="searchBar" destination="cse-yb-WaZ" id="Dbo-UX-Pld"/>
+                <outlet property="searchContentsController" destination="-1" id="nci-nQ-RmD"/>
+                <outlet property="searchResultsDataSource" destination="-1" id="kU5-bH-s36"/>
+                <outlet property="searchResultsDelegate" destination="-1" id="S0t-uz-D6A"/>
+            </connections>
+        </searchDisplayController>
+        <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Edit Profile" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="0qW-eD-NiQ">
+            <rect key="frame" x="0.0" y="0.0" width="180" height="38"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <fontDescription key="fontDescription" type="system" pointSize="18"/>
+            <color key="textColor" red="0.29803921570000003" green="0.29803921570000003" blue="0.29803921570000003" alpha="1" colorSpace="calibratedRGB"/>
+            <nil key="highlightedColor"/>
+        </label>
+        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="zH0-Jw-wuD">
+            <rect key="frame" x="0.0" y="0.0" width="13" height="22"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <state key="normal" image="nav-back">
+                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+            </state>
+            <state key="selected" image="nav-back-hit"/>
+            <state key="highlighted" image="nav-back-hit"/>
+            <connections>
+                <action selector="backButtonHit:" destination="-1" eventType="touchUpInside" id="Iqr-KN-neY"/>
+            </connections>
+        </button>
+        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="F59-KW-BpT">
+            <rect key="frame" x="0.0" y="0.0" width="46" height="30"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="15"/>
+            <state key="normal" title="Invite">
+                <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+            </state>
+            <state key="selected" image="nav_close_hit"/>
+            <connections>
+                <action selector="inviteButtonHit:" destination="-1" eventType="touchUpInside" id="YZy-ka-JDy"/>
+            </connections>
+        </button>
+    </objects>
+    <resources>
+        <image name="nav-back" width="13" height="22"/>
+        <image name="nav-back-hit" width="13" height="22"/>
+        <image name="nav_close_hit" width="20" height="21"/>
+    </resources>
+</document>

@@ -19,6 +19,8 @@
 #import "TDActivityIndicator.h"
 #import "TDUserPasswordEditViewController.h"
 
+#define TD_TEXTFIELD_ORIGIN_X_POS 100
+
 @interface TDUserProfileEditViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, UIActionSheetDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextViewDelegate>
 {
     TDUser *profileUser;

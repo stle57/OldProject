@@ -354,4 +354,14 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     return (object && ![object isKindOfClass:[NSNull class]]);
 }
 
+- (BOOL)didAskForContacts {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    return [defaults boolForKey:@"hasAskedForContacts"];
+}
+
+- (void)didAskForContacts:(BOOL)yes {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:yes forKey:@"hasAskedContacts"];
+    [defaults synchronize];
+}
 @end

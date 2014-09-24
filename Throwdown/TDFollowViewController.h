@@ -20,16 +20,18 @@
 #import "TDUserPasswordEditViewController.h"
 #import "TDFollowProfileCell.h"
 #import "TDNoFollowProfileCell.h"
+#import "TDContactsViewController.h"
 
-@interface TDFollowViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, TDFollowProfileCellDelegate, TDNoFollowProfileCellDelegate>
+#define TABLEVIEW_POSITION_UNDER_SEARCHBAR 69
+#define TD_NOFOLLOWCELL_HEIGHT 120
+#define TD_FOLLOW_CELL_HEIGHT 65
+#define TD_NOFOLLOWCELL_HEIGHT2 190
+
+@interface TDFollowViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, UIAlertViewDelegate, UIActionSheetDelegate, UINavigationControllerDelegate, TDFollowProfileCellDelegate, TDNoFollowProfileCellDelegate, TDContactsViewControllerDelegate, UIScrollViewDelegate>
 {
     TDUser *profileUser;
     NSString *name;
     NSString *username;
-    NSString *phone;
-    NSString *email;
-    NSString *password;
-    NSString *bio;
     NSString *pictureFileName;
     CGRect origTableViewFrame;
     CGRect statusBarFrame;
@@ -37,26 +39,24 @@
     kFromProfileScreenType fromProfileType;
     UIImage *editedProfileImage;
     UIImageView *tempFlyInImageView;
+
 }
 
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
-//@property (weak, nonatomic) IBOutlet UIButton *saveButton;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
 @property (weak, nonatomic) IBOutlet TDActivityIndicator *activityIndicator;
+@property (weak, nonatomic) IBOutlet UILabel *suggestedLabel;
+@property (weak, nonatomic) IBOutlet UIButton *inviteButton;
 @property (nonatomic, retain) NSString *name;
 @property (nonatomic, retain) NSString *username;
-//@property (nonatomic, retain) NSString *phone;
-//@property (nonatomic, retain) NSString *email;
-//@property (nonatomic, retain) NSString *bio;
-//@property (nonatomic, retain) NSString *password;
 @property (nonatomic, retain) NSString *pictureFileName;
-//@property (nonatomic, retain) TDUser *profileUser;
+@property (nonatomic, retain) TDUser *profileUser;
 @property (nonatomic, assign) kUserListType followControllerType;
-
 @property (nonatomic, retain) UIImage *editedProfileImage;
 @property (nonatomic, retain) UIImageView *tempFlyInImageView;
 @property (nonatomic) UIButton *backButton;
 
+- (IBAction)inviteButtonHit:(id)sender;
 
 @end

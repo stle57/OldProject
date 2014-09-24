@@ -18,8 +18,8 @@
 - (void)awakeFromNib {
     self.noFollowLabel.font = [TDConstants fontSemiBoldSized:16];
     self.noFollowLabel.textColor = [TDConstants headerTextColor];
-    self.view.backgroundColor = [TDConstants tableViewBackgroundColor];
-    self.backgroundColor = [TDConstants tableViewBackgroundColor];
+    self.view.backgroundColor = [UIColor whiteColor];
+    self.backgroundColor = [UIColor whiteColor];
 }
 
 - (void)dealloc {

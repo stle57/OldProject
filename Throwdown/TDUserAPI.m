@@ -179,8 +179,10 @@
     [manager POST:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken }
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
               NSLog(@"Following %@", userID);
+              callback(YES);
           } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
               NSLog(@"Error following: %@ with error%@", userID, error);
+              callback(NO);
           }];
 
 }
@@ -193,8 +195,10 @@
     [manager DELETE:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken }
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
               NSLog(@"Unfollowed %@", userID);
+              callback(YES);
           } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
               NSLog(@"Error unfollowing: %@ with error%@", userID, error);
+              callback(NO);
           }];
 }
 

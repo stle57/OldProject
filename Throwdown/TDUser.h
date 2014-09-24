@@ -18,8 +18,8 @@
 @property (nonatomic, assign) CGFloat bioHeight;
 @property (strong, nonatomic, readonly) NSNumber *postCount;
 @property (strong, nonatomic, readonly) NSNumber *prCount;
-@property (strong, nonatomic, readonly) NSNumber *followerCount;
-@property (strong, nonatomic, readonly) NSNumber *followingCount; 
+@property (strong, nonatomic) NSNumber *followerCount;
+@property (strong, nonatomic) NSNumber *followingCount; 
 @property (nonatomic, readonly) BOOL following;
 
 - (id)initWithDictionary:(NSDictionary *)dict;
