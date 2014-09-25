@@ -72,6 +72,8 @@
         [self openPushNotification:[launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]];
     }
 
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+    
     debug NSLog(@"app launched with options: %@", launchOptions);
     return YES;
 }
