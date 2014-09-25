@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "TDActivityIndicator.h"
+#import "TDConstants.h"
 
 @interface TDSendInviteController : UIViewController<UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate>
 
@@ -21,4 +22,6 @@
 - (IBAction)closeButtonHit:(id)sender;
 - (IBAction)sendButtonHit:(id)sender;
 - (void)setValuesForSharing:(NSArray *)contacts senderName:(NSString*)senderName;
+- (NSString*)convertInviteType:(id)inviteType;
+- (NSArray *)contacts;
 @end

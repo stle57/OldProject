@@ -7,7 +7,6 @@
 //
 
 #import "TDSendInviteController.h"
-#import "TDConstants.h"
 #import "TDUserEditCell.h"
 #import "TDAPIClient.h"
 #import "TDAppDelegate.h"
@@ -81,7 +80,6 @@
     debug NSLog(@"send invitation to users");
     // Get the name of the sender
     NSString *senderName = [self getSenderName];
-    debug NSLog(@"senderName = %@", senderName);
     if (senderName.length == 0) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Alert"
                                                         message:@"Name cannot be blank.\nWe suggest entering your first and last names."
@@ -92,16 +90,20 @@
     } else {
         // Get the list
         self.activityIndicator.text.text = @"Sending...";
+        NSArray *contacts = [self contacts];
         [self showActivity];
-        [[TDAPIClient sharedInstance] sendInvites:senderName contactList:self.contactList success:^ {
-            [self hideActivity];
-            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-            [[TDAppDelegate appDelegate] showToastWithText:@"Invites sent successfully!" type:kToastType_InviteSent payload:nil delegate:nil];
-            [[TDAnalytics sharedInstance] logEvent:@"invites_sent"];
-        } failure:^{
-            [self hideActivity];
-            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-            [[TDAppDelegate appDelegate] showToastWithText:@"Invites failed.  Tap here to retry" type:kToastType_InviteWarning payload:@{} delegate:nil];
+        [[TDAPIClient sharedInstance] sendInvites:senderName contactList:contacts callback:^(BOOL success, NSArray *contacts)
+        {
+            if (success) {
+                [self hideActivity];
+                [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+                [[TDAppDelegate appDelegate] showToastWithText:@"Invites sent successfully!" type:kToastType_InviteSent payload:nil delegate:nil];
+                [[TDAnalytics sharedInstance] logEvent:@"invites_sent"];
+            }
+            else {[self hideActivity];
+                [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+                [[TDAppDelegate appDelegate] showToastWithText:@"Invites failed.  Tap here to retry" type:kToastType_InviteWarning payload:@{} delegate:nil];
+            }
         }];
     }
 }
@@ -129,6 +131,36 @@
 - (void)hideActivity {
     self.activityIndicator.hidden = YES;
     [self.activityIndicator stopSpinner];
+}
+
+- (NSArray *)contacts {
+    NSMutableArray *array = [[NSMutableArray alloc]init];
+    for (id tempObject in self.contactList) {
+        NSDictionary *dictionary = @{@"first_name":[tempObject valueForKey:@"firstName"], @"last_name":[tempObject valueForKey:@"lastName"],
+                                     @"address_book_id":[tempObject valueForKey:@"id"], @"info":[tempObject valueForKey:@"selectedData"],
+                                     @"info_kind":([self convertInviteType:[tempObject valueForKey:@"inviteType"] ])};
+        [array addObject:dictionary];
+    }
+    return array;
+}
+
+- (NSString*)convertInviteType:(id)inviteType {
+    NSString *inviteString = [NSString alloc];
+    switch([inviteType intValue]) {
+        case kInviteType_Email:
+            inviteString = @"email";
+            break;
+        case kInviteType_Phone:
+            inviteString = @"phone";
+            break;
+        case kInviteType_None:
+            inviteString =  @"";
+            break;
+        default:
+            inviteString = @"";
+            break;
+    }
+    return inviteString;
 }
 
 #pragma mark - TableView Delegates

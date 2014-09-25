@@ -264,7 +264,7 @@
                 followCell.nameLabel.textColor = [TDConstants headerTextColor];
                 followCell.nameLabel.font = [TDConstants fontRegularSized:16.0];
                 [followCell setAccessoryType:UITableViewCellAccessoryNone];
-                if (contact.fullName == nil && contact.selectedData != nil) {
+                if (contact.fullName.length == 0 && contact.selectedData.length != 0) {
                     UIFont *font = [TDConstants fontRegularSized:16.0];
                     
                     NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:contact.selectedData font:font color:[TDConstants headerTextColor]];
@@ -394,13 +394,27 @@
     UITouch *touch = [touches anyObject];
     CGPoint currentTouchPosition = [touch locationInView:self.tableView];
     NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint: currentTouchPosition];
+    NSString *formatedPhone;
     if (indexPath != nil)
     {
         UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
         if (cell) {
             TDInviteCell *inviteCell = (TDInviteCell*)cell;
             TDContactInfo *contact = [[TDContactInfo alloc]init];
-            contact.selectedData = inviteCell.contactTextField.text;
+            if ([TDViewControllerHelper validateEmail:inviteCell.contactTextField.text]) {
+                contact.selectedData = inviteCell.contactTextField.text;
+                contact.inviteType = kInviteType_Email;
+            } else {
+                formatedPhone = [TDViewControllerHelper validatePhone:inviteCell.contactTextField.text];
+                if(formatedPhone) {
+                    contact.selectedData = formatedPhone;
+                    contact.inviteType = kInviteType_Phone;
+                } else {
+                    contact.inviteType = kInviteType_None;
+                }
+            }
+            
+            // Check if data is already in the current invite list
             NSArray *filteredArray = [self.inviteList filteredArrayUsingPredicate:[NSPredicate
                                                   predicateWithFormat:@"self.selectedData == %@", contact.selectedData]];
             if (![filteredArray count]) {
@@ -473,6 +487,7 @@
 
 - (void)addToInviteList:(TDContactInfo*)contact {
     [self.inviteList insertObject:contact atIndex:0];
+    [self checkForNextButton];
 }
 
 - (void)actionButtonPressedFromRow:(NSInteger)row tag:(NSInteger)tag {

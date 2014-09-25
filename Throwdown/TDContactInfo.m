@@ -14,8 +14,16 @@
 {
     self = [super init];
     if (self) {
+        _id = NSINTEGER_DEFINED;
+        _firstName = [[NSString alloc] init];
+        _lastName = [[NSString alloc] init];
         _emailList = [[NSMutableArray alloc] init];
         _phoneList = [[NSMutableArray alloc] init];
+        _fullName = [[NSString alloc] init];
+        _username = [[NSString alloc] init];
+        _selectedData = [[NSString alloc] init];
+        _inviteType = kInviteType_None;
+        _following = NO;
     }
     return self;
 }
@@ -25,6 +33,7 @@
     self = [super init];
     if (self)
     {
+        
         _firstName       = [dict objectForKey:@"firstName"];
         _lastName        = [dict objectForKey:@"lastName"];
         _contactPicture  = [dict objectForKey:@"contactPicture"];

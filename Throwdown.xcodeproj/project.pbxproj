@@ -97,7 +97,7 @@
 		A11E04E01888CB79002F981A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11E04DF1888CB79002F981A /* UIKit.framework */; };
 		A11E04E61888CB79002F981A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A11E04E41888CB79002F981A /* InfoPlist.strings */; };
 		A11E04E81888CB79002F981A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A11E04E71888CB79002F981A /* main.m */; };
-                A11E04EC1888CB79002F981A /* TDAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A11E04EB1888CB79002F981A /* TDAppDelegate.m */; };
+		A11E04EC1888CB79002F981A /* TDAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A11E04EB1888CB79002F981A /* TDAppDelegate.m */; };
 		A11E04EF1888CB79002F981A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A11E04ED1888CB79002F981A /* Main.storyboard */; };
 		A11E04F21888CB79002F981A /* TDRecordVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A11E04F11888CB79002F981A /* TDRecordVideoViewController.m */; };
 		A11E04F41888CB79002F981A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A11E04F31888CB79002F981A /* Images.xcassets */; };
@@ -332,7 +332,7 @@
 		A11E04E71888CB79002F981A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A11E04E91888CB79002F981A /* Throwdown-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Throwdown-Prefix.pch"; sourceTree = "<group>"; };
 		A11E04EA1888CB79002F981A /* TDAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TDAppDelegate.h; sourceTree = "<group>"; };
-                A11E04EB1888CB79002F981A /* TDAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TDAppDelegate.m; sourceTree = "<group>"; };
+		A11E04EB1888CB79002F981A /* TDAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TDAppDelegate.m; sourceTree = "<group>"; };
 		A11E04EE1888CB79002F981A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A11E04F01888CB79002F981A /* TDRecordVideoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TDRecordVideoViewController.h; sourceTree = "<group>"; };
 		A11E04F11888CB79002F981A /* TDRecordVideoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TDRecordVideoViewController.m; sourceTree = "<group>"; };
@@ -453,7 +453,7 @@
 		A1D13FEB1905E923000980E0 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 		A1D13FED1905E931000980E0 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		A1D13FEF1905E93A000980E0 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
-		A1D13FF11905F2BE000980E0 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = SOURCE_ROOT; };
+		A1D13FF11905F2BE000980E0 /* Podfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		A1D36D5819CCF66600AFE730 /* TDCameraPreviewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDCameraPreviewView.h; sourceTree = "<group>"; };
 		A1D36D5919CCF66600AFE730 /* TDCameraPreviewView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDCameraPreviewView.m; sourceTree = "<group>"; };
 		A1D6BB0B196BBAE9007983F8 /* TDSlideDownSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSlideDownSegue.h; sourceTree = "<group>"; };
@@ -721,7 +721,7 @@
 				A175678D1891C20A0034AD05 /* API */,
 				A182D836188F2C0100F794A5 /* Controllers */,
 				A11E04EA1888CB79002F981A /* TDAppDelegate.h */,
-                                A11E04EB1888CB79002F981A /* TDAppDelegate.m */,
+				A11E04EB1888CB79002F981A /* TDAppDelegate.m */,
 				A11E04ED1888CB79002F981A /* Main.storyboard */,
 				A11E04F31888CB79002F981A /* Images.xcassets */,
 				2DA5F04C18D36736003D2F99 /* Fonts */,
@@ -1323,7 +1323,7 @@
 				A14483C719A807C900B3BC8D /* TWTSignedRequest.m in Sources */,
 				A11E04F21888CB79002F981A /* TDRecordVideoViewController.m in Sources */,
 				A1B3EF3B193E8D240014B619 /* TDNoticeViewCell.m in Sources */,
-                                A11E04EC1888CB79002F981A /* TDAppDelegate.m in Sources */,
+				A11E04EC1888CB79002F981A /* TDAppDelegate.m in Sources */,
 				2DA8639318F49D190089B048 /* TDUserProfileCell.m in Sources */,
 				2D1AEE7018C937560055C315 /* TDDetailsLikesCell.m in Sources */,
 				A1C1D0F618A0387B00666D2A /* TDPostView.m in Sources */,

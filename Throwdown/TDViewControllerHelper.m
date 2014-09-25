@@ -10,6 +10,7 @@
 #import "TDWelcomeViewController.h"
 #import "TDConstants.h"
 #import "UIAlertView+TDBlockAlert.h"
+#import "NBPhoneNumberUtil.h"
 
 static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*";
 
@@ -51,6 +52,18 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
 + (BOOL)validateEmail:(NSString *)email {
     NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", EMAIL_REGEX];
     return [emailTest evaluateWithObject:email];
+}
+
++ (NSString*)validatePhone:(NSString *)phone {
+    NSError *error = nil;
+    NBPhoneNumberUtil *phoneUtil = [NBPhoneNumberUtil sharedInstance];
+    NBPhoneNumber *parsedPhoneNumber = [phoneUtil parseWithPhoneCarrierRegion:phone error:&error];
+    NSString *formattedPhoneNum = [phoneUtil format:parsedPhoneNumber numberFormat:NBEPhoneNumberFormatE164 error:&error];
+    if (!error) {
+        return formattedPhoneNum;
+    } else {
+        return formattedPhoneNum;
+    }
 }
 
 + (NSDate *)dateForRFC3339DateTimeString:(NSString *)rfc3339DateTimeString {

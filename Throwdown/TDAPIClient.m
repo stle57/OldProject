@@ -320,8 +320,26 @@
 
 }
 
-- (void)sendInvites:(NSString*)senderName contactList:(NSArray*)contactList success:(void (^)())success failure:(void(^)())failure {
-    success();
+- (void)sendInvites:(NSString*)senderName contactList:(NSArray*)contactList callback:(void (^)(BOOL success, NSArray *contacts))callback {
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/contacts/invite.json"];
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [self.httpManager POST:url parameters:@{@"contacts":contactList, @"user_token":[TDCurrentUser sharedInstance].userId} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *response = (NSDictionary *)responseObject;
+            NSNumber *success = [response objectForKey:@"success"];
+            if (success && [success boolValue]) {
+                callback([success boolValue], [response objectForKey:@"contacts"]);
+            } else {
+                callback(NO, nil);
+            }
+        } else {
+            debug NSLog(@"ERROR in signup response, got: %@", [responseObject class]);
+            callback(NO, nil);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"ERROR in signup call: %@", [error localizedDescription]);
+        callback(NO, nil);
+    }];
 }
 
 #pragma mark - Social Networks registration

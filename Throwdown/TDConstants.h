@@ -28,6 +28,13 @@ enum {
 };
 typedef NSUInteger kUserListType;
 
+enum {
+    kInviteType_Email,
+    kInviteType_Phone,
+    kInviteType_None
+};
+typedef NSInteger kInviteType;
+
 // Cloud
 static NSString *const RSUsername = @"throwdown";
 static NSString *const RSApiKey = @"c93395c50887cf4926d2d24e1d9ed4e7";

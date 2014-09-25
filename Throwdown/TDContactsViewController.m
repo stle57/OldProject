@@ -9,6 +9,7 @@
 #import "TDContactsViewController.h"
 #import "UIActionSheet+Blocks.h"
 #import "TDUserAPI.h"
+#import "TDViewControllerHelper.h"
 
 @interface TDContactsViewController ()
 {
@@ -199,7 +200,19 @@
                          NSLog(@"Selected button at index %lu", (unsigned long)index);
                          debug NSLog(@"  with contact name=%@", contactPerson.fullName);
                          if (self.delegate && [self.delegate respondsToSelector:@selector(contactPressedFromRow:)]) {
-                             contactPerson.selectedData = buttonStrings[index];
+                             NSString *formatedPhone;
+                             if ([TDViewControllerHelper validateEmail:buttonStrings[index]]) {
+                                 contactPerson.selectedData = buttonStrings[index];
+                                 contactPerson.inviteType = kInviteType_Email;
+                             } else {
+                                 formatedPhone = [TDViewControllerHelper validatePhone:buttonStrings[index]];
+                                 if(formatedPhone) {
+                                     contactPerson.selectedData = formatedPhone;
+                                     contactPerson.inviteType = kInviteType_Phone;
+                                 } else {
+                                     return;
+                                 }
+                             }
                              [delegate contactPressedFromRow:(contactPerson)];
                          }
                          [self leave];
@@ -209,11 +222,13 @@
         debug NSLog(@"just use this info and add to invite list");
         if (contactPerson.emailList.count == 1) {
             contactPerson.selectedData = contactPerson.emailList[0];
+            contactPerson.inviteType = kInviteType_Email;
             if (self.delegate && [self.delegate respondsToSelector:@selector(contactPressedFromRow:)]) {
                 [delegate contactPressedFromRow:(contactPerson)];
             }
         } else if (contactPerson.phoneList.count == 1) {
             contactPerson.selectedData = contactPerson.phoneList[0];
+            contactPerson.inviteType = kInviteType_Phone;
             if (self.delegate && [self.delegate respondsToSelector:@selector(contactPressedFromRow:)]) {
                 [delegate contactPressedFromRow:(contactPerson)];
             }

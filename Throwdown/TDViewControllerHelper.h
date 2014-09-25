@@ -16,6 +16,7 @@
 + (void)showAlertMessage:(NSString *)message withTitle:(NSString *)title;
 + (void)navigateToHomeFrom:(UIViewController *)fromController;
 + (BOOL)validateEmail:(NSString *)email;
++ (NSString*)validatePhone:(NSString *)phone;
 + (NSDate *)dateForRFC3339DateTimeString:(NSString *)rfc3339DateTimeString;
 + (NSString *)getUTCFormatedDate:(NSDate *)date;
 + (BOOL)textAttributeTapped:(NSString *)attribute inTap:(UITapGestureRecognizer *)recognizer action:(void (^)(id value))actionBlock;
