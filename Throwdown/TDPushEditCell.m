@@ -29,7 +29,7 @@
     self.bottomLineOrigY = self.bottomLine.frame.origin.y;
     
     self.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
-    self.layer.borderWidth = .5f;
+    self.layer.borderWidth = TD_CELL_BORDER_WIDTH;
 }
 
 - (IBAction)segmentChanged:(id)sender {

@@ -49,7 +49,7 @@
     [self.userImageView addGestureRecognizer:userProfileTap];
     
     self.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
-    self.layer.borderWidth = .5f;
+    self.layer.borderWidth = TD_CELL_BORDER_WIDTH;
     
     self.selectionStyle = UITableViewCellSelectionStyleNone;
 }

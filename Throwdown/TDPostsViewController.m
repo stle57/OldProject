@@ -10,6 +10,7 @@
 #import "TDUserProfileViewController.h"
 #import "TDViewControllerHelper.h"
 #import "TDAPIClient.h"
+#import "TDUserAPI.h"
 #import "TDHomeViewController.h"
 #import "TDCustomRefreshControl.h"
 #import "TDFollowViewController.h"
@@ -17,8 +18,6 @@
 
 static CGFloat const kHeightOfStatusBar = 64.0;
 static NSInteger const kInviteButtonTag = 10001;
-static NSInteger const kFollowerButtonTag = 10002;
-static NSInteger const kFollowingButtonTag = 10003;
 static CGFloat const kBioLabelInviteButtonPadding = 14;
 static CGFloat const kInviteButtonStatButtonPadding = 25;
 
@@ -389,7 +388,7 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
                     } else {
                         UIImage *buttonImage = [UIImage imageNamed:@"btn-follow.png"];
                         [cell.inviteButton setImage:buttonImage forState:(UIControlStateNormal)];
-                        [cell.inviteButton setTag:kFollowerButtonTag];
+                        [cell.inviteButton setTag:kFollowButtonTag];
                     }
                 } else if (vc.fromProfileType == kFromProfileScreenType_OwnProfileButton) {
                     UIImage *buttonImage = [UIImage imageNamed:@"btn-invite-friends.png"];
@@ -407,13 +406,19 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
             cell.whiteUnderView.frame = CGRectMake(cell.whiteUnderView.frame.origin.x,
                                                    cell.whiteUnderView.frame.origin.y,
                                                    cell.whiteUnderView.frame.size.width,
-                                                   [self tableView:tableView heightForRowAtIndexPath:indexPath]-5);
+                                                   [self tableView:tableView heightForRowAtIndexPath:indexPath]);
             cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
                                                CGRectGetMaxY(cell.whiteUnderView.frame) - (1.0 / [[UIScreen mainScreen] scale]),
                                                cell.bottomLine.frame.size.width,
                                                (1.0 / [[UIScreen mainScreen] scale]));
         }
+        cell.bottomLine.layer.borderWidth = TD_CELL_BORDER_WIDTH;
+        cell.bottomLine.layer.borderColor = [[TDConstants commentTimeTextColor] CGColor];
         
+        cell.whiteUnderView.layer.borderColor = [[TDConstants commentTimeTextColor] CGColor];
+        
+        debug NSLog(@"bottom width=%f", cell.bottomLine.layer.borderWidth);
+        debug NSLog(@"white view width=%f", cell.whiteUnderView.layer.borderWidth);
         return cell;
     }
 
@@ -581,10 +586,11 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
         if ([self getUser]) {
             CGFloat bioHeight = [self getUser].bioHeight;
             //spacing after bio, height of invite button, spacing after invite, height of stat buttons + extra padding for next section in view
-            CGFloat padding = kBioLabelInviteButtonPadding + inviteButtonHeight + kInviteButtonStatButtonPadding + statButtonHeight + 5;
+            CGFloat padding = kBioLabelInviteButtonPadding + inviteButtonHeight + kInviteButtonStatButtonPadding + statButtonHeight;
             debug NSLog(@"bioHeight=%f", bioHeight);
 
             CGFloat cellHeight = topOfBioLabelInProfileHeader + bioHeight + (bioHeight > 0 ? padding : 5); // extra padding when we have a bio
+            debug NSLog(@"   choosing between profileHeaderHeight=%f and cellHeight=%f", profileHeaderHeight, cellHeight);
             return fmaxf(profileHeaderHeight, cellHeight);
         } else {
             return 1.0;
@@ -858,15 +864,77 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
 }
 
 - (void)inviteButtonPressedFromRow:(NSInteger)tag {
-    if (tag == kFollowerButtonTag) {
+    if (tag == kFollowButtonTag) {
         debug NSLog(@"follow this person");
-        
-        // change the button
+        TDUserProfileCell * cell = nil;
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+        UITableViewCell * modifyCell = [self.tableView cellForRowAtIndexPath:indexPath];
+        if(modifyCell != nil) {
+            cell = (TDUserProfileCell*)modifyCell;
+            // Got the cell, change the button
+            UIImage * buttonImage = [UIImage imageNamed:@"btn-following.png"];
+            [cell.inviteButton setImage:buttonImage forState:UIControlStateNormal];
+            [cell.inviteButton setImage:[UIImage imageNamed:@"btn-following.png"] forState:UIControlStateHighlighted];
+            [cell.inviteButton setImage:[UIImage imageNamed:@"btn-following.png"] forState:UIControlStateSelected];
+            [cell.inviteButton setTag:kFollowingButtonTag];
+            
+        }
+        // Send follow user to server
+        NSNumber *userId = [self getUser].userId;
+        [[TDUserAPI sharedInstance] followUser:userId callback:^(BOOL success) {
+            if (success) {
+                // Send notification to update user profile stat button-add
+                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[TDCurrentUser sharedInstance].currentUserObject userInfo:@{@"incrementCount": @1}];
+            } else {
+                [[TDAppDelegate appDelegate] showToastWithText:@"Error occured.  Please try again." type:kToastType_Warning payload:@{} delegate:nil];
+                // Switch button back
+                if (cell != nil) {
+                    // Got the cell, change the button
+                    UIImage * buttonImage = [UIImage imageNamed:@"btn-follow.png"];
+                    [cell.inviteButton setImage:buttonImage forState:UIControlStateNormal];
+                    [cell.inviteButton setImage:[UIImage imageNamed:@"btn-follow-hit.png"] forState:UIControlStateHighlighted];
+                    [cell.inviteButton setImage:[UIImage imageNamed:@"btn-follow-hit.png"] forState:UIControlStateSelected];
+                    [cell.inviteButton setTag:kFollowButtonTag];
+                }
+            }
+        }];
+
     
     } else if (tag == kFollowingButtonTag) {
         debug NSLog(@"unfollow this person");
-        
-        //change the button
+        TDUserProfileCell *cell = nil;
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+        UITableViewCell * modifyCell = [self.tableView cellForRowAtIndexPath:indexPath];
+        if(modifyCell != nil) {
+            cell = (TDUserProfileCell*)modifyCell;
+            // Got the cell, change the button
+            UIImage * buttonImage = [UIImage imageNamed:@"btn-follow.png"];
+            [cell.inviteButton setImage:buttonImage forState:UIControlStateNormal];
+            [cell.inviteButton setImage:[UIImage imageNamed:@"btn-follow-hit.png"] forState:UIControlStateHighlighted];
+            [cell.inviteButton setImage:[UIImage imageNamed:@"btn-follow-hit.png"] forState:UIControlStateSelected];
+            [cell.inviteButton setTag:kFollowButtonTag];
+            
+        }
+        // Send unfollow user to server
+        NSNumber * userId = [self getUser].userId;
+        [[TDUserAPI sharedInstance] unFollowUser:userId callback:^(BOOL success) {
+            if (success) {
+                debug NSLog(@"Successfully unfollwed user=%@", userId);
+                // send notification to update user follow count-subtract
+                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[TDCurrentUser sharedInstance].currentUserObject userInfo:@{@"decreaseCount": @1}];
+            } else {
+                debug NSLog(@"could not follow user=%@", userId);
+                [[TDAppDelegate appDelegate] showToastWithText:@"Error occured.  Please try again." type:kToastType_Warning payload:@{} delegate:nil];
+                debug NSLog(@"could not follow user=%@", userId);
+                //TODO: Display toast saying error processing, TRY AGAIN
+                // Switch button back to cell
+                UIImage * buttonImage = [UIImage imageNamed:@"btn-following.png"];
+                [cell.inviteButton setImage:buttonImage forState:UIControlStateNormal];
+                [cell.inviteButton setImage:[UIImage imageNamed:@"btn-following.png"] forState:UIControlStateHighlighted];
+                [cell.inviteButton setImage:[UIImage imageNamed:@"btn-following.png"] forState:UIControlStateSelected];
+                [cell.inviteButton setTag:kFollowingButtonTag];
+            }
+        }];
         
     } else if (tag == kInviteButtonTag) {
         TDInviteViewController *vc = [[TDInviteViewController alloc] initWithNibName:@"TDInviteViewController" bundle:nil ];

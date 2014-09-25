@@ -24,9 +24,6 @@
 #import "TDInviteViewController.h"
 #import "TDUserProfileViewController.h"
 
-static NSInteger const kFollowButtonTag = 20002;
-static NSInteger const kFollowingButtonTag = 20003;
-
 @interface TDFollowViewController ()
 
 @property (nonatomic) BOOL hasLoaded;
@@ -98,7 +95,7 @@ static NSInteger const kFollowingButtonTag = 20003;
     self.tableView.contentInset = UIEdgeInsetsMake(-40.0f, 0.0f, 0.0f, 0.0f);
     
     self.searchDisplayController.searchBar.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
-    self.searchDisplayController.searchBar.layer.borderWidth = .5;
+    self.searchDisplayController.searchBar.layer.borderWidth = TD_CELL_BORDER_WIDTH;
     self.searchDisplayController.searchBar.backgroundColor = [TDConstants tableViewBackgroundColor];
     self.searchDisplayController.searchBar.clipsToBounds = YES;
     
@@ -170,13 +167,13 @@ static NSInteger const kFollowingButtonTag = 20003;
         self.navigationItem.rightBarButtonItem = rightBarButton;
         
         self.searchDisplayController.searchBar.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
-        self.searchDisplayController.searchBar.layer.borderWidth = .5;
+        self.searchDisplayController.searchBar.layer.borderWidth = TD_CELL_BORDER_WIDTH;
         self.searchDisplayController.searchBar.backgroundColor = [TDConstants tableViewBackgroundColor];
         self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants tableViewBackgroundColor];
         self.searchDisplayController.searchResultsTableView.layer.opaque = NO;
         
         // Load data from server
-        [[TDUserAPI sharedInstance] getCommunityUserList:^(BOOL success, NSDictionary *returnList) {
+        [[TDUserAPI sharedInstance] getCommunityUserList:^(BOOL success, NSArray *returnList) {
             if (success && returnList && returnList.count > 0) {
                 debug NSLog(@"user list dictionary=%@", returnList);
 

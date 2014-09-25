@@ -68,7 +68,7 @@
     
 
     self.searchDisplayController.searchBar.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
-    self.searchDisplayController.searchBar.layer.borderWidth = .5;
+    self.searchDisplayController.searchBar.layer.borderWidth = TD_CELL_BORDER_WIDTH;
     self.searchDisplayController.searchBar.backgroundColor = [TDConstants tableViewBackgroundColor];
     
     self.searchDisplayController.searchResultsTableView.layer.borderColor = [[TDConstants brandingRedColor] CGColor];

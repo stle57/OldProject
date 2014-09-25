@@ -26,34 +26,57 @@
     self.userImageView.layer.masksToBounds = YES;
     
     // Create post button
-    CALayer * layer = [self.postButton layer];
-    [layer setMasksToBounds:YES];
-    [layer setCornerRadius:0.0]; //when radius is 0, the border is a rectangle
-    [layer setBorderWidth:.5];
-    [layer setBorderColor:[[TDConstants commentTimeTextColor] CGColor]];
+    // For post button, need top border and left border
+    UIView *topBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0,
+                                                                self.postButton.frame.size.width, TD_CELL_BORDER_WIDTH) ];
+    topBorder.backgroundColor = [TDConstants commentTimeTextColor];
+    [self.postButton addSubview:topBorder];
+    
+    UIView *leftBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0, TD_CELL_BORDER_WIDTH, self.postButton.frame.size.height) ];
+    leftBorder.backgroundColor = [TDConstants commentTimeTextColor];
+    [self.postButton addSubview:leftBorder];
+    
 
     // Create PR button
-    CALayer * prLayer = [self.prButton layer];
-    [prLayer setMasksToBounds:YES];
-    [prLayer setCornerRadius:0.0]; //when radius is 0, the border is a rectangle
-    [prLayer setBorderWidth:.5];
-    [prLayer setBorderColor:[[TDConstants commentTimeTextColor] CGColor]];
-
+    // For pr button, need top and left border
+    // For post button, need top border and left border
+    UIView *prTopBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.prButton.frame.size.width, TD_CELL_BORDER_WIDTH) ];
+    prTopBorder.backgroundColor = [TDConstants commentTimeTextColor];
+    [self.prButton addSubview:prTopBorder];
     
-    // Follower button
+    UIView *prLeftBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0, TD_CELL_BORDER_WIDTH, self.prButton.frame.size.height) ];
+    prLeftBorder.backgroundColor = [TDConstants commentTimeTextColor];
+    [self.prButton addSubview:prLeftBorder];
+
+    UIView *followerTopBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0,
+            self.followerButton.frame.size.width, TD_CELL_BORDER_WIDTH) ];
+    followerTopBorder.backgroundColor = [TDConstants commentTimeTextColor];
+    [self.followerButton addSubview:followerTopBorder];
+    self.followerButton.layer.borderWidth = 0.f;
+    
+    UIView *followerLeftBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0,
+                                                                         TD_CELL_BORDER_WIDTH, self.followerButton.frame.size.height) ];
+    followerLeftBorder.backgroundColor = [TDConstants commentTimeTextColor];
+    [self.followerButton addSubview:followerLeftBorder];
+    
     CALayer * followerLayer = [self.followerButton layer];
     [followerLayer setMasksToBounds:YES];
     [followerLayer setCornerRadius:0.0]; //when radius is 0, the border is a rectangle
-    [followerLayer setBorderWidth:.5];
-    [followerLayer setBorderColor:[[TDConstants commentTimeTextColor] CGColor]];
-
     // Following Button
-
+    //For following button, need top and right border
+    UIView *followingTopBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0,
+                                                                         self.followingButton.frame.size.width, TD_CELL_BORDER_WIDTH) ];
+    followingTopBorder.backgroundColor = [TDConstants commentTimeTextColor];
+    [self.followingButton addSubview:followingTopBorder];
+    
+    UIView *followingLeftBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0,
+                                                                          TD_CELL_BORDER_WIDTH, self.followingButton.frame.size.height) ];
+    followingLeftBorder.backgroundColor = [TDConstants commentTimeTextColor];
+    [self.followingButton addSubview:followingLeftBorder];
+    
     CALayer * followingLayer = [self.followingButton layer];
     [followingLayer setMasksToBounds:YES];
     [followingLayer setCornerRadius:0.0]; //when radius is 0, the border is a rectangle
-    [followingLayer setBorderWidth:.5];
-    [followingLayer setBorderColor:[[TDConstants commentTimeTextColor] CGColor]];
 }
 
 

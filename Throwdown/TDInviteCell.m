@@ -16,7 +16,7 @@
 {
     // Initialization code
     self.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
-    self.layer.borderWidth = .5f;
+    self.layer.borderWidth = TD_CELL_BORDER_WIDTH;
     self.contactTextField.font = [TDConstants fontRegularSized:16];
     self.contactTextField.textColor = [TDConstants headerTextColor];
 }

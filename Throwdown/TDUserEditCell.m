@@ -48,6 +48,7 @@
     bottomLineOrigY = self.bottomLine.frame.origin.y + 0.5;
 
     self.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
+    self.layer.borderWidth = TD_CELL_BORDER_WIDTH;
 }
 
 @end

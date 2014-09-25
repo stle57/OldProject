@@ -612,9 +612,6 @@
                                                        CGRectGetMaxY(newTextFrame),
                                                        cell.bottomLine.frame.size.width,
                                                        cell.bottomLine.frame.size.height);
-
-                    //cell.bottomLine.layer.borderColor = [[TDConstants brandingRedColor] CGColor];
-                    //cell.bottomLine.layer.borderWidth = 0.5f;
                     break;
                 default:
                     break;

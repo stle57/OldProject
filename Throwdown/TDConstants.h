@@ -96,6 +96,9 @@ static CGFloat const kTextLineHeight = 1.27;
 
 static NSString *const kSpinningAnimation = @"rotationAnimation";
 
+static NSInteger const kFollowButtonTag = 20002;
+static NSInteger const kFollowingButtonTag = 20003;
+
 @interface TDConstants : NSObject
 
 #define APP_STORE_ID 886061848
@@ -125,6 +128,7 @@ static NSString *const kSpinningAnimation = @"rotationAnimation";
 #define TD_LIKE_EVENT_COUNT              2
 #define TD_POST_EVENT_COUNT              10
 #define TD_POTRAIT_CELL_HEIGHT           44
+#define TD_CELL_BORDER_WIDTH             .5
 
 + (TDEnvironment)environment;
 + (NSString *)appScheme;

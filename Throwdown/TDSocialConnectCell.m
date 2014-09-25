@@ -14,7 +14,7 @@
 {
     // Initialization code
     self.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
-    self.layer.borderWidth = .5f;
+    self.layer.borderWidth = TD_CELL_BORDER_WIDTH;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated
