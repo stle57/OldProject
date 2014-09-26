@@ -184,39 +184,36 @@
         // else if there is a lot of contact info, use UIActionSheet and show various ways.
         NSMutableArray *buttonStrings = [NSMutableArray arrayWithArray:contactPerson.emailList];
         [buttonStrings addObjectsFromArray:contactPerson.phoneList];
-        
-        [UIActionSheet presentOnView:self.view
-                           withTitle:@"Invite via"
-                        cancelButton:@"Cancel"
-                   destructiveButton:nil
-                        otherButtons:buttonStrings
-                            onCancel:^(UIActionSheet *actionSheet) {
-                                NSLog(@"Touched cancel button");
-                            }
-                       onDestructive:^(UIActionSheet *actionSheet) {
-                           NSLog(@"Touched destructive button");
-                       }
-                     onClickedButton:^(UIActionSheet *actionSheet, NSUInteger index) {
-                         NSLog(@"Selected button at index %lu", (unsigned long)index);
-                         debug NSLog(@"  with contact name=%@", contactPerson.fullName);
-                         if (self.delegate && [self.delegate respondsToSelector:@selector(contactPressedFromRow:)]) {
-                             NSString *formatedPhone;
-                             if ([TDViewControllerHelper validateEmail:buttonStrings[index]]) {
-                                 contactPerson.selectedData = buttonStrings[index];
-                                 contactPerson.inviteType = kInviteType_Email;
-                             } else {
-                                 formatedPhone = [TDViewControllerHelper validatePhone:buttonStrings[index]];
-                                 if(formatedPhone) {
-                                     contactPerson.selectedData = formatedPhone;
-                                     contactPerson.inviteType = kInviteType_Phone;
-                                 } else {
-                                     return;
-                                 }
+
+        [UIActionSheet showInView:self.view
+                        withTitle:@"Invite via"
+                cancelButtonTitle:@"Cancel"
+           destructiveButtonTitle:nil
+                otherButtonTitles:buttonStrings
+                         tapBlock:^(UIActionSheet *actionSheet, NSInteger buttonIndex) {
+                             if (buttonIndex == actionSheet.cancelButtonIndex) {
+                                 return;
                              }
-                             [delegate contactPressedFromRow:(contactPerson)];
-                         }
-                         [self leave];
-                     }];
+                             NSLog(@"Selected button at index %lu", (unsigned long)buttonIndex);
+                             debug NSLog(@"  with contact name=%@", contactPerson.fullName);
+                             if (self.delegate && [self.delegate respondsToSelector:@selector(contactPressedFromRow:)]) {
+                                 NSString *formatedPhone;
+                                 if ([TDViewControllerHelper validateEmail:buttonStrings[buttonIndex]]) {
+                                     contactPerson.selectedData = buttonStrings[buttonIndex];
+                                     contactPerson.inviteType = kInviteType_Email;
+                                 } else {
+                                     formatedPhone = [TDViewControllerHelper validatePhone:buttonStrings[buttonIndex]];
+                                     if(formatedPhone) {
+                                         contactPerson.selectedData = formatedPhone;
+                                         contactPerson.inviteType = kInviteType_Phone;
+                                     } else {
+                                         return;
+                                     }
+                                 }
+                                 [delegate contactPressedFromRow:(contactPerson)];
+                             }
+                             [self leave];
+                         }];
     } else if (contactPerson.emailList.count == 1 || contactPerson.phoneList.count == 1) {
         // else if there is only one contact method, move the selection to the invite page 1
         debug NSLog(@"just use this info and add to invite list");

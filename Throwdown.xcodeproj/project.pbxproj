@@ -75,7 +75,6 @@
 		4D2843EF19CA299900E4A56C /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D2843EE19CA299900E4A56C /* AddressBook.framework */; };
 		4D3352D419A29CD8007B3E06 /* iRate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D3352D319A29CD8007B3E06 /* iRate.m */; };
 		4D3352D619A29CEC007B3E06 /* iRate.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4D3352D519A29CEC007B3E06 /* iRate.bundle */; };
-		4D36F51519CCDB8100A279A5 /* UIActionSheet+Blocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D36F51419CCDB8100A279A5 /* UIActionSheet+Blocks.m */; };
 		4D36F51919CCE66700A279A5 /* TDSendInviteController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D36F51719CCE66700A279A5 /* TDSendInviteController.m */; };
 		4D36F51A19CCE66700A279A5 /* TDSendInviteController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D36F51819CCE66700A279A5 /* TDSendInviteController.xib */; };
 		4D4714B819CBF14F003AA69F /* TDContactInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4714B719CBF14F003AA69F /* TDContactInfo.m */; };
@@ -151,6 +150,7 @@
 		A19FF60F18970BBB001A0AD0 /* RSContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF60118970BBB001A0AD0 /* RSContainer.m */; };
 		A19FF61018970BBB001A0AD0 /* RSModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF60318970BBB001A0AD0 /* RSModel.m */; };
 		A19FF61118970BBB001A0AD0 /* RSStorageObject.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF60518970BBB001A0AD0 /* RSStorageObject.m */; };
+		A1A053FE19D6272300E7556A /* UIActionSheet+Blocks.m in Sources */ = {isa = PBXBuildFile; fileRef = A1A053FC19D6272300E7556A /* UIActionSheet+Blocks.m */; };
 		A1B11920190E030700FE7102 /* TDDeviceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A1B1191F190E030700FE7102 /* TDDeviceInfo.m */; };
 		A1B3EF3B193E8D240014B619 /* TDNoticeViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A1B3EF39193E8D240014B619 /* TDNoticeViewCell.m */; };
 		A1B3EF3C193E8D240014B619 /* TDNoticeViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A1B3EF3A193E8D240014B619 /* TDNoticeViewCell.xib */; };
@@ -295,8 +295,6 @@
 		4D3352D219A29CC4007B3E06 /* iRate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iRate.h; sourceTree = "<group>"; };
 		4D3352D319A29CD8007B3E06 /* iRate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iRate.m; sourceTree = "<group>"; };
 		4D3352D519A29CEC007B3E06 /* iRate.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = iRate.bundle; sourceTree = "<group>"; };
-		4D36F51319CCDB7800A279A5 /* UIActionSheet+Blocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIActionSheet+Blocks.h"; path = "../../../../../Downloads/UIActionSheet-Blocks-master/UIActionSheet+Blocks.h"; sourceTree = "<group>"; };
-		4D36F51419CCDB8100A279A5 /* UIActionSheet+Blocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIActionSheet+Blocks.m"; path = "../../../../../Downloads/UIActionSheet-Blocks-master/UIActionSheet+Blocks.m"; sourceTree = "<group>"; };
 		4D36F51619CCE66700A279A5 /* TDSendInviteController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSendInviteController.h; sourceTree = "<group>"; };
 		4D36F51719CCE66700A279A5 /* TDSendInviteController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSendInviteController.m; sourceTree = "<group>"; };
 		4D36F51819CCE66700A279A5 /* TDSendInviteController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDSendInviteController.xib; sourceTree = "<group>"; };
@@ -425,6 +423,8 @@
 		A19FF60318970BBB001A0AD0 /* RSModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSModel.m; sourceTree = "<group>"; };
 		A19FF60418970BBB001A0AD0 /* RSStorageObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSStorageObject.h; sourceTree = "<group>"; };
 		A19FF60518970BBB001A0AD0 /* RSStorageObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSStorageObject.m; sourceTree = "<group>"; };
+		A1A053FC19D6272300E7556A /* UIActionSheet+Blocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIActionSheet+Blocks.m"; sourceTree = "<group>"; };
+		A1A053FD19D6272300E7556A /* UIActionSheet+Blocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIActionSheet+Blocks.h"; sourceTree = "<group>"; };
 		A1B1191E190E030700FE7102 /* TDDeviceInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDDeviceInfo.h; sourceTree = "<group>"; };
 		A1B1191F190E030700FE7102 /* TDDeviceInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDDeviceInfo.m; sourceTree = "<group>"; };
 		A1B3EF38193E8D240014B619 /* TDNoticeViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDNoticeViewCell.h; sourceTree = "<group>"; };
@@ -734,8 +734,8 @@
 		A11E04E21888CB79002F981A /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				4D36F51419CCDB8100A279A5 /* UIActionSheet+Blocks.m */,
-				4D36F51319CCDB7800A279A5 /* UIActionSheet+Blocks.h */,
+				A1A053FC19D6272300E7556A /* UIActionSheet+Blocks.m */,
+				A1A053FD19D6272300E7556A /* UIActionSheet+Blocks.h */,
 				4D3352D519A29CEC007B3E06 /* iRate.bundle */,
 				4D3352D319A29CD8007B3E06 /* iRate.m */,
 				4D3352D219A29CC4007B3E06 /* iRate.h */,
@@ -1294,7 +1294,6 @@
 				2DA5354418F35E4300031128 /* TDUserProfileViewController.m in Sources */,
 				A1BC0B3F18BE825200F507B3 /* TDSlideLeftSegue.m in Sources */,
 				2D00148B18CFB57C0070DE16 /* TDTwoButtonView.m in Sources */,
-				4D36F51519CCDB8100A279A5 /* UIActionSheet+Blocks.m in Sources */,
 				A14B2B7F18B5308000980A31 /* TDAPIClient.m in Sources */,
 				A182D839188F2C2D00F794A5 /* TDHomeViewController.m in Sources */,
 				2DBA430118DA455500366737 /* TDTextField.m in Sources */,
@@ -1367,6 +1366,7 @@
 				A1432CE118A99D750073E492 /* TDWelcomeViewController.m in Sources */,
 				A14483C019A8026000B3BC8D /* OAuthCore.m in Sources */,
 				A1D6BB0D196BBAE9007983F8 /* TDSlideDownSegue.m in Sources */,
+				A1A053FE19D6272300E7556A /* UIActionSheet+Blocks.m in Sources */,
 				2DA420DC18E63E1A006F4D9C /* TDActivityCell.m in Sources */,
 				A1C2481418C7D4B000F187D9 /* URLConnection.m in Sources */,
 				4D2843CE19C401C000E4A56C /* TDFollowViewController.m in Sources */,
