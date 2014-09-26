@@ -78,15 +78,6 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-
-    [self.navigationController setNavigationBarHidden:YES animated:NO];
-
-    // Frosted behind status bar
-   // [self addFrostedBehindForStatusBar];
-}
-
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
@@ -158,9 +149,6 @@
 - (void)fetchPostsRefresh {
     [self stopBottomLoadingSpinner];
     [[TDPostAPI sharedInstance] fetchPostsWithSuccess:^(NSDictionary *response) {
-        [self handleNextStarts:response];
-        [self handlePostsResponse:response fromStart:YES];
-
         // Set notices (shows in both all and following on home feed)
         if ([response objectForKey:@"notices"]) {
             NSMutableArray *tmp = [[NSMutableArray alloc] init];
@@ -179,6 +167,12 @@
                                                                 object:self
                                                               userInfo:@{@"notificationCount": [response valueForKey:@"notification_count"]}];
         }
+
+        // do this last b/c it reloads the table
+        [self handleNextStarts:response];
+        [self handlePostsResponse:response fromStart:YES];
+
+
     } error:^{
         self.loaded = YES;
         self.errorLoading = YES;
