@@ -502,8 +502,14 @@
     
     if (tag == kFollowButtonTag) {
         TDFollowProfileCell * cell;
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.currentRow inSection:0];
-        UITableViewCell * modifyCell = [self.tableView cellForRowAtIndexPath:indexPath];
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
+        UITableViewCell * modifyCell = nil;
+        if (self.filteredTDUsers.count == 0){
+            modifyCell = [self.tableView cellForRowAtIndexPath:indexPath];
+        } else {
+            modifyCell = [self.searchDisplayController.searchResultsTableView cellForRowAtIndexPath:indexPath];
+        }
+        
         if(modifyCell != nil) {
             cell = (TDFollowProfileCell*)modifyCell;
             // Got the cell, change the button
