@@ -1,5 +1,5 @@
 //
-//  TDRateUsController.h
+//  TDToastViewController.h
 //  Throwdown
 //
 //  Created by Stephanie Le on 8/25/14.
@@ -10,7 +10,7 @@
 #import "TDToastView.h"
 #import "iRate.h"
 
-@interface TDRateUsController : NSObject <TDToastViewDelegate, iRateDelegate>
+@interface TDToastViewController : NSObject <TDToastViewDelegate, iRateDelegate>
 
 @end
 

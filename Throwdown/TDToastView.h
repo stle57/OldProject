@@ -13,6 +13,7 @@
 - (void)toastNotificationTappedPayload:(NSDictionary *)payload;
 - (void)toastNotificationCloseButton;
 - (void)toastNotificationTappedRateUs;
+- (void)toastNotificationSendInviteRetry:(NSDictionary *)payload;
 @end
 
 

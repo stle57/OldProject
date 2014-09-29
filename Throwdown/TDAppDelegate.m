@@ -65,9 +65,7 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window.rootViewController = initViewController;
     [self.window makeKeyAndVisible];
-    
-    self.rateUsController = [[TDRateUsController alloc] init];
-    
+        
     if ([launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
         [self openPushNotification:[launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]];
     }
@@ -137,8 +135,8 @@
 
 - (BOOL)iRateShouldPromptForRating
 {
-    if (self.rateUsController != nil) {
-        [[TDAppDelegate appDelegate] showToastWithText:@"Like Throwdown? Tap here to rate us!" type:kToastType_RateUs payload:nil delegate:self.rateUsController];
+    if ([TDAPIClient toastControllerDelegate]) {
+        [[TDAppDelegate appDelegate] showToastWithText:@"Like Throwdown? Tap here to rate us!" type:kToastType_RateUs payload:nil delegate:[TDAPIClient toastControllerDelegate]];
         [[TDAnalytics sharedInstance] logEvent:@"rating_asked"];
     }
     return NO;

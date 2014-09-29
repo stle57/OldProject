@@ -11,13 +11,12 @@
 #import "TDConstants.h"
 #import "TDToastView.h"
 #import "iRate.h"
-#import "TDRateUsController.h"
+#import "TDToastViewController.h"
 #import <FacebookSDK/FacebookSDK.h>
 
 @interface TDAppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
-@property (strong, nonatomic) TDRateUsController * rateUsController;
 
 + (TDAppDelegate*)appDelegate;
 + (UIColor *)randomColor;

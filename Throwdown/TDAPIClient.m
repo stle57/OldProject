@@ -20,7 +20,6 @@
 
 @property (strong, nonatomic) AFHTTPRequestOperationManager *httpManager;
 @property (strong, nonatomic) AFHTTPRequestOperation *credentialsTask;
-
 @end
 
 @implementation TDAPIClient
@@ -36,6 +35,15 @@
     return _sharedInstance;
 }
 
++ (TDToastViewController*)toastControllerDelegate {
+    static TDToastViewController *_toastControllerDelegate = nil;
+    static dispatch_once_t oncePredicate;
+    dispatch_once(&oncePredicate, ^ {
+        _toastControllerDelegate = [[TDToastViewController alloc] init];
+    });
+    return _toastControllerDelegate;
+}
+
 - (id)init {
     self = [super init];
     if (self) {
@@ -49,6 +57,7 @@
     self.credentialsTask = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
+
 
 #pragma mark - api calls
 
@@ -328,9 +337,10 @@
             NSDictionary *response = (NSDictionary *)responseObject;
             NSNumber *success = [response objectForKey:@"success"];
             if (success && [success boolValue]) {
+                debug NSLog(@"success response=%@", [response objectForKey:@"contacts"]);
                 callback([success boolValue], [response objectForKey:@"contacts"]);
             } else {
-                callback(NO, nil);
+                callback(NO, [response objectForKey:@"contacts"]);
             }
         } else {
             debug NSLog(@"ERROR in signup response, got: %@", [responseObject class]);

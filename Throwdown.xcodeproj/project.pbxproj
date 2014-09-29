@@ -83,7 +83,7 @@
 		4D6FCC2519CAA34D00902719 /* TDContactsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D6FCC2319CAA34D00902719 /* TDContactsViewController.xib */; };
 		4DC2C9981968F69C00A210CF /* TDTextViewControllerHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC2C9971968F69C00A210CF /* TDTextViewControllerHelper.m */; };
 		4DC2C9A31969F72600A210CF /* TDUserListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC2C9A11969F72600A210CF /* TDUserListView.m */; };
-		4DD0837019AC585C00149968 /* TDRateUsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DD0836F19AC585C00149968 /* TDRateUsController.m */; };
+		4DD0837019AC585C00149968 /* TDToastViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DD0836F19AC585C00149968 /* TDToastViewController.m */; };
 		579149E08F7B4EE789901248 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E657ABE418B84EA68554F855 /* libPods.a */; };
 		A102FEA118ECF43C00139606 /* libFlurry_4.4.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A102FEA018ECF43C00139606 /* libFlurry_4.4.0.a */; };
 		A109FF351909C76000506F88 /* TDAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = A109FF341909C76000506F88 /* TDAnalytics.m */; };
@@ -309,8 +309,8 @@
 		4DC2C9971968F69C00A210CF /* TDTextViewControllerHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTextViewControllerHelper.m; sourceTree = "<group>"; };
 		4DC2C9A01969F72600A210CF /* TDUserListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserListView.h; sourceTree = "<group>"; };
 		4DC2C9A11969F72600A210CF /* TDUserListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUserListView.m; sourceTree = "<group>"; };
-		4DD0836E19AC585C00149968 /* TDRateUsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDRateUsController.h; sourceTree = "<group>"; };
-		4DD0836F19AC585C00149968 /* TDRateUsController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDRateUsController.m; sourceTree = "<group>"; };
+		4DD0836E19AC585C00149968 /* TDToastViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDToastViewController.h; sourceTree = "<group>"; };
+		4DD0836F19AC585C00149968 /* TDToastViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDToastViewController.m; sourceTree = "<group>"; };
 		A102FE9F18ECF43C00139606 /* Flurry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flurry.h; sourceTree = "<group>"; };
 		A102FEA018ECF43C00139606 /* libFlurry_4.4.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry_4.4.0.a; sourceTree = "<group>"; };
 		A109FF331909C76000506F88 /* TDAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDAnalytics.h; sourceTree = "<group>"; };
@@ -813,8 +813,8 @@
 				A11999DC18DC0D4200C39ABF /* TDFileSystemHelper.m */,
 				4DC2C9961968F69C00A210CF /* TDTextViewControllerHelper.h */,
 				4DC2C9971968F69C00A210CF /* TDTextViewControllerHelper.m */,
-				4DD0836E19AC585C00149968 /* TDRateUsController.h */,
-				4DD0836F19AC585C00149968 /* TDRateUsController.m */,
+				4DD0836E19AC585C00149968 /* TDToastViewController.h */,
+				4DD0836F19AC585C00149968 /* TDToastViewController.m */,
 				A124E93719B019A100DC65C1 /* TDURLHelper.h */,
 				A124E93819B019A100DC65C1 /* TDURLHelper.m */,
 			);
@@ -1329,7 +1329,7 @@
 				A1C1D0F618A0387B00666D2A /* TDPostView.m in Sources */,
 				A1F13C6719AD5D7E000DD890 /* TDRadioButtonRowCell.m in Sources */,
 				A19FF60E18970BBB001A0AD0 /* RSClient.m in Sources */,
-				4DD0837019AC585C00149968 /* TDRateUsController.m in Sources */,
+				4DD0837019AC585C00149968 /* TDToastViewController.m in Sources */,
 				A182D833188B60CD00F794A5 /* SAVideoRangeSlider.m in Sources */,
 				A182D832188B60CD00F794A5 /* SASliderRight.m in Sources */,
 				A1D6BB13196BC7AC007983F8 /* TDSlideUpSegue.m in Sources */,

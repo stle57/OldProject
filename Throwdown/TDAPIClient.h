@@ -7,10 +7,13 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "TDToastView.h"
+#import "TDToastViewController.h"
 
 @interface TDAPIClient : NSObject
 
 + (TDAPIClient *)sharedInstance;
++ (TDToastViewController*)toastControllerDelegate;
 
 - (void)validateCredentials:(NSDictionary *)parameters success:(void (^)(NSDictionary *response))success failure:(void (^)())failure;
 - (void)signupUser:(NSDictionary *)userAttributes callback:(void (^)(BOOL success, NSDictionary *user))callback;

@@ -93,7 +93,8 @@
             iconImage = [UIImage imageNamed:@"td_error_toast_icon"];
             self.backgroundColor = [UIColor colorWithRed:(158./255) green:(11./255) blue:(15./255) alpha:0.85];
             self.label.textColor = [UIColor whiteColor];
-            self.closeButton.hidden = YES;
+            self.closeButton.hidden = FALSE;
+            self.closeButton.enabled = YES;
             break;
         default:
             break;
@@ -118,22 +119,21 @@
                                                 self.center.y);
 
         // Center text and icon
-        if(self.toastType != kToastType_RateUs) {
-            self.iconImageView.frame = CGRectMake((self.frame.size.width - self.iconImageView.frame.size.width - self.label.frame.size.width) / 2.0,
-                                              self.iconImageView.frame.origin.y,
-                                              self.iconImageView.frame.size.width,
-                                              self.iconImageView.frame.size.height);
-
-            self.label.center = CGPointMake(CGRectGetMaxX(self.iconImageView.frame) + 10.0 + self.label.frame.size.width / 2.0,
-                                        self.center.y);
-        } else {
+        if(self.toastType == kToastType_RateUs || self.toastType == kToastType_InviteWarning) {
             self.iconImageView.frame = CGRectMake(self.iconImageView.frame.origin.x + 5.0,
                                                   self.iconImageView.frame.origin.y,
                                                   self.iconImageView.frame.size.width,
                                                   self.iconImageView.frame.size.height);
             self.label.center = CGPointMake(CGRectGetMaxX(self.iconImageView.frame) + 10.0 + self.label.frame.size.width / 2.0,
                                             self.center.y);
+        } else {
+            self.iconImageView.frame = CGRectMake((self.frame.size.width - self.iconImageView.frame.size.width - self.label.frame.size.width) / 2.0,
+                                                  self.iconImageView.frame.origin.y,
+                                                  self.iconImageView.frame.size.width,
+                                                  self.iconImageView.frame.size.height);
             
+            self.label.center = CGPointMake(CGRectGetMaxX(self.iconImageView.frame) + 10.0 + self.label.frame.size.width / 2.0,
+                                            self.center.y);
         }
     } else {
         if (self.label.frame.size.width > self.frame.size.width) {
@@ -159,7 +159,7 @@
                             0);
 
     // Have to add a button since tap gestures and touchBegan don't work on an animated view(!)
-    if(self.toastType == kToastType_RateUs)
+    if(self.toastType == kToastType_RateUs || self.toastType == kToastType_InviteWarning)
         buttonWidth = buttonWidth-40;
     
     self.button = [[UIButton alloc] initWithFrame:CGRectMake(0.0,
@@ -175,24 +175,24 @@
 
     self.label.alpha = 0.;
     self.iconImageView.alpha = 0.;
-    if (self.toastType != kToastType_RateUs) {
-        [UIView animateWithDuration: 0.2
-                              delay: 0.0
-                            options: UIViewAnimationOptionCurveEaseInOut
-                     animations:^{
-                         self.frame = CGRectMake(0, toastOffSet, self.frame.size.width, kToastHeight);
-                         self.label.alpha = 1.;
-                         self.iconImageView.alpha = 1.;
-                     }
-                     completion:^(BOOL animDownDone){
-                         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kToastTimeOnScreen * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                             [self remove];
-                         });
-                     }];
-    } else {
+    if (self.toastType == kToastType_RateUs || self.toastType == kToastType_InviteWarning ) {
         self.frame = CGRectMake(0, toastOffSet, self.frame.size.width, kToastHeight);
         self.label.alpha = 1.;
         self.iconImageView.alpha = 1.;
+    } else {
+        [UIView animateWithDuration: 0.2
+                              delay: 0.0
+                            options: UIViewAnimationOptionCurveEaseInOut
+                         animations:^{
+                             self.frame = CGRectMake(0, toastOffSet, self.frame.size.width, kToastHeight);
+                             self.label.alpha = 1.;
+                             self.iconImageView.alpha = 1.;
+                         }
+                         completion:^(BOOL animDownDone){
+                             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(kToastTimeOnScreen * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                                 [self remove];
+                             });
+                         }];
     }
 }
 
@@ -222,20 +222,20 @@
     self.button.enabled = NO;
     [self remove];
 
-    if (self.delegate && [self.delegate respondsToSelector:@selector(toastNotificationTappedPayload:)]) {
-        if(self.toastType != kToastType_RateUs) {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(toastNotificationSendInviteRetry:)] && self.toastType == kToastType_InviteWarning) {
+        debug NSLog(@"yes...RETRY!");
+        [self.delegate performSelector:@selector(toastNotificationSendInviteRetry:) withObject:self.payload];
+        self.delegate = nil;
+    }
+    else if (self.delegate && [self.delegate respondsToSelector:@selector(toastNotificationTappedPayload:)]) {
+        if(self.toastType != kToastType_RateUs && self.toastType != kToastType_InviteWarning) {
             [self.delegate performSelector:@selector(toastNotificationTappedPayload:) withObject:self.payload];
             self.delegate = nil;
         }
-        
-    } else if (self.delegate && [self.delegate respondsToSelector:@selector(toastNotificationTappedRateUs)]) {
-        if(self.toastType == kToastType_RateUs) {
-            [self.delegate performSelector:@selector(toastNotificationTappedRateUs)];
-            self.delegate = nil;
-        }
+    } else if (self.delegate && [self.delegate respondsToSelector:@selector(toastNotificationTappedRateUs)] && self.toastType == kToastType_RateUs) {
+        [self.delegate performSelector:@selector(toastNotificationTappedRateUs)];
+        self.delegate = nil;
     }
-
-    
 }
 
 - (IBAction)closedButtonPressed:(UIButton *)sender {
