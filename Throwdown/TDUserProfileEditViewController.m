@@ -190,7 +190,7 @@
                                                     message = [NSString stringWithFormat:@"%@Verification email sent to:\n%@\n", message ? message : @"", self.email];
                                                 }
                                                 if (message) {
-                                                    message = [NSString stringWithFormat:@"%@Please verify to confirm your info.\n", message];
+                                                    message = [NSString stringWithFormat:@"%@Please verify to confirm your info.", message];
                                                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
                                                                                                     message:message
                                                                                                    delegate:nil

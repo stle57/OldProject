@@ -29,7 +29,6 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
 
 @interface TDSharePostViewController () <UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate>
 
-@property (weak, nonatomic) IBOutlet UINavigationBar *navigationBar;
 @property (weak, nonatomic) IBOutlet UINavigationItem *navigationBarItem;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet TDActivityIndicator *activityIndicator;
@@ -54,17 +53,21 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
 - (void)viewDidLoad {
     [super viewDidLoad];
     [[TDAnalytics sharedInstance] logEvent:@"camera_share_with_opened"];
+
     // Background
     self.tableView.backgroundColor = [TDConstants tableViewBackgroundColor];
-    UINavigationBar *navigationBar = self.navigationBar;
-    [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
-    
+
     UIButton *button = [TDViewControllerHelper navBackButton];
     [button addTarget:self action:@selector(backButtonPressed) forControlEvents:UIControlEventTouchUpInside];
     self.navigationBarItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
 
-    [self.navigationBar setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontSemiBoldSized:18],
-                                                  NSForegroundColorAttributeName: [UIColor whiteColor] }];
+    UINavigationBar *navigationBar = self.navigationController.navigationBar;
+    navigationBar.barStyle = UIBarStyleBlack;
+    navigationBar.translucent = NO;
+    [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
+    [navigationBar setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontSemiBoldSized:18],
+                                             NSForegroundColorAttributeName: [UIColor whiteColor] }];
+
 
     [self.saveButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[UIColor whiteColor], NSFontAttributeName:[TDConstants fontRegularSized:18] } forState:UIControlStateNormal];
 
