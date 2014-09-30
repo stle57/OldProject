@@ -26,7 +26,6 @@
         _followerCount  = [dict objectForKey:@"follower_count"];
         _followingCount = [dict objectForKey:@"following_count"];
         _following      = [[dict objectForKey:@"following"] boolValue];
-        debug NSLog(@"description =%@", [self description]);
         [self figureOutBioLabelHeightForThisMessage:_bio];
     }
     return self;

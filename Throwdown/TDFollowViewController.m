@@ -346,9 +346,16 @@
                 
                 return cell;
             } else if (self.followControllerType == kUserListType_Following){
-                TDNoFollowProfileCell *cell = [self createNoFollowCell:indexPath tableView:tableView text:@"Not following anyone" hideFindButton:NO hideInviteButton:NO];
-                
-                return cell;
+                if (self.profileUser.userId == [TDCurrentUser sharedInstance].currentUserObject.userId) {
+                    TDNoFollowProfileCell *cell = [self createNoFollowCell:indexPath tableView:tableView text:@"Not following anyone" hideFindButton:NO hideInviteButton:NO];
+                    
+                    return cell;
+                } else {
+                    // Only allow the invite and find button for the current device/user that is in operation.
+                    TDNoFollowProfileCell *cell = [self createNoFollowCell:indexPath tableView:tableView text:@"Not following anyone" hideFindButton:YES hideInviteButton:YES];
+                    
+                    return cell;
+                }
             } else if (self.followControllerType == kUserListType_TDUsers) {
                 TDNoFollowProfileCell *cell = [self createNoFollowCell:indexPath tableView:tableView text:@"No followers yet" hideFindButton:NO hideInviteButton:NO];
                 
@@ -603,6 +610,7 @@
 - (void)showUserProfile:(NSNumber *)userId {
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
     vc.userId = userId;
+    vc.needsProfileHeader = YES;
     vc.fromProfileType = kFromProfileScreenType_OtherUser;
     [self.navigationController pushViewController:vc animated:YES];
 }

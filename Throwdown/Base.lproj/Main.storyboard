@@ -995,7 +995,7 @@ The Throwdown Community</string>
                     <navigationItem key="navigationItem" id="q28-Zj-hoc">
                         <nil key="title"/>
                         <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="Vwl-FS-yeJ" userLabel="Feed Selection">
-                            <rect key="frame" x="88" y="8" width="145" height="29"/>
+                            <rect key="frame" x="87.5" y="7.5" width="145" height="29"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <segments>
                                 <segment title="All"/>

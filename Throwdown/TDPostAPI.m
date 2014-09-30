@@ -158,7 +158,7 @@
 
 - (void)fetchPostsForUser:(NSString *)userIdentifier start:(NSNumber *)start success:(void(^)(NSDictionary *response))successHandler error:(void (^)(void))errorHandler {
     NSMutableString *url = [NSMutableString stringWithFormat:@"/api/v1/users/%@.json?user_token=%@", userIdentifier, [TDCurrentUser sharedInstance].authToken];
-
+    
     if (start) {
         [url appendString:[NSString stringWithFormat:@"&start=%@", start]];
     }
@@ -177,6 +177,33 @@
             errorHandler();
         }
 
+        if ([operation.response statusCode] == 401) {
+            [self logOutUser];
+        }
+    }];
+}
+
+#pragma mark PR posts for a particular user
+
+- (void)fetchPRPostsForUser:(NSString *)userIdentifier success:(void(^)(NSDictionary *response))successHandler error:(void (^)(void))errorHandler {
+    NSMutableString *url = [NSMutableString stringWithFormat:@"/api/v1/users/%@.json?user_token=%@&kind=pr", userIdentifier, [TDCurrentUser sharedInstance].authToken];
+    
+    debug NSLog(@"inside fetchPRPostsForUser=%@", url);
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager.requestSerializer setValue:TDDeviceInfo.bundleVersion forHTTPHeaderField:kHTTPHeaderBundleVersion];
+    [manager GET:[[TDConstants getBaseURL] stringByAppendingString:url] parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            successHandler(responseObject);
+        } else if (errorHandler) {
+            errorHandler();
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"HTTP Error: %@", error);
+        
+        if (errorHandler) {
+            errorHandler();
+        }
+        
         if ([operation.response statusCode] == 401) {
             [self logOutUser];
         }

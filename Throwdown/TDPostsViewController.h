@@ -45,7 +45,7 @@
     BOOL updatingAtBottom;
     BOOL showBottomSpinner;
     CGRect statusBarFrame;
-    BOOL needsProfileHeader;
+    //BOOL needsProfileHeader;
     CGFloat topOfBioLabelInProfileHeader;
 }
 
@@ -58,6 +58,7 @@
 @property (strong, nonatomic) TDHomeHeaderView *headerView;
 @property (strong, nonatomic) UIActivityIndicatorView *playerSpinner;
 @property (nonatomic, retain) NSNumber *userId;
+@property (nonatomic) BOOL needsProfileHeader;
 @property (nonatomic, retain) NSString *username;
 @property (nonatomic) BOOL loaded;
 @property (nonatomic) BOOL errorLoading;

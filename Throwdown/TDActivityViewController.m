@@ -137,6 +137,7 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 - (void)userProfilePressedWithId:(NSNumber *)userId {
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil];
     vc.userId = userId;
+    vc.needsProfileHeader = YES;
     vc.fromProfileType = kFromProfileScreenType_OtherUser;
 
     [self.navigationController pushViewController:vc animated:YES];

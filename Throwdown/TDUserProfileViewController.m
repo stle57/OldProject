@@ -33,7 +33,7 @@
 
 - (void)viewDidLoad {
     debug NSLog(@"inside TDUserProfileViewController:viewDidLoad");
-    needsProfileHeader = YES;
+    //needsProfileHeader = YES;
 
     [super viewDidLoad];
 
@@ -65,8 +65,10 @@
             self.navigationItem.leftBarButtonItem = leftBarButton;
             self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
 
-            UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.settingsButton]; // Settings
-            self.navigationItem.rightBarButtonItem = rightBarButton;
+            if (self.needsProfileHeader) {
+                UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.settingsButton]; // Settings
+                self.navigationItem.rightBarButtonItem = rightBarButton;
+            }
         }
         break;
 
@@ -89,6 +91,9 @@
     debug NSLog(@"inside TDUsersProfileViewController:viewWillAppear");
     [super viewWillAppear:animated];
     
+    if (self.needsProfileHeader) {
+        debug NSLog(@"   SHOWING PROFILE HEADER INSIDE viewWillAppear");
+    }
     [self.tableView reloadData];
     // Stop any current playbacks
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
@@ -147,7 +152,13 @@
 }
 
 - (TDPost *)postForRow:(NSInteger)row {
-    NSInteger realRow = row - 1; // 1 is for the header
+    
+    NSInteger realRow = 0;
+    if (self.needsProfileHeader) {
+        realRow = row - 1; // 1 is for the header
+    } else {
+        realRow = row;
+    }
     if (realRow < self.posts.count) {
         return [self.posts objectAtIndex:realRow];
     } else {
@@ -156,20 +167,34 @@
 }
 
 - (void)fetchPostsRefresh {
-    debug NSLog(@"userprofile-fetchPostsRefresh");
     NSString *fetch = self.username ? self.username : [self.userId stringValue];
-    [[TDPostAPI sharedInstance] fetchPostsForUser:fetch start:nil success:^(NSDictionary *response) {
-        [self handleNextStart:[response objectForKey:@"next_start"]];
-        [self handlePostsResponse:response fromStart:YES];
-        self.user = [[TDUser alloc] initWithDictionary:[response valueForKeyPath:@"user"]];
-        self.titleLabel.text = self.user.username;
-    } error:^{
-        [self endRefreshControl];
-        [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastType_Warning payload:@{} delegate:nil];
-        self.loaded = YES;
-        self.errorLoading = YES;
-        [self.tableView reloadData];
-    }];
+    if (self.needsProfileHeader) {
+        [[TDPostAPI sharedInstance] fetchPostsForUser:fetch start:nil success:^(NSDictionary *response) {
+            [self handleNextStart:[response objectForKey:@"next_start"]];
+            [self handlePostsResponse:response fromStart:YES];
+            self.user = [[TDUser alloc] initWithDictionary:[response valueForKeyPath:@"user"]];
+            self.titleLabel.text = self.user.username;
+        } error:^{
+            [self endRefreshControl];
+            [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastType_Warning payload:@{} delegate:nil];
+            self.loaded = YES;
+            self.errorLoading = YES;
+            [self.tableView reloadData];
+        }];
+    } else {
+        [[TDPostAPI sharedInstance] fetchPRPostsForUser:fetch success:^(NSDictionary *response) {
+            [self handleNextStart:[response objectForKey:@"next_start"]];
+            [self handlePostsResponse:response fromStart:YES];
+            self.user = [[TDUser alloc] initWithDictionary:[response valueForKeyPath:@"user"]];
+            self.titleLabel.text = [NSString stringWithFormat:@"%@ %@", self.user.username, @"PRs"];
+        } error:^{
+            [self endRefreshControl];
+            [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastType_Warning payload:@{} delegate:nil];
+            self.loaded = YES;
+            self.errorLoading = YES;
+            [self.tableView reloadData];
+        }];
+    }
 }
 
 - (void)handleNextStart:(NSNumber *)start {
@@ -211,7 +236,6 @@
     if (![self hasMorePosts]) {
         return NO;
     }
-    debug NSLog(@"userprofile-fetchMorePostsAtBottom");
     NSString *fetch = self.username ? self.username : [self.userId stringValue];
     [[TDPostAPI sharedInstance] fetchPostsForUser:fetch start:self.nextStart success:^(NSDictionary *response) {
         [self handleNextStart:[response objectForKey:@"next_start"]];
@@ -268,6 +292,7 @@
 
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
     vc.userId = user.userId;
+    vc.needsProfileHeader = YES;
     vc.fromProfileType = kFromProfileScreenType_OtherUser;
     [self.navigationController pushViewController:vc animated:YES];
 }

@@ -525,7 +525,7 @@
 
         TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
         vc.username = modelId;
-
+        vc.needsProfileHeader = YES;
         if ([modelId isEqualToString:[[TDCurrentUser sharedInstance] currentUserObject].username] ||
             [modelId isEqualToString:[[TDCurrentUser sharedInstance].currentUserObject.userId stringValue]]) {
             vc.fromProfileType = kFromProfileScreenType_OwnProfileButton;
@@ -573,7 +573,7 @@
 
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
     vc.userId = userId;
-
+    vc.needsProfileHeader = YES;
     // Slightly different if current user
     if ([userId isEqualToNumber:[[TDCurrentUser sharedInstance] currentUserObject].userId]) {
         vc.fromProfileType = kFromProfileScreenType_OwnProfile;

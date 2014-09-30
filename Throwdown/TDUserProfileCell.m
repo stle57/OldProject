@@ -127,12 +127,14 @@
 }
 
 - (IBAction)followerButtonPressed:(UIButton*)sender {
+    debug NSLog(@"HIT FOLLOWER BUTTON");
     if(delegate && [delegate respondsToSelector:@selector(followerStatButtonPressed)]) {
         [delegate followerStatButtonPressed];
     }
 }
 
 - (IBAction)followingButtonPressed:(UIButton*)sender {
+    debug NSLog(@"hit FOLLOWING BUTTON");
     if(delegate && [delegate respondsToSelector:@selector(followingStatButtonPressed)]) {
         [delegate followingStatButtonPressed];
     }
