@@ -58,5 +58,6 @@
 @property (nonatomic) UIButton *backButton;
 
 - (IBAction)saveButtonHit:(id)sender;
-
+- (CGRect)getTextFieldPosition:(CGRect)frameX;
+- (CGRect)getTopLineHeight:(CGRect)oldFrame;
 @end

@@ -16,6 +16,9 @@
 @synthesize delegate;
 @synthesize textViewdOrigRect;
 @synthesize bottomLineOrigY;
+@synthesize topLineOrigHeight;
+@synthesize topLine;
+@synthesize bottomLine;
 
 - (void)dealloc
 {
@@ -36,19 +39,26 @@
     self.leftMiddleLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
     self.middleLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
     CGRect lineRect = self.bottomLine.frame;
-    lineRect.size.height = 0.5;
+    lineRect.size.height = 0.25;
     self.bottomLine.frame = lineRect;
     lineRect = self.topLine.frame;
-    lineRect.size.height = 0.5;
+    lineRect.size.height = 0.25;
     self.topLine.frame = lineRect;
     self.userImageView.layer.cornerRadius = self.userImageView.layer.frame.size.width / 2;
     self.userImageView.clipsToBounds = YES;
 
     textViewdOrigRect = self.textView.frame;
-    bottomLineOrigY = self.bottomLine.frame.origin.y + 0.5;
-
+    debug NSLog(@"self.bottomLineFrame=%@", NSStringFromCGRect((self.bottomLine.frame)));
+    bottomLineOrigY = self.bottomLine.frame.origin.y ;//+ 0.5;
+    topLineOrigHeight = self.topLine.frame.size.height;
+    
+//    self.bottomLine.layer.borderColor = [[TDConstants brandingRedColor] CGColor];
+//    self.bottomLine.layer.borderWidth = 2.;
+//    self.topLine.layer.borderColor = [[UIColor blueColor] CGColor];
+//    self.topLine.layer.borderWidth = 2.;
+//    
     self.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
-    self.layer.borderWidth = TD_CELL_BORDER_WIDTH;
+    self.layer.borderWidth = .25;
 }
 
 @end

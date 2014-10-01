@@ -88,6 +88,7 @@
     UIBarButtonItem *barButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];
     self.navigationItem.leftBarButtonItem = barButton;
     self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
+    self.automaticallyAdjustsScrollViewInsets = NO;
 
     self.activityIndicator.text.text = @"Loading";
     [self showActivity];
@@ -465,29 +466,12 @@
 }
 
 #pragma mark - TableView Delegates
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    return 20.;
+}
 
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    switch (section) {
-        case 0:
-            return 20.0;
-            break;
-        case 1:
-            return 20.0;
-            break;
-        case 2:
-            return 20.0;
-            break;
-        case 3:
-            return 20.0;
-            break;
-        case 4:
-            return 20;
-            break;
-        break;
-        default:
-            return 0.;
-        break;
-    }
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    return 0.001;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -525,11 +509,12 @@
     if (!cell) {
         NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_EDITPROFILE owner:self options:nil];
         cell = [topLevelObjects objectAtIndex:0];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.textField.delegate = self;
         cell.textView.delegate = self;
     }
-
+    
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    cell.accessoryType = UITableViewCellAccessoryNone;
     cell.titleLabel.hidden = YES;
     cell.longTitleLabel.hidden = YES;
     cell.middleLabel.hidden = YES;
@@ -546,11 +531,16 @@
                                        cell.bottomLineOrigY,
                                        cell.bottomLine.frame.size.width,
                                        cell.bottomLine.frame.size.height);
-
+    cell.topLine.frame = CGRectMake(cell.topLine.frame.origin.x,
+                                    cell.topLine.frame.origin.y,
+                                    cell.topLine.frame.size.width,
+                                    cell.topLineOrigHeight);
     switch (indexPath.section) {
         case 0: // profile settings
             switch (indexPath.row) {
                 case 0:
+                {
+                    cell.topLine.frame = [self getTopLineHeight:cell.topLine.frame];
                     cell.userImageView.hidden = NO;
                     if (self.editedProfileImage) {
                         cell.userImageView.image = self.editedProfileImage;
@@ -563,56 +553,63 @@
                     cell.topLine.hidden = NO;
                     cell.leftMiddleLabel.hidden = NO;
                     cell.leftMiddleLabel.text = @"Edit Photo";
-                    CGRect labelFrame = cell.leftMiddleLabel.frame;
-                    labelFrame.origin.x = TD_TEXTFIELD_ORIGIN_X_POS;
-                    cell.leftMiddleLabel.frame = labelFrame;
+                    cell.leftMiddleLabel.frame = [self getTextFieldPosition:cell.leftMiddleLabel.frame];
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
-                    break;
+                }
+                break;
                 case 1:
+                {
                     cell.titleLabel.hidden = NO;
                     cell.textField.hidden = NO;
                     cell.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"name"
                                                                                            attributes:@{NSForegroundColorAttributeName: textFieldPlaceHolderColor}];
                     cell.titleLabel.text = @"Name";
                     cell.textField.text = self.name;
-                    CGRect cellFrame = cell.textField.frame;
-                    cellFrame.origin.x = TD_TEXTFIELD_ORIGIN_X_POS;
-                    cell.textField.frame = cellFrame;
-                    break;
+                    cell.textField.frame = [self getTextFieldPosition:cell.textField.frame];
+                    cell.topLine.hidden = NO;
+                }
+                break;
                 case 2:
+                {
+                    cell.topLine.hidden = NO;
                     cell.titleLabel.hidden = NO;
                     cell.textField.hidden = NO;
                     cell.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"username"
                                                                                            attributes:@{NSForegroundColorAttributeName: textFieldPlaceHolderColor}];
                     cell.titleLabel.text = @"Username";
                     cell.textField.text = self.username;
-                    CGRect fieldFrame = cell.textField.frame;
-                    cellFrame.origin.x = TD_TEXTFIELD_ORIGIN_X_POS;
-                    cell.textField.frame = fieldFrame;
+                    cell.textField.frame = [self getTextFieldPosition:cell.textField.frame];
+                }
                     break;
                 case 3:
+                {
                     cell.titleLabel.hidden = NO;
                     cell.textField.hidden = NO;
 
                     cell.titleLabel.text = @"Location";
                     cell.textField.text = @"San Francisco";
+                    cell.textField.frame = [self getTextFieldPosition:cell.textField.frame];
                     cell.textField.textColor = [TDConstants commentTextColor];
-                    break;
+                }
+                break;
                     
                 case 4:
+                {
                     cell.titleLabel.hidden = NO;
                     cell.textView.hidden = NO;
                     cell.titleLabel.text = @"Bio";
                     cell.textView.text = self.bio;
                     CGRect newTextFrame = cell.textView.frame;
                     newTextFrame.size.height = [self tableView:tableView heightForRowAtIndexPath:indexPath];
-                    newTextFrame.origin.x = TD_TEXTFIELD_ORIGIN_X_POS;
                     cell.textView.frame = newTextFrame;
+                    cell.textView.frame = [self getTextFieldPosition:cell.textView.frame];
+                    cell.textView.textContainer.lineFragmentPadding = 0;
                     cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
                                                        CGRectGetMaxY(newTextFrame),
                                                        cell.bottomLine.frame.size.width,
                                                        cell.bottomLine.frame.size.height);
-                    break;
+                }
+                break;
                 default:
                     break;
             }
@@ -621,14 +618,17 @@
         case 1: // Private information
             switch (indexPath.row) {
                 case 0:
+                {
                     cell.titleLabel.hidden = NO;
                     cell.textField.hidden = NO;
                     cell.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"phone"
                                                                                            attributes:@{NSForegroundColorAttributeName: textFieldPlaceHolderColor}];
                     cell.titleLabel.text = @"Phone";
                     cell.textField.text = self.phone;
+                    cell.textField.frame = [self getTextFieldPosition:cell.textField.frame];
                     cell.topLine.hidden = NO;
                     cell.textField.keyboardType = UIKeyboardTypePhonePad;
+                }
                 break;
                 case 1:
                     cell.titleLabel.hidden = NO;
@@ -637,6 +637,8 @@
                                                                                            attributes:@{NSForegroundColorAttributeName: textFieldPlaceHolderColor}];
                     cell.titleLabel.text = @"Email";
                     cell.textField.text = self.email;
+                    cell.textField.frame = [self getTextFieldPosition:cell.textField.frame];
+
                 break;
                 default:
                     break;
@@ -646,11 +648,15 @@
         case 2: // Settings
             switch (indexPath.row) {
                 case 0:
+                {
                     cell.topLine.hidden = NO;
                     cell.longTitleLabel.hidden = NO;
                     cell.longTitleLabel.text = @"Push Notifications";
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                    
+                    cell.topLine.frame = [self getTopLineHeight:cell.topLine.frame];
+                }
                     break;
                 case 1:
                     cell.topLine.hidden = YES;
@@ -695,7 +701,7 @@
                     cell.topLine.hidden = NO;
                     cell.middleLabel.hidden = NO;
                     cell.middleLabel.text = @"Log Out";
-                    cell.middleLabel.textColor = [TDConstants brandingRedColor]; //TODO: #4c4c4c is grey but spec shows red
+                    cell.middleLabel.textColor = [TDConstants brandingRedColor];
                     debug NSLog(@"debug height=%f", cell.middleLabel.frame.size.height);
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
                     break;
@@ -708,8 +714,22 @@
     return cell;
 }
 
+- (CGRect)getTextFieldPosition:(CGRect)frameX {
+    CGRect newFrame = CGRectMake(frameX.origin.x, frameX.origin.y, frameX.size.width, frameX.size.height);
+    newFrame.origin.x = TD_TEXTFIELD_ORIGIN_X_POS;
+    
+    return newFrame;
+}
+
+- (CGRect)getTopLineHeight:(CGRect)oldFrame {
+    CGRect newFrame = CGRectMake(oldFrame.origin.x, oldFrame.origin.y, oldFrame.size.width, oldFrame.size.height);
+    newFrame.size.height = oldFrame.size.height + .25;
+    
+    return newFrame;
+}
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return indexPath.section == 0 && indexPath.row == 4 ? 90.0 : 50.0;
+    return indexPath.section == 0 && indexPath.row == 4 ? 90.0 : 44.0;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
