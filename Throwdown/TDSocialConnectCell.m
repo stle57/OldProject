@@ -13,7 +13,7 @@
 - (void)awakeFromNib
 {
     // Initialization code
-    self.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
+    self.layer.borderColor = [[TDConstants lightBorderColor] CGColor];
     self.layer.borderWidth = TD_CELL_BORDER_WIDTH;
 }
 

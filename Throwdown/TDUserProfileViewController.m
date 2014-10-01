@@ -33,7 +33,6 @@
 
 - (void)viewDidLoad {
     debug NSLog(@"inside TDUserProfileViewController:viewDidLoad");
-    //needsProfileHeader = YES;
 
     [super viewDidLoad];
 
@@ -44,7 +43,7 @@
     self.tableView.contentInset = UIEdgeInsetsZero;
      
     // Background color
-    self.tableView.backgroundColor = [TDConstants postViewBackgroundColor];
+    self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
     
     // Title
     self.titleLabel.textColor = [UIColor whiteColor];
@@ -52,15 +51,15 @@
     [self.navigationItem setTitleView:self.titleLabel];
 
     // Bar Button Items
-    switch (self.fromProfileType) {
-        case kFromProfileScreenType_OwnProfileButton: {
+    switch (self.profileType) {
+        case kFeedProfileTypeOwnViaButton: {
             UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.closeButton];     // 'X'
             self.navigationItem.leftBarButtonItem = leftBarButton;
             UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.settingsButton]; // Settings
             self.navigationItem.rightBarButtonItem = rightBarButton;
         }
         break;
-        case kFromProfileScreenType_OwnProfile: {
+        case kFeedProfileTypeOwn: {
             UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];    // <
             self.navigationItem.leftBarButtonItem = leftBarButton;
             self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
@@ -72,7 +71,7 @@
         }
         break;
 
-        case kFromProfileScreenType_OtherUser:
+        case kFeedProfileTypeOther:
         default:
         {
             UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];    // <
@@ -127,7 +126,7 @@
 
     TDUserProfileEditViewController *vc = [[TDUserProfileEditViewController alloc] initWithNibName:@"TDUserProfileEditViewController" bundle:nil ];
     vc.profileUser = [[TDCurrentUser sharedInstance] currentUserObject];
-    vc.fromProfileType = self.fromProfileType;
+    vc.profileType = self.profileType;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -293,8 +292,7 @@
 
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
     vc.userId = user.userId;
-    vc.needsProfileHeader = YES;
-    vc.fromProfileType = kFromProfileScreenType_OtherUser;
+    vc.profileType = kFeedProfileTypeOther;
     [self.navigationController pushViewController:vc animated:YES];
 }
 

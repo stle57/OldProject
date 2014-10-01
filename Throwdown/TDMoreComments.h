@@ -8,19 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@protocol TDMoreCommentsDelegate <NSObject>
-@optional
-@end
-
 @interface TDMoreComments : UITableViewCell
-{
-    id <TDMoreCommentsDelegate> __unsafe_unretained delegate;
-    NSInteger row;
-    CGRect origMoreLabelRect;
-}
 
-@property (nonatomic, assign) id <TDMoreCommentsDelegate> __unsafe_unretained delegate;
-@property (nonatomic, assign) NSInteger row;
 @property (weak, nonatomic) IBOutlet UIImageView *moreImageView;
 @property (weak, nonatomic) IBOutlet UILabel *moreLabel;
 

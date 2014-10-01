@@ -28,7 +28,7 @@
 -(id)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 1, 320, frame.size.height)];
+        self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 1, SCREEN_WIDTH, frame.size.height)];
         self.tableView.delegate = self;
         self.tableView.dataSource = self;
         self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -36,8 +36,8 @@
         [self addSubview:self.tableView];
 
         CGFloat scale = [[UIScreen mainScreen] scale];
-        UIView *topLine = [[UIView alloc] initWithFrame:CGRectMake(0, scale > 1 ? 0.5 : 0, 320, 1.0 / scale)];
-        topLine.backgroundColor = [TDConstants borderColor];
+        UIView *topLine = [[UIView alloc] initWithFrame:CGRectMake(0, scale > 1 ? 0.5 : 0, SCREEN_WIDTH, 1.0 / scale)];
+        topLine.backgroundColor = [TDConstants lightBorderColor];
         [self addSubview:topLine];
 
         self.userList = [TDUserList sharedInstance];
@@ -157,7 +157,7 @@
 
 - (void)updateFrame:(CGRect)frame {
     self.frame = frame;
-    self.tableView.frame = CGRectMake(0, 0, 320, frame.size.height);
+    self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, frame.size.height);
 }
 
 @end

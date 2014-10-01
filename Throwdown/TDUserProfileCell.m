@@ -10,13 +10,16 @@
 #import "TDAppDelegate.h"
 #import "TDConstants.h"
 #import <QuartzCore/QuartzCore.h>
+#import "TDViewControllerHelper.h"
+#import "TDAPIClient.h"
+
+static CGFloat const kBottomMargin = 15;
+static CGFloat const kMinHeight = 230 + kBottomMargin;
 
 @implementation TDUserProfileCell
 
-@synthesize delegate;
-
 - (void)dealloc {
-    delegate = nil;
+    self.delegate = nil;
 }
 
 - (void)awakeFromNib {
@@ -25,125 +28,202 @@
     self.bioLabel.font = BIO_FONT;
     self.userImageView.layer.cornerRadius = 35;
     self.userImageView.layer.masksToBounds = YES;
-    
-    // Create post button
-    // For post button, need top border and left border
-    UIView *topBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0,
-                                                                self.postButton.frame.size.width, TD_CELL_BORDER_WIDTH) ];
-    topBorder.backgroundColor = [TDConstants commentTimeTextColor];
-    [self.postButton addSubview:topBorder];
-    
+    self.origBioLabelRect = self.bioLabel.frame;
+
+    CGRect borderFrame = self.buttonsTopBorder.frame;
+    borderFrame.size.height = (1.0 / [[UIScreen mainScreen] scale]);
+    self.buttonsTopBorder.frame = borderFrame;
+
     UIView *leftBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0, TD_CELL_BORDER_WIDTH, self.postButton.frame.size.height) ];
-    leftBorder.backgroundColor = [TDConstants commentTimeTextColor];
+    leftBorder.backgroundColor = [TDConstants darkBorderColor];
     [self.postButton addSubview:leftBorder];
+
     CALayer * postLayer = [self.postButton layer];
     [postLayer setMasksToBounds:YES];
     [postLayer setCornerRadius:0.0]; //when radius is 0, the border is a rectangle
 
-    // Create PR button
-    // For pr button, need top and left border
-    // For post button, need top border and left border
-    UIView *prTopBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.prButton.frame.size.width, TD_CELL_BORDER_WIDTH) ];
-    prTopBorder.backgroundColor = [TDConstants commentTimeTextColor];
-    [self.prButton addSubview:prTopBorder];
-    
     UIView *prLeftBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0, TD_CELL_BORDER_WIDTH, self.prButton.frame.size.height) ];
-    prLeftBorder.backgroundColor = [TDConstants commentTimeTextColor];
+    prLeftBorder.backgroundColor = [TDConstants darkBorderColor];
     [self.prButton addSubview:prLeftBorder];
 
     CALayer * prLayer = [self.prButton layer];
     [prLayer setMasksToBounds:YES];
     [prLayer setCornerRadius:0.0]; //when radius is 0, the border is a rectangle
-    
+
     UIView *followerTopBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0,
             self.followerButton.frame.size.width, TD_CELL_BORDER_WIDTH) ];
     followerTopBorder.backgroundColor = [TDConstants commentTimeTextColor];
     [self.followerButton addSubview:followerTopBorder];
     self.followerButton.layer.borderWidth = 0.f;
-    
+
     UIView *followerLeftBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0,
                                                                          TD_CELL_BORDER_WIDTH, self.followerButton.frame.size.height) ];
-    followerLeftBorder.backgroundColor = [TDConstants commentTimeTextColor];
+    followerLeftBorder.backgroundColor = [TDConstants darkBorderColor];
     [self.followerButton addSubview:followerLeftBorder];
-    
+
     CALayer * followerLayer = [self.followerButton layer];
     [followerLayer setMasksToBounds:YES];
     [followerLayer setCornerRadius:0.0]; //when radius is 0, the border is a rectangle
-    // Following Button
-    //For following button, need top and right border
-    UIView *followingTopBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0,
-                                                                         self.followingButton.frame.size.width, TD_CELL_BORDER_WIDTH) ];
-    followingTopBorder.backgroundColor = [TDConstants commentTimeTextColor];
-    [self.followingButton addSubview:followingTopBorder];
-    
+
     UIView *followingLeftBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0,
                                                                           TD_CELL_BORDER_WIDTH, self.followingButton.frame.size.height) ];
-    followingLeftBorder.backgroundColor = [TDConstants commentTimeTextColor];
+    followingLeftBorder.backgroundColor = [TDConstants darkBorderColor];
     [self.followingButton addSubview:followingLeftBorder];
-    
+
     CALayer * followingLayer = [self.followingButton layer];
     [followingLayer setMasksToBounds:YES];
     [followingLayer setCornerRadius:0.0]; //when radius is 0, the border is a rectangle
 }
 
+- (void)setUser:(TDUser *)user withButton:(UserProfileButtonType)buttonType {
+    self.bioLabel.hidden = YES;
+    self.userImageView.hidden = YES;
 
-- (void)modifyStatButtonAttributes:(TDUser*)user {
-    
-    [self modifyStatButtonString:self.postButton statCount:user.postCount textString:@"\nPosts"];
-    [self modifyStatButtonString:self.prButton statCount:user.prCount textString:@"\nPRs"];
-    [self modifyStatButtonString:self.followerButton statCount:user.followerCount textString:@"\nFollowers"];
-    [self modifyStatButtonString:self.followingButton statCount:user.followingCount textString:@"\nFollowing"];
+    if (user) {
+        self.userNameLabel.text = user.name;
+        self.userImageView.hidden = NO;
+
+        CGFloat offset = 0;
+        if (user.bio && ![user.bio isKindOfClass:[NSNull class]]) {
+            self.bioLabel.attributedText = (NSMutableAttributedString *)[TDViewControllerHelper makeParagraphedTextWithBioString:user.bio];
+
+            CGRect bioFrame = self.bioLabel.frame;
+            bioFrame.size.height = user.bioHeight;
+            self.bioLabel.frame = bioFrame;
+            self.bioLabel.hidden = NO;
+            offset = self.bioLabel.frame.origin.y;
+        } else {
+            self.bioLabel.hidden = YES;
+        }
+
+        // Now move the invite button down
+        CGRect newInviteButtonFrame = self.inviteButton.frame;
+        newInviteButtonFrame.origin.y = offset + user.bioHeight + kBioLabelInviteButtonPadding;
+        self.inviteButton.frame = newInviteButtonFrame;
+
+        // Move the stat buttons down
+        CGFloat yStatButtonPosition = newInviteButtonFrame.origin.y + newInviteButtonFrame.size.height + kInviteButtonStatButtonPadding;
+
+        CGRect borderFrame = self.buttonsTopBorder.frame;
+        borderFrame.origin.y = yStatButtonPosition;
+        self.buttonsTopBorder.frame = borderFrame;
+
+        CGRect newPostButtonFrame = self.postButton.frame;
+        newPostButtonFrame.origin.y = yStatButtonPosition;
+        self.postButton.frame = newPostButtonFrame;
+
+        CGRect newPrButtonFrame = self.prButton.frame;
+        newPrButtonFrame.origin.y = yStatButtonPosition;
+        self.prButton.frame = newPrButtonFrame;
+
+        CGRect newFollowersFrame = self.followerButton.frame;
+        newFollowersFrame.origin.y = yStatButtonPosition;
+        self.followerButton.frame = newFollowersFrame;
+
+        CGRect newFollowingFrame = self.followingButton.frame;
+        newFollowingFrame.origin.y = yStatButtonPosition;
+        self.followingButton.frame = newFollowingFrame;
+
+        if (![user hasDefaultPicture]) {
+            [[TDAPIClient sharedInstance] setImage:@{@"imageView":self.userImageView,
+                                                     @"filename":user.picture,
+                                                     @"width":@70,
+                                                     @"height":@70}];
+        }
+
+        switch (buttonType) {
+            case UserProfileButtonTypeFollow:
+                self.inviteButton.enabled = YES;
+                [self.inviteButton setImage:[UIImage imageNamed:@"btn-following.png"] forState:UIControlStateNormal];
+                [self.inviteButton setImage:[UIImage imageNamed:@"btn-following-hit.png"] forState:UIControlStateSelected];
+                [self.inviteButton setImage:[UIImage imageNamed:@"btn-following-hit.png"] forState:UIControlStateHighlighted];
+                [self.inviteButton setTag:kFollowButtonTag];
+                break;
+
+            case UserProfileButtonTypeFollowing:
+                self.inviteButton.enabled = YES;
+                [self.inviteButton setImage:[UIImage imageNamed:@"btn-following.png"] forState:UIControlStateNormal];
+                [self.inviteButton setImage:[UIImage imageNamed:@"btn-following-hit.png"] forState:UIControlStateSelected];
+                [self.inviteButton setImage:[UIImage imageNamed:@"btn-following-hit.png"] forState:UIControlStateHighlighted];
+                [self.inviteButton setTag:kFollowingButtonTag];
+                break;
+
+            case UserProfileButtonTypeInvite:
+                self.inviteButton.enabled = YES;
+                [self.inviteButton setImage:[UIImage imageNamed:@"btn-invite-friends.png"] forState:UIControlStateNormal];
+                [self.inviteButton setImage:[UIImage imageNamed:@"btn-invite-friends-hit.png"] forState:UIControlStateSelected];
+                [self.inviteButton setImage:[UIImage imageNamed:@"btn-invite-friends-hit.png"] forState:UIControlStateHighlighted];
+                [self.inviteButton setTag:kInviteButtonTag];
+                break;
+            case UserProfileButtonTypeUnknown:
+                self.inviteButton.enabled = NO;
+                break;
+        }
+
+        [self modifyStatButtonString:self.postButton statCount:user.postCount textString:@"\nPosts"];
+        [self modifyStatButtonString:self.prButton statCount:user.prCount textString:@"\nPRs"];
+        [self modifyStatButtonString:self.followerButton statCount:user.followerCount textString:@"\nFollowers"];
+        [self modifyStatButtonString:self.followingButton statCount:user.followingCount textString:@"\nFollowing"];
+
+        CGRect frame = self.whiteUnderView.frame;
+        frame.size.height = [[self class] heightForUserProfile:user] - kBottomMargin;
+        self.whiteUnderView.frame = frame;
+        CGFloat lineWidth = (1.0 / [[UIScreen mainScreen] scale]);
+        self.bottomLine.frame = CGRectMake(0, frame.size.height, SCREEN_WIDTH, lineWidth);
+    }
 }
 
 -(void)modifyStatButtonString:(UIButton*)button statCount:(NSNumber*)statCount textString:(NSString*)textString{
     UIFont *font = [TDConstants fontSemiBoldSized:18.0];
     UIFont *font2= [TDConstants fontRegularSized:14];
     NSString *postString = [NSString stringWithFormat:@"%@%@", statCount.intValue > 500 ? @"500+" : statCount.stringValue, textString];
-    
+
     NSMutableAttributedString *attString = [[NSMutableAttributedString alloc] initWithString:postString];
     [attString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, postString.length)];
     [attString addAttribute:NSForegroundColorAttributeName value:[TDConstants brandingRedColor] range:NSMakeRange(0, postString.length)];
     [attString addAttribute:NSFontAttributeName value:font2 range:NSMakeRange(postString.length - textString.length, textString.length)];
     [attString addAttribute:NSForegroundColorAttributeName value:[UIColor grayColor] range:NSMakeRange(postString.length - textString.length, textString.length)];
-    
+
     button.titleLabel.lineBreakMode = NSLineBreakByWordWrapping;
     button.titleLabel.textAlignment = NSTextAlignmentCenter;
-    
+
     [button setAttributedTitle:attString forState:UIControlStateNormal];
 }
 
 - (IBAction)inviteButtonPressed:(UIButton *)sender {
     debug NSLog(@"TDUserProfileCell-inviteButtonPressed");
-    
-   
-    if (delegate && [delegate respondsToSelector:@selector(inviteButtonPressedFromRow:)]) {
-        [delegate inviteButtonPressedFromRow:sender.tag];
+
+    if (self.delegate && [self.delegate respondsToSelector:@selector(inviteButtonPressedFromRow:)]) {
+        [self.delegate inviteButtonPressedFromRow:sender.tag];
     }
 }
 
 - (IBAction)postsButtonPressed:(UIButton *)sender {
-    if(delegate && [delegate respondsToSelector:@selector(postsStatButtonPressed)]) {
-        [delegate postsStatButtonPressed];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(postsStatButtonPressed)]) {
+        [self.delegate postsStatButtonPressed];
     }
 }
 
 - (IBAction)prButtonPressed:(UIButton*)sender {
-    if(delegate && [delegate respondsToSelector:@selector(prStatButtonPressed)]) {
-        [delegate prStatButtonPressed];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(prStatButtonPressed)]) {
+        [self.delegate prStatButtonPressed];
     }
 }
 
 - (IBAction)followerButtonPressed:(UIButton*)sender {
-    debug NSLog(@"HIT FOLLOWER BUTTON");
-    if(delegate && [delegate respondsToSelector:@selector(followerStatButtonPressed)]) {
-        [delegate followerStatButtonPressed];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(followerStatButtonPressed)]) {
+        [self.delegate followerStatButtonPressed];
     }
 }
 
 - (IBAction)followingButtonPressed:(UIButton*)sender {
-    debug NSLog(@"hit FOLLOWING BUTTON");
-    if(delegate && [delegate respondsToSelector:@selector(followingStatButtonPressed)]) {
-        [delegate followingStatButtonPressed];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(followingStatButtonPressed)]) {
+        [self.delegate followingStatButtonPressed];
     }
 }
+
++ (CGFloat)heightForUserProfile:(TDUser *)user {
+    return kMinHeight + user.bioHeight + (user.bioHeight > 0 ? 0 : 0);
+}
+
 @end

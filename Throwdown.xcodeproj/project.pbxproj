@@ -7,13 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2D00148B18CFB57C0070DE16 /* TDTwoButtonView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D00148918CFB57C0070DE16 /* TDTwoButtonView.m */; };
 		2D01951C1901DAF4000CBF74 /* TDNoPostsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D01951A1901DAF4000CBF74 /* TDNoPostsCell.m */; };
 		2D01951D1901DAF4000CBF74 /* TDNoPostsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D01951B1901DAF4000CBF74 /* TDNoPostsCell.xib */; };
 		2D1AEE7018C937560055C315 /* TDDetailsLikesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D1AEE6E18C937560055C315 /* TDDetailsLikesCell.m */; };
 		2D1AEE7118C937560055C315 /* TDDetailsLikesCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D1AEE6F18C937560055C315 /* TDDetailsLikesCell.xib */; };
 		2D2E832E18CA579B00846B2E /* TDComment.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D2E832D18CA579B00846B2E /* TDComment.m */; };
-		2D3F8DF718CFC81E00333F0B /* TDTwoButtonView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2D3F8DF618CFC81E00333F0B /* TDTwoButtonView.xib */; };
 		2D531ED918E38A47006CA088 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D531ED818E38A47006CA088 /* MessageUI.framework */; };
 		2D5714CC18BD9AB300AF0B4D /* VideoButtonSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5714C918BD9AB300AF0B4D /* VideoButtonSegue.m */; };
 		2D5714CD18BD9AB300AF0B4D /* VideoCloseSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D5714CB18BD9AB300AF0B4D /* VideoCloseSegue.m */; };
@@ -44,8 +42,8 @@
 		2DA5F05C18D37C70003D2F99 /* BebasNeue Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5F05718D37C70003D2F99 /* BebasNeue Light.otf */; };
 		2DA5F05D18D37C70003D2F99 /* BebasNeue Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5F05818D37C70003D2F99 /* BebasNeue Regular.otf */; };
 		2DA5F05E18D37C70003D2F99 /* BebasNeue Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2DA5F05918D37C70003D2F99 /* BebasNeue Thin.otf */; };
-		2DA73D7718BFCC2E00D87370 /* TDLikeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA73D7618BFCC2E00D87370 /* TDLikeView.m */; };
-		2DA73D7918BFCCD000D87370 /* TDLikeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA73D7818BFCCD000D87370 /* TDLikeView.xib */; };
+		2DA73D7718BFCC2E00D87370 /* TDFeedLikeCommentCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA73D7618BFCC2E00D87370 /* TDFeedLikeCommentCell.m */; };
+		2DA73D7918BFCCD000D87370 /* TDFeedLikeCommentCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA73D7818BFCCD000D87370 /* TDFeedLikeCommentCell.xib */; };
 		2DA8639318F49D190089B048 /* TDUserProfileCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DA8639118F49D190089B048 /* TDUserProfileCell.m */; };
 		2DA8639418F49D190089B048 /* TDUserProfileCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DA8639218F49D190089B048 /* TDUserProfileCell.xib */; };
 		2DBA430118DA455500366737 /* TDTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DBA42FF18DA455500366737 /* TDTextField.m */; };
@@ -144,6 +142,7 @@
 		A182D833188B60CD00F794A5 /* SAVideoRangeSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = A182D82F188B60CD00F794A5 /* SAVideoRangeSlider.m */; };
 		A182D839188F2C2D00F794A5 /* TDHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A182D838188F2C2D00F794A5 /* TDHomeViewController.m */; };
 		A182D83A188F2C2D00F794A5 /* TDHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A182D838188F2C2D00F794A5 /* TDHomeViewController.m */; };
+		A18D9A5E19D9F551006A0658 /* Launch Screen.xib in Resources */ = {isa = PBXBuildFile; fileRef = A18D9A5D19D9F551006A0658 /* Launch Screen.xib */; };
 		A19FF5E41891FEEF001A0AD0 /* TDPost.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF5E31891FEEF001A0AD0 /* TDPost.m */; };
 		A19FF5E718932868001A0AD0 /* TDUserAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF5E618932868001A0AD0 /* TDUserAPI.m */; };
 		A19FF60D18970BBB001A0AD0 /* RSCDNContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF5FD18970BBB001A0AD0 /* RSCDNContainer.m */; };
@@ -174,6 +173,8 @@
 		A1D6BB10196BC1FD007983F8 /* TDStoryboardSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = A1D6BB0F196BC1FD007983F8 /* TDStoryboardSegue.m */; };
 		A1D6BB13196BC7AC007983F8 /* TDSlideUpSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = A1D6BB12196BC7AC007983F8 /* TDSlideUpSegue.m */; };
 		A1D6BB1619775492007983F8 /* TDTextUpload.m in Sources */ = {isa = PBXBuildFile; fileRef = A1D6BB1519775492007983F8 /* TDTextUpload.m */; };
+		A1D7072B19DBE8ED00ECB221 /* ObservingPlayerItem.m in Sources */ = {isa = PBXBuildFile; fileRef = A1D7072A19DBE8ED00ECB221 /* ObservingPlayerItem.m */; };
+		A1D7073119E0C3E800ECB221 /* TDKeyboardObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = A1D7073019E0C3E800ECB221 /* TDKeyboardObserver.m */; };
 		A1DAEEB318EB79FA00742949 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1DAEEB218EB79FA00742949 /* Crashlytics.framework */; };
 		A1E3A16D18FCC8630038A8A4 /* TDActivitiesCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A1E3A16C18FCC8630038A8A4 /* TDActivitiesCell.xib */; };
 		A1E3A17018FCCF2B0038A8A4 /* TDActivitiesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E3A16F18FCCF2B0038A8A4 /* TDActivitiesCell.m */; };
@@ -196,8 +197,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2D00148818CFB57C0070DE16 /* TDTwoButtonView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTwoButtonView.h; sourceTree = "<group>"; };
-		2D00148918CFB57C0070DE16 /* TDTwoButtonView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTwoButtonView.m; sourceTree = "<group>"; };
 		2D0195191901DAF4000CBF74 /* TDNoPostsCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDNoPostsCell.h; sourceTree = "<group>"; };
 		2D01951A1901DAF4000CBF74 /* TDNoPostsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDNoPostsCell.m; sourceTree = "<group>"; };
 		2D01951B1901DAF4000CBF74 /* TDNoPostsCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDNoPostsCell.xib; sourceTree = "<group>"; };
@@ -206,7 +205,6 @@
 		2D1AEE6F18C937560055C315 /* TDDetailsLikesCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDDetailsLikesCell.xib; sourceTree = "<group>"; };
 		2D2E832C18CA579B00846B2E /* TDComment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDComment.h; sourceTree = "<group>"; };
 		2D2E832D18CA579B00846B2E /* TDComment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDComment.m; sourceTree = "<group>"; };
-		2D3F8DF618CFC81E00333F0B /* TDTwoButtonView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDTwoButtonView.xib; sourceTree = "<group>"; };
 		2D531ED818E38A47006CA088 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 		2D5714C818BD9AB300AF0B4D /* VideoButtonSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoButtonSegue.h; sourceTree = "<group>"; };
 		2D5714C918BD9AB300AF0B4D /* VideoButtonSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoButtonSegue.m; sourceTree = "<group>"; };
@@ -249,9 +247,9 @@
 		2DA5F05718D37C70003D2F99 /* BebasNeue Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "BebasNeue Light.otf"; path = "fonts/BebasNeue Light.otf"; sourceTree = "<group>"; };
 		2DA5F05818D37C70003D2F99 /* BebasNeue Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "BebasNeue Regular.otf"; path = "fonts/BebasNeue Regular.otf"; sourceTree = "<group>"; };
 		2DA5F05918D37C70003D2F99 /* BebasNeue Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "BebasNeue Thin.otf"; path = "fonts/BebasNeue Thin.otf"; sourceTree = "<group>"; };
-		2DA73D7518BFCC2D00D87370 /* TDLikeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDLikeView.h; sourceTree = "<group>"; };
-		2DA73D7618BFCC2E00D87370 /* TDLikeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDLikeView.m; sourceTree = "<group>"; };
-		2DA73D7818BFCCD000D87370 /* TDLikeView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDLikeView.xib; sourceTree = "<group>"; };
+		2DA73D7518BFCC2D00D87370 /* TDFeedLikeCommentCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDFeedLikeCommentCell.h; sourceTree = "<group>"; };
+		2DA73D7618BFCC2E00D87370 /* TDFeedLikeCommentCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDFeedLikeCommentCell.m; sourceTree = "<group>"; };
+		2DA73D7818BFCCD000D87370 /* TDFeedLikeCommentCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDFeedLikeCommentCell.xib; sourceTree = "<group>"; };
 		2DA8639018F49D190089B048 /* TDUserProfileCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserProfileCell.h; sourceTree = "<group>"; };
 		2DA8639118F49D190089B048 /* TDUserProfileCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUserProfileCell.m; sourceTree = "<group>"; };
 		2DA8639218F49D190089B048 /* TDUserProfileCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDUserProfileCell.xib; sourceTree = "<group>"; };
@@ -412,6 +410,7 @@
 		A182D82F188B60CD00F794A5 /* SAVideoRangeSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SAVideoRangeSlider.m; sourceTree = "<group>"; };
 		A182D837188F2C2D00F794A5 /* TDHomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDHomeViewController.h; sourceTree = "<group>"; };
 		A182D838188F2C2D00F794A5 /* TDHomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDHomeViewController.m; sourceTree = "<group>"; };
+		A18D9A5D19D9F551006A0658 /* Launch Screen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = "Launch Screen.xib"; sourceTree = "<group>"; };
 		A19FF5E21891FEEF001A0AD0 /* TDPost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDPost.h; sourceTree = "<group>"; };
 		A19FF5E31891FEEF001A0AD0 /* TDPost.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDPost.m; sourceTree = "<group>"; };
 		A19FF5E518932868001A0AD0 /* TDUserAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserAPI.h; sourceTree = "<group>"; };
@@ -467,6 +466,10 @@
 		A1D6BB12196BC7AC007983F8 /* TDSlideUpSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSlideUpSegue.m; sourceTree = "<group>"; };
 		A1D6BB1419775492007983F8 /* TDTextUpload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTextUpload.h; sourceTree = "<group>"; };
 		A1D6BB1519775492007983F8 /* TDTextUpload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTextUpload.m; sourceTree = "<group>"; };
+		A1D7072919DBE8ED00ECB221 /* ObservingPlayerItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObservingPlayerItem.h; sourceTree = "<group>"; };
+		A1D7072A19DBE8ED00ECB221 /* ObservingPlayerItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObservingPlayerItem.m; sourceTree = "<group>"; };
+		A1D7072F19E0C3E800ECB221 /* TDKeyboardObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDKeyboardObserver.h; sourceTree = "<group>"; };
+		A1D7073019E0C3E800ECB221 /* TDKeyboardObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDKeyboardObserver.m; sourceTree = "<group>"; };
 		A1DAEEB218EB79FA00742949 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 		A1E3A16C18FCC8630038A8A4 /* TDActivitiesCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDActivitiesCell.xib; sourceTree = "<group>"; };
 		A1E3A16E18FCCF2B0038A8A4 /* TDActivitiesCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDActivitiesCell.h; sourceTree = "<group>"; };
@@ -689,6 +692,7 @@
 		A11E04DA1888CB79002F981A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A1D7072819DBE8ED00ECB221 /* ObservingPlayerItem */,
 				4D2843EE19CA299900E4A56C /* AddressBook.framework */,
 				A14483B719A8026000B3BC8D /* ABOAuthCore */,
 				A102FE9E18ECF43C00139606 /* Flurry */,
@@ -820,6 +824,8 @@
 				4DD0836F19AC585C00149968 /* TDToastViewController.m */,
 				A124E93719B019A100DC65C1 /* TDURLHelper.h */,
 				A124E93819B019A100DC65C1 /* TDURLHelper.m */,
+				A1D7072F19E0C3E800ECB221 /* TDKeyboardObserver.h */,
+				A1D7073019E0C3E800ECB221 /* TDKeyboardObserver.m */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -896,6 +902,7 @@
 				A182D838188F2C2D00F794A5 /* TDHomeViewController.m */,
 				A1BB463118F7767200BD9527 /* TDActivityViewController.h */,
 				A1BB463218F7767200BD9527 /* TDActivityViewController.m */,
+				A18D9A5D19D9F551006A0658 /* Launch Screen.xib */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -946,6 +953,7 @@
 		A1C1D0A5189ADAED00666D2A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				A1D7072319DBB6B800ECB221 /* Post */,
 				A12549441999D6B5001C5CD1 /* Posting */,
 				A1D13FF61905F92A000980E0 /* Home view */,
 				A1D13FF51905F8FE000980E0 /* User Profile */,
@@ -956,8 +964,6 @@
 				A1E3A16B18FCC7F40038A8A4 /* Activities */,
 				A11999D718D9290300C39ABF /* Components */,
 				A1D13FF81905F963000980E0 /* Onboarding */,
-				A1C1D0F418A0387B00666D2A /* TDPostView.h */,
-				A1C1D0F518A0387B00666D2A /* TDPostView.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -982,15 +988,12 @@
 				2DA420DB18E63E1A006F4D9C /* TDActivityCell.xib */,
 				2DA420D918E63E1A006F4D9C /* TDActivityCell.h */,
 				2DA420DA18E63E1A006F4D9C /* TDActivityCell.m */,
-				2DA73D7818BFCCD000D87370 /* TDLikeView.xib */,
-				2DA73D7518BFCC2D00D87370 /* TDLikeView.h */,
-				2DA73D7618BFCC2E00D87370 /* TDLikeView.m */,
+				2DA73D7818BFCCD000D87370 /* TDFeedLikeCommentCell.xib */,
+				2DA73D7518BFCC2D00D87370 /* TDFeedLikeCommentCell.h */,
+				2DA73D7618BFCC2E00D87370 /* TDFeedLikeCommentCell.m */,
 				2D01951B1901DAF4000CBF74 /* TDNoPostsCell.xib */,
 				2D0195191901DAF4000CBF74 /* TDNoPostsCell.h */,
 				2D01951A1901DAF4000CBF74 /* TDNoPostsCell.m */,
-				2D3F8DF618CFC81E00333F0B /* TDTwoButtonView.xib */,
-				2D00148818CFB57C0070DE16 /* TDTwoButtonView.h */,
-				2D00148918CFB57C0070DE16 /* TDTwoButtonView.m */,
 				2DA39FD518E0B2570004A9C7 /* TDMoreComments.xib */,
 				2DA39FD318E0B2570004A9C7 /* TDMoreComments.h */,
 				2DA39FD418E0B2570004A9C7 /* TDMoreComments.m */,
@@ -1068,6 +1071,24 @@
 				2DBA42FF18DA455500366737 /* TDTextField.m */,
 			);
 			name = Onboarding;
+			sourceTree = "<group>";
+		};
+		A1D7072319DBB6B800ECB221 /* Post */ = {
+			isa = PBXGroup;
+			children = (
+				A1C1D0F418A0387B00666D2A /* TDPostView.h */,
+				A1C1D0F518A0387B00666D2A /* TDPostView.m */,
+			);
+			name = Post;
+			sourceTree = "<group>";
+		};
+		A1D7072819DBE8ED00ECB221 /* ObservingPlayerItem */ = {
+			isa = PBXGroup;
+			children = (
+				A1D7072919DBE8ED00ECB221 /* ObservingPlayerItem.h */,
+				A1D7072A19DBE8ED00ECB221 /* ObservingPlayerItem.m */,
+			);
+			path = ObservingPlayerItem;
 			sourceTree = "<group>";
 		};
 		A1E3A16B18FCC7F40038A8A4 /* Activities */ = {
@@ -1183,7 +1204,7 @@
 				2DA5F05D18D37C70003D2F99 /* BebasNeue Regular.otf in Resources */,
 				A11E04F41888CB79002F981A /* Images.xcassets in Resources */,
 				2DA5F05E18D37C70003D2F99 /* BebasNeue Thin.otf in Resources */,
-				2DA73D7918BFCCD000D87370 /* TDLikeView.xib in Resources */,
+				2DA73D7918BFCCD000D87370 /* TDFeedLikeCommentCell.xib in Resources */,
 				A1B3EF3C193E8D240014B619 /* TDNoticeViewCell.xib in Resources */,
 				2DA41A5718C7D89C00B21C74 /* TDDetailViewController.xib in Resources */,
 				2DE4653318F605DC0042D81C /* TDUserProfileEditViewController.xib in Resources */,
@@ -1197,11 +1218,11 @@
 				2DA5F05318D36745003D2F99 /* ProximaNova-Regular.otf in Resources */,
 				2DA8639418F49D190089B048 /* TDUserProfileCell.xib in Resources */,
 				4D2843D419C4082300E4A56C /* TDFollowProfileCell.xib in Resources */,
-				2D3F8DF718CFC81E00333F0B /* TDTwoButtonView.xib in Resources */,
 				2D01951D1901DAF4000CBF74 /* TDNoPostsCell.xib in Resources */,
 				2DE2C70519087AA900E51156 /* TDNoMorePostsCell.xib in Resources */,
 				2DBA430218DA455500366737 /* TDTextField.xib in Resources */,
 				2DA5F05218D36745003D2F99 /* ProximaNova-Light.otf in Resources */,
+				A18D9A5E19D9F551006A0658 /* Launch Screen.xib in Resources */,
 				A10F9C251909B01600D2CAB0 /* SingleBellDing.caf in Resources */,
 				2D1AEE7118C937560055C315 /* TDDetailsLikesCell.xib in Resources */,
 				2D648A1718C9415D002FE0AD /* TDDetailsCommentsCell.xib in Resources */,
@@ -1298,7 +1319,6 @@
 				2DE4653218F605DC0042D81C /* TDUserProfileEditViewController.m in Sources */,
 				2DA5354418F35E4300031128 /* TDUserProfileViewController.m in Sources */,
 				A1BC0B3F18BE825200F507B3 /* TDSlideLeftSegue.m in Sources */,
-				2D00148B18CFB57C0070DE16 /* TDTwoButtonView.m in Sources */,
 				A14B2B7F18B5308000980A31 /* TDAPIClient.m in Sources */,
 				4D3DDDE219DDB2790057A8B2 /* TDAddressBookAPI.m in Sources */,
 				A182D839188F2C2D00F794A5 /* TDHomeViewController.m in Sources */,
@@ -1323,7 +1343,7 @@
 				A11999DA18D929E200C39ABF /* UIPlaceHolderTextView.m in Sources */,
 				A1B3EF42193F9B5D0014B619 /* TDNotice.m in Sources */,
 				2D63FA871909D22200FEBA3C /* TDActivityIndicator.m in Sources */,
-				2DA73D7718BFCC2E00D87370 /* TDLikeView.m in Sources */,
+				2DA73D7718BFCC2E00D87370 /* TDFeedLikeCommentCell.m in Sources */,
 				A14E38E81992B5ED001B46AF /* TDSocialNetworksViewController.m in Sources */,
 				A14483C719A807C900B3BC8D /* TWTSignedRequest.m in Sources */,
 				A11E04F21888CB79002F981A /* TDRecordVideoViewController.m in Sources */,
@@ -1339,6 +1359,7 @@
 				A182D832188B60CD00F794A5 /* SASliderRight.m in Sources */,
 				A1D6BB13196BC7AC007983F8 /* TDSlideUpSegue.m in Sources */,
 				2DE2C6A51908657F00E51156 /* TDUserPasswordEditViewController.m in Sources */,
+				A1D7073119E0C3E800ECB221 /* TDKeyboardObserver.m in Sources */,
 				2DA41156191006450099617B /* TDResetPasswordViewController.m in Sources */,
 				A129BAFC197F231700F6FC2B /* TDUserListCell.m in Sources */,
 				A150F08A18A31B14009A72AD /* TDConstants.m in Sources */,
@@ -1381,6 +1402,7 @@
 				4D2843E719C8A7A700E4A56C /* TDInviteViewController.m in Sources */,
 				A1E3A17018FCCF2B0038A8A4 /* TDActivitiesCell.m in Sources */,
 				A1C2481118C6B9CA00F187D9 /* TDProgressIndicator.m in Sources */,
+				A1D7072B19DBE8ED00ECB221 /* ObservingPlayerItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1512,8 +1534,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_DISPLAY_NAME_SUFFIX = "-α";
 				BUNDLE_ID_SUFFIX = .dev;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Stephanie Le (PXQB9WK964)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Stephanie Le (PXQB9WK964)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Andy Crookston (3Y66584V35)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Andy Crookston (3Y66584V35)";
 				EXCLUDED_SOURCE_FILE_NAMES = "";
 				FACEBOOK_APP_ID = 1470514189854120;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1655,8 +1677,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_DISPLAY_NAME_SUFFIX = "-ß";
 				BUNDLE_ID_SUFFIX = .staging;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Stephanie Le (PXQB9WK964)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Stephanie Le (PXQB9WK964)";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
 				EXCLUDED_SOURCE_FILE_NAMES = "";
 				FACEBOOK_APP_ID = 1470514189854120;
 				FRAMEWORK_SEARCH_PATHS = (

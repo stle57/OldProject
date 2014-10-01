@@ -7,9 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TDLikeView.h"
+#import "TDFeedLikeCommentCell.h"
 #import "TDPostView.h"
-#import "TDTwoButtonView.h"
 #import "TDDetailsCommentsCell.h"
 #import "TDMoreComments.h"
 #import <MessageUI/MessageUI.h>

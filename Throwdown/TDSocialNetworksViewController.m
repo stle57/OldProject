@@ -25,10 +25,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.view.backgroundColor = [TDConstants postViewBackgroundColor];
+    self.view.backgroundColor = [TDConstants lightBackgroundColor];
     
     // Background
-    self.tableView.backgroundColor = [TDConstants postViewBackgroundColor];
+    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
     

@@ -96,7 +96,7 @@
     
     self.searchDisplayController.searchBar.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
     self.searchDisplayController.searchBar.layer.borderWidth = TD_CELL_BORDER_WIDTH;
-    self.searchDisplayController.searchBar.backgroundColor = [TDConstants tableViewBackgroundColor];
+    self.searchDisplayController.searchBar.backgroundColor = [TDConstants lightBackgroundColor];
     self.searchDisplayController.searchBar.clipsToBounds = YES;
     self.searchDisplayController.searchResultsTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
@@ -154,12 +154,12 @@
         }];
     } else if (self.followControllerType == kUserListType_TDUsers) {
         self.searchDisplayController.searchBar.hidden = NO;
-        self.tableView.backgroundColor = [TDConstants tableViewBackgroundColor];
-        self.view.backgroundColor = [TDConstants tableViewBackgroundColor];
+        self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
+        self.view.backgroundColor = [TDConstants lightBackgroundColor];
         self.suggestedLabel.hidden = NO;
         self.suggestedLabel.textColor = [TDConstants commentTimeTextColor];
         self.suggestedLabel.font = [TDConstants fontRegularSized:13];
-        self.suggestedLabel.backgroundColor = [TDConstants tableViewBackgroundColor];
+        self.suggestedLabel.backgroundColor = [TDConstants lightBackgroundColor];
         self.suggestedLabel.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
         
         self.inviteButton.hidden = NO;
@@ -170,8 +170,8 @@
         
         self.searchDisplayController.searchBar.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
         self.searchDisplayController.searchBar.layer.borderWidth = TD_CELL_BORDER_WIDTH;
-        self.searchDisplayController.searchBar.backgroundColor = [TDConstants tableViewBackgroundColor];
-        self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants tableViewBackgroundColor];
+        self.searchDisplayController.searchBar.backgroundColor = [TDConstants lightBackgroundColor];
+        self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants lightBackgroundColor];
         self.searchDisplayController.searchResultsTableView.layer.opaque = NO;
         
         // Load data from server
@@ -312,7 +312,7 @@
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 cell.delegate = self;
             }
-            cell.contentView.backgroundColor = [TDConstants tableViewBackgroundColor];
+            cell.contentView.backgroundColor = [TDConstants lightBackgroundColor];
             cell.noFollowLabel.text = @"No matches found";
             cell.findPeopleButton.hidden = YES;
             cell.findPeopleButton.enabled = NO;
@@ -631,8 +631,7 @@
 - (void)showUserProfile:(NSNumber *)userId {
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
     vc.userId = userId;
-    vc.needsProfileHeader = YES;
-    vc.fromProfileType = kFromProfileScreenType_OtherUser;
+    vc.profileType = kFeedProfileTypeOther;
     [self.navigationController pushViewController:vc animated:YES];
 }
 

@@ -36,7 +36,7 @@
     CGRect origTableViewFrame;
     CGRect statusBarFrame;
     BOOL keybdUp;
-    kFromProfileScreenType fromProfileType;
+    kFeedProfileType profileType;
     UIImage *editedProfileImage;
     UIImageView *tempFlyInImageView;
 

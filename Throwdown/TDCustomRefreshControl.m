@@ -27,7 +27,7 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.frame = CGRectMake(0., -100., 320., 100.);
+        self.frame = CGRectMake(0., -100., SCREEN_WIDTH, 100.);
         self.isRefreshing = NO;
 
         self.animationImages = [[NSMutableArray alloc] init];
@@ -46,14 +46,14 @@
             NSString *imageName = [NSString stringWithFormat:@"ptr-00%02d", i];
             [self.animationImages addObject:[UIImage imageNamed:imageName]];
         }
-        self.refreshView = [[UIImageView alloc] initWithFrame:CGRectMake(125, 10, 70, 70)];
+        self.refreshView = [[UIImageView alloc] initWithFrame:CGRectMake((SCREEN_WIDTH / 2 - 35), 10, 70, 70)];
         self.refreshView.image = [UIImage imageNamed:@"ptr-0000"];
         self.refreshView.animationImages = self.animationImages;
         self.refreshView.animationDuration = 2;
         self.refreshView.hidden = YES;
         [self addSubview:self.refreshView];
 
-        self.releaseText = [[UILabel alloc] initWithFrame:CGRectMake(0, 82, 320, 15)];
+        self.releaseText = [[UILabel alloc] initWithFrame:CGRectMake(0, 82, SCREEN_WIDTH, 15)];
         self.releaseText.textAlignment = NSTextAlignmentCenter;
         self.releaseText.textColor = [TDConstants darkTextColor];
         self.releaseText.font = [TDConstants fontSemiBoldSized:12];

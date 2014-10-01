@@ -20,10 +20,12 @@
 #import "TDUserAPI.h"
 #import "TDAPIClient.h"
 #import "TDUserListView.h"
+#import "TDKeyboardObserver.h"
 
-static int const kTextPadding = 28;
+static int const kTextViewConstraint = 84;
+static int const kUserListHeight = 140;
 
-@interface TDCreatePostViewController () <UITextViewDelegate, NSLayoutManagerDelegate>
+@interface TDCreatePostViewController () <UITextViewDelegate, NSLayoutManagerDelegate, TDKeyboardObserverDelegate>
 
 @property (weak, nonatomic) IBOutlet UINavigationItem *navigationBarItem;
 @property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *commentTextView;
@@ -35,6 +37,8 @@ static int const kTextPadding = 28;
 @property (weak, nonatomic) IBOutlet UIButton *prButton;
 @property (weak, nonatomic) IBOutlet UIView *topLineView;
 @property (weak, nonatomic) IBOutlet UIView *optionsView;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *optionsViewConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *textViewConstraint;
 
 @property (nonatomic) BOOL isOriginal;
 @property (nonatomic) BOOL isPR;
@@ -44,7 +48,7 @@ static int const kTextPadding = 28;
 
 @property (nonatomic) UIImage *prOnImage;
 @property (nonatomic) UIImage *prOffImage;
-@property (nonatomic) CGFloat frameHeight;
+@property (nonatomic) TDKeyboardObserver *keyboardObserver;
 
 @end
 
@@ -60,6 +64,8 @@ static int const kTextPadding = 28;
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
     [navigationBar setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontSemiBoldSized:18],
                                              NSForegroundColorAttributeName: [UIColor whiteColor] }];
+
+    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
 
     UIButton *button = [TDViewControllerHelper navCloseButton];
     [button addTarget:self action:@selector(closeButtonPressed) forControlEvents:UIControlEventTouchUpInside];
@@ -85,42 +91,26 @@ static int const kTextPadding = 28;
     [self.postButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[UIColor colorWithWhite:1 alpha:0.5], NSFontAttributeName:[TDConstants fontSemiBoldSized:18] } forState:UIControlStateDisabled];
     self.postButton.enabled = NO;
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
-
-    // Position the media / pr buttons
-    CGFloat screenHeight = [UIScreen mainScreen].bounds.size.height - 64; // 64 == statusbar
-    self.optionsView.center = CGPointMake(self.optionsView.center.x, screenHeight - (self.optionsView.frame.size.height / 2));
-    CGRect textFrame = self.commentTextView.frame;
-    textFrame.size.height = screenHeight - self.optionsView.layer.frame.size.height - kTextPadding;
-    self.commentTextView.frame = textFrame;
-
     // User name filter table view
 	if (self.userListView == nil) {
-		self.userListView = [[TDUserListView alloc] initWithFrame:CGRectMake(0, 140, 320, 320)];
+		self.userListView = [[TDUserListView alloc] initWithFrame:CGRectMake(0, kUserListHeight, SCREEN_WIDTH, 0)];
         self.userListView.delegate = self;
         [self.view addSubview:self.userListView];
 	}
+
+    self.keyboardObserver = [[TDKeyboardObserver alloc] initWithDelegate:self];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    // Delaying animation by 0.1s due to a timing bug when unwinding from adding media
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self.commentTextView becomeFirstResponder];
-    });
+    [self.keyboardObserver startListening];
+    [self.commentTextView becomeFirstResponder];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     [self.commentTextView resignFirstResponder];
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
-    self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
-    self.navigationController.navigationBar.translucent = NO;
+    [self.keyboardObserver stopListening];
 }
 
 - (void)dealloc {
@@ -128,7 +118,8 @@ static int const kTextPadding = 28;
     [self.userListView removeFromSuperview];
     self.userListView.delegate = nil;
     self.userListView = nil;
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self.keyboardObserver stopListening];
+    self.keyboardObserver = nil;
 }
 
 - (void)cancelUpload {
@@ -188,7 +179,7 @@ static int const kTextPadding = 28;
     }
 }
 
-#pragma mark - Keyboard handling
+#pragma mark - TDKeyboardObserverDelegate
 
 - (void)keyboardWillShow:(NSNotification *)notification {
     NSDictionary *info = [notification userInfo];
@@ -198,43 +189,27 @@ static int const kTextPadding = 28;
 
     BOOL isPortrait = UIDeviceOrientationIsPortrait([UIApplication sharedApplication].statusBarOrientation);
     CGFloat keyboardHeight = isPortrait ? keyboardFrame.size.height : keyboardFrame.size.width;
-    self.frameHeight = self.view.bounds.size.height - keyboardHeight;
 
     NSNumber *curveValue = [info objectForKey:UIKeyboardAnimationCurveUserInfoKey];
     UIViewAnimationCurve animationCurve = curveValue.intValue;
     NSTimeInterval animationDuration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
 
-    CGPoint center = self.optionsView.center;
-    center.y = self.frameHeight - (self.optionsView.layer.frame.size.height / 2);
-
-    CGRect textFrame = self.commentTextView.frame;
-    textFrame.size.height = self.frameHeight - self.optionsView.layer.frame.size.height - 64 - kTextPadding; // 64 == status + toolbar
-
     // animationCurve << 16 to convert it from a view animation curve to a view animation option
     [UIView animateWithDuration:animationDuration delay:0.0 options:(animationCurve << 16) animations:^{
-        self.optionsView.center = center;
-        self.commentTextView.frame = textFrame;
+        self.optionsViewConstraint.constant = keyboardHeight;
+        [self.view layoutIfNeeded];
     } completion:nil];
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification {
+    // animationCurve << 16 to convert it from a view animation curve to a view animation option
     NSDictionary *info = [notification userInfo];
     NSNumber *curveValue = [info objectForKey:UIKeyboardAnimationCurveUserInfoKey];
     UIViewAnimationCurve animationCurve = curveValue.intValue;
     NSTimeInterval animationDuration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
-
-    self.frameHeight = [UIScreen mainScreen].bounds.size.height;
-
-    CGPoint center = self.optionsView.center;
-    center.y = self.frameHeight - (self.optionsView.layer.frame.size.height / 2);
-
-    CGRect textFrame = self.commentTextView.frame;
-    textFrame.size.height = self.frameHeight - self.optionsView.layer.frame.size.height - 64 - kTextPadding; // 64 == status + toolbar
-
-    // animationCurve << 16 to convert it from a view animation curve to a view animation option
     [UIView animateWithDuration:animationDuration delay:0.0 options:(animationCurve << 16) animations:^{
-        self.optionsView.center = center;
-        self.commentTextView.frame = textFrame;
+        self.optionsViewConstraint.constant = 0;
+        [self.view layoutIfNeeded];
     } completion:nil];
 }
 
@@ -248,10 +223,9 @@ static int const kTextPadding = 28;
     self.postButton.enabled = (self.filename || [[textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0);
     [self.userListView showUserSuggestions:textView callback:^(BOOL success) {
         if (success) {
-            [self.userListView updateFrame:CGRectMake(0, 140, 320, self.frameHeight - 140)];
-            CGRect frame = textView.frame;
-            frame.size.height = 140 - frame.origin.y;
-            textView.frame = frame;
+            [self.userListView updateFrame:CGRectMake(0, self.optionsView.frame.origin.y - kUserListHeight, SCREEN_WIDTH, kUserListHeight)];
+            self.textViewConstraint.constant = kTextViewConstraint + kUserListHeight;
+            [self.view layoutIfNeeded];
             [self alignCarretInTextView:textView];
         } else {
             [self resetTextViewSize];
@@ -260,19 +234,12 @@ static int const kTextPadding = 28;
 }
 
 - (void)alignCarretInTextView:(UITextView *)textView {
-    CGRect caretRect = [textView caretRectForPosition:textView.selectedTextRange.start];
-    CGFloat offscreen = caretRect.origin.y + caretRect.size.height - (textView.contentOffset.y + textView.bounds.size.height - textView.contentInset.bottom - textView.contentInset.top);
-    CGPoint offsetP = textView.contentOffset;
-    offsetP.y += offscreen + 3; // 3 px -- margin puts caret 3 px above bottom
-    if (offsetP.y >= 0) {
-        [textView setContentOffset:offsetP];
-    }
+    [textView scrollRangeToVisible:textView.selectedRange];
 }
 
 - (void)resetTextViewSize {
-    CGRect frame = self.commentTextView.frame;
-    frame.size.height = self.frameHeight - self.optionsView.layer.frame.size.height - 64 - kTextPadding; // 64 == status + toolbar
-    self.commentTextView.frame = frame;
+    self.textViewConstraint.constant = kTextViewConstraint;
+    [self.view layoutIfNeeded];
     [self alignCarretInTextView:self.commentTextView];
 }
 

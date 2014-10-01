@@ -9,7 +9,7 @@
 #import "TDConstants.h"
 #import "AVFoundation/AVFoundation.h"
 
-static NSString *const kDevHost = @"http://slemac.local:3000";
+static NSString *const kDevHost = @"http://localhost:3000";
 static NSString *const kStagingHost = @"http://staging.throwdown.us";
 static NSString *const kProductionHost = @"https://throwdown.us";
 static NSString *const kProductionSharingHost = @"http://tdwn.us";
@@ -86,54 +86,62 @@ static NSString *const kCDNStreamingServer = @"http://139bc8fb83b0918931ad-a6f56
 #pragma mark - Colors
 
 + (UIColor *)brandingRedColor {
-    return [UIColor colorWithRed:.929411765 green:.294117647 blue:.243137255 alpha:1.0]; // 237, 75, 62
-}
-
-+ (UIColor *)backgroundColor {
-    return [UIColor colorWithRed:237./255. green:237./255. blue:237./255. alpha:1.0];  // ededed
+    return [UIColor colorWithRed:(237./255.) green:(75./255.) blue:(62./255.) alpha:1.0]; // ED4B3E
 }
 
 + (UIColor *)darkBackgroundColor {
-    return [UIColor colorWithRed:211./255. green:211./255. blue:211./255. alpha:1.0]; // d3d3d3
+    return [UIColor colorWithRed:(230./255.) green:(230./255.) blue:(230./255.) alpha:1.0]; // #e6e6e6, this method previously return d3d3d3 (211/211/211)
 }
 
-+ (UIColor *)borderColor {
-    return [UIColor colorWithRed:200./255. green:200./255. blue:200./255. alpha:1.0]; // c8c8c8
++ (UIColor *)lightBackgroundColor {
+    return [UIColor colorWithRed:(245./255.) green:(245./255.) blue:(245./255.) alpha:1.0]; // #f5f5f5
 }
 
 + (UIColor *)darkTextColor {
-    return [UIColor colorWithRed:(27.0/255.0) green:(27.0/255.0) blue:(27.0/255.0) alpha:1.0];  // 1b1b1b
+    return [UIColor colorWithRed:(27.0/255.0) green:(27.0/255.0) blue:(27.0/255.0) alpha:1.0]; // 1b1b1b
 }
 
 + (UIColor *)disabledTextColor {
-    return [UIColor colorWithRed:(189.0/255.0) green:(189.0/255.0) blue:(189.0/255.0) alpha:1.0];  // bdbdbd
+    return [UIColor colorWithRed:(189.0/255.0) green:(189.0/255.0) blue:(189.0/255.0) alpha:1.0]; // bdbdbd
 }
 
 + (UIColor *)headerTextColor {
-    return [UIColor colorWithRed:(76.0/255.0) green:(76.0/255.0) blue:(76.0/255.0) alpha:1.0];  // 4c4c4c
+    return [UIColor colorWithRed:(76.0/255.0) green:(76.0/255.0) blue:(76.0/255.0) alpha:1.0]; // 4c4c4c
 }
 
 + (UIColor *)commentTextColor {
     return [self headerTextColor];
 }
 
++ (UIColor *)darkBorderColor {
+    return [self commentTimeTextColor];
+}
+
++ (UIColor *)lightBorderColor {
+    return [UIColor colorWithRed:(204./255.) green:(204./255.) blue:(204./255.) alpha:1.0]; // #cccccc
+}
+
 + (UIColor *)commentTimeTextColor {
-    return [UIColor colorWithRed:(162.0/255.0) green:(162.0/255.0) blue:(162.0/255.0) alpha:1.0];  // a2a2a2
+    return [UIColor colorWithRed:(162.0/255.0) green:(162.0/255.0) blue:(162.0/255.0) alpha:1.0]; // a2a2a2
 }
 
 + (UIColor *)activityUnseenColor {
-    return [UIColor colorWithRed:(255.0/255.0) green:(238.0/255.0) blue:(224.0/255.0) alpha:1.0];   // #fff5ed
+    return [UIColor colorWithRed:(255.0/255.0) green:(238.0/255.0) blue:(224.0/255.0) alpha:1.0]; // #fff5ed
 }
-+ (UIColor *)postViewBackgroundColor {
-    return [UIColor colorWithRed:(230./255.) green:(230./255.) blue:(230./255.) alpha:1.0];   // #e6e6e6
 
+// Deprecated: Use light or dark background color
++ (UIColor *)backgroundColor {
+    return [UIColor colorWithRed:237./255. green:237./255. blue:237./255. alpha:1.0];  // ededed
 }
-+ (UIColor *)tableViewBackgroundColor {
-    return [UIColor colorWithRed:(245./255.) green:(245./255.) blue:(245./255.) alpha:1.0];   // #f5f5f5
 
+// Deprecated: Use light or dark border color below.
++ (UIColor *)borderColor {
+    return [UIColor colorWithRed:200./255. green:200./255. blue:200./255. alpha:1.0]; // c8c8c8
 }
+
+// Deprecated: Use light or dark border color
 + (UIColor *)cellBorderColor {
-    return [UIColor colorWithRed:(162.0/255.0) green:(162.0/255.0) blue:(162.0/255.0) alpha:1.0];  // a2a2a2
+    return [self lightBorderColor];
 }
 
 #pragma mark - Fonts

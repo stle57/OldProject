@@ -40,7 +40,7 @@
     self.view.backgroundColor = [TDConstants backgroundColor];
 
     // Background
-    self.tableView.backgroundColor = [TDConstants tableViewBackgroundColor];
+    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
     

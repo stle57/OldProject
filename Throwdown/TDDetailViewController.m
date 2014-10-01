@@ -19,15 +19,15 @@
 #import "UIPlaceHolderTextView.h"
 #import "TDUserListView.h"
 #import "TDActivityIndicator.h"
+#import "TDKeyboardObserver.h"
 
 static float const kInputLineSpacing = 3;
 static float const kMinInputHeight = 33.;
 static float const kMaxInputHeight = 100.;
 static int const kCommentFieldPadding = 14;
 static int const kToolbarHeight = 64;
-static NSString *const kKeyboardKeyPath = @"position";
 
-@interface TDDetailViewController () <UITextViewDelegate, NSLayoutManagerDelegate>
+@interface TDDetailViewController () <UITextViewDelegate, NSLayoutManagerDelegate, TDKeyboardObserverDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
@@ -35,7 +35,6 @@ static NSString *const kKeyboardKeyPath = @"position";
 @property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *textView;
 @property (weak, nonatomic) IBOutlet UIButton *sendButton;
 @property (weak, nonatomic) IBOutlet UIView *topLineView;
-@property (weak, nonatomic) UIView *currentKeyboardView;
 
 @property (nonatomic) UITapGestureRecognizer *tapGesture;
 @property (nonatomic) CGFloat minLikeheight;
@@ -45,6 +44,7 @@ static NSString *const kKeyboardKeyPath = @"position";
 @property (nonatomic) NSString *cachedText;
 @property (nonatomic) TDUserListView *userListView;
 @property (nonatomic) TDActivityIndicator *activityIndicator;
+@property (nonatomic) TDKeyboardObserver *keyboardObserver;
 @end
 
 @implementation TDDetailViewController
@@ -58,6 +58,8 @@ static NSString *const kKeyboardKeyPath = @"position";
     self.tableView = nil;
     self.textView.delegate = nil;
     self.userListView = nil;
+    [self.keyboardObserver stopListening];
+    self.keyboardObserver = nil;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -93,7 +95,10 @@ static NSString *const kKeyboardKeyPath = @"position";
     cell1 = nil;
 
     // Typing Bottom
+    CGRect textFrame = self.textView.frame;
+    textFrame.size.width = SCREEN_WIDTH - 10 - 60;
     self.textView.font = [TDConstants fontRegularSized:17];
+    self.textView.frame = textFrame;
     self.textView.delegate = self;
     self.textView.clipsToBounds = YES;
     self.textView.layoutManager.delegate = self;
@@ -103,13 +108,18 @@ static NSString *const kKeyboardKeyPath = @"position";
     self.textView.contentInset = UIEdgeInsetsMake(0, 0, -10, 0);
     self.textView.placeholder = kCommentDefaultText;
 
+    self.sendButton.center = CGPointMake(SCREEN_WIDTH - self.sendButton.frame.size.width / 2.0, self.sendButton.center.y);
     self.sendButton.titleLabel.font = [TDConstants fontSemiBoldSized:18.];
     self.sendButton.enabled = NO;
-    self.topLineView.frame = CGRectMake(0, 0, 320, 1.0 / [[UIScreen mainScreen] scale]);
+    self.topLineView.frame = CGRectMake(0, 0, SCREEN_WIDTH, 1.0 / [[UIScreen mainScreen] scale]);
+
+    CGRect commentFrame = self.commentView.frame;
+    commentFrame.size.width = SCREEN_WIDTH;
+    self.commentView.frame = commentFrame;
 
     // User name filter table view
     if (self.userListView == nil) {
-        self.userListView = [[TDUserListView alloc] initWithFrame:CGRectMake(0, 0, 320, self.commentView.frame.origin.y)];
+        self.userListView = [[TDUserListView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, self.commentView.frame.origin.y)];
         // Set this delegate so that data comes back to this controller.
         self.userListView.delegate = self;
         [self.view addSubview:self.userListView];
@@ -121,20 +131,19 @@ static NSString *const kKeyboardKeyPath = @"position";
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newCommentFailed:) name:TDNotificationNewCommentFailed object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidChange:) name:UIKeyboardDidChangeFrameNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidHide:) name:UIKeyboardDidHideNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    self.keyboardObserver = [[TDKeyboardObserver alloc] initWithDelegate:self];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
 
+    [self.keyboardObserver startListening];
+
     // Stop any current playbacks
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
 
     CGFloat height = [UIScreen mainScreen].bounds.size.height - self.commentView.layer.frame.size.height;
-    self.tableView.frame = CGRectMake(0, 0, 320, height);
+    self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, height);
 
     if (!self.loaded) {
         if (self.post && self.post.postId) {
@@ -155,6 +164,7 @@ static NSString *const kKeyboardKeyPath = @"position";
     if (self.isEditing) {
         [self.textView resignFirstResponder];
     }
+    [self.keyboardObserver stopListening];
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
 }
 
@@ -329,7 +339,7 @@ static NSString *const kKeyboardKeyPath = @"position";
     TDComment *comment = [self.post commentAtIndex:commentNumber];
     if (comment) {
         cell.commentNumber = commentNumber;
-        [cell updateWithComment:comment];
+        [cell updateWithComment:comment showIcon:(commentNumber == 0)];
     }
 
     return cell;
@@ -443,8 +453,7 @@ static NSString *const kKeyboardKeyPath = @"position";
 - (void)showUserProfile:(NSNumber *)userId {
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
     vc.userId = userId;
-    vc.needsProfileHeader = YES;
-    vc.fromProfileType = kFromProfileScreenType_OtherUser;
+    vc.profileType = kFeedProfileTypeOther;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -463,36 +472,7 @@ static NSString *const kKeyboardKeyPath = @"position";
 
 #pragma mark - Keyboard / TextView management
 
-- (void)keyboardDidChange:(NSNotification *)notification {
-    if (!self.currentKeyboardView) {
-        for (UIWindow *window in [[UIApplication sharedApplication] windows]) {
-            // Because we cant get access to the UIPeripheral throught the SDK we will just use its UIView.
-            // UIPeripheral is a subclass of UIView anyways
-            // For iOS 8 we have to look a level deeper
-            // UIPeripheral should work for 4.0+. In 3.0 you would use "<UIKeyboard"
-            // Keyboard will end up as a UIView reference to the UIPeripheral / UIInput we want
-            // Iterate though each view inside of the selected Window
-            for (UIView *keyboard in window.subviews) {
-                if ([[keyboard description] hasPrefix:@"<UIPeripheral"]) {
-                    // iOS7
-                    [self registerKeyboardObserver:keyboard];
-                    return;
-                } else if ([[keyboard description] hasPrefix:@"<UIInput"]) {
-                    // iOS8
-                    for (UIView *view in keyboard.subviews) {
-                        if ([view.description hasPrefix:@"<UIInputSetHostView"]) {
-                            [self registerKeyboardObserver:view];
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
 - (void)keyboardWillShow:(NSNotification *)notification {
-    [self unregisterKeyboardObserver];
 
     NSDictionary *info = [notification userInfo];
 
@@ -534,6 +514,9 @@ static NSString *const kKeyboardKeyPath = @"position";
     } completion:nil];
 }
 
+
+#pragma mark - TDKeyboardObserverDelegate
+
 - (void)keyboardDidShow:(NSNotification *)notification {
     self.isEditing = YES;
     self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapFrom:)];
@@ -546,48 +529,23 @@ static NSString *const kKeyboardKeyPath = @"position";
     [self.tableView removeGestureRecognizer:self.tapGesture];
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationResumeTapGesture object:nil];
     self.tapGesture = nil;
-    [self unregisterKeyboardObserver];
+}
+
+- (void)keyboardFrameChanged:(CGRect)keyboardFrame {
+    NSLog(@"textview from frame: %@", NSStringFromCGRect(keyboardFrame));
+    CGRect tableFrame = self.tableView.layer.frame;
+    tableFrame.size.height = keyboardFrame.origin.y - self.commentView.layer.frame.size.height;
+    self.tableView.frame = tableFrame;
+
+    CGPoint current = self.commentView.center;
+    current.y = keyboardFrame.origin.y - (self.commentView.layer.frame.size.height / 2) - kToolbarHeight;
+    self.commentView.center = current;
 }
 
 - (void)handleTapFrom:(UITapGestureRecognizer *)tap {
     if (self.isEditing) {
         [self.textView resignFirstResponder];
     }
-}
-
-- (void)registerKeyboardObserver:(UIView *)view {
-    if (self.currentKeyboardView) {
-        [self unregisterKeyboardObserver];
-    }
-    self.currentKeyboardView = view;
-    [self.currentKeyboardView.layer addObserver:self forKeyPath:kKeyboardKeyPath options:NSKeyValueObservingOptionInitial context:nil];
-}
-
-- (void)unregisterKeyboardObserver {
-    if (self.currentKeyboardView) {
-        [self.currentKeyboardView.layer removeObserver:self forKeyPath:kKeyboardKeyPath];
-        self.currentKeyboardView = nil;
-    }
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if (object == self.currentKeyboardView.layer && [keyPath isEqualToString:kKeyboardKeyPath]) {
-        [self updateTextViewFromFrame:self.currentKeyboardView.layer.frame];
-        return;
-    }
-    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    return;
-}
-
-- (void)updateTextViewFromFrame:(CGRect)frame {
-    NSLog(@"textview from frame: %@", NSStringFromCGRect(frame));
-    CGRect tableFrame = self.tableView.layer.frame;
-    tableFrame.size.height = frame.origin.y - self.commentView.layer.frame.size.height;
-    self.tableView.frame = tableFrame;
-
-    CGPoint current = self.commentView.center;
-    current.y = frame.origin.y - (self.commentView.layer.frame.size.height / 2) - kToolbarHeight;
-    self.commentView.center = current;
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
@@ -602,7 +560,7 @@ static NSString *const kKeyboardKeyPath = @"position";
     [self.userListView showUserSuggestions:textView callback:^(BOOL success) {
         if (success) {
             // Make sure we do this after updateCommentSize
-            [self.userListView updateFrame:CGRectMake(0, 64, 320, self.commentView.frame.origin.y - kToolbarHeight)];
+            [self.userListView updateFrame:CGRectMake(0, 64, SCREEN_WIDTH, self.commentView.frame.origin.y - kToolbarHeight)];
         }
     }];
 }
@@ -615,8 +573,8 @@ static NSString *const kKeyboardKeyPath = @"position";
     self.textView.frame = textFrame;
 
     CGFloat bottom = [UIScreen mainScreen].bounds.size.height - kToolbarHeight;
-    if (self.currentKeyboardView) {
-        bottom = self.currentKeyboardView.layer.frame.origin.y - kToolbarHeight;
+    if (self.keyboardObserver.keyboardView) {
+        bottom = self.keyboardObserver.keyboardView.layer.frame.origin.y - kToolbarHeight;
     }
 
     CGRect commentFrame = self.commentView.frame;

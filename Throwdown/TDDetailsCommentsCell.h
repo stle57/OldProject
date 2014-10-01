@@ -18,20 +18,15 @@
 @end
 
 @interface TDDetailsCommentsCell : UITableViewCell <TTTAttributedLabelDelegate>
-{
-    id <TDDetailsCommentsCellDelegate> __unsafe_unretained delegate;
-    NSInteger row;
-    NSInteger commentNumber;
-}
 
 @property (nonatomic, assign) id <TDDetailsCommentsCellDelegate> __unsafe_unretained delegate;
 @property (nonatomic, assign) NSInteger row;
 @property (nonatomic, assign) NSInteger commentNumber;
-@property (weak, nonatomic) IBOutlet UILabel *usernameLabel;
+@property (weak, nonatomic) IBOutlet UIImageView *commentIcon;
 @property (weak, nonatomic) IBOutlet TDUpdatingDateLabel *timeLabel;
 @property (weak, nonatomic) IBOutlet TTTAttributedLabel *messageLabel;
-@property (weak, nonatomic) IBOutlet UIButton *userButton;
+@property (weak, nonatomic) IBOutlet UILabel *usernameLabel;
 
-- (void)updateWithComment:(TDComment *)comment;
+- (void)updateWithComment:(TDComment *)comment showIcon:(BOOL)showIcon;
 - (IBAction)userButtonPressed:(id)sender;
 @end

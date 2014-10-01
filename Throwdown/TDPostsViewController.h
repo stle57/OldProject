@@ -7,9 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TDLikeView.h"
+#import "TDFeedLikeCommentCell.h"
 #import "TDPostView.h"
-#import "TDTwoButtonView.h"
 #import "TDDetailsCommentsCell.h"
 #import "TDMoreComments.h"
 #import "TDDetailViewController.h"
@@ -19,21 +18,17 @@
 #import "TDConstants.h"
 #import "TDUserAPI.h"
 #import "VideoButtonSegue.h"
-#import "TDLikeView.h"
-#import "TDHomeHeaderView.h"
+#import "TDFeedLikeCommentCell.h"
 #import "TDActivityCell.h"
 #import "TDUserProfileCell.h"
 #import "TDNoPostsCell.h"
 #import "TDNoMorePostsCell.h"
 #import "TDNoticeViewCell.h"
 
-@interface TDPostsViewController : UIViewController <TDLikeViewDelegate, TDPostViewDelegate, TDTwoButtonViewDelegate, TDDetailsCommentsCellDelegate, TDMoreCommentsDelegate, UIActionSheetDelegate, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate, TDUserProfileCellDelegate>
+@interface TDPostsViewController : UIViewController <TDFeedLikeCommentDelegate, TDPostViewDelegate, TDDetailsCommentsCellDelegate, UIActionSheetDelegate, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate, TDUserProfileCellDelegate>
 {
     BOOL goneDownstream;
-    CGPoint origRecordButtonCenter;
-    UIDynamicAnimator *animator;
     CGFloat likeHeight;
-    CGFloat commentButtonsHeight;
     CGFloat commentRowHeight;
     CGFloat moreCommentRowHeight;
     CGFloat activityRowHeight;
@@ -45,7 +40,6 @@
     BOOL updatingAtBottom;
     BOOL showBottomSpinner;
     CGRect statusBarFrame;
-    //BOOL needsProfileHeader;
     CGFloat topOfBioLabelInProfileHeader;
 }
 
@@ -54,14 +48,13 @@
 @property (weak, nonatomic) IBOutlet UIButton *recordButton;
 @property (weak, nonatomic) IBOutlet UIButton *notificationButton;
 @property (weak, nonatomic) IBOutlet UIButton *profileButton;
-@property (nonatomic, retain) UIDynamicAnimator *animator;
-@property (strong, nonatomic) TDHomeHeaderView *headerView;
 @property (strong, nonatomic) UIActivityIndicatorView *playerSpinner;
 @property (nonatomic, retain) NSNumber *userId;
 @property (nonatomic) BOOL needsProfileHeader;
 @property (nonatomic, retain) NSString *username;
 @property (nonatomic) BOOL loaded;
 @property (nonatomic) BOOL errorLoading;
+@property (nonatomic) kFeedProfileType profileType;
 
 - (NSArray *)postsForThisScreen;
 - (TDUser *)getUser;

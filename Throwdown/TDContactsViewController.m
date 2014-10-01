@@ -49,14 +49,14 @@
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
     
     // Background color
-    self.tableView.backgroundColor = [TDConstants tableViewBackgroundColor];
+    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
     
     UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];     // '<'
     self.navigationItem.leftBarButtonItem = leftBarButton;
     [navigationBar setBarStyle:UIBarStyleBlack];
     [navigationBar setTranslucent:NO];
     
-    [self.searchDisplayController.searchBar setBarTintColor:[TDConstants tableViewBackgroundColor]];
+    [self.searchDisplayController.searchBar setBarTintColor:[TDConstants lightBackgroundColor]];
     
     // Title
     self.navLabel.textColor = [UIColor whiteColor];
@@ -67,15 +67,15 @@
     
 
     // Search Bar
-    self.searchDisplayController.searchBar.backgroundColor = [TDConstants tableViewBackgroundColor];
+    self.searchDisplayController.searchBar.backgroundColor = [TDConstants lightBackgroundColor];
     self.searchDisplayController.searchBar.backgroundImage = [UIImage new];
-    self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants postViewBackgroundColor];
+    self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants lightBackgroundColor];
     self.searchDisplayController.searchResultsTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
     
-    self.tableView.backgroundColor = [TDConstants tableViewBackgroundColor];
+    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
     
     self.filteredContactArray = [NSMutableArray arrayWithCapacity:[contacts count]];
     self.edgesForExtendedLayout = UIRectEdgeNone;
@@ -176,7 +176,7 @@
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 cell.delegate = self;
             }
-            cell.contentView.backgroundColor = [TDConstants tableViewBackgroundColor];
+            cell.contentView.backgroundColor = [TDConstants lightBackgroundColor];
             NSString *noMatchesString = @"No matches found";
             NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:noMatchesString font:[TDConstants fontSemiBoldSized:16.0] color:[TDConstants headerTextColor] lineHeight:19];
             cell.noFollowLabel.attributedText = attString;
@@ -383,8 +383,8 @@
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
     [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
     self.tableView.hidden = YES;
-    self.view.backgroundColor = [TDConstants tableViewBackgroundColor];
-    self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants tableViewBackgroundColor];
+    self.view.backgroundColor = [TDConstants lightBackgroundColor];
+    self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants lightBackgroundColor];
 }
 
 - (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {

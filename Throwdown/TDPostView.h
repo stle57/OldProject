@@ -8,8 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "TDPost.h"
-#import "TDLikeView.h"
-#import "TDTwoButtonView.h"
+#import "TDFeedLikeCommentCell.h"
 #import "TDUpdatingDateLabel.h"
 
 @protocol TDPostViewDelegate <NSObject>

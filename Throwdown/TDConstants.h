@@ -14,12 +14,12 @@ const typedef NS_ENUM(NSInteger, TDEnvironment) {
     TDEnvDevelopment
 };
 
-enum {
-    kFromProfileScreenType_OwnProfileButton,
-    kFromProfileScreenType_OwnProfile,
-    kFromProfileScreenType_OtherUser
+const typedef NS_ENUM(NSUInteger, kFeedProfileType) {
+    kFeedProfileTypeNone,
+    kFeedProfileTypeOwnViaButton,
+    kFeedProfileTypeOwn,
+    kFeedProfileTypeOther
 };
-typedef NSUInteger kFromProfileScreenType;
 
 enum {
     kUserListType_Followers,
@@ -94,7 +94,8 @@ static NSString *const TDAvatarUploadFailedNotification = @"TDAvatarUploadComple
 static NSString *const TDFontProximaNovaRegular = @"ProximaNova-Regular";
 static NSString *const TDFontProximaNovaSemibold = @"ProximaNova-Semibold";
 static CGFloat const kCommentCellUserHeight = 18.0;
-static CGFloat const kCommentPadding = 3; // padding between comments
+static CGFloat const kCommentPadding = 8; // padding between comments
+static CGFloat const kCommentMargin = 40; // 30 on left, 10 on right
 static CGFloat const kCommentLastPadding = 8; // bottom padding of comments
 static NSInteger const kCommentMaxCharacters = 500; // MAX number of characters allowed in a comment or post
 
@@ -103,6 +104,7 @@ static CGFloat const kTextLineHeight = 1.27;
 
 static NSString *const kSpinningAnimation = @"rotationAnimation";
 
+static NSInteger const kInviteButtonTag = 10001;
 static NSInteger const kFollowButtonTag = 20002;
 static NSInteger const kFollowingButtonTag = 20003;
 
@@ -110,9 +112,10 @@ static NSInteger const kFollowingButtonTag = 20003;
 
 #define APP_STORE_ID 886061848
 #define CELL_IDENTIFIER_POST_VIEW        @"TDPostView"
-#define CELL_IDENTIFIER_LIKE_VIEW        @"TDLikeView"
-#define CELL_IDENTIFIER_COMMENT_VIEW     @"TDTwoButtonView"
+#define CELL_IDENTIFIER_LIKE_VIEW        @"TDFeedLikeCommentCell"
 #define CELL_IDENTIFIER_MORE_COMMENTS    @"TDMoreComments"
+#define CELL_IDENTIFIER_COMMENT_DETAILS  @"TDDetailsCommentsCell"
+#define CELL_IDENTIFIER_POST_PADDING     @"postPaddingCell"
 #define CELL_IDENTIFIER_ACTIVITY         @"TDActivityCell"
 #define CELL_IDENTIFIER_PROFILE          @"TDUserProfileCell"
 #define CELL_IDENTIFIER_EDITPROFILE      @"TDUserEditCell"
@@ -121,11 +124,11 @@ static NSInteger const kFollowingButtonTag = 20003;
 #define CELL_IDENTIFIER_INVITE           @"TDInviteCell"
 #define TOAST_TAG                        87352
 #define COMMENT_MESSAGE_WIDTH            306.0
-#define COMMENT_MESSAGE_FONT_SIZE        15.0
+#define COMMENT_MESSAGE_FONT_SIZE        14.0
 #define COMMENT_MESSAGE_FONT             [TDConstants fontRegularSized:COMMENT_MESSAGE_FONT_SIZE]
 #define BIO_FONT                         [TDConstants fontRegularSized:14.0]
 #define TITLE_FONT                       [TDConstants fontRegularSized:18.0]
-#define TIME_FONT                        [TDConstants fontLightSized:13.0]
+#define TIME_FONT                        [TDConstants fontLightSized:14.0]
 #define USERNAME_FONT                    [TDConstants fontBoldSized:16.0]
 #define kCommentDefaultText              @"Write a comment..."
 #define START_MAIN_SPINNER_NOTIFICATION  @"TDMainSpinnerStart"
@@ -138,6 +141,7 @@ static NSInteger const kFollowingButtonTag = 20003;
 #define TD_CELL_BORDER_WIDTH             .5
 #define TD_INCREMENT_STRING              @"INCREMENT"
 #define TD_DECREMENT_STRING              @"DECREMENT"
+#define SCREEN_WIDTH                     [UIScreen mainScreen].bounds.size.width
 
 + (TDEnvironment)environment;
 + (NSString *)appScheme;
@@ -147,18 +151,20 @@ static NSInteger const kFollowingButtonTag = 20003;
 + (NSURL *)getStreamingUrlFor:(NSString *)filename;
 
 + (UIColor *)brandingRedColor;
-+ (UIColor *)backgroundColor;
 + (UIColor *)darkBackgroundColor;
-+ (UIColor *)borderColor;
++ (UIColor *)lightBackgroundColor;
 + (UIColor *)darkTextColor;
 + (UIColor *)disabledTextColor;
 + (UIColor *)headerTextColor;
 + (UIColor *)commentTextColor;
 + (UIColor *)commentTimeTextColor;
++ (UIColor *)lightBorderColor;
++ (UIColor *)darkBorderColor;
 + (UIColor *)activityUnseenColor;
-+ (UIColor *)postViewBackgroundColor;
-+ (UIColor *)tableViewBackgroundColor;
-+ (UIColor *)cellBorderColor;
+
++ (UIColor *)backgroundColor __attribute((deprecated("use lightBackgroundColor or darkBackgroundColor instead")));
++ (UIColor *)borderColor __attribute((deprecated("use lightBorderColor or darkBorderColor instead")));
++ (UIColor *)cellBorderColor  __attribute((deprecated("use lightBorderColor instead")));
 
 + (UIFont *)fontLightSized:(NSUInteger)size;
 + (UIFont *)fontRegularSized:(NSUInteger)size;

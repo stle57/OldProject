@@ -30,7 +30,7 @@
         _body = body;
         _mentions = @[];
         _createdAt = date;
-        _messageHeight = [TDViewControllerHelper heightForComment:_body withMentions:_mentions];
+        [self calculateHeight];
     }
     return self;
 }
@@ -40,7 +40,14 @@
     _body = [dict objectForKey:@"body"];
     _mentions = [dict objectForKey:@"mentions"];
     _createdAt = [TDViewControllerHelper dateForRFC3339DateTimeString:[dict objectForKey:@"created_at"]];
-    _messageHeight = [TDViewControllerHelper heightForComment:_body withMentions:_mentions];
+    [self calculateHeight];
+}
+
+- (void)calculateHeight {
+    _messageHeight = [TDViewControllerHelper heightForText:_body
+                                              withMentions:_mentions
+                                                  withFont:COMMENT_MESSAGE_FONT
+                                                   inWidth:(SCREEN_WIDTH - kCommentMargin)];
 }
 
 - (void)replaceUser:(TDUser *)newUser {

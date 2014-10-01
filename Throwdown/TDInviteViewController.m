@@ -46,7 +46,7 @@
     navigationBar.translucent = NO;
     
     // Background color
-    self.tableView.backgroundColor = [TDConstants tableViewBackgroundColor];
+    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
 
     UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.closeButton];     // 'X'
     self.navigationItem.leftBarButtonItem = leftBarButton;
@@ -66,9 +66,7 @@
     [self.navigationItem setTitleView:self.titleLabel];
     
     [self checkForNextButton];
-    self.view.backgroundColor = [TDConstants tableViewBackgroundColor];
-    
-
+    self.view.backgroundColor = [TDConstants lightBackgroundColor];
 }
 
 - (void)dealloc {

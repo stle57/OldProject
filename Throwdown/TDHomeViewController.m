@@ -38,6 +38,8 @@
 @property (nonatomic) NSArray *posts;
 @property (nonatomic) NSArray *postsFollowing;
 @property (nonatomic) NSArray *notices;
+@property (nonatomic) TDHomeHeaderView *headerView;
+@property (nonatomic, retain) UIDynamicAnimator *animator;
 
 @end
 
@@ -61,17 +63,11 @@
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.translucent = NO;
 
-    // Fix buttons for 3.5" screens
-    int screenHeight = [UIScreen mainScreen].bounds.size.height - 64; // 64 for navigation + status bar height
-    self.recordButton.center = CGPointMake(self.recordButton.center.x, screenHeight - self.recordButton.frame.size.height / 2.0);
-    self.profileButton.center = CGPointMake(self.profileButton.center.x, screenHeight - self.profileButton.frame.size.height / 2.0);
-    self.badgeCountLabel.center = CGPointMake(self.badgeCountLabel.center.x, screenHeight - 45);
-    self.notificationButton.center = CGPointMake(self.notificationButton.center.x, screenHeight - self.notificationButton.frame.size.height / 2.0);
-    origRecordButtonCenter = self.recordButton.center;
-
     [self.feedSelectionControl setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontSemiBoldSized:14] } forState:UIControlStateNormal];
     [self.feedSelectionControl setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontSemiBoldSized:14] } forState:UIControlStateHighlighted];
     [self.feedSelectionControl setContentPositionAdjustment:UIOffsetMake(0, 1) forSegmentType:UISegmentedControlSegmentAny barMetrics:UIBarMetricsDefault];
+
+    self.headerView = [[TDHomeHeaderView alloc] initWithTableView:self.tableView];
 }
 
 - (void)dealloc {
@@ -92,7 +88,8 @@
     }
 }
 
-- (void)viewDidLayoutSubviews {
+- (void)viewDidDisappear:(BOOL)animated {
+    [super viewDidDisappear:animated];
     if (goneDownstream) {
         [self hideBottomButtons];
     }
@@ -365,7 +362,6 @@
 
 #pragma mark - Bottom Buttons Bounce
 - (void)hideBottomButtons {
-    // Place off screen
     self.recordButton.center = CGPointMake(self.recordButton.center.x,
                                            [UIScreen mainScreen].bounds.size.height + (self.recordButton.frame.size.height / 2.0) + 1.0);
     self.profileButton.center = CGPointMake(self.profileButton.center.x,
@@ -377,6 +373,7 @@
 
 - (void)animateButtonsOnToScreen {
     [self hideBottomButtons];
+
     NSArray *items = @[self.recordButton, self.profileButton, self.notificationButton];
     self.animator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
     UIGravityBehavior* gravityBehavior = [[UIGravityBehavior alloc] initWithItems:items];
@@ -385,8 +382,8 @@
     UICollisionBehavior* collisionBehavior = [[UICollisionBehavior alloc] initWithItems:items];
     collisionBehavior.translatesReferenceBoundsIntoBoundary = NO;
     [collisionBehavior addBoundaryWithIdentifier:@"middle"
-                                       fromPoint:CGPointMake(0.0, origRecordButtonCenter.y - self.recordButton.frame.size.height / 2.0)
-                                         toPoint:CGPointMake(self.view.frame.size.width, origRecordButtonCenter.y - self.recordButton.frame.size.height / 2.0)];
+                                       fromPoint:CGPointMake(0.0, self.view.frame.size.height - self.recordButton.frame.size.height)
+                                         toPoint:CGPointMake(self.view.frame.size.width, self.view.frame.size.height - self.recordButton.frame.size.height)];
     UIDynamicItemBehavior* propertiesBehavior = [[UIDynamicItemBehavior alloc] initWithItems:items];
     propertiesBehavior.elasticity = 0.4;
     propertiesBehavior.friction = 100.0;
@@ -528,14 +525,14 @@
         vc.needsProfileHeader = YES;
         if ([modelId isEqualToString:[[TDCurrentUser sharedInstance] currentUserObject].username] ||
             [modelId isEqualToString:[[TDCurrentUser sharedInstance].currentUserObject.userId stringValue]]) {
-            vc.fromProfileType = kFromProfileScreenType_OwnProfileButton;
+            vc.profileType = kFeedProfileTypeOwnViaButton;
             vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
             UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
             navController.navigationBar.barStyle = UIBarStyleDefault;
             navController.navigationBar.translucent = YES;
             [self.navigationController presentViewController:navController animated:YES completion:nil];
         } else {
-            vc.fromProfileType = kFromProfileScreenType_OtherUser;
+            vc.profileType = kFeedProfileTypeOther;
             [self.navigationController pushViewController:vc animated:YES];
 
         }
@@ -576,9 +573,9 @@
     vc.needsProfileHeader = YES;
     // Slightly different if current user
     if ([userId isEqualToNumber:[[TDCurrentUser sharedInstance] currentUserObject].userId]) {
-        vc.fromProfileType = kFromProfileScreenType_OwnProfile;
+        vc.profileType = kFeedProfileTypeOwn;
     } else {
-        vc.fromProfileType = kFromProfileScreenType_OtherUser;
+        vc.profileType = kFeedProfileTypeOther;
     }
     [self.navigationController pushViewController:vc animated:YES];
 }

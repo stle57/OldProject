@@ -201,9 +201,14 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
 }
 
 + (CGFloat)heightForComment:(NSString *)text withMentions:(NSArray *)mentions {
+    CGFloat width = [UIScreen mainScreen].bounds.size.width - 20;  // 20 is standard margin
+    return [self heightForText:text withMentions:mentions withFont:COMMENT_MESSAGE_FONT inWidth:width];
+}
+
++ (CGFloat)heightForText:(NSString *)text withMentions:(NSArray *)mentions withFont:(UIFont *)font inWidth:(CGFloat)width {
     // Slow but the most accurate way to calculate the size
-    TTTAttributedLabel *label = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(0, 0, COMMENT_MESSAGE_WIDTH, 18)];
-    label.font = COMMENT_MESSAGE_FONT;
+    TTTAttributedLabel *label = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(0, 0, width, 18)];
+    label.font = font;
     label.verticalAlignment = TTTAttributedLabelVerticalAlignmentTop;
     [label setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
     [TDViewControllerHelper linkUsernamesInLabel:label users:mentions];
@@ -211,9 +216,10 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     label.numberOfLines = 0;
 
     // Adding 2 covers an edge case where emoji would get cut off
-    CGSize size = [label sizeThatFits:CGSizeMake(COMMENT_MESSAGE_WIDTH, MAXFLOAT)];
+    CGSize size = [label sizeThatFits:CGSizeMake(width, MAXFLOAT)];
     return size.height == 0. ? 0 : size.height + 2;
 }
+
 
 + (BOOL)isThrowdownURL:(NSURL *)url {
     return [[url scheme] caseInsensitiveCompare:[TDConstants appScheme]] == NSOrderedSame;

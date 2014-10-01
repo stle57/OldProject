@@ -49,6 +49,9 @@ static NSString *const kKindText  = @"text";
     _isPrivate = [[dict objectForKey:@"private"] boolValue];
     if ([dict objectForKey:@"comment"] && ![[dict objectForKey:@"comment"] isEqual:[NSNull null]]) {
         _comment = [[dict objectForKey:@"comment"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        if ([_comment length] == 0) {
+            _comment = nil;
+        }
     }
     _mentions = [dict objectForKey:@"mentions"];
 

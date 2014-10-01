@@ -12,15 +12,16 @@
 #import "NSDate+TimeAgo.h"
 #import "TDViewControllerHelper.h"
 
+static CGFloat const kMaxUsernameWidth = 230;
+
 @implementation TDDetailsCommentsCell
 
-@synthesize delegate;
-@synthesize row;
-@synthesize commentNumber;
-
 - (void)dealloc {
-    delegate = nil;
+    self.delegate = nil;
     self.messageLabel.delegate = nil;
+    for (UIGestureRecognizer *g in self.usernameLabel.gestureRecognizers) {
+        [self.usernameLabel removeGestureRecognizer:g];
+    }
 }
 
 - (void)awakeFromNib {
@@ -29,26 +30,28 @@
     self.timeLabel.textColor = [TDConstants commentTimeTextColor];
 
     // Fonts
-    self.usernameLabel.font = USERNAME_FONT;
+    self.usernameLabel.font = [TDConstants fontSemiBoldSized:16.0];
     self.timeLabel.font     = TIME_FONT;
     self.messageLabel.font  = COMMENT_MESSAGE_FONT;
     self.messageLabel.delegate = self;
+
+    self.usernameLabel.userInteractionEnabled = YES;
+    UITapGestureRecognizer *usernameTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(userButtonPressed:)];
+    [self.usernameLabel addGestureRecognizer:usernameTap];
 }
 
-- (void)updateWithComment:(TDComment *)comment {
+- (void)updateWithComment:(TDComment *)comment showIcon:(BOOL)showIcon {
     self.timeLabel.labelDate = comment.createdAt;
     self.timeLabel.text = [comment.createdAt timeAgo];
     self.usernameLabel.text = comment.user.username;
 
     // Make the button the size of username text
     CGRect frame = self.usernameLabel.frame;
-    frame.size = [self.usernameLabel sizeThatFits:frame.size];
-    self.userButton.frame = frame;
+    NSLog(@"Username frame: %@", NSStringFromCGRect(frame));
+    frame.size = [self.usernameLabel sizeThatFits:CGSizeMake(kMaxUsernameWidth, self.usernameLabel.frame.size.height + 2)];
+    self.usernameLabel.frame = frame;
 
     // Comment body
-    CGRect messagesFrame = self.messageLabel.frame;
-    messagesFrame.size.width = COMMENT_MESSAGE_WIDTH;
-    self.messageLabel.frame = messagesFrame;
     self.messageLabel.font = COMMENT_MESSAGE_FONT;
     self.messageLabel.verticalAlignment = TTTAttributedLabelVerticalAlignmentTop;
     self.messageLabel.enabledTextCheckingTypes = NSTextCheckingTypeLink;
@@ -56,12 +59,18 @@
     [self.messageLabel setText:comment.body afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
     [TDViewControllerHelper linkUsernamesInLabel:self.messageLabel users:comment.mentions];
     self.messageLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:self.messageLabel.attributedText];
-    self.messageLabel.frame = CGRectMake(self.messageLabel.frame.origin.x, self.messageLabel.frame.origin.y, COMMENT_MESSAGE_WIDTH, comment.messageHeight);
+
+    CGRect messagesFrame = self.messageLabel.frame;
+    messagesFrame.size.width = SCREEN_WIDTH - kCommentMargin;
+    messagesFrame.size.height = comment.messageHeight;
+    self.messageLabel.frame = messagesFrame;
+
+    self.commentIcon.hidden = !showIcon;
 }
 
-- (IBAction)userButtonPressed:(id)sender {
-    if (delegate && [delegate respondsToSelector:@selector(userButtonPressedFromRow:commentNumber:)]) {
-        [delegate userButtonPressedFromRow:self.row commentNumber:self.commentNumber];
+- (IBAction)userButtonPressed:(UITapGestureRecognizer *)g {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(userButtonPressedFromRow:commentNumber:)]) {
+        [self.delegate userButtonPressedFromRow:self.row commentNumber:self.commentNumber];
     }
 }
 

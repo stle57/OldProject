@@ -39,7 +39,6 @@
 @synthesize password;
 @synthesize bio;
 @synthesize pictureFileName;
-@synthesize fromProfileType;
 @synthesize editedProfileImage;
 @synthesize tempFlyInImageView;
 
@@ -74,7 +73,7 @@
     [navigationBar setBarStyle:UIBarStyleBlack];
     navigationBar.translucent = NO;
     // Background color
-    self.tableView.backgroundColor = [TDConstants postViewBackgroundColor]; //f5f5f5f5
+    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
     self.tableView.separatorColor = [UIColor clearColor];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
@@ -250,16 +249,12 @@
 }
 
 - (void)leave {
-    switch (fromProfileType) {
-        case kFromProfileScreenType_OwnProfile:
-        {
+    switch (self.profileType) {
+        case kFeedProfileTypeOwn:
             [self.navigationController popViewControllerAnimated:YES];
-        }
         break;
-        case kFromProfileScreenType_OwnProfileButton:
-        {
+        case kFeedProfileTypeOwnViaButton:
             [self.navigationController popViewControllerAnimated:YES];
-        }
         break;
 
         default:
@@ -454,8 +449,8 @@
 #pragma mark - AlertView
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     if (alertView.tag == 89892 && buttonIndex == 0) {
-        switch (fromProfileType) {
-            case kFromProfileScreenType_OwnProfile:
+        switch (self.profileType) {
+            case kFeedProfileTypeOwn:
                 [self.navigationController popViewControllerAnimated:YES];
             break;
             

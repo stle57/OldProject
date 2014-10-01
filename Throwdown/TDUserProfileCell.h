@@ -12,6 +12,17 @@
 
 #define USERNAME_PROFILE_FONT [TDConstants fontSemiBoldSized:18.0];
 
+typedef enum {
+    UserProfileButtonTypeUnknown,
+    UserProfileButtonTypeFollow,
+    UserProfileButtonTypeFollowing,
+    UserProfileButtonTypeInvite
+} UserProfileButtonType;
+
+
+static CGFloat const kBioLabelInviteButtonPadding = 14; // padding between bio label and invite button
+static CGFloat const kInviteButtonStatButtonPadding = 25; // padding between invite button and stats buttons
+
 @protocol TDUserProfileCellDelegate <NSObject>
 @optional
 -(void)inviteButtonPressedFromRow:(NSInteger)tag;
@@ -22,9 +33,6 @@
 @end
 
 @interface TDUserProfileCell : UITableViewCell
-{
-    id <TDUserProfileCellDelegate> __unsafe_unretained delegate;
-}
 
 @property (nonatomic, assign) id <TDUserProfileCellDelegate> __unsafe_unretained delegate;
 @property (weak, nonatomic) IBOutlet UIImageView *userImageView;
@@ -37,17 +45,17 @@
 @property (weak, nonatomic) IBOutlet UIButton *followerButton;
 @property (weak, nonatomic) IBOutlet UIButton *followingButton;
 @property (weak, nonatomic) IBOutlet UIButton *inviteButton;
+@property (weak, nonatomic) IBOutlet UIView *buttonsTopBorder;
 
 @property (nonatomic, assign) CGRect origBioLabelRect;
 
-
-//@property (nonatomic, readonly) TDUser *user;
-
-- (void)modifyStatButtonAttributes:(TDUser*)user;
+- (void)setUser:(TDUser *)user withButton:(UserProfileButtonType)buttonType;
 - (IBAction)inviteButtonPressed:(UIButton*)sender;
 - (IBAction)postsButtonPressed:(UIButton*)sender;
 - (IBAction)prButtonPressed:(UIButton*)sender;
 - (IBAction)followerButtonPressed:(UIButton*)sender;
 - (IBAction)followingButtonPressed:(UIButton*)sender;
+
++ (CGFloat)heightForUserProfile:(TDUser *)user;
 
 @end

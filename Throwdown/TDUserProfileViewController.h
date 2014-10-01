@@ -17,7 +17,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *settingsButton;
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
 @property (strong, nonatomic) IBOutlet UIButton *backButton;
-@property (nonatomic, assign) kFromProfileScreenType fromProfileType;
 
 - (IBAction)settingsButtonHit:(id)sender;
 - (IBAction)closeButtonHit:(id)sender;

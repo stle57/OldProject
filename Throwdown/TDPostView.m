@@ -12,6 +12,7 @@
 #import "NSDate+TimeAgo.h"
 #import "TDAppDelegate.h"
 #import "TDAPIClient.h"
+#import "ObservingPlayerItem.h"
 #import "TDViewControllerHelper.h"
 #import <TTTAttributedLabel/TTTAttributedLabel.h>
 #import <QuartzCore/QuartzCore.h>
@@ -23,7 +24,6 @@ typedef enum {
     ControlStateNone
 } ControlState;
 
-
 typedef enum {
     PlayerStateNotLoaded,
     PlayerStateLoading,
@@ -32,16 +32,18 @@ typedef enum {
     PlayerStateReachedEnd
 } PlayerState;
 
-static CGFloat const kHeightOfProfileRow = 44.;
-static CGFloat const kCommentBottomPadding = 10.;
-static CGFloat const kHeightOfMedia = 320.;
+static CGFloat const kMargin = 10;
+static CGFloat const kMarginBottomOfMedia = 13;
+static CGFloat const kHeightOfProfileRow = 65.;
+static CGFloat const kCommentBottomPadding = 15.;
 static CGFloat const kWidthOfMedia = 320.;
 static NSString *const kTracksKey = @"tracks";
 
-@interface TDPostView () <TTTAttributedLabelDelegate>
+@interface TDPostView () <TTTAttributedLabelDelegate, ObservingPlayerItemDelegate>
 
 @property (nonatomic) UIView *videoHolderView;
 @property (nonatomic) TTTAttributedLabel *commentLabel;
+@property (nonatomic) UIView *commentBottomLine;
 @property (nonatomic) UIImageView *controlView;
 @property (nonatomic) UIImageView *prStar;
 @property (nonatomic) UIImageView *privatePost;
@@ -49,13 +51,13 @@ static NSString *const kTracksKey = @"tracks";
 @property (nonatomic) UIImageView *playerSpinner;
 @property (nonatomic) AVURLAsset *videoAsset;
 @property (nonatomic) AVPlayer *player;
-@property (nonatomic) AVPlayerItem *playerItem;
+@property (nonatomic) ObservingPlayerItem *playerItem;
 @property (nonatomic) AVPlayerLayer *playerLayer;
 @property (nonatomic) TDPost *post;
 @property (nonatomic) PlayerState state;
 @property (nonatomic) NSTimer *loadingTimeout;
 @property (nonatomic) UITapGestureRecognizer *tapGestureRecognizer;
-@property (nonatomic) CGFloat mediaOffset;
+@property (nonatomic) CGFloat mediaSize;
 
 @end
 
@@ -92,19 +94,22 @@ static NSString *const kTracksKey = @"tracks";
     if (self) {
         self.userInteractionEnabled = YES;
 
+        CGFloat width = [UIScreen mainScreen].bounds.size.width;
+        self.mediaSize = (width / kWidthOfMedia) * kWidthOfMedia;
+
         // add pr star at lowest level
-        self.prStar = [[UIImageView alloc] initWithFrame:CGRectMake(255, 6, 32, 32)];
+        self.prStar = [[UIImageView alloc] initWithFrame:CGRectMake(width - 65, 6, 32, 32)];
         self.prStar.image = [UIImage imageNamed:@"trophy_64x64"];
         self.prStar.hidden = YES;
         [self addSubview:self.prStar];
 
-        self.privatePost = [[UIImageView alloc] initWithFrame:CGRectMake(200, 9, 20, 20)];
+        self.privatePost = [[UIImageView alloc] initWithFrame:CGRectMake(width - 120, 9, 20, 20)];
         self.privatePost.image = [UIImage imageNamed:@"lock_icon"];
         self.privatePost.hidden = YES;
         [self addSubview:self.privatePost];
 
-        self.usernameLabel = [[UILabel alloc] initWithFrame:CGRectMake(45, 5, 215, 32)];
-        self.usernameLabel.font = [TDConstants fontSemiBoldSized:17.0];
+        self.usernameLabel = [[UILabel alloc] initWithFrame:CGRectMake(65, kMargin, width - 85, 45)];
+        self.usernameLabel.font = [TDConstants fontSemiBoldSized:16.0];
         self.usernameLabel.textColor = [TDConstants brandingRedColor];
         self.usernameLabel.numberOfLines = 1;
         self.usernameLabel.userInteractionEnabled = YES;
@@ -112,22 +117,28 @@ static NSString *const kTracksKey = @"tracks";
         [self.usernameLabel addGestureRecognizer:usernameTap];
         [self addSubview:self.usernameLabel];
 
-        self.commentLabel = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(7, kHeightOfProfileRow, COMMENT_MESSAGE_WIDTH, 0)];
+        self.commentLabel = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(kMargin, kHeightOfProfileRow, width - (kMargin * 2), 0)];
         self.commentLabel.enabledTextCheckingTypes = NSTextCheckingTypeLink;
         self.commentLabel.textColor = [TDConstants commentTextColor];
-        self.commentLabel.font = COMMENT_MESSAGE_FONT;
+        self.commentLabel.font = [TDConstants fontRegularSized:16];
         self.commentLabel.delegate = self;
         self.commentLabel.hidden = YES;
         self.commentLabel.numberOfLines = 0;
+        self.commentLabel.verticalAlignment = TTTAttributedLabelVerticalAlignmentTop;
         [self addSubview:self.commentLabel];
 
-        self.createdLabel = [[TDUpdatingDateLabel alloc] initWithFrame:CGRectMake(260, 5, 53, 32)];
+        self.commentBottomLine = [[UIView alloc] initWithFrame:CGRectMake(kMargin, kHeightOfProfileRow, width - (kMargin * 2), 1 / [[UIScreen mainScreen] scale])];
+        self.commentBottomLine.backgroundColor = [TDConstants lightBorderColor];
+        self.commentBottomLine.hidden = YES;
+        [self addSubview:self.commentBottomLine];
+
+        self.createdLabel = [[TDUpdatingDateLabel alloc] initWithFrame:CGRectMake(width - 60, kMargin, 53, 45)];
         self.createdLabel.textColor = [TDConstants commentTimeTextColor];
         self.createdLabel.font = [TDConstants fontLightSized:14.0];
         self.createdLabel.textAlignment = NSTextAlignmentRight;
         [self addSubview:self.createdLabel];
 
-        self.userProfileImage = [[UIImageView alloc] initWithFrame:CGRectMake(7, 6, 32, 32)];
+        self.userProfileImage = [[UIImageView alloc] initWithFrame:CGRectMake(kMargin, kMargin, 45, 45)];
         self.userProfileImage.image = [UIImage imageNamed:@"prof_pic_default"];
         self.userProfileImage.backgroundColor = [TDConstants darkBackgroundColor];
         self.userProfileImage.layer.cornerRadius = self.userProfileImage.layer.frame.size.width / 2;
@@ -137,8 +148,8 @@ static NSString *const kTracksKey = @"tracks";
         [self.userProfileImage addGestureRecognizer:userProfileTap];
         [self addSubview:self.userProfileImage];
 
-        UIView *topLine = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 1 / [[UIScreen mainScreen] scale])];
-        topLine.backgroundColor = [TDConstants borderColor];
+        UIView *topLine = [[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 1 / [[UIScreen mainScreen] scale])];
+        topLine.backgroundColor = [TDConstants darkBorderColor];
         [self addSubview:topLine];
     }
     return self;
@@ -165,9 +176,11 @@ static NSString *const kTracksKey = @"tracks";
     self.userPicture = post.user.picture;
     self.state = PlayerStateNotLoaded;
 
+    CGFloat width = [UIScreen mainScreen].bounds.size.width;
+
     // Set username label and size (for tap area)
     self.usernameLabel.text = post.user.username;
-    CGSize size = [self.usernameLabel sizeThatFits:CGSizeMake(215, 32)];
+    CGSize size = [self.usernameLabel sizeThatFits:CGSizeMake(width - 85, 45)];
     CGRect frame = self.usernameLabel.frame;
     frame.size.width = size.width;
     self.usernameLabel.frame = frame;
@@ -191,27 +204,26 @@ static NSString *const kTracksKey = @"tracks";
     self.createdLabel.text = [post.createdAt timeAgo];
 
     if (post.comment) {
-        // Comment body
-        CGRect commentFrame = self.commentLabel.frame;
-        commentFrame.size.width = COMMENT_MESSAGE_WIDTH;
-        self.commentLabel.frame = commentFrame;
-        self.commentLabel.font = COMMENT_MESSAGE_FONT;
-        self.commentLabel.verticalAlignment = TTTAttributedLabelVerticalAlignmentTop;
-
         [self.commentLabel setText:post.comment afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
         [TDViewControllerHelper linkUsernamesInLabel:self.commentLabel users:post.mentions];
         self.commentLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:self.commentLabel.attributedText];
 
-        CGFloat commentHeight = [TDViewControllerHelper heightForComment:post.comment withMentions:post.mentions];
+        CGFloat commentHeight = [TDViewControllerHelper heightForText:post.comment withMentions:post.mentions withFont:[TDConstants fontRegularSized:16] inWidth:width - (kMargin * 2)];
         commentHeight = commentHeight == 0 ? 0 : commentHeight + kCommentBottomPadding;
-        CGRect frame = self.commentLabel.frame;
-        frame.size.height = commentHeight;
-        self.commentLabel.frame = frame;
+        CGRect commentFrame = self.commentLabel.frame;
+        commentFrame.origin.y = kHeightOfProfileRow + (self.post.kind == TDPostKindText ? 0 : self.mediaSize + kMarginBottomOfMedia);;
+        commentFrame.size.height = commentHeight;
+        NSLog(@"comment label height: %f", commentHeight);
+        self.commentLabel.frame = commentFrame;
         self.commentLabel.hidden = NO;
-        self.mediaOffset = kHeightOfProfileRow + commentHeight;
+
+        CGRect lineFrame = self.commentBottomLine.frame;
+        lineFrame.origin.y = commentFrame.origin.y + commentHeight +  (1 / [[UIScreen mainScreen] scale]);
+        self.commentBottomLine.frame = lineFrame;
+        self.commentBottomLine.hidden = NO;
     } else {
         self.commentLabel.hidden = YES;
-        self.mediaOffset = kHeightOfProfileRow;
+        self.commentBottomLine.hidden = YES;
     }
 
     switch (post.kind) {
@@ -244,7 +256,7 @@ static NSString *const kTracksKey = @"tracks";
         [self addSubview:self.previewImage];
     }
     self.previewImage.image = nil;
-    self.previewImage.frame = CGRectMake(0, self.mediaOffset, kWidthOfMedia, kHeightOfMedia);
+    self.previewImage.frame = CGRectMake(0, kHeightOfProfileRow, self.mediaSize, self.mediaSize);
     [self hideLoadingError];
 
     if (self.filename) {
@@ -262,8 +274,8 @@ static NSString *const kTracksKey = @"tracks";
 - (void)setupVideo {
     if (!self.controlView) {
         self.playerSpinner = [[UIImageView alloc] init];
-        self.videoHolderView = [[UIView alloc] initWithFrame:CGRectMake(0, self.mediaOffset, kWidthOfMedia, kHeightOfMedia)];
-        self.controlView = [[UIImageView alloc] initWithFrame:CGRectMake(0, self.mediaOffset, kWidthOfMedia, kHeightOfMedia)];
+        self.videoHolderView = [[UIView alloc] initWithFrame:CGRectMake(0, kHeightOfProfileRow, self.mediaSize, self.mediaSize)];
+        self.controlView = [[UIImageView alloc] initWithFrame:CGRectMake(0, kHeightOfProfileRow, self.mediaSize, self.mediaSize)];
         self.controlView.contentMode = UIViewContentModeCenter;
         self.controlView.userInteractionEnabled = YES;
         self.tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapFrom:)];
@@ -284,12 +296,7 @@ static NSString *const kTracksKey = @"tracks";
     [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationResumeTapGesture object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationStopPlayers object:self];
 
-    if (self.playerItem) {
-        [self.playerItem removeObserver:self forKeyPath:@"status" context:nil];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemDidPlayToEndTimeNotification object:self.playerItem];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemPlaybackStalledNotification object:self.playerItem];
-        self.playerItem = nil;
-    }
+    self.playerItem = nil;
     if (self.videoHolderView) {
         [self.playerLayer removeFromSuperlayer];
         [self.videoHolderView removeFromSuperview];
@@ -353,13 +360,13 @@ static NSString *const kTracksKey = @"tracks";
     debug NSLog(@"update control state to: %d", controlState);
 
     if (controlState != ControlStatePlay) {
-        self.playerSpinner.frame = CGRectMake(290.0, self.mediaOffset + kHeightOfMedia - 30, 20.0, 20.0);
+        self.playerSpinner.frame = CGRectMake(self.mediaSize - 30, kHeightOfProfileRow + self.mediaSize - 30, 20.0, 20.0);
     }
 
     switch (controlState) {
         case ControlStatePlay:
             // 35 == half of 70 on play button
-            self.playerSpinner.frame = CGRectMake(125, self.mediaOffset + (kHeightOfMedia / 2) - 35, 70, 70);
+            self.playerSpinner.frame = CGRectMake((self.mediaSize / 2) - 35, kHeightOfProfileRow + (self.mediaSize / 2) - 35, 70, 70);
             [self.playerSpinner setImage:[UIImage imageNamed:@"play_button_140x140"]];
             break;
         case ControlStatePaused:
@@ -405,24 +412,11 @@ static NSString *const kTracksKey = @"tracks";
             AVKeyValueStatus status = [self.videoAsset statusOfValueForKey:kTracksKey error:&error];
 
             if (status == AVKeyValueStatusLoaded) {
-                self.playerItem = [AVPlayerItem playerItemWithAsset:self.videoAsset];
-                [self.playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
-
-                [[NSNotificationCenter defaultCenter] addObserver:self
-                                                         selector:@selector(stopVideoFromNotification:)
-                                                             name:TDNotificationStopPlayers
-                                                           object:nil];
-                [[NSNotificationCenter defaultCenter] addObserver:self
-                                                         selector:@selector(playerItemDidReachEnd:)
-                                                             name:AVPlayerItemDidPlayToEndTimeNotification
-                                                           object:self.playerItem];
-                [[NSNotificationCenter defaultCenter] addObserver:self
-                                                         selector:@selector(playerItemDidStall:)
-                                                             name:AVPlayerItemPlaybackStalledNotification
-                                                           object:self.playerItem];
+                self.playerItem = [[ObservingPlayerItem alloc] initWithAsset:self.videoAsset];
+                self.playerItem.delegate = self;
 
                 self.playerLayer = [AVPlayerLayer layer];
-                [self.playerLayer setFrame:CGRectMake(0, 0, kHeightOfMedia, kWidthOfMedia)];
+                [self.playerLayer setFrame:CGRectMake(0, 0, self.mediaSize, self.mediaSize)];
                 [self.playerLayer setBackgroundColor:[UIColor clearColor].CGColor];
                 [self.playerLayer setVideoGravity:AVLayerVideoGravityResize];
                 [self.videoHolderView.layer addSublayer:self.playerLayer];
@@ -457,29 +451,6 @@ static NSString *const kTracksKey = @"tracks";
     }
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    if ([keyPath isEqualToString:@"status"]) {
-        debug NSLog(@"PLAYBACK: status at state %d", self.state);
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (self.playerItem.status == AVPlayerItemStatusReadyToPlay) {
-                // Only play once it's been loaded
-                // status change is called every time the player is reset
-                if (self.state == PlayerStateLoading) {
-                    [self updateControlImage:ControlStateNone];
-                    [self playVideo];
-                }
-            } else if (self.playerItem.status == AVPlayerItemStatusFailed) {
-                debug NSLog(@"PLAYBACK: failed!");
-                self.state = PlayerStateNotLoaded;
-                [self showLoadingError];
-            }
-        });
-        return;
-    }
-    [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    return;
-}
-
 - (void)startLoadingTimeout {
     if (self.loadingTimeout) {
         [self.loadingTimeout invalidate];
@@ -497,19 +468,6 @@ static NSString *const kTracksKey = @"tracks";
         self.state = PlayerStateNotLoaded;
         [self showLoadingError];
     }
-}
-
-- (void)playerItemDidStall:(NSNotification *)notification {
-    debug NSLog(@"PLAYBACK: stalled");
-    self.state = PlayerStateNotLoaded;
-    [self showLoadingError];
-}
-
-- (void)playerItemDidReachEnd:(NSNotification *)notification {
-    debug NSLog(@"PLAYBACK: reached end");
-    self.state = PlayerStateReachedEnd;
-    [self updateControlImage:ControlStatePlay];
-    [self hideLoadingError];
 }
 
 - (void)showLoadingError {
@@ -562,12 +520,15 @@ static NSString *const kTracksKey = @"tracks";
 #pragma mark - table cell height calculation
 
 + (CGFloat)heightForPost:(TDPost *)post {
-    CGFloat commentHeight = [TDViewControllerHelper heightForComment:post.comment withMentions:post.mentions];
+    CGFloat width = [UIScreen mainScreen].bounds.size.width;
+    CGFloat commentHeight = [TDViewControllerHelper heightForText:post.comment withMentions:post.mentions withFont:[TDConstants fontRegularSized:16] inWidth:width - (kMargin * 2)];
     commentHeight = commentHeight == 0 ? 0 : commentHeight + kCommentBottomPadding;
+    CGFloat mediaSize = (width / kWidthOfMedia) * kWidthOfMedia;
+
     switch (post.kind) {
         case TDPostKindPhoto:
         case TDPostKindVideo:
-            return kHeightOfProfileRow + kHeightOfMedia + commentHeight + ([post.commentsTotalCount intValue] > 0 ? 5 : 0);
+            return kHeightOfProfileRow + mediaSize + commentHeight + (commentHeight > 0 ? kMarginBottomOfMedia : 0);
             break;
 
         case TDPostKindText:
@@ -578,6 +539,41 @@ static NSString *const kTracksKey = @"tracks";
             return kHeightOfProfileRow;
             break;
     }
+}
+
+
+#pragma mark - ObservingPlayerItemDelegate
+
+- (void)playerItemReadyToPlay {
+    // Only play once it's been loaded
+    // ready to play is called every time the player is reset
+    if (self.state == PlayerStateLoading) {
+        [self updateControlImage:ControlStateNone];
+        [self playVideo];
+    }
+}
+
+- (void)playerItemPlayFailed {
+    debug NSLog(@"PLAYBACK: failed!");
+    self.state = PlayerStateNotLoaded;
+    [self showLoadingError];
+}
+
+- (void)playerItemRemovedObservation {
+    [self stopVideo];
+}
+
+- (void)playerItemStalled {
+    debug NSLog(@"PLAYBACK: stalled");
+    self.state = PlayerStateNotLoaded;
+    [self showLoadingError];
+}
+
+- (void)playerItemReachedEnd {
+    debug NSLog(@"PLAYBACK: reached end");
+    self.state = PlayerStateReachedEnd;
+    [self updateControlImage:ControlStatePlay];
+    [self hideLoadingError];
 }
 
 

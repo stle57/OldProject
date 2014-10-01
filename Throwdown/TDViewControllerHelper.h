@@ -28,6 +28,7 @@
 + (void)linkUsernamesInLabel:(TTTAttributedLabel *)label users:(NSArray *)users;
 + (void)linkUsernamesInLabel:(TTTAttributedLabel *)label users:(NSArray *)users pattern:(NSString *)pattern;
 + (CGFloat)heightForComment:(NSString *)text withMentions:(NSArray *)mentions;
++ (CGFloat)heightForText:(NSString *)text withMentions:(NSArray *)mentions withFont:(UIFont *)font inWidth:(CGFloat)width;
 + (BOOL)isThrowdownURL:(NSURL *)url;
 + (BOOL)isSafariURL:(NSURL *)url;
 + (BOOL)askUserToOpenInSafari:(NSURL *)url;

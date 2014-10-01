@@ -55,7 +55,7 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
     [[TDAnalytics sharedInstance] logEvent:@"camera_share_with_opened"];
 
     // Background
-    self.tableView.backgroundColor = [TDConstants tableViewBackgroundColor];
+    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
 
     UIButton *button = [TDViewControllerHelper navBackButton];
     [button addTarget:self action:@selector(backButtonPressed) forControlEvents:UIControlEventTouchUpInside];
