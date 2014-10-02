@@ -80,8 +80,8 @@ static NSString *const kKeyboardKeyPath = @"position";
     // Delete or report icon - have to use uibutton to give design's hit state correctly
     UIButton *rightButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [rightButton setFrame:CGRectMake(0.0, 0.0, 20, 21)];
-    [rightButton setImage:[UIImage imageNamed:@"nav_dots"] forState:UIControlStateNormal];
-    [rightButton setImage:[UIImage imageNamed:@"nav_dots_hit"] forState:UIControlStateHighlighted];
+    [rightButton setImage:[UIImage imageNamed:@"dots"] forState:UIControlStateNormal];
+    [rightButton setImage:[UIImage imageNamed:@"dots-hit"] forState:UIControlStateHighlighted];
     [rightButton addTarget:self action:@selector(reportButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *deleteBarButton = [[UIBarButtonItem alloc] initWithCustomView:rightButton];
     self.navigationItem.rightBarButtonItem = deleteBarButton;

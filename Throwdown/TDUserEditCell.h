@@ -18,6 +18,7 @@
     CGRect textViewdOrigRect;
     CGFloat bottomLineOrigY;
     CGFloat topLineOrigHeight;
+    CGFloat bottomLineOrigHeight;
 }
 
 @property (nonatomic, assign) id <TDUserEditCellDelegate> __unsafe_unretained delegate;
@@ -33,6 +34,7 @@
 @property (nonatomic, assign) CGRect textViewdOrigRect;
 @property (nonatomic, assign) CGFloat bottomLineOrigY;
 @property (nonatomic, assign) CGFloat topLineOrigHeight;
+@property (nonatomic, assign) CGFloat bottomLineOrigHeight;
 
 
 @end

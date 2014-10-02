@@ -8,6 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "TDUser.h"
+#import "TDConstants.h"
+
+#define USERNAME_PROFILE_FONT [TDConstants fontSemiBoldSized:18.0];
 
 @protocol TDUserProfileCellDelegate <NSObject>
 @optional

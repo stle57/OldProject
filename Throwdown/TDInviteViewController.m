@@ -298,6 +298,8 @@
                 
                 if (contact.contactPicture) {
                     [followCell.userImageView setImage:contact.contactPicture];
+                } else {
+                    [followCell.userImageView setImage:[UIImage imageNamed:@"prof_pic_default"]];
                 }
                 return followCell;
             }

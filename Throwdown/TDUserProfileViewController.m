@@ -85,6 +85,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removePost:) name:TDNotificationRemovePost object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateUserFollowingCount:) name:TDUpdateFollowingCount object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateUserFollowerCount:) name:TDUpdateFollowerCount object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -333,22 +334,29 @@
 
 #pragma mark - Update Following Count after User follow notification
 - (void)updateUserFollowingCount:(NSNotification *)notification {
-     debug NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
-    if (notification.userInfo) {
-        if ([notification.userInfo objectForKey:@"incrementCount"]) {
-            self.getUser.followingCount = [NSNumber numberWithLong:[self.getUser.followingCount integerValue] + [((NSNumber *)[notification.userInfo objectForKey:@"incrementCount"]) integerValue]];
-        } else if ([notification.userInfo objectForKey:@"decreaseCount"]) {
-            self.getUser.followingCount = [NSNumber numberWithLong:[self.getUser.followingCount integerValue] - [((NSNumber *)[notification.userInfo objectForKey:@"decreaseCount"]) integerValue]];
+     debug NSLog(@"%@ updateUserFollowingCount:%@", [self class], notification.object);
+    if (self.getUser.userId == notification.object) {
+        if ([notification.userInfo objectForKey:TD_INCREMENT_STRING]) {
+            // We are following someone on their profile screen
+            self.getUser.followingCount = [NSNumber numberWithLong:[self.getUser.followingCount integerValue] + [((NSNumber *)[notification.userInfo objectForKey:TD_INCREMENT_STRING]) integerValue]];
+        } else if ([notification.userInfo objectForKey:TD_DECREMENT_STRING]) {
+            self.getUser.followingCount = [NSNumber numberWithLong:[self.getUser.followingCount integerValue] - [((NSNumber *)[notification.userInfo objectForKey:TD_DECREMENT_STRING]) integerValue]];
         }
     }
-    
     [self.tableView reloadData];
 }
 
 - (void)updateUserFollowerCount:(NSNotification *)notification {
-     debug NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
-    
-    self.getUser.followerCount = [[NSNumber alloc] initWithInt:(self.getUser.followerCount.intValue-1)];
-    [self.tableView reloadData];
+     debug NSLog(@"%@ updateUserFollowerCount:%@", [self class], notification.object);
+    if (notification.object == self.getUser.userId) {
+        if ([notification.userInfo objectForKey:TD_INCREMENT_STRING]) {
+            self.getUser.followerCount = [[NSNumber alloc] initWithInt:(self.getUser.followerCount.intValue+1)];
+            self.getUser.following = YES;
+        } else if ([notification.userInfo objectForKey:TD_DECREMENT_STRING]) {
+            self.getUser.followerCount =[[NSNumber alloc] initWithInt:(self.getUser.followerCount.intValue-1)];
+            self.getUser.following = NO;
+        }
+        [self.tableView reloadData];
+    }
 }
 @end

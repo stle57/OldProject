@@ -136,6 +136,8 @@ static NSInteger const kFollowingButtonTag = 20003;
 #define TD_POST_EVENT_COUNT              10
 #define TD_POTRAIT_CELL_HEIGHT           44
 #define TD_CELL_BORDER_WIDTH             .5
+#define TD_INCREMENT_STRING              @"INCREMENT"
+#define TD_DECREMENT_STRING              @"DECREMENT"
 
 + (TDEnvironment)environment;
 + (NSString *)appScheme;

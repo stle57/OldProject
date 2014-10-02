@@ -77,6 +77,7 @@
 		4D3352D619A29CEC007B3E06 /* iRate.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4D3352D519A29CEC007B3E06 /* iRate.bundle */; };
 		4D36F51919CCE66700A279A5 /* TDSendInviteController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D36F51719CCE66700A279A5 /* TDSendInviteController.m */; };
 		4D36F51A19CCE66700A279A5 /* TDSendInviteController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D36F51819CCE66700A279A5 /* TDSendInviteController.xib */; };
+		4D3DDDE219DDB2790057A8B2 /* TDAddressBookAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D3DDDE119DDB2790057A8B2 /* TDAddressBookAPI.m */; };
 		4D4714B819CBF14F003AA69F /* TDContactInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4714B719CBF14F003AA69F /* TDContactInfo.m */; };
 		4D6FCC2419CAA34D00902719 /* TDContactsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D6FCC2219CAA34D00902719 /* TDContactsViewController.m */; };
 		4D6FCC2519CAA34D00902719 /* TDContactsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D6FCC2319CAA34D00902719 /* TDContactsViewController.xib */; };
@@ -298,6 +299,8 @@
 		4D36F51619CCE66700A279A5 /* TDSendInviteController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSendInviteController.h; sourceTree = "<group>"; };
 		4D36F51719CCE66700A279A5 /* TDSendInviteController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSendInviteController.m; sourceTree = "<group>"; };
 		4D36F51819CCE66700A279A5 /* TDSendInviteController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDSendInviteController.xib; sourceTree = "<group>"; };
+		4D3DDDE019DDB2790057A8B2 /* TDAddressBookAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDAddressBookAPI.h; sourceTree = "<group>"; };
+		4D3DDDE119DDB2790057A8B2 /* TDAddressBookAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDAddressBookAPI.m; sourceTree = "<group>"; };
 		4D4714B619CBF14F003AA69F /* TDContactInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDContactInfo.h; sourceTree = "<group>"; };
 		4D4714B719CBF14F003AA69F /* TDContactInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDContactInfo.m; sourceTree = "<group>"; };
 		4D6FCC2119CAA34D00902719 /* TDContactsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDContactsViewController.h; sourceTree = "<group>"; };
@@ -858,6 +861,8 @@
 				A1F02FD318C92277002FEB2F /* TDPostUpload.m */,
 				A1D6BB1419775492007983F8 /* TDTextUpload.h */,
 				A1D6BB1519775492007983F8 /* TDTextUpload.m */,
+				4D3DDDE019DDB2790057A8B2 /* TDAddressBookAPI.h */,
+				4D3DDDE119DDB2790057A8B2 /* TDAddressBookAPI.m */,
 			);
 			name = API;
 			sourceTree = "<group>";
@@ -1295,6 +1300,7 @@
 				A1BC0B3F18BE825200F507B3 /* TDSlideLeftSegue.m in Sources */,
 				2D00148B18CFB57C0070DE16 /* TDTwoButtonView.m in Sources */,
 				A14B2B7F18B5308000980A31 /* TDAPIClient.m in Sources */,
+				4D3DDDE219DDB2790057A8B2 /* TDAddressBookAPI.m in Sources */,
 				A182D839188F2C2D00F794A5 /* TDHomeViewController.m in Sources */,
 				2DBA430118DA455500366737 /* TDTextField.m in Sources */,
 				A14483BF19A8026000B3BC8D /* OAuth+Additions.m in Sources */,

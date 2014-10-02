@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6245" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
     <dependencies>
+        <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
     </dependencies>
     <objects>
@@ -49,8 +50,8 @@
             <state key="normal" image="nav-icon-settings">
                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
             </state>
-            <state key="selected" image="nav_settings_hit"/>
-            <state key="highlighted" image="nav_settings_hit"/>
+            <state key="selected" image="nav-icon-settings-hit"/>
+            <state key="highlighted" image="nav-icon-settings-hit"/>
             <connections>
                 <action selector="settingsButtonHit:" destination="-1" eventType="touchUpInside" id="IT3-IE-8S7"/>
             </connections>
@@ -61,8 +62,8 @@
             <state key="normal" image="nav-close">
                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
             </state>
-            <state key="selected" image="nav_close_hit"/>
-            <state key="highlighted" image="nav_close_hit"/>
+            <state key="selected" image="nav-close-hit"/>
+            <state key="highlighted" image="nav-close-hit"/>
             <connections>
                 <action selector="closeButtonHit:" destination="-1" eventType="touchUpInside" id="utC-lj-l7j"/>
             </connections>
@@ -73,8 +74,8 @@
             <state key="normal" image="nav-back">
                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
             </state>
-            <state key="selected" image="nav_close_hit"/>
-            <state key="highlighted" image="nav_back_hit"/>
+            <state key="selected" image="nav-back-hit"/>
+            <state key="highlighted" image="nav-back-hit"/>
             <connections>
                 <action selector="backButtonHit:" destination="-1" eventType="touchUpInside" id="fcv-jc-DEt"/>
             </connections>
@@ -83,11 +84,11 @@
     <resources>
         <image name="feed-background-grey" width="320" height="568"/>
         <image name="nav-back" width="13" height="22"/>
+        <image name="nav-back-hit" width="13" height="22"/>
         <image name="nav-close" width="17" height="17"/>
+        <image name="nav-close-hit" width="17" height="17"/>
         <image name="nav-icon-settings" width="18" height="18"/>
-        <image name="nav_back_hit" width="20" height="21"/>
-        <image name="nav_close_hit" width="20" height="21"/>
-        <image name="nav_settings_hit" width="20" height="21"/>
+        <image name="nav-icon-settings-hit" width="18" height="18"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

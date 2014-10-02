@@ -59,5 +59,5 @@
 
 - (IBAction)saveButtonHit:(id)sender;
 - (CGRect)getTextFieldPosition:(CGRect)frameX;
-- (CGRect)getTopLineHeight:(CGRect)oldFrame;
+- (CGRect)getLineHeight:(CGRect)oldFrame;
 @end

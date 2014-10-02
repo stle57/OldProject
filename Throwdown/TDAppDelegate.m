@@ -16,6 +16,7 @@
 #import "TDHomeViewController.h"
 #import "TDAnalytics.h"
 #import "TDURLHelper.h"
+#import "TDAddressBookAPI.h"
 
 // Used for class reference:
 #import "TDRecordVideoViewController.h"
@@ -45,6 +46,7 @@
         [TestFlight takeOff:@"6fef227c-c5cb-4505-9502-9052e2819f45"];
     }
 
+    NSArray *temp = [[TDAddressBookAPI sharedInstance] getContactList];
     // Whenever a person opens the app, check for a cached session
     if (FBSession.activeSession.state == FBSessionStateCreatedTokenLoaded) {
         // If there's one, just open the session silently, without showing the user the login UI
@@ -63,7 +65,7 @@
     UIViewController *initViewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
 
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    self.window.rootViewController = initViewController;
+    self.window.rootViewController =    initViewController;
     [self.window makeKeyAndVisible];
         
     if ([launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {

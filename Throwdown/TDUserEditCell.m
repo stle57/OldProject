@@ -19,6 +19,7 @@
 @synthesize topLineOrigHeight;
 @synthesize topLine;
 @synthesize bottomLine;
+@synthesize bottomLineOrigHeight;
 
 - (void)dealloc
 {
@@ -48,15 +49,16 @@
     self.userImageView.clipsToBounds = YES;
 
     textViewdOrigRect = self.textView.frame;
-    debug NSLog(@"self.bottomLineFrame=%@", NSStringFromCGRect((self.bottomLine.frame)));
-    bottomLineOrigY = self.bottomLine.frame.origin.y ;//+ 0.5;
+    bottomLineOrigY = self.bottomLine.frame.origin.y ;
     topLineOrigHeight = self.topLine.frame.size.height;
+    bottomLineOrigHeight = self.bottomLine.frame.size.height;
     
-//    self.bottomLine.layer.borderColor = [[TDConstants brandingRedColor] CGColor];
-//    self.bottomLine.layer.borderWidth = 2.;
-//    self.topLine.layer.borderColor = [[UIColor blueColor] CGColor];
-//    self.topLine.layer.borderWidth = 2.;
-//    
+    CALayer * postLayer = [self layer];
+    [postLayer setMasksToBounds:YES];
+    [postLayer setCornerRadius:0.0]; //when radius is 0, the border is a rectangle
+    
+    self.topLine.layer.borderColor = [[TDConstants brandingRedColor] CGColor];
+    
     self.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
     self.layer.borderWidth = .25;
 }

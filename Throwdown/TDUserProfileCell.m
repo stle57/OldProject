@@ -20,7 +20,8 @@
 }
 
 - (void)awakeFromNib {
-    self.userNameLabel.font = TITLE_FONT;
+    self.userNameLabel.font = USERNAME_PROFILE_FONT;
+    self.userNameLabel.textAlignment = NSTextAlignmentCenter;
     self.bioLabel.font = BIO_FONT;
     self.userImageView.layer.cornerRadius = 35;
     self.userImageView.layer.masksToBounds = YES;
@@ -35,7 +36,9 @@
     UIView *leftBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0, TD_CELL_BORDER_WIDTH, self.postButton.frame.size.height) ];
     leftBorder.backgroundColor = [TDConstants commentTimeTextColor];
     [self.postButton addSubview:leftBorder];
-    
+    CALayer * postLayer = [self.postButton layer];
+    [postLayer setMasksToBounds:YES];
+    [postLayer setCornerRadius:0.0]; //when radius is 0, the border is a rectangle
 
     // Create PR button
     // For pr button, need top and left border
@@ -48,6 +51,10 @@
     prLeftBorder.backgroundColor = [TDConstants commentTimeTextColor];
     [self.prButton addSubview:prLeftBorder];
 
+    CALayer * prLayer = [self.prButton layer];
+    [prLayer setMasksToBounds:YES];
+    [prLayer setCornerRadius:0.0]; //when radius is 0, the border is a rectangle
+    
     UIView *followerTopBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0,
             self.followerButton.frame.size.width, TD_CELL_BORDER_WIDTH) ];
     followerTopBorder.backgroundColor = [TDConstants commentTimeTextColor];

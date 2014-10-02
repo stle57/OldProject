@@ -10,13 +10,7 @@
 #import "UIActionSheet+Blocks.h"
 #import "TDUserAPI.h"
 #import "TDViewControllerHelper.h"
-
-@interface TDContactsViewController ()
-{
-    ABAddressBookRef addressBook;
-    NSArray *persons;
-}
-@end
+#import "TDAddressBookAPI.h"
 
 @implementation TDContactsViewController
 @synthesize delegate;
@@ -26,7 +20,6 @@
 
 - (void)dealloc {
     delegate = nil;
-    persons = nil;
     self.contacts = nil;
     self.userList = nil;
     self.filteredContactArray = nil;
@@ -72,9 +65,6 @@
     self.searchDisplayController.searchBar.layer.borderWidth = TD_CELL_BORDER_WIDTH;
     self.searchDisplayController.searchBar.backgroundColor = [TDConstants tableViewBackgroundColor];
     
-    self.searchDisplayController.searchResultsTableView.layer.borderColor = [[TDConstants brandingRedColor] CGColor];
-    self.searchDisplayController.searchResultsTableView.layer.borderWidth = 2.0;
-    
     [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
     
@@ -87,9 +77,10 @@
     self.navLabel.text = @"Contacts";
     self.suggestedLabel.hidden = YES;
     self.inviteButton.hidden = YES;
-        
-    [self copyAddressBook];
-
+    
+    contacts = [[TDAddressBookAPI sharedInstance] getContactList];
+    debug NSLog(@"contacts count=%lu", (unsigned long)[contacts count]);
+    
     [self.tableView reloadData];
 }
 
@@ -234,94 +225,6 @@
     }
 }
 
-//Method to sort by last name for Contacts
--(NSArray*)sortByLastNameForContacts:(NSArray*)sortArray
-{
-    sortArray = [sortArray sortedArrayUsingComparator:^NSComparisonResult(id a, id b) {
-        NSString *first,*second;int count = 0;
-        
-        first=[NSString stringWithString:[[NSString stringWithFormat:@"%@",(__bridge_transfer NSString *)ABRecordCopyCompositeName((__bridge ABRecordRef)(a))] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
-        second=[NSString stringWithString:[[NSString stringWithFormat:@"%@",(__bridge_transfer NSString *)ABRecordCopyCompositeName((__bridge ABRecordRef)(b))] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]]];
-        
-        first = [self fetchLastName:first];
-        second=[self fetchLastName:second];
-        count++;
-        
-        return [first compare:second options:NSCaseInsensitiveSearch];
-    }];
-    debug NSLog(@"sortArray=%@", sortArray);
-    return  sortArray;
-}
-
--(NSString*)fetchLastName:(NSString*)lastName
-{
-    lastName=[lastName stringByReplacingOccurrencesOfString:@"." withString:@" "];
-    NSRange range=[lastName rangeOfCharacterFromSet:[NSCharacterSet alphanumericCharacterSet] options:NSBackwardsSearch];
-    range.length=range.location;
-    range.location=0;
-    lastName= ([lastName rangeOfString:@" " options:NSBackwardsSearch range:range].location==NSNotFound)? [NSString stringWithFormat:@" %@",lastName]:[lastName substringFromIndex:[lastName rangeOfString:@" " options:NSBackwardsSearch range:range].location];
-    debug NSLog(@"fetch lsat name=%@", lastName);
-    return lastName;
-    
-}
-
-- (void)copyAddressBook {
-    CFErrorRef * err = NULL;
-
-    addressBook = ABAddressBookCreateWithOptions(NULL, err);
-    if (addressBook != nil) {
-        persons = (NSArray*)CFBridgingRelease(ABAddressBookCopyArrayOfAllPeople(addressBook));
-        NSArray *contactArray=(__bridge NSArray *)(ABAddressBookCopyArrayOfAllPeopleInSourceWithSortOrdering(addressBook,(__bridge ABRecordRef)(persons),1));
-        
-        // sort again because users may have inputed the full name into the first name
-        contactArray=[self sortByLastNameForContacts:contactArray];
-        NSMutableArray *tempArray = [[NSMutableArray alloc] init];
-        for (int i = 0; i < [contactArray count]; i++)
-        {
-            TDContactInfo *contactInfo = [[TDContactInfo alloc] init];
-            
-            ABRecordRef contactPerson = (__bridge ABRecordRef)contactArray[i];
-            
-            contactInfo.id = ABRecordGetRecordID(contactPerson);
-            contactInfo.firstName = (__bridge_transfer NSString *)ABRecordCopyValue(contactPerson, kABPersonFirstNameProperty);
-            contactInfo.lastName =  (__bridge_transfer NSString *)ABRecordCopyValue(contactPerson, kABPersonLastNameProperty);
-            if (contactInfo.lastName == nil) {
-                contactInfo.fullName = [NSString stringWithFormat:@"%@", contactInfo.firstName];
-            } else {
-                contactInfo.fullName = [NSString stringWithFormat:@"%@ %@", contactInfo.firstName, contactInfo.lastName];
-            }
-            ABMultiValueRef emails = ABRecordCopyValue(contactPerson, kABPersonEmailProperty);
-            NSUInteger j = 0;
-            for (j = 0; j < ABMultiValueGetCount(emails); j++)
-            {
-                NSString *email = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(emails, j);
-                [contactInfo.emailList addObject:email];
-            }
-            debug NSLog(@"contact full name=%@", contactInfo.fullName);
-            
-            ABMultiValueRef phoneNumbers = ABRecordCopyValue(contactPerson, kABPersonPhoneProperty);
-            NSUInteger p = 0;
-            for (p = 0; p < ABMultiValueGetCount(phoneNumbers); p++)
-            {
-                NSString *phoneNumber = (__bridge_transfer NSString *)ABMultiValueCopyValueAtIndex(phoneNumbers, p);
-                [contactInfo.phoneList addObject:phoneNumber];
-            }
-            
-            if (ABPersonHasImageData(contactPerson) == YES) {
-                CFDataRef ref = ABPersonCopyImageData(contactPerson);
-                contactInfo.contactPicture = [[UIImage alloc] initWithData:(__bridge NSData *)(ref)];
-            }
-            
-
-            [tempArray addObject:contactInfo];
-        }
-        
-        self.contacts = [tempArray copy];
-
-    }
-    CFRelease(addressBook);
- }
-
 - (TDFollowProfileCell*) createCell:(NSIndexPath *)indexPath contact:(TDContactInfo*)contact{
     TDFollowProfileCell *cell = (TDFollowProfileCell*)[self.tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_FOLLOWPROFILE];
     if (!cell) {
@@ -340,6 +243,9 @@
         CGRect nameFrame = cell.nameLabel.frame;
         nameFrame.origin.y = MIDDLE_CELL_Y_AXIS;
         cell.nameLabel.frame = nameFrame;
+        if(contact.fullName == nil) {
+            debug NSLog(@"!!!!this contact has a null full name");
+        }
         NSString *fullName = contact.fullName;
         cell.nameLabel.hidden = NO;
         cell.nameLabel.text = fullName;

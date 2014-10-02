@@ -451,6 +451,11 @@
         [cell.actionButton setTag:kFollowingButtonTag];
     }
 
+    if (cell.userId == [[TDCurrentUser sharedInstance] currentUserObject].userId) {
+        cell.actionButton.hidden = YES;
+    } else {
+        cell.actionButton.hidden = NO;
+    }
     return cell;
 }
 
@@ -531,7 +536,8 @@
         [[TDUserAPI sharedInstance] followUser:userId callback:^(BOOL success) {
             if (success) {
                 // Send notification to update user profile stat button-add
-                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:self userInfo:@{@"incrementCount": @1}];
+//                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:self.profileUser.userId userInfo:@{@"incrementCount": @1}];
+                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[[TDCurrentUser sharedInstance] currentUserObject].userId userInfo:@{TD_INCREMENT_STRING: @1}];
             } else {
                 [[TDAppDelegate appDelegate] showToastWithText:@"Error occured.  Please try again." type:kToastType_Warning payload:@{} delegate:nil];
                 // Switch button back
@@ -585,7 +591,8 @@
             if (success) {
                 debug NSLog(@"Successfully unfollwed user=%@", userId);
                 // send notification to update user follow count-subtract
-                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:self userInfo:@{@"decreaseCount": @1}];
+//                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:self.profileUser.userId userInfo:@{@"decreaseCount": @1}];
+                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[[TDCurrentUser sharedInstance] currentUserObject].userId userInfo:@{TD_DECREMENT_STRING: @1}];
             } else {
                 debug NSLog(@"could not follow user=%@", userId);
                 [[TDAppDelegate appDelegate] showToastWithText:@"Error occured.  Please try again." type:kToastType_Warning payload:@{} delegate:nil];
@@ -628,6 +635,7 @@
 - (void)findButtonPressed {
     TDFollowViewController *vc = [[TDFollowViewController alloc] initWithNibName:@"TDFollowViewController" bundle:nil ];
     vc.followControllerType = kUserListType_TDUsers;
+    vc.profileUser = self.profileUser;
     [self.navigationController pushViewController:vc animated:YES];
 
 }

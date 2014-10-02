@@ -385,15 +385,25 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
                         [cell.inviteButton setImage:[UIImage imageNamed:@"btn-following-hit.png"] forState:(UIControlStateSelected)];
                         [cell.inviteButton setTag:kFollowingButtonTag];
                     } else {
-                        UIImage *buttonImage = [UIImage imageNamed:@"btn-follow.png"];
-                        [cell.inviteButton setImage:buttonImage forState:(UIControlStateNormal)];
-                        [cell.inviteButton setImage:[UIImage imageNamed:@"btn-follow-hit.png"] forState:(UIControlStateHighlighted)];
-                        [cell.inviteButton setImage:[UIImage imageNamed:@"btn-follow-hit.png"] forState:(UIControlStateSelected)];
-                        [cell.inviteButton setTag:kFollowButtonTag];
+                        if (vc.getUser.userId != [[TDCurrentUser sharedInstance] currentUserObject].userId) {
+                            UIImage *buttonImage = [UIImage imageNamed:@"btn-follow.png"];
+                            [cell.inviteButton setImage:buttonImage forState:(UIControlStateNormal)];
+                            [cell.inviteButton setImage:[UIImage imageNamed:@"btn-follow-hit.png"] forState:(UIControlStateHighlighted)];
+                            [cell.inviteButton setImage:[UIImage imageNamed:@"btn-follow-hit.png"] forState:(UIControlStateSelected)];
+                            [cell.inviteButton setTag:kFollowButtonTag];
+                        } else {
+                            UIImage *buttonImage = [UIImage imageNamed:@"btn-invite-friends.png"];
+                            [cell.inviteButton setImage:buttonImage forState:(UIControlStateNormal)];
+                            [cell.inviteButton setImage:[UIImage imageNamed:@"btn-invite-friends-hit.png"] forState:(UIControlStateHighlighted)];
+                            [cell.inviteButton setImage:[UIImage imageNamed:@"btn-invite-friends-hit.png"] forState:(UIControlStateSelected)];
+                            [cell.inviteButton setTag:kInviteButtonTag];
+                        }
                     }
                 } else if (vc.fromProfileType == kFromProfileScreenType_OwnProfileButton) {
                     UIImage *buttonImage = [UIImage imageNamed:@"btn-invite-friends.png"];
                     [cell.inviteButton setImage:buttonImage forState:(UIControlStateNormal)];
+                    [cell.inviteButton setImage:[UIImage imageNamed:@"btn-invite-friends-hit.png"] forState:(UIControlStateHighlighted)];
+                    [cell.inviteButton setImage:[UIImage imageNamed:@"btn-invite-friends-hit.png"] forState:(UIControlStateSelected)];
                     [cell.inviteButton setTag:kInviteButtonTag];
                 } else if (vc.fromProfileType == kFromProfileScreenType_OwnProfile) {
                     UIImage *buttonImage = [UIImage imageNamed:@"btn-invite-friends.png"];
@@ -880,7 +890,7 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
         TDUserProfileCell * cell = nil;
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
         UITableViewCell * modifyCell = [self.tableView cellForRowAtIndexPath:indexPath];
-        if(modifyCell != nil) {
+        if(modifyCell != nil && [modifyCell isKindOfClass:[TDUserProfileCell class]]) {
             cell = (TDUserProfileCell*)modifyCell;
             // Got the cell, change the button
             UIImage * buttonImage = [UIImage imageNamed:@"btn-following.png"];
@@ -895,7 +905,10 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
         [[TDUserAPI sharedInstance] followUser:userId callback:^(BOOL success) {
             if (success) {
                 // Send notification to update user profile stat button-add
-                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[TDCurrentUser sharedInstance].currentUserObject userInfo:@{@"incrementCount": @1}];
+                debug NSLog(@"updating the following count of %@", [TDCurrentUser sharedInstance].currentUserObject);
+//                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:userId userInfo:@{@"incrementCount": @1}];
+                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[[TDCurrentUser sharedInstance] currentUserObject].userId userInfo:@{TD_INCREMENT_STRING: @1}];
+                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowerCount object:userId userInfo:@{TD_INCREMENT_STRING: @1}];
             } else {
                 [[TDAppDelegate appDelegate] showToastWithText:@"Error occured.  Please try again." type:kToastType_Warning payload:@{} delegate:nil];
                 // Switch button back
@@ -930,7 +943,9 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
             if (success) {
                 debug NSLog(@"Successfully unfollwed user=%@", userId);
                 // send notification to update user follow count-subtract
-                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[TDCurrentUser sharedInstance].currentUserObject userInfo:@{@"decreaseCount": @1}];
+//                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[TDCurrentUser sharedInstance].currentUserObject userInfo:@{@"decreaseCount": @1}];
+                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[TDCurrentUser sharedInstance].currentUserObject userInfo:@{TD_DECREMENT_STRING: @1}];
+                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowerCount object:userId userInfo:@{TD_DECREMENT_STRING: @1}];
             } else {
                 debug NSLog(@"could not follow user=%@", userId);
                 [[TDAppDelegate appDelegate] showToastWithText:@"Error occured.  Please try again." type:kToastType_Warning payload:@{} delegate:nil];
