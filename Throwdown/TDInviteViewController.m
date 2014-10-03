@@ -67,6 +67,8 @@
     
     [self checkForNextButton];
     self.view.backgroundColor = [TDConstants tableViewBackgroundColor];
+    
+
 }
 
 - (void)dealloc {
@@ -117,7 +119,7 @@
             NSString *topLabelText =@"Receive a free Throwdown T-shirt if\nthree of your friends join!";
             UIFont *font = [TDConstants fontSemiBoldSized:16.0];
             
-            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:topLabelText font:font color:[TDConstants commentTextColor]];
+            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:topLabelText font:font color:[TDConstants headerTextColor]];
             
             [topLabel setTextAlignment:NSTextAlignmentCenter];
             [topLabel setLineBreakMode:NSLineBreakByWordWrapping];
@@ -213,6 +215,7 @@
                 cell = [topLevelObjects objectAtIndex:0];
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 cell.contactTextField.delegate = self;
+                cell.delegate = self;
             }
             
             cell.contactTextField.hidden = NO;
@@ -366,25 +369,7 @@
     
 }
 
-#pragma mark - TDTextField delegates
-- (void)textFieldDidBeginEditing:(UITextField *)textField {
-    NSIndexPath* indexPath1 = [NSIndexPath indexPathForRow:0 inSection:0];
-    
-    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath1];
-    if(cell) {
-        TDInviteCell *inviteCell = (TDInviteCell*)cell;
-        [inviteCell setAccessoryType:UITableViewCellAccessoryDetailDisclosureButton];
-        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-        CGRect frame = CGRectMake(inviteCell.accessoryView.frame.origin.x, inviteCell.accessoryView.frame.size.height, 44, 44);
-        button.frame = frame;
-        [button.titleLabel setFont:[TDConstants fontRegularSized:16]];
-        [button setTitle:@"Add" forState:UIControlStateNormal];
-        [button setTitleColor:[TDConstants brandingRedColor] forState:UIControlStateNormal];
-        [button addTarget:self action:@selector(checkButtonTapped:event:)  forControlEvents:UIControlEventTouchUpInside];
-        button.backgroundColor = [UIColor clearColor];
-        inviteCell.accessoryView = button;
-    }
-}
+#pragma mark - TDTextField delegates    
 
 -(void)textFieldDidEndEditing:(UITextField *)textField {
     // Build the two index paths
@@ -395,6 +380,7 @@
         TDInviteCell *inviteCell = (TDInviteCell*)cell;
         [inviteCell setAccessoryType:UITableViewCellAccessoryDetailDisclosureButton];
        self.accessoryViewShown = NO;
+        inviteCell.addedButton = NO;
     }
 }
 
@@ -407,6 +393,11 @@
             [inviteCell.contactTextField resignFirstResponder];
             [self insertDataIntoInviteList:indexPath1];
         }
+        [inviteCell setAccessoryType:UITableViewCellAccessoryNone];
+        [inviteCell setAccessoryView:nil];
+        self.accessoryViewShown = NO;
+        
+        
         return NO;
     }
     

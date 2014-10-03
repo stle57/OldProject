@@ -8,8 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol TDInviteCellDelegate <NSObject>
+@optional
+- (void)checkButtonTapped:(id)sender event:(id)event;
+@end
+
 @interface TDInviteCell : UITableViewCell
 
-@property (weak, nonatomic) IBOutlet UITextField *contactTextField;
+@property (nonatomic, assign) id <TDInviteCellDelegate> __unsafe_unretained delegate;
 
+@property (weak, nonatomic) IBOutlet UITextField *contactTextField;
+@property (nonatomic) BOOL addedButton;
 @end

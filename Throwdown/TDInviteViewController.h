@@ -8,13 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "TDContactsViewController.h"
+#import "TDInviteCell.h"
 
 #define TD_INVITE_CELL_HEIGHT 65
 #define TD_INVITE_HEADER_HEIGHT_SEC0 120
 #define TD_INVITE_HEADER_HEIGHT_SEC1 13
 #define TD_INVITE_HEADER_HEIGHT_SEC2 49
 
-@interface TDInviteViewController : UIViewController<UITableViewDataSource, UITextFieldDelegate, UIAlertViewDelegate, TDContactsViewControllerDelegate, TDFollowProfileCellDelegate>
+@interface TDInviteViewController : UIViewController<UITableViewDataSource, UITextFieldDelegate, UIAlertViewDelegate, TDContactsViewControllerDelegate, TDFollowProfileCellDelegate, TDInviteCellDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;

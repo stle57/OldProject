@@ -22,8 +22,6 @@
     lineRect = self.topLine.frame;
     lineRect.size.height = TD_CELL_BORDER_WIDTH;
     self.topLine.frame = lineRect;
-    
-    self.topLine.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated{
