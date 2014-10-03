@@ -16,8 +16,14 @@
     self.titleLabel.textColor = [TDConstants headerTextColor];
     self.selectionStyle = UITableViewCellSelectionStyleGray;
     self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    self.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
-    self.layer.borderWidth = TD_CELL_BORDER_WIDTH;
+    CGRect lineRect = self.bottomLine.frame;
+    lineRect.size.height = TD_CELL_BORDER_WIDTH;
+    self.bottomLine.frame = lineRect;
+    lineRect = self.topLine.frame;
+    lineRect.size.height = TD_CELL_BORDER_WIDTH;
+    self.topLine.frame = lineRect;
+    
+    self.topLine.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated{

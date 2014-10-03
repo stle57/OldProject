@@ -25,10 +25,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.view.backgroundColor = [TDConstants backgroundColor];
+    self.view.backgroundColor = [TDConstants postViewBackgroundColor];
     
     // Background
-    self.tableView.backgroundColor = [TDConstants tableViewBackgroundColor];
+    self.tableView.backgroundColor = [TDConstants postViewBackgroundColor];
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
     
@@ -49,7 +49,8 @@
     self.tableView = [[UITableView alloc] initWithFrame:[[UIScreen mainScreen] bounds] style:UITableViewStyleGrouped];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
-    self.tableView.separatorInset = UIEdgeInsetsMake(0, 60, 0, 0);
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+   // self.tableView.separatorInset = UIEdgeInsetsMake(0, 50, 0, 0);
     [self.view addSubview:self.tableView];
 }
 
@@ -79,9 +80,13 @@
         cell = [topLevelObjects objectAtIndex:0];
         cell.titleLabel.font = [TDConstants fontRegularSized:18];
     }
-
+    cell.topLine.hidden = YES;
+    
+    debug NSLog(@"topLine frame=%@", NSStringFromCGRect(cell.topLine.frame));
+    debug NSLog(@"bottomLine frame=%@", NSStringFromCGRect(cell.bottomLine.frame));
     switch (indexPath.row) {
         case 0:
+            cell.topLine.hidden = NO;
             if ([[TDCurrentUser sharedInstance] canPostToTwitter]) {
                 cell.titleLabel.text = [TDCurrentUser sharedInstance].twitterIdentifier;
                 cell.iconView.image = [UIImage imageNamed:@"twitter_active_48x38"];

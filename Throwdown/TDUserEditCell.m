@@ -53,12 +53,6 @@
     topLineOrigHeight = self.topLine.frame.size.height;
     bottomLineOrigHeight = self.bottomLine.frame.size.height;
     
-    CALayer * postLayer = [self layer];
-    [postLayer setMasksToBounds:YES];
-    [postLayer setCornerRadius:0.0]; //when radius is 0, the border is a rectangle
-    
-    self.topLine.layer.borderColor = [[TDConstants brandingRedColor] CGColor];
-    
 }
 
 @end
