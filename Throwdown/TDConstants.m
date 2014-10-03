@@ -133,7 +133,7 @@ static NSString *const kCDNStreamingServer = @"http://139bc8fb83b0918931ad-a6f56
 
 }
 + (UIColor *)cellBorderColor {
-    return [UIColor colorWithRed:(204./255.) green:(204./255.) blue:(204./255.) alpha:1.0];   // #cccccc
+    return [UIColor colorWithRed:(162.0/255.0) green:(162.0/255.0) blue:(162.0/255.0) alpha:1.0];  // a2a2a2
 }
 
 #pragma mark - Fonts

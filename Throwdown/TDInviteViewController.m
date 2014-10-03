@@ -20,7 +20,7 @@
 
 @interface TDInviteViewController ()
 @property (nonatomic) BOOL accessoryViewShown;
-@property (nonatomic) NSMutableArray *inviteList;
+@property (nonatomic, retain) NSMutableArray *inviteList;
 @end
 
 @implementation TDInviteViewController
@@ -84,6 +84,16 @@
     
     [self checkForNextButton];
     [self.tableView reloadData];
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    // This is needed so the cells do not overlap with section header
+    float  heightForHeader = TD_INVITE_HEADER_HEIGHT_SEC0;
+    if (scrollView.contentOffset.y<=heightForHeader&&scrollView.contentOffset.y>=0) {
+        scrollView.contentInset = UIEdgeInsetsMake(-scrollView.contentOffset.y, 0, 0, 0);
+    } else if (scrollView.contentOffset.y>=heightForHeader) {
+        scrollView.contentInset = UIEdgeInsetsMake(-heightForHeader, 0, 0, 0);
+    }
 }
 
 - (IBAction)closeButtonHit:(id)sender {
@@ -190,8 +200,6 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    
-    debug NSLog(@"!!!!creating cell for section: %lu and row: %lu", indexPath.section, indexPath.row);
     switch (indexPath.section) {
         case 0: // Enter Phone number
         {
@@ -260,7 +268,7 @@
                 followCell.nameLabel.hidden = YES;
                 followCell.usernameLabel.hidden = YES;
                 followCell.actionButton.hidden = YES;
-                
+                followCell.userId = contact.id;
                 followCell.nameLabel.textColor = [TDConstants headerTextColor];
                 followCell.nameLabel.font = [TDConstants fontRegularSized:16.0];
                 [followCell setAccessoryType:UITableViewCellAccessoryNone];
@@ -279,6 +287,7 @@
                     NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
                     NSString *usernameStr = contact.fullName;
                     [style setLineSpacing:19.0];
+                    
                     NSDictionary *attributes2= @{NSParagraphStyleAttributeName:style};
                     NSAttributedString * attributedString2 = [[NSAttributedString alloc] initWithString:usernameStr attributes:attributes2];
                     followCell.nameLabel.attributedText = attributedString2;
@@ -338,8 +347,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    debug NSLog(@"inviteviewcontroller row selected");
-        [tableView deselectRowAtIndexPath:indexPath animated:NO];
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
     
     switch (indexPath.section) {
         case 1:
@@ -390,44 +398,29 @@
     }
 }
 
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    NSIndexPath *indexPath1 =[NSIndexPath indexPathForRow:0 inSection:0];
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath1];
+    if(cell) {
+        TDInviteCell *inviteCell = (TDInviteCell*)cell;
+        if (textField == inviteCell.contactTextField) {
+            [inviteCell.contactTextField resignFirstResponder];
+            [self insertDataIntoInviteList:indexPath1];
+        }
+        return NO;
+    }
+    
+    return YES;
+}
+
 - (void)checkButtonTapped:(id)sender event:(id)event
 {
     NSSet *touches = [event allTouches];
     UITouch *touch = [touches anyObject];
     CGPoint currentTouchPosition = [touch locationInView:self.tableView];
     NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint: currentTouchPosition];
-    NSString *formatedPhone;
-    if (indexPath != nil)
-    {
-        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-        if (cell) {
-            TDInviteCell *inviteCell = (TDInviteCell*)cell;
-            TDContactInfo *contact = [[TDContactInfo alloc]init];
-            if ([TDViewControllerHelper validateEmail:inviteCell.contactTextField.text]) {
-                contact.selectedData = inviteCell.contactTextField.text;
-                contact.inviteType = kInviteType_Email;
-            } else {
-                formatedPhone = [TDViewControllerHelper validatePhone:inviteCell.contactTextField.text];
-                if(formatedPhone) {
-                    contact.selectedData = formatedPhone;
-                    contact.inviteType = kInviteType_Phone;
-                } else {
-                    contact.inviteType = kInviteType_None;
-                }
-            }
-            
-            // Check if data is already in the current invite list
-            NSArray *filteredArray = [self.inviteList filteredArrayUsingPredicate:[NSPredicate
-                                                  predicateWithFormat:@"self.selectedData == %@", contact.selectedData]];
-            if (![filteredArray count]) {
-                [self addToInviteList:contact];
-            }
-            inviteCell.contactTextField.text = @"";
-            [inviteCell setAccessoryType:UITableViewCellAccessoryDetailDisclosureButton];
-
-            inviteCell.accessoryView = nil;
-            [self.tableView reloadData];
-        }
+    if (indexPath != nil) {
+        [self insertDataIntoInviteList:indexPath];
     }
 }
 
@@ -438,6 +431,37 @@
         self.nextButton.enabled = NO;
     }
 }
+
+- (void)insertDataIntoInviteList:(NSIndexPath*)indexPath1 {
+    NSString *formatedPhone;
+    UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath1];
+    if (cell) {
+        TDInviteCell *inviteCell = (TDInviteCell*)cell;
+        TDContactInfo *contact = [[TDContactInfo alloc]init];
+        if ([TDViewControllerHelper validateEmail:inviteCell.contactTextField.text]) {
+            contact.selectedData = inviteCell.contactTextField.text;
+            contact.inviteType = kInviteType_Email;
+        } else {
+            formatedPhone = [TDViewControllerHelper validatePhone:inviteCell.contactTextField.text];
+            if(formatedPhone) {
+                contact.selectedData = formatedPhone;
+                contact.inviteType = kInviteType_Phone;
+            } else {
+                contact.inviteType = kInviteType_None;
+            }
+        }
+        
+        // Check if data is already in the current invite list
+        NSArray *filteredArray = [self.inviteList filteredArrayUsingPredicate:[NSPredicate
+                                                                               predicateWithFormat:@"self.selectedData == %@", contact.selectedData]];
+        if (![filteredArray count]) {
+            [self addToInviteList:contact];
+        }
+        inviteCell.contactTextField.text = @"";
+        [self.tableView reloadData];
+    }
+}
+
 #pragma mark - my contacts
 - (void)gotoMyContacts {
     // Check to see if we asked for contact permission yet
@@ -449,7 +473,6 @@
         vc.delegate = self;
         [self.navigationController pushViewController:vc animated:YES];
     } else {
-        debug NSLog(@"first time asking");
         NSString * message = @"We'd like to ask for your permission\nto access your Contacts.  On the\nnext screen, please tap \"OK\" to\n give us permission.";
         
         [[TDAnalytics sharedInstance] logEvent:@"contacts_asked"];
@@ -479,6 +502,7 @@
 
 #pragma mark TDFollowProfileCellDelegate
 - (void)contactPressedFromRow:(TDContactInfo*)contact {
+    // Check if we've already added the person
     NSArray *filteredArray =
     [self.inviteList filteredArrayUsingPredicate:[NSPredicate
             predicateWithFormat:@"self.selectedData == %@", contact.selectedData]];
@@ -487,13 +511,29 @@
     }
 }
 
+- (void)invitesAdded:(NSMutableArray*)inviteList {
+    // Need to filter dups from the contact view controller
+    bool foundEntry = NO;
+    for (id object in inviteList)
+    {
+        TDContactInfo *info = (TDContactInfo*)object;
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"self.id == %@", info.id];
+        NSArray *filteredArray = [self.inviteList filteredArrayUsingPredicate:predicate];
+        if ([filteredArray count] == 0) {
+            foundEntry = YES;
+            
+            [self.inviteList addObject:object];
+        }
+    }
+    [self checkForNextButton];
+}
+
 - (void)addToInviteList:(TDContactInfo*)contact {
     [self.inviteList insertObject:contact atIndex:0];
     [self checkForNextButton];
 }
 
-- (void)actionButtonPressedFromRow:(NSInteger)row tag:(NSInteger)tag {
-    debug NSLog(@"inside TDInviteViewController: actionButtonPressedFromRow, row=%lu, tag=%ld", row, (long)tag);
+- (void)actionButtonPressedFromRow:(NSInteger)row tag:(NSInteger)tag userId:(NSNumber *)userId{
     if ([self.inviteList objectAtIndex:row] != nil) {
         if (tag == 1001) {
             [self.inviteList removeObjectAtIndex:row];

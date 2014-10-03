@@ -127,7 +127,6 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
     self.customRefreshControl = nil;
     self.animator = nil;
     self.userId = nil;
-    self.needsProfileHeader = nil;
 }
 
 #pragma mark - Notices methods to override

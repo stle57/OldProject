@@ -16,7 +16,7 @@
 @synthesize delegate;
 @synthesize userId;
 //@synthesize textViewdOrigRect;
-//@synthesize bottomLineOrigY;
+@synthesize bottomLineOrigY;
 
 - (void)dealloc
 {
@@ -48,16 +48,20 @@
 
     [self.userImageView addGestureRecognizer:userProfileTap];
     
-    self.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
-    self.layer.borderWidth = TD_CELL_BORDER_WIDTH;
-    
     self.selectionStyle = UITableViewCellSelectionStyleNone;
+    
+    CGRect lineRect = self.bottomLine.frame;
+    lineRect.size.height = 0.5;
+    self.bottomLine.frame = lineRect;
+    lineRect = self.topLine.frame;
+    lineRect.size.height = 0.5;
+    self.topLine.frame = lineRect;
 }
 
 - (IBAction)actionButtonPressed:(UIButton*)sender{
-    debug NSLog(@"TDFollowProfileCell-actionButtonPressed w/ userId=%@", self.userId);
-    if (delegate && [delegate respondsToSelector:@selector(actionButtonPressedFromRow:tag:)]) {
-        [delegate actionButtonPressedFromRow:self.row tag:sender.tag];
+    debug NSLog(@"TDFollowProfileCell-actionButtonPressed w/ userId=%d", [self.userId intValue]);
+    if (delegate && [delegate respondsToSelector:@selector(actionButtonPressedFromRow:tag:userId:)]) {
+        [delegate actionButtonPressedFromRow:self.row tag:sender.tag userId:self.userId];
     }
 }
 

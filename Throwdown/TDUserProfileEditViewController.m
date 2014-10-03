@@ -74,7 +74,7 @@
     [navigationBar setBarStyle:UIBarStyleBlack];
     navigationBar.translucent = NO;
     // Background color
-    self.tableView.backgroundColor = [TDConstants tableViewBackgroundColor]; //f5f5f5f5
+    self.tableView.backgroundColor = [TDConstants postViewBackgroundColor]; //f5f5f5f5
     self.tableView.separatorColor = [UIColor clearColor];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
@@ -519,6 +519,7 @@
     cell.longTitleLabel.hidden = YES;
     cell.middleLabel.hidden = YES;
     cell.userImageView.hidden = YES;
+    cell.topLine.hidden = YES;
     cell.textField.hidden = YES;
     cell.textField.secureTextEntry = NO;
     cell.leftMiddleLabel.hidden = YES;
@@ -529,21 +530,14 @@
     cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
                                        cell.bottomLineOrigY,
                                        cell.bottomLine.frame.size.width,
-                                       cell.bottomLineOrigHeight);
+                                       cell.bottomLine.frame.size.height);
     
-    cell.topLine.frame = CGRectMake(cell.topLine.frame.origin.x,
-                                    cell.topLine.frame.origin.y,
-                                    cell.topLine.frame.size.width,
-                                    cell.topLineOrigHeight);
-    cell.topLine.hidden = NO;
-    cell.bottomLine.hidden = NO;
     switch (indexPath.section) {
         case 0: // profile settings
             switch (indexPath.row) {
                 case 0:
                 {
-                    cell.topLine.frame = [self getLineHeight:cell.topLine.frame];
-                    debug NSLog(@"image cell topline=%@", NSStringFromCGRect(cell.topLine.frame));
+                    cell.topLine.hidden = NO;
                     cell.userImageView.hidden = NO;
                     if (self.editedProfileImage) {
                         cell.userImageView.image = self.editedProfileImage;
@@ -568,7 +562,6 @@
                     cell.titleLabel.text = @"Name";
                     cell.textField.text = self.name;
                     cell.textField.frame = [self getTextFieldPosition:cell.textField.frame];
-                    debug NSLog(@"topline for name=%@", NSStringFromCGRect(cell.topLine.frame));
                 }
                 break;
                 case 2:
@@ -601,17 +594,15 @@
                     cell.titleLabel.text = @"Bio";
                     cell.textView.text = self.bio;
                     CGRect newTextFrame = cell.textView.frame;
-                    newTextFrame.size.height = [self tableView:tableView heightForRowAtIndexPath:indexPath];
+                    newTextFrame.size.height = [self tableView:tableView heightForRowAtIndexPath:indexPath]-1;
                     cell.textView.frame = newTextFrame;
-                    cell.textView.frame = [self getTextFieldPosition:cell.textView.frame];
+                    debug NSLog(@"==newer bio cell frame = %@", NSStringFromCGRect(cell.textView.frame));
+
                     cell.textView.textContainer.lineFragmentPadding = 0;
                     cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
                                                        CGRectGetMaxY(newTextFrame),
                                                        cell.bottomLine.frame.size.width,
                                                        cell.bottomLine.frame.size.height);
-                    cell.bottomLine.frame = [self getLineHeight:cell.bottomLine.frame];
-                    debug NSLog(@"bio bottomLine=%@", NSStringFromCGRect(cell.bottomLine.frame));
-
                 }
                 break;
                 default:
@@ -631,6 +622,7 @@
                     cell.textField.text = self.phone;
                     cell.textField.frame = [self getTextFieldPosition:cell.textField.frame];
                     cell.textField.keyboardType = UIKeyboardTypePhonePad;
+                    cell.topLine.hidden = NO;
                 }
                 break;
                 case 1:
@@ -641,7 +633,6 @@
                     cell.titleLabel.text = @"Email";
                     cell.textField.text = self.email;
                     cell.textField.frame = [self getTextFieldPosition:cell.textField.frame];
-                    cell.bottomLine.frame = [self getLineHeight:cell.bottomLine.frame];
                     debug NSLog(@"cell.bottomLine.frame=%@ for email", NSStringFromCGRect( cell.bottomLine.frame));
 
                 break;
@@ -658,9 +649,7 @@
                     cell.longTitleLabel.text = @"Push Notifications";
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-                    
-                    cell.topLine.frame = [self getLineHeight:cell.topLine.frame];
-                    debug NSLog(@"topLine for push not=%@", NSStringFromCGRect(cell.topLine.frame));
+                    cell.topLine.hidden = NO;
                 }
                     break;
                 case 1:
@@ -674,30 +663,23 @@
                     cell.longTitleLabel.text = @"Change Password";
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-                    cell.bottomLine.frame = [self getLineHeight:cell.bottomLine.frame];
-                    debug NSLog(@"bottomLine for push not=%@", NSStringFromCGRect(cell.bottomLine.frame));
-
                     break;
             }
             break;
         case 3:
             switch (indexPath.row) {
                 case 0:
-                    cell.topLine.frame = [self getLineHeight:cell.topLine.frame];
+                    cell.topLine.hidden = NO;
                     cell.longTitleLabel.hidden = NO;
                     cell.longTitleLabel.text = @"Buy a Throwdown T-Shirt";
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
                     break;
                 case 1:
-                    debug NSLog(@"topLine frame for rate=%@", NSStringFromCGRect(cell.topLine.frame));
                     cell.longTitleLabel.hidden = NO;
                     cell.longTitleLabel.text = @"Rate Throwdown in App Store";
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
                     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-                    cell.bottomLine.frame = [self getLineHeight:cell.bottomLine.frame];
-                    debug NSLog(@"bottomLine frame for rate=%@", NSStringFromCGRect(cell.bottomLine.frame));
-
                     break;
                 default:
                     break;
@@ -707,13 +689,11 @@
         case 4: // Log out
             switch (indexPath.row) {
                 case 0:
-                    cell.topLine.frame = [self getLineHeight:cell.topLine.frame];
+                    cell.topLine.hidden = NO;
                     cell.middleLabel.hidden = NO;
                     cell.middleLabel.text = @"Log Out";
                     cell.middleLabel.textColor = [TDConstants brandingRedColor];
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
-                    cell.bottomLine.frame = [self getLineHeight:cell.bottomLine.frame];
-                    debug NSLog(@"cell.bottomLine.frame=%@", NSStringFromCGRect( cell.bottomLine.frame));
                     break;
             }
         break;
@@ -727,13 +707,6 @@
 - (CGRect)getTextFieldPosition:(CGRect)frameX {
     CGRect newFrame = CGRectMake(frameX.origin.x, frameX.origin.y, frameX.size.width, frameX.size.height);
     newFrame.origin.x = TD_TEXTFIELD_ORIGIN_X_POS;
-    
-    return newFrame;
-}
-
-- (CGRect)getLineHeight:(CGRect)oldFrame {
-    CGRect newFrame = CGRectMake(oldFrame.origin.x, oldFrame.origin.y, oldFrame.size.width, oldFrame.size.height);
-    newFrame.size.height = oldFrame.size.height + .25;
     
     return newFrame;
 }

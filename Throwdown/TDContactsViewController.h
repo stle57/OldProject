@@ -10,6 +10,7 @@
 #import "TDFollowProfileCell.h"
 #import "TDContactInfo.h"
 #import "TDConstants.h"
+#import "TDNoFollowProfileCell.h"
 
 @import AddressBook;
 
@@ -18,9 +19,10 @@ static const CGFloat MIDDLE_CELL_Y_AXIS = 23.75;
 @protocol TDContactsViewControllerDelegate <NSObject>
 @optional
 - (void)contactPressedFromRow:(TDContactInfo*)contact;
+- (void)invitesAdded:(NSMutableArray*)inviteList;
 @end
 
-@interface TDContactsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, UISearchDisplayDelegate, TDFollowProfileCellDelegate, UIActionSheetDelegate>
+@interface TDContactsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, UISearchDisplayDelegate, TDFollowProfileCellDelegate, UIActionSheetDelegate, TDNoFollowProfileCellDelegate>
 
 @property (nonatomic, assign) id <TDContactsViewControllerDelegate> __unsafe_unretained delegate;
 @property (weak, nonatomic) IBOutlet UILabel *navLabel;
@@ -31,7 +33,9 @@ static const CGFloat MIDDLE_CELL_Y_AXIS = 23.75;
 @property (nonatomic) NSArray *contacts;
 @property (nonatomic) NSArray *userList;
 @property (nonatomic) NSMutableArray *filteredContactArray;
-
+@property (nonatomic) CGFloat origNameLabelYAxis;
+@property (nonatomic) CGRect origNameLabelFrame;
+@property (nonatomic) NSMutableArray *inviteList;
 
 - (IBAction)backButtonHit:(id)sender;
 - (IBAction)inviteButtonHit:(id)sender;

@@ -11,7 +11,7 @@
 
 @protocol TDFollowProfileCellDelegate <NSObject>
 @required
-- (void)actionButtonPressedFromRow:(NSInteger)row tag:(NSInteger)tag;
+- (void)actionButtonPressedFromRow:(NSInteger)row tag:(NSInteger)tag userId:(NSNumber*)userId;
 @optional
 - (void)userProfilePressedWithId:(NSNumber *)userId;
 @end
@@ -26,7 +26,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *userImageView;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *usernameLabel;
-//@property (weak, nonatomic) IBOutlet UIView *bottomLine;
+@property (weak, nonatomic) IBOutlet UIView *bottomLine;
 @property (weak, nonatomic) IBOutlet UIView *topLine;
 @property (weak, nonatomic) IBOutlet UIButton *actionButton;
 
@@ -34,8 +34,8 @@
 @property (nonatomic, assign) NSInteger row;
 
 //@property (nonatomic, assign) CGRect textViewdOrigRect;
-//@property (nonatomic, assign) CGFloat bottomLineOrigY;
-//
+@property (nonatomic, assign) CGFloat bottomLineOrigY;
+
 - (IBAction)actionButtonPressed:(UIButton*)sender;
 - (IBAction)followActionButtonPressed:(UIButton*)sender;
 - (IBAction)unFollowActionButtonPressed:(UIButton*)sender;

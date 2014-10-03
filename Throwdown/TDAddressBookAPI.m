@@ -64,10 +64,6 @@
     if (addressBook != nil) {
         ABRecordRef source = ABAddressBookCopyDefaultSource(addressBook);
         NSArray *contactArray = (NSArray *)CFBridgingRelease(ABAddressBookCopyArrayOfAllPeopleInSourceWithSortOrdering(addressBook, source, kABPersonSortByLastName));
-        // sort again because users may have inputed the full name into the first name
-        //debug NSLog(@"count of contactArray before sort=%ld", (unsigned long)[contactArray count]);
-        //contactArray=[self sortByLastNameForContacts:contactArray];
-        //debug NSLog(@"count of contactArray AFTER sort=%ld", (unsigned long)[contactArray count]);
         
         NSMutableArray *tempArray = [[NSMutableArray alloc] init];
         for (int i = 0; i < [contactArray count]; i++)
@@ -76,19 +72,20 @@
             
             ABRecordRef contactPerson = (__bridge ABRecordRef)contactArray[i];
             
-            contactInfo.id = ABRecordGetRecordID(contactPerson);
+            contactInfo.id = [NSNumber numberWithInteger:ABRecordGetRecordID(contactPerson)];
             contactInfo.firstName = CFBridgingRelease(ABRecordCopyValue(contactPerson, kABPersonFirstNameProperty));
             contactInfo.lastName =  CFBridgingRelease(ABRecordCopyValue(contactPerson, kABPersonLastNameProperty));
-            if (contactInfo.lastName == nil) {
+            if (contactInfo.firstName != nil && contactInfo.lastName != nil){
+                contactInfo.fullName = [NSString stringWithFormat:@"%@ %@", contactInfo.firstName, contactInfo.lastName];
+            } else if (contactInfo.firstName == nil && contactInfo.lastName != nil) {
+                contactInfo.fullName = [NSString stringWithFormat:@"%@", contactInfo.lastName];
+            } else if (contactInfo.firstName != nil && contactInfo.lastName == nil) {
                 contactInfo.fullName = [NSString stringWithFormat:@"%@", contactInfo.firstName];
             } else {
-                contactInfo.fullName = [NSString stringWithFormat:@"%@ %@", contactInfo.firstName, contactInfo.lastName];
+                // Contact doesn't have first or last name -- not valid
+                continue;
             }
             
-            if(contactInfo.fullName.length == 0) {
-                debug NSLog(@"====>not adding this contact");
-                break;
-            }
             ABMultiValueRef emails = ABRecordCopyValue(contactPerson, kABPersonEmailProperty);
             NSUInteger j = 0;
             for (j = 0; j < ABMultiValueGetCount(emails); j++)
@@ -115,13 +112,11 @@
         }
         
         self.contactList = [tempArray copy];
-        
     }
     
 }
 
 - (NSArray*)getContactList {
-    debug NSLog(@"contactList count=%lu", (unsigned long)[self.contactList count]);
     return self.contactList;
 }
 

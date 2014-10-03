@@ -11,7 +11,7 @@
 
 @interface TDContactInfo : NSObject
 
-@property (nonatomic) NSInteger id;
+@property (nonatomic) NSNumber *id;
 @property (nonatomic) NSString *firstName;
 @property (nonatomic) NSString *lastName;
 @property (nonatomic) NSMutableArray *phoneList;

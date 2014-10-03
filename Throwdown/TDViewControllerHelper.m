@@ -160,7 +160,7 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     [paragraphStyle setLineHeightMultiple:kTextLineHeight];
     [attributedString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, text.length)];
-    [attributedString addAttribute:NSForegroundColorAttributeName value:[TDConstants commentTimeTextColor] range:NSMakeRange(0, text.length)];
+    [attributedString addAttribute:NSForegroundColorAttributeName value:color range:NSMakeRange(0, text.length)];
     return attributedString;
 }
 

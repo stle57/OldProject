@@ -40,10 +40,10 @@
     self.leftMiddleLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
     self.middleLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
     CGRect lineRect = self.bottomLine.frame;
-    lineRect.size.height = 0.25;
+    lineRect.size.height = 0.5;
     self.bottomLine.frame = lineRect;
     lineRect = self.topLine.frame;
-    lineRect.size.height = 0.25;
+    lineRect.size.height = 0.5;
     self.topLine.frame = lineRect;
     self.userImageView.layer.cornerRadius = self.userImageView.layer.frame.size.width / 2;
     self.userImageView.clipsToBounds = YES;
@@ -59,8 +59,6 @@
     
     self.topLine.layer.borderColor = [[TDConstants brandingRedColor] CGColor];
     
-    self.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
-    self.layer.borderWidth = .25;
 }
 
 @end

@@ -14,7 +14,7 @@
 {
     self = [super init];
     if (self) {
-        _id = NSINTEGER_DEFINED;
+        _id        = [[NSNumber alloc] init];
         _firstName = [[NSString alloc] init];
         _lastName = [[NSString alloc] init];
         _emailList = [[NSMutableArray alloc] init];
@@ -33,13 +33,16 @@
     self = [super init];
     if (self)
     {
-        
+        _id              = [NSNumber numberWithInteger:(long)[dict objectForKey:@"id"]];
         _firstName       = [dict objectForKey:@"firstName"];
         _lastName        = [dict objectForKey:@"lastName"];
-        _contactPicture  = [dict objectForKey:@"contactPicture"];
-        _username        = [dict objectForKey:@"username"];
         _emailList       = [dict objectForKey:@"emailList"];
         _phoneList       = [dict objectForKey:@"phoneList"];
+        _fullName        = [dict objectForKey:@"fullName"];
+        _username        = [dict objectForKey:@"username"];
+        _selectedData    = [dict objectForKey:@"selectedData"];
+        _contactPicture  = [dict objectForKey:@"contactPicture"];
+
     }
     return self;
 }

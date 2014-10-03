@@ -98,6 +98,7 @@
     self.searchDisplayController.searchBar.layer.borderWidth = TD_CELL_BORDER_WIDTH;
     self.searchDisplayController.searchBar.backgroundColor = [TDConstants tableViewBackgroundColor];
     self.searchDisplayController.searchBar.clipsToBounds = YES;
+    self.searchDisplayController.searchResultsTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
@@ -117,6 +118,7 @@
             }
             [self.tableView reloadData];
             [self hideActivity];
+
         } failure:^{
             self.hasLoaded = NO;
             [self.tableView reloadData];
@@ -304,7 +306,7 @@
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 cell.delegate = self;
             }
-            
+            cell.contentView.backgroundColor = [TDConstants tableViewBackgroundColor];
             cell.noFollowLabel.text = @"No matches found";
             cell.findPeopleButton.hidden = YES;
             cell.findPeopleButton.enabled = NO;
@@ -406,8 +408,14 @@
         cell = [topLevelObjects objectAtIndex:0];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.delegate = self;
-        cell.userId = [object valueForKey:@"id"];
-        cell.row = indexPath.row;
+    }
+    cell.userId = [object valueForKey:@"id"];
+    cell.row = indexPath.row;
+    
+    if (cell.row == 0) {
+        cell.topLine.hidden = NO;
+    } else {
+        cell.topLine.hidden = YES;
     }
     NSString *usernameStr = [NSString stringWithFormat:@"@%@", [object valueForKey:@"username"] ];
     NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
@@ -423,7 +431,6 @@
     NSAttributedString * attributedString2 = [[NSAttributedString alloc] initWithString:usernameStr attributes:attributes2];
     cell.nameLabel.attributedText = attributedString2;
     
-    cell.topLine.hidden = YES;
     cell.userImageView.hidden = NO;
   
     if ([object valueForKey:@"picture"] != [NSNull null] && ![[object valueForKey:@"picture"] isEqualToString:@"default"]) {
@@ -501,16 +508,16 @@
 }
 
 #pragma mark - TDFollowCellProfileDelegate
-- (void)actionButtonPressedFromRow:(NSInteger)row tag:(NSInteger)tag{
+- (void)actionButtonPressedFromRow:(NSInteger)row tag:(NSInteger)tag userId:(NSNumber *)userId{
     debug NSLog(@"TDFollowViewControllerDelegate: action button pressed with tag=%tu and row=%ld", tag, (long)row);
     debug NSLog(@"follow/unfollow--");
     self.currentRow = row;
     
-    NSNumber *userId = nil;
-    if(self.followUsers != nil) {
-        userId = [[self.followUsers objectAtIndex:row] valueForKeyPath:@"id"];
-        debug NSLog(@"going to follow user w/ id=%@", userId);
-    }
+//    NSNumber *userId = nil;
+//    if(self.followUsers != nil) {
+//        userId = [[self.followUsers objectAtIndex:row] valueForKeyPath:@"id"];
+//        debug NSLog(@"going to follow user w/ id=%@", userId);
+//    }
     
     if (tag == kFollowButtonTag) {
         TDFollowProfileCell * cell;
