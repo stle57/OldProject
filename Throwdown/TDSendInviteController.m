@@ -250,7 +250,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     switch (indexPath.section) {
         case 0:
-            return 50;
+            return 43.0;
             break;
         case 1:
             return 0;
@@ -290,7 +290,6 @@
                                            cell.bottomLineOrigY,
                                            cell.bottomLine.frame.size.width,
                                            cell.bottomLine.frame.size.height);
-
         cell.titleLabel.hidden = NO;
         cell.textField.hidden = NO;
         cell.titleLabel.text = @"Name";
@@ -298,6 +297,7 @@
         CGRect cellFrame = cell.textField.frame;
         cellFrame.origin.x = 100;
         cell.textField.frame = cellFrame;
+        cell.topLine.hidden = NO;
 
         return cell;
     } else {
