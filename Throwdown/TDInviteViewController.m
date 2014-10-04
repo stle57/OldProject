@@ -119,7 +119,7 @@
             NSString *topLabelText =@"Receive a free Throwdown T-shirt if\nthree of your friends join!";
             UIFont *font = [TDConstants fontSemiBoldSized:16.0];
             
-            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:topLabelText font:font color:[TDConstants headerTextColor]];
+            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:topLabelText font:font color:[TDConstants headerTextColor] lineHeight:20.0];
             
             [topLabel setTextAlignment:NSTextAlignmentCenter];
             [topLabel setLineBreakMode:NSLineBreakByWordWrapping];
@@ -131,7 +131,7 @@
             NSString *bottomText = @"Invite friends to join with a phone number or\nemail address, or select from your contacts";
             UIFont *bottomFont = [TDConstants fontRegularSized:14.0];
             
-            NSAttributedString *bottomAttString = [TDViewControllerHelper makeParagraphedTextWithString:bottomText font:bottomFont color:[TDConstants commentTextColor]];
+            NSAttributedString *bottomAttString = [TDViewControllerHelper makeParagraphedTextWithString:bottomText font:bottomFont color:[TDConstants commentTextColor] lineHeight:16.0];
 
             [bottomLabel setTextAlignment:NSTextAlignmentNatural];
             [bottomLabel setLineBreakMode:NSLineBreakByWordWrapping];
@@ -278,7 +278,7 @@
                 if (contact.fullName.length == 0 && contact.selectedData.length != 0) {
                     UIFont *font = [TDConstants fontRegularSized:16.0];
                     
-                    NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:contact.selectedData font:font color:[TDConstants headerTextColor]];
+                    NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:contact.selectedData font:font color:[TDConstants headerTextColor] lineHeight:16.0];
                     
                     CGRect labelFrame = followCell.usernameLabel.frame;
                     labelFrame.origin.y = 23.75;

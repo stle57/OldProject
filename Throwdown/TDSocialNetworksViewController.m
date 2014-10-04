@@ -82,8 +82,6 @@
     }
     cell.topLine.hidden = YES;
     
-    debug NSLog(@"topLine frame=%@", NSStringFromCGRect(cell.topLine.frame));
-    debug NSLog(@"bottomLine frame=%@", NSStringFromCGRect(cell.bottomLine.frame));
     switch (indexPath.row) {
         case 0:
             cell.topLine.hidden = NO;

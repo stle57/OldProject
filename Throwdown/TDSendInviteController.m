@@ -188,9 +188,10 @@
         case 0:
         {
             UIView *headerView =[[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 63)];
-            UILabel *topLabel = [[UILabel alloc] initWithFrame:CGRectMake(7, 20, 300, 32)];
+            UILabel *topLabel = [[UILabel alloc] initWithFrame:CGRectMake(7, 22, 300, 32)];
             NSString *topLabelText =@"Please confirm how you'd like your\nname to appear to your friends.";
-            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:topLabelText font:[TDConstants fontRegularSized:16] color:[TDConstants commentTextColor] ];
+            CGFloat lineHeight = 20.0;
+            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:topLabelText font:[TDConstants fontRegularSized:16] color:[TDConstants headerTextColor] lineHeight:lineHeight];
             [topLabel setTextAlignment:NSTextAlignmentCenter];
             [topLabel setLineBreakMode:NSLineBreakByWordWrapping];
             [topLabel setAttributedText:attString];
@@ -205,8 +206,8 @@
             UIView *headerView =[[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 112)];
             UILabel *topLabel = [[UILabel alloc] initWithFrame:CGRectMake(7, 0, 300, 40)];
             NSString *topLabelText =@"Sugestion: use your first and last name";
-
-            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:topLabelText font:[TDConstants fontRegularSized:14.0] color:[TDConstants commentTextColor]];
+            CGFloat lineHeight = 14;
+            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:topLabelText font:[TDConstants fontRegularSized:14.0] color:[TDConstants commentTextColor] lineHeight:lineHeight];
             
             [topLabel setNumberOfLines:1];
             [topLabel setAttributedText:attString];
@@ -215,7 +216,8 @@
             
             UILabel *bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(7, 63, 320, 36)];
             NSString *bottomText = @"Tap \"Send\" to send your invites!";
-            NSAttributedString *bottomAttString = [TDViewControllerHelper makeParagraphedTextWithString:bottomText font:[TDConstants fontSemiBoldSized:16.0] color:[TDConstants headerTextColor]];
+            lineHeight = 16.0;
+            NSAttributedString *bottomAttString = [TDViewControllerHelper makeParagraphedTextWithString:bottomText font:[TDConstants fontSemiBoldSized:16.0] color:[TDConstants headerTextColor] lineHeight:lineHeight];
             
             [bottomLabel setTextAlignment:NSTextAlignmentCenter];
             [bottomLabel setLineBreakMode:NSLineBreakByWordWrapping];

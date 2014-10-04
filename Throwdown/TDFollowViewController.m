@@ -319,7 +319,8 @@
             
             UILabel *descriptionLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, descripFrame.origin.y, 320, 57)];
             NSString *text = @"Sorry we weren't able to find the\nperson you're looking for.\n Invite them to join Throwndown.";
-            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:text font:[TDConstants fontRegularSized:15.0] color:[TDConstants headerTextColor]];
+            CGFloat lineHeight = 16.0;
+            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:text font:[TDConstants fontRegularSized:15.0] color:[TDConstants headerTextColor] lineHeight:lineHeight];
             descriptionLabel.attributedText = attString;
             descriptionLabel.textAlignment = NSTextAlignmentCenter;
             [descriptionLabel setNumberOfLines:0];

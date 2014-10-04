@@ -942,13 +942,11 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
             if (success) {
                 debug NSLog(@"Successfully unfollwed user=%@", userId);
                 // send notification to update user follow count-subtract
-//                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[TDCurrentUser sharedInstance].currentUserObject userInfo:@{@"decreaseCount": @1}];
                 [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[TDCurrentUser sharedInstance].currentUserObject userInfo:@{TD_DECREMENT_STRING: @1}];
                 [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowerCount object:userId userInfo:@{TD_DECREMENT_STRING: @1}];
             } else {
-                debug NSLog(@"could not follow user=%@", userId);
                 [[TDAppDelegate appDelegate] showToastWithText:@"Error occured.  Please try again." type:kToastType_Warning payload:@{} delegate:nil];
-                debug NSLog(@"could not follow user=%@", userId);
+
                 //TODO: Display toast saying error processing, TRY AGAIN
                 // Switch button back to cell
                 UIImage * buttonImage = [UIImage imageNamed:@"btn-following.png"];
