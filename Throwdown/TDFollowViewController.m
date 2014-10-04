@@ -229,7 +229,13 @@
 }
 
 - (IBAction)inviteButtonHit:(id)sender {
-    [self.navigationController popViewControllerAnimated:YES];
+    TDInviteViewController *vc = [[TDInviteViewController alloc] initWithNibName:@"TDInviteViewController" bundle:nil ];
+    
+    vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
+    navController.navigationBar.barStyle = UIBarStyleDefault;
+    navController.navigationBar.translucent = YES;
+    [self.navigationController presentViewController:navController animated:YES completion:nil];
 }
 
 - (NSString *)buildStringFromErrors:(NSArray *)array baseString:(NSString *)baseString {
