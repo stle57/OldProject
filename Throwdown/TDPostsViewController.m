@@ -309,7 +309,6 @@ static CGFloat const kInviteButtonStatButtonPadding = 25;
     
     // 1st row for Profile Header
     if (self.needsProfileHeader && indexPath.section == 0 && self.loaded && !self.errorLoading) {
-        debug NSLog(@"!!!!!!!!creating header");
         TDUserProfileCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_PROFILE];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_PROFILE owner:self options:nil];

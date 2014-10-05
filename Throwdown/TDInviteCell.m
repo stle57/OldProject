@@ -38,7 +38,6 @@
 }
 
 - (void)textFieldEdited{
-    debug NSLog(@"edited");
     if (!self.addedButton && self.contactTextField.text.length > 0) {
             [self setAccessoryType:UITableViewCellAccessoryDetailDisclosureButton];
             UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];

@@ -31,7 +31,6 @@
 }
 
 - (void)awakeFromNib {
-    debug NSLog(@"inside TDFollowProfileCell awakeFromNib");
     self.userInteractionEnabled = YES;
     
     self.nameLabel.font      = [TDConstants fontSemiBoldSized:16.0];
@@ -59,24 +58,14 @@
 }
 
 - (IBAction)actionButtonPressed:(UIButton*)sender{
-    debug NSLog(@"TDFollowProfileCell-actionButtonPressed w/ userId=%d", [self.userId intValue]);
     if (delegate && [delegate respondsToSelector:@selector(actionButtonPressedFromRow:tag:userId:)]) {
         [delegate actionButtonPressedFromRow:self.row tag:sender.tag userId:self.userId];
     }
 }
 
-- (IBAction)unFollowActionButtonPressed:(UIButton *)sender {
-    
-}
-
-- (IBAction)followActionButtonPressed:(UIButton *)sender {
-    
-}
-
 #pragma mark - User Name Button
 
 - (void)usernameTapped:(UITapGestureRecognizer *)g {
-    debug NSLog(@"====>inside usernameTapped with userid=%@", self.userId);
     if (self.delegate && [self.delegate respondsToSelector:@selector(userProfilePressedWithId:)]) {
         [self.delegate userProfilePressedWithId:self.userId];
     }

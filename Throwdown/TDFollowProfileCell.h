@@ -29,14 +29,9 @@
 @property (weak, nonatomic) IBOutlet UIView *bottomLine;
 @property (weak, nonatomic) IBOutlet UIView *topLine;
 @property (weak, nonatomic) IBOutlet UIButton *actionButton;
-
 @property (nonatomic, assign) NSNumber *userId;
 @property (nonatomic, assign) NSInteger row;
-
-//@property (nonatomic, assign) CGRect textViewdOrigRect;
 @property (nonatomic, assign) CGFloat bottomLineOrigY;
 
 - (IBAction)actionButtonPressed:(UIButton*)sender;
-- (IBAction)followActionButtonPressed:(UIButton*)sender;
-- (IBAction)unFollowActionButtonPressed:(UIButton*)sender;
 @end

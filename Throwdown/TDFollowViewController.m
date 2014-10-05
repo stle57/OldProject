@@ -26,7 +26,7 @@
 
 @interface TDFollowViewController ()
 
-@property (nonatomic) BOOL hasLoaded;
+@property (nonatomic) BOOL gotFromServer;
 @property (nonatomic) NSArray *followUsers;
 @property (nonatomic) NSMutableArray *filteredTDUsers;
 @property (nonatomic) NSInteger currentRow;
@@ -104,23 +104,23 @@
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
 
     self.activityIndicator.text.text = @"Loading";
-    self.suggestedLabel.hidden = YES;
     [self showActivity];
+    self.suggestedLabel.hidden = YES;
     if (self.followControllerType == kUserListType_Following){
         self.searchDisplayController.searchBar.hidden = YES;
         [[TDAPIClient sharedInstance] getFollowingSettings:self.profileUser.userId currentUserToken:[TDCurrentUser sharedInstance].authToken success:^(NSArray *users) {
-            self.hasLoaded = YES;
             if ([users isKindOfClass:[NSArray class]]) {
                 self.followUsers = users;
             }
             else {
                 debug NSLog(@"not a dictionary");
             }
+            self.gotFromServer = YES;
             [self.tableView reloadData];
             [self hideActivity];
 
         } failure:^{
-            self.hasLoaded = NO;
+            self.gotFromServer = NO;
             [self.tableView reloadData];
             [self hideActivity];
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't load users"
@@ -133,16 +133,16 @@
     } else if (self.followControllerType == kUserListType_Followers) {
         self.searchDisplayController.searchBar.hidden = YES;
         [[TDAPIClient sharedInstance] getFollowerSettings:self.profileUser.userId currentUserToken:[TDCurrentUser sharedInstance].authToken success:^(NSArray *users) {
-            self.hasLoaded = YES;
             debug NSLog(@"%lu followers", (unsigned long)users.count);
             if ([users isKindOfClass:[NSArray class]]) {
                 self.followUsers = users;
             }
             debug NSLog(@"follow call is calling reloadData on tableView");
+            self.gotFromServer = YES;
             [self.tableView reloadData];
             [self hideActivity];
         } failure:^{
-            self.hasLoaded = NO;
+            self.gotFromServer = NO;
             [self.tableView reloadData];
             [self hideActivity];
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't load users"
@@ -178,12 +178,13 @@
         [[TDUserAPI sharedInstance] getCommunityUserList:^(BOOL success, NSArray *returnList) {
             if (success && returnList && returnList.count > 0) {
                 debug NSLog(@"user list dictionary=%@", returnList);
-
                 self.followUsers = [returnList copy];
                 self.filteredTDUsers = [NSMutableArray arrayWithCapacity:[self.followUsers count]];
+                self.gotFromServer = YES;
                 [self.tableView reloadData];
                 [self hideActivity];
             } else {
+                self.gotFromServer = NO;
                 debug NSLog(@"no list");
             }
         }];
@@ -193,6 +194,9 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    if (!self.gotFromServer) {
+        [self showActivity];
+    }
     [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
     self.edgesForExtendedLayout = UIRectEdgeNone;
@@ -200,7 +204,7 @@
     [self.navigationController setNavigationBarHidden:NO animated:NO];
 
     origTableViewFrame = self.tableView.frame;
-    if (self.hasLoaded) {
+    if (self.gotFromServer) {
         [self hideActivity];
     }
 }
@@ -257,45 +261,53 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 1;
+    if (self.gotFromServer) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     debug NSLog(@"inside numberOfRowsInSection");
-    if (tableView == self.tableView) {
-        switch (section) {
-            case 0: // follow/following user list
-            {
-                if(self.followUsers.count > 0)
+    if (self.gotFromServer) {
+        if (tableView == self.tableView) {
+            switch (section) {
+                case 0: // follow/following user list
                 {
-                    return self.followUsers.count;
+                    if(self.followUsers.count > 0)
+                    {
+                        return self.followUsers.count;
+                    }
+                    else{
+                        return 1;
+                    }
                 }
-                else{
-                    return 1;
-                }
-            }
-            break;
-            default:
-                return 1;
                 break;
-        }
-    } else if (tableView == self.searchDisplayController.searchResultsTableView) {
-        switch (section) {
-            case 0: // follow/following user list
-            {
-                if(self.filteredTDUsers.count > 0)
+                default:
+                    return 1;
+                    break;
+            }
+        } else if (tableView == self.searchDisplayController.searchResultsTableView) {
+            switch (section) {
+                case 0: // follow/following user list
                 {
-                    return self.filteredTDUsers.count;
+                    if(self.filteredTDUsers.count > 0)
+                    {
+                        return self.filteredTDUsers.count;
+                    }
+                    else{
+                        return 1;
+                    }
                 }
-                else{
-                    return 1;
-                }
-            }
-            break;
-            default:
-                return 0;
                 break;
+                default:
+                    return 0;
+                    break;
+            }
         }
+    } else {
+        return 0;
     }
     return 0;
 }
@@ -380,8 +392,7 @@
     return nil;
 }
 
-- (TDNoFollowProfileCell*)createNoFollowCell:(NSIndexPath*)indexPath tableView:(UITableView*)tableView text:(NSString*)text hideFindButton:(BOOL)hideFindButton
-                            hideInviteButton:(BOOL)hideInviteButton {
+- (TDNoFollowProfileCell*)createNoFollowCell:(NSIndexPath*)indexPath tableView:(UITableView*)tableView text:(NSString*)text hideFindButton:(BOOL)hideFindButton hideInviteButton:(BOOL)hideInviteButton {
     TDNoFollowProfileCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoFollowProfileCell"];
     if (!cell) {
         NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoFollowProfileCell" owner:self options:nil];
@@ -501,6 +512,7 @@
 #pragma mark - TDFollowCellProfileDelegate
 
 - (void)showActivity {
+    debug NSLog(@"activityIndicator frame=%@", NSStringFromCGRect(self.activityIndicator.frame));
     self.backButton.enabled = NO;
     self.activityIndicator.center = self.view.center;
     [self.view bringSubviewToFront:self.activityIndicator];
@@ -550,7 +562,6 @@
         [[TDUserAPI sharedInstance] followUser:userId callback:^(BOOL success) {
             if (success) {
                 // Send notification to update user profile stat button-add
-//                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:self.profileUser.userId userInfo:@{@"incrementCount": @1}];
                 [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[[TDCurrentUser sharedInstance] currentUserObject].userId userInfo:@{TD_INCREMENT_STRING: @1}];
             } else {
                 [[TDAppDelegate appDelegate] showToastWithText:@"Error occured.  Please try again." type:kToastType_Warning payload:@{} delegate:nil];
@@ -605,7 +616,6 @@
             if (success) {
                 debug NSLog(@"Successfully unfollwed user=%@", userId);
                 // send notification to update user follow count-subtract
-//                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:self.profileUser.userId userInfo:@{@"decreaseCount": @1}];
                 [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[[TDCurrentUser sharedInstance] currentUserObject].userId userInfo:@{TD_DECREMENT_STRING: @1}];
             } else {
                 debug NSLog(@"could not follow user=%@", userId);

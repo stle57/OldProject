@@ -113,9 +113,7 @@
 }
 
 - (IBAction)inviteButtonPressed:(UIButton *)sender {
-    debug NSLog(@"TDUserProfileCell-inviteButtonPressed");
-    
-   
+
     if (delegate && [delegate respondsToSelector:@selector(inviteButtonPressedFromRow:)]) {
         [delegate inviteButtonPressedFromRow:sender.tag];
     }
