@@ -37,7 +37,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.view.backgroundColor = [TDConstants backgroundColor];
+    self.view.backgroundColor = [TDConstants darkBackgroundColor];
 
     // Background
     self.tableView.backgroundColor = [TDConstants lightBackgroundColor];

@@ -20,16 +20,33 @@
 
 - (void)awakeFromNib {
     self.longTitleLabel.font = [TDConstants fontRegularSized:16];
+    CGRect titleLabelFrame = self.longTitleLabel.frame;
+    titleLabelFrame.origin.x = TD_MARGIN;
+    self.longTitleLabel.frame = titleLabelFrame;
+    
+    CGRect cellFrame = self.frame;
+    cellFrame.size.width = SCREEN_WIDTH;
+    self.frame = cellFrame;
+    
     CGRect lineRect = self.bottomLine.frame;
-    lineRect.size.height = 0.5;
+    lineRect.size.height = (1.0 / [[UIScreen mainScreen] scale]);
+    lineRect.size.width = SCREEN_WIDTH;
     self.bottomLine.frame = lineRect;
-    lineRect = self.topLine.frame;
-    lineRect.size.height = 0.5;
-    self.topLine.frame = lineRect;
+    
+    CGRect topLineRect = self.topLine.frame;
+    topLineRect.size.width = SCREEN_WIDTH;
+    topLineRect.size.height = 1 / [[UIScreen mainScreen] scale];
+    self.topLine.frame = topLineRect;
+    
     self.bottomLineOrigY = self.bottomLine.frame.origin.y;
     
-    self.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
-    self.layer.borderWidth = TD_CELL_BORDER_WIDTH;
+    CGRect switchFrame = self.aSwitch.frame;
+    switchFrame.origin.x = SCREEN_WIDTH - switchFrame.size.width - TD_MARGIN;
+    self.aSwitch.frame = switchFrame;
+    
+    CGRect frame = self.segmentControl.frame;
+    frame.origin.x = SCREEN_WIDTH - frame.size.width - TD_MARGIN;
+    self.segmentControl.frame = frame;
 }
 
 - (IBAction)segmentChanged:(id)sender {

@@ -26,6 +26,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [TDConstants lightBackgroundColor];
+    self.tableView.layer.borderColor = [[UIColor redColor] CGColor];
+    self.tableView.layer.borderWidth = 2.;
     
     // Background
     self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
@@ -49,8 +51,6 @@
     self.tableView = [[UITableView alloc] initWithFrame:[[UIScreen mainScreen] bounds] style:UITableViewStyleGrouped];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
-    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-   // self.tableView.separatorInset = UIEdgeInsetsMake(0, 50, 0, 0);
     [self.view addSubview:self.tableView];
 }
 
@@ -81,10 +81,9 @@
         cell.titleLabel.font = [TDConstants fontRegularSized:18];
     }
     cell.topLine.hidden = YES;
-    
+    cell.bottomLine.hidden = YES;
     switch (indexPath.row) {
         case 0:
-            cell.topLine.hidden = NO;
             if ([[TDCurrentUser sharedInstance] canPostToTwitter]) {
                 cell.titleLabel.text = [TDCurrentUser sharedInstance].twitterIdentifier;
                 cell.iconView.image = [UIImage imageNamed:@"twitter_active_48x38"];
