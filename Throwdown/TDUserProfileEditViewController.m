@@ -128,7 +128,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:NO animated:NO];
-
+    
     origTableViewFrame = self.tableView.frame;
 
     if (self.hasLoaded) {
@@ -689,6 +689,9 @@
                     cell.middleLabel.text = @"Log Out";
                     cell.middleLabel.textColor = [TDConstants brandingRedColor];
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
+                    CGRect mLabelFrame = cell.middleLabel.frame;
+                    mLabelFrame.size.width = [UIScreen mainScreen].bounds.size.width;
+                    cell.middleLabel.frame = mLabelFrame;
                     break;
             }
         break;

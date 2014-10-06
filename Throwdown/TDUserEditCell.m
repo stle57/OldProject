@@ -27,6 +27,11 @@
 }
 
 - (void)awakeFromNib {
+    CGFloat width = [UIScreen mainScreen].bounds.size.width;
+    CGRect cellFrame = self.frame;
+    cellFrame.size.width = width;
+    self.frame = cellFrame;
+    
     self.titleLabel.font      = [TDConstants fontRegularSized:16.0];
     self.titleLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
     self.longTitleLabel.font  = [TDConstants fontRegularSized:16.0];
@@ -39,12 +44,17 @@
     self.textView.textColor   = [TDConstants headerTextColor]; //4c4c4c
     self.leftMiddleLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
     self.middleLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
+
     CGRect lineRect = self.bottomLine.frame;
-    lineRect.size.height = 0.5;
+    lineRect.size.height = (1.0 / [[UIScreen mainScreen] scale]);
+    lineRect.size.width = width;
     self.bottomLine.frame = lineRect;
-    lineRect = self.topLine.frame;
-    lineRect.size.height = 0.5;
-    self.topLine.frame = lineRect;
+    
+    CGRect topLineRect = self.topLine.frame;
+    topLineRect.size.width = width;
+    topLineRect.size.height = 1 / [[UIScreen mainScreen] scale];
+    self.topLine.frame = topLineRect;
+    
     self.userImageView.layer.cornerRadius = self.userImageView.layer.frame.size.width / 2;
     self.userImageView.clipsToBounds = YES;
 
