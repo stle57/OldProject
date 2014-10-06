@@ -134,9 +134,9 @@ static CGFloat const kMinHeight = 230 + kBottomMargin;
         switch (buttonType) {
             case UserProfileButtonTypeFollow:
                 self.inviteButton.enabled = YES;
-                [self.inviteButton setImage:[UIImage imageNamed:@"btn-following.png"] forState:UIControlStateNormal];
-                [self.inviteButton setImage:[UIImage imageNamed:@"btn-following-hit.png"] forState:UIControlStateSelected];
-                [self.inviteButton setImage:[UIImage imageNamed:@"btn-following-hit.png"] forState:UIControlStateHighlighted];
+                [self.inviteButton setImage:[UIImage imageNamed:@"btn-follow.png"] forState:UIControlStateNormal];
+                [self.inviteButton setImage:[UIImage imageNamed:@"btn-follow-hit.png"] forState:UIControlStateSelected];
+                [self.inviteButton setImage:[UIImage imageNamed:@"btn-follow-hit.png"] forState:UIControlStateHighlighted];
                 [self.inviteButton setTag:kFollowButtonTag];
                 break;
 

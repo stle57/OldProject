@@ -10,6 +10,7 @@
 #import "TDAppDelegate.h"
 #import "TDConstants.h"
 #import <QuartzCore/QuartzCore.h>
+#import "TDViewControllerHelper.h"
 
 @implementation TDFollowProfileCell
 
@@ -34,8 +35,6 @@
     debug NSLog(@"inside TDFollowProfileCell awakeFromNib");
     self.userInteractionEnabled = YES;
     
-    self.nameLabel.font      = [TDConstants fontSemiBoldSized:16.0];
-    self.nameLabel.textColor = [TDConstants brandingRedColor];
     self.usernameLabel.font  = [TDConstants fontRegularSized:13];
     self.usernameLabel.textColor = [TDConstants headerTextColor];
     
@@ -50,12 +49,7 @@
     
     self.selectionStyle = UITableViewCellSelectionStyleNone;
     
-    CGRect lineRect = self.bottomLine.frame;
-    lineRect.size.height = 0.5;
-    self.bottomLine.frame = lineRect;
-    lineRect = self.topLine.frame;
-    lineRect.size.height = 0.5;
-    self.topLine.frame = lineRect;
+    [self modifyFrames];
 }
 
 - (IBAction)actionButtonPressed:(UIButton*)sender{
@@ -73,6 +67,26 @@
     
 }
 
+- (void) modifyFrames {
+    CGRect cellFrame = self.frame;
+    cellFrame.size.width = SCREEN_WIDTH;
+    self.frame = cellFrame;
+    
+    CGRect topLineRect = self.topLine.frame;
+    topLineRect.size.height = (1.0 / [[UIScreen mainScreen] scale]);
+    topLineRect.size.width = SCREEN_WIDTH;
+    self.topLine.frame = topLineRect;
+    
+    CGRect bottomLineRect = self.bottomLine.frame;
+    bottomLineRect.size.height = (1.0 / [[UIScreen mainScreen] scale]);
+    bottomLineRect.size.width = SCREEN_WIDTH;
+    self.bottomLine.frame = bottomLineRect;
+    
+    CGRect actionButtonRect = self.actionButton.frame;
+    actionButtonRect.origin.x = SCREEN_WIDTH - self.actionButton.frame.size.width - TD_MARGIN;
+    self.actionButton.frame = actionButtonRect;
+    
+}
 #pragma mark - User Name Button
 
 - (void)usernameTapped:(UITapGestureRecognizer *)g {

@@ -86,7 +86,7 @@
     [navigationBar setBarStyle:UIBarStyleBlack];
     navigationBar.translucent = NO;
     
-    // Buttons
+    // Buttonså
     self.backButton = [TDViewControllerHelper navBackButton];
     [self.backButton addTarget:self action:@selector(backButtonHit:) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *barButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];
@@ -94,7 +94,7 @@
     self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
     self.tableView.contentInset = UIEdgeInsetsMake(-40.0f, 0.0f, 0.0f, 0.0f);
     
-    self.searchDisplayController.searchBar.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
+    self.searchDisplayController.searchBar.layer.borderColor = [[TDConstants lightBorderColor] CGColor];
     self.searchDisplayController.searchBar.layer.borderWidth = TD_CELL_BORDER_WIDTH;
     self.searchDisplayController.searchBar.backgroundColor = [TDConstants lightBackgroundColor];
     self.searchDisplayController.searchBar.clipsToBounds = YES;
@@ -160,7 +160,7 @@
         self.suggestedLabel.textColor = [TDConstants commentTimeTextColor];
         self.suggestedLabel.font = [TDConstants fontRegularSized:13];
         self.suggestedLabel.backgroundColor = [TDConstants lightBackgroundColor];
-        self.suggestedLabel.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
+        self.suggestedLabel.layer.borderColor = [[TDConstants lightBorderColor] CGColor];
         
         self.inviteButton.hidden = NO;
         self.inviteButton.titleLabel.font = [TDConstants fontRegularSized:18];
@@ -168,7 +168,7 @@
         UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.inviteButton];
         self.navigationItem.rightBarButtonItem = rightBarButton;
         
-        self.searchDisplayController.searchBar.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
+        self.searchDisplayController.searchBar.layer.borderColor = [[TDConstants lightBorderColor] CGColor];
         self.searchDisplayController.searchBar.layer.borderWidth = TD_CELL_BORDER_WIDTH;
         self.searchDisplayController.searchBar.backgroundColor = [TDConstants lightBackgroundColor];
         self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants lightBackgroundColor];
@@ -261,7 +261,6 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    debug NSLog(@"inside numberOfRowsInSection");
     if (tableView == self.tableView) {
         switch (section) {
             case 0: // follow/following user list
@@ -389,6 +388,7 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.delegate = self;
     }
+    debug NSLog(@"noFOllowlabel frame = %@", NSStringFromCGRect(cell.noFollowLabel.frame));
     cell.noFollowLabel.text = text;
     cell.findPeopleButton.hidden = hideFindButton;
     cell.invitePeopleButton.hidden = hideFindButton;
@@ -425,18 +425,11 @@
         cell.topLine.hidden = YES;
     }
     NSString *usernameStr = [NSString stringWithFormat:@"@%@", [object valueForKey:@"username"] ];
-    NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
-    [style setLineSpacing:16.0];
-    NSDictionary *attributes = @{NSParagraphStyleAttributeName:style};
-    NSAttributedString * attributedString = [[NSAttributedString alloc] initWithString:usernameStr attributes:attributes];
-    cell.usernameLabel.attributedText = attributedString;
+    NSAttributedString *usernameAttStr = [TDViewControllerHelper makeParagraphedTextWithString:usernameStr font:[TDConstants fontRegularSized:13.0] color:[TDConstants headerTextColor] lineHeight:16.0];
+    cell.usernameLabel.attributedText = usernameAttStr;
     
-    
-    usernameStr = [object valueForKey:@"name"];
-    [style setLineSpacing:19.0];
-    NSDictionary *attributes2= @{NSParagraphStyleAttributeName:style};
-    NSAttributedString * attributedString2 = [[NSAttributedString alloc] initWithString:usernameStr attributes:attributes2];
-    cell.nameLabel.attributedText = attributedString2;
+    NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:[object valueForKey:@"name"] font:[TDConstants fontSemiBoldSized:16] color:[TDConstants brandingRedColor] lineHeight:19.0];
+    cell.nameLabel.attributedText = attString;
     
     cell.userImageView.hidden = NO;
   
