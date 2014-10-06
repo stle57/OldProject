@@ -13,6 +13,13 @@
 - (void)awakeFromNib
 {
     // Initialization code
+    CGRect cellFrame = self.frame;
+    cellFrame.size.width = SCREEN_WIDTH;
+    self.frame = cellFrame;
+    
+    CGRect connectLabelFrame = self.connectLabel.frame;
+    connectLabelFrame.size.width = SCREEN_WIDTH;
+    self.connectLabel.frame = connectLabelFrame;
     self.layer.borderColor = [[TDConstants lightBorderColor] CGColor];
     self.layer.borderWidth = TD_CELL_BORDER_WIDTH;
 }
