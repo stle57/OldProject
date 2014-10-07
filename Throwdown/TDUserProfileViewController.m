@@ -88,7 +88,6 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    debug NSLog(@"inside TDUsersProfileViewController:viewWillAppear");
     [super viewWillAppear:animated];
     
     [self.tableView reloadData];

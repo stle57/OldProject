@@ -102,6 +102,7 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
         [self showActivity];
         [[TDAPIClient sharedInstance] sendInvites:senderName contactList:sentContacts callback:^(BOOL success, NSArray *contacts)
         {
+            debug NSLog(@"waiting on callback");
             if (success) {
                 NSMutableArray *newList = [[NSMutableArray alloc] init];
                 debug NSLog(@"contacts=%@", contacts);
@@ -130,6 +131,9 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
                     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
                     [[TDAppDelegate appDelegate] showToastWithText:@"Invites failed.  Tap here to retry" type:kToastType_InviteWarning payload:@{@"senderName":senderName, @"retryList":newList} delegate:[TDAPIClient toastControllerDelegate]];
                 }
+            } else {
+                [self hideActivity];
+                [[TDAppDelegate appDelegate] showToastWithText:@"Invites failed.  Tap here to retry" type:kToastType_InviteWarning payload:@{@"senderName":senderName, @"retryList":sentContacts} delegate:[TDAPIClient toastControllerDelegate]];
             }
         }];
     }
@@ -163,8 +167,14 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
 - (NSArray *)contacts {
     NSMutableArray *array = [[NSMutableArray alloc]init];
     for (id tempObject in self.contactList) {
+        NSString *idString = @"";
+        if ([tempObject valueForKey:@"id"] != nil) {
+            idString = [tempObject valueForKey:@"id"];
+        }
+        
+        debug NSLog(@"idString-%@", idString);
         NSDictionary *dictionary = @{@"first_name":[tempObject valueForKey:@"firstName"], @"last_name":[tempObject valueForKey:@"lastName"],
-                                     @"address_book_id":[tempObject valueForKey:@"id"], @"info":[tempObject valueForKey:@"selectedData"],
+                                     @"address_book_id":idString, @"info":[tempObject valueForKey:@"selectedData"],
                                      @"info_kind":([self convertInviteType:[tempObject valueForKey:@"inviteType"] ])};
         [array addObject:dictionary];
     }
