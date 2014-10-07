@@ -1534,8 +1534,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_DISPLAY_NAME_SUFFIX = "-α";
 				BUNDLE_ID_SUFFIX = .dev;
-				CODE_SIGN_IDENTITY = "iPhone Developer: Andy Crookston (3Y66584V35)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Andy Crookston (3Y66584V35)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				EXCLUDED_SOURCE_FILE_NAMES = "";
 				FACEBOOK_APP_ID = 1470514189854120;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1551,6 +1551,7 @@
 					"$(PROJECT_DIR)/Flurry",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SCHEME_SUFFIX = development;
 				TARGETED_DEVICE_FAMILY = 1;
 				TWITTER_CONSUMER_KEY = xiqfRpqHtyEPL9yA1mmNaopZu;
@@ -1567,8 +1568,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_DISPLAY_NAME_SUFFIX = "";
 				BUNDLE_ID_SUFFIX = "";
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				EXCLUDED_SOURCE_FILE_NAMES = "FLEX*";
 				FACEBOOK_APP_ID = 1419119258326947;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1584,6 +1585,7 @@
 					"$(PROJECT_DIR)/Flurry",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SCHEME_SUFFIX = "";
 				TARGETED_DEVICE_FAMILY = 1;
 				TWITTER_CONSUMER_KEY = oHcrGnh5KKgef3Nsgl4Ftkk9e;
@@ -1677,8 +1679,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_DISPLAY_NAME_SUFFIX = "-ß";
 				BUNDLE_ID_SUFFIX = .staging;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				EXCLUDED_SOURCE_FILE_NAMES = "";
 				FACEBOOK_APP_ID = 1470514189854120;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -1699,6 +1701,7 @@
 					"$(PROJECT_DIR)/Flurry",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SCHEME_SUFFIX = staging;
 				TARGETED_DEVICE_FAMILY = 1;
 				TWITTER_CONSUMER_KEY = xiqfRpqHtyEPL9yA1mmNaopZu;

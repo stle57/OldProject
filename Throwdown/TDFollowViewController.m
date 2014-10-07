@@ -322,17 +322,16 @@
             CGRect descripFrame = cell.noFollowLabel.frame;
             descripFrame.origin.y = descripFrame.origin.y + descripFrame.size.height + 7;
             
-            UILabel *descriptionLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, descripFrame.origin.y, 320, 57)];
+            UILabel *descriptionLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, descripFrame.origin.y, SCREEN_WIDTH, 57)];
             NSString *text = @"Sorry we weren't able to find the\nperson you're looking for.\n Invite them to join Throwndown.";
-            CGFloat lineHeight = 16.0;
-            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:text font:[TDConstants fontRegularSized:15.0] color:[TDConstants headerTextColor] lineHeight:lineHeight];
+            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:text font:[TDConstants fontRegularSized:15.0] color:[TDConstants headerTextColor] lineHeight:16.0];
             descriptionLabel.attributedText = attString;
             descriptionLabel.textAlignment = NSTextAlignmentCenter;
             [descriptionLabel setNumberOfLines:0];
             [cell addSubview:descriptionLabel];
             
             CGRect frame = cell.invitePeopleButton.frame;
-            frame.origin.x = 160 - frame.size.width/2;
+            frame.origin.x = SCREEN_WIDTH/2 - cell.invitePeopleButton.frame.size.width/2;
             frame.origin.y = descriptionLabel.frame.origin.y + descriptionLabel.frame.size.height + 15;
             cell.invitePeopleButton.frame = frame;
             return cell;
@@ -388,7 +387,7 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.delegate = self;
     }
-    debug NSLog(@"noFOllowlabel frame = %@", NSStringFromCGRect(cell.noFollowLabel.frame));
+
     cell.noFollowLabel.text = text;
     cell.findPeopleButton.hidden = hideFindButton;
     cell.invitePeopleButton.hidden = hideFindButton;

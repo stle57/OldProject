@@ -23,6 +23,9 @@
 @property (nonatomic, retain) NSMutableArray *inviteList;
 @end
 
+static NSString *topHeaderText1 =@"Receive a free Throwdown T-shirt if\nthree of your friends join!";
+static NSString *topHeaderText2 = @"Invite friends to join with a phone number or\nemail address, or select from your contacts";
+
 @implementation TDInviteViewController
 
 
@@ -80,6 +83,13 @@
 }
 
 - (void) viewWillAppear:(BOOL)animated {
+    CGRect tableViewFrame = self.tableView.frame;
+    tableViewFrame.size.width = SCREEN_WIDTH;
+    tableViewFrame.size.height = [UIScreen mainScreen].bounds.size.height -
+        self.navigationController.navigationBar.frame.size.height;
+    
+    self.tableView.frame = tableViewFrame;
+    
     [super viewWillAppear:animated];
     
     [self checkForNextButton];
@@ -111,45 +121,40 @@
     switch (section) {
         case 0:
         {
-            UIView *headerView =[[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 112)];
-
-            UILabel *topLabel = [[UILabel alloc] initWithFrame:CGRectMake(7, 20, 300, 40)];
-            NSString *topLabelText =@"Receive a free Throwdown T-shirt if\nthree of your friends join!";
             UIFont *font = [TDConstants fontSemiBoldSized:16.0];
-            
-            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:topLabelText font:font color:[TDConstants headerTextColor] lineHeight:20.0];
-            
+            CGFloat textHeight1 = [TDViewControllerHelper heightForText:topHeaderText1 font:font];
+            UILabel *topLabel = [[UILabel alloc] initWithFrame:CGRectMake(TD_MARGIN, 20, SCREEN_WIDTH, textHeight1)];
+            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:topHeaderText1 font:font color:[TDConstants headerTextColor] lineHeight:20.0];
             [topLabel setTextAlignment:NSTextAlignmentCenter];
             [topLabel setLineBreakMode:NSLineBreakByWordWrapping];
             [topLabel setAttributedText:attString];
             [topLabel setNumberOfLines:0];
-            [headerView addSubview:topLabel];
             
-            UILabel *bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(7, 75, 320, 36)];
-            NSString *bottomText = @"Invite friends to join with a phone number or\nemail address, or select from your contacts";
             UIFont *bottomFont = [TDConstants fontRegularSized:14.0];
-            
-            NSAttributedString *bottomAttString = [TDViewControllerHelper makeParagraphedTextWithString:bottomText font:bottomFont color:[TDConstants commentTextColor] lineHeight:16.0];
-
+            CGFloat bottomTextHeight = [TDViewControllerHelper heightForText:topHeaderText2 font:bottomFont];
+            UILabel *bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(TD_MARGIN, 20 + textHeight1 + 15, SCREEN_WIDTH, bottomTextHeight)];
+            NSAttributedString *bottomAttString = [TDViewControllerHelper makeParagraphedTextWithString:topHeaderText2 font:bottomFont color:[TDConstants commentTimeTextColor] lineHeight:18.0];
             [bottomLabel setTextAlignment:NSTextAlignmentNatural];
             [bottomLabel setLineBreakMode:NSLineBreakByWordWrapping];
             [bottomLabel setAttributedText:bottomAttString];
             [bottomLabel setNumberOfLines:0];
             
+            UIView *headerView =[[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 20 + [TDViewControllerHelper heightForText:topHeaderText1 font:[TDConstants fontSemiBoldSized:16.0]] + 15 + [TDViewControllerHelper heightForText:topHeaderText2 font:[TDConstants fontRegularSized:14.0]] + 13 )];
+            [headerView addSubview:topLabel];
             [headerView addSubview:bottomLabel];
             return headerView;
         }
         break;
         case 2:
         {
-            UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0.0, 320, 49)];
+            UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0.0, SCREEN_WIDTH, 49)];
             UILabel *sectionHeaderLabel = [[UILabel alloc] initWithFrame:headerView.layer.frame];
             sectionHeaderLabel.text = @"TO INVITE";
             sectionHeaderLabel.font = [TDConstants fontSemiBoldSized:14];
             sectionHeaderLabel.textColor = [TDConstants commentTimeTextColor]; // a2a2a2
             CGRect labelFrame = sectionHeaderLabel.frame;
             sectionHeaderLabel.textAlignment = NSTextAlignmentLeft;
-            labelFrame.origin.x = 7.0;
+            labelFrame.origin.x = TD_MARGIN;
             labelFrame.origin.y = 25.0;
             sectionHeaderLabel.frame = labelFrame;
             [sectionHeaderLabel sizeToFit];
@@ -334,7 +339,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     switch (section) {
         case 0:
-            return TD_INVITE_HEADER_HEIGHT_SEC0;
+            return 20 + [TDViewControllerHelper heightForText:topHeaderText1 font:[TDConstants fontSemiBoldSized:16.0]] + 15 + [TDViewControllerHelper heightForText:topHeaderText2 font:[TDConstants fontRegularSized:14.0]] + 13 ;
             break;
         case 1:
             return TD_INVITE_HEADER_HEIGHT_SEC1;
@@ -530,5 +535,6 @@
         }
     }
 }
+
 
 @end

@@ -87,6 +87,14 @@
     
     self.contacts = [[TDAddressBookAPI sharedInstance] getContactList];
 
+    CGRect tableViewFrame = self.tableView.frame;
+    tableViewFrame.size.width = SCREEN_WIDTH;
+    self.tableView.frame = tableViewFrame;
+    
+    CGRect searchBarFrame = self.searchDisplayController.searchBar.frame;
+    searchBarFrame.size.width = SCREEN_WIDTH;
+    self.searchDisplayController.searchBar.frame = searchBarFrame;
+    
    [self.tableView reloadData];
 }
 
@@ -190,7 +198,7 @@
             CGRect descripFrame = cell.noFollowLabel.frame;
             descripFrame.origin.y = descripFrame.origin.y + descripFrame.size.height + 7;
             
-            UILabel *descriptionLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, descripFrame.origin.y, 320, 57)];
+            UILabel *descriptionLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, descripFrame.origin.y, SCREEN_WIDTH, 57)];
             CGFloat lineHeight = 19;
             NSString *text = @"Sorry we weren't able to find the\nperson you're looking for in\nyour Address Book.";
             attString = [TDViewControllerHelper makeParagraphedTextWithString:text font:[TDConstants fontRegularSized:15.0] color:[TDConstants headerTextColor] lineHeight:lineHeight];

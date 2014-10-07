@@ -17,6 +17,10 @@
 @property NSMutableArray *contactList;
 @end
 
+static NSString *header1Text =@"Please confirm how you'd like your\nname to appear to your friends.";
+static NSString *header2Text1 =@"Sugestion: use your first and last name";
+static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
+
 @implementation TDSendInviteController
 @synthesize sender;
 
@@ -59,6 +63,10 @@
     [self.navigationItem setTitleView:self.titleLabel];
     
     self.view.backgroundColor = [TDConstants lightBackgroundColor];
+    
+    CGRect tableViewFrame = self.tableView.frame;
+    tableViewFrame.size.width = SCREEN_WIDTH;
+    self.tableView.frame = tableViewFrame;
 
 }
 
@@ -187,15 +195,16 @@
     switch (section) {
         case 0:
         {
-            UIView *headerView =[[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 63)];
-            UILabel *topLabel = [[UILabel alloc] initWithFrame:CGRectMake(7, 22, 300, 32)];
-            NSString *topLabelText =@"Please confirm how you'd like your\nname to appear to your friends.";
+            CGFloat heightText = [TDViewControllerHelper heightForText:header1Text font:[TDConstants fontRegularSized:16.0]];
+            UILabel *topLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 22, SCREEN_WIDTH, heightText)];
             CGFloat lineHeight = 20.0;
-            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:topLabelText font:[TDConstants fontRegularSized:16] color:[TDConstants headerTextColor] lineHeight:lineHeight];
+            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:header1Text font:[TDConstants fontRegularSized:16] color:[TDConstants headerTextColor] lineHeight:lineHeight];
             [topLabel setTextAlignment:NSTextAlignmentCenter];
             [topLabel setLineBreakMode:NSLineBreakByWordWrapping];
             [topLabel setAttributedText:attString];
             [topLabel setNumberOfLines:0];
+            
+            UIView *headerView =[[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 22 + heightText + 25)];
             [headerView addSubview:topLabel];
             
             return headerView;
@@ -203,21 +212,22 @@
         break;
     
         case 1: {
-            UIView *headerView =[[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 112)];
-            UILabel *topLabel = [[UILabel alloc] initWithFrame:CGRectMake(7, 0, 300, 40)];
-            NSString *topLabelText =@"Sugestion: use your first and last name";
+            CGFloat textHeight = [TDViewControllerHelper heightForText:header2Text1 font:[TDConstants fontRegularSized:14.0]];
+            CGFloat bottomTextHeight = [TDViewControllerHelper heightForText:header2Text2 font:[TDConstants fontSemiBoldSized:16.0]];
+
+            UIView *headerView =[[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 11 + textHeight + 38 + bottomTextHeight)];
+            UILabel *topLabel = [[UILabel alloc] initWithFrame:CGRectMake(TD_MARGIN, 11, 300, textHeight)];
             CGFloat lineHeight = 14;
-            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:topLabelText font:[TDConstants fontRegularSized:14.0] color:[TDConstants commentTextColor] lineHeight:lineHeight];
+            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:header2Text1 font:[TDConstants fontRegularSized:14.0] color:[TDConstants commentTextColor] lineHeight:lineHeight];
             
             [topLabel setNumberOfLines:1];
             [topLabel setAttributedText:attString];
             [topLabel setNumberOfLines:0];
             [headerView addSubview:topLabel];
             
-            UILabel *bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(7, 63, 320, 36)];
-            NSString *bottomText = @"Tap \"Send\" to send your invites!";
+            UILabel *bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(TD_MARGIN, 11 + textHeight + 38, SCREEN_WIDTH, bottomTextHeight)];
             lineHeight = 16.0;
-            NSAttributedString *bottomAttString = [TDViewControllerHelper makeParagraphedTextWithString:bottomText font:[TDConstants fontSemiBoldSized:16.0] color:[TDConstants headerTextColor] lineHeight:lineHeight];
+            NSAttributedString *bottomAttString = [TDViewControllerHelper makeParagraphedTextWithString:header2Text2 font:[TDConstants fontSemiBoldSized:16.0] color:[TDConstants headerTextColor] lineHeight:lineHeight];
             
             [bottomLabel setTextAlignment:NSTextAlignmentCenter];
             [bottomLabel setLineBreakMode:NSLineBreakByWordWrapping];
@@ -315,10 +325,10 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     switch (section) {
         case 0:
-            return 63;
+            return 22 + [TDViewControllerHelper heightForText:header1Text font:[TDConstants fontRegularSized:16]] + 25;
             break;
         case 1:
-            return 79;
+            return 11 + [TDViewControllerHelper heightForText:header2Text1 font:[TDConstants fontRegularSized:14.0]] + 38 + [TDViewControllerHelper heightForText:header2Text2 font:[TDConstants fontSemiBoldSized:16.0]];
             break;
         default:
             return 0.;

@@ -271,8 +271,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSInteger realRow = [[self postsForThisScreen] count] + [self noticeCount] + (self.profileType != kFeedProfileTypeNone ? 1 : 0);
-
-    debug NSLog(@"REAL ROW=%ld", (long)realRow);
     // 'Loading' or 'No Posts' cell
     if ([[self postsForThisScreen] count] == 0) {
         TDNoPostsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoPostsCell"];

@@ -18,7 +18,11 @@
 - (void)awakeFromNib
 {
     // Initialization code
-    self.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
+    CGRect cellFrame = self.frame;
+    cellFrame.size.width = SCREEN_WIDTH;
+    self.frame = cellFrame;
+    debug NSLog(@"invite cell frame-%@", NSStringFromCGRect(self.frame));
+    self.layer.borderColor = [[TDConstants lightBorderColor] CGColor];
     self.layer.borderWidth = TD_CELL_BORDER_WIDTH;
     self.contactTextField.font = [TDConstants fontRegularSized:16];
     self.contactTextField.textColor = [TDConstants headerTextColor];
@@ -38,16 +42,16 @@
 }
 
 - (void)textFieldEdited{
-    debug NSLog(@"edited");
     if (!self.addedButton && self.contactTextField.text.length > 0) {
-            [self setAccessoryType:UITableViewCellAccessoryDetailDisclosureButton];
-            UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-            CGRect frame = CGRectMake(self.accessoryView.frame.origin.x, self.accessoryView.frame.size.height, 44, 44);
-            button.frame = frame;
-            [button.titleLabel setFont:[TDConstants fontRegularSized:16]];
-            [button setTitle:@"Add" forState:UIControlStateNormal];
-            [button setTitleColor:[TDConstants brandingRedColor] forState:UIControlStateNormal];
-    [button addTarget:self action:@selector(addInviteData:event:)  forControlEvents:UIControlEventTouchUpInside];
+        [self setAccessoryType:UITableViewCellAccessoryDetailDisclosureButton];
+        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+        CGRect frame = CGRectMake(self.accessoryView.frame.origin.x, self.accessoryView.frame.size.height, 44, 44);
+        button.frame = frame;
+
+        [button.titleLabel setFont:[TDConstants fontRegularSized:16]];
+        [button setTitle:@"Add" forState:UIControlStateNormal];
+        [button setTitleColor:[TDConstants brandingRedColor] forState:UIControlStateNormal];
+        [button addTarget:self action:@selector(addInviteData:event:)  forControlEvents:UIControlEventTouchUpInside];
             button.backgroundColor = [UIColor clearColor];
             self.accessoryView = button;
         self.addedButton = YES;

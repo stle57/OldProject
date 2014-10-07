@@ -246,4 +246,12 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     return isSafariURL;
 }
 
++ (CGFloat)heightForText:(NSString*)bodyText font:(UIFont*)font{
+    CGSize constraingSize = CGSizeMake(300, MAXFLOAT);
+    CGRect textRect = [bodyText boundingRectWithSize:constraingSize options:(NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading) attributes:@{NSFontAttributeName:font} context:nil];
+    debug NSLog(@"text rect=%@", NSStringFromCGRect(textRect));
+    
+    return textRect.size.height;
+}
+
 @end

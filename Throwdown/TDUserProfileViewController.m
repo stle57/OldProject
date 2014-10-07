@@ -91,9 +91,6 @@
     debug NSLog(@"inside TDUsersProfileViewController:viewWillAppear");
     [super viewWillAppear:animated];
     
-    if (self.needsProfileHeader) {
-        debug NSLog(@"   SHOWING PROFILE HEADER INSIDE viewWillAppear");
-    }
     [self.tableView reloadData];
     // Stop any current playbacks
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
