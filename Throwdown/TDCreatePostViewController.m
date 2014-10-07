@@ -65,8 +65,6 @@ static int const kUserListHeight = 140;
     [navigationBar setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontSemiBoldSized:18],
                                              NSForegroundColorAttributeName: [UIColor whiteColor] }];
 
-    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
-
     UIButton *button = [TDViewControllerHelper navCloseButton];
     [button addTarget:self action:@selector(closeButtonPressed) forControlEvents:UIControlEventTouchUpInside];
     self.navigationBarItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
@@ -99,6 +97,11 @@ static int const kUserListHeight = 140;
 	}
 
     self.keyboardObserver = [[TDKeyboardObserver alloc] initWithDelegate:self];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
 }
 
 - (void)viewDidAppear:(BOOL)animated {

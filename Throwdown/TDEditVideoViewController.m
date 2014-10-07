@@ -99,12 +99,7 @@ static const NSString *ItemStatusContext;
     [self setNeedsStatusBarAppearanceUpdate];
     self.isSetup = NO;
 
-    // Fix buttons for 3.5" screens
-    if ([UIScreen mainScreen].bounds.size.height == 480.0) {
-        self.controlsView.center = CGPointMake(self.controlsView.center.x, 430);
-        self.coverView.center = CGPointMake(self.coverView.center.x, 212);
-    }
-    self.helpLabel.frame = CGRectMake(0, 44, 320, self.coverView.frame.origin.y - 44);
+    self.helpLabel.frame = CGRectMake(0, 44, SCREEN_WIDTH, self.coverView.frame.origin.y - 44);
     self.helpLabel.font = [TDConstants fontSemiBoldSized:17];
 
     [[UIApplication sharedApplication] setStatusBarHidden:YES
@@ -184,8 +179,9 @@ static const NSString *ItemStatusContext;
 }
 
 - (CGRect)previewRect {
-    CGFloat y = [UIScreen mainScreen].bounds.size.height == 480.0 ? 52 : 96;
-    return CGRectMake(0, y, 320, 320);
+    CGRect bounds = [UIScreen mainScreen].bounds;
+    CGFloat y = (bounds.size.height - bounds.size.width) / 2.;
+    return CGRectMake(0, y, SCREEN_WIDTH, SCREEN_WIDTH);
 }
 
 # pragma mark - saving

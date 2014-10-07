@@ -45,8 +45,9 @@
     [window setBackgroundColor:[UIColor blackColor]];
     [self.destinationViewController view].hidden = YES;
 
-    [self.destinationViewController dismissViewControllerAnimated:NO completion:nil];
-    [[self.destinationViewController navigationController] popToRootViewControllerAnimated:NO];
+    [[self.destinationViewController navigationController] dismissViewControllerAnimated:self.sourceViewController completion:nil];
+//    [self.destinationViewController dismissViewControllerAnimated:NO completion:nil];
+//    [[self.destinationViewController navigationController] popToRootViewControllerAnimated:NO];
 }
 
 @end

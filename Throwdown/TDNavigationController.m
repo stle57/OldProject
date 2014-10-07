@@ -22,9 +22,9 @@
     } else if ([@"PRSegue" isEqualToString:identifier]) {
         return [[TDPRSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
     } else if ([@"OpenRecordViewSegue" isEqualToString:identifier]) {
-        return [[TDSlideUpSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
-    } else if ([@"MediaCloseSegue" isEqualToString:identifier]) {
         return [[TDSlideDownSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
+    } else if ([@"MediaCloseSegue" isEqualToString:identifier]) {
+        return [[TDSlideUpSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
     } else {
         return [super segueForUnwindingToViewController:toViewController
                                      fromViewController:fromViewController
