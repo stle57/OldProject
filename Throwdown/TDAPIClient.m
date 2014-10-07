@@ -332,7 +332,7 @@
 - (void)sendInvites:(NSString*)senderName contactList:(NSArray*)contactList callback:(void (^)(BOOL success, NSArray *contacts))callback {
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/contacts/invite.json"];
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
-    [self.httpManager POST:url parameters:@{@"contacts":contactList, @"user_token":[TDCurrentUser sharedInstance].userId} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [self.httpManager POST:url parameters:@{@"contacts":contactList, @"user_token":[TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             NSDictionary *response = (NSDictionary *)responseObject;
             NSNumber *success = [response objectForKey:@"success"];
