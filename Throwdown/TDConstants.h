@@ -142,6 +142,7 @@ static NSInteger const kFollowingButtonTag = 20003;
 #define TD_INCREMENT_STRING              @"INCREMENT"
 #define TD_DECREMENT_STRING              @"DECREMENT"
 #define SCREEN_WIDTH                     [UIScreen mainScreen].bounds.size.width
+#define SCREEN_HEIGHT                    [UIScreen mainScreen].bounds.size.height
 #define TD_MARGIN                        10.0
 
 + (TDEnvironment)environment;

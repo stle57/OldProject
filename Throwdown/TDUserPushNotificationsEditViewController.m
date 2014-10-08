@@ -79,7 +79,6 @@ settings: [
     [super viewDidLoad];
 
     // Background
-    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
     
@@ -94,6 +93,8 @@ settings: [
     UIBarButtonItem *barButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];
     self.navigationItem.leftBarButtonItem = barButton;
     self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
+    
+    self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
 }
 
 - (void)viewWillAppear:(BOOL)animated {

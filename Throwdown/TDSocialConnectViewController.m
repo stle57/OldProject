@@ -40,7 +40,6 @@
     self.view.backgroundColor = [TDConstants darkBackgroundColor];
 
     // Background
-    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
     
@@ -68,6 +67,7 @@
     self.tableView = [[UITableView alloc] initWithFrame:[[UIScreen mainScreen] bounds] style:UITableViewStyleGrouped];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
+    self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
     [self.view addSubview:self.tableView];
 
     self.activityIndicator = [[TDActivityIndicator alloc] initWithFrame:[[UIScreen mainScreen] bounds]];

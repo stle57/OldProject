@@ -38,7 +38,7 @@
 
     statusBarFrame = [self.view convertRect: [UIApplication sharedApplication].statusBarFrame fromView: nil];
     // Background
-    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
+    self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
     

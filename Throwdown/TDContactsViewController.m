@@ -49,7 +49,7 @@
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
     
     // Background color
-    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
+    self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
     
     UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];     // '<'
     self.navigationItem.leftBarButtonItem = leftBarButton;
@@ -75,8 +75,6 @@
     [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
     
-    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
-    
     self.filteredContactArray = [NSMutableArray arrayWithCapacity:[contacts count]];
     self.edgesForExtendedLayout = UIRectEdgeNone;
     
@@ -89,6 +87,7 @@
 
     CGRect tableViewFrame = self.tableView.frame;
     tableViewFrame.size.width = SCREEN_WIDTH;
+    tableViewFrame.size.height = SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height - self.searchDisplayController.searchBar.frame.size.height;
     self.tableView.frame = tableViewFrame;
     
     CGRect searchBarFrame = self.searchDisplayController.searchBar.frame;
@@ -391,8 +390,8 @@
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
     [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
     self.tableView.hidden = YES;
-    self.view.backgroundColor = [TDConstants lightBackgroundColor];
-    self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants lightBackgroundColor];
+    self.view.backgroundColor = [TDConstants darkBackgroundColor];
+    self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants darkBackgroundColor];
 }
 
 - (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
