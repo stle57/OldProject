@@ -306,8 +306,8 @@
     cell.bottomLine.hidden = NO;
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    cell.usernameLabel.hidden = YES;
-    cell.usernameLabel.attributedText = [[NSMutableAttributedString alloc] init];
+    cell.descriptionLabel.hidden = YES;
+    cell.descriptionLabel.attributedText = [[NSMutableAttributedString alloc] init];
     cell.nameLabel.text = @"";
     cell.actionButton.hidden = YES;
     [cell.userImageView setImage:[UIImage imageNamed:@"prof_pic_default.png"]];
@@ -360,13 +360,13 @@
         followCell.nameLabel.font = [TDConstants fontSemiBoldSized:16];
         followCell.nameLabel.textColor = [TDConstants headerTextColor];
         [followCell.nameLabel sizeToFit];
-        followCell.usernameLabel.hidden = NO;
+        followCell.descriptionLabel.hidden = NO;
         NSString *usernameLabel = [NSString stringWithFormat:@"%@%@", @"Invite via: ", contactInfo.selectedData];
         CGFloat lineHeight = 0;
         NSAttributedString * attributedString = [TDViewControllerHelper makeParagraphedTextWithString:usernameLabel font:[TDConstants fontRegularSized:13] color:[TDConstants headerTextColor] lineHeight:lineHeight];
         
-        followCell.usernameLabel.attributedText = attributedString;
-        [followCell.usernameLabel sizeToFit];
+        followCell.descriptionLabel.attributedText = attributedString;
+        [followCell.descriptionLabel sizeToFit];
         followCell.actionButton.hidden = NO;
         [followCell.actionButton setImage:[UIImage imageNamed:@"btn-remove.png"] forState:UIControlStateNormal];
         [followCell.actionButton setImage:[UIImage imageNamed:@"btn-remove-hit.png"] forState:UIControlStateHighlighted];
@@ -448,7 +448,7 @@
             revertedCell.actionButton.hidden = YES;
             revertedCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             
-            revertedCell.usernameLabel.hidden = YES;
+            revertedCell.descriptionLabel.hidden = YES;
             CGRect frame = revertedCell.nameLabel.frame;
             frame.origin.y = MIDDLE_CELL_Y_AXIS;
             revertedCell.nameLabel.frame = frame;
@@ -467,7 +467,7 @@
             revertedCell.actionButton.hidden = YES;
             revertedCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             
-            revertedCell.usernameLabel.hidden = YES;
+            revertedCell.descriptionLabel.hidden = YES;
             CGRect frame = revertedCell.nameLabel.frame;
             frame.origin.y = MIDDLE_CELL_Y_AXIS;
             revertedCell.nameLabel.frame = frame;
@@ -480,7 +480,7 @@
             revertedCell.actionButton.hidden = YES;
             revertedCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             
-            revertedCell.usernameLabel.hidden = YES;
+            revertedCell.descriptionLabel.hidden = YES;
             CGRect frame = revertedCell.nameLabel.frame;
             frame.origin.y = MIDDLE_CELL_Y_AXIS;
             revertedCell.nameLabel.frame = frame;

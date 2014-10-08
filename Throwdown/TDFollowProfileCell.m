@@ -22,7 +22,7 @@
 - (void)dealloc
 {
     delegate = nil;
-    for (UIGestureRecognizer *g in self.usernameLabel.gestureRecognizers) {
+    for (UIGestureRecognizer *g in self.nameLabel.gestureRecognizers) {
         [self.nameLabel removeGestureRecognizer:g];
     }
     for (UIGestureRecognizer *g in self.userImageView.gestureRecognizers) {
@@ -34,8 +34,8 @@
 - (void)awakeFromNib {
     self.userInteractionEnabled = YES;
     
-    self.usernameLabel.font  = [TDConstants fontRegularSized:13];
-    self.usernameLabel.textColor = [TDConstants headerTextColor];
+    self.descriptionLabel.font  = [TDConstants fontRegularSized:13];
+    self.descriptionLabel.textColor = [TDConstants headerTextColor];
     
     UITapGestureRecognizer *usernameTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(usernameTapped:)];
     [self.nameLabel addGestureRecognizer:usernameTap];
@@ -83,6 +83,10 @@
     CGRect actionButtonRect = self.actionButton.frame;
     actionButtonRect.origin.x = SCREEN_WIDTH - self.actionButton.frame.size.width - TD_MARGIN;
     self.actionButton.frame = actionButtonRect;
+    
+    CGRect descriptionLabelRect = self.descriptionLabel.frame;
+    descriptionLabelRect.size.width = actionButtonRect.origin.x - descriptionLabelRect.origin.x - TD_MARGIN;
+    self.descriptionLabel.frame = descriptionLabelRect;
     
 }
 

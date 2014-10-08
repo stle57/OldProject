@@ -27,8 +27,6 @@
     
     self.selectionStyle = UITableViewCellSelectionStyleGray;
     self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    self.accessoryView.layer.borderColor = [[UIColor redColor] CGColor];
-    self.accessoryView.layer.borderWidth = 2.;
     
     CGRect lineRect = self.bottomLine.frame;
     lineRect.size.height = (1.0 / [[UIScreen mainScreen] scale]);

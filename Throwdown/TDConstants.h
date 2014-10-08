@@ -162,6 +162,7 @@ static NSInteger const kFollowingButtonTag = 20003;
 + (UIColor *)lightBorderColor;
 + (UIColor *)darkBorderColor;
 + (UIColor *)activityUnseenColor;
++ (UIColor *)helpTextColor;
 
 + (UIColor *)backgroundColor __attribute((deprecated("use lightBackgroundColor or darkBackgroundColor instead")));
 + (UIColor *)borderColor __attribute((deprecated("use lightBorderColor or darkBorderColor instead")));

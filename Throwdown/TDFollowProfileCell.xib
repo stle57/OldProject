@@ -69,10 +69,10 @@
             <connections>
                 <outlet property="actionButton" destination="0RK-xc-SBo" id="V4U-4B-wjy"/>
                 <outlet property="bottomLine" destination="aV6-nP-jnS" id="xar-yr-jMr"/>
+                <outlet property="descriptionLabel" destination="Biy-hP-sgD" id="WRc-uI-qch"/>
                 <outlet property="nameLabel" destination="KLu-IA-xKg" id="hbC-H6-VDg"/>
                 <outlet property="topLine" destination="8A1-O9-lTg" id="z17-0f-1wE"/>
                 <outlet property="userImageView" destination="1Fe-Mr-5rh" id="h1y-nT-yBg"/>
-                <outlet property="usernameLabel" destination="Biy-hP-sgD" id="epx-w9-iZH"/>
             </connections>
         </tableViewCell>
     </objects>

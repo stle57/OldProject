@@ -26,8 +26,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [TDConstants lightBackgroundColor];
-    self.tableView.layer.borderColor = [[UIColor redColor] CGColor];
-    self.tableView.layer.borderWidth = 2.;
     
     // Background
     self.tableView.backgroundColor = [TDConstants lightBackgroundColor];

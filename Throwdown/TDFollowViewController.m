@@ -86,23 +86,25 @@
     [navigationBar setBarStyle:UIBarStyleBlack];
     navigationBar.translucent = NO;
     
-    // Buttonså
+    // Buttons
     self.backButton = [TDViewControllerHelper navBackButton];
     [self.backButton addTarget:self action:@selector(backButtonHit:) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *barButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];
     self.navigationItem.leftBarButtonItem = barButton;
     self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
-    self.tableView.contentInset = UIEdgeInsetsMake(-40.0f, 0.0f, 0.0f, 0.0f);
+    self.tableView.contentInset = UIEdgeInsetsMake(-35.0f, 0.0f, 0.0f, 0.0f);
     
-    self.searchDisplayController.searchBar.layer.borderColor = [[TDConstants lightBorderColor] CGColor];
+    self.searchDisplayController.searchBar.layer.borderColor = [[TDConstants darkBorderColor] CGColor];
     self.searchDisplayController.searchBar.layer.borderWidth = TD_CELL_BORDER_WIDTH;
-    self.searchDisplayController.searchBar.backgroundColor = [TDConstants lightBackgroundColor];
     self.searchDisplayController.searchBar.clipsToBounds = YES;
     self.searchDisplayController.searchResultsTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
 
+    self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
+    self.view.backgroundColor = [TDConstants darkBackgroundColor];
+    
     self.activityIndicator.text.text = @"Loading";
     [self showActivity];
     self.suggestedLabel.hidden = YES;
@@ -133,11 +135,9 @@
     } else if (self.followControllerType == kUserListType_Followers) {
         self.searchDisplayController.searchBar.hidden = YES;
         [[TDAPIClient sharedInstance] getFollowerSettings:self.profileUser.userId currentUserToken:[TDCurrentUser sharedInstance].authToken success:^(NSArray *users) {
-            debug NSLog(@"%lu followers", (unsigned long)users.count);
             if ([users isKindOfClass:[NSArray class]]) {
                 self.followUsers = users;
             }
-            debug NSLog(@"follow call is calling reloadData on tableView");
             self.gotFromServer = YES;
             [self.tableView reloadData];
             [self hideActivity];
@@ -154,12 +154,13 @@
         }];
     } else if (self.followControllerType == kUserListType_TDUsers) {
         self.searchDisplayController.searchBar.hidden = NO;
-        self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
-        self.view.backgroundColor = [TDConstants lightBackgroundColor];
+        self.searchDisplayController.searchBar.barTintColor = [TDConstants darkBackgroundColor];
+        self.searchDisplayController.searchBar.translucent = NO;
+        
         self.suggestedLabel.hidden = NO;
-        self.suggestedLabel.textColor = [TDConstants commentTimeTextColor];
+        self.suggestedLabel.textColor = [TDConstants helpTextColor];
         self.suggestedLabel.font = [TDConstants fontRegularSized:13];
-        self.suggestedLabel.backgroundColor = [TDConstants lightBackgroundColor];
+        self.suggestedLabel.backgroundColor = [TDConstants darkBackgroundColor];
         self.suggestedLabel.layer.borderColor = [[TDConstants lightBorderColor] CGColor];
         
         self.inviteButton.hidden = NO;
@@ -168,16 +169,9 @@
         UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.inviteButton];
         self.navigationItem.rightBarButtonItem = rightBarButton;
         
-        self.searchDisplayController.searchBar.layer.borderColor = [[TDConstants lightBorderColor] CGColor];
-        self.searchDisplayController.searchBar.layer.borderWidth = TD_CELL_BORDER_WIDTH;
-        self.searchDisplayController.searchBar.backgroundColor = [TDConstants lightBackgroundColor];
-        self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants lightBackgroundColor];
-        self.searchDisplayController.searchResultsTableView.layer.opaque = NO;
-        
         // Load data from server
         [[TDUserAPI sharedInstance] getCommunityUserList:^(BOOL success, NSArray *returnList) {
             if (success && returnList && returnList.count > 0) {
-                debug NSLog(@"user list dictionary=%@", returnList);
                 self.followUsers = [returnList copy];
                 self.filteredTDUsers = [NSMutableArray arrayWithCapacity:[self.followUsers count]];
                 self.gotFromServer = YES;
@@ -185,7 +179,6 @@
                 [self hideActivity];
             } else {
                 self.gotFromServer = NO;
-                debug NSLog(@"no list");
             }
         }];
 
@@ -313,7 +306,6 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    debug NSLog(@"inside cellForRowAtIndexPath");
       NSInteger currentRow = indexPath.row;
     if (tableView == self.searchDisplayController.searchResultsTableView) {
         if (self.filteredTDUsers == nil || self.filteredTDUsers.count == 0) {
@@ -324,8 +316,12 @@
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 cell.delegate = self;
             }
+            
             cell.contentView.backgroundColor = [TDConstants lightBackgroundColor];
+            tableView.backgroundColor = [TDConstants lightBackgroundColor];
             cell.noFollowLabel.text = @"No matches found";
+            cell.noFollowLabel.font = [TDConstants fontSemiBoldSized:16.0];
+            cell.noFollowLabel.textColor = [TDConstants headerTextColor];
             cell.findPeopleButton.hidden = YES;
             cell.findPeopleButton.enabled = NO;
 
@@ -335,9 +331,13 @@
             CGRect descripFrame = cell.noFollowLabel.frame;
             descripFrame.origin.y = descripFrame.origin.y + descripFrame.size.height + 7;
             
-            UILabel *descriptionLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, descripFrame.origin.y, SCREEN_WIDTH, 57)];
             NSString *text = @"Sorry we weren't able to find the\nperson you're looking for.\n Invite them to join Throwndown.";
-            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:text font:[TDConstants fontRegularSized:15.0] color:[TDConstants headerTextColor] lineHeight:16.0];
+
+            CGFloat descriptionHeight = [TDViewControllerHelper heightForText:text font:[TDConstants fontRegularSized:15.0]];
+            UILabel *descriptionLabel =
+                [[UILabel alloc] initWithFrame:CGRectMake(0, descripFrame.origin.y, SCREEN_WIDTH, descriptionHeight)];
+            
+            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:text font:[TDConstants fontRegularSized:15.0] color:[TDConstants headerTextColor] lineHeight:19.0];
             descriptionLabel.attributedText = attString;
             descriptionLabel.textAlignment = NSTextAlignmentCenter;
             [descriptionLabel setNumberOfLines:0];
@@ -345,7 +345,7 @@
             
             CGRect frame = cell.invitePeopleButton.frame;
             frame.origin.x = SCREEN_WIDTH/2 - cell.invitePeopleButton.frame.size.width/2;
-            frame.origin.y = descriptionLabel.frame.origin.y + descriptionLabel.frame.size.height + 15;
+            frame.origin.y = descriptionLabel.frame.origin.y + descriptionLabel.frame.size.height + 30;
             cell.invitePeopleButton.frame = frame;
             return cell;
         } else {
@@ -427,17 +427,18 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.delegate = self;
     }
+    cell.topLine.hidden = NO;
+//    cell.bottomLine.hidden = NO;
     cell.userId = [object valueForKey:@"id"];
     cell.row = indexPath.row;
     
-    if (cell.row == 0) {
-        cell.topLine.hidden = NO;
-    } else {
-        cell.topLine.hidden = YES;
+    NSString *str = [NSString stringWithFormat:@"%@", [object valueForKey:@"bio"]];
+    if (str == nil || str.length == 0 || [[object valueForKey:@"bio"] isKindOfClass:[NSNull class]]) {
+        str = [NSString stringWithFormat:@"@%@", [object valueForKey:@"username"]];
     }
-    NSString *usernameStr = [NSString stringWithFormat:@"@%@", [object valueForKey:@"username"] ];
-    NSAttributedString *usernameAttStr = [TDViewControllerHelper makeParagraphedTextWithString:usernameStr font:[TDConstants fontRegularSized:13.0] color:[TDConstants headerTextColor] lineHeight:16.0];
-    cell.usernameLabel.attributedText = usernameAttStr;
+   // NSString *usernameStr = [NSString stringWithFormat:@"%@", [object valueForKey:@"bio"] ];
+    NSAttributedString *usernameAttStr = [TDViewControllerHelper makeParagraphedTextWithString:str font:[TDConstants fontRegularSized:13.0] color:[TDConstants headerTextColor] lineHeight:16.0];
+    cell.descriptionLabel.attributedText = usernameAttStr;
     
     NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:[object valueForKey:@"name"] font:[TDConstants fontSemiBoldSized:16] color:[TDConstants brandingRedColor] lineHeight:19.0];
     cell.nameLabel.attributedText = attString;
@@ -499,7 +500,16 @@
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    debug NSLog(@"table view is scrolling");
+    if (self.followControllerType == kUserListType_TDUsers) {
+        if (!self.suggestedLabel.hidden) {
+            self.suggestedLabel.hidden = YES;
+            CGRect tableViewFrame = self.tableView.frame;
+            debug NSLog(@"table view frame when scrolling = %@", NSStringFromCGRect(self.tableView.frame));
+            tableViewFrame.origin.y = tableViewFrame.origin.y - self.suggestedLabel.frame.size.height;
+            self.tableView.frame = tableViewFrame;
+            debug NSLog(@" AFTERtable view frame when scrolling = %@", NSStringFromCGRect(self.tableView.frame));
+        }
+    }
 }
 
 #pragma mark - TDFollowCellProfileDelegate
@@ -635,6 +645,7 @@
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
     vc.userId = userId;
     vc.profileType = kFeedProfileTypeOther;
+    vc.needsProfileHeader = YES;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -659,6 +670,14 @@
 #pragma mark UISearchBarDelegate
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
     [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants headerTextColor]];
+    self.suggestedLabel.hidden = YES;
+    self.tableView.hidden = YES;
+}
+
+- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
+    [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
+    self.tableView.hidden = NO;
+    self.suggestedLabel.hidden = NO;
 }
 
 #pragma mark Content Filtering

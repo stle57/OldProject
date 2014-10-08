@@ -186,7 +186,7 @@ settings: [
     UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 35.0)];
 
     if (self.gotFromServer && section < [self.settings count]) {
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(5, 7, 320, 18)];
+        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(5, 7, SCREEN_WIDTH, 18)];
         label.text = [[self.settings objectAtIndex:section] objectForKey:@"name"];
         label.font = [TDConstants fontRegularSized:16.0];
         label.textColor = [TDConstants headerTextColor];

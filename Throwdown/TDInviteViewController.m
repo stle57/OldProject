@@ -49,7 +49,7 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
     navigationBar.translucent = NO;
     
     // Background color
-    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
+    self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
 
     UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.closeButton];     // 'X'
     self.navigationItem.leftBarButtonItem = leftBarButton;
@@ -69,7 +69,7 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
     [self.navigationItem setTitleView:self.titleLabel];
     
     [self checkForNextButton];
-    self.view.backgroundColor = [TDConstants lightBackgroundColor];
+    self.view.backgroundColor = [TDConstants darkBackgroundColor];
 }
 
 - (void)dealloc {
@@ -133,7 +133,7 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
             UIFont *bottomFont = [TDConstants fontRegularSized:14.0];
             CGFloat bottomTextHeight = [TDViewControllerHelper heightForText:topHeaderText2 font:bottomFont];
             UILabel *bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(TD_MARGIN, 20 + textHeight1 + 15, SCREEN_WIDTH, bottomTextHeight)];
-            NSAttributedString *bottomAttString = [TDViewControllerHelper makeParagraphedTextWithString:topHeaderText2 font:bottomFont color:[TDConstants commentTimeTextColor] lineHeight:18.0];
+            NSAttributedString *bottomAttString = [TDViewControllerHelper makeParagraphedTextWithString:topHeaderText2 font:bottomFont color:[TDConstants helpTextColor] lineHeight:18.0];
             [bottomLabel setTextAlignment:NSTextAlignmentNatural];
             [bottomLabel setLineBreakMode:NSLineBreakByWordWrapping];
             [bottomLabel setAttributedText:bottomAttString];
@@ -210,7 +210,7 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
         {
             TDInviteCell *cell = (TDInviteCell*)[tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_INVITE];
             
-            UIColor *textFieldPlaceHolderColor = [TDConstants commentTimeTextColor];
+            UIColor *textFieldPlaceHolderColor = [TDConstants helpTextColor];
             UIFont *placeHolderFont = [TDConstants fontRegularSized:16];
             cell.contactTextField.tag = 800+(10*indexPath.section)+indexPath.row;
             if (!cell) {
@@ -266,13 +266,13 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
                 if (!followCell) {
                     NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_FOLLOWPROFILE owner:self options:nil];
                     followCell = [topLevelObjects objectAtIndex:0];
-                    self.origUsernameLabelFrame = followCell.usernameLabel.frame;
+                    self.origUsernameLabelFrame = followCell.descriptionLabel.frame;
                     self.origNameLabelFrame = followCell.nameLabel.frame;
                 }
                 followCell.delegate = self;
                 followCell.row = indexPath.row;
                 followCell.nameLabel.hidden = YES;
-                followCell.usernameLabel.hidden = YES;
+                followCell.descriptionLabel.hidden = YES;
                 followCell.actionButton.hidden = YES;
                 followCell.userId = contact.id;
                 followCell.nameLabel.textColor = [TDConstants headerTextColor];
@@ -283,11 +283,11 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
                     
                     NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:contact.selectedData font:font color:[TDConstants headerTextColor] lineHeight:16.0];
                     
-                    CGRect labelFrame = followCell.usernameLabel.frame;
+                    CGRect labelFrame = followCell.descriptionLabel.frame;
                     labelFrame.origin.y = 23.75;
-                    followCell.usernameLabel.frame = labelFrame;
-                    followCell.usernameLabel.hidden = NO;
-                    followCell.usernameLabel.attributedText = attString;
+                    followCell.descriptionLabel.frame = labelFrame;
+                    followCell.descriptionLabel.hidden = NO;
+                    followCell.descriptionLabel.attributedText = attString;
                 } else {
                     followCell.nameLabel.hidden = NO;
                     NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
@@ -299,9 +299,9 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
                     followCell.nameLabel.attributedText = attributedString2;
                     
                     
-                    followCell.usernameLabel.hidden = NO;
-                    followCell.usernameLabel.text = contact.selectedData;
-                    followCell.usernameLabel.frame = self.origUsernameLabelFrame;
+                    followCell.descriptionLabel.hidden = NO;
+                    followCell.descriptionLabel.text = contact.selectedData;
+                    followCell.descriptionLabel.frame = self.origUsernameLabelFrame;
 
                 }
                 followCell.actionButton.hidden = NO;

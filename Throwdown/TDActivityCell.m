@@ -20,7 +20,7 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
-        self.layer.borderColor = [[TDConstants cellBorderColor] CGColor];
+        self.layer.borderColor = [[TDConstants lightBorderColor] CGColor];
         self.layer.borderWidth = TD_CELL_BORDER_WIDTH;
 
     }

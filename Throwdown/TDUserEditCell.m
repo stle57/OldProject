@@ -1,6 +1,6 @@
 //
 //  TDUserEditCell.m
-//  Throwdown
+//  ;
 //
 //  Created by Andrew Bennett on 4/9/14.
 //  Copyright (c) 2014 Throwdown. All rights reserved.
@@ -44,7 +44,7 @@
     self.textView.textColor   = [TDConstants headerTextColor]; //4c4c4c
     self.leftMiddleLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
     self.middleLabel.textColor = [TDConstants headerTextColor]; // 4c4c4c
-
+    
     CGRect lineRect = self.bottomLine.frame;
     lineRect.size.height = (1.0 / [[UIScreen mainScreen] scale]);
     lineRect.size.width = width;
@@ -63,6 +63,8 @@
     topLineOrigHeight = self.topLine.frame.size.height;
     bottomLineOrigHeight = self.bottomLine.frame.size.height;
     
+    self.topLine.backgroundColor = [TDConstants lightBorderColor];
+    self.bottomLine.backgroundColor = [TDConstants lightBorderColor];
 }
 
 @end

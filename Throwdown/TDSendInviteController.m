@@ -18,7 +18,7 @@
 @end
 
 static NSString *header1Text =@"Please confirm how you'd like your\nname to appear to your friends.";
-static NSString *header2Text1 =@"Sugestion: use your first and last name";
+static NSString *header2Text1 =@"Suggestion: use your first and last name";
 static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
 
 @implementation TDSendInviteController
@@ -89,8 +89,8 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
     // Get the name of the sender
     NSString *senderName = [self getSenderName];
     if (senderName.length == 0) {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Alert"
-                                                        message:@"Name cannot be blank.\nWe suggest entering your first and last names."
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Name cannot be blank."
+                                                        message:@"We suggest entering your first and last names."
                                                        delegate:nil
                                               cancelButtonTitle:@"OK"
                                               otherButtonTitles:nil];

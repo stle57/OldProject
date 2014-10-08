@@ -118,7 +118,7 @@ static NSString *const kCDNStreamingServer = @"http://139bc8fb83b0918931ad-a6f56
 }
 
 + (UIColor *)lightBorderColor {
-    return [UIColor colorWithRed:(204./255.) green:(204./255.) blue:(204./255.) alpha:1.0]; // #cccccc
+    return [self commentTimeTextColor];
 }
 
 + (UIColor *)commentTimeTextColor {
@@ -129,6 +129,9 @@ static NSString *const kCDNStreamingServer = @"http://139bc8fb83b0918931ad-a6f56
     return [UIColor colorWithRed:(255.0/255.0) green:(238.0/255.0) blue:(224.0/255.0) alpha:1.0]; // #fff5ed
 }
 
++ (UIColor *)helpTextColor {
+    return [UIColor colorWithRed:(147./255.) green:(147./255.) blue:(147./255.) alpha:1.0]; //#939393
+}
 // Deprecated: Use light or dark background color
 + (UIColor *)backgroundColor {
     return [UIColor colorWithRed:237./255. green:237./255. blue:237./255. alpha:1.0];  // ededed
