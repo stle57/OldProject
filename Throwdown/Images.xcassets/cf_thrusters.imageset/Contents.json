@@ -3,16 +3,17 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "intro-background.png"
+      "filename" : "cf_thrusters.jpg"
     },
     {
       "idiom" : "universal",
       "scale" : "2x",
-      "filename" : "intro-background@2x.png"
+      "filename" : "cf_thrusters@2x.jpg"
     },
     {
       "idiom" : "universal",
-      "scale" : "3x"
+      "scale" : "3x",
+      "filename" : "cf_thrusters@3x.jpg"
     }
   ],
   "info" : {

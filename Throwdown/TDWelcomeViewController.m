@@ -22,63 +22,56 @@
 @property (weak, nonatomic) IBOutlet UIView *slide3;
 @property (weak, nonatomic) IBOutlet UIView *indicatorView;
 @property (weak, nonatomic) IBOutlet UIScrollView *backgroundScrollView;
+@property (weak, nonatomic) IBOutlet UIImageView *introBackground;
+@property (weak, nonatomic) IBOutlet UIImageView *backgroundImage;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *slide1constraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *slide2constraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *slide3constraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *introSlideConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *backgroundImageConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *backgroundImageWidthConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *slide3TitleConstraint;
+
+@property (nonatomic) int pageWidth;
+@property (nonatomic) int currentPage;
 @end
 
 @implementation TDWelcomeViewController
 
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-}
-
-- (void) viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-}
-
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    CGRect pagingScrollViewFrame = [[UIScreen mainScreen] bounds];
-    pagingScrollViewFrame.origin.x -= 10;
-    pagingScrollViewFrame.size.width += 20;
-    self.scrollView.frame = pagingScrollViewFrame;
-    self.scrollView.contentSize = CGSizeMake(340 * 4, pagingScrollViewFrame.size.height);
-    self.scrollView.delegate = self;
-
     // Move slides to the right
     CGRect frame = [[UIScreen mainScreen] bounds];
+    CGFloat height = frame.size.height;
+    CGFloat width = frame.size.width;
 
-    CGFloat screenHeight = frame.size.height;
+    self.pageWidth = width + 20;
+    self.currentPage = 0;
 
-    frame.origin.x += 10;
-    self.introSlide.frame = frame;
-    frame.origin.x += frame.size.width + 20;
-    self.slide1.frame = frame;
-    frame.origin.x += frame.size.width + 20;
-    self.slide2.frame = frame;
-    frame.origin.x += frame.size.width + 20;
-    self.slide3.frame = frame;
+    CGFloat totalWidth = (self.pageWidth * 4) + 40;
+    CGFloat aspect = 667 / totalWidth; // 667 = width of image
+
+    self.backgroundImageWidthConstraint.constant = totalWidth * aspect;
+    self.scrollView.contentSize = CGSizeMake(totalWidth, height);
+    self.scrollView.delegate = self;
+
+    self.introSlideConstraint.constant = 10;
+    self.slide1constraint.constant = self.pageWidth + 10;
+    self.slide2constraint.constant = self.pageWidth * 2 + 10;
+    self.slide3constraint.constant = self.pageWidth * 3 + 10;
 
     // Intro slide
     self.titleLabel.font = [UIFont fontWithName:@"BebasNeueRegular" size:68.0];
     self.snippetLabel.font = [TDConstants fontSemiBoldSized:20];
     self.loginButton.titleLabel.font = [TDConstants fontSemiBoldSized:14];
 
-    if (screenHeight == 480.) {
-        [self fixPosition:self.titleLabel];
-        [self fixPosition:self.snippetLabel];
-        [self fixPosition:self.loginButton];
-        [self fixPosition:self.signupButton];
-        [self fixPosition:self.indicatorView withHeight:88];
-        for (UIView *view in [self.slide1 subviews]) {
-            [self fixPosition:view withHeight:88];
-        }
-        for (UIView *view in [self.slide2 subviews]) {
-            [self fixPosition:view withHeight:88];
-        }
-        for (UIView *view in [self.slide3 subviews]) {
-            [self fixPosition:view];
-        }
+    // moves all the slide 3 titles up if it's a small screen
+    if (height == 480) {
+        self.slide3TitleConstraint.constant = 20;
     }
+
+    self.backgroundImageConstraint.constant = -100 - (-self.pageWidth) / 4.0;
 
     self.indicatorView.hidden = YES;
 
@@ -109,30 +102,17 @@
     }
 }
 
-- (void)fixPosition:(UIView *)view {
-    [self fixPosition:view withHeight:44];
-}
-
-- (void)fixPosition:(UIView *)view withHeight:(CGFloat)height {
-    CGRect frame = view.layer.frame;
-    frame.origin.y -= height;
-    view.frame = frame;
-}
-
-- (BOOL)prefersStatusBarHidden {
-    return YES;
-}
-
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     int offset = (int)scrollView.contentOffset.x;
-    int page = offset / 340;
+    int page = offset / (self.pageWidth - 20);
 
     // Hide indicator on first slide
-    self.indicatorView.hidden = offset < 170;
+    self.indicatorView.hidden = offset < (self.pageWidth / 2);
 
-    [self.backgroundScrollView setContentOffset:CGPointMake((offset - 340) / 4.f, 0)];
+    self.backgroundImageConstraint.constant = -100 -(offset - self.pageWidth) / 4.0;
 
-    if (offset % 340 == 0 && page > 0) {
+    if (page > 0 && self.currentPage != page) {
+        self.currentPage = page;
         [[TDAnalytics sharedInstance] logEvent:[NSString stringWithFormat:@"intro_page_%d", page]];
         for (NSNumber *num in @[@41, @42, @43]) {
             UIImageView *indicator = (UIImageView *)[self.view viewWithTag:[num integerValue]];
