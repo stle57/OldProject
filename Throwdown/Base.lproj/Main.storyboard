@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="DPQ-qf-8sb">
     <dependencies>
+        <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -23,7 +24,7 @@
                             </view>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yCY-OC-yOW" userLabel="Black Cover View">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                                <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tgj-aS-c8v" userLabel="Record controls">
                                 <rect key="frame" x="0.0" y="500" width="600" height="100"/>
@@ -96,7 +97,7 @@
                                         </connections>
                                     </button>
                                 </subviews>
-                                <color key="backgroundColor" red="0.29803921570000003" green="0.7843137255" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="centerY" secondItem="adF-V8-fH8" secondAttribute="centerY" id="1x4-qR-1SF"/>
                                     <constraint firstAttribute="centerY" secondItem="cnB-Wd-Stf" secondAttribute="centerY" id="HUG-OO-crT"/>
@@ -111,7 +112,7 @@
                             </view>
                             <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cZv-bv-JN9" userLabel="Indicator background">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
-                                <color key="backgroundColor" red="0.929411765" green="0.29803921570000003" blue="0.29803921570000003" alpha="1" colorSpace="calibratedRGB"/>
+                                <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="aHK-0p-KaM"/>
                                 </constraints>
@@ -211,6 +212,7 @@
                     <connections>
                         <outlet property="albumButton" destination="2a9-PF-90i" id="x5p-0S-kMb"/>
                         <outlet property="bottomCoverHeightConstraint" destination="dIe-iG-khw" id="HwP-59-2Df"/>
+                        <outlet property="cameraPreview" destination="VYp-zZ-cCO" id="lmt-y6-DET"/>
                         <outlet property="closeButton" destination="6yY-RR-kvO" id="KIb-vu-e7J"/>
                         <outlet property="coverView" destination="yCY-OC-yOW" id="uOg-Vs-Ow7"/>
                         <outlet property="flashButton" destination="p2X-Qr-6Vj" id="DVl-BZ-K3W"/>
