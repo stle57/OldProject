@@ -31,12 +31,16 @@
     if (self) {
         NSArray *nibContents = [[NSBundle mainBundle] loadNibNamed:@"TDTextField" owner:self options:nil];
         self.backgroundColor = [UIColor clearColor];
-        [self addSubview:[nibContents lastObject]];
+        UIView *view = (UIView *)[nibContents lastObject];
+        CGRect frame = view.frame;
+        frame.size.width = self.frame.size.width;
+        view.frame = frame;
+        [self addSubview:view];
 
         // Make bottom line 0.5 pixels
         CGRect bottomLineFrame = self.bottomLine.frame;
         bottomLineFrame.size.height = 0.5;
-        bottomLineFrame.origin.x += 0.5;
+        bottomLineFrame.origin.y += 0.5;
         self.bottomLine.frame = bottomLineFrame;
 
         [self.textfield addTarget:self
@@ -53,11 +57,11 @@
     type = aType;
     self.spinner.hidden = YES;
     
-    self.placeholderLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:19.0];
+    self.placeholderLabel.font = [TDConstants fontRegularSized:19];
     self.placeholderLabel.text = placeHolder;
     self.placeholderLabel.alpha = 0.8;
 
-    self.textfield.font = [UIFont fontWithName:@"ProximaNova-Regular" size:19.0];
+    self.textfield.font = [TDConstants fontRegularSized:19];
     self.textfield.keyboardType = keyboardType;
     if (keyboardType == UIKeyboardTypeEmailAddress || keyboardType == UIKeyboardTypeTwitter) {
         self.textfield.autocapitalizationType = UITextAutocapitalizationTypeNone;
@@ -74,14 +78,6 @@
         UIImage *iconImage = [UIImage imageNamed:iconName];
         self.iconImageView.image = iconImage;
         iconImage = nil;
-    } else {
-        // redo frames
-        CGRect newFrame = self.placeholderLabel.frame;
-        newFrame.origin.x = self.iconImageView.frame.origin.x+4.0;
-        newFrame.size.width += (self.placeholderLabel.frame.origin.x+self.iconImageView.frame.origin.x-8.0);
-        self.placeholderLabel.frame = newFrame;
-        newFrame.origin.x -= 4.0;
-        self.textfield.frame = newFrame;
     }
 
     self.xmarkImageView.hidden = YES;

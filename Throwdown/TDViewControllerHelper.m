@@ -35,6 +35,10 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
 }
 
 + (void)showAlertMessage:(NSString *)message withTitle:(NSString *)title {
+    // This fixes iOS8 turning the message into title (which is huge and ughly) when there's not title.
+    if (title == nil) {
+        title = @"";
+    }
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title
                                                       message:message
                                                      delegate:nil
