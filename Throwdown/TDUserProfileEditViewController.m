@@ -466,7 +466,10 @@
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
-    return 0.001;
+    if (section == 4)
+        return 10.;
+    else
+        return 0.001;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
