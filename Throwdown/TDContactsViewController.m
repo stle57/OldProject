@@ -27,6 +27,7 @@
     self.userList = nil;
     self.filteredContactArray = nil;
     self.inviteList = nil;
+    self.labels = nil;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -35,6 +36,7 @@
     if (self) {
         contacts = [[NSMutableArray alloc] init];
         inviteList = [[NSMutableArray alloc] init];
+        self.labels = [[NSMutableArray alloc] init];
     }
     return self;
 }
@@ -56,7 +58,7 @@
     [navigationBar setBarStyle:UIBarStyleBlack];
     [navigationBar setTranslucent:NO];
     
-    [self.searchDisplayController.searchBar setBarTintColor:[TDConstants lightBackgroundColor]];
+    [self.searchDisplayController.searchBar setBarTintColor:[TDConstants darkBackgroundColor]];
     
     // Title
     self.navLabel.textColor = [UIColor whiteColor];
@@ -67,9 +69,9 @@
     
 
     // Search Bar
-    self.searchDisplayController.searchBar.backgroundColor = [TDConstants lightBackgroundColor];
+    self.searchDisplayController.searchBar.backgroundColor = [TDConstants darkBackgroundColor];
     self.searchDisplayController.searchBar.backgroundImage = [UIImage new];
-    self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants lightBackgroundColor];
+    self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants darkBackgroundColor];
     self.searchDisplayController.searchResultsTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
@@ -140,6 +142,8 @@
         if (self.filteredContactArray == nil || [self.filteredContactArray count] == 0) {
             return 220.0;
         } else {
+            // Calculate the height of the labels
+            [self createLabels];
             return 65.0;
         }
     } else {
@@ -183,11 +187,12 @@
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 cell.delegate = self;
             }
-            cell.contentView.backgroundColor = [TDConstants lightBackgroundColor];
+            cell.contentView.backgroundColor = [TDConstants darkBackgroundColor];
             NSString *noMatchesString = @"No matches found";
-            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:noMatchesString font:[TDConstants fontSemiBoldSized:16.0] color:[TDConstants headerTextColor] lineHeight:19];
+            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:noMatchesString font:[TDConstants fontSemiBoldSized:16.0] color:[TDConstants headerTextColor] lineHeight:19 lineHeightMultipler:(19/16.0)];
             cell.noFollowLabel.attributedText = attString;
-
+            debug NSLog(@"no matches frame =%@", NSStringFromCGRect(cell.noFollowLabel.frame));
+            
             cell.findPeopleButton.hidden = YES;
             cell.findPeopleButton.enabled = NO;
 
@@ -200,7 +205,7 @@
             UILabel *descriptionLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, descripFrame.origin.y, SCREEN_WIDTH, 57)];
             CGFloat lineHeight = 19;
             NSString *text = @"Sorry we weren't able to find the\nperson you're looking for in\nyour Address Book.";
-            attString = [TDViewControllerHelper makeParagraphedTextWithString:text font:[TDConstants fontRegularSized:15.0] color:[TDConstants headerTextColor] lineHeight:lineHeight];
+            attString = [TDViewControllerHelper makeParagraphedTextWithString:text font:[TDConstants fontRegularSized:15.0] color:[TDConstants headerTextColor] lineHeight:lineHeight lineHeightMultipler:(lineHeight/15.0)];
             descriptionLabel.attributedText = attString;
             descriptionLabel.textAlignment = NSTextAlignmentCenter;
             [descriptionLabel setNumberOfLines:0];
@@ -362,7 +367,7 @@
         followCell.descriptionLabel.hidden = NO;
         NSString *usernameLabel = [NSString stringWithFormat:@"%@%@", @"Invite via: ", contactInfo.selectedData];
         CGFloat lineHeight = 0;
-        NSAttributedString * attributedString = [TDViewControllerHelper makeParagraphedTextWithString:usernameLabel font:[TDConstants fontRegularSized:13] color:[TDConstants headerTextColor] lineHeight:lineHeight];
+        NSAttributedString * attributedString = [TDViewControllerHelper makeParagraphedTextWithString:usernameLabel font:[TDConstants fontRegularSized:13] color:[TDConstants headerTextColor] lineHeight:lineHeight lineHeightMultipler:(lineHeight/13.0)];
         
         followCell.descriptionLabel.attributedText = attributedString;
         [followCell.descriptionLabel sizeToFit];
@@ -386,17 +391,19 @@
     debug NSLog(@"just adding contact to inviteList, count=%lu", (unsigned long)[self.inviteList count]);
 }
 
+- (void)createLabels {
+    
+}
 #pragma mark UISearchBarDelegate
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
     [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
-    self.tableView.hidden = YES;
     self.view.backgroundColor = [TDConstants darkBackgroundColor];
     self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants darkBackgroundColor];
 }
 
 - (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
-    self.tableView.hidden = NO;
 }
+
 #pragma mark Content Filtering
 - (void)filterContentForSearchText:(NSString*)searchText scope:(NSString*)scope
 {

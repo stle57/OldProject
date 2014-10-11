@@ -14,6 +14,11 @@
 #define TD_INVITE_HEADER_HEIGHT_SEC0 120
 #define TD_INVITE_HEADER_HEIGHT_SEC1 13
 #define TD_INVITE_HEADER_HEIGHT_SEC2 49
+#define HEADER1_TOP_MARGIN 20
+#define HEADER1_MIDDLE_MARGIN 15
+#define HEADER1_BOTTOM_MARGIN 13
+#define HEADER2_TOP_MARGIN 25
+#define HEADER2_BOTTOM_MARGIN 10
 
 @interface TDInviteViewController : UIViewController<UITableViewDataSource, UITextFieldDelegate, UIAlertViewDelegate, TDContactsViewControllerDelegate, TDFollowProfileCellDelegate, TDInviteCellDelegate>
 
@@ -24,6 +29,8 @@
 
 @property (nonatomic) CGRect origUsernameLabelFrame;
 @property (nonatomic) CGRect origNameLabelFrame;
+
+@property (nonatomic) NSMutableArray *headerLabels;
 
 - (IBAction)closeButtonHit:(id)sender;
 - (IBAction)nextButtonHit:(id)sender;

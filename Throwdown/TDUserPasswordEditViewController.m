@@ -357,7 +357,7 @@
     cell.leftMiddleLabel.hidden = YES;
     cell.textView.hidden = YES;
     cell.textField.tag = 800+(10*indexPath.section)+indexPath.row;
-    UIColor *textFieldPlaceHolderColor = [UIColor colorWithRed:(189.0/255.0) green:(189.0/255.0) blue:(189.0/255.0) alpha:1.0];
+    UIColor *textFieldPlaceHolderColor = [TDConstants commentTimeTextColor];
     cell.textView.frame = cell.textViewdOrigRect;
     cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
                                        [self tableView:self.tableView heightForRowAtIndexPath:indexPath],

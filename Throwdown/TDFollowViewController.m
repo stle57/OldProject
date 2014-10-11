@@ -50,6 +50,7 @@
     self.pictureFileName = nil;
     self.editedProfileImage = nil;
     self.tempFlyInImageView = nil;
+    self.labels = nil;
 }
 
 - (void)viewDidLoad {
@@ -58,6 +59,7 @@
     //debug NSLog(@"EditUserProfile:%@", self.profileUser);
     
     statusBarFrame = [self.view convertRect:[UIApplication sharedApplication].statusBarFrame fromView: nil];
+    self.labels = [[NSMutableArray alloc] init];
     
     // Title
     if (self.followControllerType == kUserListType_Followers) {
@@ -262,7 +264,6 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    debug NSLog(@"inside numberOfRowsInSection");
     if (self.gotFromServer) {
         if (tableView == self.tableView) {
             switch (section) {
@@ -317,29 +318,24 @@
                 cell.delegate = self;
             }
             
-            cell.contentView.backgroundColor = [TDConstants lightBackgroundColor];
-            tableView.backgroundColor = [TDConstants lightBackgroundColor];
+            cell.contentView.backgroundColor = [TDConstants darkBackgroundColor];
+            tableView.backgroundColor = [TDConstants darkBackgroundColor];
+           // UILabel *noFollowLabel = [self.labels objectAtIndex:0];
             cell.noFollowLabel.text = @"No matches found";
-            cell.noFollowLabel.font = [TDConstants fontSemiBoldSized:16.0];
-            cell.noFollowLabel.textColor = [TDConstants headerTextColor];
+            debug NSLog(@"no follow label frame=%@", NSStringFromCGRect(cell.noFollowLabel.frame));
+            
             cell.findPeopleButton.hidden = YES;
             cell.findPeopleButton.enabled = NO;
 
             cell.invitePeopleButton.hidden = NO;
             cell.invitePeopleButton.enabled = YES;
+            UILabel *descriptionLabel = [self.labels objectAtIndex:1];
             
-            CGRect descripFrame = cell.noFollowLabel.frame;
-            descripFrame.origin.y = descripFrame.origin.y + descripFrame.size.height + 7;
-            
-            NSString *text = @"Sorry we weren't able to find the\nperson you're looking for.\n Invite them to join Throwndown.";
-
-            CGFloat descriptionHeight = [TDViewControllerHelper heightForText:text font:[TDConstants fontRegularSized:15.0]];
-            UILabel *descriptionLabel =
-                [[UILabel alloc] initWithFrame:CGRectMake(0, descripFrame.origin.y, SCREEN_WIDTH, descriptionHeight)];
-            
-            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:text font:[TDConstants fontRegularSized:15.0] color:[TDConstants headerTextColor] lineHeight:19.0];
-            descriptionLabel.attributedText = attString;
-            descriptionLabel.textAlignment = NSTextAlignmentCenter;
+            CGRect descripFrame = descriptionLabel.frame;
+            descripFrame.origin.y = cell.noFollowLabel.frame.origin.y + cell.noFollowLabel.frame.size.height + 7;
+            descripFrame.origin.x = SCREEN_WIDTH/2 - descripFrame.size.width/2;
+            descriptionLabel.frame = descripFrame;
+            debug NSLog(@"descripFrame=%@", NSStringFromCGRect(descriptionLabel.frame));
             [descriptionLabel setNumberOfLines:0];
             [cell addSubview:descriptionLabel];
             
@@ -431,11 +427,16 @@
 //    cell.bottomLine.hidden = NO;
     cell.userId = [object valueForKey:@"id"];
     cell.row = indexPath.row;
-    
-    NSString *str = [NSString stringWithFormat:@"%@", [object valueForKey:@"bio"]];
-    if (str == nil || str.length == 0 || [[object valueForKey:@"bio"] isKindOfClass:[NSNull class]]) {
+    NSString *str = nil;
+    if (self.followControllerType == kUserListType_TDUsers) {
+        str = [NSString stringWithFormat:@"%@", [object valueForKey:@"bio"]];
+        if (str == nil || str.length == 0 || [[object valueForKey:@"bio"] isKindOfClass:[NSNull class]]) {
+            str = [NSString stringWithFormat:@"@%@", [object valueForKey:@"username"]];
+        }
+    } else {
         str = [NSString stringWithFormat:@"@%@", [object valueForKey:@"username"]];
     }
+    
    // NSString *usernameStr = [NSString stringWithFormat:@"%@", [object valueForKey:@"bio"] ];
     NSAttributedString *usernameAttStr = [TDViewControllerHelper makeParagraphedTextWithString:str font:[TDConstants fontRegularSized:13.0] color:[TDConstants headerTextColor] lineHeight:16.0];
     cell.descriptionLabel.attributedText = usernameAttStr;
@@ -481,7 +482,10 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     if (tableView == self.searchDisplayController.searchResultsTableView) {
         if (self.filteredTDUsers == nil || self.filteredTDUsers.count == 0) {
-            return TD_NOFOLLOWCELL_HEIGHT2;
+            [self createLabels];
+            UILabel *label = [self.labels objectAtIndex:0];
+            UILabel *label2 = [self.labels objectAtIndex:1];
+            return 30 + label.frame.size.height + 7 + label2.frame.size.height + 30 + [UIImage imageNamed:@"btn-invite-friends.png"].size.height;
         } else {
             return TD_FOLLOW_CELL_HEIGHT;
         }
@@ -504,18 +508,41 @@
         if (!self.suggestedLabel.hidden) {
             self.suggestedLabel.hidden = YES;
             CGRect tableViewFrame = self.tableView.frame;
-            debug NSLog(@"table view frame when scrolling = %@", NSStringFromCGRect(self.tableView.frame));
             tableViewFrame.origin.y = tableViewFrame.origin.y - self.suggestedLabel.frame.size.height;
             self.tableView.frame = tableViewFrame;
-            debug NSLog(@" AFTERtable view frame when scrolling = %@", NSStringFromCGRect(self.tableView.frame));
         }
     }
+}
+
+- (void)createLabels {
+    
+    NSString *text1 = @"No matches found";
+    UILabel *noMatchesLabel =
+    [[UILabel alloc] initWithFrame:CGRectMake(0, 30, SCREEN_WIDTH, 100)];
+    noMatchesLabel.text = text1;
+    noMatchesLabel.font = [TDConstants fontSemiBoldSized:16.0];
+    noMatchesLabel.textColor = [TDConstants headerTextColor];
+    [noMatchesLabel sizeToFit];
+    
+    [self.labels addObject:noMatchesLabel];
+    
+    NSString *text2 = @"Sorry we weren't able to find the\nperson you're looking for.\n Invite them to join Throwndown.";
+
+    UILabel *descriptionLabel =
+    [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
+    
+    NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:text2 font:[TDConstants fontRegularSized:15.0] color:[TDConstants headerTextColor] lineHeight:19.0 lineHeightMultipler:(19.0/15.0)];
+    descriptionLabel.attributedText = attString;
+    descriptionLabel.textAlignment = NSTextAlignmentCenter;
+    [descriptionLabel setNumberOfLines:0];
+    [descriptionLabel sizeToFit];
+    [self.labels addObject:descriptionLabel];
+
 }
 
 #pragma mark - TDFollowCellProfileDelegate
 
 - (void)showActivity {
-    debug NSLog(@"activityIndicator frame=%@", NSStringFromCGRect(self.activityIndicator.frame));
     self.backButton.enabled = NO;
     self.activityIndicator.center = self.view.center;
     [self.view bringSubviewToFront:self.activityIndicator];
@@ -669,14 +696,12 @@
 
 #pragma mark UISearchBarDelegate
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
-    [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants headerTextColor]];
+    //[[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants headerTextColor]];
     self.suggestedLabel.hidden = YES;
-    self.tableView.hidden = YES;
 }
 
 - (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
-    [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
-    self.tableView.hidden = NO;
+    //[[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
     self.suggestedLabel.hidden = NO;
 }
 

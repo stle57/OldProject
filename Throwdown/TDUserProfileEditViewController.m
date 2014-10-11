@@ -514,11 +514,12 @@
     cell.longTitleLabel.hidden = YES;
     cell.middleLabel.hidden = YES;
     cell.userImageView.hidden = YES;
-    cell.topLine.hidden = YES;
+    cell.topLine.hidden = NO;
     cell.textField.hidden = YES;
     cell.textField.secureTextEntry = NO;
     cell.leftMiddleLabel.hidden = YES;
     cell.textView.hidden = YES;
+    cell.bottomLine.hidden = NO;
     cell.textField.tag = 800+(10*indexPath.section)+indexPath.row;
     UIColor *textFieldPlaceHolderColor = [TDConstants headerTextColor];
     cell.textView.frame = cell.textViewdOrigRect;
@@ -526,7 +527,6 @@
                                        cell.bottomLineOrigY,
                                        cell.bottomLine.frame.size.width,
                                        cell.bottomLine.frame.size.height);
-    
     switch (indexPath.section) {
         case 0: // profile settings
             switch (indexPath.row) {
@@ -546,6 +546,9 @@
                     cell.leftMiddleLabel.text = @"Edit Photo";
                     cell.leftMiddleLabel.frame = [self getTextFieldPosition:cell.leftMiddleLabel.frame];
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
+                    if (cell.bottomLine.hidden ==YES) {
+                        debug NSLog(@" bottom line HIDDEN for profile image");
+                    }
                 }
                 break;
                 case 1:
@@ -589,11 +592,13 @@
                     cell.titleLabel.text = @"Bio";
                     cell.textView.text = self.bio;
                     CGRect newTextFrame = cell.textView.frame;
-                    newTextFrame.size.height = [self tableView:tableView heightForRowAtIndexPath:indexPath]-1;
+                    newTextFrame.size.height = [self tableView:tableView heightForRowAtIndexPath:indexPath];
                     cell.textView.frame = newTextFrame;
                     debug NSLog(@"==newer bio cell frame = %@", NSStringFromCGRect(cell.textView.frame));
-
                     cell.textView.textContainer.lineFragmentPadding = 0;
+//                    cell.textView.layer.borderWidth = 1.0;
+//                    cell.textView.layer.borderColor = [[TDConstants brandingRedColor] CGColor];
+                    
                     cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
                                                        CGRectGetMaxY(newTextFrame),
                                                        cell.bottomLine.frame.size.width,

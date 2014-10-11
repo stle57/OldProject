@@ -280,6 +280,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
         }
 
+        
         if (!self.loaded) {
             cell.noPostsLabel.text = @"Loading…";
         } else if (self.errorLoading) {

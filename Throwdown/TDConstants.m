@@ -9,7 +9,7 @@
 #import "TDConstants.h"
 #import "AVFoundation/AVFoundation.h"
 
-static NSString *const kDevHost = @"http://localhost:3000";
+static NSString *const kDevHost = @"http://slemac.local:3000";
 static NSString *const kStagingHost = @"http://staging.throwdown.us";
 static NSString *const kProductionHost = @"https://throwdown.us";
 static NSString *const kProductionSharingHost = @"http://tdwn.us";

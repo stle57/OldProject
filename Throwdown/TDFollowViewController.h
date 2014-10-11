@@ -56,6 +56,7 @@
 @property (nonatomic, retain) UIImage *editedProfileImage;
 @property (nonatomic, retain) UIImageView *tempFlyInImageView;
 @property (nonatomic) UIButton *backButton;
+@property (nonatomic) NSMutableArray *labels;
 
 - (IBAction)inviteButtonHit:(id)sender;
 

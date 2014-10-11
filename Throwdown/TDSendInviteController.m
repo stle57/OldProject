@@ -29,6 +29,7 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         self.contactList = [[NSMutableArray alloc] init];
+        self.headerLabels = [[NSMutableArray alloc] initWithCapacity:3];
     }
     return self;
 }
@@ -43,7 +44,7 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
     [navigationBar setBarStyle:UIBarStyleBlack];
     navigationBar.translucent = NO;
     // Background color
-    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
+    self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
     
     UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.closeButton];     // 'X'
     self.navigationItem.leftBarButtonItem = leftBarButton;
@@ -62,7 +63,7 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
     [self.titleLabel sizeToFit];
     [self.navigationItem setTitleView:self.titleLabel];
     
-    self.view.backgroundColor = [TDConstants lightBackgroundColor];
+    self.view.backgroundColor = [TDConstants darkBackgroundColor];
     
     CGRect tableViewFrame = self.tableView.frame;
     tableViewFrame.size.width = SCREEN_WIDTH;
@@ -73,6 +74,7 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
 - (void)dealloc {
     self.contactList = nil;
     self.sender = nil;
+    self.headerLabels = nil;
 }
 - (void)didReceiveMemoryWarning
 {
@@ -200,21 +202,83 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
     return inviteString;
 }
 
+- (void) createHeaderLabels:(NSInteger)section {
+    switch (section) {
+        case 0: //Top header label
+        {
+            UILabel *topLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 22, SCREEN_WIDTH, 100)];
+            CGFloat lineHeight = 20.0;
+            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:header1Text font:[TDConstants fontRegularSized:16] color:[TDConstants headerTextColor] lineHeight:lineHeight lineHeightMultipler:(lineHeight/16.0)];
+            
+            [topLabel setTextAlignment:NSTextAlignmentCenter];
+            [topLabel setLineBreakMode:NSLineBreakByWordWrapping];
+            [topLabel setAttributedText:attString];
+            [topLabel setNumberOfLines:0];
+            [topLabel sizeToFit];
+            
+            CGRect frame = topLabel.frame;
+            frame.origin.x = SCREEN_WIDTH/2 - topLabel.frame.size.width/2;
+            topLabel.frame = frame;
+            
+            if ([self.headerLabels count] == 0) {
+                [self.headerLabels insertObject:topLabel atIndex:section];
+            } else {
+                [self.headerLabels replaceObjectAtIndex:section withObject:topLabel];
+            }
+
+        }
+        break;
+        case 1: //Suggestion label
+        {
+            UILabel *topLabel = [[UILabel alloc] initWithFrame:CGRectMake(TD_MARGIN, 11, SCREEN_WIDTH, 100)];
+            CGFloat lineHeight = 14;
+            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:header2Text1 font:[TDConstants fontRegularSized:14.0] color:[TDConstants commentTextColor] lineHeight:lineHeight lineHeightMultipler:(lineHeight/14.0)];
+            
+            [topLabel setNumberOfLines:1];
+            [topLabel setAttributedText:attString];
+            [topLabel setNumberOfLines:0];
+            [topLabel sizeToFit];
+            
+            if([self.headerLabels count] == 1) {
+                [self.headerLabels insertObject:topLabel atIndex:section];
+            }
+        }
+        break;
+        case 2: //Tap Send label
+        {
+            if ([self.headerLabels count] ==2) {
+                UILabel *topLabel = [self.headerLabels objectAtIndex:section-1];
+                
+                UILabel *bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, topLabel.frame.origin.y + topLabel.frame.size.height + MIDDLE_MARGIN_HEADER2, SCREEN_WIDTH, 100)];
+                CGFloat lineHeight = 16.0;
+                NSAttributedString *bottomAttString = [TDViewControllerHelper makeParagraphedTextWithString:header2Text2 font:[TDConstants fontSemiBoldSized:16.0] color:[TDConstants headerTextColor] lineHeight:lineHeight lineHeightMultipler:(lineHeight/16.0)];
+                
+                [bottomLabel setTextAlignment:NSTextAlignmentCenter];
+                [bottomLabel setLineBreakMode:NSLineBreakByWordWrapping];
+                [bottomLabel setAttributedText:bottomAttString];
+                [bottomLabel setNumberOfLines:0];
+                [bottomLabel sizeToFit];
+                
+                CGRect frame = bottomLabel.frame;
+                frame.origin.x = SCREEN_WIDTH/2 - bottomLabel.frame.size.width/2;
+                bottomLabel.frame = frame;
+
+                if([self.headerLabels count] == 2) {
+                    [self.headerLabels insertObject:bottomLabel atIndex:section];
+                }
+            }
+        }
+        break;
+        default: break;
+    }
+}
 #pragma mark - TableView Delegates
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     switch (section) {
         case 0:
         {
-            CGFloat heightText = [TDViewControllerHelper heightForText:header1Text font:[TDConstants fontRegularSized:16.0]];
-            UILabel *topLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 22, SCREEN_WIDTH, heightText)];
-            CGFloat lineHeight = 20.0;
-            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:header1Text font:[TDConstants fontRegularSized:16] color:[TDConstants headerTextColor] lineHeight:lineHeight];
-            [topLabel setTextAlignment:NSTextAlignmentCenter];
-            [topLabel setLineBreakMode:NSLineBreakByWordWrapping];
-            [topLabel setAttributedText:attString];
-            [topLabel setNumberOfLines:0];
-            
-            UIView *headerView =[[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 22 + heightText + 25)];
+            UILabel *topLabel = [self.headerLabels objectAtIndex:section];
+            UIView *headerView =[[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, TOP_BOTTOM_HEADER1_MARGIN + topLabel.frame.size.height + TOP_BOTTOM_HEADER1_MARGIN)];
             [headerView addSubview:topLabel];
             
             return headerView;
@@ -222,28 +286,10 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
         break;
     
         case 1: {
-            CGFloat textHeight = [TDViewControllerHelper heightForText:header2Text1 font:[TDConstants fontRegularSized:14.0]];
-            CGFloat bottomTextHeight = [TDViewControllerHelper heightForText:header2Text2 font:[TDConstants fontSemiBoldSized:16.0]];
-
-            UIView *headerView =[[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 11 + textHeight + 38 + bottomTextHeight)];
-            UILabel *topLabel = [[UILabel alloc] initWithFrame:CGRectMake(TD_MARGIN, 11, 300, textHeight)];
-            CGFloat lineHeight = 14;
-            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:header2Text1 font:[TDConstants fontRegularSized:14.0] color:[TDConstants commentTextColor] lineHeight:lineHeight];
-            
-            [topLabel setNumberOfLines:1];
-            [topLabel setAttributedText:attString];
-            [topLabel setNumberOfLines:0];
+            UILabel *topLabel = [self.headerLabels objectAtIndex:section];
+            UILabel *bottomLabel = [self.headerLabels objectAtIndex:section+1];
+            UIView *headerView =[[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, TOP_MARGIN_HEADER2 + topLabel.frame.size.height + MIDDLE_MARGIN_HEADER2 + bottomLabel.frame.size.height)];
             [headerView addSubview:topLabel];
-            
-            UILabel *bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(TD_MARGIN, 11 + textHeight + 38, SCREEN_WIDTH, bottomTextHeight)];
-            lineHeight = 16.0;
-            NSAttributedString *bottomAttString = [TDViewControllerHelper makeParagraphedTextWithString:header2Text2 font:[TDConstants fontSemiBoldSized:16.0] color:[TDConstants headerTextColor] lineHeight:lineHeight];
-            
-            [bottomLabel setTextAlignment:NSTextAlignmentCenter];
-            [bottomLabel setLineBreakMode:NSLineBreakByWordWrapping];
-            [bottomLabel setAttributedText:bottomAttString];
-            [bottomLabel setNumberOfLines:0];
-            
             [headerView addSubview:bottomLabel];
             return  headerView;
         }
@@ -335,11 +381,26 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     switch (section) {
         case 0:
-            return 22 + [TDViewControllerHelper heightForText:header1Text font:[TDConstants fontRegularSized:16]] + 25;
-            break;
+        {
+            [self createHeaderLabels:section];
+            UILabel *label = [self.headerLabels objectAtIndex:section];
+            return TOP_BOTTOM_HEADER1_MARGIN + label.frame.size.height + TOP_BOTTOM_HEADER1_MARGIN;
+        }
+        break;
         case 1:
-            return 11 + [TDViewControllerHelper heightForText:header2Text1 font:[TDConstants fontRegularSized:14.0]] + 38 + [TDViewControllerHelper heightForText:header2Text2 font:[TDConstants fontSemiBoldSized:16.0]];
-            break;
+        {
+            [self createHeaderLabels:section];
+            [self createHeaderLabels:section+1];
+            if ([self.headerLabels count] == 3) {
+                UILabel *topLabel = [self.headerLabels objectAtIndex:section];
+                UILabel *bottomLabel = [self.headerLabels objectAtIndex:section+1];
+                 return TOP_MARGIN_HEADER2 + topLabel.frame.size.height + MIDDLE_MARGIN_HEADER2 + bottomLabel.frame.size.height;
+            } else {
+                return 0.;
+            }
+           
+        }
+        break;
         default:
             return 0.;
             break;

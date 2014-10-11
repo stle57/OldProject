@@ -36,6 +36,7 @@ static const CGFloat MIDDLE_CELL_Y_AXIS = 23.75;
 @property (nonatomic) CGFloat origNameLabelYAxis;
 @property (nonatomic) CGRect origNameLabelFrame;
 @property (nonatomic) NSMutableArray *inviteList;
+@property (nonatomic) NSMutableArray *labels;
 
 - (IBAction)backButtonHit:(id)sender;
 - (IBAction)inviteButtonHit:(id)sender;

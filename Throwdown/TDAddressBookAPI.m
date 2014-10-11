@@ -64,7 +64,7 @@
     if (addressBook != nil) {
         ABRecordRef source = ABAddressBookCopyDefaultSource(addressBook);
         NSArray *contactArray = (NSArray *)CFBridgingRelease(ABAddressBookCopyArrayOfAllPeopleInSourceWithSortOrdering(addressBook, source, kABPersonSortByLastName));
-        
+        debug NSLog(@"number of contacts after copying=%lu", (unsigned long)[contactArray count]);
         NSMutableArray *tempArray = [[NSMutableArray alloc] init];
         for (int i = 0; i < [contactArray count]; i++)
         {
@@ -112,6 +112,7 @@
         }
         
         self.contactList = [tempArray copy];
+        debug NSLog(@" after filtering, contact count=%lu", [self.contactList count]);
     }
     
 }
