@@ -158,7 +158,6 @@
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            debug NSLog (@"calling callback");
             NSDictionary *response = (NSDictionary*)responseObject;
             callback(YES, [response objectForKey:@"users"]);
         } else {
@@ -166,7 +165,7 @@
             callback(NO, @[]);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        debug NSLog(@"Get full HTTP Error: %@", error);
+        debug NSLog(@"Get community list Error: %@", error);
         callback(NO, @[]);
     }];
 }

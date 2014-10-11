@@ -132,6 +132,7 @@
 		A14E38F01992E71B001B46AF /* TDSocialNetworkCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A14E38EE1992E71B001B46AF /* TDSocialNetworkCell.xib */; };
 		A150F08A18A31B14009A72AD /* TDConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = A150F08918A31B14009A72AD /* TDConstants.m */; };
 		A151958B18BAE8FD0050A45B /* TDUser.m in Sources */ = {isa = PBXBuildFile; fileRef = A151958A18BAE8FD0050A45B /* TDUser.m */; };
+		A15596D819E9E96000C7C0B8 /* TDRequestSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = A15596D719E9E96000C7C0B8 /* TDRequestSerializer.m */; };
 		A17567901891C7F20034AD05 /* TDPostAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = A175678F1891C7F20034AD05 /* TDPostAPI.m */; };
 		A180D4DF18C14EA7003B9378 /* TDNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = A180D4DE18C14EA7003B9378 /* TDNavigationController.m */; };
 		A180D4E518C33D26003B9378 /* TDUnwindSlideLeftSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = A180D4E418C33D26003B9378 /* TDUnwindSlideLeftSegue.m */; };
@@ -392,6 +393,8 @@
 		A150F08918A31B14009A72AD /* TDConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDConstants.m; sourceTree = "<group>"; };
 		A151958918BAE8FD0050A45B /* TDUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUser.h; sourceTree = "<group>"; };
 		A151958A18BAE8FD0050A45B /* TDUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUser.m; sourceTree = "<group>"; };
+		A15596D619E9E96000C7C0B8 /* TDRequestSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDRequestSerializer.h; sourceTree = "<group>"; };
+		A15596D719E9E96000C7C0B8 /* TDRequestSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDRequestSerializer.m; sourceTree = "<group>"; };
 		A175678E1891C7F20034AD05 /* TDPostAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDPostAPI.h; sourceTree = "<group>"; };
 		A175678F1891C7F20034AD05 /* TDPostAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDPostAPI.m; sourceTree = "<group>"; };
 		A180D4DD18C14EA7003B9378 /* TDNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDNavigationController.h; sourceTree = "<group>"; };
@@ -869,6 +872,8 @@
 				A1D6BB1519775492007983F8 /* TDTextUpload.m */,
 				4D3DDDE019DDB2790057A8B2 /* TDAddressBookAPI.h */,
 				4D3DDDE119DDB2790057A8B2 /* TDAddressBookAPI.m */,
+				A15596D619E9E96000C7C0B8 /* TDRequestSerializer.h */,
+				A15596D719E9E96000C7C0B8 /* TDRequestSerializer.m */,
 			);
 			name = API;
 			sourceTree = "<group>";
@@ -1385,6 +1390,7 @@
 				A1B9002E18CC316800012A1F /* TDHomeHeaderView.m in Sources */,
 				4D4714B819CBF14F003AA69F /* TDContactInfo.m in Sources */,
 				A1D6BB10196BC1FD007983F8 /* TDStoryboardSegue.m in Sources */,
+				A15596D819E9E96000C7C0B8 /* TDRequestSerializer.m in Sources */,
 				4D2843D319C4082300E4A56C /* TDFollowProfileCell.m in Sources */,
 				2D5714CD18BD9AB300AF0B4D /* VideoCloseSegue.m in Sources */,
 				A1E90CDD18B445FC0046D281 /* TDSignupStepTwoViewController.m in Sources */,

@@ -143,7 +143,9 @@ typedef enum {
 - (void)cleanup {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     if ([self.delegate respondsToSelector:@selector(uploadComplete)]) {
-        [self.delegate uploadComplete];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.delegate uploadComplete];
+        });
     }
     _delegate = nil; // don't use self.delegate here, can throw exception for unknown reason (related to the start hack?)
 }
@@ -185,7 +187,9 @@ typedef enum {
     CGFloat totalProgress = [self totalProgress];
     debug NSLog(@"Total progress for %@: %f", self.filename, totalProgress);
     if ([self.delegate respondsToSelector:@selector(uploadDidUpdate:)]) {
-        [self.delegate uploadDidUpdate:totalProgress];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.delegate uploadDidUpdate:totalProgress];
+        });
     }
 }
 
@@ -205,13 +209,12 @@ typedef enum {
                                   sharingTo:self.shareOptions
                                   isPrivate:self.isPrivate
                                     success:^(NSDictionary *response) {
-
-            self.postStatus = UploadCompleted;
-            [self uploadComplete];
-        } failure:^{
-            self.postStatus = UploadFailed;
-            [self uploadFailed];
-        }];
+                                        self.postStatus = UploadCompleted;
+                                        [self uploadComplete];
+                                    } failure:^{
+                                        self.postStatus = UploadFailed;
+                                        [self uploadFailed];
+                                    }];
     } else if (self.postStatus == UploadCompleted) {
         [self uploadComplete];
     }
@@ -240,9 +243,11 @@ typedef enum {
 }
 
 - (void)uploadFailed {
-    if ([self.delegate respondsToSelector:@selector(uploadFailed)]) {
-        [self.delegate uploadFailed];
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if ([self.delegate respondsToSelector:@selector(uploadFailed)]) {
+            [self.delegate uploadFailed];
+        }
+    });
 }
 
 - (void)startUploads {
@@ -290,7 +295,6 @@ typedef enum {
         }
         [self finalizeUpload];
     } failure:^(NSHTTPURLResponse *response, NSData *data, NSError *error) {
-
         [[NSNotificationCenter defaultCenter] postNotificationName:TDUploadFailedNotification object:self];
         NSLog(@"%@ upload failed", (fileType == UploadTypeVideo ? @"VIDEO" : @"IMAGE"));
         [self uploadFailed:fileType];

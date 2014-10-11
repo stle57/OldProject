@@ -18,6 +18,7 @@
 #import "TDFileSystemHelper.h"
 #import "TDDeviceInfo.h"
 #import "iRate.h"
+#import "TDRequestSerializer.h"
 
 @interface TDPostAPI ()
 
@@ -69,6 +70,7 @@
     }
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts.json"];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager setRequestSerializer:[[TDRequestSerializer alloc] init]];
     [manager POST:url parameters:@{ @"post": post, @"share_to": sharing, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
         // Should just put the post in the feed but this is easier to implement for now + takes care of any other new posts in the feed.
         [self fetchPostsWithSuccess:^(NSDictionary *response) {
@@ -78,7 +80,7 @@
             success(responseObject);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        debug NSLog(@"Error: %@", error);
+        NSLog(@"Add Post Error: %@", error);
 
         if (failure) {
             failure();

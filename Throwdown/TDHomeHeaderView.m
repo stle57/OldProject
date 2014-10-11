@@ -22,23 +22,23 @@
 @implementation TDHomeHeaderView
 
 - (id)initWithTableView:(UITableView *)tableView {
-    self = [super initWithFrame:CGRectMake(0.0, 0.0, 320.0, 5.0)];
+    self = [super initWithFrame:CGRectMake(0.0, 0.0, SCREEN_WIDTH, 5.0)];
     if (self) {
         self.table = tableView;
         self.currentUploads = [[NSMutableArray alloc] init];
 
         self.backgroundColor = [UIColor whiteColor];
 
-        UIView *topPadding = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, 320.0, 5.0)];
-        topPadding.backgroundColor = [TDConstants backgroundColor];
+        UIView *topPadding = [[UIView alloc] initWithFrame:CGRectMake(0.0, 0.0, SCREEN_WIDTH, 5.0)];
+        topPadding.backgroundColor = [TDConstants darkBackgroundColor];
         [self addSubview:topPadding];
 
-        UIView *topBorder = [[UIView alloc] initWithFrame:CGRectMake(0.0, 5.0, 320.0, 1 / [[UIScreen mainScreen] scale])];
-        topBorder.backgroundColor = [TDConstants borderColor];
+        UIView *topBorder = [[UIView alloc] initWithFrame:CGRectMake(0.0, 5.0, SCREEN_WIDTH, 1 / [[UIScreen mainScreen] scale])];
+        topBorder.backgroundColor = [TDConstants darkBorderColor];
         [self addSubview:topBorder];
 
-        self.bottomPadding = [[UIView alloc] initWithFrame:CGRectMake(0.0, 50.0, 320.0, 5.0)];
-        self.bottomPadding.backgroundColor = [TDConstants backgroundColor];
+        self.bottomPadding = [[UIView alloc] initWithFrame:CGRectMake(0.0, 50.0, SCREEN_WIDTH, 5.0)];
+        self.bottomPadding.backgroundColor = [TDConstants darkBackgroundColor];
         [self addSubview:self.bottomPadding];
 
     }
@@ -57,12 +57,12 @@
     // TODO: Potentially turn this into - (void)layoutSubviews?
     int count = 0;
     for (UIView *progress in self.currentUploads) {
-        progress.frame = CGRectMake(0.0, 6.0 + 50.0 * count, 320.0, 50.0);
+        progress.frame = CGRectMake(0.0, 6.0 + 50.0 * count, SCREEN_WIDTH, 50.0);
         count += 1;
     }
 
-    self.bottomPadding.frame = CGRectMake(0.0, 6.0 + 50.0 * count, 320.0, 5);
-    self.frame = CGRectMake(0.0, 0.0, 320.0, 11.0 + 50.0 * count);
+    self.bottomPadding.frame = CGRectMake(0.0, 6.0 + 50.0 * count, SCREEN_WIDTH, 5);
+    self.frame = CGRectMake(0.0, 0.0, SCREEN_WIDTH, 11.0 + 50.0 * count);
     NSLog(@"total progress bars %i", count);
 
     [self.table setTableHeaderView:([self.currentUploads count] > 0 ? self : nil)];
