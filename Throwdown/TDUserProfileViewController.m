@@ -164,7 +164,7 @@
 
 - (void)fetchPostsRefresh {
     NSString *fetch = self.username ? self.username : [self.userId stringValue];
-    if (self.needsProfileHeader) {
+    if (self.profileType != kFeedProfileTypeNone) {
         [[TDPostAPI sharedInstance] fetchPostsForUser:fetch start:nil success:^(NSDictionary *response) {
             [self handleNextStart:[response objectForKey:@"next_start"]];
             [self handlePostsResponse:response fromStart:YES];
@@ -344,10 +344,10 @@
      debug NSLog(@"%@ updateUserFollowerCount:%@", [self class], notification.object);
     if (notification.object == self.getUser.userId) {
         if ([notification.userInfo objectForKey:TD_INCREMENT_STRING]) {
-            self.getUser.followerCount = [[NSNumber alloc] initWithInt:(self.getUser.followerCount.intValue+1)];
+            self.getUser.followerCount = [NSNumber numberWithLong:[self.getUser.followerCount integerValue] + [((NSNumber *)[notification.userInfo objectForKey:TD_INCREMENT_STRING]) integerValue]];
             self.getUser.following = YES;
         } else if ([notification.userInfo objectForKey:TD_DECREMENT_STRING]) {
-            self.getUser.followerCount =[[NSNumber alloc] initWithInt:(self.getUser.followerCount.intValue-1)];
+            self.getUser.followerCount =[NSNumber numberWithLong:[self.getUser.followerCount integerValue] - [((NSNumber *)[notification.userInfo objectForKey:TD_DECREMENT_STRING]) integerValue]];
             self.getUser.following = NO;
         }
         [self.tableView reloadData];
