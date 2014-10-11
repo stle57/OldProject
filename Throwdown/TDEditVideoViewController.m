@@ -396,9 +396,18 @@ static const NSString *ItemStatusContext;
     [self.scrollView setZoomScale:[self.scrollView minimumZoomScale]];
     [self.scrollView addSubview:self.previewImageView];
 
+    [self centerScrollViewContents];
+
     debug NSLog(@"photo size %@", NSStringFromCGSize(self.previewImageView.image.size));
     debug NSLog(@"scroll size %@", NSStringFromCGRect(self.scrollView.frame));
     debug NSLog(@"content size %@", NSStringFromCGSize(self.scrollView.contentSize));
+}
+
+- (void)centerScrollViewContents {
+    // center image
+    CGFloat x = (self.scrollView.contentSize.width - self.scrollView.frame.size.width);
+    CGFloat y = (self.scrollView.contentSize.height - self.scrollView.frame.size.width);
+    [self.scrollView scrollRectToVisible:CGRectMake(x - (x / 2), y - (y / 2), self.scrollView.frame.size.width, self.scrollView.frame.size.width) animated:NO];
 }
 
 #pragma mark - Video editing
@@ -480,20 +489,16 @@ static const NSString *ItemStatusContext;
                 [self.scrollView setDelegate:self];
                 [self.scrollView setShowsHorizontalScrollIndicator:NO];
                 [self.scrollView setShowsVerticalScrollIndicator:NO];
-                // [self.scrollView setMaximumZoomScale:2.0];
-                // [self.scrollView setMinimumZoomScale:];
-                // [self.scrollView setZoomScale:scale];
 
                 [self.videoContainerView setFrame:rect];
 
                 [self.scrollView setContentSize:rect.size];
                 [self.scrollView addSubview:self.videoContainerView];
 
+                [self centerScrollViewContents];
+
                 if (self.isOriginal) {
-                    CGSize size = self.scrollView.contentSize;
-                    CGRect videoFrame = CGRectMake((size.width - SCREEN_WIDTH) / 2, (size.height - SCREEN_WIDTH) / 2, SCREEN_WIDTH, SCREEN_WIDTH);
-                    debug NSLog(@"locked scroll frame: %@", NSStringFromCGRect(videoFrame));
-                    [self.scrollView scrollRectToVisible:videoFrame animated:NO];
+                    self.scrollView.clipsToBounds = YES; // hide the excess video
                     self.scrollView.scrollEnabled = NO;
                 }
 
