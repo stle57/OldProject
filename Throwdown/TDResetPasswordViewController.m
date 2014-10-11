@@ -23,11 +23,9 @@
 
 @implementation TDResetPasswordViewController
 
--(void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.topLabel.textColor = [TDConstants headerTextColor];
     self.topLabel.font = [TDConstants fontRegularSized:20];
 
     // Textfields
@@ -37,15 +35,6 @@
                                                type:kTDTextFieldType_UsernameOrPhoneNumber
                                            delegate:self];
 
-    // Small fix if 3.5" screen
-    if ([UIScreen mainScreen].bounds.size.height == 480.0) {
-        // move up log in button slightly
-        self.resetButton.center = CGPointMake(self.resetButton.center.x,
-                                              self.resetButton.center.y+2.0);
-        UIImage *backgroundImage = [UIImage imageNamed:@"reg_bg2_480"];
-        self.backgroundImageView.image = backgroundImage;
-        backgroundImage = nil;
-    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -70,15 +59,12 @@
 {
     switch (type) {
         case kTDTextFieldType_UsernameOrPhoneNumber:
-        {
             self.emailOrPhoneNumber = textField.text;
-        }
         break;
         default:
         break;
     }
 
-    //    if ([self validatePhoneField] || [self validateEmailField]) {
     if ([self validateEmailField]) {
         self.resetButton.enabled = YES;
     } else {
@@ -90,15 +76,12 @@
 {
     switch (type) {
         case kTDTextFieldType_UsernameOrPhoneNumber:
-        {
             self.emailOrPhoneNumber = textField.text;
-        }
         break;
         default:
         break;
     }
 
-//    if ([self validatePhoneField] || [self validateEmailField]) {
     if ([self validateEmailField]) {
         self.resetButton.enabled = YES;
     } else {
@@ -140,10 +123,10 @@
                              [[TDUserAPI sharedInstance] resetPassword:self.emailOrPhoneNumber callback:^(BOOL success, NSDictionary *dict) {
 
                                  if (success) {
-                                     [TDViewControllerHelper showAlertMessage:@"Password Reset Information has been sent to you." withTitle:nil];
+                                     [TDViewControllerHelper showAlertMessage:@"Check your email for a link to reset your password." withTitle:nil];
                                      [TDViewControllerHelper navigateToHomeFrom:self];
                                  } else {
-                                     [TDViewControllerHelper showAlertMessage:@"Incorrect reset info provided.\nPlease try again." withTitle:nil];
+                                     [TDViewControllerHelper showAlertMessage:@"No account found with that email.\nPlease try again." withTitle:nil];
                                      self.resetButton.enabled = YES;
                                      self.resetButton.hidden = NO;
                                      self.backButton.enabled = YES;
@@ -163,23 +146,16 @@
     if (!error && [phoneUtil isValidNumber:parsedPhoneNumber]) {
         self.emailOrPhoneNumber = [phoneUtil format:parsedPhoneNumber numberFormat:NBEPhoneNumberFormatE164 error:&error];
         return YES;
-
-//        [self.phoneNumberTextField startSpinner];
-//        [self validateField:kTDTextFieldType_Phone];
     } else {
         return NO;
-//        [self.phoneNumberTextField status:NO];
     }
 }
 
 - (BOOL)validateEmailField {
     if ([TDViewControllerHelper validateEmail:self.emailOrPhoneNumber]) {
-//        [self.emailTextField startSpinner];
-//        [self validateField:kTDTextFieldType_Email];
         return YES;
     } else {
         return NO;
-//        [self.userNameTextField status:NO];
     }
 }
 

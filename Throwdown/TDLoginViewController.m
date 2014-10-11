@@ -19,9 +19,13 @@
 @property (weak, nonatomic) IBOutlet UIButton *backButton;
 @property (nonatomic, copy) NSString *userEmail;
 @property (nonatomic, copy) NSString *password;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *loginButtonOffset;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *textFieldSpacing;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *emailFieldOffset;
 
 - (IBAction)backButtonPressed:(UIButton *)sender;
 - (IBAction)loginButtonPressed:(id)sender;
+
 @end
 
 @implementation TDLoginViewController
@@ -46,16 +50,11 @@
                                            delegate:self];
     [self.passwordTextField secure];
 
-    // Small fix if 3.5" screen
-    if ([UIScreen mainScreen].bounds.size.height == 480.0) {
-        // move up log in button slightly
-        self.loginButton.center = CGPointMake(self.loginButton.center.x,
-                                                self.loginButton.center.y+2.0);
-        self.passwordTextField.center = CGPointMake(self.passwordTextField.center.x,
-                                                    self.passwordTextField.center.y+2.0);
-        UIImage *backgroundImage = [UIImage imageNamed:@"reg_bg2_480"];
-        self.backgroundImageView.image = backgroundImage;
-        backgroundImage = nil;
+    if ([UIScreen mainScreen].bounds.size.height == 480) {
+        // Moves the buttons up, forgot password depends on login button
+        self.emailFieldOffset.constant -= 10;
+        self.textFieldSpacing.constant -=  10;
+        self.loginButtonOffset.constant -= 45;
     }
 }
 

@@ -58,11 +58,12 @@ static void *RecordingContext = &RecordingContext;
 @property (weak, nonatomic) IBOutlet UIButton *switchCamerabutton;
 @property (weak, nonatomic) IBOutlet UIButton *flashButton;
 @property (weak, nonatomic) IBOutlet UIView *progressBarView;
-@property (weak, nonatomic) IBOutlet UIView *controlsView;
-@property (weak, nonatomic) IBOutlet UIView *indicatorBackgroundView;
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *modeIndicator;
 - (IBAction)recordButtonPressed:(UIButton *)sender;
+
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *topCoverHeightConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *bottomCoverHeightConstraint;
 
 @end
 
@@ -100,10 +101,10 @@ static void *RecordingContext = &RecordingContext;
 
 
     CGRect bounds = [UIScreen mainScreen].bounds;
-    CGFloat height = (bounds.size.height - 320) / 2.;
-    NSLog(@"%f, %@", height, NSStringFromCGRect(bounds));
-    self.indicatorBackgroundView.frame = CGRectMake(0, 0, bounds.size.width, height);
-    self.controlsView.frame = CGRectMake(0, bounds.size.height - height, bounds.size.width, height);
+    CGFloat height = (bounds.size.height - bounds.size.width) / 2.;
+
+    self.topCoverHeightConstraint.constant = height;
+    self.bottomCoverHeightConstraint.constant = height;
     [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
 
     self.tapToFocusGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapToFocus:)];
@@ -216,7 +217,8 @@ static void *RecordingContext = &RecordingContext;
     self.timeLabel.hidden = YES;
     self.timeLabel.text = @"00:00";
     CGRect progressBarFrame = self.progressBarView.frame;
-    progressBarFrame.origin.x = -320;
+    progressBarFrame.size.width = SCREEN_WIDTH;
+    progressBarFrame.origin.x = -SCREEN_WIDTH;
     self.progressBarView.frame = progressBarFrame;
 
     dispatch_async([self sessionQueue], ^{
@@ -459,7 +461,8 @@ static void *RecordingContext = &RecordingContext;
 
 - (void)tapToFocus:(UITapGestureRecognizer *)sender {
     CGPoint touchPoint = [sender locationInView:self.cameraPreview];
-    CGPoint focusTo = CGPointMake(touchPoint.x / 320., touchPoint.y / 568.);
+    CGSize size = [UIScreen mainScreen].bounds.size;
+    CGPoint focusTo = CGPointMake(touchPoint.x / size.width, touchPoint.y / size.height);
 
     debug NSLog(@"focus at %f x %f", focusTo.x, focusTo.y);
 

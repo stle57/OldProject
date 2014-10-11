@@ -23,8 +23,11 @@
 @property (nonatomic, copy) NSString *emailAddress;
 @property (nonatomic, copy) NSString *firstLastName;
 @property (nonatomic, copy) NSString *username;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *nextButtonOffset;
 
 - (IBAction)backButtonPressed:(UIButton *)sender;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *numberLabelOffset;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *nameOffset;
 @end
 
 @implementation TDSignupStepOneViewController
@@ -67,18 +70,13 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 
     // Small fix if 3.5" screen
     if ([UIScreen mainScreen].bounds.size.height == 480.0) {
-        // move up log in button slightly
-        self.nextButton.center = CGPointMake(self.nextButton.center.x,
-                                             self.nextButton.center.y-21.0);
-        UIImage *backgroundImage = [UIImage imageNamed:@"reg_bg2_480"];
-        self.backgroundImageView.image = backgroundImage;
-        backgroundImage = nil;
+        self.nextButtonOffset.constant += 54;
+        self.numberLabelOffset.constant += 10;
+        self.nameOffset.constant -= 20;
     }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    [self.navigationController setNavigationBarHidden:YES animated:animated];
-    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:NO];
     [super viewWillAppear:animated];
 }
 
