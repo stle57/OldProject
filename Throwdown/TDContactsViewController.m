@@ -272,7 +272,7 @@
                                      contactPerson.inviteType = kInviteType_Email;
                                  } else {
                                      formatedPhone = [TDViewControllerHelper validatePhone:buttonStrings[buttonIndex]];
-                                     if(formatedPhone) {
+                                     if(formatedPhone.length > 0) {
                                          contactPerson.selectedData = formatedPhone;
                                          contactPerson.inviteType = kInviteType_Phone;
                                      } else {
@@ -288,15 +288,23 @@
     } else if (contactPerson.emailList.count == 1 || contactPerson.phoneList.count == 1) {
         // else if there is only one contact method, move the selection to the invite page 1
         if (contactPerson.emailList.count == 1) {
-            contactPerson.selectedData = contactPerson.emailList[0];
-            contactPerson.inviteType = kInviteType_Email;
+            if ([TDViewControllerHelper validateEmail:contactPerson.emailList[0]]) {
+                contactPerson.selectedData = contactPerson.emailList[0];
+                contactPerson.inviteType = kInviteType_Email;
+                
+                [self addToInviteList:contactPerson];
+                [self markCellAsSelected:contactPerson indexPath:indexPath tableView:tableView];
+            }
         } else if (contactPerson.phoneList.count == 1) {
             NSString *formatedPhone =[TDViewControllerHelper validatePhone:contactPerson.phoneList[0]];
-            contactPerson.selectedData = formatedPhone;
-            contactPerson.inviteType = kInviteType_Phone;
+            if (formatedPhone.length > 0) {
+                contactPerson.selectedData = formatedPhone;
+                contactPerson.inviteType = kInviteType_Phone;
+                [self addToInviteList:contactPerson];
+                [self markCellAsSelected:contactPerson indexPath:indexPath tableView:tableView];
+            }
         }
-        [self addToInviteList:contactPerson];
-        [self markCellAsSelected:contactPerson indexPath:indexPath tableView:tableView];
+        
     }
 }
 

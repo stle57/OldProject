@@ -493,7 +493,7 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
             contact.inviteType = kInviteType_Email;
         } else {
             formatedPhone = [TDViewControllerHelper validatePhone:inviteCell.contactTextField.text];
-            if(formatedPhone) {
+            if(formatedPhone.length > 0) {
                 contact.selectedData = formatedPhone;
                 contact.inviteType = kInviteType_Phone;
             } else {
@@ -501,11 +501,13 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
             }
         }
         
-        // Check if data is already in the current invite list
-        NSArray *filteredArray = [self.inviteList filteredArrayUsingPredicate:[NSPredicate
-                                                                               predicateWithFormat:@"self.selectedData == %@", contact.selectedData]];
-        if (![filteredArray count]) {
-            [self addToInviteList:contact];
+        if (contact.inviteType != kInviteType_None) {
+            // Check if data is already in the current invite list
+            NSArray *filteredArray = [self.inviteList filteredArrayUsingPredicate:[NSPredicate
+                                                                                   predicateWithFormat:@"self.selectedData == %@", contact.selectedData]];
+            if (![filteredArray count]) {
+                [self addToInviteList:contact];
+            }
         }
         inviteCell.contactTextField.text = @"";
         [self.tableView reloadData];

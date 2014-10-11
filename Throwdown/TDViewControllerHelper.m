@@ -62,11 +62,13 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     NSError *error = nil;
     NBPhoneNumberUtil *phoneUtil = [NBPhoneNumberUtil sharedInstance];
     NBPhoneNumber *parsedPhoneNumber = [phoneUtil parseWithPhoneCarrierRegion:phone error:&error];
+    
     NSString *formattedPhoneNum = [phoneUtil format:parsedPhoneNumber numberFormat:NBEPhoneNumberFormatE164 error:&error];
-    if (!error) {
+    
+    if (!error && [phoneUtil isValidNumber:parsedPhoneNumber]) {
         return formattedPhoneNum;
     } else {
-        return formattedPhoneNum;
+        return @"";
     }
 }
 
