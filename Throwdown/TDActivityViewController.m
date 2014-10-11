@@ -22,6 +22,7 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 @property (nonatomic) NSArray *activities;
 @property (nonatomic, retain) UIRefreshControl *refreshControl;
 @property (weak, nonatomic) IBOutlet UIButton *feedbackButton;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableBottomOffset;
 
 @end
 
@@ -37,11 +38,10 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 
     if (![MFMailComposeViewController canSendMail]) {
         self.feedbackButton.hidden = YES;
+        self.tableBottomOffset.constant = 0;
+    } else {
+        self.feedbackButton.titleLabel.font = [TDConstants fontSemiBoldSized:18];
     }
-
-    CGRect frame = self.tableView.frame;
-    frame.size.height = [UIScreen mainScreen].bounds.size.height - (self.feedbackButton.hidden ? 0 : self.feedbackButton.frame.size.height);
-    self.tableView.frame = frame;
 
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
@@ -65,15 +65,6 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
     [self.tableView addSubview:self.refreshControl];
 
     [self refresh];
-}
-
-
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
 }
 
 #pragma mark - UITableViewDataSourceDelegate

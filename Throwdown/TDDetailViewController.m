@@ -107,6 +107,9 @@ static int const kToolbarHeight = 64;
     self.textView.layer.borderColor = [UIColor colorWithRed:178./255. green:178./255. blue:178./255. alpha:1].CGColor;
     self.textView.contentInset = UIEdgeInsetsMake(0, 0, -10, 0);
     self.textView.placeholder = kCommentDefaultText;
+    self.textView.scrollsToTop = NO;
+
+    self.tableView.scrollsToTop = YES;
 
     self.sendButton.center = CGPointMake(SCREEN_WIDTH - self.sendButton.frame.size.width / 2.0, self.sendButton.center.y);
     self.sendButton.titleLabel.font = [TDConstants fontSemiBoldSized:18.];
@@ -143,7 +146,8 @@ static int const kToolbarHeight = 64;
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
 
     CGFloat height = [UIScreen mainScreen].bounds.size.height - self.commentView.layer.frame.size.height;
-    self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, height);
+    self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, height - kToolbarHeight);
+    NSLog(@"table frame: %@", NSStringFromCGRect(self.tableView.frame));
 
     if (!self.loaded) {
         if (self.post && self.post.postId) {
@@ -497,10 +501,9 @@ static int const kToolbarHeight = 64;
     CGRect commentFrame = self.commentView.frame;
     commentFrame.size.height = textFrame.size.height + kCommentFieldPadding;
     commentFrame.origin.y = bottom - height - kCommentFieldPadding;
-    NSLog(@"show comment frame: %@", NSStringFromCGRect(commentFrame));
 
     CGRect tableFrame = self.tableView.layer.frame;
-    tableFrame.size.height = bottom - height - kCommentFieldPadding;
+    tableFrame.size.height = bottom - height - kCommentFieldPadding - kToolbarHeight;
 
     CGRect buttonFrame = self.sendButton.frame;
     buttonFrame.origin.y = (height + kCommentFieldPadding) - buttonFrame.size.height;
@@ -511,6 +514,8 @@ static int const kToolbarHeight = 64;
         self.commentView.frame = commentFrame;
         self.sendButton.frame = buttonFrame;
         self.tableView.frame = tableFrame;
+        NSLog(@"table frame: %@", NSStringFromCGRect(self.tableView.frame));
+
     } completion:nil];
 }
 
@@ -534,8 +539,10 @@ static int const kToolbarHeight = 64;
 - (void)keyboardFrameChanged:(CGRect)keyboardFrame {
     NSLog(@"textview from frame: %@", NSStringFromCGRect(keyboardFrame));
     CGRect tableFrame = self.tableView.layer.frame;
-    tableFrame.size.height = keyboardFrame.origin.y - self.commentView.layer.frame.size.height;
+    tableFrame.size.height = keyboardFrame.origin.y - self.commentView.layer.frame.size.height - kToolbarHeight;
     self.tableView.frame = tableFrame;
+    NSLog(@"table frame: %@", NSStringFromCGRect(self.tableView.frame));
+
 
     CGPoint current = self.commentView.center;
     current.y = keyboardFrame.origin.y - (self.commentView.layer.frame.size.height / 2) - kToolbarHeight;
@@ -586,6 +593,8 @@ static int const kToolbarHeight = 64;
     CGRect tableFrame = self.tableView.layer.frame;
     tableFrame.size.height = bottom - height - kCommentFieldPadding;
     self.tableView.frame = tableFrame;
+    NSLog(@"table frame: %@", NSStringFromCGRect(self.tableView.frame));
+
 
     CGRect buttonFrame = self.sendButton.frame;
     buttonFrame.origin.y = self.commentView.layer.frame.size.height - buttonFrame.size.height;

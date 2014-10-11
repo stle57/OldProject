@@ -47,7 +47,6 @@ static CGFloat const kMaxUsernameWidth = 230;
 
     // Make the button the size of username text
     CGRect frame = self.usernameLabel.frame;
-    NSLog(@"Username frame: %@", NSStringFromCGRect(frame));
     frame.size = [self.usernameLabel sizeThatFits:CGSizeMake(kMaxUsernameWidth, self.usernameLabel.frame.size.height + 2)];
     self.usernameLabel.frame = frame;
 

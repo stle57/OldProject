@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="DPQ-qf-8sb">
     <dependencies>
-        <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -103,14 +102,10 @@
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
-                                    <constraint firstAttribute="centerY" secondItem="adF-V8-fH8" secondAttribute="centerY" id="1x4-qR-1SF"/>
                                     <constraint firstAttribute="bottom" secondItem="2a9-PF-90i" secondAttribute="bottom" id="5Oc-n5-dkT"/>
-                                    <constraint firstAttribute="centerY" secondItem="cnB-Wd-Stf" secondAttribute="centerY" id="HUG-OO-crT"/>
                                     <constraint firstAttribute="centerX" secondItem="1Jc-mN-hx2" secondAttribute="centerX" id="HgN-Hd-2CP"/>
                                     <constraint firstItem="cnB-Wd-Stf" firstAttribute="trailing" secondItem="bR2-LG-wfE" secondAttribute="trailing" constant="98" id="ccI-Zi-nAi"/>
                                     <constraint firstAttribute="height" constant="100" id="dIe-iG-khw"/>
-                                    <constraint firstAttribute="centerY" secondItem="1Jc-mN-hx2" secondAttribute="centerY" id="eAI-Uq-G2Q"/>
-                                    <constraint firstAttribute="centerY" secondItem="bR2-LG-wfE" secondAttribute="centerY" id="frb-CD-Hqy"/>
                                     <constraint firstAttribute="bottom" secondItem="cnB-Wd-Stf" secondAttribute="bottom" id="fx8-l4-uqS"/>
                                     <constraint firstAttribute="bottom" secondItem="1Jc-mN-hx2" secondAttribute="bottom" constant="10" id="ib0-xn-Rnr"/>
                                     <constraint firstItem="2a9-PF-90i" firstAttribute="leading" secondItem="tgj-aS-c8v" secondAttribute="leading" id="mVL-FX-HOJ"/>
@@ -119,14 +114,6 @@
                                     <constraint firstAttribute="centerX" secondItem="cnB-Wd-Stf" secondAttribute="centerX" id="sHB-Xe-0w3"/>
                                     <constraint firstItem="adF-V8-fH8" firstAttribute="leading" secondItem="1Jc-mN-hx2" secondAttribute="leading" constant="97" id="tB5-Jn-Lhc"/>
                                 </constraints>
-                                <variation key="default">
-                                    <mask key="constraints">
-                                        <exclude reference="frb-CD-Hqy"/>
-                                        <exclude reference="HUG-OO-crT"/>
-                                        <exclude reference="eAI-Uq-G2Q"/>
-                                        <exclude reference="1x4-qR-1SF"/>
-                                    </mask>
-                                </variation>
                             </view>
                             <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cZv-bv-JN9" userLabel="Indicator background">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
@@ -269,11 +256,18 @@
                                 <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aqV-xQ-E5K" userLabel="Feedback Button">
-                                <rect key="frame" x="0.0" y="486" width="320" height="50"/>
-                                <state key="normal" image="send_feedback_button">
+                                <rect key="frame" x="0.0" y="486" width="600" height="50"/>
+                                <color key="backgroundColor" red="0.92941176469999998" green="0.29411764709999999" blue="0.24313725489999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="4ru-X1-aUb"/>
+                                </constraints>
+                                <state key="normal" title="Send Feedback">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <state key="highlighted" image="send_feedback_button_hit"/>
+                                <state key="highlighted" title="Send Feedback">
+                                    <color key="titleColor" red="0.63529411759999999" green="0.63529411759999999" blue="0.63529411759999999" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
                                 <connections>
                                     <action selector="feedbackButton:" destination="ueK-a6-4lV" eventType="touchUpInside" id="DSs-Fa-C1E"/>
                                 </connections>
@@ -281,12 +275,13 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="qzV-nw-fmu" firstAttribute="top" secondItem="eRM-eF-DxQ" secondAttribute="top" id="Qor-5x-psa"/>
-                            <constraint firstItem="aqV-xQ-E5K" firstAttribute="top" secondItem="qzV-nw-fmu" secondAttribute="bottom" id="ThV-ks-fAg"/>
-                            <constraint firstItem="qzV-nw-fmu" firstAttribute="trailing" secondItem="aqi-dU-DSf" secondAttribute="trailing" id="YdM-iy-Ir7"/>
-                            <constraint firstItem="aqV-xQ-E5K" firstAttribute="leading" secondItem="GxJ-xN-CjT" secondAttribute="leading" id="qvU-Wc-hwx"/>
-                            <constraint firstItem="qzV-nw-fmu" firstAttribute="leading" secondItem="aqi-dU-DSf" secondAttribute="leading" id="sHT-9h-90e"/>
-                            <constraint firstItem="aqV-xQ-E5K" firstAttribute="bottom" secondItem="GxJ-xN-CjT" secondAttribute="top" id="szC-01-x3a"/>
+                            <constraint firstAttribute="trailing" secondItem="aqV-xQ-E5K" secondAttribute="trailing" id="2Rm-Sg-foE"/>
+                            <constraint firstItem="GxJ-xN-CjT" firstAttribute="top" secondItem="aqV-xQ-E5K" secondAttribute="bottom" id="SZG-GO-iCY"/>
+                            <constraint firstItem="GxJ-xN-CjT" firstAttribute="top" secondItem="qzV-nw-fmu" secondAttribute="bottom" constant="50" id="ZU9-sh-0bZ"/>
+                            <constraint firstItem="qzV-nw-fmu" firstAttribute="leading" secondItem="eRM-eF-DxQ" secondAttribute="leadingMargin" constant="-16" id="bF9-GS-oG5"/>
+                            <constraint firstItem="aqV-xQ-E5K" firstAttribute="leading" secondItem="eRM-eF-DxQ" secondAttribute="leading" id="byB-LM-77T"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="qzV-nw-fmu" secondAttribute="trailing" constant="-16" id="wnF-qJ-Fhy"/>
+                            <constraint firstItem="qzV-nw-fmu" firstAttribute="top" secondItem="aqi-dU-DSf" secondAttribute="bottom" id="zt2-Xm-3oi"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Notifications" id="liU-LI-7yw">
@@ -299,6 +294,9 @@
                                 </state>
                                 <state key="selected" image="nav-close-hit"/>
                                 <state key="highlighted" image="nav-close-hit"/>
+                                <connections>
+                                    <segue destination="zKu-1j-h4U" kind="unwind" unwindAction="unwindToHome:" id="ikf-1r-GBL"/>
+                                </connections>
                             </button>
                             <connections>
                                 <segue destination="zKu-1j-h4U" kind="unwind" identifier="UnwindToHomeSegue" unwindAction="unwindToHome:" id="Wew-Ty-2DP"/>
@@ -308,13 +306,14 @@
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
                     <connections>
                         <outlet property="feedbackButton" destination="aqV-xQ-E5K" id="45W-M3-dGj"/>
+                        <outlet property="tableBottomOffset" destination="ZU9-sh-0bZ" id="iiY-wG-ckx"/>
                         <outlet property="tableView" destination="qzV-nw-fmu" id="kLl-Hs-HVt"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="GiT-L8-3qO" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="zKu-1j-h4U" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="-2638.125" y="1983.8028169014083"/>
+            <point key="canvasLocation" x="-2639" y="1983"/>
         </scene>
         <!--Edit Video View Controller-->
         <scene sceneID="ZSd-xw-mlv">
@@ -639,14 +638,14 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="cjF-Rp-NQ1" firstAttribute="trailing" secondItem="mZR-ol-Kph" secondAttribute="trailing" id="Ffu-zY-COx"/>
-                            <constraint firstItem="obm-HE-Uzm" firstAttribute="bottom" secondItem="mZR-ol-Kph" secondAttribute="top" id="I2E-Na-GkZ"/>
-                            <constraint firstItem="cjF-Rp-NQ1" firstAttribute="top" secondItem="15s-Uv-kpK" secondAttribute="bottom" id="alz-Xw-rkF"/>
-                            <constraint firstItem="obm-HE-Uzm" firstAttribute="leading" secondItem="mZR-ol-Kph" secondAttribute="leading" id="ccQ-kc-bvP"/>
-                            <constraint firstItem="obm-HE-Uzm" firstAttribute="leading" secondItem="cjF-Rp-NQ1" secondAttribute="leading" id="mdM-pC-c2F"/>
-                            <constraint firstItem="obm-HE-Uzm" firstAttribute="trailing" secondItem="mZR-ol-Kph" secondAttribute="trailing" id="s7f-0Z-k98"/>
-                            <constraint firstItem="cjF-Rp-NQ1" firstAttribute="bottom" secondItem="mZR-ol-Kph" secondAttribute="top" id="t7o-hk-e6M"/>
-                            <constraint firstItem="obm-HE-Uzm" firstAttribute="top" secondItem="cjF-Rp-NQ1" secondAttribute="top" id="wde-Wz-X9m"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="obm-HE-Uzm" secondAttribute="trailing" constant="-16" id="1cp-uD-W8c"/>
+                            <constraint firstItem="mZR-ol-Kph" firstAttribute="top" secondItem="cjF-Rp-NQ1" secondAttribute="bottom" id="4FA-DQ-US3"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="cjF-Rp-NQ1" secondAttribute="trailing" constant="-16" id="Cbp-Hy-rMf"/>
+                            <constraint firstItem="obm-HE-Uzm" firstAttribute="leading" secondItem="P9F-Gb-fhS" secondAttribute="leadingMargin" constant="-16" id="LOf-WS-sLT"/>
+                            <constraint firstItem="cjF-Rp-NQ1" firstAttribute="leading" secondItem="P9F-Gb-fhS" secondAttribute="leadingMargin" constant="-16" id="ic2-6c-yuq"/>
+                            <constraint firstItem="obm-HE-Uzm" firstAttribute="top" secondItem="15s-Uv-kpK" secondAttribute="bottom" id="kNT-2U-rtT"/>
+                            <constraint firstItem="cjF-Rp-NQ1" firstAttribute="top" secondItem="15s-Uv-kpK" secondAttribute="bottom" id="s4x-U5-0lB"/>
+                            <constraint firstItem="mZR-ol-Kph" firstAttribute="top" secondItem="obm-HE-Uzm" secondAttribute="bottom" id="yEm-ZW-lZb"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Share With" id="xL3-zQ-hP0">
@@ -1797,8 +1796,6 @@ The Throwdown Community</string>
         <image name="reg_resetpass_disabled" width="285" height="42"/>
         <image name="reg_resetpass_hit" width="285" height="42"/>
         <image name="reg_signup_hit" width="285" height="42"/>
-        <image name="send_feedback_button" width="320" height="50"/>
-        <image name="send_feedback_button_hit" width="320" height="50"/>
         <image name="trophy_off_74x74" width="37" height="37"/>
         <image name="v_checkbutton" width="30" height="30"/>
         <image name="v_checkbutton_hit" width="30" height="30"/>

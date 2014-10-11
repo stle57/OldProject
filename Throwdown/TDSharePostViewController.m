@@ -133,7 +133,7 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
     UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, section == 1 ? 40 : 20)];
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(18, 18, 320, 18)];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(18, 18, SCREEN_WIDTH, 18)];
     label.font = [TDConstants fontRegularSized:15.0];
     label.textColor = [TDConstants headerTextColor];
 
