@@ -12,6 +12,7 @@
 #import "TDConstants.h"
 
 static NSString *const kUserIdAttribute = @"user_id";
+static CGFloat const kLikersLineMultiple = 1.05;
 
 @interface TDDetailsLikesCell () <TTTAttributedLabelDelegate>
 @end
@@ -27,7 +28,7 @@ static NSString *const kUserIdAttribute = @"user_id";
     [super awakeFromNib];
 
     self.likersNamesLabel.textColor = [UIColor darkGrayColor];
-    self.likersNamesLabel.font = USERNAME_FONT;
+    self.likersNamesLabel.font = [TDConstants fontSemiBoldSized:14];
     self.likersNamesLabel.delegate = self;
     self.likersNamesLabel.verticalAlignment = TTTAttributedLabelVerticalAlignmentTop;
 }
@@ -65,19 +66,13 @@ static NSString *const kUserIdAttribute = @"user_id";
     debug NSLog(@"TDDetailsLikesCell-setLike:%d", like);
     like = liked;
     if (liked) {
-        UIImage *buttonImage = [UIImage imageNamed:@"like_button_on.png"];
-        [self.likeButton setImage:buttonImage forState:UIControlStateNormal];
-        buttonImage = nil;
-        buttonImage = [UIImage imageNamed:@"like_button_on.png"];
-        [self.likeButton setImage:buttonImage forState:UIControlStateHighlighted];
-        buttonImage = nil;
+        [self.likeButton setImage:[UIImage imageNamed:@"btn-liked"] forState:UIControlStateNormal];
+        [self.likeButton setImage:[UIImage imageNamed:@"btn-liked-hit"] forState:UIControlStateHighlighted];
+        [self.likeButton setImage:[UIImage imageNamed:@"btn-liked-hit"] forState:UIControlStateSelected];
     } else {
-        UIImage *buttonImage = [UIImage imageNamed:@"like_button.png"];
-        [self.likeButton setImage:buttonImage forState:UIControlStateNormal];
-        buttonImage = nil;
-        buttonImage = [UIImage imageNamed:@"like_button.png"];
-        [self.likeButton setImage:buttonImage forState:UIControlStateHighlighted];
-        buttonImage = nil;
+        [self.likeButton setImage:[UIImage imageNamed:@"btn-like"] forState:UIControlStateNormal];
+        [self.likeButton setImage:[UIImage imageNamed:@"btn-like-hit"] forState:UIControlStateHighlighted];
+        [self.likeButton setImage:[UIImage imageNamed:@"btn-like-hit"] forState:UIControlStateSelected];
     }
 }
 
@@ -97,9 +92,9 @@ static NSString *const kUserIdAttribute = @"user_id";
     NSString *text = [[self.likers valueForKeyPath:@"username"] componentsJoinedByString:@", "];
     [self.likersNamesLabel setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
     [TDViewControllerHelper linkUsernamesInLabel:self.likersNamesLabel users:self.likers pattern:@"(\\b\\w+\\b)"];
-    self.likersNamesLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:self.likersNamesLabel.attributedText];
+    self.likersNamesLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:self.likersNamesLabel.attributedText withMultiple:kLikersLineMultiple];
 
-    // manually fix the height b/c we force the width down to 210 (AppDelegate method doesn't support it)
+    // manually fix the height b/c we force the width (AppDelegate method doesn't support it)
     NSInteger height = [TDDetailsLikesCell heightOfLikersLabel:likers];
     self.likersNamesLabel.frame = CGRectMake(self.likersNamesLabel.frame.origin.x,
                                              self.likersNamesLabel.frame.origin.y,
@@ -107,12 +102,15 @@ static NSString *const kUserIdAttribute = @"user_id";
                                              height);
 }
 
-+ (NSInteger)heightOfLikersLabel:(NSArray *)likers {
++ (CGFloat)heightOfLikersLabel:(NSArray *)likers {
     NSString *text = [[likers valueForKeyPath:@"username"] componentsJoinedByString:@", "];
-    NSInteger height = [TDAppDelegate heightOfTextForString:text
-                                                    andFont:USERNAME_FONT
-                                                    maxSize:CGSizeMake(210.0, MAXFLOAT)];
-    return height;
+    TTTAttributedLabel *label = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH - 75, MAXFLOAT)];
+    label.numberOfLines = 0;
+    label.font = [TDConstants fontSemiBoldSized:14];
+    [label setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
+    label.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:label.attributedText withMultiple:kLikersLineMultiple];
+    [label sizeToFit];
+    return label.frame.size.height;
 }
 
 #pragma mark - TTTAttributedLabelDelegate

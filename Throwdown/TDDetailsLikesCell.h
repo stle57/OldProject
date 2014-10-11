@@ -38,6 +38,6 @@
 - (void)setLike:(BOOL)liked;
 - (void)setLikesArray:(NSArray *)array;
 
-+ (NSInteger)heightOfLikersLabel:(NSArray *)likers;
++ (CGFloat)heightOfLikersLabel:(NSArray *)likers;
 
 @end

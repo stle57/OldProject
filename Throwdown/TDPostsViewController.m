@@ -16,6 +16,7 @@
 #import "TDFollowViewController.h"
 #import "TDInviteViewController.h"
 
+static CGFloat const kWhiteBottomPadding = 6;
 static CGFloat const kPostMargin = 22;
 static CGFloat const kHeightOfStatusBar = 64.0;
 
@@ -407,11 +408,11 @@ static CGFloat const kHeightOfStatusBar = 64.0;
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             cell.backgroundColor = [TDConstants darkBackgroundColor];
 
-            UIView *white = [[UIView alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 6)];
+            UIView *white = [[UIView alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, kWhiteBottomPadding)];
             white.backgroundColor = [UIColor whiteColor];
             [cell addSubview:white];
 
-            UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, 6, [UIScreen mainScreen].bounds.size.width, 1 / [[UIScreen mainScreen] scale])];
+            UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, kWhiteBottomPadding, [UIScreen mainScreen].bounds.size.width, 1 / [[UIScreen mainScreen] scale])];
             line.backgroundColor = [TDConstants darkBorderColor];
             [cell addSubview:line];
         }
@@ -470,14 +471,9 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 
     NSInteger lastRow = [self tableView:nil numberOfRowsInSection:indexPath.section] - 1;
 
-    // Last row in each post section is just 15px background padding
+    // Last row in each post section is just background padding and bottom line
     if (indexPath.row == lastRow) {
         return kPostMargin;
-    }
-
-    // Like and Comment buttons
-    if (indexPath.row == 1) {
-        return likeHeight;
     }
 
     TDPost *post = [self postForRow:indexPath.section];
@@ -493,9 +489,15 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         return moreCommentRowHeight;
     }
 
+    NSArray *comments = [post commentsForFeed];
+
+    // Like and Comment buttons
+    if (indexPath.row == 1) {
+        return likeHeight - ([comments count] > 0 ? 0 : kWhiteBottomPadding);
+    }
+
     // Comments
     NSInteger commentNumber = indexPath.row - 2;
-    NSArray *comments = [post commentsForFeed];
     if ([comments count] > commentNumber) {
         TDComment *comment = [comments objectAtIndex:commentNumber];
 

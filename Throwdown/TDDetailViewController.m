@@ -365,10 +365,11 @@ static int const kToolbarHeight = 64;
     // Likes row
     if (indexPath.row == 1) {
         if ([self.post.likers count] == 0) {
-            return self.minLikeheight;    // at least one row to show 'like' button
+            return self.minLikeheight;    // at least one row to show the like button
         } else {
-            NSUInteger textHeight = [TDDetailsLikesCell heightOfLikersLabel:self.post.likers];
-            textHeight = (textHeight < self.minLikeheight ? self.minLikeheight : textHeight);
+            CGFloat textHeight = [TDDetailsLikesCell heightOfLikersLabel:self.post.likers];
+            textHeight = (textHeight < self.minLikeheight ? self.minLikeheight : textHeight + 25);
+            NSLog(@"like height %f", textHeight);
             return textHeight;
         }
     }
@@ -379,7 +380,7 @@ static int const kToolbarHeight = 64;
     if (comment) {
         // Last one?
         if ((indexPath.row - 2) == ([self.post.commentsTotalCount intValue] - 1)) {
-            return kCommentCellUserHeight + kCommentLastPadding + comment.messageHeight;
+            return kCommentCellUserHeight + kCommentLastPaddingDetail + comment.messageHeight;
         }
         return kCommentCellUserHeight + kCommentPadding + comment.messageHeight;
     } else {

@@ -103,11 +103,6 @@ static NSString *const kTracksKey = @"tracks";
         self.prStar.hidden = YES;
         [self addSubview:self.prStar];
 
-        self.privatePost = [[UIImageView alloc] initWithFrame:CGRectMake(width - 120, 9, 20, 20)];
-        self.privatePost.image = [UIImage imageNamed:@"lock_icon"];
-        self.privatePost.hidden = YES;
-        [self addSubview:self.privatePost];
-
         self.usernameLabel = [[UILabel alloc] initWithFrame:CGRectMake(65, kMargin, width - 85, 45)];
         self.usernameLabel.font = [TDConstants fontSemiBoldSized:16.0];
         self.usernameLabel.textColor = [TDConstants brandingRedColor];
@@ -148,6 +143,11 @@ static NSString *const kTracksKey = @"tracks";
         [self.userProfileImage addGestureRecognizer:userProfileTap];
         [self addSubview:self.userProfileImage];
 
+        self.privatePost = [[UIImageView alloc] initWithFrame:CGRectMake(kMargin - 1.5, kMargin + 25.5, 21, 21)]; // the image has a white border (thus the weird half pixels)
+        self.privatePost.image = [UIImage imageNamed:@"icon-lock"];
+        self.privatePost.hidden = YES;
+        [self addSubview:self.privatePost];
+
         UIView *topLine = [[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 1 / [[UIScreen mainScreen] scale])];
         topLine.backgroundColor = [TDConstants darkBorderColor];
         [self addSubview:topLine];
@@ -184,9 +184,6 @@ static NSString *const kTracksKey = @"tracks";
     CGRect frame = self.usernameLabel.frame;
     frame.size.width = size.width;
     self.usernameLabel.frame = frame;
-    if (post.isPrivate) {
-        self.privatePost.center = CGPointMake(frame.origin.x + size.width + 16, self.privatePost.center.y); // icon size = 20 / 2  margin: 6 = 16
-    }
 
     self.prStar.hidden = !post.personalRecord;
     self.privatePost.hidden = !post.isPrivate;

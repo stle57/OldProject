@@ -97,6 +97,7 @@ static CGFloat const kCommentCellUserHeight = 18.0;
 static CGFloat const kCommentPadding = 8; // padding between comments
 static CGFloat const kCommentMargin = 40; // 30 on left, 10 on right
 static CGFloat const kCommentLastPadding = 8; // bottom padding of comments
+static CGFloat const kCommentLastPaddingDetail = 30; // same as above for detail view
 static NSInteger const kCommentMaxCharacters = 500; // MAX number of characters allowed in a comment or post
 
 // 1.27 is the lowest we can go without cutting off the emoji
@@ -129,7 +130,6 @@ static NSInteger const kFollowingButtonTag = 20003;
 #define BIO_FONT                         [TDConstants fontRegularSized:14.0]
 #define TITLE_FONT                       [TDConstants fontRegularSized:18.0]
 #define TIME_FONT                        [TDConstants fontLightSized:14.0]
-#define USERNAME_FONT                    [TDConstants fontBoldSized:16.0]
 #define kCommentDefaultText              @"Write a comment..."
 #define START_MAIN_SPINNER_NOTIFICATION  @"TDMainSpinnerStart"
 #define STOP_MAIN_SPINNER_NOTIFICATION   @"TDMainSpinnerStop"

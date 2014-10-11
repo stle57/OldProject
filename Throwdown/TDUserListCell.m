@@ -10,7 +10,7 @@
 #import "TDConstants.h"
 
 static int const kIndentenation = 68;
-static int const kWidth = 252;
+static int const kMargin = 68;
 
 @interface TDUserListCell ()
 
@@ -27,12 +27,12 @@ static int const kWidth = 252;
         self.textLabel.hidden = YES;
         self.detailTextLabel.hidden = YES;
 
-        self.name = [[UILabel alloc] initWithFrame:CGRectMake(kIndentenation, 5, kWidth, 15)];
+        self.name = [[UILabel alloc] initWithFrame:CGRectMake(kIndentenation, 5, SCREEN_WIDTH - kMargin, 15)];
         self.name.font = COMMENT_MESSAGE_FONT;
         self.name.textColor = [TDConstants headerTextColor];
         [self addSubview:self.name];
 
-        self.username = [[UILabel alloc] initWithFrame:CGRectMake(kIndentenation, 20, kWidth, 13)];
+        self.username = [[UILabel alloc] initWithFrame:CGRectMake(kIndentenation, 20, SCREEN_WIDTH - kMargin, 13)];
         self.username.font = [TDConstants fontRegularSized:13.0];
         self.username.textColor = [TDConstants disabledTextColor];
         [self addSubview:self.username];
@@ -46,8 +46,8 @@ static int const kWidth = 252;
         self.profileImage.image = [UIImage imageNamed:@"prof_pic_default"];
         [self.contentView addSubview:self.profileImage];
 
-        self.bottomLine = [[UIView alloc] initWithFrame:CGRectMake(kIndentenation, self.frame.size.height - 5, kWidth, 1.0 / [[UIScreen mainScreen] scale])];
-        self.bottomLine.backgroundColor = [TDConstants borderColor];
+        self.bottomLine = [[UIView alloc] initWithFrame:CGRectMake(kIndentenation, self.frame.size.height - 5, SCREEN_WIDTH - kMargin, 1.0 / [[UIScreen mainScreen] scale])];
+        self.bottomLine.backgroundColor = [TDConstants lightBorderColor];
         [self addSubview:self.bottomLine];
     }
     return self;
