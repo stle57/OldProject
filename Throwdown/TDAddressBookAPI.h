@@ -14,4 +14,9 @@
 - (void)addContactsToAddressBook:(ABAddressBookRef)addressBook;
 - (NSArray*)getContactList;
 
+void MyAddressBookExternalChangeCallback ( ABAddressBookRef addressBook,
+                                          CFDictionaryRef info,
+                                          void *context
+                                          );
+
 @end

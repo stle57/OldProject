@@ -320,7 +320,7 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
                 followCell.actionButton.hidden = YES;
                 followCell.userId = contact.id;
                 followCell.nameLabel.textColor = [TDConstants headerTextColor];
-                followCell.nameLabel.font = [TDConstants fontRegularSized:16.0];
+                followCell.nameLabel.font = [TDConstants fontSemiBoldSized:16.0];
                 [followCell setAccessoryType:UITableViewCellAccessoryNone];
                 if (contact.fullName.length == 0 && contact.selectedData.length != 0) {
                     UIFont *font = [TDConstants fontRegularSized:16.0];

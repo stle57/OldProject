@@ -238,7 +238,7 @@
 
 - (void)addToInviteList:(TDContactInfo*)contactPerson indexPath:(NSIndexPath*)indexPath tableView:(UITableView*)tableView{
     // If there is no contact info except facetime, pop up aialertview
-    if (contactPerson.emailList.count == 0 & contactPerson.phoneList.count == 0) {
+    if (contactPerson.emailList.count == 0 && contactPerson.phoneList.count == 0) {
 
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No Contact Method Available"
                                                         message:@"Sorry, we weren't able to find an available phone number or email to send this person an invite."
@@ -246,7 +246,7 @@
                                               cancelButtonTitle:@"OK"
                                               otherButtonTitles:nil];
         [alert show];
-    } else if ( contactPerson.emailList.count > 1 || contactPerson.phoneList.count > 1) {
+    } else if ( (contactPerson.emailList.count > 1 || contactPerson.phoneList.count > 1) || ((contactPerson.emailList.count == 1 && contactPerson.phoneList.count ==1) ) ){
         // else if there is a lot of contact info, use UIActionSheet and show various ways.
         NSMutableArray *buttonStrings = [NSMutableArray arrayWithArray:contactPerson.emailList];
         [buttonStrings addObjectsFromArray:contactPerson.phoneList];
@@ -287,7 +287,8 @@
             contactPerson.selectedData = contactPerson.emailList[0];
             contactPerson.inviteType = kInviteType_Email;
         } else if (contactPerson.phoneList.count == 1) {
-            contactPerson.selectedData = contactPerson.phoneList[0];
+            NSString *formatedPhone =[TDViewControllerHelper validatePhone:contactPerson.phoneList[0]];
+            contactPerson.selectedData = formatedPhone;
             contactPerson.inviteType = kInviteType_Phone;
         }
         [self addToInviteList:contactPerson];
