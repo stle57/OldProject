@@ -290,7 +290,9 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         }
 
         // Center label (could be improved!)
-        cell.noPostsLabel.center = CGPointMake(cell.view.center.x, cell.view.frame.size.height / 2);
+        CGRect frame = cell.noPostsLabel.frame;
+        frame.origin.y = SCREEN_HEIGHT/2 - self.navigationController.navigationBar.frame.size.height;
+        cell.noPostsLabel.frame = frame;
         return cell;
     }
 
