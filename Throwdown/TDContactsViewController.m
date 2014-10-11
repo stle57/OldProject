@@ -58,8 +58,6 @@
     [navigationBar setBarStyle:UIBarStyleBlack];
     [navigationBar setTranslucent:NO];
     
-    [self.searchDisplayController.searchBar setBarTintColor:[TDConstants darkBackgroundColor]];
-    
     // Title
     self.navLabel.textColor = [UIColor whiteColor];
     self.navLabel.font = [TDConstants fontSemiBoldSized:18];
@@ -69,8 +67,11 @@
     
 
     // Search Bar
-    self.searchDisplayController.searchBar.backgroundColor = [TDConstants darkBackgroundColor];
     self.searchDisplayController.searchBar.backgroundImage = [UIImage new];
+    self.searchDisplayController.searchBar.backgroundColor = [TDConstants darkBackgroundColor];
+    self.searchDisplayController.searchBar.barTintColor = [TDConstants darkBackgroundColor];
+    self.searchDisplayController.searchBar.translucent = NO;
+    
     self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants darkBackgroundColor];
     self.searchDisplayController.searchResultsTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
@@ -187,7 +188,10 @@
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 cell.delegate = self;
             }
-            cell.contentView.backgroundColor = [TDConstants darkBackgroundColor];
+            
+            cell.backgroundColor = [UIColor whiteColor];
+            self.searchDisplayController.searchResultsTableView.backgroundColor = [UIColor whiteColor];
+
             NSString *noMatchesString = @"No matches found";
             NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:noMatchesString font:[TDConstants fontSemiBoldSized:16.0] color:[TDConstants headerTextColor] lineHeight:19 lineHeightMultipler:(19/16.0)];
             cell.noFollowLabel.attributedText = attString;
@@ -397,7 +401,7 @@
 }
 #pragma mark UISearchBarDelegate
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
-    [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
+    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants headerTextColor]];
     self.view.backgroundColor = [TDConstants darkBackgroundColor];
     self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants darkBackgroundColor];
 }

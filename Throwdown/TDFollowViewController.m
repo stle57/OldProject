@@ -30,7 +30,7 @@
 @property (nonatomic) NSArray *followUsers;
 @property (nonatomic) NSMutableArray *filteredTDUsers;
 @property (nonatomic) NSInteger currentRow;
-
+@property (nonatomic) UITextField *searchBarTextField;
 @end
 
 @implementation TDFollowViewController
@@ -99,8 +99,12 @@
     self.searchDisplayController.searchBar.layer.borderColor = [[TDConstants darkBorderColor] CGColor];
     self.searchDisplayController.searchBar.layer.borderWidth = TD_CELL_BORDER_WIDTH;
     self.searchDisplayController.searchBar.clipsToBounds = YES;
+
+    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextAlignment:NSTextAlignmentLeft];
+    
     self.searchDisplayController.searchResultsTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
+    // Changes the "search for people" font and text color
     [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
 
@@ -156,6 +160,8 @@
         }];
     } else if (self.followControllerType == kUserListType_TDUsers) {
         self.searchDisplayController.searchBar.hidden = NO;
+        self.searchDisplayController.searchBar.backgroundImage = [UIImage new];
+        self.searchDisplayController.searchBar.backgroundColor = [TDConstants darkBackgroundColor];
         self.searchDisplayController.searchBar.barTintColor = [TDConstants darkBackgroundColor];
         self.searchDisplayController.searchBar.translucent = NO;
         
@@ -318,9 +324,8 @@
                 cell.delegate = self;
             }
             
-            cell.contentView.backgroundColor = [TDConstants darkBackgroundColor];
-            tableView.backgroundColor = [TDConstants darkBackgroundColor];
-           // UILabel *noFollowLabel = [self.labels objectAtIndex:0];
+            cell.contentView.backgroundColor = [UIColor whiteColor];
+            tableView.backgroundColor = [UIColor whiteColor];
             cell.noFollowLabel.text = @"No matches found";
             debug NSLog(@"no follow label frame=%@", NSStringFromCGRect(cell.noFollowLabel.frame));
             
@@ -696,7 +701,8 @@
 
 #pragma mark UISearchBarDelegate
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
-    //[[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants headerTextColor]];
+    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants headerTextColor]];
+    
     self.suggestedLabel.hidden = YES;
 }
 
