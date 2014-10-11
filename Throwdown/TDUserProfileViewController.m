@@ -182,7 +182,7 @@
             [self handleNextStart:[response objectForKey:@"next_start"]];
             [self handlePostsResponse:response fromStart:YES];
             self.user = [[TDUser alloc] initWithDictionary:[response valueForKeyPath:@"user"]];
-            self.titleLabel.text = [NSString stringWithFormat:@"%@ %@", self.user.username, @"PRs"];
+            self.titleLabel.text = [NSString stringWithFormat:@"%@", @"Personal Records"];
         } error:^{
             [self endRefreshControl];
             [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastType_Warning payload:@{} delegate:nil];
