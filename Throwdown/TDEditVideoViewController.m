@@ -22,6 +22,7 @@
 #import "UIImage+Resizing.h"
 #import "UIImage+Rotating.h"
 #include <math.h>
+#import "FLEXManager.h"
 
 static const NSString *ItemStatusContext;
 
@@ -48,7 +49,6 @@ static const NSString *ItemStatusContext;
 @property (nonatomic) BOOL isSetup;
 @property (nonatomic) UIImage *assetImage;
 
-@property (nonatomic) UIScrollView *scrollView;
 @property (nonatomic) UIImageView *previewImageView;
 @property (nonatomic) UIView *videoContainerView;
 
@@ -59,9 +59,13 @@ static const NSString *ItemStatusContext;
 @property (weak, nonatomic) IBOutlet UIButton *cancelButton;
 @property (weak, nonatomic) IBOutlet UIButton *playButton;
 @property (weak, nonatomic) IBOutlet UIButton *doneButton;
-@property (weak, nonatomic) IBOutlet UIView *controlsView;
 @property (weak, nonatomic) IBOutlet UIView *coverView;
 @property (weak, nonatomic) IBOutlet UILabel *helpLabel;
+@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *scrollViewHeight;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *scrollViewWidth;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *topCoverHeight;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *controlsHeight;
 
 - (IBAction)playButtonPressed:(UIButton *)sender;
 - (IBAction)doneButtonPressed:(UIButton *)sender;
@@ -99,7 +103,13 @@ static const NSString *ItemStatusContext;
     [self setNeedsStatusBarAppearanceUpdate];
     self.isSetup = NO;
 
-    self.helpLabel.frame = CGRectMake(0, 44, SCREEN_WIDTH, self.coverView.frame.origin.y - 44);
+    CGSize size = [UIScreen mainScreen].bounds.size;
+    self.scrollView.clipsToBounds = NO;
+    self.scrollViewWidth.constant = SCREEN_WIDTH;
+    self.scrollViewHeight.constant = SCREEN_WIDTH;
+    self.topCoverHeight.constant = (size.height - size.width) / 2.0;
+    self.controlsHeight.constant = (size.height - size.width) / 2.0;
+
     self.helpLabel.font = [TDConstants fontSemiBoldSized:17];
 
     [[UIApplication sharedApplication] setStatusBarHidden:YES
@@ -370,7 +380,6 @@ static const NSString *ItemStatusContext;
         self.previewImageView.image = [UIImage imageWithData:self.photoData];
     }
 
-    self.scrollView = [[UIScrollView alloc] initWithFrame:self.previewImageView.frame];
     [self.scrollView setBackgroundColor:[UIColor blackColor]];
     [self.scrollView setDelegate:self];
     [self.scrollView setShowsHorizontalScrollIndicator:NO];
@@ -386,9 +395,6 @@ static const NSString *ItemStatusContext;
     [self.scrollView setMinimumZoomScale:self.scrollView.frame.size.width / shorter];
     [self.scrollView setZoomScale:[self.scrollView minimumZoomScale]];
     [self.scrollView addSubview:self.previewImageView];
-
-    [self.view addSubview:self.scrollView];
-    [self.view insertSubview:self.scrollView belowSubview:self.coverView];
 
     debug NSLog(@"photo size %@", NSStringFromCGSize(self.previewImageView.image.size));
     debug NSLog(@"scroll size %@", NSStringFromCGRect(self.scrollView.frame));
@@ -413,7 +419,7 @@ static const NSString *ItemStatusContext;
 
 - (void)setupVideoEditing {
     self.playButton.hidden = NO;
-    self.slider = [[SAVideoRangeSlider alloc] initWithFrame:CGRectMake(0, 0, 320, 44) videoUrl:self.recordedVideoUrl];
+    self.slider = [[SAVideoRangeSlider alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 44) videoUrl:self.recordedVideoUrl];
     self.slider.delegate = self;
     [self.slider setMinGap:.1f];
     [self.slider setMaxGap:30];
@@ -470,7 +476,6 @@ static const NSString *ItemStatusContext;
                 [self.playerLayer setPlayer:self.player];
                 [self.videoContainerView.layer addSublayer:self.playerLayer];
 
-                self.scrollView = [[UIScrollView alloc] initWithFrame:self.videoContainerView.frame];
                 [self.scrollView setBackgroundColor:[UIColor blackColor]];
                 [self.scrollView setDelegate:self];
                 [self.scrollView setShowsHorizontalScrollIndicator:NO];
@@ -484,12 +489,9 @@ static const NSString *ItemStatusContext;
                 [self.scrollView setContentSize:rect.size];
                 [self.scrollView addSubview:self.videoContainerView];
 
-                [self.view addSubview:self.scrollView];
-                [self.view insertSubview:self.scrollView belowSubview:self.coverView];
-
                 if (self.isOriginal) {
                     CGSize size = self.scrollView.contentSize;
-                    CGRect videoFrame = CGRectMake((size.width - 320) / 2, (size.height - 320) / 2, 320, 320);
+                    CGRect videoFrame = CGRectMake((size.width - SCREEN_WIDTH) / 2, (size.height - SCREEN_WIDTH) / 2, SCREEN_WIDTH, SCREEN_WIDTH);
                     debug NSLog(@"locked scroll frame: %@", NSStringFromCGRect(videoFrame));
                     [self.scrollView scrollRectToVisible:videoFrame animated:NO];
                     self.scrollView.scrollEnabled = NO;

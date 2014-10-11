@@ -102,9 +102,6 @@ static void *RecordingContext = &RecordingContext;
 
     CGRect bounds = [UIScreen mainScreen].bounds;
     CGFloat height = (bounds.size.height - bounds.size.width) / 2.;
-    NSLog(@"%f, %@", height, NSStringFromCGRect(bounds));
-//    self.topCoverHeightConstraint.constant = height;
-//    self.bottomCoverHeightConstraint.constant = bounds.size.height - height;
 
     self.topCoverHeightConstraint.constant = height;
     self.bottomCoverHeightConstraint.constant = height;
