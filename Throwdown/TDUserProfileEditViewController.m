@@ -546,9 +546,6 @@
                     cell.leftMiddleLabel.text = @"Edit Photo";
                     cell.leftMiddleLabel.frame = [self getTextFieldPosition:cell.leftMiddleLabel.frame];
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
-                    if (cell.bottomLine.hidden ==YES) {
-                        debug NSLog(@" bottom line HIDDEN for profile image");
-                    }
                 }
                 break;
                 case 1:
@@ -588,16 +585,27 @@
                 case 4:
                 {
                     cell.titleLabel.hidden = NO;
+                    cell.textField.hidden = YES;
                     cell.textView.hidden = NO;
                     cell.titleLabel.text = @"Bio";
-                    cell.textView.text = self.bio;
+                    if ([self.bio isKindOfClass:[NSNull class]] || self.bio.length == 0) {
+                        cell.textView.text = self.bio;
+                    } else {
+                        NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:self.bio];
+                        NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+                        [paragraphStyle setLineHeightMultiple:(19.0/16.0)];
+                        [paragraphStyle setMinimumLineHeight:19.0];
+                        [paragraphStyle setMaximumLineHeight:19.0];
+                        paragraphStyle.alignment = NSTextAlignmentLeft;
+                        [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, self.bio.length)];
+                        [attributedString addAttribute:NSFontAttributeName value:[TDConstants fontRegularSized:16.0] range:NSMakeRange(0, self.bio.length)];
+                        [attributedString addAttribute:NSForegroundColorAttributeName value:[TDConstants headerTextColor] range:NSMakeRange(0, self.bio.length)];
+                        cell.textView.attributedText = attributedString;
+                    }
                     CGRect newTextFrame = cell.textView.frame;
                     newTextFrame.size.height = [self tableView:tableView heightForRowAtIndexPath:indexPath];
+                    newTextFrame.origin.y = cell.bottomLine.frame.size.height;
                     cell.textView.frame = newTextFrame;
-                    debug NSLog(@"==newer bio cell frame = %@", NSStringFromCGRect(cell.textView.frame));
-                    cell.textView.textContainer.lineFragmentPadding = 0;
-//                    cell.textView.layer.borderWidth = 1.0;
-//                    cell.textView.layer.borderColor = [[TDConstants brandingRedColor] CGColor];
                     
                     cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
                                                        CGRectGetMaxY(newTextFrame),
@@ -633,8 +641,6 @@
                     cell.titleLabel.text = @"Email";
                     cell.textField.text = self.email;
                     cell.textField.frame = [self getTextFieldPosition:cell.textField.frame];
-                    debug NSLog(@"cell.bottomLine.frame=%@ for email", NSStringFromCGRect( cell.bottomLine.frame));
-
                 break;
                 default:
                     break;
