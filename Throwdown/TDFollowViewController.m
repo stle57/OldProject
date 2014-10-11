@@ -420,6 +420,7 @@
 }
 
 - (TDFollowProfileCell*)createCell:(NSIndexPath*)indexPath tableView:(UITableView*)tableView object:(NSArray*)object{
+    BOOL adjustHeightCell = NO;
     TDFollowProfileCell *cell = (TDFollowProfileCell*)[tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_FOLLOWPROFILE];
     
     if (!cell) {
@@ -428,23 +429,36 @@
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.delegate = self;
     }
+    
     cell.topLine.hidden = NO;
-//    cell.bottomLine.hidden = NO;
     cell.userId = [object valueForKey:@"id"];
     cell.row = indexPath.row;
-    NSString *str = nil;
+    NSAttributedString *usernameAttStr = nil;
     if (self.followControllerType == kUserListType_TDUsers) {
-        str = [NSString stringWithFormat:@"%@", [object valueForKey:@"bio"]];
+        NSString *str = [NSString stringWithFormat:@"%@", [object valueForKey:@"bio"]];
         if (str == nil || str.length == 0 || [[object valueForKey:@"bio"] isKindOfClass:[NSNull class]]) {
             str = [NSString stringWithFormat:@"@%@", [object valueForKey:@"username"]];
+            usernameAttStr = [TDViewControllerHelper makeParagraphedTextWithString:str font:[TDConstants fontRegularSized:13.0] color:[TDConstants headerTextColor] lineHeight:16.0];
+        } else {
+            // Need to adjust the height of label to accomodate for emojis in BIO
+            adjustHeightCell = YES;
+            usernameAttStr = [TDViewControllerHelper makeParagraphedTextForTruncatedBio:str font:[TDConstants fontRegularSized:13.0] color:[TDConstants headerTextColor] lineHeight:16.0];
         }
     } else {
-        str = [NSString stringWithFormat:@"@%@", [object valueForKey:@"username"]];
+        NSString *str = [NSString stringWithFormat:@"@%@", [object valueForKey:@"username"]];
+        usernameAttStr = [TDViewControllerHelper makeParagraphedTextWithString:str font:[TDConstants fontRegularSized:13.0] color:[TDConstants headerTextColor] lineHeight:16.0];
     }
     
-   // NSString *usernameStr = [NSString stringWithFormat:@"%@", [object valueForKey:@"bio"] ];
-    NSAttributedString *usernameAttStr = [TDViewControllerHelper makeParagraphedTextWithString:str font:[TDConstants fontRegularSized:13.0] color:[TDConstants headerTextColor] lineHeight:16.0];
     cell.descriptionLabel.attributedText = usernameAttStr;
+    
+    if (adjustHeightCell) {
+        [cell.descriptionLabel sizeToFit];
+        
+        CGRect frame = cell.descriptionLabel.frame;
+        frame.size.height = frame.size.height +5;
+        frame.size.width = cell.descriptionLabelOrigWidth;
+        cell.descriptionLabel.frame = frame;
+    }
     
     NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:[object valueForKey:@"name"] font:[TDConstants fontSemiBoldSized:16] color:[TDConstants brandingRedColor] lineHeight:19.0];
     cell.nameLabel.attributedText = attString;

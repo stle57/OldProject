@@ -18,6 +18,7 @@
 @synthesize userId;
 //@synthesize textViewdOrigRect;
 @synthesize bottomLineOrigY;
+@synthesize descriptionLabelOrigWidth;
 
 - (void)dealloc
 {
@@ -49,6 +50,9 @@
     self.selectionStyle = UITableViewCellSelectionStyleNone;
     
     [self modifyFrames];
+    
+    descriptionLabelOrigWidth = self.descriptionLabel.frame.size.width;
+    
 }
 
 - (IBAction)actionButtonPressed:(UIButton*)sender{

@@ -32,6 +32,7 @@
 @property (nonatomic, assign) NSNumber *userId;
 @property (nonatomic, assign) NSInteger row;
 @property (nonatomic, assign) CGFloat bottomLineOrigY;
+@property (nonatomic, assign) CGFloat descriptionLabelOrigWidth;
 
 - (IBAction)actionButtonPressed:(UIButton*)sender;
 @end
