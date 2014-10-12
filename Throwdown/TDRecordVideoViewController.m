@@ -69,14 +69,6 @@ static void *RecordingContext = &RecordingContext;
 
 @implementation TDRecordVideoViewController
 
-- (UIStatusBarStyle)preferredStatusBarStyle {
-    return UIStatusBarStyleDefault; // only used in the camera picker ui
-}
-
-- (BOOL)prefersStatusBarHidden {
-    return YES;
-}
-
 - (BOOL)shouldAutorotate {
     // Disable autorotation of the interface when recording is in progress.
     return ![self lockInterfaceRotation];
@@ -98,7 +90,7 @@ static void *RecordingContext = &RecordingContext;
     self.recordButton.enabled = NO;
     self.photoMode = YES;
     self.albumPickerOpen = NO;
-
+    [[UIApplication sharedApplication] setStatusBarHidden:YES];
 
     CGRect bounds = [UIScreen mainScreen].bounds;
     CGFloat height = (bounds.size.height - bounds.size.width) / 2.;
@@ -205,7 +197,8 @@ static void *RecordingContext = &RecordingContext;
     self.coverView.hidden = YES;
     if (self.albumPickerOpen) {
         self.albumPickerOpen = NO;
-        [self setNeedsStatusBarAppearanceUpdate];
+        [[UIApplication sharedApplication] setStatusBarHidden:YES];
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     } else {
         self.croppedURL = nil;
         self.assetImage = nil;
@@ -556,6 +549,8 @@ static void *RecordingContext = &RecordingContext;
 
 - (IBAction)albumButtonPressed:(id)sender {
     self.albumPickerOpen = YES;
+    [[UIApplication sharedApplication] setStatusBarHidden:NO];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
 
     UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
     imagePickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
