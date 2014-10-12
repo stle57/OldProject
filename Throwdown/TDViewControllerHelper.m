@@ -284,4 +284,9 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     return textRect.size.height;
 }
 
++ (CGPoint)centerPosition {
+    
+    return CGPointMake([UIScreen mainScreen].bounds.size.width/2, [UIScreen mainScreen].bounds.size.height/2);
+
+}
 @end

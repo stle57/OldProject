@@ -61,7 +61,7 @@
     debug NSLog(@"EditUserProfile:%@", self.profileUser);
 
     statusBarFrame = [self.view convertRect:[UIApplication sharedApplication].statusBarFrame fromView: nil];
-
+    
     // Title
     self.titleLabel.text = @"Settings";
     self.titleLabel.textColor = [UIColor whiteColor];
@@ -130,6 +130,9 @@
     [self.navigationController setNavigationBarHidden:NO animated:NO];
     
     origTableViewFrame = self.tableView.frame;
+    UIBarButtonItem *saveBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.saveButton];
+    self.navigationItem.rightBarButtonItem = saveBarButton;
+    self.saveButton.enabled = NO;
 
     if (self.hasLoaded) {
         [self checkForSaveButton];
@@ -196,6 +199,8 @@
                                                                                                    delegate:nil
                                                                                           cancelButtonTitle:@"OK"
                                                                                           otherButtonTitles:nil];
+                                                    debug NSLog(@"alert frame=%@", NSStringFromCGRect(alert.frame));
+                                                    debug NSLog(@"alert center=%@", NSStringFromCGPoint(alert.center));
                                                     [alert show];
                                                     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationReloadHome object:nil];
                                                 }
@@ -370,6 +375,14 @@
             [cell.textField resignFirstResponder];
             self.tableView.frame = origTableViewFrame;
             keybdUp = NO;
+            return;
+        }
+        
+        if ([cell.textView isFirstResponder]) {
+            [cell.textView resignFirstResponder];
+            self.tableView.frame = origTableViewFrame;
+            keybdUp = NO;
+            return;
         }
     }
 }
@@ -1005,13 +1018,19 @@
 - (void)showActivity {
     self.saveButton.enabled = NO;
     self.backButton.enabled = NO;
-    self.activityIndicator.center = self.view.center;
+    self.activityIndicator.center = [TDViewControllerHelper centerPosition];
+    
+    CGPoint centerFrame = self.activityIndicator.center;
+    centerFrame.y = self.activityIndicator.center.y - self.activityIndicator.backgroundView.frame.size.height/2;
+    self.activityIndicator.center = centerFrame;
+
     [self.view bringSubviewToFront:self.activityIndicator];
     [self.activityIndicator startSpinner];
     self.activityIndicator.hidden = NO;
 }
 
 - (void)hideActivity {
+    self.saveButton.enabled = YES;
     self.backButton.enabled = YES;
     self.activityIndicator.hidden = YES;
     [self.activityIndicator stopSpinner];

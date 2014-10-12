@@ -241,6 +241,12 @@ static int const kToolbarHeight = 64;
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postDeleteFailed:) name:TDNotificationRemovePostFailed object:nil];
 
         self.activityIndicator = [[TDActivityIndicator alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+        self.activityIndicator.center = [TDViewControllerHelper centerPosition];
+        
+        CGPoint centerFrame = self.activityIndicator.center;
+        centerFrame.y = self.activityIndicator.center.y - self.activityIndicator.backgroundView.frame.size.height/2;
+        self.activityIndicator.center = centerFrame;
+        
         self.activityIndicator.hidden = NO;
         self.activityIndicator.text.text = @"Removing post";
         [self.view addSubview:self.activityIndicator];

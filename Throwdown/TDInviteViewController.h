@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "TDContactsViewController.h"
 #import "TDInviteCell.h"
+#import "TDActivityIndicator.h"
 
 #define TD_INVITE_CELL_HEIGHT 65
 #define TD_INVITE_HEADER_HEIGHT_SEC0 120
@@ -31,6 +32,7 @@
 @property (nonatomic) CGRect origNameLabelFrame;
 
 @property (nonatomic) NSMutableArray *headerLabels;
+@property (nonatomic) TDActivityIndicator *activityIndicator;
 
 - (IBAction)closeButtonHit:(id)sender;
 - (IBAction)nextButtonHit:(id)sender;

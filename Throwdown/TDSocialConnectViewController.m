@@ -71,6 +71,11 @@
     [self.view addSubview:self.tableView];
 
     self.activityIndicator = [[TDActivityIndicator alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.activityIndicator.center = [TDViewControllerHelper centerPosition];
+    CGPoint centerFrame = self.activityIndicator.center;
+    centerFrame.y = self.activityIndicator.center.y - self.activityIndicator.backgroundView.frame.size.height/2;
+    self.activityIndicator.center = centerFrame;
+    
     [self.view addSubview:self.activityIndicator];
 }
 

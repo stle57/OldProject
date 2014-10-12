@@ -285,7 +285,12 @@ settings: [
 
 - (void)showActivity {
     self.backButton.enabled = NO;
-    self.activityIndicator.center = self.view.center;
+    self.activityIndicator.center = [TDViewControllerHelper centerPosition];
+    
+    CGPoint centerFrame = self.activityIndicator.center;
+    centerFrame.y = self.activityIndicator.center.y - self.activityIndicator.backgroundView.frame.size.height/2;
+    self.activityIndicator.center = centerFrame;
+    
     [self.view bringSubviewToFront:self.activityIndicator];
     [self.activityIndicator startSpinner];
     self.activityIndicator.hidden = NO;

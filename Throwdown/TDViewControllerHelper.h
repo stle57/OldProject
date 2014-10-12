@@ -35,4 +35,5 @@
 + (BOOL)isSafariURL:(NSURL *)url;
 + (BOOL)askUserToOpenInSafari:(NSURL *)url;
 + (CGFloat)heightForText:(NSString*)bodyText font:(UIFont*)font;
++ (CGPoint)centerPosition;
 @end

@@ -43,6 +43,8 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.activityIndicator = [[TDActivityIndicator alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+
     // Do any additional setup after loading the view from its nib.
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
@@ -415,6 +417,7 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
         case 1:
             switch (indexPath.row) {
                 case 0:
+                    [self showActivity];
                     [self gotoMyContacts];
                     break;
 
@@ -594,5 +597,22 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
     }
 }
 
+#pragma mark - Activity
 
+- (void)showActivity {
+    self.activityIndicator.center = [TDViewControllerHelper centerPosition];
+    
+    CGPoint centerFrame = self.activityIndicator.center;
+    centerFrame.y = self.activityIndicator.center.y - self.activityIndicator.backgroundView.frame.size.height/2;
+    self.activityIndicator.center = centerFrame;
+    
+    [self.view bringSubviewToFront:self.activityIndicator];
+    [self.activityIndicator startSpinner];
+    self.activityIndicator.hidden = NO;
+}
+
+- (void)hideActivity {
+    self.activityIndicator.hidden = YES;
+    [self.activityIndicator stopSpinner];
+}
 @end

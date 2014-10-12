@@ -54,6 +54,7 @@
 @property (nonatomic, assign) kFeedProfileType profileType;
 @property (nonatomic, retain) UIImage *editedProfileImage;
 @property (nonatomic, retain) UIImageView *tempFlyInImageView;
+
 @property (nonatomic) UIButton *backButton;
 
 - (IBAction)saveButtonHit:(id)sender;
