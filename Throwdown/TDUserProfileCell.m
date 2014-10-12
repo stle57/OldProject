@@ -77,13 +77,12 @@ static CGFloat const kMinHeight = 230 + kBottomMargin;
 
 - (void)setUser:(TDUser *)user withButton:(UserProfileButtonType)buttonType {
     self.bioLabel.hidden = YES;
-    self.userImageView.hidden = YES;
+
+    CGFloat offset = self.bioLabel.frame.origin.y;
 
     if (user) {
         self.userNameLabel.text = user.name;
-        self.userImageView.hidden = NO;
 
-        CGFloat offset = 0;
         if (user.bio && ![user.bio isKindOfClass:[NSNull class]]) {
             self.bioLabel.attributedText = (NSMutableAttributedString *)[TDViewControllerHelper makeParagraphedTextWithBioString:user.bio];
 
@@ -91,92 +90,96 @@ static CGFloat const kMinHeight = 230 + kBottomMargin;
             bioFrame.size.height = user.bioHeight;
             self.bioLabel.frame = bioFrame;
             self.bioLabel.hidden = NO;
-            offset = self.bioLabel.frame.origin.y;
-        } else {
-            self.bioLabel.hidden = YES;
+            offset += user.bioHeight;
         }
-
-        // Now move the invite button down
-        CGRect newInviteButtonFrame = self.inviteButton.frame;
-        newInviteButtonFrame.origin.y = offset + user.bioHeight + kBioLabelInviteButtonPadding;
-        self.inviteButton.frame = newInviteButtonFrame;
-
-        // Move the stat buttons down
-        CGFloat yStatButtonPosition = newInviteButtonFrame.origin.y + newInviteButtonFrame.size.height + kInviteButtonStatButtonPadding;
-
-        CGRect borderFrame = self.buttonsTopBorder.frame;
-        borderFrame.origin.y = yStatButtonPosition;
-        self.buttonsTopBorder.frame = borderFrame;
-
-        CGRect newPostButtonFrame = self.postButton.frame;
-        newPostButtonFrame.origin.y = yStatButtonPosition;
-        self.postButton.frame = newPostButtonFrame;
-
-        CGRect newPrButtonFrame = self.prButton.frame;
-        newPrButtonFrame.origin.y = yStatButtonPosition;
-        self.prButton.frame = newPrButtonFrame;
-
-        CGRect newFollowersFrame = self.followerButton.frame;
-        newFollowersFrame.origin.y = yStatButtonPosition;
-        self.followerButton.frame = newFollowersFrame;
-
-        CGRect newFollowingFrame = self.followingButton.frame;
-        newFollowingFrame.origin.y = yStatButtonPosition;
-        self.followingButton.frame = newFollowingFrame;
-
-        if (![user hasDefaultPicture]) {
-            [[TDAPIClient sharedInstance] setImage:@{@"imageView":self.userImageView,
-                                                     @"filename":user.picture,
-                                                     @"width":@70,
-                                                     @"height":@70}];
-        }
-
-        switch (buttonType) {
-            case UserProfileButtonTypeFollow:
-                self.inviteButton.enabled = YES;
-                [self.inviteButton setImage:[UIImage imageNamed:@"btn-follow.png"] forState:UIControlStateNormal];
-                [self.inviteButton setImage:[UIImage imageNamed:@"btn-follow-hit.png"] forState:UIControlStateSelected];
-                [self.inviteButton setImage:[UIImage imageNamed:@"btn-follow-hit.png"] forState:UIControlStateHighlighted];
-                [self.inviteButton setTag:kFollowButtonTag];
-                break;
-
-            case UserProfileButtonTypeFollowing:
-                self.inviteButton.enabled = YES;
-                [self.inviteButton setImage:[UIImage imageNamed:@"btn-following.png"] forState:UIControlStateNormal];
-                [self.inviteButton setImage:[UIImage imageNamed:@"btn-following-hit.png"] forState:UIControlStateSelected];
-                [self.inviteButton setImage:[UIImage imageNamed:@"btn-following-hit.png"] forState:UIControlStateHighlighted];
-                [self.inviteButton setTag:kFollowingButtonTag];
-                break;
-
-            case UserProfileButtonTypeInvite:
-                self.inviteButton.enabled = YES;
-                [self.inviteButton setImage:[UIImage imageNamed:@"btn-invite-friends.png"] forState:UIControlStateNormal];
-                [self.inviteButton setImage:[UIImage imageNamed:@"btn-invite-friends-hit.png"] forState:UIControlStateSelected];
-                [self.inviteButton setImage:[UIImage imageNamed:@"btn-invite-friends-hit.png"] forState:UIControlStateHighlighted];
-                [self.inviteButton setTag:kInviteButtonTag];
-                break;
-            case UserProfileButtonTypeUnknown:
-                self.inviteButton.enabled = NO;
-                break;
-        }
-
-        [self modifyStatButtonString:self.postButton statCount:user.postCount textString:@"\nPosts"];
-        [self modifyStatButtonString:self.prButton statCount:user.prCount textString:@"\nPRs"];
-        [self modifyStatButtonString:self.followerButton statCount:user.followerCount textString:@"\nFollowers"];
-        [self modifyStatButtonString:self.followingButton statCount:user.followingCount textString:@"\nFollowing"];
-
-        CGRect frame = self.whiteUnderView.frame;
-        frame.size.height = [[self class] heightForUserProfile:user] - kBottomMargin;
-        self.whiteUnderView.frame = frame;
-        CGFloat lineWidth = (1.0 / [[UIScreen mainScreen] scale]);
-        self.bottomLine.frame = CGRectMake(0, frame.size.height, SCREEN_WIDTH, lineWidth);
     }
+
+    // Now move the invite button down
+    CGRect newInviteButtonFrame = self.inviteButton.frame;
+    newInviteButtonFrame.origin.y = offset + kBioLabelInviteButtonPadding + 1; // 1 makes the borders go all the way to the bottom
+    self.inviteButton.frame = newInviteButtonFrame;
+
+    // Move the stat buttons down
+    CGFloat yStatButtonPosition = newInviteButtonFrame.origin.y + newInviteButtonFrame.size.height + kInviteButtonStatButtonPadding;
+
+    CGRect borderFrame = self.buttonsTopBorder.frame;
+    borderFrame.origin.y = yStatButtonPosition;
+    self.buttonsTopBorder.frame = borderFrame;
+
+    CGRect newPostButtonFrame = self.postButton.frame;
+    newPostButtonFrame.origin.y = yStatButtonPosition;
+    self.postButton.frame = newPostButtonFrame;
+
+    CGRect newPrButtonFrame = self.prButton.frame;
+    newPrButtonFrame.origin.y = yStatButtonPosition;
+    self.prButton.frame = newPrButtonFrame;
+
+    CGRect newFollowersFrame = self.followerButton.frame;
+    newFollowersFrame.origin.y = yStatButtonPosition;
+    self.followerButton.frame = newFollowersFrame;
+
+    CGRect newFollowingFrame = self.followingButton.frame;
+    newFollowingFrame.origin.y = yStatButtonPosition;
+    self.followingButton.frame = newFollowingFrame;
+
+    if (user && ![user hasDefaultPicture]) {
+        [[TDAPIClient sharedInstance] setImage:@{@"imageView":self.userImageView,
+                                                 @"filename":user.picture,
+                                                 @"width":@70,
+                                                 @"height":@70}];
+    }
+
+    switch (buttonType) {
+        case UserProfileButtonTypeFollow:
+            self.inviteButton.enabled = YES;
+            [self.inviteButton setImage:[UIImage imageNamed:@"btn-follow.png"] forState:UIControlStateNormal];
+            [self.inviteButton setImage:[UIImage imageNamed:@"btn-follow-hit.png"] forState:UIControlStateSelected];
+            [self.inviteButton setImage:[UIImage imageNamed:@"btn-follow-hit.png"] forState:UIControlStateHighlighted];
+            [self.inviteButton setTag:kFollowButtonTag];
+            break;
+
+        case UserProfileButtonTypeFollowing:
+            self.inviteButton.enabled = YES;
+            [self.inviteButton setImage:[UIImage imageNamed:@"btn-following.png"] forState:UIControlStateNormal];
+            [self.inviteButton setImage:[UIImage imageNamed:@"btn-following-hit.png"] forState:UIControlStateSelected];
+            [self.inviteButton setImage:[UIImage imageNamed:@"btn-following-hit.png"] forState:UIControlStateHighlighted];
+            [self.inviteButton setTag:kFollowingButtonTag];
+            break;
+
+        case UserProfileButtonTypeInvite:
+            self.inviteButton.enabled = YES;
+            [self.inviteButton setImage:[UIImage imageNamed:@"btn-invite-friends.png"] forState:UIControlStateNormal];
+            [self.inviteButton setImage:[UIImage imageNamed:@"btn-invite-friends-hit.png"] forState:UIControlStateSelected];
+            [self.inviteButton setImage:[UIImage imageNamed:@"btn-invite-friends-hit.png"] forState:UIControlStateHighlighted];
+            [self.inviteButton setTag:kInviteButtonTag];
+            break;
+        case UserProfileButtonTypeUnknown:
+            self.inviteButton.enabled = NO;
+            break;
+    }
+
+    [self modifyStatButtonString:self.postButton statCount:user.postCount textString:@"\nPosts"];
+    [self modifyStatButtonString:self.prButton statCount:user.prCount textString:@"\nPRs"];
+    [self modifyStatButtonString:self.followerButton statCount:user.followerCount textString:@"\nFollowers"];
+    [self modifyStatButtonString:self.followingButton statCount:user.followingCount textString:@"\nFollowing"];
+
+    CGRect frame = self.whiteUnderView.frame;
+    frame.size.height = [[self class] heightForUserProfile:user] - kBottomMargin;
+    self.whiteUnderView.frame = frame;
+    CGFloat lineWidth = (1.0 / [[UIScreen mainScreen] scale]);
+    self.bottomLine.frame = CGRectMake(0, frame.size.height, SCREEN_WIDTH, lineWidth);
 }
 
 -(void)modifyStatButtonString:(UIButton*)button statCount:(NSNumber*)statCount textString:(NSString*)textString{
     UIFont *font = [TDConstants fontSemiBoldSized:18.0];
     UIFont *font2= [TDConstants fontRegularSized:14];
-    NSString *postString = [NSString stringWithFormat:@"%@%@", statCount.intValue > 500 ? @"500+" : statCount.stringValue, textString];
+    NSString *number;
+    if (statCount) {
+        number = statCount.intValue > 500 ? @"500+" : statCount.stringValue;
+    } else {
+        number = @"";
+    }
+    NSString *postString = [NSString stringWithFormat:@"%@%@", number, textString];
 
     NSMutableAttributedString *attString = [[NSMutableAttributedString alloc] initWithString:postString];
     [attString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, postString.length)];
@@ -223,7 +226,11 @@ static CGFloat const kMinHeight = 230 + kBottomMargin;
 }
 
 + (CGFloat)heightForUserProfile:(TDUser *)user {
-    return kMinHeight + user.bioHeight + (user.bioHeight > 0 ? 0 : 0);
+    if (user) {
+        return kMinHeight + user.bioHeight + (user.bioHeight > 0 ? 0 : 0);
+    } else {
+        return kMinHeight;
+    }
 }
 
 @end

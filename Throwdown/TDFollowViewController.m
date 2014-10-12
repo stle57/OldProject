@@ -691,7 +691,6 @@
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
     vc.userId = userId;
     vc.profileType = kFeedProfileTypeOther;
-    vc.needsProfileHeader = YES;
     [self.navigationController pushViewController:vc animated:YES];
 }
 

@@ -222,7 +222,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     NSArray *posts = [self postsForThisScreen];
 
     if ([posts count] == 0) {
-        return 1;
+        return 1 + (self.profileType != kFeedProfileTypeNone ? 1 : 0);
     }
 
     // 1 section per post, +1 if we need the Profile Header cell
@@ -231,13 +231,13 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
 
-    // 'No Posts'
-    if ([[self postsForThisScreen] count] == 0) {
+    // 1st row for Profile Header
+    if (self.profileType != kFeedProfileTypeNone && section == 0) {
         return 1;
     }
 
-    // 1st row for Profile Header
-    if (self.profileType != kFeedProfileTypeNone && section == 0) {
+    // 'No Posts'
+    if ([[self postsForThisScreen] count] == 0) {
         return 1;
     }
 
@@ -272,33 +272,9 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSInteger realRow = [[self postsForThisScreen] count] + [self noticeCount] + (self.profileType != kFeedProfileTypeNone ? 1 : 0);
-    // 'Loading' or 'No Posts' cell
-    if ([[self postsForThisScreen] count] == 0) {
-        TDNoPostsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoPostsCell"];
-        if (!cell) {
-            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoPostsCell" owner:self options:nil];
-            cell = [topLevelObjects objectAtIndex:0];
-            cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        }
-
-        
-        if (!self.loaded) {
-            cell.noPostsLabel.text = @"Loading…";
-        } else if (self.errorLoading) {
-            cell.noPostsLabel.text = @"Error loading posts";
-        } else {
-            cell.noPostsLabel.text = @"No posts yet";
-        }
-
-        // Center label (could be improved!)
-        CGRect frame = cell.noPostsLabel.frame;
-        frame.origin.y = SCREEN_HEIGHT/2 - self.navigationController.navigationBar.frame.size.height;
-        cell.noPostsLabel.frame = frame;
-        return cell;
-    }
 
     // 1st row for Profile Header
-    if (self.profileType != kFeedProfileTypeNone && indexPath.section == 0 && self.loaded && !self.errorLoading) {
+    if (self.profileType != kFeedProfileTypeNone && indexPath.section == 0) {
         TDUserProfileCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_PROFILE];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_PROFILE owner:self options:nil];
@@ -315,6 +291,29 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         } else {
             [cell setUser:user withButton:UserProfileButtonTypeInvite];
         }
+        return cell;
+    }
+
+    // 'Loading' or 'No Posts' cell
+    if ([[self postsForThisScreen] count] == 0) {
+        TDNoPostsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoPostsCell"];
+        if (!cell) {
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoPostsCell" owner:self options:nil];
+            cell = [topLevelObjects objectAtIndex:0];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        }
+
+
+        if (!self.loaded) {
+            cell.noPostsLabel.text = @"Loading…";
+        } else if (self.errorLoading) {
+            cell.noPostsLabel.text = @"Error loading posts";
+        } else {
+            cell.noPostsLabel.text = @"No posts yet";
+        }
+
+        CGFloat height = [UIScreen mainScreen].bounds.size.height - kHeightOfStatusBar - self.tableView.contentInset.top - (self.profileType == kFeedProfileTypeNone ? 0 : [TDUserProfileCell heightForUserProfile:[self getUser]]);
+        cell.noPostsLabel.center = CGPointMake(cell.view.center.x, height / 2);
         return cell;
     }
 
@@ -441,15 +440,14 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSUInteger postsCount = [[self postsForThisScreen] count];
 
-    // Just 'No Posts' cell
-    if (postsCount == 0) {
-        return [UIScreen mainScreen].bounds.size.height - self.tableView.contentInset.top;
-    }
-
     // 1st row is Profile Header
     if (self.profileType != kFeedProfileTypeNone && indexPath.section == 0) {
-        TDUser *user = [self getUser];
-        return (user ? [TDUserProfileCell heightForUserProfile:user] : 0);
+        return [TDUserProfileCell heightForUserProfile:[self getUser]];
+    }
+
+    // Just 'No Posts' cell
+    if (postsCount == 0) {
+        return [UIScreen mainScreen].bounds.size.height - kHeightOfStatusBar - self.tableView.contentInset.top - (self.profileType == kFeedProfileTypeNone ? 0 : [TDUserProfileCell heightForUserProfile:[self getUser]]);
     }
 
     NSUInteger noticeCount = [self noticeCount];
@@ -627,7 +625,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 - (void)openUserProfile:(NSNumber *)userId {
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
     vc.userId = userId;
-    vc.needsProfileHeader = YES;
     if ([userId isEqualToNumber:[TDCurrentUser sharedInstance].userId]) {
         vc.profileType = kFeedProfileTypeOwnViaButton;
         vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
@@ -698,7 +695,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 - (void)prStatButtonPressed {
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
     vc.userId = self.userId;
-    vc.needsProfileHeader = NO;
+    vc.noProfileHeader = YES;
     vc.profileType = kFeedProfileTypeNone;
     [self.navigationController pushViewController:vc animated:YES];
 }

@@ -17,6 +17,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *settingsButton;
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
 @property (strong, nonatomic) IBOutlet UIButton *backButton;
+@property (nonatomic) BOOL noProfileHeader;
+
 
 - (IBAction)settingsButtonHit:(id)sender;
 - (IBAction)closeButtonHit:(id)sender;

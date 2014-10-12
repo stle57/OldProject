@@ -50,7 +50,6 @@
 @property (weak, nonatomic) IBOutlet UIButton *profileButton;
 @property (strong, nonatomic) UIActivityIndicatorView *playerSpinner;
 @property (nonatomic, retain) NSNumber *userId;
-@property (nonatomic) BOOL needsProfileHeader;
 @property (nonatomic, retain) NSString *username;
 @property (nonatomic) BOOL loaded;
 @property (nonatomic) BOOL errorLoading;

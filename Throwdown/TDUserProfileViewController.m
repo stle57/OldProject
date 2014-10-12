@@ -31,6 +31,14 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
+- (instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        self.noProfileHeader = NO;
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
     debug NSLog(@"inside TDUserProfileViewController:viewDidLoad");
 
@@ -41,7 +49,7 @@
     [navigationBar setBarStyle:UIBarStyleBlack];
     navigationBar.translucent = NO;
     self.tableView.contentInset = UIEdgeInsetsZero;
-     
+
     // Background color
     self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
     
@@ -64,7 +72,7 @@
             self.navigationItem.leftBarButtonItem = leftBarButton;
             self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
 
-            if (self.needsProfileHeader) {
+            if (!self.noProfileHeader) {
                 UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.settingsButton]; // Settings
                 self.navigationItem.rightBarButtonItem = rightBarButton;
             }
@@ -150,7 +158,7 @@
 - (TDPost *)postForRow:(NSInteger)row {
     
     NSInteger realRow = 0;
-    if (self.needsProfileHeader) {
+    if (!self.noProfileHeader) {
         realRow = row - 1; // 1 is for the header
     } else {
         realRow = row;
@@ -164,7 +172,7 @@
 
 - (void)fetchPostsRefresh {
     NSString *fetch = self.username ? self.username : [self.userId stringValue];
-    if (self.profileType != kFeedProfileTypeNone) {
+    if (!self.noProfileHeader) {
         [[TDPostAPI sharedInstance] fetchPostsForUser:fetch start:nil success:^(NSDictionary *response) {
             [self handleNextStart:[response objectForKey:@"next_start"]];
             [self handlePostsResponse:response fromStart:YES];
@@ -182,7 +190,7 @@
             [self handleNextStart:[response objectForKey:@"next_start"]];
             [self handlePostsResponse:response fromStart:YES];
             self.user = [[TDUser alloc] initWithDictionary:[response valueForKeyPath:@"user"]];
-            self.titleLabel.text = [NSString stringWithFormat:@"%@", @"Personal Records"];
+            self.titleLabel.text = @"Personal Records";
         } error:^{
             [self endRefreshControl];
             [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastType_Warning payload:@{} delegate:nil];
