@@ -379,11 +379,26 @@
         [followCell.nameLabel sizeToFit];
         followCell.descriptionLabel.hidden = NO;
         NSString *usernameLabel = [NSString stringWithFormat:@"%@%@", @"Invite via: ", contactInfo.selectedData];
+        
         CGFloat lineHeight = 0;
-        NSAttributedString * attributedString = [TDViewControllerHelper makeParagraphedTextWithString:usernameLabel font:[TDConstants fontRegularSized:13] color:[TDConstants headerTextColor] lineHeight:lineHeight lineHeightMultipler:(lineHeight/13.0)];
+        NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:usernameLabel];
+        NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+        [paragraphStyle setLineHeightMultiple:(lineHeight/13.0)];
+        [paragraphStyle setMinimumLineHeight:lineHeight];
+        [paragraphStyle setMaximumLineHeight:lineHeight];
+        paragraphStyle.alignment = NSTextAlignmentLeft;
+        paragraphStyle.lineBreakMode = NSLineBreakByTruncatingTail;
+        [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, usernameLabel.length)];
+        [attributedString addAttribute:NSFontAttributeName value:[TDConstants fontRegularSized:13.0] range:NSMakeRange(0, usernameLabel.length)];
+        [attributedString addAttribute:NSForegroundColorAttributeName value:[TDConstants headerTextColor] range:NSMakeRange(0, usernameLabel.length)];
         
         followCell.descriptionLabel.attributedText = attributedString;
         [followCell.descriptionLabel sizeToFit];
+        
+        CGRect frame = followCell.descriptionLabel.frame;
+        frame.size.width = followCell.actionButton.frame.origin.x - frame.origin.x - TD_MARGIN;
+        followCell.descriptionLabel.frame = frame;
+        
         followCell.actionButton.hidden = NO;
         [followCell.actionButton setImage:[UIImage imageNamed:@"btn-remove.png"] forState:UIControlStateNormal];
         [followCell.actionButton setImage:[UIImage imageNamed:@"btn-remove-hit.png"] forState:UIControlStateHighlighted];
