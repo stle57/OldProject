@@ -98,7 +98,7 @@ static NSString *const kTracksKey = @"tracks";
         self.mediaSize = (width / kWidthOfMedia) * kWidthOfMedia;
 
         // add pr star at lowest level
-        self.prStar = [[UIImageView alloc] initWithFrame:CGRectMake(width - 65, 6, 32, 32)];
+        self.prStar = [[UIImageView alloc] initWithFrame:CGRectMake(width - 65, kMargin + 6, 32, 32)];
         self.prStar.image = [UIImage imageNamed:@"trophy_64x64"];
         self.prStar.hidden = YES;
         [self addSubview:self.prStar];
