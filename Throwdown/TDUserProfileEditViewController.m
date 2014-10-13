@@ -194,7 +194,7 @@
                                                 }
                                                 if (message) {
                                                     message = [NSString stringWithFormat:@"%@Please verify to confirm your info.", message];
-                                                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
                                                                                                     message:message
                                                                                                    delegate:nil
                                                                                           cancelButtonTitle:@"OK"
