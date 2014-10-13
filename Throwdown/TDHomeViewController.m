@@ -20,7 +20,6 @@
 #import "TDNavigationController.h"
 #import "TDURLHelper.h"
 #import "TDFileSystemHelper.h"
-#import "UIAlertView+TDBlockAlert.h"
 #import <QuartzCore/QuartzCore.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
@@ -170,7 +169,6 @@
         // do this last b/c it reloads the table
         [self handleNextStarts:response];
         [self handlePostsResponse:response fromStart:YES];
-
 
     } error:^{
         self.loaded = YES;
@@ -403,8 +401,12 @@
 - (BOOL)shouldPerformSegueWithIdentifier:(NSString *)identifier sender:(id)sender {
     if ([@"VideoButtonSegue" isEqualToString:identifier] && [TDFileSystemHelper getFreeDiskspace] < kMinFileSpaceForRecording) {
         NSLog(@"Warning, low disk space: %lld", [TDFileSystemHelper getFreeDiskspace]);
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Storage Space Low" message:@"There is not enough available storage to record or upload content. Clear some space to continue." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-        [alert showWithCompletionBlock:nil];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Storage Space Low"
+                                                        message:@"There is not enough available storage to record or upload content. Clear some space to continue."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
         return NO;
     }
     return YES;
