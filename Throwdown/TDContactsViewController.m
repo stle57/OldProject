@@ -78,6 +78,7 @@
     [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
     
+    
     self.filteredContactArray = [NSMutableArray arrayWithCapacity:[contacts count]];
     self.edgesForExtendedLayout = UIRectEdgeNone;
     
@@ -221,7 +222,18 @@
             TDContactInfo *contactPerson = [filteredContactArray objectAtIndex:indexPath.row];
             if (contactPerson.fullName != nil && contactPerson.fullName.length != 0) {
             TDFollowProfileCell *cell = [self createCell:tableView indexPath:indexPath contact:contactPerson];
-                return cell;
+            
+            // Check if we've already added the person from the main table view.  If so, change the reformat the cell
+            for (int index = 0; index < self.inviteList.count; index++) {
+                TDContactInfo *info = self.inviteList[index];
+                // Check if we've already added the person
+                if(info.id == contactPerson.id) {
+                    debug NSLog(@"index=%d", index);
+                    [self reformatCellToSelected:cell contactInfo:contactPerson];
+                }
+            }
+                
+            return cell;
             }
         }
     }
@@ -283,6 +295,7 @@
                                  // Modify the cell
                                  [self addToInviteList:contactPerson];
                                  [self markCellAsSelected:contactPerson indexPath:indexPath tableView:tableView];
+                                 [self markCellAsSelected:contactPerson indexPath:nil tableView:tableView];
                              }
                          }];
     } else if (contactPerson.emailList.count == 1 || contactPerson.phoneList.count == 1) {
@@ -294,6 +307,7 @@
                 
                 [self addToInviteList:contactPerson];
                 [self markCellAsSelected:contactPerson indexPath:indexPath tableView:tableView];
+                [self markCellAsSelected:contactPerson indexPath:nil tableView:tableView];
             }
         } else if (contactPerson.phoneList.count == 1) {
             NSString *formatedPhone =[TDViewControllerHelper validatePhone:contactPerson.phoneList[0]];
@@ -302,6 +316,7 @@
                 contactPerson.inviteType = kInviteType_Phone;
                 [self addToInviteList:contactPerson];
                 [self markCellAsSelected:contactPerson indexPath:indexPath tableView:tableView];
+                [self markCellAsSelected:contactPerson indexPath:nil tableView:tableView];
             }
         }
         
@@ -367,8 +382,30 @@
 - (void)markCellAsSelected:(TDContactInfo*)contactInfo indexPath:(NSIndexPath*)indexPath tableView:(UITableView*)tableView{
     debug NSLog(@"mark as selected");
     
-    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
-    
+    if (indexPath != nil) {
+        UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+        [self reformatCellToSelected:cell contactInfo:contactInfo];
+    } else {
+        debug NSLog(@"need to find contact in the table, and change marking!");
+        NSUInteger index = 0;
+
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"self.id == %@", contactInfo.id];
+        if (tableView == self.searchDisplayController.searchResultsTableView){
+            NSArray * selectedObject = [self.contacts filteredArrayUsingPredicate:predicate];
+            if (selectedObject){
+                index = [self.contacts indexOfObject:selectedObject[0]];
+                debug NSLog(@"index=%d", (int)index);
+                NSIndexPath *indexPath = [NSIndexPath indexPathForRow:(int)index inSection:0];
+                UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+                [self reformatCellToSelected:cell contactInfo:selectedObject[0]];
+            }
+        } else if (tableView == self.tableView) {
+            debug NSLog(@"have contact info to mark in search view");
+        }
+    }
+}
+
+- (void)reformatCellToSelected:(UITableViewCell*)cell contactInfo:(TDContactInfo*)contactInfo{
     if (cell && [cell isKindOfClass:[TDFollowProfileCell class]]) {
         TDFollowProfileCell *followCell = (TDFollowProfileCell*)cell;
         followCell.accessoryType = UITableViewCellAccessoryNone;
@@ -403,11 +440,8 @@
         [followCell.actionButton setImage:[UIImage imageNamed:@"btn-remove.png"] forState:UIControlStateNormal];
         [followCell.actionButton setImage:[UIImage imageNamed:@"btn-remove-hit.png"] forState:UIControlStateHighlighted];
         [followCell.actionButton setImage:[UIImage imageNamed:@"btn-remove-hit.png"] forState:UIControlStateSelected];
-    } else {
-        debug NSLog(@"did not modify anything!");
     }
 }
-
 - (void)addToInviteList:(TDContactInfo*)contact {
     // Check if we've already added the person
     NSArray *filteredArray =
@@ -440,8 +474,8 @@
     
 	// Filter the array using NSPredicate
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF.fullName contains[c] %@",searchText];
-    NSArray *tempArray = [contacts filteredArrayUsingPredicate:predicate];
-    filteredContactArray = [NSMutableArray arrayWithArray:tempArray];
+    NSArray *tempArray = [self.contacts filteredArrayUsingPredicate:predicate];
+    self.filteredContactArray = [NSMutableArray arrayWithArray:tempArray];
 }
 
 #pragma mark - UISearchDisplayController Delegate Methods
@@ -493,33 +527,26 @@
 
 - (void)actionButtonPressedFromRow:(NSInteger)row tag:(NSInteger)tag userId:(NSNumber*)userId{
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0] ;
-    if (self.tableView.hidden) {
+    if (self.searchDisplayController.isActive) {
         // Remove from invite list on
         UITableViewCell* cell = [self.searchDisplayController.searchResultsTableView cellForRowAtIndexPath:indexPath];
-        if (cell && [cell isKindOfClass:[TDFollowProfileCell class]]) {
-            TDFollowProfileCell *revertedCell = (TDFollowProfileCell*)cell;
-            revertedCell.actionButton.hidden = YES;
-            revertedCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            
-            revertedCell.descriptionLabel.hidden = YES;
-            CGRect frame = revertedCell.nameLabel.frame;
-            frame.origin.y = MIDDLE_CELL_Y_AXIS;
-            revertedCell.nameLabel.frame = frame;
-            revertedCell.nameLabel.font = [TDConstants fontRegularSized:16];
+        [self reformatCellToUnselected:cell];
+        
+        // Need to reformat on the entire list too
+        NSUInteger index = 0;
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"self.id == %@", userId];
+        NSArray * selectedObject = [self.contacts filteredArrayUsingPredicate:predicate];
+        if (selectedObject){
+            index = [self.contacts indexOfObject:selectedObject[0]];
+            debug NSLog(@"index=%d", (int)index);
+            NSIndexPath *indexPath = [NSIndexPath indexPathForRow:(int)index inSection:0];
+            UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+            [self reformatCellToUnselected:cell];
         }
+        
     } else {
         UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:indexPath];
-        if (cell && [cell isKindOfClass:[TDFollowProfileCell class]]) {
-            TDFollowProfileCell *revertedCell = (TDFollowProfileCell*)cell;
-            revertedCell.actionButton.hidden = YES;
-            revertedCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-            
-            revertedCell.descriptionLabel.hidden = YES;
-            CGRect frame = revertedCell.nameLabel.frame;
-            frame.origin.y = MIDDLE_CELL_Y_AXIS;
-            revertedCell.nameLabel.frame = frame;
-            revertedCell.nameLabel.font = [TDConstants fontRegularSized:16];
-        }
+        [self reformatCellToUnselected:cell];
     }
     
     // Remove from invite list of this view
@@ -528,6 +555,20 @@
     [self.inviteList removeAllObjects];
     if ([filteredArray count] > 0) {
         [self.inviteList addObjectsFromArray:filteredArray];
+    }
+}
+
+- (void)reformatCellToUnselected:(UITableViewCell*)cell {
+    if (cell && [cell isKindOfClass:[TDFollowProfileCell class]]) {
+        TDFollowProfileCell *revertedCell = (TDFollowProfileCell*)cell;
+        revertedCell.actionButton.hidden = YES;
+        revertedCell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        
+        revertedCell.descriptionLabel.hidden = YES;
+        CGRect frame = revertedCell.nameLabel.frame;
+        frame.origin.y = MIDDLE_CELL_Y_AXIS;
+        revertedCell.nameLabel.frame = frame;
+        revertedCell.nameLabel.font = [TDConstants fontRegularSized:16];
     }
 }
 @end

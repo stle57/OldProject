@@ -76,7 +76,6 @@
     if (!cell) {
         NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDSocialNetworkCell" owner:self options:nil];
         cell = [topLevelObjects objectAtIndex:0];
-        cell.titleLabel.font = [TDConstants fontRegularSized:18];
     }
     cell.topLine.hidden = YES;
     cell.bottomLine.hidden = YES;

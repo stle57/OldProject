@@ -24,7 +24,7 @@
 @end
 
 static NSString *topHeaderText1 =@"Receive a free Throwdown T-shirt if\nthree of your friends join!";
-static NSString *topHeaderText2 = @"Invite friends to join with a phone number or email\naddress, or select from your contacts";
+static NSString *topHeaderText2 = @"Invite friends to join with a phone number or email address, or select from your contacts";
 
 @implementation TDInviteViewController
 
@@ -62,6 +62,7 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
     [self.nextButton sizeToFit];
     UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.nextButton]; // NextButton
     self.navigationItem.rightBarButtonItem = rightBarButton;
+    self.nextButton.hidden = YES;
     
     // Title
     self.titleLabel.text = @"Invite Friends";
@@ -95,6 +96,7 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
     
     [super viewWillAppear:animated];
     
+    [self displayNextButton];
     [self checkForNextButton];
     [self.tableView reloadData];
 }
@@ -135,7 +137,9 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
             CGRect frame = topLabel.frame;
             frame.origin.x = SCREEN_WIDTH/2 - topLabel.frame.size.width/2;
             topLabel.frame = frame;
-            
+            debug NSLog(@"topLabel frame-%@", NSStringFromCGRect(topLabel.frame));
+            topLabel.layer.borderColor = [[UIColor redColor] CGColor];
+            topLabel.layer.borderWidth = 2.0;
             if ([self.headerLabels count] == 0) {
                 [self.headerLabels insertObject:topLabel atIndex:section];
             } else {
@@ -152,12 +156,15 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
                 UILabel *bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(TD_MARGIN, HEADER1_TOP_MARGIN + topLabel.frame.size.height + HEADER1_MIDDLE_MARGIN, SCREEN_WIDTH - TD_MARGIN, 100)];
                 UIFont *bottomFont = [TDConstants fontRegularSized:14.0];
                 NSAttributedString *bottomAttString = [TDViewControllerHelper makeParagraphedTextWithString:topHeaderText2 font:bottomFont color:[TDConstants helpTextColor] lineHeight:18.0 lineHeightMultipler:(18.0/14.0)];
-                [bottomLabel setTextAlignment:NSTextAlignmentCenter];
                 [bottomLabel setLineBreakMode:NSLineBreakByWordWrapping];
                 [bottomLabel setAttributedText:bottomAttString];
                 [bottomLabel setNumberOfLines:0];
                 [bottomLabel sizeToFit];
             
+                // This helps realign the text on the screen
+                CGRect bottomLabelFrame = bottomLabel.frame;
+                bottomLabelFrame.size.width = bottomLabelFrame.size.width - TD_MARGIN;
+                bottomLabel.frame = bottomLabelFrame;
                 [self.headerLabels insertObject:bottomLabel atIndex:section];
             }
         }
@@ -485,6 +492,14 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
     }
 }
 
+- (void) displayNextButton {
+    if ([self.inviteList count] == 0) {
+        self.nextButton.hidden = YES;
+    } else {
+        self.nextButton.hidden = NO;
+    }
+
+}
 - (void)insertDataIntoInviteList:(NSIndexPath*)indexPath1 {
     NSString *formatedPhone;
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath1];
@@ -514,6 +529,7 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
         }
         inviteCell.contactTextField.text = @"";
         [self.tableView reloadData];
+        [self displayNextButton];
     }
 }
 
@@ -576,8 +592,7 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
         NSArray *filteredArray = [self.inviteList filteredArrayUsingPredicate:predicate];
         if ([filteredArray count] == 0) {
             foundEntry = YES;
-            
-            [self.inviteList addObject:object];
+            [self.inviteList insertObject:object atIndex:0];
         }
     }
     [self checkForNextButton];
@@ -593,6 +608,7 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
         if (tag == 1001) {
             [self.inviteList removeObjectAtIndex:row];
             [self.tableView reloadData];
+            [self displayNextButton];
         }
     }
 }

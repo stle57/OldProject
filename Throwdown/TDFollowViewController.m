@@ -101,7 +101,7 @@
     self.searchDisplayController.searchBar.clipsToBounds = YES;
 
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextAlignment:NSTextAlignmentLeft];
-    
+
     self.searchDisplayController.searchResultsTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     // Changes the "search for people" font and text color

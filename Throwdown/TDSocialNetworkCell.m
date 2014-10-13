@@ -15,15 +15,13 @@
     CGRect cellFrame = self.frame;
     cellFrame.size.width = SCREEN_WIDTH;
     self.frame = cellFrame;
-    debug NSLog(@"social network cell=%@", NSStringFromCGRect(self.frame));
     
     CGRect contentViewFrame = self.contentView.frame;
     contentViewFrame.size.width = SCREEN_WIDTH;
     self.contentView.frame = contentViewFrame;
 
-    self.titleLabel.font = [TDConstants fontRegularSized:16.0];
+    self.titleLabel.font = [TDConstants fontRegularSized:18.0];
     self.titleLabel.textColor = [TDConstants headerTextColor];
-    debug NSLog(@"titleLabel frame = %@", NSStringFromCGRect(self.titleLabel.frame));
     
     self.selectionStyle = UITableViewCellSelectionStyleGray;
     self.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
