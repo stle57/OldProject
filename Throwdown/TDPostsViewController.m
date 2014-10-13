@@ -15,6 +15,7 @@
 #import "TDCustomRefreshControl.h"
 #import "TDFollowViewController.h"
 #import "TDInviteViewController.h"
+#import "TDNoFollowingCell.h"
 
 static CGFloat const kWhiteBottomPadding = 6;
 static CGFloat const kPostMargin = 22;
@@ -56,7 +57,12 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     TDNoMorePostsCell *uploadMoreCell = [topLevelObjects objectAtIndex:0];
     uploadMoreHeight = uploadMoreCell.frame.size.height;
     uploadMoreCell = nil;
+    topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoFollowingCell" owner:self options:nil];
+    TDNoFollowingCell *noFollowingCell = [topLevelObjects objectAtIndex:0];
+    noFollowingHeight = noFollowingCell.frame.size.height - kHeightOfStatusBar;
+    noFollowingCell = nil;
 
+    
     self.loaded = NO;
     self.errorLoading = NO;
 
@@ -150,6 +156,11 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 // Override this to return the current set of posts for the current feedƒ- 1
 - (NSArray *)postsForThisScreen {
     return nil;
+}
+
+// Override this to return which feed we are on
+- (BOOL)onAllFeed {
+    return NO;
 }
 
 // Override to return user object if we're on profile view
@@ -303,12 +314,21 @@ static CGFloat const kHeightOfStatusBar = 64.0;
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
         }
 
-
         if (!self.loaded) {
             cell.noPostsLabel.text = @"Loading…";
         } else if (self.errorLoading) {
             cell.noPostsLabel.text = @"Error loading posts";
         } else {
+            if (![self onAllFeed] && [TDCurrentUser sharedInstance].currentUserObject.following == 0) {
+                debug NSLog(@"create a different cell and return");
+                TDNoFollowingCell *noFollowCell = [tableView dequeueReusableCellWithIdentifier:@"TDNoFollowingCell"];
+                if (!noFollowCell) {
+                    NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoFollowingCell" owner:self options:nil];
+                    noFollowCell = [topLevelObjects objectAtIndex:0];
+                    noFollowCell.selectionStyle = UITableViewCellSelectionStyleNone;
+                }
+                return noFollowCell;
+            }
             cell.noPostsLabel.text = @"No posts yet";
         }
 

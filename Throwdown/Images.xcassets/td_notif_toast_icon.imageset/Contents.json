@@ -6,12 +6,13 @@
     },
     {
       "idiom" : "universal",
-      "scale" : "2x"
+      "scale" : "2x",
+      "filename" : "td_notif_toast_icon@2x.png"
     },
     {
       "idiom" : "universal",
       "scale" : "3x",
-      "filename" : "icon-add-folower-xl@3x.png"
+      "filename" : "td_notif_toast_icon@3x.png"
     }
   ],
   "info" : {

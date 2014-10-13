@@ -83,7 +83,7 @@
             self.closeButton.enabled = YES;
             break;
         case kToastType_InviteSent:
-            iconImage = [UIImage imageNamed:@"td_info_toast_icon"];
+            iconImage = [UIImage imageNamed:@"td_notif_toast_icon"];
             self.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:.95f];
             [self.label setFont:[UIFont systemFontOfSize:14]];
             self.label.textColor = [TDConstants headerTextColor];

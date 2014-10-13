@@ -24,11 +24,13 @@
 #import <QuartzCore/QuartzCore.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
+#include "TDFollowViewController.h"
 
 #define CELL_IDENTIFIER @"TDPostView"
 
 @interface TDHomeViewController ()
 @property (weak, nonatomic) IBOutlet UISegmentedControl *feedSelectionControl;
+@property (weak, nonatomic) IBOutlet UIButton *searchTDUsersButton;
 @property (weak, nonatomic) IBOutlet UILabel *badgeCountLabel;
 @property (nonatomic) NSNumber *badgeCount;
 
@@ -597,6 +599,13 @@
     [self reloadPosts];
     [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
     NSLog(@"selection is %ld", (long)[self.feedSelectionControl selectedSegmentIndex]);
+}
+
+- (IBAction)searchTDUsersButtonPressed:(id)sender {
+    TDFollowViewController *vc = [[TDFollowViewController alloc] initWithNibName:@"TDFollowViewController" bundle:nil ];
+    vc.followControllerType = kUserListType_TDUsers;
+    vc.profileUser = [TDCurrentUser sharedInstance].currentUserObject;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 @end

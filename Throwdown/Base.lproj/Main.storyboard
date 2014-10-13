@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="DPQ-qf-8sb">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="DPQ-qf-8sb">
     <dependencies>
+        <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -1464,8 +1465,20 @@ The Throwdown Community</string>
                     </view>
                     <navigationItem key="navigationItem" id="q28-Zj-hoc">
                         <nil key="title"/>
+                        <barButtonItem key="leftBarButtonItem" image="icon-add follower in text" style="plain" id="ZRl-hg-43W">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="J0O-6a-YHw">
+                                <rect key="frame" x="16" y="11" width="21" height="22"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" image="nav-add-follower"/>
+                                <state key="selected" image="nav-add-follower-hit"/>
+                                <state key="highlighted" image="nav-add-follower-hit"/>
+                                <connections>
+                                    <action selector="searchTDUsersButtonPressed:" destination="y50-ZI-obS" eventType="touchUpInside" id="Q73-dy-0bu"/>
+                                </connections>
+                            </button>
+                        </barButtonItem>
                         <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="Vwl-FS-yeJ" userLabel="Feed Selection">
-                            <rect key="frame" x="228" y="8" width="145" height="29"/>
+                            <rect key="frame" x="227.5" y="7.5" width="145" height="29"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <segments>
                                 <segment title="All"/>
@@ -1485,6 +1498,7 @@ The Throwdown Community</string>
                         <outlet property="notificationButton" destination="Tdo-gQ-7zF" id="6A5-ER-Qrc"/>
                         <outlet property="profileButton" destination="Uso-in-hkr" id="Q4Y-XF-DPw"/>
                         <outlet property="recordButton" destination="0Pj-wg-KUs" id="FuF-mB-bbc"/>
+                        <outlet property="searchTDUsersButton" destination="J0O-6a-YHw" id="PME-iG-5z9"/>
                         <outlet property="tableView" destination="w9B-bo-GMv" id="b4c-qq-nhR"/>
                     </connections>
                 </viewController>
@@ -1761,9 +1775,12 @@ The Throwdown Community</string>
         <image name="camera_grey_88x55_hit" width="44" height="27"/>
         <image name="cf_thrusters" width="667" height="445"/>
         <image name="feed-background-grey" width="320" height="568"/>
+        <image name="icon-add follower in text" width="21" height="17"/>
         <image name="icon-cross" width="28" height="28"/>
         <image name="iphone-1" width="191" height="402"/>
         <image name="iphone-2" width="191" height="402"/>
+        <image name="nav-add-follower" width="21" height="17"/>
+        <image name="nav-add-follower-hit" width="21" height="17"/>
         <image name="nav-close" width="17" height="17"/>
         <image name="nav-close-hit" width="17" height="17"/>
         <image name="nav_notif" width="40" height="40"/>

@@ -37,6 +37,7 @@
     CGFloat statButtonHeight;
     CGFloat noPostsHeight;
     CGFloat uploadMoreHeight;
+    CGFloat noFollowingHeight;
     BOOL updatingAtBottom;
     BOOL showBottomSpinner;
     CGRect statusBarFrame;
@@ -56,6 +57,7 @@
 @property (nonatomic) kFeedProfileType profileType;
 
 - (NSArray *)postsForThisScreen;
+- (BOOL)onAllFeed;
 - (TDUser *)getUser;
 - (void)reloadPosts;
 - (void)refreshPostsList;
