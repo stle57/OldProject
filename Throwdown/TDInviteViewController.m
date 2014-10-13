@@ -137,9 +137,7 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
             CGRect frame = topLabel.frame;
             frame.origin.x = SCREEN_WIDTH/2 - topLabel.frame.size.width/2;
             topLabel.frame = frame;
-            debug NSLog(@"topLabel frame-%@", NSStringFromCGRect(topLabel.frame));
-            topLabel.layer.borderColor = [[UIColor redColor] CGColor];
-            topLabel.layer.borderWidth = 2.0;
+
             if ([self.headerLabels count] == 0) {
                 [self.headerLabels insertObject:topLabel atIndex:section];
             } else {
