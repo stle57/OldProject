@@ -48,5 +48,6 @@ typedef enum {
 - (void)removeLastComment;
 - (void)replaceUser:(TDUser *)newUser;
 - (void)replaceLikers:(NSArray *)newLikers;
+- (void)updateFromNotification:(NSNotification *)n;
 - (void)updateUserInfoFor:(TDUser *)newUser;
 @end

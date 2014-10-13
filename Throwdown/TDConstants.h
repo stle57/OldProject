@@ -35,6 +35,13 @@ enum {
 };
 typedef NSInteger kInviteType;
 
+// for TDNotificationUpdatePost notifications, set user data's "change" field to a NSNumber version of these:
+const typedef NS_ENUM(NSUInteger, kUpdatePostType) {
+    kUpdatePostTypeLike,
+    kUpdatePostTypeUnlike,
+    kUpdatePostTypeAddComment
+};
+
 // Cloud
 static NSString *const RSUsername = @"throwdown";
 static NSString *const RSApiKey = @"c93395c50887cf4926d2d24e1d9ed4e7";
@@ -77,6 +84,7 @@ static NSString *const TDNotificationUploadComments = @"TDNotificationUploadComm
 static NSString *const TDNotificationUploadCancelled = @"TDNotificationUploadCancelled";
 static NSString *const TDNotificationUpdate = @"TDNotificationUpdate";
 static NSString *const TDNotificationRemovePost = @"TDNotificationRemovePost";
+static NSString *const TDNotificationUpdatePost = @"TDNotificationUpdatePost"; // When a post gets a new comment or like, tells feeds to update
 static NSString *const TDNotificationRemovePostFailed = @"TDNotificationRemovePostFailed";
 static NSString *const TDNotificationNewCommentPostInfo = @"TDNotificationNewCommentPostInfo";
 static NSString *const TDNotificationNewCommentFailed = @"TDNotificationNewCommentFailed";
@@ -97,7 +105,7 @@ static CGFloat const kCommentCellUserHeight = 18.0;
 static CGFloat const kCommentPadding = 8; // padding between comments
 static CGFloat const kCommentMargin = 40; // 30 on left, 10 on right
 static CGFloat const kCommentLastPadding = 8; // bottom padding of comments
-static CGFloat const kCommentLastPaddingDetail = 30; // same as above for detail view
+static CGFloat const kCommentLastPaddingDetail = 25; // same as above for detail view
 static NSInteger const kCommentMaxCharacters = 500; // MAX number of characters allowed in a comment or post
 
 // 1.27 is the lowest we can go without cutting off the emoji

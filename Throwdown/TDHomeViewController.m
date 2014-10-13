@@ -54,6 +54,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadHome:) name:TDNotificationReloadHome object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removePost:) name:TDNotificationRemovePost object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePost:) name:TDNotificationUpdatePost object:nil];
 
     [self.badgeCountLabel setFont:[TDConstants fontSemiBoldSized:11]];
     [self.badgeCountLabel.layer setCornerRadius:9.0];
@@ -325,7 +326,34 @@
     });
 }
 
-#pragma mark - Update Posts After User Change Notification
+#pragma mark - Update Posts
+
+- (void)updatePost:(NSNotification *)n {
+    BOOL changeMade = NO;
+    NSNumber *postId = (NSNumber *)[n.userInfo objectForKey:@"postId"];
+
+    for (TDPost *post in self.posts) {
+        if ([post.postId isEqualToNumber:postId]) {
+            [post updateFromNotification:n];
+            changeMade = YES;
+            break;
+        }
+    }
+    for (TDPost *post in self.postsFollowing) {
+        if ([post.postId isEqualToNumber:postId]) {
+            [post updateFromNotification:n];
+            changeMade = YES;
+            break;
+        }
+    }
+
+    if (changeMade) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
+    }
+}
+
 - (void)updatePostsAfterUserUpdate:(NSNotification *)notification {
     debug NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
 

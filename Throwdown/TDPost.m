@@ -7,6 +7,8 @@
 //
 
 #import "TDPost.h"
+#import "TDConstants.h"
+#import "TDCurrentUser.h"
 #import "TDViewControllerHelper.h"
 
 static NSString *const kKindVideo = @"video";
@@ -107,6 +109,9 @@ static NSString *const kKindText  = @"text";
 }
 
 - (void)addComment:(TDComment *)newComment {
+    if (newComment == nil) {
+        return;
+    }
     NSMutableArray *newArray = [NSMutableArray arrayWithArray:self.comments];
     [newArray addObject:newComment];
     _comments = newArray;
@@ -176,6 +181,21 @@ static NSString *const kKindText  = @"text";
 
 - (void)replaceLikers:(NSArray *)newLikers {
     _likers = newLikers;
+}
+
+- (void)updateFromNotification:(NSNotification *)n {
+    NSUInteger change = [(NSNumber *)[n.userInfo objectForKey:@"change"] unsignedIntegerValue];
+    switch (change) {
+        case kUpdatePostTypeLike:
+            [self addLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
+            break;
+        case kUpdatePostTypeUnlike:
+            [self removeLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
+            break;
+        case kUpdatePostTypeAddComment:
+            [self addComment:[n.userInfo objectForKey:@"comment"]];
+            break;
+    }
 }
 
 - (void)updateUserInfoFor:(TDUser *)newUser {

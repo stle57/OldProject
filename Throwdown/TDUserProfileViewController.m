@@ -91,6 +91,7 @@
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removePost:) name:TDNotificationRemovePost object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePost:) name:TDNotificationUpdatePost object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateUserFollowingCount:) name:TDUpdateFollowingCount object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateUserFollowerCount:) name:TDUpdateFollowerCount object:nil];
 }
@@ -310,6 +311,24 @@
     }
 
     [self.tableView reloadData];
+}
+
+- (void)updatePost:(NSNotification *)n {
+    BOOL changeMade = NO;
+    NSNumber *postId = (NSNumber *)[n.userInfo objectForKey:@"postId"];
+
+    for (TDPost *post in self.posts) {
+        if ([post.postId isEqualToNumber:postId]) {
+            [post updateFromNotification:n];
+            changeMade = YES;
+            break;
+        }
+    }
+    if (changeMade) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
+    }
 }
 
 - (void)removePost:(NSNotification *)n {
