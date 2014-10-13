@@ -59,11 +59,6 @@ static CGFloat const kMaxUsernameWidth = 230;
     [TDViewControllerHelper linkUsernamesInLabel:self.messageLabel users:comment.mentions];
     self.messageLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:self.messageLabel.attributedText];
 
-    CGRect messagesFrame = self.messageLabel.frame;
-    messagesFrame.size.width = SCREEN_WIDTH - kCommentMargin;
-    messagesFrame.size.height = comment.messageHeight;
-    self.messageLabel.frame = messagesFrame;
-
     self.commentIcon.hidden = !showIcon;
 }
 
