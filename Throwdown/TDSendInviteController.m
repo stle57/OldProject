@@ -323,7 +323,7 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     switch (indexPath.section) {
         case 0:
-            return 43.0;
+            return 44.0;
             break;
         case 1:
             return 0;
