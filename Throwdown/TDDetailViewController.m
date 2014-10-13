@@ -131,6 +131,7 @@ static int const kToolbarHeight = 64;
     self.loaded = NO;
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadPosts:) name:TDRefreshPostsNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePost:) name:TDNotificationUpdatePost object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newCommentFailed:) name:TDNotificationNewCommentFailed object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
 
@@ -147,7 +148,6 @@ static int const kToolbarHeight = 64;
 
     CGFloat height = [UIScreen mainScreen].bounds.size.height - self.commentView.layer.frame.size.height;
     self.tableView.frame = CGRectMake(0, 0, SCREEN_WIDTH, height - kToolbarHeight);
-    NSLog(@"table frame: %@", NSStringFromCGRect(self.tableView.frame));
 
     if (!self.loaded) {
         if (self.post && self.post.postId) {
@@ -270,6 +270,10 @@ static int const kToolbarHeight = 64;
 #pragma mark - Notifications
 
 - (void)reloadPosts:(NSNotification*)notification {
+    [self reloadPosts];
+}
+
+- (void)reloadPosts {
     if (!self.liking) {
         [[TDPostAPI sharedInstance] getFullPostInfoForPost:[self.postId stringValue] success:^(NSDictionary *response) {
             [self fullPostReturn:response];
@@ -375,7 +379,6 @@ static int const kToolbarHeight = 64;
         } else {
             CGFloat textHeight = [TDDetailsLikesCell heightOfLikersLabel:self.post.likers];
             textHeight = (textHeight < self.minLikeheight ? self.minLikeheight : textHeight + 25);
-            NSLog(@"like height %f", textHeight);
             return textHeight;
         }
     }
@@ -399,11 +402,8 @@ static int const kToolbarHeight = 64;
 - (void)likeButtonPressedFromLikes {
     if (self.post.postId) {
         self.liking = YES;
-
-        // Add the like for the update
         [self.post addLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
         [self updateAllRowsExceptTopOne];
-
         [[TDPostAPI sharedInstance] likePostWithId:self.post.postId];
     }
 }
@@ -412,7 +412,6 @@ static int const kToolbarHeight = 64;
     debug NSLog(@"TDDetailViewController-unLikeButtonPressedLikes");
     if (self.post.postId) {
         self.liking = YES;
-
         [self.post removeLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
         [self updateAllRowsExceptTopOne];
 
@@ -521,8 +520,6 @@ static int const kToolbarHeight = 64;
         self.commentView.frame = commentFrame;
         self.sendButton.frame = buttonFrame;
         self.tableView.frame = tableFrame;
-        NSLog(@"table frame: %@", NSStringFromCGRect(self.tableView.frame));
-
     } completion:nil];
 }
 
@@ -544,12 +541,9 @@ static int const kToolbarHeight = 64;
 }
 
 - (void)keyboardFrameChanged:(CGRect)keyboardFrame {
-    NSLog(@"textview from frame: %@", NSStringFromCGRect(keyboardFrame));
     CGRect tableFrame = self.tableView.layer.frame;
     tableFrame.size.height = keyboardFrame.origin.y - self.commentView.layer.frame.size.height - kToolbarHeight;
     self.tableView.frame = tableFrame;
-    NSLog(@"table frame: %@", NSStringFromCGRect(self.tableView.frame));
-
 
     CGPoint current = self.commentView.center;
     current.y = keyboardFrame.origin.y - (self.commentView.layer.frame.size.height / 2) - kToolbarHeight;
@@ -595,13 +589,10 @@ static int const kToolbarHeight = 64;
     commentFrame.size.height = textFrame.size.height + kCommentFieldPadding;
     commentFrame.origin.y = bottom - height - kCommentFieldPadding;
     self.commentView.frame = commentFrame;
-    NSLog(@"comment frame : %@", NSStringFromCGRect(commentFrame));
 
     CGRect tableFrame = self.tableView.layer.frame;
     tableFrame.size.height = bottom - height - kCommentFieldPadding;
     self.tableView.frame = tableFrame;
-    NSLog(@"table frame: %@", NSStringFromCGRect(self.tableView.frame));
-
 
     CGRect buttonFrame = self.sendButton.frame;
     buttonFrame.origin.y = self.commentView.layer.frame.size.height - buttonFrame.size.height;
@@ -634,6 +625,20 @@ static int const kToolbarHeight = 64;
         [[TDCurrentUser sharedInstance] registerForPushNotifications:@"Would you like to be notified of future replies?"];
 
         [[TDPostAPI sharedInstance] postNewComment:body forPost:self.post.postId];
+    }
+}
+
+- (void)updatePost:(NSNotification *)n {
+    if (self.liking) {
+        self.liking = NO;
+        return;
+    }
+    NSNumber *postId = (NSNumber *)[n.userInfo objectForKey:@"postId"];
+    if ([self.post.postId isEqualToNumber:postId]) {
+        [self.post updateFromNotification:n];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self reloadPosts];
+        });
     }
 }
 

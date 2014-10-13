@@ -43,23 +43,15 @@ static CGFloat const kLikersLineMultiple = 1.05;
 - (IBAction)likeButtonPressed:(UIButton *)sender {
     debug NSLog(@"TDDetailsLikesCell-likeButtonPressed:%@", delegate);
     if (like) {
-        like = !like;
-        if (delegate) {
-            if ([delegate respondsToSelector:@selector(unLikeButtonPressedFromLikes)]) {
-                [delegate unLikeButtonPressedFromLikes];
-            }
+        if (delegate && [delegate respondsToSelector:@selector(unLikeButtonPressedFromLikes)]) {
+            [delegate unLikeButtonPressedFromLikes];
         }
     } else {
-        like = !like;
-        if (delegate) {
-            if ([delegate respondsToSelector:@selector(likeButtonPressedFromLikes)]) {
-                [delegate likeButtonPressedFromLikes];
-            }
+        if (delegate && [delegate respondsToSelector:@selector(likeButtonPressedFromLikes)]) {
+            [delegate likeButtonPressedFromLikes];
         }
     }
-
-    // Do it quick for speedy UI
-    [self setLike:like];
+    like = !like;
 }
 
 -(void)setLike:(BOOL)liked {

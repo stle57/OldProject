@@ -268,12 +268,20 @@
 - (void)likePostWithId:(NSNumber *)postId {
     debug NSLog(@"inside likePostWithId");
     //  /api/v1/posts/{post's id}/like.json
-    if( self.lastLikedPostId == nil ) {
+    if (self.lastLikedPostId == nil) {
         debug NSLog(@"setting event count inside like post");
         [iRate sharedInstance].eventCount = [iRate sharedInstance].eventCount + TD_LIKE_EVENT_COUNT;
         self.lastLikedPostId = postId;
     }
-    
+
+    // Notify any views to reload
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUpdatePost
+                                                        object:self
+                                                      userInfo:@{
+                                                                 @"postId": postId,
+                                                                 @"change": [NSNumber numberWithUnsignedInteger:kUpdatePostTypeLike]
+                                                                 }];
+
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts/[POST_ID]/like.json"];
     url = [url stringByReplacingOccurrencesOfString:@"[POST_ID]"
                                          withString:[postId stringValue]];
@@ -289,10 +297,8 @@
             }
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-
         debug NSLog(@"LIKE Error: %@", error);
-
-        if (error && [operation.response statusCode] == 401) {
+        if ([operation.response statusCode] == 401) {
             [self logOutUser];
         }
     }];
@@ -300,14 +306,21 @@
 
 - (void)unLikePostWithId:(NSNumber *)postId {
     //  /api/v1/posts/{post's id}/like.json
-    if( self.lastLikedPostId == nil ) {
+    if (self.lastLikedPostId == nil) {
         debug NSLog(@"setting event count");
-        // This takes care of the scenario where the user liked a post and then immediately disliked
-        // it.
+        // This takes care of the scenario where the user liked a post and then immediately disliked it.
         [iRate sharedInstance].eventCount = [iRate sharedInstance].eventCount + TD_LIKE_EVENT_COUNT;
         self.lastLikedPostId = postId;
     }
-    
+
+    // Notify any views to reload
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUpdatePost
+                                                        object:self
+                                                      userInfo:@{
+                                                                 @"postId": postId,
+                                                                 @"change": [NSNumber numberWithUnsignedInteger:kUpdatePostTypeUnlike]
+                                                                 }];
+
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts/[POST_ID]/like.json"];
     url = [url stringByReplacingOccurrencesOfString:@"[POST_ID]"
                                          withString:[postId stringValue]];
@@ -324,8 +337,8 @@
 
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"UNLIKE Error: %@", error);
-        if (error && [operation.response statusCode] == 401) {
-                [self logOutUser];
+        if ([operation.response statusCode] == 401) {
+            [self logOutUser];
         }
     }];
 }
@@ -346,10 +359,8 @@
         if (errorCallback) {
             errorCallback();
         }
-        if (error) {
-            if ([operation.response statusCode] == 401) {
-                [self logOutUser];
-            }
+        if ([operation.response statusCode] == 401) {
+            [self logOutUser];
         }
     }];
 }
@@ -368,13 +379,16 @@
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             NSDictionary *returnDict = [NSDictionary dictionaryWithDictionary:responseObject];
             if ([returnDict objectForKey:@"success"] && [[returnDict objectForKey:@"success"] boolValue]) {
-                [self notifyPostsRefreshed];
                 debug NSLog(@"New Comment Success!:%@", returnDict);
 
                 // Notify any views to reload
-                [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationNewCommentPostInfo
+                [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUpdatePost
                                                                     object:self
-                                                                  userInfo:returnDict];
+                                                                  userInfo:@{
+                                                                             @"postId": postId,
+                                                                             @"change": [NSNumber numberWithUnsignedInteger:kUpdatePostTypeAddComment],
+                                                                             @"comment": returnDict
+                                                                             }];
             } else {
                 [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationNewCommentFailed object:nil userInfo:nil];
             }
