@@ -160,9 +160,7 @@
         }];
     } else if (self.followControllerType == kUserListType_TDUsers) {
         self.searchDisplayController.searchBar.hidden = NO;
-        self.searchDisplayController.searchBar.backgroundImage = [UIImage new];
-        self.searchDisplayController.searchBar.backgroundColor = [TDConstants darkBackgroundColor];
-        self.searchDisplayController.searchBar.barTintColor = [TDConstants darkBackgroundColor];
+        [[UISearchBar appearance] setBackgroundImage:[UIImage imageNamed:@"e6e6e6_square.png"] forBarPosition:0 barMetrics:UIBarMetricsDefault]; // Sets the search bar to a solid color(no transparancy)
         self.searchDisplayController.searchBar.translucent = NO;
         
         self.suggestedLabel.hidden = NO;
@@ -526,13 +524,16 @@
     if (self.followControllerType == kUserListType_TDUsers) {
         if (!self.suggestedLabel.hidden) {
             self.suggestedLabel.hidden = YES;
-            CGRect tableViewFrame = self.tableView.frame;
-            tableViewFrame.origin.y = tableViewFrame.origin.y - self.suggestedLabel.frame.size.height;
-            self.tableView.frame = tableViewFrame;
+            [self moveTableViewUp];
         }
     }
 }
 
+- (void)moveTableViewUp {
+    CGRect tableViewFrame = self.tableView.frame;
+    tableViewFrame.origin.y = tableViewFrame.origin.y - self.suggestedLabel.frame.size.height;
+    self.tableView.frame = tableViewFrame;
+}
 - (void)createLabels {
     
     NSString *text1 = @"No matches found";
@@ -720,7 +721,6 @@
 #pragma mark UISearchBarDelegate
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants headerTextColor]];
-    
     self.suggestedLabel.hidden = YES;
 }
 

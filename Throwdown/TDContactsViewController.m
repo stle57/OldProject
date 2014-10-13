@@ -67,11 +67,8 @@
     
 
     // Search Bar
-    self.searchDisplayController.searchBar.backgroundImage = [UIImage new];
-    self.searchDisplayController.searchBar.backgroundColor = [TDConstants darkBackgroundColor];
-    self.searchDisplayController.searchBar.barTintColor = [TDConstants darkBackgroundColor];
+    [[UISearchBar appearance] setBackgroundImage:[UIImage imageNamed:@"e6e6e6_square.png"] forBarPosition:0 barMetrics:UIBarMetricsDefault]; // Sets the search bar to a solid color(no transparancy)
     self.searchDisplayController.searchBar.translucent = NO;
-    
     self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants darkBackgroundColor];
     self.searchDisplayController.searchResultsTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
@@ -219,6 +216,8 @@
             return cell;
 
         } else {
+            self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants darkBackgroundColor];
+
             TDContactInfo *contactPerson = [filteredContactArray objectAtIndex:indexPath.row];
             if (contactPerson.fullName != nil && contactPerson.fullName.length != 0) {
             TDFollowProfileCell *cell = [self createCell:tableView indexPath:indexPath contact:contactPerson];
