@@ -32,6 +32,7 @@
 @property (nonatomic) NSMutableArray *filteredTDUsers;
 @property (nonatomic) NSInteger currentRow;
 @property (nonatomic) UITextField *searchBarTextField;
+@property (nonatomic) NSString *searchString;
 @end
 
 @implementation TDFollowViewController
@@ -52,6 +53,9 @@
     self.editedProfileImage = nil;
     self.tempFlyInImageView = nil;
     self.labels = nil;
+    self.suggestedUsers = nil;
+    self.followUsers = nil;
+    self.filteredTDUsers = nil;
 }
 
 - (void)viewDidLoad {
@@ -95,6 +99,8 @@
     self.searchDisplayController.searchBar.layer.borderWidth = TD_CELL_BORDER_WIDTH;
     self.searchDisplayController.searchBar.clipsToBounds = YES;
 
+    self.searchDisplayController.searchResultsTableView.delegate = self;
+    self.searchDisplayController.searchResultsTableView.dataSource = self;
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextAlignment:NSTextAlignmentLeft];
 
     self.searchDisplayController.searchResultsTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -106,35 +112,49 @@
     self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
     self.view.backgroundColor = [TDConstants darkBackgroundColor];
     
-    self.activityIndicator.text.text = @"Loading";
-    [self showActivity];
     self.suggestedLabel.hidden = YES;
     if (self.followControllerType == kUserListType_Following){
         self.searchDisplayController.searchBar.hidden = YES;
-        [[TDAPIClient sharedInstance] getFollowingSettings:self.profileUser.userId currentUserToken:[TDCurrentUser sharedInstance].authToken success:^(NSArray *users) {
-            if ([users isKindOfClass:[NSArray class]]) {
-                self.followUsers = users;
-            }
-            else {
-                debug NSLog(@"not a dictionary");
-            }
-            self.gotFromServer = YES;
-            [self.tableView reloadData];
-            [self hideActivity];
-
-        } failure:^{
-            self.gotFromServer = NO;
-            [self.tableView reloadData];
-            [self hideActivity];
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't load users"
-                                                        message:@"Please close and try again."
-                                                       delegate:nil
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:nil];
-            [alert show];
-        }];
     } else if (self.followControllerType == kUserListType_Followers) {
         self.searchDisplayController.searchBar.hidden = YES;
+    } else if (self.followControllerType == kUserListType_TDUsers) {
+        self.searchDisplayController.searchBar.hidden = NO;
+        [[UISearchBar appearance] setBackgroundImage:[UIImage imageNamed:@"e6e6e6_square.png"] forBarPosition:0 barMetrics:UIBarMetricsDefault]; // Sets the search bar to a solid color(no transparancy)
+        self.searchDisplayController.searchBar.translucent = NO;
+        
+        self.suggestedLabel.hidden = NO;
+        self.suggestedLabel.textColor = [TDConstants helpTextColor];
+        self.suggestedLabel.font = [TDConstants fontRegularSized:13];
+        self.suggestedLabel.backgroundColor = [TDConstants darkBackgroundColor];
+        self.suggestedLabel.layer.borderColor = [[TDConstants lightBorderColor] CGColor];
+        
+        self.inviteButton.hidden = NO;
+        self.inviteButton.titleLabel.font = [TDConstants fontRegularSized:18];
+        self.inviteButton.titleLabel.textColor = [UIColor whiteColor];
+        UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.inviteButton];
+        self.navigationItem.rightBarButtonItem = rightBarButton;
+    }
+    
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
+    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
+    self.edgesForExtendedLayout = UIRectEdgeNone;
+
+    [self.navigationController setNavigationBarHidden:NO animated:NO];
+    [self resizeTableView:self.followControllerType];
+    
+    origTableViewFrame = self.tableView.frame;
+    [self loadDataFromServer];
+}
+
+- (void)loadDataFromServer {
+
+    self.gotFromServer = NO;
+    self.activityIndicator.text.text = @"Loading";
+    [self showActivity];
+    if (self.followControllerType == kUserListType_Followers) {
         [[TDAPIClient sharedInstance] getFollowerSettings:self.profileUser.userId currentUserToken:[TDCurrentUser sharedInstance].authToken success:^(NSArray *users) {
             if ([users isKindOfClass:[NSArray class]]) {
                 self.followUsers = users;
@@ -153,23 +173,28 @@
                                                   otherButtonTitles:nil];
             [alert show];
         }];
+
+    } else if (self.followControllerType == kUserListType_Following) {
+        [[TDAPIClient sharedInstance] getFollowingSettings:self.profileUser.userId currentUserToken:[TDCurrentUser sharedInstance].authToken success:^(NSArray *users) {
+            if ([users isKindOfClass:[NSArray class]]) {
+                self.followUsers = users;
+            }
+            self.gotFromServer = YES;
+            [self.tableView reloadData];
+            [self hideActivity];
+        } failure:^{
+            self.gotFromServer = NO;
+            [self.tableView reloadData];
+            [self hideActivity];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Couldn't load users"
+                                                            message:@"Please close and try again."
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil];
+            [alert show];
+        }];
+
     } else if (self.followControllerType == kUserListType_TDUsers) {
-        self.searchDisplayController.searchBar.hidden = NO;
-        [[UISearchBar appearance] setBackgroundImage:[UIImage imageNamed:@"e6e6e6_square.png"] forBarPosition:0 barMetrics:UIBarMetricsDefault]; // Sets the search bar to a solid color(no transparancy)
-        self.searchDisplayController.searchBar.translucent = NO;
-        
-        self.suggestedLabel.hidden = NO;
-        self.suggestedLabel.textColor = [TDConstants helpTextColor];
-        self.suggestedLabel.font = [TDConstants fontRegularSized:13];
-        self.suggestedLabel.backgroundColor = [TDConstants darkBackgroundColor];
-        self.suggestedLabel.layer.borderColor = [[TDConstants lightBorderColor] CGColor];
-        
-        self.inviteButton.hidden = NO;
-        self.inviteButton.titleLabel.font = [TDConstants fontRegularSized:18];
-        self.inviteButton.titleLabel.textColor = [UIColor whiteColor];
-        UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.inviteButton];
-        self.navigationItem.rightBarButtonItem = rightBarButton;
-        
         // Load data from server
         [[TDUserAPI sharedInstance] getSuggestedUserList:^(BOOL success, NSArray *suggestedList) {
             if (success && suggestedList && suggestedList.count > 0) {
@@ -195,31 +220,15 @@
                 [self hideActivity];
             }
         }];
-
+        
+        if (self.searchDisplayController.isActive == YES) {
+            [self.searchDisplayController.delegate searchDisplayController:self.searchDisplayController shouldReloadTableForSearchString:self.searchString];
+            [self.tableView reloadData];
+        } else {
+            debug NSLog(@"search table view is not the one showing!");
+        }
     }
-    
 }
-
-- (void)viewWillAppear:(BOOL)animated {
-    if (!self.gotFromServer) {
-        [self showActivity];
-    }
-    [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
-    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
-    self.edgesForExtendedLayout = UIRectEdgeNone;
-
-    [self.navigationController setNavigationBarHidden:NO animated:NO];
-    [self resizeTableView:self.followControllerType];
-    
-    origTableViewFrame = self.tableView.frame;
-    
-    if (self.gotFromServer) {
-        [self hideActivity];
-    }
-    
-    [self.tableView reloadData];
-}
-
 -(void)viewDidLayoutSubviews{
     if (self.followControllerType == kUserListType_TDUsers) {
         [self.navigationController setNavigationBarHidden:NO animated:NO];
@@ -330,7 +339,8 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
       NSInteger currentRow = indexPath.row;
-    if (tableView == self.searchDisplayController.searchResultsTableView) {
+    if (self.searchDisplayController.isActive) {
+//    if (tableView == self.searchDisplayController.searchResultsTableView) {
         if (self.filteredTDUsers == nil || self.filteredTDUsers.count == 0) {
             TDNoFollowProfileCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoFollowProfileCell"];
             if (!cell) {
@@ -772,6 +782,7 @@
 
 - (void)filterContentForSearchText:(NSString*)searchText scope:(NSString*)scope
 {
+    self.searchString = searchText;
 	// Update the filtered array based on the search text and scope.
 	
     // Remove all objects from the filtered search array

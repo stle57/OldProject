@@ -362,6 +362,7 @@
             self.getUser.followingCount = [NSNumber numberWithLong:[self.getUser.followingCount integerValue] + [((NSNumber *)[notification.userInfo objectForKey:TD_INCREMENT_STRING]) integerValue]];
         } else if ([notification.userInfo objectForKey:TD_DECREMENT_STRING]) {
             self.getUser.followingCount = [NSNumber numberWithLong:[self.getUser.followingCount integerValue] - [((NSNumber *)[notification.userInfo objectForKey:TD_DECREMENT_STRING]) integerValue]];
+            debug NSLog(@"  decrement is now %@", self.getUser.followingCount);
         }
     }
     [self.tableView reloadData];
@@ -376,6 +377,12 @@
         } else if ([notification.userInfo objectForKey:TD_DECREMENT_STRING]) {
             self.getUser.followerCount =[NSNumber numberWithLong:[self.getUser.followerCount integerValue] - [((NSNumber *)[notification.userInfo objectForKey:TD_DECREMENT_STRING]) integerValue]];
             self.getUser.following = NO;
+            
+            // Now check if the profile user is the same as the device user
+            // If the same, modify the device user following count
+            if (self.getUser.userId != [TDCurrentUser sharedInstance].currentUserObject.userId) {
+                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[[TDCurrentUser sharedInstance] currentUserObject].userId userInfo:@{TD_DECREMENT_STRING: @1}];
+            }
         }
         [self.tableView reloadData];
     }
