@@ -61,24 +61,18 @@
     statusBarFrame = [self.view convertRect:[UIApplication sharedApplication].statusBarFrame fromView: nil];
     self.labels = [[NSMutableArray alloc] init];
     
-    // Title
     if (self.followControllerType == kUserListType_Followers) {
         self.titleLabel.text = @"Followers";
-        CGRect tableViewFrame = self.tableView.frame;
-        tableViewFrame.origin.y = 0;
-        self.tableView.frame = tableViewFrame;
+        [self resizeTableView:self.followControllerType];
     } else if (self.followControllerType == kUserListType_Following){
         self.titleLabel.text = @"Following";
-        CGRect tableViewFrame = self.tableView.frame;
-        tableViewFrame.origin.y = 0;
-        self.tableView.frame = tableViewFrame;
+        [self resizeTableView:self.followControllerType];
     } else if (self.followControllerType == kUserListType_TDUsers) {
         self.titleLabel.text = @"Find People";
-        CGRect tableViewFrame = self.tableView.frame;
-        tableViewFrame.origin.y = TABLEVIEW_POSITION_UNDER_SEARCHBAR;
-        self.tableView.frame = tableViewFrame;
+        [self resizeTableView:self.followControllerType];
     }
     
+    // Title
     self.titleLabel.textColor = [UIColor whiteColor];
     self.titleLabel.font = [TDConstants fontSemiBoldSized:18];
     [self.navigationItem setTitleView:self.titleLabel];
@@ -201,8 +195,10 @@
     self.edgesForExtendedLayout = UIRectEdgeNone;
 
     [self.navigationController setNavigationBarHidden:NO animated:NO];
-
+    [self resizeTableView:self.followControllerType];
+    
     origTableViewFrame = self.tableView.frame;
+    
     if (self.gotFromServer) {
         [self hideActivity];
     }
@@ -325,7 +321,6 @@
             cell.contentView.backgroundColor = [UIColor whiteColor];
             tableView.backgroundColor = [UIColor whiteColor];
             cell.noFollowLabel.text = @"No matches found";
-            debug NSLog(@"no follow label frame=%@", NSStringFromCGRect(cell.noFollowLabel.frame));
             
             cell.findPeopleButton.hidden = YES;
             cell.findPeopleButton.enabled = NO;
@@ -338,7 +333,6 @@
             descripFrame.origin.y = cell.noFollowLabel.frame.origin.y + cell.noFollowLabel.frame.size.height + 7;
             descripFrame.origin.x = SCREEN_WIDTH/2 - descripFrame.size.width/2;
             descriptionLabel.frame = descripFrame;
-            debug NSLog(@"descripFrame=%@", NSStringFromCGRect(descriptionLabel.frame));
             [descriptionLabel setNumberOfLines:0];
             [cell addSubview:descriptionLabel];
             
@@ -355,10 +349,7 @@
     } else if (tableView == self.tableView) {
         
         if (self.followUsers == nil || self.followUsers.count == 0) {
-            debug NSLog(@"changing backgroundColor to white");
-            debug NSLog(@"%@", self.tableView.backgroundColor);
             self.tableView.backgroundColor = [UIColor whiteColor];
-            debug NSLog(@"%@", self.tableView.backgroundColor);
             
             if (self.followControllerType == kUserListType_Followers) {
                 TDNoFollowProfileCell* cell = [self createNoFollowCell:indexPath tableView:tableView text:@"No followers yet" hideFindButton:YES hideInviteButton:YES];
@@ -534,6 +525,24 @@
     tableViewFrame.origin.y = tableViewFrame.origin.y - self.suggestedLabel.frame.size.height;
     self.tableView.frame = tableViewFrame;
 }
+
+- (void)resizeTableView:(kUserListType)followViewControllerType {
+    if (followViewControllerType == kUserListType_Followers) {
+        CGRect tableViewFrame = self.tableView.frame;
+        tableViewFrame.origin.y = 0;
+        tableViewFrame.size.height = SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height;
+        self.tableView.frame = tableViewFrame;
+    } else if (followViewControllerType == kUserListType_Following){
+        CGRect tableViewFrame = self.tableView.frame;
+        tableViewFrame.origin.y = 0;
+        tableViewFrame.size.height = SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height;
+        self.tableView.frame = tableViewFrame;
+    } else if (followViewControllerType == kUserListType_TDUsers) {
+        CGRect tableViewFrame = self.tableView.frame;
+        tableViewFrame.origin.y = TABLEVIEW_POSITION_UNDER_SEARCHBAR - self.searchDisplayController.searchBar.frame.size.height;
+        self.tableView.frame = tableViewFrame;
+    }
+}
 - (void)createLabels {
     
     NSString *text1 = @"No matches found";
@@ -569,7 +578,6 @@
     CGPoint centerFrame = self.activityIndicator.center;
     centerFrame.y = self.activityIndicator.center.y - self.activityIndicator.backgroundView.frame.size.height/2;
     self.activityIndicator.center = centerFrame;
-    debug NSLog(@"activityIndicator center=%@", NSStringFromCGPoint(self.activityIndicator.center));
     [self.view bringSubviewToFront:self.activityIndicator];
     [self.activityIndicator startSpinner];
     self.activityIndicator.hidden = NO;
@@ -632,7 +640,6 @@
             }
         }];
     } else if (tag == kFollowingButtonTag) {
-        debug NSLog(@"show confirmation");
         NSString *reportText = [NSString stringWithFormat:@"Unfollow @%@", [[self.followUsers objectAtIndex:row] valueForKeyPath:@"username"]];
         UIActionSheet * actionSheet = [[UIActionSheet alloc] initWithTitle:nil
                                                       delegate:self

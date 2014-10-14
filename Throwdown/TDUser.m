@@ -9,7 +9,7 @@
 #import "TDUser.h"
 #import "TDAppDelegate.h"
 #import "TDConstants.h"
-
+#import "TDViewControllerHelper.h"
 @implementation TDUser
 
 - (id)initWithDictionary:(NSDictionary *)dict {
@@ -49,9 +49,7 @@
 - (void)figureOutBioLabelHeightForThisMessage:(NSString *)text {
     _bioHeight = 0.0;
     if (text && ![text isKindOfClass:[NSNull class]] && [text length] > 0) {
-        _bioHeight = [TDAppDelegate heightOfTextForString:text
-                                                  andFont:BIO_FONT
-                                                  maxSize:CGSizeMake(COMMENT_MESSAGE_WIDTH, MAXFLOAT)];
+        _bioHeight = [TDViewControllerHelper heightForText:text withMentions:@[] withFont:BIO_FONT inWidth:SCREEN_WIDTH-20];
     }
 }
 
