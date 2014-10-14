@@ -46,7 +46,7 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
     // Background color
     self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
     
-    UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.closeButton];     // 'X'
+    UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];     // '<'
     self.navigationItem.leftBarButtonItem = leftBarButton;
     
     self.sendButton.titleLabel.textColor = [UIColor whiteColor];
@@ -82,8 +82,8 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
     // Dispose of any resources that can be recreated.
 }
 
-- (IBAction)closeButtonHit:(id)sender {
-    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+- (IBAction)backButtonHit:(id)sender {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (IBAction)sendButtonHit:(id)sender {
