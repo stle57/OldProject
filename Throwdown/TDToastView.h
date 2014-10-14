@@ -14,6 +14,7 @@
 - (void)toastNotificationCloseButton;
 - (void)toastNotificationTappedRateUs;
 - (void)toastNotificationSendInviteRetry:(NSDictionary *)payload;
+- (void)toastNotificationStopInvites;
 @end
 
 

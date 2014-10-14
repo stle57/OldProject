@@ -115,8 +115,10 @@ void MyAddressBookExternalChangeCallback (
                 contactInfo.fullName = [NSString stringWithFormat:@"%@ %@", contactInfo.firstName, contactInfo.lastName];
             } else if (contactInfo.firstName == nil && contactInfo.lastName != nil) {
                 contactInfo.fullName = [NSString stringWithFormat:@"%@", contactInfo.lastName];
+                contactInfo.firstName = @"";
             } else if (contactInfo.firstName != nil && contactInfo.lastName == nil) {
                 contactInfo.fullName = [NSString stringWithFormat:@"%@", contactInfo.firstName];
+                contactInfo.lastName = @"";
             } else {
                 // Contact doesn't have first or last name -- not valid
                 continue;

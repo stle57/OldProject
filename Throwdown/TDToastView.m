@@ -241,7 +241,10 @@
 - (IBAction)closedButtonPressed:(UIButton *)sender {
     self.button.enabled = NO;
     [self remove];
-    if(self.delegate && [self.delegate respondsToSelector:@selector(toastNotificationCloseButton)]) {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(toastNotificationStopInvites)] &&  self.toastType == kToastType_InviteWarning) {
+        [self.delegate performSelector:@selector(toastNotificationStopInvites)];
+        self.delegate = nil;
+    } else if(self.delegate && [self.delegate respondsToSelector:@selector(toastNotificationCloseButton)]) {
         [self.delegate performSelector:@selector(toastNotificationCloseButton)];
         self.delegate = nil;
     }

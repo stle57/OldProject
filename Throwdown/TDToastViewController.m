@@ -58,4 +58,10 @@
          }];
     }
 }
+
+- (void)toastNotificationStopInvites {
+    debug NSLog(@"Inside toastNotificationStopInvites");
+    [[TDAnalytics sharedInstance] logEvent:@"sending_invites_stop"];
+
+}
 @end
