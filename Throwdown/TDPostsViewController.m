@@ -319,14 +319,16 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         } else if (self.errorLoading) {
             cell.noPostsLabel.text = @"Error loading posts";
         } else {
-            if (![self onAllFeed] && [TDCurrentUser sharedInstance].currentUserObject.following == 0) {
-                debug NSLog(@"create a different cell and return");
+            if (![self onAllFeed] && [TDCurrentUser sharedInstance].currentUserObject.followingCount == 0 && self.profileType == kFeedProfileTypeNone) {
+                debug NSLog(@"create a different cell and return, followingCount=%@ for %@", [[TDCurrentUser sharedInstance].currentUserObject.followingCount stringValue], [TDCurrentUser sharedInstance].currentUserObject.name);
                 TDNoFollowingCell *noFollowCell = [tableView dequeueReusableCellWithIdentifier:@"TDNoFollowingCell"];
                 if (!noFollowCell) {
                     NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoFollowingCell" owner:self options:nil];
                     noFollowCell = [topLevelObjects objectAtIndex:0];
                     noFollowCell.selectionStyle = UITableViewCellSelectionStyleNone;
                 }
+                noFollowCell.backgroundColor = [UIColor whiteColor];
+                self.tableView.backgroundColor = [UIColor whiteColor];
                 return noFollowCell;
             }
             cell.noPostsLabel.text = @"No posts yet";
@@ -757,7 +759,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
             if (success) {
                 // Send notification to update user profile stat button-add
                 debug NSLog(@"updating the following count of %@", [TDCurrentUser sharedInstance].currentUserObject);
-//                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:userId userInfo:@{@"incrementCount": @1}];
                 [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[[TDCurrentUser sharedInstance] currentUserObject].userId userInfo:@{TD_INCREMENT_STRING: @1}];
                 [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowerCount object:userId userInfo:@{TD_INCREMENT_STRING: @1}];
             } else {

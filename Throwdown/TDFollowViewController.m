@@ -28,6 +28,7 @@
 
 @property (nonatomic) BOOL gotFromServer;
 @property (nonatomic) NSArray *followUsers;
+@property (nonatomic) NSArray *suggestedUsers;
 @property (nonatomic) NSMutableArray *filteredTDUsers;
 @property (nonatomic) NSInteger currentRow;
 @property (nonatomic) UITextField *searchBarTextField;
@@ -170,6 +171,18 @@
         self.navigationItem.rightBarButtonItem = rightBarButton;
         
         // Load data from server
+        [[TDUserAPI sharedInstance] getSuggestedUserList:^(BOOL success, NSArray *suggestedList) {
+            if (success && suggestedList && suggestedList.count > 0) {
+                self.suggestedUsers = [suggestedList copy];
+                self.gotFromServer = YES;
+                [self.tableView reloadData];
+                [self hideActivity];
+            } else {
+                self.gotFromServer = NO;
+                [self hideActivity];
+            }
+        }];
+        
         [[TDUserAPI sharedInstance] getCommunityUserList:^(BOOL success, NSArray *returnList) {
             if (success && returnList && returnList.count > 0) {
                 self.followUsers = [returnList copy];
@@ -179,6 +192,7 @@
                 [self hideActivity];
             } else {
                 self.gotFromServer = NO;
+                [self hideActivity];
             }
         }];
 
@@ -202,6 +216,8 @@
     if (self.gotFromServer) {
         [self hideActivity];
     }
+    
+    [self.tableView reloadData];
 }
 
 -(void)viewDidLayoutSubviews{
@@ -269,12 +285,18 @@
             switch (section) {
                 case 0: // follow/following user list
                 {
-                    if(self.followUsers.count > 0)
-                    {
-                        return self.followUsers.count;
-                    }
-                    else{
-                        return 1;
+                    if (self.followControllerType == kUserListType_TDUsers) {
+                        if (self.suggestedUsers.count > 0) {
+                            return self.suggestedUsers.count;
+                        } else {
+                            return 1;
+                        }
+                    } else {
+                        if (self.followUsers.count > 0) {
+                            return self.followUsers.count;
+                        } else {
+                            return 1;
+                        }
                     }
                 }
                 break;
@@ -347,8 +369,11 @@
             return cell;
         }
     } else if (tableView == self.tableView) {
-        
-        if (self.followUsers == nil || self.followUsers.count == 0) {
+        if (self.followControllerType == kUserListType_TDUsers && (self.suggestedUsers == nil || self.suggestedUsers.count ==0)) {
+            TDNoFollowProfileCell *cell = [self createNoFollowCell:indexPath tableView:tableView text:@"Not following anyone" hideFindButton:NO hideInviteButton:NO];
+            
+            return cell;
+        } else if (self.followUsers == nil || self.followUsers.count == 0) {
             self.tableView.backgroundColor = [UIColor whiteColor];
             
             if (self.followControllerType == kUserListType_Followers) {
@@ -372,10 +397,17 @@
                 return cell;
             }
         } else {
-            NSArray *object = [self.followUsers objectAtIndex:currentRow];
-            
-            TDFollowProfileCell *cell = [self createCell:indexPath tableView:tableView object:object];
-            return cell;
+            if (self.followControllerType == kUserListType_TDUsers) {
+                NSArray *object = [self.suggestedUsers objectAtIndex:currentRow];
+                
+                TDFollowProfileCell *cell = [self createCell:indexPath tableView:tableView object:object];
+                return cell;
+            } else {
+                NSArray *object = [self.followUsers objectAtIndex:currentRow];
+                
+                TDFollowProfileCell *cell = [self createCell:indexPath tableView:tableView object:object];
+                return cell;
+            }
         }
     }
     return nil;
@@ -555,7 +587,7 @@
     
     [self.labels addObject:noMatchesLabel];
     
-    NSString *text2 = @"Sorry we weren't able to find the\nperson you're looking for.\n Invite them to join Throwndown.";
+    NSString *text2 = @"Sorry, we weren't able to find the\nperson you're looking for.\n Invite them to join Throwndown!";
 
     UILabel *descriptionLabel =
     [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
