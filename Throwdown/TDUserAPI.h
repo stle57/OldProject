@@ -18,7 +18,7 @@
 - (void)signupUser:(NSDictionary *)userAttributes callback:(void (^)(BOOL success))callback;
 - (void)loginUser:(NSString *)email withPassword:(NSString *)password callback:(void (^)(BOOL success))callback;
 - (void)resetPassword:(NSString *)requestString callback:(void (^)(BOOL success, NSDictionary *dict))callback;
-- (void)editUserWithName:(NSString *)name email:(NSString *)email username:(NSString *)username phone:(NSString *)phone bio:(NSString *)bio picture:(NSString *)pictureFileName callback:(void (^)(BOOL success, NSDictionary *dict))callback;
+- (void)editUserWithName:(NSString *)name email:(NSString *)email username:(NSString *)username phone:(NSString *)phone bio:(NSString *)bio picture:(NSString *)pictureFileName location:(NSString*)location callback:(void (^)(BOOL success, NSDictionary *dict))callback;
 - (void)changePasswordFrom:(NSString *)oldPassword newPassword:(NSString *)newPassword confirmPassword:(NSString *)confirmPassword callback:(void (^)(BOOL success, NSDictionary *dict))callback;
 - (BOOL)isLoggedIn;
 - (void)logout;
@@ -27,4 +27,6 @@
 - (void)getCommunityUserList:(void (^)(BOOL success, NSArray *communityList))callback;
 - (void)followUser:(NSNumber *)userID callback:(void (^)(BOOL success))callback;
 - (void)unFollowUser:(NSNumber *)userID callback:(void (^)(BOOL success))callback;
+- (void)getSuggestedUserList:(void (^)(BOOL success, NSArray *suggestedList))callback;
+
 @end

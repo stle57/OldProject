@@ -169,7 +169,7 @@
     }];
 }
 
--(void)editUserWithName:(NSString *)name email:(NSString *)email username:(NSString *)username phone:(NSString *)phone bio:(NSString *)bio picture:(NSString *)pictureFileName callback:(void (^)(BOOL success, NSDictionary *user))callback
+-(void)editUserWithName:(NSString *)name email:(NSString *)email username:(NSString *)username phone:(NSString *)phone bio:(NSString *)bio picture:(NSString *)pictureFileName location:(NSString*)location callback:(void (^)(BOOL success, NSDictionary *user))callback
 {
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/users/%@.json", [TDCurrentUser sharedInstance].userId]];
 
@@ -182,7 +182,8 @@
                                  @"phone_number": (phone ? phone : null),
                                         @"email": (email ? email : null),
                                           @"bio": (bio ? bio : null),
-                                      @"picture": (pictureFileName ? pictureFileName : null)
+                                      @"picture": (pictureFileName ? pictureFileName : null),
+                                      @"location": (location ? location : null)
                              }, @"user_token": [TDCurrentUser sharedInstance].authToken};
     [self.httpManager PUT:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {

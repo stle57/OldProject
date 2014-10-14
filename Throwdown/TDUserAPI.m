@@ -69,9 +69,9 @@
     }];
 }
 
-- (void)editUserWithName:(NSString *)name email:(NSString *)email username:(NSString *)username phone:(NSString *)phone bio:(NSString *)bio picture:(NSString *)pictureFileName callback:(void (^)(BOOL success, NSDictionary *dict))callback
+- (void)editUserWithName:(NSString *)name email:(NSString *)email username:(NSString *)username phone:(NSString *)phone bio:(NSString *)bio picture:(NSString *)pictureFileName location:(NSString*)location callback:(void (^)(BOOL success, NSDictionary *dict))callback
 {
-    [[TDAPIClient sharedInstance] editUserWithName:name email:email username:username phone:phone bio:bio picture:pictureFileName callback:^(BOOL success, NSDictionary *user) {
+    [[TDAPIClient sharedInstance] editUserWithName:name email:email username:username phone:phone bio:bio picture:pictureFileName location:location callback:^(BOOL success, NSDictionary *user) {
         if (success) {
             debug NSLog(@"---SUCCESS:%@", user);
             if (user) {
@@ -201,4 +201,26 @@
           }];
 }
 
+- (void)getSuggestedUserList:(void (^)(BOOL success, NSArray *suggestedList))callback {
+    NSAssert(callback != nil, @"getSuggestedUserList callback required");
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    TDCurrentUser *currentUser = [TDCurrentUser sharedInstance];
+    
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/users/featured.json?user_token=%@", currentUser.authToken]];
+    
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *response = (NSDictionary*)responseObject;
+            callback(YES, [response objectForKey:@"users"]);
+        } else {
+            debug NSLog(@"did not get userlist");
+            callback(NO, @[]);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"Get community list Error: %@", error);
+        callback(NO, @[]);
+    }];
+}
 @end

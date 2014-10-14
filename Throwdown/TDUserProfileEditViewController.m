@@ -41,6 +41,7 @@
 @synthesize pictureFileName;
 @synthesize editedProfileImage;
 @synthesize tempFlyInImageView;
+@synthesize location;
 
 - (void)dealloc {
     self.profileUser = nil;
@@ -53,6 +54,7 @@
     self.pictureFileName = nil;
     self.editedProfileImage = nil;
     self.tempFlyInImageView = nil;
+    self.location = nil;
 }
 
 - (void)viewDidLoad {
@@ -99,6 +101,7 @@
             self.username = [settings objectForKey:@"username"];
             self.phone = [settings objectForKey:@"displayed_phone_number"];
             self.email = [settings objectForKey:@"displayed_email"];
+            self.location = [settings objectForKey:@"location"];
             if ([settings objectForKey:@"bio"] == [NSNull null]) {
                 self.bio = @"";
             } else {
@@ -177,6 +180,7 @@
                                            phone:self.phone
                                              bio:self.bio
                                          picture:self.pictureFileName
+                                        location:self.location
                                         callback:^(BOOL success, NSDictionary *dict) {
                                             [self hideActivity];
 
@@ -277,6 +281,9 @@
             break;
         case (800+10*0+2):
             self.username = text;
+            break;
+        case (800+10*0+3):
+            self.location= text;
             break;
         case (800+10*1+0):
             self.phone = text;
@@ -416,6 +423,7 @@
         ([self.username length] > 0 && ![self.username isEqualToString:[self.settings objectForKey:@"username"]]) ||
         ([self.phone length] > 0 && ![self.phone isEqualToString:[self.settings objectForKey:@"displayed_phone_number"]]) ||
         (![self.bio isEqualToString:(currentBio ? currentBio :  @"")]) ||
+        ([self.location length] > 0 && ![self.location isEqualToString:[self.settings objectForKey:@"location"]]) ||
         ([self.email length] > 0 && ![self.email isEqualToString:[self.settings objectForKey:@"displayed_email"]]))
     {
         return YES;
@@ -592,7 +600,7 @@
                     cell.textField.hidden = NO;
 
                     cell.titleLabel.text = @"Location";
-                    cell.textField.text = @"San Francisco";
+                    cell.textField.text = self.location;
                     cell.textField.frame = [self getTextFieldPosition:cell.textField.frame];
                     cell.textField.textColor = [TDConstants commentTextColor];
                 }
