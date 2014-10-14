@@ -387,7 +387,7 @@
                                                                   userInfo:@{
                                                                              @"postId": postId,
                                                                              @"change": [NSNumber numberWithUnsignedInteger:kUpdatePostTypeAddComment],
-                                                                             @"comment": returnDict
+                                                                             @"comment": [returnDict objectForKey:@"comment"]
                                                                              }];
             } else {
                 [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationNewCommentFailed object:nil userInfo:nil];

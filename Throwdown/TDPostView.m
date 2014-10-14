@@ -210,7 +210,6 @@ static NSString *const kTracksKey = @"tracks";
         CGRect commentFrame = self.commentLabel.frame;
         commentFrame.origin.y = kHeightOfProfileRow + (self.post.kind == TDPostKindText ? 0 : self.mediaSize + kMarginBottomOfMedia);;
         commentFrame.size.height = commentHeight;
-        NSLog(@"comment label height: %f", commentHeight);
         self.commentLabel.frame = commentFrame;
         self.commentLabel.hidden = NO;
 
