@@ -374,6 +374,7 @@
             cell.invitePeopleButton.frame = frame;
             return cell;
         } else {
+            self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants darkBackgroundColor];
             NSArray *object = [self.filteredTDUsers objectAtIndex:indexPath.row];
             TDFollowProfileCell *cell = [self createCell:indexPath tableView:tableView object:object];
             return cell;
@@ -407,6 +408,7 @@
                 return cell;
             }
         } else {
+            self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
             if (self.followControllerType == kUserListType_TDUsers) {
                 NSArray *object = [self.suggestedUsers objectAtIndex:currentRow];
                 
