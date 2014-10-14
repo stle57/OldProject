@@ -36,7 +36,7 @@
     [self addSubview:self.addFollowersLabel];
     
     self.descriptionLabel.frame = CGRectMake(0, 0, SCREEN_WIDTH, 100);
-    NSString *text = @"You're currently not following anyone\non Throwdown.  Find people to follow\nby tapping above.";
+    NSString *text = @"You're currently not following anyone\non Throwdown.  Find people to follow\nby tapping  above.";
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:text];
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     [paragraphStyle setLineHeightMultiple:(20./14.)];
