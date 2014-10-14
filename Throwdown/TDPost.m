@@ -193,7 +193,7 @@ static NSString *const kKindText  = @"text";
             [self removeLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
             break;
         case kUpdatePostTypeAddComment:
-            [self addComment:[n.userInfo objectForKey:@"comment"]];
+            [self addComment:[[TDComment alloc] initWithDictionary:[n.userInfo objectForKey:@"comment"]]];
             break;
     }
 }
