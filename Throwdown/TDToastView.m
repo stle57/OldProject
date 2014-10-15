@@ -29,6 +29,12 @@
     self.payload = nil;
 }
 
+- (void)viewDidLoad {
+    debug NSLog(@"inside viewDidLoad");
+    CGRect frame = self.frame;
+    frame.size.width = SCREEN_WIDTH;
+    self.frame = frame;
+}
 + (id)toastView {
     TDToastView *toastView = [[[NSBundle mainBundle] loadNibNamed:@"TDToastView" owner:nil options:nil] lastObject];
     if ([toastView isKindOfClass:[TDToastView class]]) {
@@ -82,14 +88,14 @@
             self.closeButton.hidden = FALSE;
             self.closeButton.enabled = YES;
             break;
-        case kToastType_InviteSent:
+        case kToastType_InviteWarning:
             iconImage = [UIImage imageNamed:@"td_notif_toast_icon"];
             self.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:.95f];
             [self.label setFont:[UIFont systemFontOfSize:14]];
             self.label.textColor = [TDConstants headerTextColor];
             self.closeButton.hidden = YES;
             break;
-        case kToastType_InviteWarning:
+        case kToastType_InviteSent:
             iconImage = [UIImage imageNamed:@"td_error_toast_icon"];
             self.backgroundColor = [UIColor colorWithRed:(158./255) green:(11./255) blue:(15./255) alpha:0.85];
             self.label.textColor = [UIColor whiteColor];
@@ -117,15 +123,22 @@
        
         self.iconImageView.center = CGPointMake(self.iconImageView.center.x,
                                                 self.center.y);
-
+        
+        self.closeButton.center = CGPointMake(self.closeButton.center.x,
+                                              self.center.y);
+        
         // Center text and icon
-        if(self.toastType == kToastType_RateUs || self.toastType == kToastType_InviteWarning) {
-            self.iconImageView.frame = CGRectMake(self.iconImageView.frame.origin.x + 5.0,
+        if(self.toastType == kToastType_RateUs || self.toastType == kToastType_InviteSent) {
+            self.iconImageView.frame = CGRectMake((self.frame.size.width - self.iconImageView.frame.size.width - self.label.frame.size.width - self.closeButton.frame.size.width) / 2.0,
                                                   self.iconImageView.frame.origin.y,
                                                   self.iconImageView.frame.size.width,
                                                   self.iconImageView.frame.size.height);
             self.label.center = CGPointMake(CGRectGetMaxX(self.iconImageView.frame) + 10.0 + self.label.frame.size.width / 2.0,
                                             self.center.y);
+            self.closeButton.frame = CGRectMake(self.frame.size.width - self.closeButton.frame.size.width - 30,
+                                                self.closeButton.frame.origin.y,
+                                                self.closeButton.frame.size.width,
+                                                self.closeButton.frame.size.height);
         } else {
             self.iconImageView.frame = CGRectMake((self.frame.size.width - self.iconImageView.frame.size.width - self.label.frame.size.width) / 2.0,
                                                   self.iconImageView.frame.origin.y,
