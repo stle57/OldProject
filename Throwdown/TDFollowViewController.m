@@ -23,6 +23,7 @@
 #import "TDSocialNetworksViewController.h"
 #import "TDInviteViewController.h"
 #import "TDUserProfileViewController.h"
+#import "TDFindPeopleController.h"
 
 @interface TDFollowViewController ()
 
@@ -762,11 +763,9 @@
     [self.navigationController presentViewController:navController animated:YES completion:nil];
 }
 - (void)findButtonPressed {
-    TDFollowViewController *vc = [[TDFollowViewController alloc] initWithNibName:@"TDFollowViewController" bundle:nil ];
-    vc.followControllerType = kUserListType_TDUsers;
-    vc.profileUser = self.profileUser;
-    [self.navigationController pushViewController:vc animated:YES];
-
+    TDFindPeopleController *vc = [[TDFindPeopleController alloc] initWithNibName:@"TDFindPeopleController" bundle:nil ];
+    vc.profileUser = [TDCurrentUser sharedInstance].currentUserObject;
+    [self.navigationController pushViewController:vc animated:NO];
 }
 
 #pragma mark UISearchBarDelegate

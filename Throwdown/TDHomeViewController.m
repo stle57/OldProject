@@ -23,7 +23,7 @@
 #import <QuartzCore/QuartzCore.h>
 #include <sys/types.h>
 #include <sys/sysctl.h>
-#include "TDFollowViewController.h"
+#include "TDFindPeopleController.h"
 
 #define CELL_IDENTIFIER @"TDPostView"
 
@@ -632,8 +632,7 @@
 }
 
 - (IBAction)searchTDUsersButtonPressed:(id)sender {
-    TDFollowViewController *vc = [[TDFollowViewController alloc] initWithNibName:@"TDFollowViewController" bundle:nil ];
-    vc.followControllerType = kUserListType_TDUsers;
+    TDFindPeopleController *vc = [[TDFindPeopleController alloc] initWithNibName:@"TDFindPeopleController" bundle:nil ];
     vc.profileUser = [TDCurrentUser sharedInstance].currentUserObject;
     [self.navigationController pushViewController:vc animated:YES];
 }

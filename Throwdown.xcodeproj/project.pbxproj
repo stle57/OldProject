@@ -77,6 +77,8 @@
 		4D36F51A19CCE66700A279A5 /* TDSendInviteController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D36F51819CCE66700A279A5 /* TDSendInviteController.xib */; };
 		4D3DDDE219DDB2790057A8B2 /* TDAddressBookAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D3DDDE119DDB2790057A8B2 /* TDAddressBookAPI.m */; };
 		4D4714B819CBF14F003AA69F /* TDContactInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D4714B719CBF14F003AA69F /* TDContactInfo.m */; };
+		4D55D3CD19EDF85300A876D2 /* TDFindPeopleController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D55D3CB19EDF85300A876D2 /* TDFindPeopleController.m */; };
+		4D55D3CE19EDF85300A876D2 /* TDFindPeopleController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D55D3CC19EDF85300A876D2 /* TDFindPeopleController.xib */; };
 		4D5D43EB19EB8A2D00046772 /* TDNoFollowingCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D5D43E919EB8A2D00046772 /* TDNoFollowingCell.m */; };
 		4D5D43EC19EB8A2D00046772 /* TDNoFollowingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D5D43EA19EB8A2D00046772 /* TDNoFollowingCell.xib */; };
 		4D6FCC2419CAA34D00902719 /* TDContactsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D6FCC2219CAA34D00902719 /* TDContactsViewController.m */; };
@@ -304,6 +306,9 @@
 		4D3DDDE119DDB2790057A8B2 /* TDAddressBookAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDAddressBookAPI.m; sourceTree = "<group>"; };
 		4D4714B619CBF14F003AA69F /* TDContactInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDContactInfo.h; sourceTree = "<group>"; };
 		4D4714B719CBF14F003AA69F /* TDContactInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDContactInfo.m; sourceTree = "<group>"; };
+		4D55D3CA19EDF85300A876D2 /* TDFindPeopleController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDFindPeopleController.h; sourceTree = "<group>"; };
+		4D55D3CB19EDF85300A876D2 /* TDFindPeopleController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDFindPeopleController.m; sourceTree = "<group>"; };
+		4D55D3CC19EDF85300A876D2 /* TDFindPeopleController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDFindPeopleController.xib; sourceTree = "<group>"; };
 		4D5D43E819EB8A2D00046772 /* TDNoFollowingCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDNoFollowingCell.h; sourceTree = "<group>"; };
 		4D5D43E919EB8A2D00046772 /* TDNoFollowingCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDNoFollowingCell.m; sourceTree = "<group>"; };
 		4D5D43EA19EB8A2D00046772 /* TDNoFollowingCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDNoFollowingCell.xib; sourceTree = "<group>"; };
@@ -597,6 +602,9 @@
 				4D36F51619CCE66700A279A5 /* TDSendInviteController.h */,
 				4D36F51719CCE66700A279A5 /* TDSendInviteController.m */,
 				4D36F51819CCE66700A279A5 /* TDSendInviteController.xib */,
+				4D55D3CA19EDF85300A876D2 /* TDFindPeopleController.h */,
+				4D55D3CB19EDF85300A876D2 /* TDFindPeopleController.m */,
+				4D55D3CC19EDF85300A876D2 /* TDFindPeopleController.xib */,
 			);
 			name = UserProfile;
 			sourceTree = "<group>";
@@ -1243,6 +1251,7 @@
 				4D3352D619A29CEC007B3E06 /* iRate.bundle in Resources */,
 				2DA5354518F35E4300031128 /* TDUserProfileViewController.xib in Resources */,
 				A1D13FF21905F2BE000980E0 /* Podfile in Resources */,
+				4D55D3CE19EDF85300A876D2 /* TDFindPeopleController.xib in Resources */,
 				2DA5F05C18D37C70003D2F99 /* BebasNeue Light.otf in Resources */,
 				A11E04EF1888CB79002F981A /* Main.storyboard in Resources */,
 				2DA5F05A18D37C70003D2F99 /* BebasNeue Bold.otf in Resources */,
@@ -1411,6 +1420,7 @@
 				A1A053FE19D6272300E7556A /* UIActionSheet+Blocks.m in Sources */,
 				2DA420DC18E63E1A006F4D9C /* TDActivityCell.m in Sources */,
 				A1C2481418C7D4B000F187D9 /* URLConnection.m in Sources */,
+				4D55D3CD19EDF85300A876D2 /* TDFindPeopleController.m in Sources */,
 				4D5D43EB19EB8A2D00046772 /* TDNoFollowingCell.m in Sources */,
 				4D2843CE19C401C000E4A56C /* TDFollowViewController.m in Sources */,
 				2DC12118190F281C00835AAF /* TDUpdatingDateLabel.m in Sources */,
@@ -1551,7 +1561,7 @@
 				BUNDLE_DISPLAY_NAME_SUFFIX = "-α";
 				BUNDLE_ID_SUFFIX = .dev;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Stephanie Le (PXQB9WK964)";
 				EXCLUDED_SOURCE_FILE_NAMES = "";
 				FACEBOOK_APP_ID = 1470514189854120;
 				FRAMEWORK_SEARCH_PATHS = (
