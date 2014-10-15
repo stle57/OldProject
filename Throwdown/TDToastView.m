@@ -129,13 +129,21 @@
         
         // Center text and icon
         if(self.toastType == kToastType_RateUs || self.toastType == kToastType_InviteSent) {
-            self.iconImageView.frame = CGRectMake((self.frame.size.width - self.iconImageView.frame.size.width - self.label.frame.size.width - self.closeButton.frame.size.width) / 2.0,
+            
+            self.label.frame = CGRectMake(SCREEN_WIDTH/2 - self.label.frame.size.width/2,
+                                          self.label.frame.origin.y,
+                                          self.label.frame.size.width,
+                                          self.label.frame.size.height);
+            self.iconImageView.frame = CGRectMake(self.label.frame.origin.x - self.iconImageView.frame.size.width - 5,
                                                   self.iconImageView.frame.origin.y,
                                                   self.iconImageView.frame.size.width,
                                                   self.iconImageView.frame.size.height);
-            self.label.center = CGPointMake(CGRectGetMaxX(self.iconImageView.frame) + 10.0 + self.label.frame.size.width / 2.0,
-                                            self.center.y);
-            self.closeButton.frame = CGRectMake(self.frame.size.width - self.closeButton.frame.size.width - 30,
+
+//            self.closeButton.frame = CGRectMake(self.label.frame.origin.x + self.label.frame.size.width + (self.label.frame.origin.x - (self.iconImageView.frame.origin.x + self.iconImageView.frame.size.width)),
+//                                                self.closeButton.frame.origin.y,
+//                                                self.closeButton.frame.size.width,
+//                                                self.closeButton.frame.size.height);
+            self.closeButton.frame = CGRectMake(SCREEN_WIDTH - self.closeButton.frame.size.width - 20,
                                                 self.closeButton.frame.origin.y,
                                                 self.closeButton.frame.size.width,
                                                 self.closeButton.frame.size.height);
