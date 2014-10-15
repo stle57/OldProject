@@ -22,6 +22,9 @@ PODS:
   - libPhoneNumber-iOS (0.7.1)
   - NSDate+TimeAgo (1.0.2)
   - NYXImagesKit (2.3)
+  - SDWebImage (3.7.1):
+    - SDWebImage/Core
+  - SDWebImage/Core (3.7.1)
   - TestFlightSDK (3.0.0)
   - TTTAttributedLabel (1.9.5)
 
@@ -32,6 +35,7 @@ DEPENDENCIES:
   - libPhoneNumber-iOS
   - NSDate+TimeAgo
   - NYXImagesKit
+  - SDWebImage
   - TestFlightSDK (= 3.0.0)
   - TTTAttributedLabel
 
@@ -42,6 +46,7 @@ SPEC CHECKSUMS:
   libPhoneNumber-iOS: a9ce7eaee294cd81beb5c3eb0e5b9f7a045007a1
   NSDate+TimeAgo: c01d6ac0b81add41f77f264fa4276d355723fcde
   NYXImagesKit: 1c9f228ae78fab475d267b3b3a1308e0fba11731
+  SDWebImage: 116e88633b5b416ea0ca4b334a4ac59cf72dd38d
   TestFlightSDK: 36b8a207c5a119a3144aa2e6d24973eb9d5e0d0a
   TTTAttributedLabel: 9f727215d63a358f92317a24c83c94c72de78e80
 

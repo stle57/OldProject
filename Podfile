@@ -9,6 +9,7 @@ pod 'NSDate+TimeAgo'
 pod 'NYXImagesKit'
 pod 'TTTAttributedLabel'
 pod 'FLEX'
+pod 'SDWebImage'
 
 # target "Throwdown" do
 # 

@@ -16,6 +16,8 @@
 #import "TDViewControllerHelper.h"
 #import <TTTAttributedLabel/TTTAttributedLabel.h>
 #import <QuartzCore/QuartzCore.h>
+#import <SDWebImage/SDWebImageManager.h>
+#import "UIImage+Resizing.h"
 
 typedef enum {
     ControlStatePaused,
@@ -58,6 +60,13 @@ static NSString *const kTracksKey = @"tracks";
 @property (nonatomic) NSTimer *loadingTimeout;
 @property (nonatomic) UITapGestureRecognizer *tapGestureRecognizer;
 @property (nonatomic) CGFloat mediaSize;
+@property (nonatomic) UIView *progressBackgroundView;
+@property (nonatomic) UIView *progressBarView;
+@property (nonatomic) BOOL previewLoadError;
+
+// Used for caching and checking if the row has been updated
+@property (nonatomic) NSURL *imageURL;
+@property (nonatomic) NSURL *userURL;
 
 @end
 
@@ -191,10 +200,7 @@ static NSString *const kTracksKey = @"tracks";
     // Set first to not show the wrong image while loading or if load fails
     [self.userProfileImage setImage:[UIImage imageNamed:@"prof_pic_default"]];
     if (post.user && ![post.user hasDefaultPicture]) {
-        [[TDAPIClient sharedInstance] setImage:@{@"imageView":self.userProfileImage,
-                                                 @"filename":post.user.picture,
-                                                 @"width":[NSNumber numberWithInt:self.userProfileImage.frame.size.width],
-                                                 @"height":[NSNumber numberWithInt:self.userProfileImage.frame.size.height]}];
+        [self downloadUserImage:[NSURL URLWithString:post.user.picture]];
     }
 
     self.createdLabel.labelDate = post.createdAt;
@@ -224,15 +230,9 @@ static NSString *const kTracksKey = @"tracks";
 
     switch (post.kind) {
         case TDPostKindPhoto:
-            self.filename = post.filename;
-            [self setupPreview];
-            break;
-
         case TDPostKindVideo:
             self.filename = post.filename;
             [self setupPreview];
-            [self setupVideo];
-            [self updateControlImage:ControlStatePlay];
             break;
 
         case TDPostKindText:
@@ -244,7 +244,31 @@ static NSString *const kTracksKey = @"tracks";
     }
 }
 
+- (void)downloadUserImage:(NSURL *)profileURL {
+    self.userURL = profileURL;
+
+    self.userURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@%@", RSHost, self.filename, FTImage]];
+    SDWebImageManager *manager = [SDWebImageManager sharedManager];
+    [manager downloadImageWithURL:self.imageURL options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+        // no progress indicator here
+    } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *finalURL) {
+        // avoid doing anything on a row that's been reused b/c the download took too long and user scrolled away
+        if (![profileURL isEqual:self.userURL] || !self.userProfileImage) {
+            return;
+        }
+        if (!error && image) {
+            image = [image scaleToSize:self.userProfileImage.frame.size];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.userProfileImage.image = image;
+            });
+        }
+    }];
+}
+
+
 - (void)setupPreview {
+    [self removeTapControl]; // removes any old failed image downloads
+
     if (!self.previewImage) {
         self.previewImage = [[UIImageView alloc] init];
         self.previewImage.backgroundColor = [TDConstants darkBackgroundColor];
@@ -256,7 +280,7 @@ static NSString *const kTracksKey = @"tracks";
     [self hideLoadingError];
 
     if (self.filename) {
-        [[TDAPIClient sharedInstance] setImage:@{ @"imageView":self.previewImage, @"filename":[self.filename stringByAppendingString:FTImage] }];
+        [self downloadPreview];
     }
 }
 
@@ -265,23 +289,87 @@ static NSString *const kTracksKey = @"tracks";
         [self.previewImage removeFromSuperview];
         self.previewImage = nil;
     }
+
+    // used in video's but also if the preview image failed to download
+    [self removeTapControl];
+}
+
+- (void)downloadPreview {
+    self.previewLoadError = NO;
+    [self setupProgressBar];
+
+    self.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@%@", RSHost, self.filename, FTImage]];
+    SDWebImageManager *manager = [SDWebImageManager sharedManager];
+    [manager downloadImageWithURL:self.imageURL options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            CGRect frame = self.progressBarView.frame;
+            frame.size.width = 200.0 * ((double)receivedSize / (double)expectedSize);
+            if (frame.size.width > 10) {
+                self.progressBarView.frame = frame;
+            }
+        });
+    } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *finalURL) {
+        // avoid doing anything on a row that's been reused b/c the download took too long and user scrolled away
+        // self.imageURL will have changed and previewImage will be remove if it's a text post
+        if (![finalURL isEqual:self.imageURL] || !self.previewImage) {
+            return;
+        }
+        if (error || !image) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.previewLoadError = YES;
+                [self removeProgressBar];
+                [self setupTapControl];
+                [self showLoadingError];
+            });
+        } else if (image) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self removeProgressBar];
+                self.previewImage.image = image;
+                if (self.post.kind == TDPostKindVideo) {
+                    [self setupVideo];
+                    [self updateControlImage:ControlStatePlay];
+                }
+            });
+        }
+    }];
+}
+
+- (void)setupProgressBar {
+    [self removeProgressBar]; // never want more than one!
+    CGFloat y = kHeightOfProfileRow + (self.mediaSize / 2) - 5;
+    CGFloat x = (SCREEN_WIDTH - 200) / 2;
+    self.progressBackgroundView = [[UIView alloc] initWithFrame:CGRectMake(x, y, 200, 10)];
+    self.progressBackgroundView.backgroundColor = [TDConstants lightBorderColor];
+    self.progressBackgroundView.layer.cornerRadius = 5;
+    self.progressBackgroundView.layer.masksToBounds = YES;
+    [self addSubview:self.progressBackgroundView];
+
+    self.progressBarView = [[UIView alloc] initWithFrame:CGRectMake(x, y, 0, 10)];
+    self.progressBarView.backgroundColor = [UIColor whiteColor];
+    self.progressBarView.layer.cornerRadius = 5;
+    self.progressBarView.layer.masksToBounds = YES;
+    [self addSubview:self.progressBarView];
+}
+
+- (void)removeProgressBar {
+    if (self.progressBarView) {
+        [self.progressBarView removeFromSuperview];
+        [self.progressBackgroundView removeFromSuperview];
+        self.progressBarView = nil;
+        self.progressBackgroundView = nil;
+    }
 }
 
 - (void)setupVideo {
     if (!self.controlView) {
         self.playerSpinner = [[UIImageView alloc] init];
-        self.videoHolderView = [[UIView alloc] initWithFrame:CGRectMake(0, kHeightOfProfileRow, self.mediaSize, self.mediaSize)];
-        self.controlView = [[UIImageView alloc] initWithFrame:CGRectMake(0, kHeightOfProfileRow, self.mediaSize, self.mediaSize)];
-        self.controlView.contentMode = UIViewContentModeCenter;
-        self.controlView.userInteractionEnabled = YES;
-        self.tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapFrom:)];
-        [self.controlView addGestureRecognizer:self.tapGestureRecognizer];
-        [self addSubview:self.videoHolderView];
         [self addSubview:self.playerSpinner];
-        [self addSubview:self.controlView];
+        self.videoHolderView = [[UIView alloc] initWithFrame:CGRectMake(0, kHeightOfProfileRow, self.mediaSize, self.mediaSize)];
+        [self addSubview:self.videoHolderView];
         [self insertSubview:self.videoHolderView aboveSubview:self.previewImage];
         [self insertSubview:self.playerSpinner aboveSubview:self.videoHolderView];
-        [self insertSubview:self.controlView aboveSubview:self.playerSpinner];
+        [self setupTapControl];
+
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pauseTapGesture:) name:TDNotificationPauseTapGesture object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resumeTapGesture:) name:TDNotificationResumeTapGesture object:nil];
     }
@@ -296,13 +384,36 @@ static NSString *const kTracksKey = @"tracks";
     if (self.videoHolderView) {
         [self.playerLayer removeFromSuperlayer];
         [self.videoHolderView removeFromSuperview];
-        [self.controlView removeFromSuperview];
         [self.playerSpinner removeFromSuperview];
         self.player = nil;
         self.playerLayer = nil;
         self.videoHolderView = nil;
-        self.controlView = nil;
         self.playerSpinner = nil;
+    }
+}
+
+// used for video and for retrying preview download if it fails
+- (void)setupTapControl {
+    [self removeTapControl]; // no duplicates please
+    self.controlView = [[UIImageView alloc] initWithFrame:CGRectMake(0, kHeightOfProfileRow, self.mediaSize, self.mediaSize)];
+    self.controlView.contentMode = UIViewContentModeCenter;
+    self.controlView.userInteractionEnabled = YES;
+    self.tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapFrom:)];
+    [self.controlView addGestureRecognizer:self.tapGestureRecognizer];
+    [self addSubview:self.controlView];
+    if (self.playerSpinner) {
+        [self insertSubview:self.controlView aboveSubview:self.playerSpinner];
+    }
+}
+
+- (void)removeTapControl {
+    if (self.controlView) {
+        if (self.tapGestureRecognizer) {
+            [self.controlView removeGestureRecognizer:self.tapGestureRecognizer];
+            self.tapGestureRecognizer = nil;
+        }
+        [self.controlView removeFromSuperview];
+        self.controlView = nil;
     }
 }
 
@@ -317,7 +428,10 @@ static NSString *const kTracksKey = @"tracks";
 }
 
 - (void)handleTapFrom:(UITapGestureRecognizer *)tap {
-    if (self.post.kind == TDPostKindVideo) {
+    if (self.previewLoadError) {
+        [self removeTapControl];
+        [self downloadPreview];
+    } else if (self.post.kind == TDPostKindVideo) {
         switch (self.state) {
             case PlayerStateNotLoaded:
                 [self loadVideo];
@@ -348,6 +462,7 @@ static NSString *const kTracksKey = @"tracks";
 #pragma mark - video handling
 
 - (void)updateControlImage:(ControlState)controlState {
+    // returns here if this isn't a video (b/c this gets called when image load fails too)
     if (!self.playerSpinner) {
         return;
     }
@@ -361,8 +476,7 @@ static NSString *const kTracksKey = @"tracks";
 
     switch (controlState) {
         case ControlStatePlay:
-            // 35 == half of 70 on play button
-            self.playerSpinner.frame = CGRectMake((self.mediaSize / 2) - 35, kHeightOfProfileRow + (self.mediaSize / 2) - 35, 70, 70);
+            self.playerSpinner.frame = CGRectMake((self.mediaSize / 2) - 35, kHeightOfProfileRow + (self.mediaSize / 2) - 35, 70, 70); // 70/2 = 35
             [self.playerSpinner setImage:[UIImage imageNamed:@"play_button_140x140"]];
             break;
         case ControlStatePaused:
