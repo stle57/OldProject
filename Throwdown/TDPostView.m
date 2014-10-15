@@ -200,7 +200,7 @@ static NSString *const kTracksKey = @"tracks";
     // Set first to not show the wrong image while loading or if load fails
     [self.userProfileImage setImage:[UIImage imageNamed:@"prof_pic_default"]];
     if (post.user && ![post.user hasDefaultPicture]) {
-        [self downloadUserImage:[NSURL URLWithString:post.user.picture]];
+        [self downloadUserImage:post.user.picture];
     }
 
     self.createdLabel.labelDate = post.createdAt;
@@ -244,16 +244,17 @@ static NSString *const kTracksKey = @"tracks";
     }
 }
 
-- (void)downloadUserImage:(NSURL *)profileURL {
-    self.userURL = profileURL;
+#pragma mark - download images
 
-    self.userURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@%@", RSHost, self.filename, FTImage]];
+- (void)downloadUserImage:(NSString *)filename {
+    self.userURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", RSHost, filename]];
+
     SDWebImageManager *manager = [SDWebImageManager sharedManager];
-    [manager downloadImageWithURL:self.imageURL options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+    [manager downloadImageWithURL:self.userURL options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
         // no progress indicator here
     } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *finalURL) {
         // avoid doing anything on a row that's been reused b/c the download took too long and user scrolled away
-        if (![profileURL isEqual:self.userURL] || !self.userProfileImage) {
+        if (![finalURL isEqual:self.userURL] || !self.userProfileImage) {
             return;
         }
         if (!error && image) {
@@ -265,35 +266,6 @@ static NSString *const kTracksKey = @"tracks";
     }];
 }
 
-
-- (void)setupPreview {
-    [self removeTapControl]; // removes any old failed image downloads
-
-    if (!self.previewImage) {
-        self.previewImage = [[UIImageView alloc] init];
-        self.previewImage.backgroundColor = [TDConstants darkBackgroundColor];
-        [self.previewImage setUserInteractionEnabled:YES];
-        [self addSubview:self.previewImage];
-    }
-    self.previewImage.image = nil;
-    self.previewImage.frame = CGRectMake(0, kHeightOfProfileRow, self.mediaSize, self.mediaSize);
-    [self hideLoadingError];
-
-    if (self.filename) {
-        [self downloadPreview];
-    }
-}
-
-- (void)removePreview {
-    if (self.previewImage) {
-        [self.previewImage removeFromSuperview];
-        self.previewImage = nil;
-    }
-
-    // used in video's but also if the preview image failed to download
-    [self removeTapControl];
-}
-
 - (void)downloadPreview {
     self.previewLoadError = NO;
     [self setupProgressBar];
@@ -301,13 +273,16 @@ static NSString *const kTracksKey = @"tracks";
     self.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@%@", RSHost, self.filename, FTImage]];
     SDWebImageManager *manager = [SDWebImageManager sharedManager];
     [manager downloadImageWithURL:self.imageURL options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            CGRect frame = self.progressBarView.frame;
-            frame.size.width = 200.0 * ((double)receivedSize / (double)expectedSize);
-            if (frame.size.width > 10) {
-                self.progressBarView.frame = frame;
-            }
-        });
+        // progress bar could have been removed
+        if (self.progressBarView) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                CGRect frame = self.progressBarView.frame;
+                frame.size.width = 200.0 * ((double)receivedSize / (double)expectedSize);
+                if (frame.size.width > 10) {
+                    self.progressBarView.frame = frame;
+                }
+            });
+        }
     } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *finalURL) {
         // avoid doing anything on a row that's been reused b/c the download took too long and user scrolled away
         // self.imageURL will have changed and previewImage will be remove if it's a text post
@@ -332,6 +307,39 @@ static NSString *const kTracksKey = @"tracks";
             });
         }
     }];
+}
+
+#pragma mark - setup subviews
+
+- (void)setupPreview {
+    [self removeTapControl]; // removes any old failed image downloads
+    [self removeProgressBar]; // if cell is reused while download is in progress
+
+    if (!self.previewImage) {
+        self.previewImage = [[UIImageView alloc] init];
+        self.previewImage.backgroundColor = [TDConstants darkBackgroundColor];
+        [self.previewImage setUserInteractionEnabled:YES];
+        [self addSubview:self.previewImage];
+    }
+    self.previewImage.image = nil;
+    self.previewImage.frame = CGRectMake(0, kHeightOfProfileRow, self.mediaSize, self.mediaSize);
+    [self hideLoadingError];
+
+    if (self.filename) {
+        [self downloadPreview];
+    }
+}
+
+- (void)removePreview {
+    if (self.previewImage) {
+        [self.previewImage removeFromSuperview];
+        self.previewImage = nil;
+    }
+
+    // if it's still downloading
+    [self removeProgressBar];
+    // if the preview image failed to download
+    [self removeTapControl];
 }
 
 - (void)setupProgressBar {
