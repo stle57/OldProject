@@ -23,8 +23,7 @@ const typedef NS_ENUM(NSUInteger, kFeedProfileType) {
 
 enum {
     kUserListType_Followers,
-    kUserListType_Following,
-    kUserListType_TDUsers
+    kUserListType_Following
 };
 typedef NSUInteger kUserListType;
 

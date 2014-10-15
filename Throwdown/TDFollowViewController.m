@@ -73,11 +73,7 @@
     } else if (self.followControllerType == kUserListType_Following){
         self.titleLabel.text = @"Following";
         [self resizeTableView:self.followControllerType];
-    } else if (self.followControllerType == kUserListType_TDUsers) {
-        self.titleLabel.text = @"Find People";
-        [self resizeTableView:self.followControllerType];
     }
-    
     // Title
     self.titleLabel.textColor = [UIColor whiteColor];
     self.titleLabel.font = [TDConstants fontSemiBoldSized:18];
@@ -118,22 +114,6 @@
         self.searchDisplayController.searchBar.hidden = YES;
     } else if (self.followControllerType == kUserListType_Followers) {
         self.searchDisplayController.searchBar.hidden = YES;
-    } else if (self.followControllerType == kUserListType_TDUsers) {
-        self.searchDisplayController.searchBar.hidden = NO;
-        [[UISearchBar appearance] setBackgroundImage:[UIImage imageNamed:@"e6e6e6_square.png"] forBarPosition:0 barMetrics:UIBarMetricsDefault]; // Sets the search bar to a solid color(no transparancy)
-        self.searchDisplayController.searchBar.translucent = NO;
-        
-        self.suggestedLabel.hidden = NO;
-        self.suggestedLabel.textColor = [TDConstants helpTextColor];
-        self.suggestedLabel.font = [TDConstants fontRegularSized:13];
-        self.suggestedLabel.backgroundColor = [TDConstants darkBackgroundColor];
-        self.suggestedLabel.layer.borderColor = [[TDConstants lightBorderColor] CGColor];
-        
-        self.inviteButton.hidden = NO;
-        self.inviteButton.titleLabel.font = [TDConstants fontRegularSized:18];
-        self.inviteButton.titleLabel.textColor = [UIColor whiteColor];
-        UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.inviteButton];
-        self.navigationItem.rightBarButtonItem = rightBarButton;
     }
     
 }
@@ -195,49 +175,9 @@
             [alert show];
         }];
 
-    } else if (self.followControllerType == kUserListType_TDUsers) {
-        // Load data from server
-        [[TDUserAPI sharedInstance] getSuggestedUserList:^(BOOL success, NSArray *suggestedList) {
-            if (success && suggestedList && suggestedList.count > 0) {
-                self.suggestedUsers = [suggestedList copy];
-                self.gotFromServer = YES;
-                [self.tableView reloadData];
-                [self hideActivity];
-            } else {
-                self.gotFromServer = NO;
-                [self hideActivity];
-            }
-        }];
-        
-        [[TDUserAPI sharedInstance] getCommunityUserList:^(BOOL success, NSArray *returnList) {
-            if (success && returnList && returnList.count > 0) {
-                self.followUsers = [returnList copy];
-                self.filteredTDUsers = [NSMutableArray arrayWithCapacity:[self.followUsers count]];
-                self.gotFromServer = YES;
-                [self.tableView reloadData];
-                [self hideActivity];
-            } else {
-                self.gotFromServer = NO;
-                [self hideActivity];
-            }
-        }];
-        
-        if (self.searchDisplayController.isActive == YES) {
-            [self.searchDisplayController.delegate searchDisplayController:self.searchDisplayController shouldReloadTableForSearchString:self.searchString];
-            [self.tableView reloadData];
-        } else {
-            debug NSLog(@"search table view is not the one showing!");
-        }
     }
 }
 -(void)viewDidLayoutSubviews{
-    if (self.followControllerType == kUserListType_TDUsers) {
-        [self.navigationController setNavigationBarHidden:NO animated:NO];
-        [self.searchDisplayController.searchBar setShowsCancelButton:NO animated:NO];
-        CGRect tableViewFrame = self.tableView.frame;
-        tableViewFrame.origin.y = TABLEVIEW_POSITION_UNDER_SEARCHBAR;
-        self.tableView.frame = tableViewFrame;
-    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -295,18 +235,10 @@
             switch (section) {
                 case 0: // follow/following user list
                 {
-                    if (self.followControllerType == kUserListType_TDUsers) {
-                        if (self.suggestedUsers.count > 0) {
-                            return self.suggestedUsers.count;
-                        } else {
-                            return 1;
-                        }
+                    if (self.followUsers.count > 0) {
+                        return self.followUsers.count;
                     } else {
-                        if (self.followUsers.count > 0) {
-                            return self.followUsers.count;
-                        } else {
-                            return 1;
-                        }
+                        return 1;
                     }
                 }
                 break;
@@ -340,8 +272,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
       NSInteger currentRow = indexPath.row;
-    if (self.searchDisplayController.isActive) {
-//    if (tableView == self.searchDisplayController.searchResultsTableView) {
+    if (tableView == self.searchDisplayController.searchResultsTableView) {
         if (self.filteredTDUsers == nil || self.filteredTDUsers.count == 0) {
             TDNoFollowProfileCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoFollowProfileCell"];
             if (!cell) {
@@ -381,11 +312,7 @@
             return cell;
         }
     } else if (tableView == self.tableView) {
-        if (self.followControllerType == kUserListType_TDUsers && (self.suggestedUsers == nil || self.suggestedUsers.count ==0)) {
-            TDNoFollowProfileCell *cell = [self createNoFollowCell:indexPath tableView:tableView text:@"Not following anyone" hideFindButton:NO hideInviteButton:NO];
-            
-            return cell;
-        } else if (self.followUsers == nil || self.followUsers.count == 0) {
+        if (self.followUsers == nil || self.followUsers.count == 0) {
             self.tableView.backgroundColor = [UIColor whiteColor];
             
             if (self.followControllerType == kUserListType_Followers) {
@@ -403,24 +330,13 @@
                     
                     return cell;
                 }
-            } else if (self.followControllerType == kUserListType_TDUsers) {
-                TDNoFollowProfileCell *cell = [self createNoFollowCell:indexPath tableView:tableView text:@"No followers yet" hideFindButton:NO hideInviteButton:NO];
-                
-                return cell;
             }
         } else {
             self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
-            if (self.followControllerType == kUserListType_TDUsers) {
-                NSArray *object = [self.suggestedUsers objectAtIndex:currentRow];
-                
-                TDFollowProfileCell *cell = [self createCell:indexPath tableView:tableView object:object];
-                return cell;
-            } else {
-                NSArray *object = [self.followUsers objectAtIndex:currentRow];
-                
-                TDFollowProfileCell *cell = [self createCell:indexPath tableView:tableView object:object];
-                return cell;
-            }
+            NSArray *object = [self.followUsers objectAtIndex:currentRow];
+            
+            TDFollowProfileCell *cell = [self createCell:indexPath tableView:tableView object:object];
+            return cell;
         }
     }
     return nil;
@@ -468,20 +384,9 @@
     cell.userId = [object valueForKey:@"id"];
     cell.row = indexPath.row;
     NSAttributedString *usernameAttStr = nil;
-    if (self.followControllerType == kUserListType_TDUsers) {
-        NSString *str = [NSString stringWithFormat:@"%@", [object valueForKey:@"bio"]];
-        if (str == nil || str.length == 0 || [[object valueForKey:@"bio"] isKindOfClass:[NSNull class]]) {
-            str = [NSString stringWithFormat:@"@%@", [object valueForKey:@"username"]];
-            usernameAttStr = [TDViewControllerHelper makeParagraphedTextWithString:str font:[TDConstants fontRegularSized:13.0] color:[TDConstants headerTextColor] lineHeight:16.0];
-        } else {
-            // Need to adjust the height of label to accomodate for emojis in BIO
-            adjustHeightCell = YES;
-            usernameAttStr = [TDViewControllerHelper makeParagraphedTextForTruncatedBio:str font:[TDConstants fontRegularSized:13.0] color:[TDConstants headerTextColor] lineHeight:16.0];
-        }
-    } else {
-        NSString *str = [NSString stringWithFormat:@"@%@", [object valueForKey:@"username"]];
-        usernameAttStr = [TDViewControllerHelper makeParagraphedTextWithString:str font:[TDConstants fontRegularSized:13.0] color:[TDConstants headerTextColor] lineHeight:16.0];
-    }
+
+    NSString *str = [NSString stringWithFormat:@"@%@", [object valueForKey:@"username"]];
+    usernameAttStr = [TDViewControllerHelper makeParagraphedTextWithString:str font:[TDConstants fontRegularSized:13.0] color:[TDConstants headerTextColor] lineHeight:16.0];
     
     cell.descriptionLabel.attributedText = usernameAttStr;
     
@@ -557,12 +462,6 @@
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    if (self.followControllerType == kUserListType_TDUsers) {
-        if (!self.suggestedLabel.hidden) {
-            self.suggestedLabel.hidden = YES;
-            [self moveTableViewUp];
-        }
-    }
 }
 
 - (void)moveTableViewUp {
@@ -581,10 +480,6 @@
         CGRect tableViewFrame = self.tableView.frame;
         tableViewFrame.origin.y = 0;
         tableViewFrame.size.height = SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height;
-        self.tableView.frame = tableViewFrame;
-    } else if (followViewControllerType == kUserListType_TDUsers) {
-        CGRect tableViewFrame = self.tableView.frame;
-        tableViewFrame.origin.y = TABLEVIEW_POSITION_UNDER_SEARCHBAR - self.searchDisplayController.searchBar.frame.size.height;
         self.tableView.frame = tableViewFrame;
     }
 }
