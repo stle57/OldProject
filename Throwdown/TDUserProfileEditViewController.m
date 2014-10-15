@@ -101,7 +101,11 @@
             self.username = [settings objectForKey:@"username"];
             self.phone = [settings objectForKey:@"displayed_phone_number"];
             self.email = [settings objectForKey:@"displayed_email"];
-            self.location = [settings objectForKey:@"location"];
+            if ([settings objectForKey:@"location"] == [NSNull null]) {
+                self.location = @"";
+            } else {
+                self.location = [settings objectForKey:@"location"];
+            }
             if ([settings objectForKey:@"bio"] == [NSNull null]) {
                 self.bio = @"";
             } else {
@@ -418,12 +422,13 @@
     }
 
     NSString *currentBio = [self.settings objectForKey:@"bio"];
+    NSString *currentLocation = [self.settings objectForKey:@"location"];
     if (self.editedProfileImage != nil ||
         ([self.name length] > 0 && ![self.name isEqualToString:[self.settings objectForKey:@"name"]]) ||
         ([self.username length] > 0 && ![self.username isEqualToString:[self.settings objectForKey:@"username"]]) ||
         ([self.phone length] > 0 && ![self.phone isEqualToString:[self.settings objectForKey:@"displayed_phone_number"]]) ||
         (![self.bio isEqualToString:(currentBio ? currentBio :  @"")]) ||
-        ([self.location length] > 0 && ![self.location isEqualToString:[self.settings objectForKey:@"location"]]) ||
+        (![self.location isEqualToString:(currentLocation ? currentLocation :  @"")]) ||
         ([self.email length] > 0 && ![self.email isEqualToString:[self.settings objectForKey:@"displayed_email"]]))
     {
         return YES;
