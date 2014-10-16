@@ -21,7 +21,6 @@
 #import "UIAlertView+TDBlockAlert.h"
 #import "TDUserPushNotificationsEditViewController.h"
 #import "TDSocialNetworksViewController.h"
-#import <FLEXManager.h>
 #import "TDAnalytics.h"
 
 @interface TDUserProfileEditViewController ()
@@ -61,8 +60,6 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    [[FLEXManager sharedManager] showExplorer];
 
     debug NSLog(@"EditUserProfile:%@", self.profileUser);
 
