@@ -1561,7 +1561,7 @@
 				BUNDLE_DISPLAY_NAME_SUFFIX = "-α";
 				BUNDLE_ID_SUFFIX = .dev;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Stephanie Le (PXQB9WK964)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Andy Crookston (4H23FB7AFD)";
 				EXCLUDED_SOURCE_FILE_NAMES = "";
 				FACEBOOK_APP_ID = 1470514189854120;
 				FRAMEWORK_SEARCH_PATHS = (

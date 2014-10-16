@@ -136,7 +136,9 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:NO animated:NO];
-    
+    [[UIApplication sharedApplication] setStatusBarHidden:NO];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+
     origTableViewFrame = self.tableView.frame;
     UIBarButtonItem *saveBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.saveButton];
     self.navigationItem.rightBarButtonItem = saveBarButton;
@@ -233,7 +235,6 @@
                                                     [message appendFormat:@"%@", [self buildStringFromErrors:[dict objectForKey:@"email"] baseString:[NSString stringWithFormat:@"Email (%@)", self.email]]];
                                                 }
                                                 if ([dict objectForKey:@"bio"]) {
-
                                                     if (self.bio && [self.bio length] > 8) {    // make sure it's not too long for the alert
                                                         self.bio = [NSString stringWithFormat:@"%@...", [self.bio substringToIndex:7]];
                                                     }
@@ -448,17 +449,17 @@
 
 #pragma mark - TextView
 - (void)textViewDidBeginEditing:(UITextView *)textView {
-    self.bio = textView.text;
+    self.bio = [textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     [self checkForSaveButton];
 }
 
 - (void)textViewDidChange:(UITextView *)textView {
-    self.bio = textView.text;
+    self.bio = [textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     [self checkForSaveButton];
 }
 
 - (void)textViewDidEndEditing:(UITextView *)textView {
-    self.bio = textView.text;
+    self.bio = [textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     [self checkForSaveButton];
 }
 
@@ -907,6 +908,9 @@
 }
 
 - (void)showImagePickerForSourceType:(UIImagePickerControllerSourceType)sourceType {
+    [[UIApplication sharedApplication] setStatusBarHidden:NO];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
+
     UIImagePickerController *imagePickerController = [[UIImagePickerController alloc] init];
     imagePickerController.modalPresentationStyle = UIModalPresentationCurrentContext;
     imagePickerController.sourceType = sourceType;
@@ -923,16 +927,17 @@
 }
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    [[UIApplication sharedApplication] setStatusBarHidden:NO];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+
     if (self.tempFlyInImageView && [self.tempFlyInImageView superview]) {
         [self.tempFlyInImageView removeFromSuperview];
     }
 
     UIImage *image = [info valueForKey:UIImagePickerControllerEditedImage];
-
-    // Scale to 140x140
     CGFloat shorterSide = image.size.width < image.size.height ? image.size.width : image.size.height;
     image = [image cropToSize:CGSizeMake(shorterSide, shorterSide) usingMode:NYXCropModeCenter];
-    image = [image scaleToSize:CGSizeMake(140.0, 140.0) usingMode:NYXResizeModeScaleToFill];
+    image = [image scaleToSize:CGSizeMake(210.0, 210.0) usingMode:NYXResizeModeScaleToFill];
     self.editedProfileImage = image;
 
     // Need to figure out where the avatar image is on the screen
@@ -975,6 +980,8 @@
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
     [self dismissViewControllerAnimated:YES completion:NULL];
+    [[UIApplication sharedApplication] setStatusBarHidden:NO];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 }
 
 #pragma mark - Upload Avatar Image
