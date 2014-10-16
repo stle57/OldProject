@@ -78,7 +78,7 @@
     [navigationBar setBarStyle:UIBarStyleBlack];
     navigationBar.translucent = NO;
     // Background color
-    self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
+    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
     self.tableView.separatorColor = [UIColor clearColor];
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     

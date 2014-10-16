@@ -44,7 +44,7 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
     [navigationBar setBarStyle:UIBarStyleBlack];
     navigationBar.translucent = NO;
     // Background color
-    self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
+    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
     
     UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];     // '<'
     self.navigationItem.leftBarButtonItem = leftBarButton;
@@ -63,7 +63,7 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
     [self.titleLabel sizeToFit];
     [self.navigationItem setTitleView:self.titleLabel];
     
-    self.view.backgroundColor = [TDConstants darkBackgroundColor];
+    self.view.backgroundColor = [TDConstants lightBackgroundColor];
     
     CGRect tableViewFrame = self.tableView.frame;
     tableViewFrame.size.width = SCREEN_WIDTH;
@@ -212,8 +212,8 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
         case 0: //Top header label
         {
             UILabel *topLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 22, SCREEN_WIDTH, 100)];
-            CGFloat lineHeight = 20.0;
-            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:header1Text font:[TDConstants fontRegularSized:16] color:[TDConstants headerTextColor] lineHeight:lineHeight lineHeightMultipler:(lineHeight/16.0)];
+            CGFloat lineHeight = 21.0;
+            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:header1Text font:[TDConstants fontRegularSized:17] color:[TDConstants headerTextColor] lineHeight:lineHeight lineHeightMultipler:(lineHeight/17.0)];
             
             [topLabel setTextAlignment:NSTextAlignmentCenter];
             [topLabel setLineBreakMode:NSLineBreakByWordWrapping];
@@ -237,7 +237,7 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
         {
             UILabel *topLabel = [[UILabel alloc] initWithFrame:CGRectMake(TD_MARGIN, 11, SCREEN_WIDTH, 100)];
             CGFloat lineHeight = 14;
-            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:header2Text1 font:[TDConstants fontRegularSized:14.0] color:[TDConstants commentTextColor] lineHeight:lineHeight lineHeightMultipler:(lineHeight/14.0)];
+            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:header2Text1 font:[TDConstants fontRegularSized:14.0] color:[TDConstants helpTextColor] lineHeight:lineHeight lineHeightMultipler:(lineHeight/14.0)];
             
             [topLabel setNumberOfLines:1];
             [topLabel setAttributedText:attString];
@@ -255,8 +255,8 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
                 UILabel *topLabel = [self.headerLabels objectAtIndex:section-1];
                 
                 UILabel *bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, topLabel.frame.origin.y + topLabel.frame.size.height + MIDDLE_MARGIN_HEADER2, SCREEN_WIDTH, 100)];
-                CGFloat lineHeight = 16.0;
-                NSAttributedString *bottomAttString = [TDViewControllerHelper makeParagraphedTextWithString:header2Text2 font:[TDConstants fontSemiBoldSized:16.0] color:[TDConstants headerTextColor] lineHeight:lineHeight lineHeightMultipler:(lineHeight/16.0)];
+                CGFloat lineHeight = 17.0;
+                NSAttributedString *bottomAttString = [TDViewControllerHelper makeParagraphedTextWithString:header2Text2 font:[TDConstants fontSemiBoldSized:17.0] color:[TDConstants headerTextColor] lineHeight:lineHeight lineHeightMultipler:(lineHeight/17.0)];
                 
                 [bottomLabel setTextAlignment:NSTextAlignmentCenter];
                 [bottomLabel setLineBreakMode:NSLineBreakByWordWrapping];

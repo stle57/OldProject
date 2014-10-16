@@ -51,7 +51,7 @@
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
     
     // Background color
-    self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
+    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
     
     UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];     // '<'
     self.navigationItem.leftBarButtonItem = leftBarButton;
@@ -67,9 +67,9 @@
     
 
     // Search Bar
-    [[UISearchBar appearance] setBackgroundImage:[UIImage imageNamed:@"e6e6e6_square.png"] forBarPosition:0 barMetrics:UIBarMetricsDefault]; // Sets the search bar to a solid color(no transparancy)
+    [[UISearchBar appearance] setBackgroundImage:[UIImage imageNamed:@"f5f5f5_square.png"] forBarPosition:0 barMetrics:UIBarMetricsDefault]; // Sets the search bar to a solid color(no transparancy)
     self.searchDisplayController.searchBar.translucent = NO;
-    self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants darkBackgroundColor];
+    self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants lightBackgroundColor];
     self.searchDisplayController.searchResultsTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
@@ -216,7 +216,7 @@
             return cell;
 
         } else {
-            self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants darkBackgroundColor];
+            self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants lightBackgroundColor];
 
             TDContactInfo *contactPerson = [filteredContactArray objectAtIndex:indexPath.row];
             if (contactPerson.fullName != nil && contactPerson.fullName.length != 0) {
@@ -458,8 +458,8 @@
 #pragma mark UISearchBarDelegate
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants headerTextColor]];
-    self.view.backgroundColor = [TDConstants darkBackgroundColor];
-    self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants darkBackgroundColor];
+    self.view.backgroundColor = [TDConstants lightBackgroundColor];
+    self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants lightBackgroundColor];
 }
 
 - (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {

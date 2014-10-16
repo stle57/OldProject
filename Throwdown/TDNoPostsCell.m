@@ -18,7 +18,8 @@
 @implementation TDNoPostsCell
 
 - (void)awakeFromNib {
-    self.noPostsLabel.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:17.0];
+    self.noPostsLabel.font = [TDConstants fontSemiBoldSized:17.0];
+    self.noPostsLabel.textColor = [TDConstants helpTextColor];
 }
 
 - (void)dealloc {

@@ -37,7 +37,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.view.backgroundColor = [TDConstants darkBackgroundColor];
+    self.view.backgroundColor = [TDConstants lightBackgroundColor];
 
     // Background
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
@@ -67,7 +67,7 @@
     self.tableView = [[UITableView alloc] initWithFrame:[[UIScreen mainScreen] bounds] style:UITableViewStyleGrouped];
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
-    self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
+    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
     [self.view addSubview:self.tableView];
 
     self.activityIndicator = [[TDActivityIndicator alloc] initWithFrame:[[UIScreen mainScreen] bounds]];

@@ -28,6 +28,7 @@
 @synthesize disableViewOverlay;
 @synthesize headerView;
 @synthesize emptyCell;
+@synthesize editingIndexPath;
 
 - (void)dealloc {
     self.tdUsers = nil;
@@ -37,6 +38,9 @@
     self.labels = nil;
     self.profileUser = nil;
     self.searchText = nil;
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -61,9 +65,9 @@
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
     
     // Background color
-    self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
+    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
     
-    self.view.backgroundColor = [TDConstants darkBackgroundColor];
+    self.view.backgroundColor = [TDConstants lightBackgroundColor];
     
     UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];     // '<'
     self.navigationItem.leftBarButtonItem = leftBarButton;
@@ -86,7 +90,7 @@
     
     
     // Search Bar
-    [[UISearchBar appearance] setBackgroundImage:[UIImage imageNamed:@"e6e6e6_square.png"] forBarPosition:0 barMetrics:UIBarMetricsDefault]; // Sets the search bar to a solid color(no transparancy)
+    [[UISearchBar appearance] setBackgroundImage:[UIImage imageNamed:@"f5f5f5_square.png"] forBarPosition:0 barMetrics:UIBarMetricsDefault]; // Sets the search bar to a solid color(no transparancy)
     self.searchBar.translucent = NO;
     self.searchBar.layer.borderColor = [[TDConstants darkBorderColor] CGColor];
     self.searchBar.layer.borderWidth = TD_CELL_BORDER_WIDTH;
@@ -119,7 +123,7 @@
     emptyCell.noFollowLabel.hidden = YES;
     emptyCell.invitePeopleButton.hidden = YES;
     emptyCell.findPeopleButton.hidden = YES;
-    emptyCell.backgroundColor = [TDConstants darkBackgroundColor];
+    emptyCell.backgroundColor = [TDConstants lightBackgroundColor];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -140,6 +144,10 @@
     debug NSLog(@"calling loadData 1");
 
     [self loadData];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+
 }
 
 - (void) loadData {
@@ -249,11 +257,14 @@
 {
     if (self.gotFromServer) {
         if (self.searchingActive) {
-            if ([filteredUsersArray count] == 0) {
+            if ([self.searchText isEqual:@""]) {
                 // If count is 0, we should show suggested user list!
                 [self.view addSubview:self.disableViewOverlay];
-                debug NSLog(@"filtred array is 0, loading %lu for suggestedUsers", (unsigned long)[suggestedUsers count]);
+                //self.tableView.tableHeaderView = self.headerView;
+                debug NSLog(@"filtered array is 0, loading %lu for suggestedUsers", (unsigned long)[suggestedUsers count]);
                 return [suggestedUsers count];
+            } else if ([filteredUsersArray count] == 0){
+                return 1;
             } else {
                 debug NSLog(@"returning %lu row for filteredUsersArray", (unsigned long)[filteredUsersArray count]);
 
@@ -279,10 +290,10 @@
         if ([suggestedUsers count] == 0) {
             return emptyCell;
         } else {
-        NSArray *object = [self.suggestedUsers objectAtIndex:current];
-        
-        TDFollowProfileCell *cell = [self createCell:indexPath tableView:tableView object:object];
-        return cell;
+            NSArray *object = [self.suggestedUsers objectAtIndex:current];
+            
+            TDFollowProfileCell *cell = [self createCell:indexPath tableView:tableView object:object];
+            return cell;
         }
         
     } else {
@@ -294,7 +305,7 @@
             TDFollowProfileCell *cell = [self createCell:indexPath tableView:tableView object:object];
             return cell;
             
-        } if (filteredUsersArray.count == 0) {
+        } else if (filteredUsersArray.count == 0) {
             TDNoFollowProfileCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoFollowProfileCell"];
             if (!cell) {
                 NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoFollowProfileCell" owner:self options:nil];
@@ -446,7 +457,7 @@
     debug NSLog(@"textDidBeginEditing");
     self.searchingActive = YES;
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants headerTextColor]];
-    self.view.backgroundColor = [TDConstants darkBackgroundColor];
+    self.view.backgroundColor = [TDConstants lightBackgroundColor];
     
     [self searchBar:searchBar activate:YES];
     if (self.searchBar.text.length > 0) {
@@ -730,6 +741,33 @@
         }
     }
     //[searchBar setShowsCancelButton:active animated:YES];
+}
+
+#pragma mark - Keyboard / Textfield
+
+- (void)keyboardWillHide:(NSNotification *)notification {
+    NSNumber *rate = notification.userInfo[UIKeyboardAnimationDurationUserInfoKey];
+    [UIView animateWithDuration:rate.floatValue animations:^{
+        self.tableView.contentInset = UIEdgeInsetsZero;
+        self.tableView.scrollIndicatorInsets = UIEdgeInsetsZero;
+    }];
+}
+
+- (void)keyboardWillShow:(NSNotification *)notification {
+    CGSize keyboardSize = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    NSNumber *rate = notification.userInfo[UIKeyboardAnimationDurationUserInfoKey];
+    UIEdgeInsets contentInsets;
+    if (UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation])) {
+        contentInsets = UIEdgeInsetsMake(0.0, 0.0, (keyboardSize.height), 0.0);
+    } else {
+        contentInsets = UIEdgeInsetsMake(0.0, 0.0, (keyboardSize.width), 0.0);
+    }
+    
+    [UIView animateWithDuration:rate.floatValue animations:^{
+        self.tableView.contentInset = contentInsets;
+        self.tableView.scrollIndicatorInsets = contentInsets;
+    }];
+    [self.tableView scrollToRowAtIndexPath:self.editingIndexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
 }
 
 @end

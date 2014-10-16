@@ -32,7 +32,7 @@
     findFrame.origin.x = SCREEN_WIDTH/2 - self.findPeopleButton.frame.size.width - 10;
     self.findPeopleButton.frame = findFrame;
     
-    self.noFollowLabel.font = [TDConstants fontSemiBoldSized:16];
+    self.noFollowLabel.font = [TDConstants fontSemiBoldSized:17];
     self.noFollowLabel.textColor = [TDConstants headerTextColor];
     self.view.backgroundColor = [UIColor whiteColor];
     self.backgroundColor = [UIColor whiteColor];

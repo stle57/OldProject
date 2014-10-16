@@ -106,8 +106,8 @@
     [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
 
-    self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
-    self.view.backgroundColor = [TDConstants darkBackgroundColor];
+    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
+    self.view.backgroundColor = [TDConstants lightBackgroundColor];
     
     self.suggestedLabel.hidden = YES;
     if (self.followControllerType == kUserListType_Following){
@@ -306,7 +306,7 @@
             cell.invitePeopleButton.frame = frame;
             return cell;
         } else {
-            self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants darkBackgroundColor];
+            self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants lightBackgroundColor];
             NSArray *object = [self.filteredTDUsers objectAtIndex:indexPath.row];
             TDFollowProfileCell *cell = [self createCell:indexPath tableView:tableView object:object];
             return cell;
@@ -332,7 +332,7 @@
                 }
             }
         } else {
-            self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
+            self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
             NSArray *object = [self.followUsers objectAtIndex:currentRow];
             
             TDFollowProfileCell *cell = [self createCell:indexPath tableView:tableView object:object];

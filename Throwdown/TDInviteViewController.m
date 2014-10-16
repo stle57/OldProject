@@ -52,7 +52,7 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
     navigationBar.translucent = NO;
     
     // Background color
-    self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
+    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
 
     UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.closeButton];     // 'X'
     self.navigationItem.leftBarButtonItem = leftBarButton;
@@ -73,7 +73,7 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
     [self.navigationItem setTitleView:self.titleLabel];
     
     [self checkForNextButton];
-    self.view.backgroundColor = [TDConstants darkBackgroundColor];
+    self.view.backgroundColor = [TDConstants lightBackgroundColor];
 }
 
 - (void)dealloc {
@@ -125,9 +125,9 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
     switch (section) {
         case 0:
         {
-            UIFont *font = [TDConstants fontSemiBoldSized:16.0];
-            UILabel *topLabel = [[UILabel alloc] initWithFrame:CGRectMake(TD_MARGIN, 20, SCREEN_WIDTH, 100)];
-            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:topHeaderText1 font:font color:[TDConstants headerTextColor] lineHeight:20.0 lineHeightMultipler:(20.0/16.0)];
+            UIFont *font = [TDConstants fontSemiBoldSized:17.0];
+            UILabel *topLabel = [[UILabel alloc] initWithFrame:CGRectMake(TD_MARGIN, 30, SCREEN_WIDTH, 100)];
+            NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:topHeaderText1 font:font color:[TDConstants headerTextColor] lineHeight:21.0 lineHeightMultipler:(21.0/17.0)];
             [topLabel setTextAlignment:NSTextAlignmentCenter];
             [topLabel setLineBreakMode:NSLineBreakByWordWrapping];
             [topLabel setAttributedText:attString];
@@ -152,8 +152,8 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
             if ([self.headerLabels count] == 1) {
                 UILabel *topLabel = [self.headerLabels objectAtIndex:section-1];
                 UILabel *bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(TD_MARGIN, HEADER1_TOP_MARGIN + topLabel.frame.size.height + HEADER1_MIDDLE_MARGIN, SCREEN_WIDTH - TD_MARGIN, 100)];
-                UIFont *bottomFont = [TDConstants fontRegularSized:14.0];
-                NSAttributedString *bottomAttString = [TDViewControllerHelper makeParagraphedTextWithString:topHeaderText2 font:bottomFont color:[TDConstants helpTextColor] lineHeight:18.0 lineHeightMultipler:(18.0/14.0)];
+                UIFont *bottomFont = [TDConstants fontRegularSized:15.0];
+                NSAttributedString *bottomAttString = [TDViewControllerHelper makeParagraphedTextWithString:topHeaderText2 font:bottomFont color:[TDConstants helpTextColor] lineHeight:19.0 lineHeightMultipler:(19.0/15.0)];
                 [bottomLabel setLineBreakMode:NSLineBreakByWordWrapping];
                 [bottomLabel setAttributedText:bottomAttString];
                 [bottomLabel setNumberOfLines:0];

@@ -21,7 +21,7 @@
             <rect key="frame" x="0.0" y="64" width="320" height="504"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <searchBar contentMode="redraw" placeholder="Search Contacts" id="TZ4-FK-mBm">
+                <searchBar contentMode="redraw" placeholder="Search People" id="TZ4-FK-mBm">
                     <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <textInputTraits key="textInputTraits"/>

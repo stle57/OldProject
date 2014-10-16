@@ -94,7 +94,7 @@ settings: [
     self.navigationItem.leftBarButtonItem = barButton;
     self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
     
-    self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
+    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
 }
 
 - (void)viewWillAppear:(BOOL)animated {

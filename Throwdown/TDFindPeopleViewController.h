@@ -38,6 +38,7 @@
 @property (retain) UIView *disableViewOverlay;
 @property (retain) UIView *headerView;
 @property (retain) TDNoFollowProfileCell *emptyCell;
+@property (nonatomic) NSIndexPath *editingIndexPath;
 
 - (IBAction)backButtonHit:(id)sender;
 - (IBAction)inviteButtonHit:(id)sender;
