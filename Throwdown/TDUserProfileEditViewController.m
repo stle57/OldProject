@@ -21,6 +21,7 @@
 #import "UIAlertView+TDBlockAlert.h"
 #import "TDUserPushNotificationsEditViewController.h"
 #import "TDSocialNetworksViewController.h"
+#import <FLEXManager.h>
 
 @interface TDUserProfileEditViewController ()
 
@@ -59,6 +60,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+
+    [[FLEXManager sharedManager] showExplorer];
 
     debug NSLog(@"EditUserProfile:%@", self.profileUser);
 
@@ -549,6 +552,7 @@
     cell.leftMiddleLabel.hidden = YES;
     cell.textView.hidden = YES;
     cell.bottomLine.hidden = NO;
+    cell.rightArrow.hidden = YES;
     cell.textField.tag = 800+(10*indexPath.section)+indexPath.row;
     UIColor *textFieldPlaceHolderColor = [TDConstants headerTextColor];
     cell.textView.frame = cell.textViewdOrigRect;
@@ -610,7 +614,7 @@
                     cell.textField.textColor = [TDConstants commentTextColor];
                 }
                 break;
-                    
+
                 case 4:
                 {
                     cell.titleLabel.hidden = NO;
@@ -635,7 +639,7 @@
                     newTextFrame.size.height = [self tableView:tableView heightForRowAtIndexPath:indexPath];
                     newTextFrame.origin.y = cell.bottomLine.frame.size.height;
                     cell.textView.frame = newTextFrame;
-                    
+
                     cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
                                                        CGRectGetMaxY(newTextFrame),
                                                        cell.bottomLine.frame.size.width,
@@ -683,7 +687,7 @@
                     cell.longTitleLabel.hidden = NO;
                     cell.longTitleLabel.text = @"Push Notifications";
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
-                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                    cell.rightArrow.hidden = NO;
                     cell.topLine.hidden = NO;
                 }
                     break;
@@ -691,13 +695,13 @@
                     cell.longTitleLabel.hidden = NO;
                     cell.longTitleLabel.text = @"Social Networks";
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
-                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                    cell.rightArrow.hidden = NO;
                     break;
                 case 2:
                     cell.longTitleLabel.hidden = NO;
                     cell.longTitleLabel.text = @"Change Password";
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
-                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                    cell.rightArrow.hidden = NO;
                     break;
             }
             break;
@@ -708,13 +712,13 @@
                     cell.longTitleLabel.hidden = NO;
                     cell.longTitleLabel.text = @"Buy a Throwdown T-Shirt";
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
-                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                    cell.rightArrow.hidden = NO;
                     break;
                 case 1:
                     cell.longTitleLabel.hidden = NO;
                     cell.longTitleLabel.text = @"Rate Throwdown in App Store";
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
-                    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                    cell.rightArrow.hidden = NO;
                     break;
                 default:
                     break;
@@ -745,7 +749,6 @@
 - (CGRect)getTextFieldPosition:(CGRect)frameX {
     CGRect newFrame = CGRectMake(frameX.origin.x, frameX.origin.y, frameX.size.width, frameX.size.height);
     newFrame.origin.x = TD_TEXTFIELD_ORIGIN_X_POS;
-    
     return newFrame;
 }
 
@@ -837,7 +840,6 @@
 
 #pragma mark - Rate App Link
 - (void)gotoRateAppLink {
-    NSLog(@"Inside gotoRateAppLink");
     debug NSLog(@"===>Inside toastNotificationTappedRateUs for iRate");
     //mark as rated
     [iRate sharedInstance].ratedThisVersion = YES;

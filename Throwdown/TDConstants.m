@@ -118,7 +118,7 @@ static NSString *const kCDNStreamingServer = @"http://139bc8fb83b0918931ad-a6f56
 }
 
 + (UIColor *)lightBorderColor {
-    return [self commentTimeTextColor];
+    return [UIColor colorWithRed:(204.0/255.0) green:(204.0/255.0) blue:(204.0/255.0) alpha:1.0]; // cccccc
 }
 
 + (UIColor *)commentTimeTextColor {
