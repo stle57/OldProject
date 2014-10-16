@@ -122,12 +122,6 @@
     emptyCell.invitePeopleButton.hidden = YES;
     emptyCell.findPeopleButton.hidden = YES;
     emptyCell.backgroundColor = [TDConstants darkBackgroundColor];
-    emptyCell.layer.borderColor = [[UIColor greenColor] CGColor];
-    emptyCell.layer.borderWidth = 2.0;
-    debug NSLog(@"emptyCell frame = %@", NSStringFromCGRect(emptyCell.frame));
-    
-    //[self loadData];
-
 }
 
 - (void)viewWillAppear:(BOOL)animated {
