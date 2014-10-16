@@ -41,6 +41,7 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     [aCoder encodeObject:self.deviceToken forKey:@"device_token"];
     [aCoder encodeObject:self.phoneNumber forKey:@"phone_number"];
     [aCoder encodeObject:self.bio forKey:@"bio"];
+    [aCoder encodeObject:self.location forKey:@"location"];
     [aCoder encodeObject:self.picture forKey:@"picture"];
 
     [aCoder encodeObject:self.fbToken forKey:@"fb_token"];
@@ -68,6 +69,9 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
         _phoneNumber = [aDecoder decodeObjectForKey:@"phone_number"];
         if ([self nullcheck:[aDecoder decodeObjectForKey:@"bio"]]) {
             _bio     = [aDecoder decodeObjectForKey:@"bio"];
+        }
+        if ([self nullcheck:[aDecoder decodeObjectForKey:@"location"]]) {
+            _location     = [aDecoder decodeObjectForKey:@"location"];
         }
         if ([self nullcheck:[aDecoder decodeObjectForKey:@"picture"]]) {
             _picture = [aDecoder decodeObjectForKey:@"picture"];
@@ -98,6 +102,9 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     _phoneNumber = [dictionary objectForKey:@"phone_number"];
     if ([self nullcheck:[dictionary objectForKey:@"bio"]]) {
         _bio     = [dictionary objectForKey:@"bio"];
+    }
+    if ([self nullcheck:[dictionary objectForKey:@"location"]]) {
+        _location     = [dictionary objectForKey:@"location"];
     }
     if ([self nullcheck:[dictionary objectForKey:@"picture"]]) {
         _picture     = [dictionary objectForKey:@"picture"];
@@ -175,6 +182,7 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     _deviceToken = nil;
     _picture = nil;
     _bio = nil;
+    _location = nil;
     _fbToken = nil;
     _fbUID = nil;
     _fbIdentifier = nil;
@@ -204,7 +212,8 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
         userName:self.username
             name:self.name
          picture:self.picture
-             bio:self.bio];
+             bio:self.bio
+        location:self.location];
     return user;
 }
 

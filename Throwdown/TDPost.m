@@ -228,6 +228,11 @@ static NSString *const kKindText  = @"text";
             } else {
                 [newLiker setObject:@"" forKey:@"username"];
             }
+            if (newUser.location) {
+                [newLiker setObject:newUser.location forKey:@"location"];
+            } else {
+                [newLiker setObject:@"" forKey:@"location"];
+            }
             [newLikers replaceObjectAtIndex:[newLikers indexOfObject:liker] withObject:newLiker];
             newLiker = nil;
         }
