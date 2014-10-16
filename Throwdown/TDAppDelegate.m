@@ -125,7 +125,7 @@
     }
     [iRate sharedInstance].daysUntilPrompt = 2;
     [iRate sharedInstance].eventsUntilPrompt = 20;
-    
+    [iRate sharedInstance].promptForNewVersionIfUserRated = YES;
 	[iRate sharedInstance].onlyPromptIfLatestVersion = NO;
     
     //enable preview mode
