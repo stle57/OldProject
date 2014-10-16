@@ -56,8 +56,6 @@
     self.disableViewOverlay.backgroundColor=[UIColor blackColor];
     self.disableViewOverlay.alpha = 0;
     
-    //statusBarFrame = [self.view convertRect:[UIApplication sharedApplication].statusBarFrame fromView: nil];
-    
     // Do any additional setup after loading the view from its nib.
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
@@ -125,16 +123,11 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    debug NSLog(@"inside viewWillAppear w/ searchText=%@", self.searchText);
-    debug NSLog(@"what inside search bar = %@", self.searchBar.text);
     [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
     
-    
-    
-    self.edgesForExtendedLayout = UIRectEdgeNone;
+    //self.edgesForExtendedLayout = UIRectEdgeNone;
     [self.navigationController setNavigationBarHidden:NO animated:NO];
-    debug NSLog(@"search bar frame = %@", NSStringFromCGRect(self.searchBar.frame));
     CGRect frame = self.searchBar.frame;
     frame.size.width = SCREEN_WIDTH;
     self.searchBar.frame = frame;
@@ -257,14 +250,21 @@
     if (self.gotFromServer) {
         if (self.searchingActive) {
             if ([filteredUsersArray count] == 0) {
-                return 1;
+                // If count is 0, we should show suggested user list!
+                [self.view addSubview:self.disableViewOverlay];
+                debug NSLog(@"filtred array is 0, loading %lu for suggestedUsers", (unsigned long)[suggestedUsers count]);
+                return [suggestedUsers count];
             } else {
+                debug NSLog(@"returning %lu row for filteredUsersArray", (unsigned long)[filteredUsersArray count]);
+
                 return [filteredUsersArray count];
             }
         } else {
             if ([suggestedUsers count] == 0) {
+                debug NSLog(@"  returning 1 ROW for suggested users");
                 return 1;
             } else {
+                debug NSLog(@"  returning %lu row for suggested users", (unsigned long)[suggestedUsers count]);
                 return [suggestedUsers count];
             }
         }
@@ -288,10 +288,11 @@
     } else {
         self.tableView.tableHeaderView = nil;
         if ([self.searchText isEqual:@""]) {
-            debug NSLog(@"returning empty cell");
-            self.emptyCell.backgroundColor = [TDConstants darkBackgroundColor];
-            self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
-            return self.emptyCell;
+            // Need to show the suggested list
+            NSArray *object = [self.suggestedUsers objectAtIndex:current];
+            
+            TDFollowProfileCell *cell = [self createCell:indexPath tableView:tableView object:object];
+            return cell;
             
         } if (filteredUsersArray.count == 0) {
             TDNoFollowProfileCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoFollowProfileCell"];
@@ -338,7 +339,6 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    //[tableView deselectRowAtIndexPath:indexPath animated:NO];
 }
 
 - (TDFollowProfileCell*)createCell:(NSIndexPath*)indexPath tableView:(UITableView*)tableView object:(NSArray*)object{
