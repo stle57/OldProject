@@ -150,8 +150,8 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     [paragraphStyle setLineHeightMultiple:kTextLineHeight];
     [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [text length])];
-    [paragraphStyle setMinimumLineHeight:17];
-    [paragraphStyle setMaximumLineHeight:17.0];
+    [paragraphStyle setMinimumLineHeight:19];
+    [paragraphStyle setMaximumLineHeight:19];
     paragraphStyle.alignment = NSTextAlignmentCenter;
     paragraphStyle.firstLineHeadIndent = 10.0f;
     paragraphStyle.headIndent = 10.0f;

@@ -30,7 +30,7 @@ static CGFloat const kMaxUsernameWidth = 230;
     self.timeLabel.textColor = [TDConstants commentTimeTextColor];
 
     // Fonts
-    self.usernameLabel.font = [TDConstants fontSemiBoldSized:16.0];
+    self.usernameLabel.font = [TDConstants fontSemiBoldSized:15.0];
     self.timeLabel.font     = TIME_FONT;
     self.messageLabel.font  = COMMENT_MESSAGE_FONT;
     self.messageLabel.delegate = self;

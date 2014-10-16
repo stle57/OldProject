@@ -20,7 +20,7 @@
     contentViewFrame.size.width = SCREEN_WIDTH;
     self.contentView.frame = contentViewFrame;
 
-    self.titleLabel.font = [TDConstants fontRegularSized:18.0];
+    self.titleLabel.font = [TDConstants fontRegularSized:16.0];
     self.titleLabel.textColor = [TDConstants headerTextColor];
     
     self.selectionStyle = UITableViewCellSelectionStyleGray;

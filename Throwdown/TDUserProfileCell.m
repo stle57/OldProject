@@ -85,7 +85,7 @@ static CGFloat const kMinHeight = 230 + kBottomMargin;
     if (user) {
         self.userNameLabel.text = user.name;
         if (user.bio && ![user.bio isKindOfClass:[NSNull class]]) {
-            self.bioLabel.attributedText = (NSMutableAttributedString *)[TDViewControllerHelper makeParagraphedTextWithBioString:user.bio];
+            self.bioLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithBioString:user.bio];
 
             CGRect bioFrame = self.bioLabel.frame;
             bioFrame.size.height = user.bioHeight;

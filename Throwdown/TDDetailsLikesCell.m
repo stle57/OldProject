@@ -11,6 +11,7 @@
 #import "TDAppDelegate.h"
 #import "TDConstants.h"
 
+#define USERNAME_FONT [TDConstants fontSemiBoldSized:15];
 static NSString *const kUserIdAttribute = @"user_id";
 static CGFloat const kLikersLineMultiple = 1.05;
 
@@ -28,7 +29,7 @@ static CGFloat const kLikersLineMultiple = 1.05;
     [super awakeFromNib];
 
     self.likersNamesLabel.textColor = [UIColor darkGrayColor];
-    self.likersNamesLabel.font = [TDConstants fontSemiBoldSized:14];
+    self.likersNamesLabel.font = USERNAME_FONT;
     self.likersNamesLabel.delegate = self;
     self.likersNamesLabel.verticalAlignment = TTTAttributedLabelVerticalAlignmentTop;
 }
@@ -98,7 +99,7 @@ static CGFloat const kLikersLineMultiple = 1.05;
     NSString *text = [[likers valueForKeyPath:@"username"] componentsJoinedByString:@", "];
     TTTAttributedLabel *label = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH - 75, MAXFLOAT)];
     label.numberOfLines = 0;
-    label.font = [TDConstants fontSemiBoldSized:14];
+    label.font = USERNAME_FONT;
     [label setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
     label.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:label.attributedText withMultiple:kLikersLineMultiple];
     [label sizeToFit];

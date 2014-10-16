@@ -113,7 +113,7 @@ static NSString *const kTracksKey = @"tracks";
         [self addSubview:self.prStar];
 
         self.usernameLabel = [[UILabel alloc] initWithFrame:CGRectMake(65, kMargin, width - 85, 45)];
-        self.usernameLabel.font = [TDConstants fontSemiBoldSized:16.0];
+        self.usernameLabel.font = [TDConstants fontSemiBoldSized:17.0];
         self.usernameLabel.textColor = [TDConstants brandingRedColor];
         self.usernameLabel.numberOfLines = 1;
         self.usernameLabel.userInteractionEnabled = YES;
@@ -124,7 +124,7 @@ static NSString *const kTracksKey = @"tracks";
         self.commentLabel = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(kMargin, kHeightOfProfileRow, width - (kMargin * 2), 0)];
         self.commentLabel.enabledTextCheckingTypes = NSTextCheckingTypeLink;
         self.commentLabel.textColor = [TDConstants commentTextColor];
-        self.commentLabel.font = [TDConstants fontRegularSized:16];
+        self.commentLabel.font = [TDConstants fontRegularSized:17];
         self.commentLabel.delegate = self;
         self.commentLabel.hidden = YES;
         self.commentLabel.numberOfLines = 0;
