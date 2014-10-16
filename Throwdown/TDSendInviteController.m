@@ -350,6 +350,7 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
             cell = [topLevelObjects objectAtIndex:0];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
         }
+        cell.rightArrow.hidden = YES;
         cell.titleLabel.hidden = YES;
         cell.longTitleLabel.hidden = YES;
         cell.middleLabel.hidden = YES;
