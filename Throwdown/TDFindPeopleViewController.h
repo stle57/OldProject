@@ -1,8 +1,8 @@
 //
-//  TDFindPeopleController.h
+//  TDFindPeopleViewController.h
 //  Throwdown
 //
-//  Created by Stephanie Le on 9/17/14.
+//  Created by Stephanie Le on 10/15/14.
 //  Copyright (c) 2014 Throwdown. All rights reserved.
 //
 
@@ -13,23 +13,17 @@
 #import "TDNoFollowProfileCell.h"
 #import "TDActivityIndicator.h"
 
-//@protocol TDFindPeopleControllerDelegate <NSObject>
-//@optional
-//- (void)contactPressedFromRow:(TDContactInfo*)contact;
-//- (void)invitesAdded:(NSMutableArray*)inviteList;
-//@end
 
-@interface TDFindPeopleController : UIViewController<UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, UISearchDisplayDelegate, TDFollowProfileCellDelegate, UIActionSheetDelegate, TDNoFollowProfileCellDelegate>
+@interface TDFindPeopleViewController : UIViewController<TDNoFollowProfileCellDelegate, UIActionSheetDelegate, TDFollowProfileCellDelegate, UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate>
 
-//@property (nonatomic, assign) id <TDFindPeopleControllerDelegate> __unsafe_unretained delegate;
 @property (weak, nonatomic) IBOutlet UILabel *navLabel;
 @property (weak, nonatomic) IBOutlet UIButton *backButton;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (weak, nonatomic) IBOutlet UILabel *suggestedLabel;
 @property (weak, nonatomic) IBOutlet UIButton *inviteButton;
 @property (weak, nonatomic) IBOutlet TDActivityIndicator *activityIndicator;
-@property (nonatomic) NSInteger currentRow;
+@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 
+@property (nonatomic) NSInteger currentRow;
 @property (nonatomic) NSArray *tdUsers;
 @property (nonatomic) NSArray *suggestedUsers;
 @property (nonatomic) NSMutableArray *filteredUsersArray;
@@ -39,10 +33,16 @@
 @property (nonatomic) NSMutableArray *labels;
 @property (nonatomic) BOOL gotFromServer;
 @property (nonatomic) TDUser *profileUser;
+@property (nonatomic) BOOL searchingActive;
+@property (nonatomic) NSString *searchText;
+@property (retain) UIView *disableViewOverlay;
+@property (retain) UIView *headerView;
+@property (retain) TDNoFollowProfileCell *emptyCell;
 
 - (IBAction)backButtonHit:(id)sender;
 - (IBAction)inviteButtonHit:(id)sender;
 
 - (void)hideActivity;
 - (void)showActivity;
+
 @end

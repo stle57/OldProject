@@ -23,7 +23,7 @@
 #import "TDSocialNetworksViewController.h"
 #import "TDInviteViewController.h"
 #import "TDUserProfileViewController.h"
-#import "TDFindPeopleController.h"
+#import "TDFindPeopleViewController.h"
 
 @interface TDFollowViewController ()
 
@@ -658,7 +658,7 @@
     [self.navigationController presentViewController:navController animated:YES completion:nil];
 }
 - (void)findButtonPressed {
-    TDFindPeopleController *vc = [[TDFindPeopleController alloc] initWithNibName:@"TDFindPeopleController" bundle:nil ];
+    TDFindPeopleViewController *vc = [[TDFindPeopleViewController alloc] initWithNibName:@"TDFindPeopleViewController" bundle:nil ];
     vc.profileUser = [TDCurrentUser sharedInstance].currentUserObject;
     [self.navigationController pushViewController:vc animated:NO];
 }

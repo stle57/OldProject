@@ -2,11 +2,11 @@
 //  TDFindPeopleViewController.m
 //  Throwdown
 //
-//  Created by Stephanie Le on 9/17/14.
+//  Created by Stephanie Le on 10/15/14.
 //  Copyright (c) 2014 Throwdown. All rights reserved.
 //
 
-#import "TDFindPeopleController.h"
+#import "TDFindPeopleViewController.h"
 #import "UIActionSheet+Blocks.h"
 #import "TDUserAPI.h"
 #import "TDAPIClient.h"
@@ -14,7 +14,7 @@
 #import "TDInviteViewController.h"
 #import "TDUserProfileViewController.h"
 
-@implementation TDFindPeopleController
+@implementation TDFindPeopleViewController
 @synthesize filteredUsersArray;
 @synthesize tdUsers;
 @synthesize suggestedUsers;
@@ -24,6 +24,10 @@
 @synthesize gotFromServer;
 @synthesize currentRow;
 @synthesize profileUser;
+@synthesize searchingActive;
+@synthesize disableViewOverlay;
+@synthesize headerView;
+@synthesize emptyCell;
 
 - (void)dealloc {
     self.tdUsers = nil;
@@ -32,6 +36,7 @@
     self.inviteList = nil;
     self.labels = nil;
     self.profileUser = nil;
+    self.searchText = nil;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -44,11 +49,14 @@
     }
     return self;
 }
-
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
     [super viewDidLoad];
-    [self.searchDisplayController.searchBar sizeToFit];
+    self.disableViewOverlay = [[UIView alloc]
+                               initWithFrame:CGRectMake(0.0f,44.0f,SCREEN_WIDTH,SCREEN_HEIGHT-self.navigationController.navigationBar.frame.size.height - self.searchBar.frame.size.height)];
+    self.disableViewOverlay.backgroundColor=[UIColor blackColor];
+    self.disableViewOverlay.alpha = 0;
+    
+    //statusBarFrame = [self.view convertRect:[UIApplication sharedApplication].statusBarFrame fromView: nil];
     
     // Do any additional setup after loading the view from its nib.
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
@@ -56,6 +64,7 @@
     
     // Background color
     self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
+    
     self.view.backgroundColor = [TDConstants darkBackgroundColor];
     
     UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];     // '<'
@@ -77,24 +86,85 @@
     [self.navLabel sizeToFit];
     [self.navigationItem setTitleView:self.navLabel];
     
-
+    
     // Search Bar
     [[UISearchBar appearance] setBackgroundImage:[UIImage imageNamed:@"e6e6e6_square.png"] forBarPosition:0 barMetrics:UIBarMetricsDefault]; // Sets the search bar to a solid color(no transparancy)
-    self.searchDisplayController.searchBar.translucent = NO;
-    self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants darkBackgroundColor];
-    self.searchDisplayController.searchResultsTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    self.searchDisplayController.searchBar.layer.borderColor = [[TDConstants darkBorderColor] CGColor];
-    self.searchDisplayController.searchBar.layer.borderWidth = TD_CELL_BORDER_WIDTH;
-    self.searchDisplayController.searchBar.clipsToBounds = YES;
+    self.searchBar.translucent = NO;
+    self.searchBar.layer.borderColor = [[TDConstants darkBorderColor] CGColor];
+    self.searchBar.layer.borderWidth = TD_CELL_BORDER_WIDTH;
+    self.searchBar.clipsToBounds = YES;
+
+    [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
+    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
+    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextAlignment:NSTextAlignmentLeft];
     
+    self.headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 25)];
+    UILabel *suggestedLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, SCREEN_WIDTH, 25)];
+    suggestedLabel.text = @"Suggested people to follow";
+    suggestedLabel.font = [TDConstants fontRegularSized:13.0];
+    suggestedLabel.textColor = [TDConstants helpTextColor];
+     
+    [self.headerView addSubview:suggestedLabel];
+    self.tableView.tableHeaderView = self.headerView;
+
+    
+    // Title
+    self.navLabel.text = @"Find People";
+    self.inviteButton.hidden = NO;
+
+    self.filteredUsersArray = [NSMutableArray arrayWithCapacity:[tdUsers count]];
+
+    NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoFollowProfileCell" owner:self options:nil];
+    emptyCell = [topLevelObjects objectAtIndex:0];
+    emptyCell.selectionStyle = UITableViewCellSelectionStyleNone;
+    emptyCell.delegate = self;
+    emptyCell.noFollowLabel.hidden = YES;
+    emptyCell.invitePeopleButton.hidden = YES;
+    emptyCell.findPeopleButton.hidden = YES;
+    emptyCell.backgroundColor = [TDConstants darkBackgroundColor];
+    emptyCell.layer.borderColor = [[UIColor greenColor] CGColor];
+    emptyCell.layer.borderWidth = 2.0;
+    debug NSLog(@"emptyCell frame = %@", NSStringFromCGRect(emptyCell.frame));
+    
+    //[self loadData];
+
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    debug NSLog(@"inside viewWillAppear w/ searchText=%@", self.searchText);
+    debug NSLog(@"what inside search bar = %@", self.searchBar.text);
     [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
     
+    
+    
+    self.edgesForExtendedLayout = UIRectEdgeNone;
+    [self.navigationController setNavigationBarHidden:NO animated:NO];
+    debug NSLog(@"search bar frame = %@", NSStringFromCGRect(self.searchBar.frame));
+    CGRect frame = self.searchBar.frame;
+    frame.size.width = SCREEN_WIDTH;
+    self.searchBar.frame = frame;
+    [self.searchBar sizeToFit];
+    
+    CGRect tableFrame = self.tableView.frame;
+    tableFrame.size.width = SCREEN_WIDTH;
+    tableFrame.size.height = SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height - self.searchBar.frame.size.height - self.headerView.frame.size.height;
+    self.tableView.frame = tableFrame;
+    debug NSLog(@"calling loadData 1");
+
+    [self loadData];
+}
+
+- (void) loadData {
+    self.gotFromServer = NO;
+    self.activityIndicator.text.text = @"Loading";
+    [self showActivity];
     // Load data from server
     [[TDUserAPI sharedInstance] getSuggestedUserList:^(BOOL success, NSArray *suggestedList) {
         if (success && suggestedList && suggestedList.count > 0) {
             self.suggestedUsers = [suggestedList copy];
             self.gotFromServer = YES;
+            debug NSLog(@"2. reloading suggested users list");
             [self.tableView reloadData];
             [self hideActivity];
         } else {
@@ -106,8 +176,13 @@
     [[TDUserAPI sharedInstance] getCommunityUserList:^(BOOL success, NSArray *returnList) {
         if (success && returnList && returnList.count > 0) {
             self.tdUsers = [returnList copy];
-            self.filteredUsersArray = [NSMutableArray arrayWithCapacity:[self.tdUsers count]];
+            if (self.searchText.length > 0) {
+                debug NSLog(@"  3a. redoing filter");
+                [self filterContentForSearchText:self.searchText scope:nil];
+            }
             self.gotFromServer = YES;
+            debug NSLog(@" 3. reloading td user list");
+
             [self.tableView reloadData];
             [self hideActivity];
         } else {
@@ -115,65 +190,18 @@
             [self hideActivity];
         }
     }];
-
-    self.filteredUsersArray = [NSMutableArray arrayWithCapacity:[tdUsers count]];
-    self.edgesForExtendedLayout = UIRectEdgeNone;
-    
-    // Title
-    self.navLabel.text = @"Find People";
-    self.suggestedLabel.hidden = NO;
-    self.inviteButton.hidden = NO;
-    self.suggestedLabel.hidden = NO;
-    self.suggestedLabel.textColor = [TDConstants helpTextColor];
-    self.suggestedLabel.font = [TDConstants fontRegularSized:13];
-    self.suggestedLabel.backgroundColor = [TDConstants darkBackgroundColor];
-    self.suggestedLabel.layer.borderColor = [[TDConstants lightBorderColor] CGColor];
-    CGRect tableViewFrame = self.tableView.frame;
-    tableViewFrame.size.width = SCREEN_WIDTH;
-    tableViewFrame.origin.y = self.suggestedLabel.frame.size.height + self.searchDisplayController.searchBar.frame.size.height;
-    self.tableView.frame = tableViewFrame;
-    
-    CGRect searchBarFrame = self.searchDisplayController.searchBar.frame;
-    searchBarFrame.size.width = SCREEN_WIDTH;
-    self.searchDisplayController.searchBar.frame = searchBarFrame;
-   [self.tableView reloadData];
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-    [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
-    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
-    
-    //self.tableView.hidden = NO;
-    if (self.searchDisplayController.isActive) {
-        CGRect searchBarFrame = self.searchDisplayController.searchBar.frame;
-        searchBarFrame.origin.y  = self.navigationController.navigationBar.frame.size.height;
-        self.searchDisplayController.searchBar.frame = searchBarFrame;
-        if (self.searchDisplayController.searchBar.hidden == YES) {
-            debug NSLog(@"SEARCH BAR IS HIDDEN");
-        }
-        if (self.searchDisplayController.searchResultsTableView.hidden == YES) {
-            debug NSLog(@"SEARCH TABLE VIEW IS HIDDEN");
-        }
-    debug NSLog(@"!!!!!!!!!search frame inside viewWillAppear:%@", NSStringFromCGRect(self.searchDisplayController.searchResultsTableView.frame));
-    debug NSLog(@"searchbar frame = %@", NSStringFromCGRect(self.searchDisplayController.searchBar.frame));
-        self.searchDisplayController.searchResultsTableView.hidden = NO;
-        [self.searchDisplayController.searchResultsTableView.superview bringSubviewToFront:self.searchDisplayController.searchResultsTableView];
-    } else {
-        debug NSLog(@"search display is not active");
-        debug NSLog(@"!!!!!!!!!table view frame = %@", NSStringFromCGRect(self.tableView.frame));
-    }
-    [self.searchDisplayController.searchResultsTableView reloadData];
     
 }
-- (void)didReceiveMemoryWarning
-{
+
+
+- (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
 -(void)viewDidLayoutSubviews{
     [self.navigationController setNavigationBarHidden:NO animated:NO];
-    [self.searchDisplayController.searchBar setShowsCancelButton:NO animated:NO];
+    [self.searchBar setShowsCancelButton:NO animated:NO];
 }
 
 - (IBAction)backButtonHit:(id)sender {
@@ -194,26 +222,32 @@
     [self.navigationController presentViewController:navController animated:YES completion:nil];
 }
 
+#pragma mark UITableViewDelegate
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     return 0.0;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (tableView == self.searchDisplayController.searchResultsTableView) {
+    if (self.searchingActive) {
         if (self.filteredUsersArray == nil || [self.filteredUsersArray count] == 0) {
-            [self createLabels];
-            UILabel *label = [self.labels objectAtIndex:0];
-            UILabel *label2 = [self.labels objectAtIndex:1];
-            return 30 + label.frame.size.height + 7 + label2.frame.size.height + 30 + [UIImage imageNamed:@"btn-invite-friends.png"].size.height;
+            if ([self.searchText isEqual:@""]) {
+                return self.tableView.frame.size.height;
+            } else {
+                [self createLabels];
+                UILabel *label = [self.labels objectAtIndex:0];
+                UILabel *label2 = [self.labels objectAtIndex:1];
+                return 30 + label.frame.size.height + 7 + label2.frame.size.height + 30 + [UIImage imageNamed:@"btn-invite-friends.png"].size.height+ self.headerView.frame.size.height;
+            }
         } else {
             // Calculate the height of the labels
             return 65.0;
         }
     } else {
+        debug NSLog(@"returning 65");
+
         return 65.0;
     }
-    return 0;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -227,15 +261,18 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (self.gotFromServer) {
-        if (tableView == self.searchDisplayController.searchResultsTableView) {
-            if ([filteredUsersArray count] > 0) {
-                return [filteredUsersArray count];
-            } else {
+        if (self.searchingActive) {
+            if ([filteredUsersArray count] == 0) {
                 return 1;
+            } else {
+                return [filteredUsersArray count];
             }
-            
         } else {
-            return [suggestedUsers count];
+            if ([suggestedUsers count] == 0) {
+                return 1;
+            } else {
+                return [suggestedUsers count];
+            }
         }
     }
     return 0;
@@ -244,14 +281,25 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSInteger current = indexPath.row;
-    if (tableView == self.tableView) {
+    if (!self.searchingActive) {
+        if ([suggestedUsers count] == 0) {
+            return emptyCell;
+        } else {
         NSArray *object = [self.suggestedUsers objectAtIndex:current];
         
         TDFollowProfileCell *cell = [self createCell:indexPath tableView:tableView object:object];
         return cell;
-
-    } else if (tableView == self.searchDisplayController.searchResultsTableView) {
-        if (filteredUsersArray.count == 0) {
+        }
+        
+    } else {
+        self.tableView.tableHeaderView = nil;
+        if ([self.searchText isEqual:@""]) {
+            debug NSLog(@"returning empty cell");
+            self.emptyCell.backgroundColor = [TDConstants darkBackgroundColor];
+            self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
+            return self.emptyCell;
+            
+        } if (filteredUsersArray.count == 0) {
             TDNoFollowProfileCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoFollowProfileCell"];
             if (!cell) {
                 NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoFollowProfileCell" owner:self options:nil];
@@ -269,6 +317,7 @@
             
             cell.invitePeopleButton.hidden = NO;
             cell.invitePeopleButton.enabled = YES;
+            cell.noFollowLabel.hidden = NO;
             UILabel *descriptionLabel = [self.labels objectAtIndex:1];
             
             CGRect descripFrame = descriptionLabel.frame;
@@ -282,9 +331,10 @@
             frame.origin.x = SCREEN_WIDTH/2 - cell.invitePeopleButton.frame.size.width/2;
             frame.origin.y = descriptionLabel.frame.origin.y + descriptionLabel.frame.size.height + 30;
             cell.invitePeopleButton.frame = frame;
+            
+            self.tableView.backgroundColor = [UIColor whiteColor];
             return cell;
         } else {
-            self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants darkBackgroundColor];
             NSArray *object = [self.filteredUsersArray objectAtIndex:indexPath.row];
             TDFollowProfileCell *cell = [self createCell:indexPath tableView:tableView object:object];
             return cell;
@@ -294,17 +344,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-//    if (tableView == self.tableView) {
-//        // Get contact from contract array
-//        TDContactInfo *contactPerson = tdUsers[indexPath.row];
-//        [self addToInviteList:contactPerson indexPath:indexPath tableView:tableView];
-//
-//    } else if (tableView == self.searchDisplayController.searchResultsTableView) {
-//        TDContactInfo *contactPerson = filteredUsersArray[indexPath.row];
-//        [self addToInviteList:contactPerson indexPath:indexPath tableView:tableView];
-//    }
- //   [tableView deselectRowAtIndexPath:indexPath animated:NO];
-
+    //[tableView deselectRowAtIndexPath:indexPath animated:NO];
 }
 
 - (TDFollowProfileCell*)createCell:(NSIndexPath*)indexPath tableView:(UITableView*)tableView object:(NSArray*)object{
@@ -322,15 +362,15 @@
     cell.userId = [object valueForKey:@"id"];
     cell.row = indexPath.row;
     NSAttributedString *usernameAttStr = nil;
-        NSString *str = [NSString stringWithFormat:@"%@", [object valueForKey:@"bio"]];
-        if (str == nil || str.length == 0 || [[object valueForKey:@"bio"] isKindOfClass:[NSNull class]]) {
-            str = [NSString stringWithFormat:@"@%@", [object valueForKey:@"username"]];
-            usernameAttStr = [TDViewControllerHelper makeParagraphedTextWithString:str font:[TDConstants fontRegularSized:13.0] color:[TDConstants headerTextColor] lineHeight:16.0];
-        } else {
-            // Need to adjust the height of label to accomodate for emojis in BIO
-            adjustHeightCell = YES;
-            usernameAttStr = [TDViewControllerHelper makeParagraphedTextForTruncatedBio:str font:[TDConstants fontRegularSized:13.0] color:[TDConstants headerTextColor] lineHeight:16.0];
-        }
+    NSString *str = [NSString stringWithFormat:@"%@", [object valueForKey:@"bio"]];
+    if (str == nil || str.length == 0 || [[object valueForKey:@"bio"] isKindOfClass:[NSNull class]]) {
+        str = [NSString stringWithFormat:@"@%@", [object valueForKey:@"username"]];
+        usernameAttStr = [TDViewControllerHelper makeParagraphedTextWithString:str font:[TDConstants fontRegularSized:13.0] color:[TDConstants headerTextColor] lineHeight:16.0];
+    } else {
+        // Need to adjust the height of label to accomodate for emojis in BIO
+        adjustHeightCell = YES;
+        usernameAttStr = [TDViewControllerHelper makeParagraphedTextForTruncatedBio:str font:[TDConstants fontRegularSized:13.0] color:[TDConstants headerTextColor] lineHeight:16.0];
+    }
     
     cell.descriptionLabel.attributedText = usernameAttStr;
     
@@ -409,21 +449,45 @@
 
 #pragma mark UISearchBarDelegate
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
+    debug NSLog(@"textDidBeginEditing");
+    self.searchingActive = YES;
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants headerTextColor]];
     self.view.backgroundColor = [TDConstants darkBackgroundColor];
-    self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants darkBackgroundColor];
-    debug NSLog(@"TEXT BEGIN EDITING");
-    debug NSLog(@"  !!!!!!!!!search frame inside viewWillAppear:%@", NSStringFromCGRect(self.searchDisplayController.searchResultsTableView.frame));
-    debug NSLog(@"  searchbar frame = %@", NSStringFromCGRect(self.searchDisplayController.searchBar.frame));
+    
+    [self searchBar:searchBar activate:YES];
+    if (self.searchBar.text.length > 0) {
+        debug NSLog(@"   2. loadData inside textDidBeginEditing");
+        [self loadData];
+        [self searchBar:_searchBar textDidChange:self.searchBar.text];
+    }
+    
+}
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+    debug NSLog(@"textDidChange to %@", searchText);
+    if (searchText.length > 0) {
+        [disableViewOverlay removeFromSuperview];
+    }
+    self.searchText = searchText;
+    [self filterContentForSearchText:searchText scope:nil];
 
-    debug NSLog(@"  !!!!!!!!!table view frame = %@", NSStringFromCGRect(self.tableView.frame));
+    debug NSLog(@"  1.reloading table view inside textDidChange");
+    [self.tableView reloadData];
+}
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    UITouch *touch = [[event allTouches] anyObject];
+    if ([self.searchBar isFirstResponder] && [touch view] != self.searchBar)
+    {
+        [self.searchBar resignFirstResponder];
+
+    }
+    [super touchesBegan:touches withEvent:event];
 }
 
 - (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
-    debug NSLog(@"TEXT END EDITING");
-    debug NSLog(@"  !!!!!!!!!search frame inside viewWillAppear:%@", NSStringFromCGRect(self.searchDisplayController.searchResultsTableView.frame));
-    debug NSLog(@"searchbar frame = %@", NSStringFromCGRect(self.searchDisplayController.searchBar.frame));
-    debug NSLog(@"  !!!!!!!!!table view frame = %@", NSStringFromCGRect(self.tableView.frame));
+    debug NSLog(@"DID END EDITING---search bar");
+    self.searchingActive = NO;
+    [self searchBar:self.searchBar activate:NO];
 }
 
 #pragma mark Content Filtering
@@ -441,28 +505,6 @@
     self.filteredUsersArray = [NSMutableArray arrayWithArray:tempArray];
 }
 
-#pragma mark - UISearchDisplayController Delegate Methods
-
-- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString
-{
-    // Tells the table data source to reload when text changes
-    [self filterContentForSearchText:searchString scope:
-     [[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:[self.searchDisplayController.searchBar selectedScopeButtonIndex]]];
-    
-    // Return YES to cause the search result table view to be reloaded.
-    return YES;
-}
-
-
-- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption
-{
-    // Tells the table data source to reload when scope bar selection changes
-    [self filterContentForSearchText:[self.searchDisplayController.searchBar text] scope:
-     [[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:searchOption]];
-    
-    // Return YES to cause the search result table view to be reloaded.
-    return YES;
-}
 
 #pragma mark - TDFollowCellProfileDelegate
 - (void)removeFromInviteList:(UITableView*)tableView indexPath:(NSIndexPath*)indexPath {
@@ -551,21 +593,20 @@
     debug NSLog(@"follow/unfollow--");
     self.currentRow = row;
     
-    //    NSNumber *userId = nil;
-    //    if(self.followUsers != nil) {
-    //        userId = [[self.followUsers objectAtIndex:row] valueForKeyPath:@"id"];
-    //        debug NSLog(@"going to follow user w/ id=%@", userId);
-    //    }
+    NSNumber *id = nil;
+    
+    if(self.searchingActive) {
+        id = [[self.filteredUsersArray objectAtIndex:row] valueForKeyPath:@"id"];
+        debug NSLog(@"going to follow user w/ id=%@", id);
+    } else {
+        id = [[self.suggestedUsers objectAtIndex:row] valueForKeyPath:@"id"];
+        debug NSLog(@"going to follow user w/ id=%@", id);
+    }
     
     if (tag == kFollowButtonTag) {
         TDFollowProfileCell * cell;
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
-        UITableViewCell * modifyCell = nil;
-        if (self.filteredUsersArray.count == 0){
-            modifyCell = [self.tableView cellForRowAtIndexPath:indexPath];
-        } else {
-            modifyCell = [self.searchDisplayController.searchResultsTableView cellForRowAtIndexPath:indexPath];
-        }
+        UITableViewCell * modifyCell = [self.tableView cellForRowAtIndexPath:indexPath];
         
         if(modifyCell != nil) {
             cell = (TDFollowProfileCell*)modifyCell;
@@ -596,21 +637,33 @@
             }
         }];
     } else if (tag == kFollowingButtonTag) {
-        NSString *reportText = [NSString stringWithFormat:@"Unfollow @%@", [[self.tdUsers objectAtIndex:row] valueForKeyPath:@"username"]];
-        UIActionSheet * actionSheet = [[UIActionSheet alloc] initWithTitle:nil
-                                                                  delegate:self
-                                                         cancelButtonTitle:@"Cancel"
-                                                    destructiveButtonTitle:reportText
-                                                         otherButtonTitles:nil, nil];
-        [actionSheet showInView:self.view];
+        if (self.searchingActive) {
+            NSString *reportText = [NSString stringWithFormat:@"Unfollow @%@", [[self.filteredUsersArray objectAtIndex:row] valueForKeyPath:@"username"]];
+            UIActionSheet * actionSheet = [[UIActionSheet alloc] initWithTitle:nil
+                                                                      delegate:self
+                                                             cancelButtonTitle:@"Cancel"
+                                                        destructiveButtonTitle:reportText
+                                                             otherButtonTitles:nil, nil];
+            [actionSheet showInView:self.view];
+        } else {
+            NSString *reportText = [NSString stringWithFormat:@"Unfollow @%@", [[self.suggestedUsers objectAtIndex:row] valueForKeyPath:@"username"]];
+            UIActionSheet * actionSheet = [[UIActionSheet alloc] initWithTitle:nil
+                                                                      delegate:self
+                                                             cancelButtonTitle:@"Cancel"
+                                                        destructiveButtonTitle:reportText
+                                                             otherButtonTitles:nil, nil];
+            [actionSheet showInView:self.view];
+        }
     }
     
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     NSNumber *userId = nil;
-    if(self.tdUsers != nil) {
-        userId = [[self.tdUsers objectAtIndex:self.currentRow] valueForKeyPath:@"id"];
+    if (self.searchingActive) {
+        userId = [[self.filteredUsersArray objectAtIndex:self.currentRow] valueForKey:@"id"];
+    } else {
+        userId = [[self.suggestedUsers objectAtIndex:self.currentRow] valueForKeyPath:@"id"];
     }
     
     TDFollowProfileCell * cell;
@@ -650,6 +703,39 @@
         }];
     }
     
+}
+
+- (void) scrollViewDidScroll:(UIScrollView *)scrollView {
+    
+}
+
+
+- (void)searchBar:(UISearchBar *)searchBar activate:(BOOL) active{
+    self.tableView.allowsSelection = !active;
+    self.tableView.scrollEnabled = active;
+    if (!active) {
+        [disableViewOverlay removeFromSuperview];
+        [searchBar resignFirstResponder];
+        self.searchText = nil;
+    } else {
+        self.disableViewOverlay.alpha = 0;
+        [self.view addSubview:self.disableViewOverlay];
+        
+        [UIView beginAnimations:@"FadeIn" context:nil];
+        [UIView setAnimationDuration:0.5];
+        self.disableViewOverlay.alpha = 0.6;
+        [UIView commitAnimations];
+        
+        // probably not needed if you have a details view since you
+        // will go there on selection
+        NSIndexPath *selected = [self.tableView
+                                 indexPathForSelectedRow];
+        if (selected) {
+            [self.tableView deselectRowAtIndexPath:selected
+                                             animated:NO];
+        }
+    }
+    //[searchBar setShowsCancelButton:active animated:YES];
 }
 
 @end
