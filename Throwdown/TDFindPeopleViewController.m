@@ -299,6 +299,7 @@
     } else {
         self.tableView.tableHeaderView = nil;
         if ([self.searchText isEqual:@""]) {
+            self.tableView.tableHeaderView = self.headerView;
             // Need to show the suggested list
             NSArray *object = [self.suggestedUsers objectAtIndex:current];
             
@@ -493,6 +494,7 @@
     debug NSLog(@"DID END EDITING---search bar");
     self.searchingActive = NO;
     [self searchBar:self.searchBar activate:NO];
+    [self loadData];
 }
 
 #pragma mark Content Filtering
@@ -707,7 +709,6 @@
             }
         }];
     }
-    
 }
 
 - (void) scrollViewDidScroll:(UIScrollView *)scrollView {
@@ -721,6 +722,7 @@
     if (!active) {
         [disableViewOverlay removeFromSuperview];
         [searchBar resignFirstResponder];
+        self.tableView.tableHeaderView = self.headerView;
         self.searchText = nil;
     } else {
         self.disableViewOverlay.alpha = 0;
