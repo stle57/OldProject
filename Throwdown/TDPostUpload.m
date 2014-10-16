@@ -145,9 +145,9 @@ typedef enum {
     if ([self.delegate respondsToSelector:@selector(uploadComplete)]) {
         dispatch_async(dispatch_get_main_queue(), ^{
             [self.delegate uploadComplete];
+            _delegate = nil; // don't use self.delegate here, can throw exception for unknown reason (related to the start hack?)
         });
     }
-    _delegate = nil; // don't use self.delegate here, can throw exception for unknown reason (related to the start hack?)
 }
 
 # pragma mark - notification selectors
