@@ -88,14 +88,14 @@
             self.closeButton.hidden = FALSE;
             self.closeButton.enabled = YES;
             break;
-        case kToastType_InviteWarning:
+        case kToastType_InviteSent:
             iconImage = [UIImage imageNamed:@"td_notif_toast_icon"];
             self.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:.95f];
             [self.label setFont:[UIFont systemFontOfSize:14]];
             self.label.textColor = [TDConstants headerTextColor];
             self.closeButton.hidden = YES;
             break;
-        case kToastType_InviteSent:
+        case kToastType_InviteWarning:
             iconImage = [UIImage imageNamed:@"td_error_toast_icon"];
             self.backgroundColor = [UIColor colorWithRed:(158./255) green:(11./255) blue:(15./255) alpha:0.85];
             self.label.textColor = [UIColor whiteColor];
@@ -139,10 +139,6 @@
                                                   self.iconImageView.frame.size.width,
                                                   self.iconImageView.frame.size.height);
 
-//            self.closeButton.frame = CGRectMake(self.label.frame.origin.x + self.label.frame.size.width + (self.label.frame.origin.x - (self.iconImageView.frame.origin.x + self.iconImageView.frame.size.width)),
-//                                                self.closeButton.frame.origin.y,
-//                                                self.closeButton.frame.size.width,
-//                                                self.closeButton.frame.size.height);
             self.closeButton.frame = CGRectMake(SCREEN_WIDTH - self.closeButton.frame.size.width - 20,
                                                 self.closeButton.frame.origin.y,
                                                 self.closeButton.frame.size.width,
