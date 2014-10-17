@@ -462,11 +462,9 @@
     self.view.backgroundColor = [TDConstants lightBackgroundColor];
     
     [self searchBar:searchBar activate:YES];
-    if (self.searchBar.text.length > 0) {
-        debug NSLog(@"   2. loadData inside textDidBeginEditing");
-        [self loadData];
-        [self searchBar:_searchBar textDidChange:self.searchBar.text];
-    }
+    debug NSLog(@"   2. loadData inside textDidBeginEditing");
+    [self loadData];
+    [self searchBar:_searchBar textDidChange:self.searchBar.text];
     
 }
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
