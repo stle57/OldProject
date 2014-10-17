@@ -43,8 +43,6 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.activityIndicator = [[TDActivityIndicator alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-
     // Do any additional setup after loading the view from its nib.
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
@@ -422,6 +420,7 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
         case 1:
             switch (indexPath.row) {
                 case 0:
+                    self.activityIndicator.text.text = @"Loading";
                     [self showActivity];
                     [self gotoMyContacts];
                     break;
@@ -540,7 +539,9 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
         //show controller
         TDContactsViewController *vc = [[TDContactsViewController alloc] initWithNibName:@"TDContactsViewController" bundle:nil ];
         vc.delegate = self;
+        [vc setValuesForSharing:self.inviteList];
         [self.navigationController pushViewController:vc animated:YES];
+        [self hideActivity];
     } else {
         NSString * message = @"We'd like to ask for your permission\nto access your Contacts.  On the\nnext screen, please tap \"OK\" to\n give us permission.";
         
@@ -560,7 +561,9 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
                             return;
                         }
                         TDContactsViewController *vc = [[TDContactsViewController alloc] initWithNibName:@"TDContactsViewController" bundle:nil ];
+                        [vc setValuesForSharing:self.inviteList];
                         [self.navigationController pushViewController:vc animated:YES];
+                        [self hideActivity];
                     });
                 });
             }

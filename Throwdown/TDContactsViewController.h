@@ -40,4 +40,6 @@ static const CGFloat MIDDLE_CELL_Y_AXIS = 23.75;
 
 - (IBAction)backButtonHit:(id)sender;
 - (IBAction)inviteButtonHit:(id)sender;
+
+- (void)setValuesForSharing:(NSArray *)currentInvite;
 @end

@@ -12,6 +12,7 @@
 @interface TDAddressBookAPI ()
 @property (nonatomic) ABAddressBookRef addressBook;
 @property (nonatomic) NSMutableArray* contactList;
+@property (nonatomic) NSMutableDictionary *contactsById;
 @end
 
 @implementation TDAddressBookAPI
@@ -40,6 +41,7 @@ void MyAddressBookExternalChangeCallback (
         CFErrorRef * err = NULL;
         self.addressBook = ABAddressBookCreateWithOptions(NULL, err);
         self.contactList = nil;
+        self.contactsById = nil;
         [self copyAddressBook];
         ABAddressBookRegisterExternalChangeCallback (self.addressBook,
                                                      MyAddressBookExternalChangeCallback,
@@ -146,6 +148,7 @@ void MyAddressBookExternalChangeCallback (
                 contactInfo.contactPicture = image;
             }
             
+            [self.contactsById setObject:contactInfo forKey:contactInfo.id];
             [tempArray addObject:contactInfo];
         }
         
@@ -158,6 +161,10 @@ void MyAddressBookExternalChangeCallback (
 
 - (NSArray*)getContactList {
     return self.contactList;
+}
+
+- (NSDictionary*)getContactsDictionary {
+    return self.contactsById;
 }
 
 //Method to sort by last name for Contacts

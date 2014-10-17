@@ -127,6 +127,8 @@
     [self resizeTableView:self.followControllerType];
     
     origTableViewFrame = self.tableView.frame;
+    
+    debug NSLog(@"follow view controller table view frame=%@", NSStringFromCGRect( self.tableView.frame));
     [self loadDataFromServer];
 }
 

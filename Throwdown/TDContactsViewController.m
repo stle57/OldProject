@@ -12,6 +12,10 @@
 #import "TDViewControllerHelper.h"
 #import "TDAddressBookAPI.h"
 
+@interface TDContactsViewController ()
+@property (nonatomic, retain) NSMutableArray *currentInviteList;
+@end
+
 @implementation TDContactsViewController
 @synthesize delegate;
 @synthesize filteredContactArray;
@@ -44,6 +48,13 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+ 
+    // Resize the view
+    CGRect viewFrame = self.view.frame;
+    viewFrame.size.height = SCREEN_HEIGHT;
+    viewFrame.size.width = SCREEN_WIDTH;
+    self.view.frame = viewFrame;
+    
     [self.searchDisplayController.searchBar sizeToFit];
     
     // Do any additional setup after loading the view from its nib.
@@ -85,17 +96,30 @@
     self.inviteButton.hidden = YES;
     
     self.contacts = [[TDAddressBookAPI sharedInstance] getContactList];
-
-    CGRect tableViewFrame = self.tableView.frame;
-    tableViewFrame.size.width = SCREEN_WIDTH;
-    tableViewFrame.size.height = SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height - self.searchDisplayController.searchBar.frame.size.height;
-    self.tableView.frame = tableViewFrame;
     
     CGRect searchBarFrame = self.searchDisplayController.searchBar.frame;
     searchBarFrame.size.width = SCREEN_WIDTH;
     self.searchDisplayController.searchBar.frame = searchBarFrame;
+
+    CGRect tableFrame = self.tableView.frame;
+    tableFrame.size.width = SCREEN_WIDTH;
+    tableFrame.size.height = SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height - 44;
+    self.tableView.frame = tableFrame;
+    [self.tableView sizeToFit];
+
+    NSDictionary *dict = [[TDAddressBookAPI sharedInstance] getContactsDictionary];
+    // Check if we've already added the person to the invite list, and mark the contact as added
+    for (int index = 0; index < self.currentInviteList.count; index++) {
+        TDContactInfo *info = self.currentInviteList[index];
+        // Check if we've already added the person
+        TDContactInfo *obj = [dict objectForKey:[info.id stringValue]];
+        {
+            obj.selectedData = info.selectedData;
+            obj.inviteType = info.inviteType;
+        }
+    }
+    [self.tableView reloadData];
     
-   [self.tableView reloadData];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -103,6 +127,8 @@
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
     
     self.tableView.hidden = NO;
+    self.tableView.layer.borderColor = [[UIColor redColor] CGColor];
+    self.tableView.layer.borderWidth = 2.0;
     
 }
 - (void)didReceiveMemoryWarning
@@ -193,7 +219,6 @@
             NSString *noMatchesString = @"No matches found";
             NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:noMatchesString font:[TDConstants fontSemiBoldSized:16.0] color:[TDConstants headerTextColor] lineHeight:19 lineHeightMultipler:(19/16.0)];
             cell.noFollowLabel.attributedText = attString;
-            debug NSLog(@"no matches frame =%@", NSStringFromCGRect(cell.noFollowLabel.frame));
             
             cell.findPeopleButton.hidden = YES;
             cell.findPeopleButton.enabled = NO;
@@ -227,7 +252,6 @@
                 TDContactInfo *info = self.inviteList[index];
                 // Check if we've already added the person
                 if(info.id == contactPerson.id) {
-                    debug NSLog(@"index=%d", index);
                     [self reformatCellToSelected:cell contactInfo:contactPerson];
                 }
             }
@@ -247,6 +271,7 @@
 
     } else if (tableView == self.searchDisplayController.searchResultsTableView) {
         TDContactInfo *contactPerson = filteredContactArray[indexPath.row];
+
         [self addToInviteList:contactPerson indexPath:indexPath tableView:tableView];
     }
 }
@@ -357,9 +382,7 @@
     self.origNameLabelYAxis = nameFrame.origin.y;
     nameFrame.origin.y = MIDDLE_CELL_Y_AXIS;
     cell.nameLabel.frame = nameFrame;
-    if(contact.fullName == nil && ([contact.emailList count] > 0 || [contact.phoneList count] > 0)) {
-        debug NSLog(@"!!!!this contact has a null full name");
-    }
+
     NSString *fullName = contact.fullName;
     cell.nameLabel.hidden = NO;
     cell.nameLabel.text = fullName;
@@ -375,6 +398,14 @@
     if (contact.contactPicture) {
         [cell.userImageView setImage:contact.contactPicture];
     }
+    // Check if we've already added the person from the main table view.  If so, change the reformat the cell
+    for (int index = 0; index < self.inviteList.count; index++) {
+        TDContactInfo *info = self.inviteList[index];
+        // Check if we've already added the person
+        if(info.id == contact.id) {
+            [self reformatCellToSelected:cell contactInfo:contact];
+        }
+    }
     return cell;
 }
 
@@ -385,7 +416,6 @@
         UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
         [self reformatCellToSelected:cell contactInfo:contactInfo];
     } else {
-        debug NSLog(@"need to find contact in the table, and change marking!");
         NSUInteger index = 0;
 
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"self.id == %@", contactInfo.id];
@@ -393,10 +423,11 @@
             NSArray * selectedObject = [self.contacts filteredArrayUsingPredicate:predicate];
             if (selectedObject){
                 index = [self.contacts indexOfObject:selectedObject[0]];
-                debug NSLog(@"index=%d", (int)index);
                 NSIndexPath *indexPath = [NSIndexPath indexPathForRow:(int)index inSection:0];
                 UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-                [self reformatCellToSelected:cell contactInfo:selectedObject[0]];
+                if (cell) {
+                    [self reformatCellToSelected:cell contactInfo:selectedObject[0]];
+                }
             }
         } else if (tableView == self.tableView) {
             debug NSLog(@"have contact info to mark in search view");
@@ -449,7 +480,6 @@
     if (!filteredArray.count){
         [self.inviteList insertObject:contact atIndex:0];
     }
-    debug NSLog(@"just adding contact to inviteList, count=%lu", (unsigned long)[self.inviteList count]);
 }
 
 - (void)createLabels {
@@ -503,8 +533,6 @@
 #pragma mark - TDFollowCellProfileDelegate
 - (void)removeFromInviteList:(UITableView*)tableView indexPath:(NSIndexPath*)indexPath {
     
-    debug NSLog(@"removing contact at row=%ld", (long)indexPath.row);
-    
     // Remove from invite list on
     if (self.inviteList[indexPath.row] != nil) {
         [self.inviteList removeObjectAtIndex:indexPath.row];
@@ -537,7 +565,6 @@
         NSArray * selectedObject = [self.contacts filteredArrayUsingPredicate:predicate];
         if (selectedObject){
             index = [self.contacts indexOfObject:selectedObject[0]];
-            debug NSLog(@"index=%d", (int)index);
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:(int)index inSection:0];
             UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
             [self reformatCellToUnselected:cell];
@@ -570,4 +597,12 @@
         revertedCell.nameLabel.font = [TDConstants fontRegularSized:16];
     }
 }
+
+# pragma mark - setting data from previous controller
+- (void)setValuesForSharing:(NSArray *)currentInvite {
+    for (id object in currentInvite) {
+        [self.inviteList addObject:object];
+    }
+}
+
 @end

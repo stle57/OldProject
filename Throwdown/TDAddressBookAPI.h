@@ -13,7 +13,7 @@
 + (TDAddressBookAPI *)sharedInstance;
 - (void)addContactsToAddressBook:(ABAddressBookRef)addressBook;
 - (NSArray*)getContactList;
-
+- (NSDictionary*)getContactsDictionary;
 void MyAddressBookExternalChangeCallback ( ABAddressBookRef addressBook,
                                           CFDictionaryRef info,
                                           void *context

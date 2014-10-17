@@ -27,12 +27,12 @@
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
 @property (weak, nonatomic) IBOutlet UIButton *nextButton;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
+@property (weak, nonatomic) IBOutlet TDActivityIndicator *activityIndicator;
 
 @property (nonatomic) CGRect origUsernameLabelFrame;
 @property (nonatomic) CGRect origNameLabelFrame;
 
 @property (nonatomic) NSMutableArray *headerLabels;
-@property (nonatomic) TDActivityIndicator *activityIndicator;
 
 - (IBAction)closeButtonHit:(id)sender;
 - (IBAction)nextButtonHit:(id)sender;
