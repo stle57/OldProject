@@ -497,7 +497,7 @@
 		A1F3B3671907819000CDA9F5 /* Dring.caf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Dring.caf; path = ../Dring.caf; sourceTree = "<group>"; };
 		A1FBA27B1981C57D00C65E04 /* TDPRSegue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDPRSegue.h; sourceTree = "<group>"; };
 		A1FBA27C1981C57D00C65E04 /* TDPRSegue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDPRSegue.m; sourceTree = "<group>"; };
-		BC8AD58EF48B41289E5CE49E /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
+		BC8AD58EF48B41289E5CE49E /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = ../Pods/Pods.xcconfig; sourceTree = "<group>"; };
 		E657ABE418B84EA68554F855 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -692,7 +692,6 @@
 				A11E05001888CB79002F981A /* ThrowdownTests */,
 				A11E04DA1888CB79002F981A /* Frameworks */,
 				A11E04D91888CB79002F981A /* Products */,
-				BC8AD58EF48B41289E5CE49E /* Pods.xcconfig */,
 			);
 			sourceTree = "<group>";
 		};
@@ -763,6 +762,7 @@
 				4D3352D319A29CD8007B3E06 /* iRate.m */,
 				4D3352D219A29CC4007B3E06 /* iRate.h */,
 				A1D13FF11905F2BE000980E0 /* Podfile */,
+				BC8AD58EF48B41289E5CE49E /* Pods.xcconfig */,
 				A11E04E31888CB79002F981A /* Throwdown-Info.plist */,
 				A11E04E41888CB79002F981A /* InfoPlist.strings */,
 				A11E04E71888CB79002F981A /* main.m */,

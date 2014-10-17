@@ -12,8 +12,12 @@
 #import "UIAlertView+TDBlockAlert.h"
 #import "TDAnalytics.h"
 #import <FacebookSDK/FacebookSDK.h>
+#import <SSKeychain.h>
 
 static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
+static NSString *const kConfirmed = @"YES";
+static NSString *const kPushNotificationAsked    = @"push-notification-asked";
+static NSString *const kPushNotificationApproved = @"push-notification-approved";
 
 @implementation TDCurrentUser
 
@@ -187,7 +191,7 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
     _fbUID = nil;
     _fbIdentifier = nil;
     _fbTokenExpiration = nil;
-    _fbPermissions = NO;
+    _fbPermissions = nil;
     _twitterToken = nil;
     _twitterSecret = nil;
     _twitterUID = nil;
@@ -305,19 +309,50 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
 
 #pragma mark - push notification device token
 
+- (void)checkPushNotificationToken {
+    debug NSLog(@"APN::checkPushNotificationToken");
+    NSString *service = [[NSBundle mainBundle] bundleIdentifier];
+    // Migrate UserDefaults to the permanent Keychain
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if ([defaults boolForKey:@"approvedPushNotification"]) {
+        [defaults removeObjectForKey:@"approvedPushNotification"];
+        [defaults synchronize];
+        [SSKeychain setPassword:kConfirmed forService:service account:kPushNotificationApproved];
+    }
+
+    NSString *value = [SSKeychain passwordForService:service account:kPushNotificationApproved];
+    if ((value && [value isEqualToString:kConfirmed]) || [self isRegisteredForPush]) {
+        [self registerForRemoteNotificationTypes];
+    }
+}
+
 - (BOOL)isRegisteredForPush {
-    return self.deviceToken != nil;
+    if ([[UIApplication sharedApplication] respondsToSelector:@selector(currentUserNotificationSettings)]) {
+        UIUserNotificationSettings *settings = [[UIApplication sharedApplication] currentUserNotificationSettings];
+        return (settings.types != UIUserNotificationTypeNone);
+    } else {
+        return self.deviceToken != nil;
+    }
 }
 
 - (BOOL)didAskForPush {
+    NSString *service = [[NSBundle mainBundle] bundleIdentifier];
+    // Migrate UserDefaults to the permanent Keychain
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    return [defaults boolForKey:@"hasAskedPushNotification"];
+    if ([defaults boolForKey:@"hasAskedPushNotification"]) {
+        [defaults removeObjectForKey:@"hasAskedPushNotification"];
+        [defaults synchronize];
+        [SSKeychain setPassword:kConfirmed forService:service account:kPushNotificationAsked];
+        return true;
+    }
+
+    NSString *value = [SSKeychain passwordForService:service account:kPushNotificationAsked];
+    return (value && [value isEqualToString:kConfirmed]);
 }
 
-- (void)didAskForPush:(BOOL)yes {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setBool:yes forKey:@"hasAskedPushNotification"];
-    [defaults synchronize];
+- (void)setAskedForPush {
+    NSString *service = [[NSBundle mainBundle] bundleIdentifier];
+    [SSKeychain setPassword:kConfirmed forService:service account:kPushNotificationAsked];
 }
 
 - (void)registerForPushNotifications:(NSString *)message {
@@ -340,23 +375,27 @@ static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
 
 - (void)registerDeviceToken:(NSString *)token {
     [[TDAnalytics sharedInstance] logEvent:@"notification_approved"];
+    NSString *service = [[NSBundle mainBundle] bundleIdentifier];
+    [SSKeychain setPassword:kConfirmed forService:service account:kPushNotificationApproved];
 	token = [token stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
 	token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
     if (![token isEqualToString:self.deviceToken]) {
         _deviceToken = token;
         [self save];
         [[TDAPIClient sharedInstance] registerDeviceToken:token forUserToken:self.authToken];
-
-        // store this for future knowledge
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        [defaults setBool:YES forKey:@"approvedPushNotification"];
-        [defaults synchronize];
     }
 }
 
 - (void)registerForRemoteNotificationTypes {
-    [self didAskForPush:YES];
-    [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound)];
+    debug NSLog(@"APN::registerForRemoteNotificationTypes");
+    [self setAskedForPush];
+    if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerUserNotificationSettings:)]) { // iOS 8
+        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound) categories:nil];
+        [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
+    } else {
+        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound)];
+    }
 }
 
 - (BOOL)nullcheck:(id)object {
