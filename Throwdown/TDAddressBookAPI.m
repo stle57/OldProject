@@ -141,8 +141,9 @@ void MyAddressBookExternalChangeCallback (
             }
             
             if (ABPersonHasImageData(contactPerson) == YES) {
-                CFDataRef ref = ABPersonCopyImageData(contactPerson);
-                contactInfo.contactPicture = [[UIImage alloc] initWithData:(__bridge NSData *)(ref)];
+                UIImage *image =[UIImage imageWithData:(__bridge NSData *)ABPersonCopyImageDataWithFormat(contactPerson, kABPersonImageFormatThumbnail)];
+
+                contactInfo.contactPicture = image;
             }
             
             [tempArray addObject:contactInfo];
@@ -150,6 +151,8 @@ void MyAddressBookExternalChangeCallback (
         
         self.contactList = [tempArray copy];
     }
+    
+    
     
 }
 

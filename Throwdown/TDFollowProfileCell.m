@@ -43,6 +43,7 @@
 
     self.userImageView.layer.cornerRadius = self.userImageView.layer.frame.size.width / 2;
     self.userImageView.clipsToBounds = YES;
+    self.userImageView.layer.masksToBounds = YES;
     UITapGestureRecognizer *userProfileTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(usernameTapped:)];
 
     [self.userImageView addGestureRecognizer:userProfileTap];
