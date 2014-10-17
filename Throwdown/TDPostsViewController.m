@@ -319,7 +319,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         } else if (self.errorLoading) {
             cell.noPostsLabel.text = @"Error loading posts";
         } else {
-            if (![self onAllFeed] && [TDCurrentUser sharedInstance].currentUserObject.followingCount == 0 && self.profileType == kFeedProfileTypeNone) {
+            if (![self onAllFeed] && self.getUser.followingCount == 0 && self.profileType == kFeedProfileTypeNone) {
                 debug NSLog(@"create a different cell and return, followingCount=%@ for %@", [[TDCurrentUser sharedInstance].currentUserObject.followingCount stringValue], [TDCurrentUser sharedInstance].currentUserObject.name);
                 TDNoFollowingCell *noFollowCell = [tableView dequeueReusableCellWithIdentifier:@"TDNoFollowingCell"];
                 if (!noFollowCell) {
