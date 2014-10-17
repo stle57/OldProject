@@ -13,7 +13,7 @@
 #define TOP_BOTTOM_HEADER1_MARGIN 25
 #define TOP_MARGIN_HEADER2        11
 #define MIDDLE_MARGIN_HEADER2     38
-@interface TDSendInviteController : UIViewController<UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate>
+@interface TDSendInviteController : UIViewController<UITableViewDataSource, UITableViewDelegate, UIAlertViewDelegate, UITextFieldDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIButton *backButton;
@@ -22,6 +22,7 @@
 @property (weak, nonatomic) IBOutlet TDActivityIndicator *activityIndicator;
 @property (nonatomic) NSString* sender;
 @property (nonatomic) NSMutableArray *headerLabels;
+@property (nonatomic) UITapGestureRecognizer *tapGesture;
 
 - (IBAction)backButtonHit:(id)sender;
 - (IBAction)sendButtonHit:(id)sender;

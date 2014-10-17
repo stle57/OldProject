@@ -128,7 +128,7 @@
                                               self.center.y);
         
         // Center text and icon
-        if(self.toastType == kToastType_RateUs || self.toastType == kToastType_InviteSent) {
+        if(self.toastType == kToastType_RateUs || self.toastType == kToastType_InviteWarning) {
             
             self.label.frame = CGRectMake(SCREEN_WIDTH/2 - self.label.frame.size.width/2,
                                           self.label.frame.origin.y,

@@ -37,7 +37,6 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
     
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
@@ -68,6 +67,10 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
     CGRect tableViewFrame = self.tableView.frame;
     tableViewFrame.size.width = SCREEN_WIDTH;
     self.tableView.frame = tableViewFrame;
+    
+    _tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideKeyboard)];
+    _tapGesture.enabled = NO;
+    [self.view addGestureRecognizer:_tapGesture];
 
 }
 
@@ -92,13 +95,14 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
     NSString *senderName = [self getSenderName];
     if (senderName.length == 0) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Name cannot be blank."
-                                                        message:@"We suggest entering your first and last names."
+                                                        message:@"We suggest entering your first\nand last names."
                                                        delegate:nil
                                               cancelButtonTitle:@"OK"
                                               otherButtonTitles:nil];
         [alert show];
     } else {
         // Get the list
+        [self hideKeyboard];
         self.activityIndicator.text.text = @"Sending...";
         NSArray *sentContacts = [self contacts];
         [self showActivity];
@@ -135,6 +139,7 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
                 }
             } else {
                 [self hideActivity];
+                [self.navigationController dismissViewControllerAnimated:YES completion:nil];
                 [[TDAppDelegate appDelegate] showToastWithText:@"Invites failed.  Tap here to retry" type:kToastType_InviteWarning payload:@{@"senderName":senderName, @"retryList":sentContacts} delegate:[TDAPIClient toastControllerDelegate]];
             }
         }];
@@ -349,6 +354,7 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_EDITPROFILE owner:self options:nil];
             cell = [topLevelObjects objectAtIndex:0];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.textField.delegate = self;
         }
         cell.rightArrow.hidden = YES;
         cell.titleLabel.hidden = YES;
@@ -418,5 +424,39 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
 - (void)setValuesForSharing:(NSArray *)contacts senderName:(NSString*)senderName{
     self.sender = senderName;
     [self.contactList addObjectsFromArray:contacts];
+}
+
+- (IBAction)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    
+    UITouch *touch = [[event allTouches] anyObject];
+    for (TDUserEditCell *cell in self.tableView.visibleCells) {
+        if ([cell.textField isFirstResponder] && [touch view] != cell.textField) {
+            [cell.textField resignFirstResponder];
+        }
+    }
+    [super touchesBegan:touches withEvent:event];
+}
+
+#pragma mark UITextFieldDelegate
+-(BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [textField resignFirstResponder];
+    return YES;
+}
+
+-(BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+    _tapGesture.enabled = YES;
+    return YES;
+}
+-(void)hideKeyboard
+{
+    for (TDUserEditCell *cell in self.tableView.visibleCells) {
+        if ([cell.textField isFirstResponder])
+        {
+            [cell.textField resignFirstResponder];
+            _tapGesture.enabled = NO;
+        }
+    }
 }
 @end

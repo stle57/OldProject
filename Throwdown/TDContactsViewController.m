@@ -127,9 +127,6 @@
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
     
     self.tableView.hidden = NO;
-    self.tableView.layer.borderColor = [[UIColor redColor] CGColor];
-    self.tableView.layer.borderWidth = 2.0;
-    
 }
 - (void)didReceiveMemoryWarning
 {
