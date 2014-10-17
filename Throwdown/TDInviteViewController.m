@@ -24,7 +24,7 @@
 @end
 
 static NSString *topHeaderText1 =@"Receive a free Throwdown T-shirt if\nthree of your friends join!";
-static NSString *topHeaderText2 = @"Invite friends to join with a phone number or email address, or select from your contacts";
+static NSString *topHeaderText2 = @"Invite friends to join with a phone number or\nemail address, or select from your contacts";
 
 @implementation TDInviteViewController
 
@@ -161,7 +161,7 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
             
                 // This helps realign the text on the screen
                 CGRect bottomLabelFrame = bottomLabel.frame;
-                bottomLabelFrame.size.width = bottomLabelFrame.size.width - TD_MARGIN;
+                bottomLabelFrame.size.width = SCREEN_WIDTH- TD_MARGIN;
                 bottomLabel.frame = bottomLabelFrame;
                 [self.headerLabels insertObject:bottomLabel atIndex:section];
             }
