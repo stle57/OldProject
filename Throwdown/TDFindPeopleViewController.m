@@ -719,7 +719,6 @@
 
 - (void)searchBar:(UISearchBar *)searchBar activate:(BOOL) active{
     self.tableView.allowsSelection = !active;
-    self.tableView.scrollEnabled = active;
     if (!active) {
         [disableViewOverlay removeFromSuperview];
         [searchBar resignFirstResponder];

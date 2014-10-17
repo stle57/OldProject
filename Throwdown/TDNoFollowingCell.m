@@ -26,7 +26,7 @@
     
     self.addFollowersLabel.frame = CGRectMake(0, 0, SCREEN_WIDTH, 50);
     NSString *addText = @"Add Followers";
-    NSAttributedString *addAttrString = [TDViewControllerHelper makeParagraphedTextWithString:addText font:[TDConstants fontSemiBoldSized:16] color:[TDConstants headerTextColor] lineHeight:16.0 lineHeightMultipler:(16/16.0)];
+    NSAttributedString *addAttrString = [TDViewControllerHelper makeParagraphedTextWithString:addText font:[TDConstants fontSemiBoldSized:17] color:[TDConstants headerTextColor] lineHeight:17.0 lineHeightMultipler:(17/17.0)];
     self.addFollowersLabel.attributedText = addAttrString;
     [self.addFollowersLabel sizeToFit];
     CGRect labelFrame = self.addFollowersLabel.frame;
@@ -39,12 +39,12 @@
     NSString *text = @"You're currently not following anyone\non Throwdown.  Find people to follow\nby tapping  above.";
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:text];
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    [paragraphStyle setLineHeightMultiple:(20./14.)];
+    [paragraphStyle setLineHeightMultiple:(20./15.)];
     [paragraphStyle setMinimumLineHeight:20.0];
     [paragraphStyle setMaximumLineHeight:20.0];
     paragraphStyle.alignment = NSTextAlignmentCenter;
     [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, text.length)];
-    [attributedString addAttribute:NSFontAttributeName value:[TDConstants fontRegularSized:14] range:NSMakeRange(0, text.length)];
+    [attributedString addAttribute:NSFontAttributeName value:[TDConstants fontRegularSized:15] range:NSMakeRange(0, text.length)];
     [attributedString addAttribute:NSForegroundColorAttributeName value:[TDConstants headerTextColor] range:NSMakeRange(0, text.length)];
     NSTextAttachment *textAttachment = [[NSTextAttachment alloc] init];
     textAttachment.image = [UIImage imageNamed:@"icon-add follower in text.png"];
