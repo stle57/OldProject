@@ -319,19 +319,29 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         } else if (self.errorLoading) {
             cell.noPostsLabel.text = @"Error loading posts";
         } else {
-            if (![self onAllFeed] && self.getUser.followingCount == 0 && self.profileType == kFeedProfileTypeNone) {
-                debug NSLog(@"create a different cell and return, followingCount=%@ for %@", [[TDCurrentUser sharedInstance].currentUserObject.followingCount stringValue], [TDCurrentUser sharedInstance].currentUserObject.name);
-                TDNoFollowingCell *noFollowCell = [tableView dequeueReusableCellWithIdentifier:@"TDNoFollowingCell"];
-                if (!noFollowCell) {
-                    NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoFollowingCell" owner:self options:nil];
-                    noFollowCell = [topLevelObjects objectAtIndex:0];
-                    noFollowCell.selectionStyle = UITableViewCellSelectionStyleNone;
+            TDUser *user = [self getUser];
+            if (user) {
+                // We are in the TDUserProfileViewController
+                if (![self onAllFeed] && user.followingCount == 0 && self.profileType == kFeedProfileTypeNone) {
+                    debug NSLog(@"create a different cell and return, followingCount=%@ for %@", [user.followingCount stringValue], user.name);
+                    TDNoFollowingCell *noFollowCell = [tableView dequeueReusableCellWithIdentifier:@"TDNoFollowingCell"];
+                    if (!noFollowCell) {
+                        NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoFollowingCell" owner:self options:nil];
+                        noFollowCell = [topLevelObjects objectAtIndex:0];
+                        noFollowCell.selectionStyle = UITableViewCellSelectionStyleNone;
+                    }
+                    noFollowCell.backgroundColor = [UIColor whiteColor];
+                    self.tableView.backgroundColor = [UIColor whiteColor];
+                    return noFollowCell;
+                } else {
+                    cell.noPostsLabel.text = @"No posts yet";
                 }
-                noFollowCell.backgroundColor = [UIColor whiteColor];
-                self.tableView.backgroundColor = [UIColor whiteColor];
-                return noFollowCell;
+            } else {
+                // We are in the TDHomeViewController, so use the current user object.
+                if (![self onAllFeed] && [TDCurrentUser sharedInstance].currentUserObject.followingCount == 0 && self.profileType == kFeedProfileTypeNone) {
+                    cell.noPostsLabel.text = @"No posts yet";
+                }
             }
-            cell.noPostsLabel.text = @"No posts yet";
         }
 
         CGFloat height = [UIScreen mainScreen].bounds.size.height - kHeightOfStatusBar - self.tableView.contentInset.top - (self.profileType == kFeedProfileTypeNone ? 0 : [TDUserProfileCell heightForUserProfile:[self getUser]]);
