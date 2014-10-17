@@ -46,6 +46,8 @@
         [TestFlight takeOff:@"6fef227c-c5cb-4505-9502-9052e2819f45"];
     }
 
+    [[TDCurrentUser sharedInstance] checkPushNotificationToken];
+
     // Whenever a person opens the app, check for a cached session
     if (FBSession.activeSession.state == FBSessionStateCreatedTokenLoaded) {
         // If there's one, just open the session silently, without showing the user the login UI
@@ -145,14 +147,19 @@
 
 #pragma mark - Push notifications
 
-- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
-{
+// iOS 8 only
+- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
+    NSLog(@"didRegisterUserNotificationSettings");
+    // We actually don't care here, what's important is getting the remote notification below
+}
+
+- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     [[TDCurrentUser sharedInstance] registerDeviceToken:[deviceToken description]];
 }
 
-- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
-{
+- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
     NSLog(@"Failed device token error: %@", error);
+    [[TDAnalytics sharedInstance] logEvent:@"error" withInfo:[error localizedDescription] source:nil];
 }
 
 /*

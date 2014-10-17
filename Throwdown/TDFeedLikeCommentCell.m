@@ -20,7 +20,7 @@
 }
 
 - (void)awakeFromNib {
-    self.moreLabel.font = [TDConstants fontSemiBoldSized:14.0];
+    self.moreLabel.font = [TDConstants fontSemiBoldSized:15.0];
 }
 
 - (IBAction)likeButtonPressed:(UIButton *)sender {
@@ -44,9 +44,9 @@
 - (void)setUserLiked:(BOOL)liked totalLikes:(NSInteger)likeCount {
 
     if (likeCount > 1) {
-        self.moreLabel.text = [NSString stringWithFormat:@"%lu Likes", (long)likeCount];
+        self.moreLabel.text = [NSString stringWithFormat:@"%lu likes", (long)likeCount];
     } else {
-        self.moreLabel.text = @"1 Like";
+        self.moreLabel.text = @"1 like";
     }
 
     self.moreLabel.hidden = likeCount == 0;

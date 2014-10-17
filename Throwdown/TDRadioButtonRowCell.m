@@ -13,7 +13,7 @@
 
 - (void)awakeFromNib
 {
-    self.titleLabel.font = [TDConstants fontRegularSized:18.];
+    self.titleLabel.font = [TDConstants fontRegularSized:16.];
     self.separatorInset = UIEdgeInsetsMake(0, 18, 0, 0);
 }
 

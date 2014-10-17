@@ -132,10 +132,9 @@ static NSInteger const kFollowingButtonTag = 20003;
 #define CELL_IDENTIFIER_INVITE           @"TDInviteCell"
 #define TOAST_TAG                        87352
 #define COMMENT_MESSAGE_WIDTH            306.0
-#define COMMENT_MESSAGE_FONT_SIZE        14.0
+#define COMMENT_MESSAGE_FONT_SIZE        15.0
 #define COMMENT_MESSAGE_FONT             [TDConstants fontRegularSized:COMMENT_MESSAGE_FONT_SIZE]
-#define BIO_FONT                         [TDConstants fontRegularSized:14.0]
-#define TITLE_FONT                       [TDConstants fontRegularSized:18.0]
+#define BIO_FONT                         [TDConstants fontRegularSized:16.0]
 #define TIME_FONT                        [TDConstants fontLightSized:14.0]
 #define kCommentDefaultText              @"Write a comment..."
 #define START_MAIN_SPINNER_NOTIFICATION  @"TDMainSpinnerStart"

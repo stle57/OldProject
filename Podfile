@@ -10,6 +10,7 @@ pod 'NYXImagesKit'
 pod 'TTTAttributedLabel'
 pod 'FLEX'
 pod 'SDWebImage'
+pod 'SSKeychain'
 
 # target "Throwdown" do
 # 

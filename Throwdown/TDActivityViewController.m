@@ -63,6 +63,7 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
     [self.refreshControl addTarget:self action:@selector(refreshControlUsed) forControlEvents:UIControlEventValueChanged];
     [self.refreshControl setTintColor:[UIColor blackColor]];
     [self.tableView addSubview:self.refreshControl];
+    self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
 
     [self refresh];
 }
@@ -77,8 +78,11 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         cell.delegate = self;
     }
-    cell.activity = [self.activities objectAtIndex:indexPath.row];
-    cell.row = indexPath.row;
+
+    if ([self.activities count] > indexPath.row) {
+        cell.activity = [self.activities objectAtIndex:indexPath.row];
+        cell.row = indexPath.row;
+    }
 
     return cell;
 }
