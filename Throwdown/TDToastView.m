@@ -138,8 +138,8 @@
                                                   self.iconImageView.frame.origin.y,
                                                   self.iconImageView.frame.size.width,
                                                   self.iconImageView.frame.size.height);
-
-            self.closeButton.frame = CGRectMake(SCREEN_WIDTH - self.closeButton.frame.size.width - 20,
+            
+            self.closeButton.frame = CGRectMake(self.label.frame.origin.x + self.label.frame.size.width + (self.label.frame.origin.x - (self.iconImageView.frame.origin.x + self.iconImageView.frame.size.width)),
                                                 self.closeButton.frame.origin.y,
                                                 self.closeButton.frame.size.width,
                                                 self.closeButton.frame.size.height);
