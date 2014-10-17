@@ -86,7 +86,7 @@
 
     if (self.didUpload) {
         self.didUpload = NO;
-        [[TDCurrentUser sharedInstance] registerForPushNotifications:@"Would you like to be notified of feedback?"];
+        [[TDCurrentUser sharedInstance] registerForPushNotifications:@"Thanks for making a post! We'd\nlike to notify you when someone\nlikes or comments on it. But, we'd\nlike to ask you first. On the next\nscreen, please tap \"OK\" to give\nus permission."];
     }
 }
 

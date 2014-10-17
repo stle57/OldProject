@@ -622,7 +622,7 @@ static int const kToolbarHeight = 64;
 
         [self.textView resignFirstResponder];
 
-        [[TDCurrentUser sharedInstance] registerForPushNotifications:@"Would you like to be notified of future replies?"];
+        [[TDCurrentUser sharedInstance] registerForPushNotifications:@"Thanks for making a comment!\nWe'd like to notify you when someone replies. But, we'd like\n to ask you first. On the next\nscreen, please tap \"OK\" to give\n us permission."];
 
         [[TDPostAPI sharedInstance] postNewComment:body forPost:self.post.postId];
     }
