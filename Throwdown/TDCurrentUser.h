@@ -22,6 +22,11 @@
 @property (nonatomic, copy, readonly) NSString *deviceToken;
 @property (strong, nonatomic, readonly) NSString *picture;
 
+@property (nonatomic, copy, readonly) NSNumber *postCount;
+@property (nonatomic, copy, readonly) NSNumber *prCount;
+@property (nonatomic, copy, readonly) NSNumber *followerCount;
+@property (nonatomic, copy, readonly) NSNumber *followingCount;
+
 @property (nonatomic, copy, readonly) NSString *fbToken;
 @property (nonatomic, copy, readonly) NSString *fbUID;
 @property (nonatomic, copy, readonly) NSString *fbIdentifier;
@@ -44,6 +49,7 @@
 - (void)registerForRemoteNotificationTypes;
 - (void)registerDeviceToken:(NSString *)token;
 - (TDUser *)currentUserObject;
+- (void)updateCurrentUserInfo;
 - (void)registerFacebookAccessToken:(NSString *)token expiresAt:(NSDate *)expiresAt userId:(NSString *)userId identifier:(NSString *)identifier callback:(void (^)(BOOL success))callback;
 - (void)unlinkFacebook;
 - (void)updateFacebookPermissions;

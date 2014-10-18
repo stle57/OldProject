@@ -78,6 +78,7 @@
         } error:nil];
         if (success) {
             success(responseObject);
+            [[TDCurrentUser sharedInstance] updateCurrentUserInfo];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Add Post Error: %@", error);

@@ -179,6 +179,7 @@
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
               NSLog(@"Following %@", userID);
               callback(YES);
+              [[TDCurrentUser sharedInstance] updateCurrentUserInfo];
           } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
               NSLog(@"Error following: %@ with error%@", userID, error);
               callback(NO);
@@ -195,6 +196,7 @@
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
               NSLog(@"Unfollowed %@", userID);
               callback(YES);
+              [[TDCurrentUser sharedInstance] updateCurrentUserInfo];
           } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
               NSLog(@"Error unfollowing: %@ with error%@", userID, error);
               callback(NO);

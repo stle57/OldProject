@@ -131,6 +131,31 @@
     }];
 }
 
+- (void)updateCurrentUser:(NSString *)token callback:(void (^)(BOOL success, NSDictionary *user))callback {
+    NSString *url = [NSString stringWithFormat:@"%@/api/v1/users/me.json?user_token=%@", [TDConstants getBaseURL], token];
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [self.httpManager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *response = (NSDictionary *)responseObject;
+            NSNumber *success = [response objectForKey:@"success"];
+            if (success && [success boolValue]) {
+                callback([success boolValue], [response objectForKey:@"user"]);
+            } else {
+                callback(NO, nil);
+            }
+        } else {
+            debug NSLog(@"ERROR in user update response, got: %@", [responseObject class]);
+            callback(NO, nil);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"ERROR in user update call: %@", [error localizedDescription]);
+        callback(NO, nil);
+        if (error && [operation.response statusCode] == 401) {
+            [[NSNotificationCenter defaultCenter] postNotificationName:LOG_OUT_NOTIFICATION object:nil userInfo:nil];
+        }
+    }];
+}
+
 - (void)resetPassword:(NSString *)requestString callback:(void (^)(BOOL success, NSDictionary *user))callback
 {
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/users/password.json"];
