@@ -33,7 +33,7 @@
     return self;
 }
 
-- (void)userId:(NSNumber *)userId userName:(NSString *)userName name:(NSString *)name picture:(NSString *)picture bio:(NSString *)bio location:(NSString*)location; {
+- (void)userId:(NSNumber *)userId userName:(NSString *)userName name:(NSString *)name picture:(NSString *)picture bio:(NSString *)bio location:(NSString*)location followingCount:(NSNumber*)followingCount followerCount:(NSNumber*)followerCount prCount:(NSNumber*)prCount postCount:(NSNumber*)postCount; {
     _userId = userId;
     _username = userName;
     _name = name;
@@ -42,6 +42,11 @@
     }
     _bio = bio;
     _location = location;
+    _followerCount = followerCount;
+    _followingCount = followingCount;
+    _prCount = prCount;
+    _postCount = postCount;
+    
     [self figureOutBioLabelHeightForThisMessage:_bio];
     [self figureOutLocationLabelHeightForThisMessage:_location];
 }

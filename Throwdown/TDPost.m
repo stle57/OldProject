@@ -233,6 +233,31 @@ static NSString *const kKindText  = @"text";
             } else {
                 [newLiker setObject:@"" forKey:@"location"];
             }
+            if (newUser.followingCount) {
+                [newLiker setObject:newUser.followingCount forKey:@"following_count"];
+            } else {
+                [newLiker setObject:@"" forKey:@"following_count"];
+
+            }
+            if (newUser.followerCount) {
+                [newLiker setObject:newUser.followerCount forKey:@"follower_count"];
+            } else {
+                [newLiker setObject:@"" forKey:@"follower_count"];
+                
+            }
+            if (newUser.prCount) {
+                [newLiker setObject:newUser.prCount forKey:@"pr_count"];
+            } else {
+                [newLiker setObject:@"" forKey:@"pr_count"];
+                
+            }
+            if (newUser.postCount) {
+                [newLiker setObject:newUser.postCount forKey:@"post_count"];
+            } else {
+                [newLiker setObject:@"" forKey:@"post_count"];
+                
+            }
+            
             [newLikers replaceObjectAtIndex:[newLikers indexOfObject:liker] withObject:newLiker];
             newLiker = nil;
         }

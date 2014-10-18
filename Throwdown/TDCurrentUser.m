@@ -202,6 +202,10 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
     _picture = nil;
     _bio = nil;
     _location = nil;
+    _followingCount = nil;
+    _followerCount = nil;
+    _prCount = nil;
+    _postCount = nil;
     _fbToken = nil;
     _fbUID = nil;
     _fbIdentifier = nil;
@@ -232,7 +236,11 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
             name:self.name
          picture:self.picture
              bio:self.bio
-        location:self.location];
+        location:self.location
+  followingCount:self.followingCount
+   followerCount:self.followerCount
+         prCount:self.prCount
+       postCount:self.postCount];
     return user;
 }
 

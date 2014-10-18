@@ -85,8 +85,8 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(startSpinner:) name:START_MAIN_SPINNER_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(stopSpinner:) name:STOP_MAIN_SPINNER_NOTIFICATION object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logOutUser:) name:LOG_OUT_NOTIFICATION object:nil];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshPostsList:) name:TDRefreshPostsNotification object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logOutUser:) name:LOG_OUT_NOTIFICATION object:nil];
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshPostsList:) name:TDRefreshPostsNotification object:nil];
 
     [self refreshPostsList];
     [self fetchPostsRefresh];
@@ -322,23 +322,17 @@ static CGFloat const kHeightOfStatusBar = 64.0;
             TDUser *user = [self getUser];
             if (user) {
                 // We are in the TDUserProfileViewController
-                if (![self onAllFeed] && user.followingCount == 0 && self.profileType == kFeedProfileTypeNone) {
-                    debug NSLog(@"create a different cell and return, followingCount=%@ for %@", [user.followingCount stringValue], user.name);
-                    TDNoFollowingCell *noFollowCell = [tableView dequeueReusableCellWithIdentifier:@"TDNoFollowingCell"];
-                    if (!noFollowCell) {
-                        NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoFollowingCell" owner:self options:nil];
-                        noFollowCell = [topLevelObjects objectAtIndex:0];
-                        noFollowCell.selectionStyle = UITableViewCellSelectionStyleNone;
-                    }
-                    noFollowCell.backgroundColor = [UIColor whiteColor];
-                    self.tableView.backgroundColor = [UIColor whiteColor];
-                    return noFollowCell;
+                if (![self onAllFeed] && ([user.followingCount intValue] == 0) && self.profileType == kFeedProfileTypeNone) {
+                    TDNoFollowingCell *noFollowingCell = [self createNoFollowingCell:tableView];
+                    return noFollowingCell;
                 } else {
                     cell.noPostsLabel.text = @"No posts yet";
                 }
             } else {
-                // We are in the TDHomeViewController, so use the current user object.
-                if (![self onAllFeed] && [TDCurrentUser sharedInstance].currentUserObject.followingCount == 0 && self.profileType == kFeedProfileTypeNone) {
+                if ( ![self onAllFeed] && ([[TDCurrentUser sharedInstance].currentUserObject.followingCount intValue] == 0) && self.profileType == kFeedProfileTypeNone) {
+                    TDNoFollowingCell *noFollowingCell = [self createNoFollowingCell:tableView];
+                    return noFollowingCell;
+                } else {
                     cell.noPostsLabel.text = @"No posts yet";
                 }
             }
@@ -829,5 +823,19 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         [self.navigationController presentViewController:navController animated:YES completion:nil];
 
     }
+}
+
+- (TDNoFollowingCell*)createNoFollowingCell:(UITableView*)tableView {
+    
+    TDNoFollowingCell *noFollowingCell = [tableView dequeueReusableCellWithIdentifier:@"TDNoFollowingCell"];
+    if (!noFollowingCell) {
+        NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoFollowingCell" owner:self options:nil];
+        noFollowingCell = [topLevelObjects objectAtIndex:0];
+        noFollowingCell.selectionStyle = UITableViewCellSelectionStyleNone;
+    }
+    noFollowingCell.backgroundColor = [UIColor whiteColor];
+    self.tableView.backgroundColor = [UIColor whiteColor];
+    return noFollowingCell;
+
 }
 @end

@@ -25,7 +25,7 @@
 @property (nonatomic) BOOL following;
 
 - (id)initWithDictionary:(NSDictionary *)dict;
-- (void)userId:(NSNumber *)userId userName:(NSString *)userName name:(NSString *)name picture:(NSString *)picture bio:(NSString *)bio location:(NSString *)location;
+- (void)userId:(NSNumber *)userId userName:(NSString *)userName name:(NSString *)name picture:(NSString *)picture bio:(NSString *)bio location:(NSString *)location followingCount:(NSNumber*)followingCount followerCount:(NSNumber*)followerCount prCount:(NSNumber*)prCount postCount:(NSNumber*)postCount;
 - (BOOL)hasDefaultPicture;
 
 @end
