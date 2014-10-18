@@ -864,15 +864,15 @@
 - (void)showPhotoActionSheet {
     // ActionSheet
     if (![UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
-        UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@""
+        UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil
                                                                  delegate:self
                                                         cancelButtonTitle:@"Cancel"
                                                    destructiveButtonTitle:nil
-                                                        otherButtonTitles:@"Choose Photo", nil];
+                                                        otherButtonTitles:@"Choose Photo",nil];
         actionSheet.tag = 3556;
         [actionSheet showInView:self.view];
     } else {
-        UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:@""
+        UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil
                                                                  delegate:self
                                                         cancelButtonTitle:@"Cancel"
                                                    destructiveButtonTitle:nil
