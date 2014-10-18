@@ -46,7 +46,10 @@
         [TestFlight takeOff:@"6fef227c-c5cb-4505-9502-9052e2819f45"];
     }
 
-    [[TDCurrentUser sharedInstance] checkPushNotificationToken];
+    if ([[TDCurrentUser sharedInstance] isLoggedIn]) {
+        [[TDCurrentUser sharedInstance] updateCurrentUserInfo];
+        [[TDCurrentUser sharedInstance] checkPushNotificationToken];
+    }
 
     // Whenever a person opens the app, check for a cached session
     if (FBSession.activeSession.state == FBSessionStateCreatedTokenLoaded) {
@@ -61,7 +64,7 @@
                                       }];
     }
 
-    NSString *storyboardId = [[TDUserAPI sharedInstance] isLoggedIn] ? @"HomeViewController" : @"WelcomeViewController";
+    NSString *storyboardId = [[TDCurrentUser sharedInstance] isLoggedIn] ? @"HomeViewController" : @"WelcomeViewController";
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *initViewController = [storyboard instantiateViewControllerWithIdentifier:storyboardId];
 

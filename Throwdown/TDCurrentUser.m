@@ -48,6 +48,11 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
     [aCoder encodeObject:self.location forKey:@"location"];
     [aCoder encodeObject:self.picture forKey:@"picture"];
 
+    [aCoder encodeObject:self.postCount forKey:@"post_count"];
+    [aCoder encodeObject:self.prCount forKey:@"pr_count"];
+    [aCoder encodeObject:self.followerCount forKey:@"follower_count"];
+    [aCoder encodeObject:self.followingCount forKey:@"following_count"];
+
     [aCoder encodeObject:self.fbToken forKey:@"fb_token"];
     [aCoder encodeObject:self.fbUID forKey:@"fb_uid"];
     [aCoder encodeObject:self.fbIdentifier forKey:@"fb_identifer"];
@@ -81,6 +86,11 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
             _picture = [aDecoder decodeObjectForKey:@"picture"];
         }
 
+        _postCount         = [aDecoder decodeObjectForKey:@"post_count"];
+        _prCount           = [aDecoder decodeObjectForKey:@"pr_count"];
+        _followerCount     = [aDecoder decodeObjectForKey:@"follower_count"];
+        _followingCount    = [aDecoder decodeObjectForKey:@"following_count"];
+
         _fbToken           = [aDecoder decodeObjectForKey:@"fb_token"];
         _fbUID             = [aDecoder decodeObjectForKey:@"fb_uid"];
         _fbIdentifier      = [aDecoder decodeObjectForKey:@"fb_identifer"];
@@ -113,6 +123,11 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
     if ([self nullcheck:[dictionary objectForKey:@"picture"]]) {
         _picture     = [dictionary objectForKey:@"picture"];
     }
+
+    _postCount      = [dictionary objectForKey:@"post_count"];
+    _prCount        = [dictionary objectForKey:@"pr_count"];
+    _followingCount = [dictionary objectForKey:@"following_count"];
+    _followerCount  = [dictionary objectForKey:@"follower_count"];
 
     if ([dictionary objectForKey:@"identities"] && [[dictionary objectForKey:@"identities"] count] > 0) {
         for (NSDictionary *identity in [dictionary objectForKey:@"identities"]) {
@@ -219,6 +234,14 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
              bio:self.bio
         location:self.location];
     return user;
+}
+
+- (void)updateCurrentUserInfo {
+    [[TDAPIClient sharedInstance] updateCurrentUser:self.authToken callback:^(BOOL success, NSDictionary *user) {
+        if (success) {
+            [self updateFromDictionary:user];
+        }
+    }];
 }
 
 #pragma mark - Facebook integrations
