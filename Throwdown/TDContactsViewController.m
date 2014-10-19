@@ -69,6 +69,12 @@
     [navigationBar setBarStyle:UIBarStyleBlack];
     [navigationBar setTranslucent:NO];
     
+    self.doneButton.hidden = NO;
+    self.doneButton.titleLabel.font = [TDConstants fontRegularSized:18];
+    self.doneButton.titleLabel.textColor = [UIColor whiteColor];
+    UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.doneButton];
+    self.navigationItem.rightBarButtonItem = rightBarButton;
+    
     // Title
     self.navLabel.textColor = [UIColor whiteColor];
     self.navLabel.font = [TDConstants fontSemiBoldSized:18];
@@ -93,7 +99,6 @@
     // Title
     self.navLabel.text = @"Contacts";
     self.suggestedLabel.hidden = YES;
-    self.inviteButton.hidden = YES;
     
     self.contacts = [[TDAddressBookAPI sharedInstance] getContactList];
     
@@ -150,8 +155,8 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (IBAction)inviteButtonHit:(id)sender {
-    [self.navigationController popViewControllerAnimated:YES];
+- (IBAction)doneButtonHit:(id)sender {
+    [self leave];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {

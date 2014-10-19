@@ -29,7 +29,7 @@ static const CGFloat MIDDLE_CELL_Y_AXIS = 23.75;
 @property (weak, nonatomic) IBOutlet UIButton *backButton;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UILabel *suggestedLabel;
-@property (weak, nonatomic) IBOutlet UIButton *inviteButton;
+@property (weak, nonatomic) IBOutlet UIButton *doneButton;
 @property (nonatomic) NSArray *contacts;
 @property (nonatomic) NSArray *userList;
 @property (nonatomic) NSMutableArray *filteredContactArray;
@@ -39,7 +39,7 @@ static const CGFloat MIDDLE_CELL_Y_AXIS = 23.75;
 @property (nonatomic) NSMutableArray *labels;
 
 - (IBAction)backButtonHit:(id)sender;
-- (IBAction)inviteButtonHit:(id)sender;
+- (IBAction)doneButtonHit:(id)sender;
 
 - (void)setValuesForSharing:(NSArray *)currentInvite;
 @end
