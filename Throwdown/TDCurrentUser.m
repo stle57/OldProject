@@ -410,7 +410,7 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
     [SSKeychain setPassword:kConfirmed forService:service account:kPushNotificationApproved];
 	token = [token stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"<>"]];
 	token = [token stringByReplacingOccurrencesOfString:@" " withString:@""];
-    if (![token isEqualToString:self.deviceToken]) {
+    if (self.deviceToken == nil || ![token isEqualToString:self.deviceToken]) {
         _deviceToken = token;
         [self save];
         [[TDAPIClient sharedInstance] registerDeviceToken:token forUserToken:self.authToken];
@@ -419,13 +419,15 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
 
 - (void)registerForRemoteNotificationTypes {
     debug NSLog(@"APN::registerForRemoteNotificationTypes");
-    [self setAskedForPush];
-    if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerUserNotificationSettings:)]) { // iOS 8
-        UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound) categories:nil];
-        [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
-        [[UIApplication sharedApplication] registerForRemoteNotifications];
-    } else {
-        [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound)];
+    if ([self isLoggedIn]) {
+        [self setAskedForPush];
+        if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerUserNotificationSettings:)]) { // iOS 8
+            UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound) categories:nil];
+            [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+            [[UIApplication sharedApplication] registerForRemoteNotifications];
+        } else {
+            [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound)];
+        }
     }
 }
 

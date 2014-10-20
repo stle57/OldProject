@@ -316,6 +316,10 @@
 }
 
 - (void)registerDeviceToken:(NSString *)token forUserToken:(NSString *)userToken {
+    if (token == nil || userToken == nil) {
+        debug NSLog(@"device token missing arguments");
+        return;
+    }
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/device_tokens.json"];
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
     [self.httpManager POST:url parameters:@{@"user_token": userToken, @"device_token": token} success:^(AFHTTPRequestOperation *operation, id responseObject) {
