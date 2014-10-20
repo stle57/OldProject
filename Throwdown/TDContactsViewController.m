@@ -149,7 +149,6 @@
 }
 
 - (void)viewDidAppear:(BOOL)animated {
-    [self.searchBar becomeFirstResponder];
     [super viewDidAppear:animated];
     
 }
@@ -519,6 +518,8 @@
     self.view.backgroundColor = [TDConstants lightBackgroundColor];
     self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
     self.searchingActive = YES;
+    
+    [self searchBar:self.searchBar activate:YES];
     
 }
 
