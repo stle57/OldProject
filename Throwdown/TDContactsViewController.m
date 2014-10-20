@@ -109,12 +109,6 @@
     
     self.contacts = [[TDAddressBookAPI sharedInstance] getContactList];
 
-    CGRect tableFrame = self.tableView.frame;
-    tableFrame.size.width = SCREEN_WIDTH;
-    tableFrame.size.height = SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height - 44;
-    self.tableView.frame = tableFrame;
-    [self.tableView sizeToFit];
-
     NSDictionary *dict = [[TDAddressBookAPI sharedInstance] getContactsDictionary];
     // Check if we've already added the person to the invite list, and mark the contact as added
     for (int index = 0; index < self.currentInviteList.count; index++) {
@@ -141,9 +135,9 @@
 
     CGRect tableFrame = self.tableView.frame;
     tableFrame.size.width = SCREEN_WIDTH;
-    tableFrame.size.height = SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height - self.searchBar.frame.size.height;
+    tableFrame.size.height = SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height - [UIApplication sharedApplication].statusBarFrame.size.height - self.searchBar.frame.size.height;
     self.tableView.frame = tableFrame;
-    
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 }
