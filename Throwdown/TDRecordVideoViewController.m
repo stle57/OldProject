@@ -84,20 +84,18 @@ static void *RecordingContext = &RecordingContext;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self setNeedsStatusBarAppearanceUpdate];
+    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
     [[TDAnalytics sharedInstance] logEvent:@"camera_opened"];
 
     self.recordButton.enabled = NO;
     self.photoMode = YES;
     self.albumPickerOpen = NO;
-    [[UIApplication sharedApplication] setStatusBarHidden:YES];
 
     CGRect bounds = [UIScreen mainScreen].bounds;
     CGFloat height = (bounds.size.height - bounds.size.width) / 2.;
 
     self.topCoverHeightConstraint.constant = height;
     self.bottomCoverHeightConstraint.constant = height;
-    [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
 
     self.tapToFocusGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapToFocus:)];
     [self.cameraPreview addGestureRecognizer:self.tapToFocusGesture];

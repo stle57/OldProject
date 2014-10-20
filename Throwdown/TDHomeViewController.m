@@ -34,6 +34,7 @@
 @property (nonatomic) NSNumber *badgeCount;
 
 @property (nonatomic) BOOL didUpload;
+@property (nonatomic) BOOL scrollToTop;
 @property (nonatomic) NSNumber *nextStartAll;
 @property (nonatomic) NSNumber *nextStartFollowing;
 @property (nonatomic) NSArray *posts;
@@ -63,6 +64,7 @@
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
     [[UIApplication sharedApplication] setStatusBarHidden:NO];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.translucent = NO;
 
@@ -76,6 +78,16 @@
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    if (self.scrollToTop) {
+        [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
+        self.scrollToTop = NO;
+    }
+    [self animateNavBarTo:20];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -386,7 +398,7 @@
         }
 
         [self.headerView addUpload:notification.object];
-        [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
+        self.scrollToTop = YES;
     });
 }
 
@@ -444,6 +456,7 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
+    [self animateNavBarTo:20];
 
     if([segue isKindOfClass:[VideoButtonSegue class]]) {
         goneDownstream = YES;
@@ -636,7 +649,6 @@
 - (IBAction)feedSelectionControlChanged:(id)sender {
     [self reloadPosts];
     [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
-    NSLog(@"selection is %ld", (long)[self.feedSelectionControl selectedSegmentIndex]);
 }
 
 - (IBAction)searchTDUsersButtonPressed:(id)sender {
