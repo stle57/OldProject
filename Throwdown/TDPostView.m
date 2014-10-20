@@ -273,39 +273,39 @@ static NSString *const kTracksKey = @"tracks";
     self.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@%@", RSHost, self.filename, FTImage]];
     SDWebImageManager *manager = [SDWebImageManager sharedManager];
     [manager downloadImageWithURL:self.imageURL options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
-        // progress bar could have been removed
-        if (self.progressBarView) {
-            dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // progress bar could have been removed
+            // we have to do this on the main thread for thread safety
+            if (self.progressBarView) {
                 CGRect frame = self.progressBarView.frame;
                 frame.size.width = 200.0 * ((double)receivedSize / (double)expectedSize);
                 if (frame.size.width > 10) {
                     self.progressBarView.frame = frame;
                 }
-            });
-        }
+            }
+        });
     } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *finalURL) {
-        // avoid doing anything on a row that's been reused b/c the download took too long and user scrolled away
-        // self.imageURL will have changed and previewImage will be remove if it's a text post
-        if (![finalURL isEqual:self.imageURL] || !self.previewImage) {
-            return;
-        }
-        if (error || !image) {
-            dispatch_async(dispatch_get_main_queue(), ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // avoid doing anything on a row that's been reused b/c the download took too long and user scrolled away
+            // self.imageURL will have changed and previewImage will be remove if it's a text post
+            // we have to do this on the main thread for thread safety
+            if (![finalURL isEqual:self.imageURL] || !self.previewImage) {
+                return;
+            }
+            if (error || !image) {
                 self.previewLoadError = YES;
                 [self removeProgressBar];
                 [self setupTapControl];
                 [self showLoadingError];
-            });
-        } else if (image) {
-            dispatch_async(dispatch_get_main_queue(), ^{
+            } else if (image) {
                 [self removeProgressBar];
                 self.previewImage.image = image;
                 if (self.post.kind == TDPostKindVideo) {
                     [self setupVideo];
                     [self updateControlImage:ControlStatePlay];
                 }
-            });
-        }
+            }
+        });
     }];
 }
 
