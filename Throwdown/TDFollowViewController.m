@@ -32,8 +32,6 @@
 @property (nonatomic) NSArray *suggestedUsers;
 @property (nonatomic) NSMutableArray *filteredTDUsers;
 @property (nonatomic) NSInteger currentRow;
-@property (nonatomic) UITextField *searchBarTextField;
-@property (nonatomic) NSString *searchString;
 @end
 
 @implementation TDFollowViewController
@@ -92,36 +90,14 @@
     self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
     self.tableView.contentInset = UIEdgeInsetsMake(-35.0f, 0.0f, 0.0f, 0.0f);
     
-    self.searchDisplayController.searchBar.layer.borderColor = [[TDConstants darkBorderColor] CGColor];
-    self.searchDisplayController.searchBar.layer.borderWidth = TD_CELL_BORDER_WIDTH;
-    self.searchDisplayController.searchBar.clipsToBounds = YES;
-
-    self.searchDisplayController.searchResultsTableView.delegate = self;
-    self.searchDisplayController.searchResultsTableView.dataSource = self;
-    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextAlignment:NSTextAlignmentLeft];
-
-    self.searchDisplayController.searchResultsTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    
-    // Changes the "search for people" font and text color
-    [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
-    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
 
     self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
     self.view.backgroundColor = [TDConstants lightBackgroundColor];
     
-    self.suggestedLabel.hidden = YES;
-    if (self.followControllerType == kUserListType_Following){
-        self.searchDisplayController.searchBar.hidden = YES;
-    } else if (self.followControllerType == kUserListType_Followers) {
-        self.searchDisplayController.searchBar.hidden = YES;
-    }
-    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
-    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
-    self.edgesForExtendedLayout = UIRectEdgeNone;
+     self.edgesForExtendedLayout = UIRectEdgeNone;
 
     [self.navigationController setNavigationBarHidden:NO animated:NO];
     [self resizeTableView:self.followControllerType];
@@ -248,23 +224,6 @@
                     return 1;
                     break;
             }
-        } else if (tableView == self.searchDisplayController.searchResultsTableView) {
-            switch (section) {
-                case 0: // follow/following user list
-                {
-                    if(self.filteredTDUsers.count > 0)
-                    {
-                        return self.filteredTDUsers.count;
-                    }
-                    else{
-                        return 1;
-                    }
-                }
-                break;
-                default:
-                    return 0;
-                    break;
-            }
         }
     } else {
         return 0;
@@ -274,46 +233,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
       NSInteger currentRow = indexPath.row;
-    if (tableView == self.searchDisplayController.searchResultsTableView) {
-        if (self.filteredTDUsers == nil || self.filteredTDUsers.count == 0) {
-            TDNoFollowProfileCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoFollowProfileCell"];
-            if (!cell) {
-                NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoFollowProfileCell" owner:self options:nil];
-                cell = [topLevelObjects objectAtIndex:0];
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.delegate = self;
-            }
-            
-            cell.contentView.backgroundColor = [UIColor whiteColor];
-            tableView.backgroundColor = [UIColor whiteColor];
-            cell.noFollowLabel.text = @"No matches found";
-            
-            cell.findPeopleButton.hidden = YES;
-            cell.findPeopleButton.enabled = NO;
-
-            cell.invitePeopleButton.hidden = NO;
-            cell.invitePeopleButton.enabled = YES;
-            UILabel *descriptionLabel = [self.labels objectAtIndex:1];
-            
-            CGRect descripFrame = descriptionLabel.frame;
-            descripFrame.origin.y = cell.noFollowLabel.frame.origin.y + cell.noFollowLabel.frame.size.height + 7;
-            descripFrame.origin.x = SCREEN_WIDTH/2 - descripFrame.size.width/2;
-            descriptionLabel.frame = descripFrame;
-            [descriptionLabel setNumberOfLines:0];
-            [cell addSubview:descriptionLabel];
-            
-            CGRect frame = cell.invitePeopleButton.frame;
-            frame.origin.x = SCREEN_WIDTH/2 - cell.invitePeopleButton.frame.size.width/2;
-            frame.origin.y = descriptionLabel.frame.origin.y + descriptionLabel.frame.size.height + 30;
-            cell.invitePeopleButton.frame = frame;
-            return cell;
-        } else {
-            self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants lightBackgroundColor];
-            NSArray *object = [self.filteredTDUsers objectAtIndex:indexPath.row];
-            TDFollowProfileCell *cell = [self createCell:indexPath tableView:tableView object:object];
-            return cell;
-        }
-    } else if (tableView == self.tableView) {
+    if (tableView == self.tableView) {
         if (self.followUsers == nil || self.followUsers.count == 0) {
             self.tableView.backgroundColor = [UIColor whiteColor];
             
@@ -440,16 +360,7 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (tableView == self.searchDisplayController.searchResultsTableView) {
-        if (self.filteredTDUsers == nil || self.filteredTDUsers.count == 0) {
-            [self createLabels];
-            UILabel *label = [self.labels objectAtIndex:0];
-            UILabel *label2 = [self.labels objectAtIndex:1];
-            return 30 + label.frame.size.height + 7 + label2.frame.size.height + 30 + [UIImage imageNamed:@"btn-invite-friends.png"].size.height;
-        } else {
-            return TD_FOLLOW_CELL_HEIGHT;
-        }
-    } else if (tableView == self.tableView) {
+    if (tableView == self.tableView) {
         if (self.followUsers == nil || self.followUsers.count == 0) {
             return TD_NOFOLLOWCELL_HEIGHT; // For the no following/no followers cell
         } else {
@@ -468,7 +379,7 @@
 
 - (void)moveTableViewUp {
     CGRect tableViewFrame = self.tableView.frame;
-    tableViewFrame.origin.y = tableViewFrame.origin.y - self.suggestedLabel.frame.size.height;
+    tableViewFrame.origin.y = tableViewFrame.origin.y;
     self.tableView.frame = tableViewFrame;
 }
 
@@ -546,13 +457,8 @@
     if (tag == kFollowButtonTag) {
         TDFollowProfileCell * cell;
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
-        UITableViewCell * modifyCell = nil;
-        if (self.filteredTDUsers.count == 0){
-            modifyCell = [self.tableView cellForRowAtIndexPath:indexPath];
-        } else {
-            modifyCell = [self.searchDisplayController.searchResultsTableView cellForRowAtIndexPath:indexPath];
-        }
-        
+        UITableViewCell * modifyCell = [self.tableView cellForRowAtIndexPath:indexPath];
+
         if(modifyCell != nil) {
             cell = (TDFollowProfileCell*)modifyCell;
             // Got the cell, change the button
@@ -665,54 +571,4 @@
     [self.navigationController pushViewController:vc animated:NO];
 }
 
-#pragma mark UISearchBarDelegate
-- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
-    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants headerTextColor]];
-    self.suggestedLabel.hidden = YES;
-}
-
-- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
-    //[[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
-    self.suggestedLabel.hidden = NO;
-}
-
-#pragma mark Content Filtering
-
-- (void)filterContentForSearchText:(NSString*)searchText scope:(NSString*)scope
-{
-    self.searchString = searchText;
-	// Update the filtered array based on the search text and scope.
-	
-    // Remove all objects from the filtered search array
-	[self.filteredTDUsers removeAllObjects];
-    
-	// Filter the arraphy using NSPredicate
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF.name contains[c] %@",searchText];
-    NSArray *tempArray = [self.followUsers filteredArrayUsingPredicate:predicate];
-    
-    self.filteredTDUsers = [NSMutableArray arrayWithArray:tempArray];
-}
-
-#pragma mark - UISearchDisplayController Delegate Methods
-
-- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString
-{
-    // Tells the table data source to reload when text changes
-    [self filterContentForSearchText:searchString scope:
-     [[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:[self.searchDisplayController.searchBar selectedScopeButtonIndex]]];
-    
-    // Return YES to cause the search result table view to be reloaded.
-    return YES;
-}
-
-
-- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption
-{
-    // Tells the table data source to reload when scope bar selection changes
-    [self filterContentForSearchText:[self.searchDisplayController.searchBar text] scope:
-     [[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:searchOption]];
-    
-    // Return YES to cause the search result table view to be reloaded.
-    return YES;
-}
 @end

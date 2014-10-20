@@ -46,7 +46,6 @@
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
 @property (weak, nonatomic) IBOutlet TDActivityIndicator *activityIndicator;
-@property (weak, nonatomic) IBOutlet UILabel *suggestedLabel;
 @property (weak, nonatomic) IBOutlet UIButton *inviteButton;
 @property (nonatomic, retain) NSString *name;
 @property (nonatomic, retain) NSString *username;

@@ -22,21 +22,24 @@ static const CGFloat MIDDLE_CELL_Y_AXIS = 23.75;
 - (void)invitesAdded:(NSMutableArray*)inviteList;
 @end
 
-@interface TDContactsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, UISearchDisplayDelegate, TDFollowProfileCellDelegate, UIActionSheetDelegate, TDNoFollowProfileCellDelegate>
+@interface TDContactsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate,TDFollowProfileCellDelegate, UIActionSheetDelegate, TDNoFollowProfileCellDelegate>
 
 @property (nonatomic, assign) id <TDContactsViewControllerDelegate> __unsafe_unretained delegate;
 @property (weak, nonatomic) IBOutlet UILabel *navLabel;
 @property (weak, nonatomic) IBOutlet UIButton *backButton;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (weak, nonatomic) IBOutlet UILabel *suggestedLabel;
 @property (weak, nonatomic) IBOutlet UIButton *doneButton;
+@property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (nonatomic) NSArray *contacts;
-@property (nonatomic) NSArray *userList;
 @property (nonatomic) NSMutableArray *filteredContactArray;
 @property (nonatomic) CGFloat origNameLabelYAxis;
 @property (nonatomic) CGRect origNameLabelFrame;
 @property (nonatomic) NSMutableArray *inviteList;
 @property (nonatomic) NSMutableArray *labels;
+@property (nonatomic) BOOL searchingActive;
+@property (nonatomic) NSString *searchText;
+@property (retain) UIView *disableViewOverlay;
+@property (nonatomic) NSIndexPath *editingIndexPath;
 
 - (IBAction)backButtonHit:(id)sender;
 - (IBAction)doneButtonHit:(id)sender;

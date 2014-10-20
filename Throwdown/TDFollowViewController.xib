@@ -9,8 +9,6 @@
                 <outlet property="activityIndicator" destination="ded-Gi-FWr" id="367-l7-Rxq"/>
                 <outlet property="closeButton" destination="6Zl-1e-jyr" id="wFa-tu-wFU"/>
                 <outlet property="inviteButton" destination="qH7-JT-PlZ" id="Z32-S7-0aV"/>
-                <outlet property="searchDisplayController" destination="XXy-cd-5tj" id="xeg-er-RCC"/>
-                <outlet property="suggestedLabel" destination="gNG-4c-xOE" id="Swt-Yp-TYI"/>
                 <outlet property="tableView" destination="ypO-Yh-C3o" id="wiK-0Q-yvA"/>
                 <outlet property="titleLabel" destination="jlv-Tl-yT7" id="mkr-ND-hpo"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
@@ -27,7 +25,7 @@
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                 </view>
                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" style="grouped" separatorStyle="none" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="ypO-Yh-C3o">
-                    <rect key="frame" x="0.0" y="44" width="320" height="505"/>
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="505"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
                     <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                     <connections>
@@ -35,21 +33,6 @@
                         <outlet property="delegate" destination="-1" id="s8s-FM-ojy"/>
                     </connections>
                 </tableView>
-                <searchBar contentMode="redraw" placeholder="Search for people" id="4oa-Ty-bGa">
-                    <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                    <textInputTraits key="textInputTraits"/>
-                    <connections>
-                        <outlet property="delegate" destination="-1" id="lmP-vz-43b"/>
-                    </connections>
-                </searchBar>
-                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Suggested people to follow" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="gNG-4c-xOE">
-                    <rect key="frame" x="10" y="44" width="320" height="25"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
@@ -76,15 +59,6 @@
                 <action selector="closeButtonHit:" destination="-1" eventType="touchUpInside" id="3BL-j6-Ws2"/>
             </connections>
         </button>
-        <searchDisplayController id="XXy-cd-5tj">
-            <connections>
-                <outlet property="delegate" destination="-1" id="uz6-Sh-bod"/>
-                <outlet property="searchBar" destination="4oa-Ty-bGa" id="I3g-Z5-xUU"/>
-                <outlet property="searchContentsController" destination="-1" id="A4I-eN-4Tk"/>
-                <outlet property="searchResultsDataSource" destination="-1" id="5Tu-Yu-ctx"/>
-                <outlet property="searchResultsDelegate" destination="-1" id="Zfo-IH-OjH"/>
-            </connections>
-        </searchDisplayController>
         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="qH7-JT-PlZ">
             <rect key="frame" x="0.0" y="0.0" width="46" height="30"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>

@@ -261,7 +261,6 @@
             if ([self.searchText isEqual:@""]) {
                 // If count is 0, we should show suggested user list!
                 [self.view addSubview:self.disableViewOverlay];
-                //self.tableView.tableHeaderView = self.headerView;
                 debug NSLog(@"filtered array is 0, loading %lu for suggestedUsers", (unsigned long)[suggestedUsers count]);
                 return [suggestedUsers count];
             } else if ([filteredUsersArray count] == 0){
@@ -472,6 +471,7 @@
     if (searchText.length > 0) {
         [disableViewOverlay removeFromSuperview];
     }
+    
     self.searchText = searchText;
     [self filterContentForSearchText:searchText scope:nil];
 

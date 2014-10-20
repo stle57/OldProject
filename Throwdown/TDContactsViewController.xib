@@ -10,8 +10,7 @@
                 <outlet property="backButton" destination="zH0-Jw-wuD" id="CUe-2e-uZT"/>
                 <outlet property="doneButton" destination="F59-KW-BpT" id="28Q-ow-piL"/>
                 <outlet property="navLabel" destination="0qW-eD-NiQ" id="ueR-6O-Z9g"/>
-                <outlet property="searchDisplayController" destination="V06-TE-PiN" id="hG2-1Z-YLr"/>
-                <outlet property="suggestedLabel" destination="R95-rR-F2c" id="S4W-Xb-WXj"/>
+                <outlet property="searchBar" destination="cse-yb-WaZ" id="tbN-t2-utA"/>
                 <outlet property="tableView" destination="Lr9-X2-Dox" id="zCh-0o-aRe"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -38,26 +37,10 @@
                         <outlet property="delegate" destination="-1" id="hvn-Yd-Wki"/>
                     </connections>
                 </searchBar>
-                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Suggested people to follow" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="R95-rR-F2c">
-                    <rect key="frame" x="7" y="44" width="320" height="25"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
         </view>
-        <searchDisplayController id="V06-TE-PiN">
-            <connections>
-                <outlet property="delegate" destination="-1" id="bhV-zZ-scW"/>
-                <outlet property="searchBar" destination="cse-yb-WaZ" id="Dbo-UX-Pld"/>
-                <outlet property="searchContentsController" destination="-1" id="nci-nQ-RmD"/>
-                <outlet property="searchResultsDataSource" destination="-1" id="kU5-bH-s36"/>
-                <outlet property="searchResultsDelegate" destination="-1" id="S0t-uz-D6A"/>
-            </connections>
-        </searchDisplayController>
         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Edit Profile" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="0qW-eD-NiQ">
             <rect key="frame" x="0.0" y="0.0" width="180" height="38"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>

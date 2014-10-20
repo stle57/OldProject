@@ -20,26 +20,31 @@
 @synthesize delegate;
 @synthesize filteredContactArray;
 @synthesize contacts;
-@synthesize userList;
 @synthesize origNameLabelYAxis;
 @synthesize origNameLabelFrame;
 @synthesize inviteList;
+@synthesize searchingActive;
+@synthesize searchText;
+@synthesize disableViewOverlay;
+@synthesize editingIndexPath;
 
 - (void)dealloc {
     delegate = nil;
     self.contacts = nil;
-    self.userList = nil;
     self.filteredContactArray = nil;
     self.inviteList = nil;
     self.labels = nil;
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        contacts = [[NSMutableArray alloc] init];
-        inviteList = [[NSMutableArray alloc] init];
+        self.contacts = [[NSMutableArray alloc] init];
+        self.inviteList = [[NSMutableArray alloc] init];
         self.labels = [[NSMutableArray alloc] init];
     }
     return self;
@@ -48,14 +53,17 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
- 
+    
+    self.disableViewOverlay = [[UIView alloc]
+                               initWithFrame:CGRectMake(0.0f,44.0f,SCREEN_WIDTH,SCREEN_HEIGHT-self.navigationController.navigationBar.frame.size.height - self.searchBar.frame.size.height)];
+    self.disableViewOverlay.backgroundColor=[UIColor blackColor];
+    self.disableViewOverlay.alpha = 0;
+
     // Resize the view
     CGRect viewFrame = self.view.frame;
     viewFrame.size.height = SCREEN_HEIGHT;
     viewFrame.size.width = SCREEN_WIDTH;
     self.view.frame = viewFrame;
-    
-    [self.searchDisplayController.searchBar sizeToFit];
     
     // Do any additional setup after loading the view from its nib.
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
@@ -85,10 +93,10 @@
 
     // Search Bar
     [[UISearchBar appearance] setBackgroundImage:[UIImage imageNamed:@"f5f5f5_square.png"] forBarPosition:0 barMetrics:UIBarMetricsDefault]; // Sets the search bar to a solid color(no transparancy)
-    self.searchDisplayController.searchBar.translucent = NO;
-    self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants lightBackgroundColor];
-    self.searchDisplayController.searchResultsTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    
+    self.searchBar.translucent = NO;
+    self.searchBar.layer.borderColor = [[TDConstants darkBorderColor] CGColor];
+    self.searchBar.layer.borderWidth = TD_CELL_BORDER_WIDTH;
+    self.searchBar.clipsToBounds = YES;
     [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
     
@@ -98,13 +106,8 @@
     
     // Title
     self.navLabel.text = @"Contacts";
-    self.suggestedLabel.hidden = YES;
     
     self.contacts = [[TDAddressBookAPI sharedInstance] getContactList];
-    
-    CGRect searchBarFrame = self.searchDisplayController.searchBar.frame;
-    searchBarFrame.size.width = SCREEN_WIDTH;
-    self.searchDisplayController.searchBar.frame = searchBarFrame;
 
     CGRect tableFrame = self.tableView.frame;
     tableFrame.size.width = SCREEN_WIDTH;
@@ -131,7 +134,24 @@
     [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
     
-    self.tableView.hidden = NO;
+    CGRect frame = self.searchBar.frame;
+    frame.size.width = SCREEN_WIDTH;
+    self.searchBar.frame = frame;
+    [self.searchBar sizeToFit];
+
+    CGRect tableFrame = self.tableView.frame;
+    tableFrame.size.width = SCREEN_WIDTH;
+    tableFrame.size.height = SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height - self.searchBar.frame.size.height;
+    self.tableView.frame = tableFrame;
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [self.searchBar becomeFirstResponder];
+    [super viewDidAppear:animated];
+    
 }
 - (void)didReceiveMemoryWarning
 {
@@ -141,7 +161,7 @@
 
 -(void)viewDidLayoutSubviews{
     [self.navigationController setNavigationBarHidden:NO animated:NO];
-    [self.searchDisplayController.searchBar setShowsCancelButton:NO animated:NO];
+    [self.searchBar setShowsCancelButton:NO animated:NO];
 }
 
 - (IBAction)backButtonHit:(id)sender {
@@ -165,18 +185,16 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (tableView == self.searchDisplayController.searchResultsTableView) {
-        if (self.filteredContactArray == nil || [self.filteredContactArray count] == 0) {
-            return 220.0;
-        } else {
-            // Calculate the height of the labels
-            [self createLabels];
-            return 65.0;
-        }
-    } else {
-        return 65.0;
+    if (!self.searchingActive || [self.searchText isEqual:@""]) {
+        return 65;
     }
-    return 0;
+    else {
+        if ([filteredContactArray count] > 0) {
+            return 65;
+        } else {
+            return 220;
+        }
+    }
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -185,27 +203,27 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (tableView == self.searchDisplayController.searchResultsTableView) {
+    if (!self.searchingActive || [self.searchText isEqual:@""]) {
+        return [self.contacts count];
+    }
+    else {
         if ([filteredContactArray count] > 0) {
             return [filteredContactArray count];
         } else {
             return 1;
         }
-        
-    } else {
-        return [contacts count];
     }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (tableView == self.tableView) {
+    if ((!self.searchingActive) || [self.searchText isEqual:@""]) {
         TDContactInfo *contactPerson = contacts[indexPath.row];
         if (contactPerson.fullName != nil && contactPerson.fullName.length != 0) {
             TDFollowProfileCell *cell = [self createCell:tableView indexPath:indexPath contact:contactPerson];
             return cell;
         }
-    } else if (tableView == self.searchDisplayController.searchResultsTableView) {
+    } else {
         if (filteredContactArray.count == 0) {
             TDNoFollowProfileCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoFollowProfileCell"];
             if (!cell) {
@@ -214,9 +232,9 @@
                 cell.selectionStyle = UITableViewCellSelectionStyleNone;
                 cell.delegate = self;
             }
-            
+            cell.userInteractionEnabled = YES;
             cell.backgroundColor = [UIColor whiteColor];
-            self.searchDisplayController.searchResultsTableView.backgroundColor = [UIColor whiteColor];
+            self.tableView.backgroundColor = [UIColor whiteColor];
 
             NSString *noMatchesString = @"No matches found";
             NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:noMatchesString font:[TDConstants fontSemiBoldSized:16.0] color:[TDConstants headerTextColor] lineHeight:19 lineHeightMultipler:(19/16.0)];
@@ -243,7 +261,7 @@
             return cell;
 
         } else {
-            self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants lightBackgroundColor];
+            self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
 
             TDContactInfo *contactPerson = [filteredContactArray objectAtIndex:indexPath.row];
             if (contactPerson.fullName != nil && contactPerson.fullName.length != 0) {
@@ -266,15 +284,23 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (tableView == self.tableView) {
+    if (!self.searchingActive) {
         // Get contact from contract array
         TDContactInfo *contactPerson = contacts[indexPath.row];
         [self addToInviteList:contactPerson indexPath:indexPath tableView:tableView];
 
-    } else if (tableView == self.searchDisplayController.searchResultsTableView) {
-        TDContactInfo *contactPerson = filteredContactArray[indexPath.row];
+    } else {
+        debug NSLog(@"indexPath.row=%d", indexPath.row);
+        if ([self.filteredContactArray count] == 0) {
+            // We got in this state because the user tapped out of the search bar and had
+            // and empty search result.
+            return;
+            //[self searchBarTextDidEndEditing:self.searchBar];
+        } else {
+            TDContactInfo *contactPerson = filteredContactArray[indexPath.row];
 
-        [self addToInviteList:contactPerson indexPath:indexPath tableView:tableView];
+            [self addToInviteList:contactPerson indexPath:indexPath tableView:tableView];
+        }
     }
 }
 
@@ -421,7 +447,7 @@
         NSUInteger index = 0;
 
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"self.id == %@", contactInfo.id];
-        if (tableView == self.searchDisplayController.searchResultsTableView){
+        if (self.searchingActive){
             NSArray * selectedObject = [self.contacts filteredArrayUsingPredicate:predicate];
             if (selectedObject){
                 index = [self.contacts indexOfObject:selectedObject[0]];
@@ -431,7 +457,7 @@
                     [self reformatCellToSelected:cell contactInfo:selectedObject[0]];
                 }
             }
-        } else if (tableView == self.tableView) {
+        } else {
             debug NSLog(@"have contact info to mark in search view");
         }
     }
@@ -491,12 +517,37 @@
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants headerTextColor]];
     self.view.backgroundColor = [TDConstants lightBackgroundColor];
-    self.searchDisplayController.searchResultsTableView.backgroundColor = [TDConstants lightBackgroundColor];
+    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
+    self.searchingActive = YES;
+    
 }
 
 - (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
+    self.searchingActive = NO;
+    self.searchBar.text= @"";
+    self.searchText = self.searchBar.text;
+    [self searchBar:self.searchBar activate:NO];
 }
 
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchString {
+    debug NSLog(@"textDidChange to %@", searchString);
+    if (searchString.length > 0) {
+        [disableViewOverlay removeFromSuperview];
+    } else {
+        self.disableViewOverlay.alpha = 0;
+        [self.view addSubview:self.disableViewOverlay];
+        
+        [UIView beginAnimations:@"FadeIn" context:nil];
+        [UIView setAnimationDuration:0.5];
+        self.disableViewOverlay.alpha = 0.6;
+        [UIView commitAnimations];
+    }
+    self.searchText = searchString;
+    [self filterContentForSearchText:searchText scope:nil];
+    
+    debug NSLog(@"  1.reloading table view inside textDidChange");
+    [self.tableView reloadData];
+}
 #pragma mark Content Filtering
 - (void)filterContentForSearchText:(NSString*)searchText scope:(NSString*)scope
 {
@@ -504,32 +555,9 @@
 	[self.filteredContactArray removeAllObjects];
     
 	// Filter the array using NSPredicate
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF.fullName contains[c] %@",searchText];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF.fullName contains[c] %@",self.searchText];
     NSArray *tempArray = [self.contacts filteredArrayUsingPredicate:predicate];
     self.filteredContactArray = [NSMutableArray arrayWithArray:tempArray];
-}
-
-#pragma mark - UISearchDisplayController Delegate Methods
-
-- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString
-{
-    // Tells the table data source to reload when text changes
-    [self filterContentForSearchText:searchString scope:
-     [[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:[self.searchDisplayController.searchBar selectedScopeButtonIndex]]];
-    
-    // Return YES to cause the search result table view to be reloaded.
-    return YES;
-}
-
-
-- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchScope:(NSInteger)searchOption
-{
-    // Tells the table data source to reload when scope bar selection changes
-    [self filterContentForSearchText:[self.searchDisplayController.searchBar text] scope:
-     [[self.searchDisplayController.searchBar scopeButtonTitles] objectAtIndex:searchOption]];
-    
-    // Return YES to cause the search result table view to be reloaded.
-    return YES;
 }
 
 #pragma mark - TDFollowCellProfileDelegate
@@ -556,9 +584,9 @@
 
 - (void)actionButtonPressedFromRow:(NSInteger)row tag:(NSInteger)tag userId:(NSNumber*)userId{
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0] ;
-    if (self.searchDisplayController.isActive) {
+    if (self.searchingActive) {
         // Remove from invite list on
-        UITableViewCell* cell = [self.searchDisplayController.searchResultsTableView cellForRowAtIndexPath:indexPath];
+        UITableViewCell* cell = [self.tableView cellForRowAtIndexPath:indexPath];
         [self reformatCellToUnselected:cell];
         
         // Need to reformat on the entire list too
@@ -605,6 +633,70 @@
     for (id object in currentInvite) {
         [self.inviteList addObject:object];
     }
+}
+
+- (void)searchBar:(UISearchBar *)searchBar activate:(BOOL) active{
+    self.tableView.allowsSelection = active;
+    if (!active) {
+        [disableViewOverlay removeFromSuperview];
+        [searchBar resignFirstResponder];
+        self.searchText = nil;
+    } else {
+        self.disableViewOverlay.alpha = 0;
+        [self.view addSubview:self.disableViewOverlay];
+        
+        [UIView beginAnimations:@"FadeIn" context:nil];
+        [UIView setAnimationDuration:0.5];
+        self.disableViewOverlay.alpha = 0.6;
+        [UIView commitAnimations];
+        
+        // probably not needed if you have a details view since you
+        // will go there on selection
+        NSIndexPath *selected = [self.tableView
+                                 indexPathForSelectedRow];
+        if (selected) {
+            [self.tableView deselectRowAtIndexPath:selected
+                                          animated:NO];
+        }
+    }
+}
+
+#pragma mark - Keyboard / Textfield
+
+- (void)keyboardWillHide:(NSNotification *)notification {
+    NSNumber *rate = notification.userInfo[UIKeyboardAnimationDurationUserInfoKey];
+    [UIView animateWithDuration:rate.floatValue animations:^{
+        self.tableView.contentInset = UIEdgeInsetsZero;
+        self.tableView.scrollIndicatorInsets = UIEdgeInsetsZero;
+    }];
+}
+
+- (void)keyboardWillShow:(NSNotification *)notification {
+    CGSize keyboardSize = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    NSNumber *rate = notification.userInfo[UIKeyboardAnimationDurationUserInfoKey];
+    UIEdgeInsets contentInsets;
+    if (UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation])) {
+        contentInsets = UIEdgeInsetsMake(0.0, 0.0, (keyboardSize.height), 0.0);
+    } else {
+        contentInsets = UIEdgeInsetsMake(0.0, 0.0, (keyboardSize.width), 0.0);
+    }
+    
+    [UIView animateWithDuration:rate.floatValue animations:^{
+        self.tableView.contentInset = contentInsets;
+        self.tableView.scrollIndicatorInsets = contentInsets;
+    }];
+    [self.tableView scrollToRowAtIndexPath:self.editingIndexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    UITouch *touch = [[event allTouches] anyObject];
+    if ([self.searchBar isFirstResponder] && [touch view] != self.searchBar)
+    {
+        [self.searchBar resignFirstResponder];
+        
+    }
+    [super touchesBegan:touches withEvent:event];
 }
 
 @end
