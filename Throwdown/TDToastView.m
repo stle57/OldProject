@@ -87,6 +87,9 @@
             self.label.textColor = [TDConstants headerTextColor];
             self.closeButton.hidden = FALSE;
             self.closeButton.enabled = YES;
+            [self.closeButton setImage:[UIImage imageNamed:@"nav_close.png"] forState:UIControlStateNormal];
+            [self.closeButton setImage:[UIImage imageNamed:@"nav_close_hit.png"] forState:UIControlStateHighlighted];
+            [self.closeButton setImage:[UIImage imageNamed:@"nav_close_hit.png"] forState:UIControlStateSelected];
             break;
         case kToastType_InviteSent:
             iconImage = [UIImage imageNamed:@"td_notif_toast_icon"];
@@ -99,6 +102,9 @@
             iconImage = [UIImage imageNamed:@"td_error_toast_icon"];
             self.backgroundColor = [UIColor colorWithRed:(158./255) green:(11./255) blue:(15./255) alpha:0.85];
             self.label.textColor = [UIColor whiteColor];
+            [self.closeButton setImage:[UIImage imageNamed:@"nav-close.png"] forState:UIControlStateNormal];
+            [self.closeButton setImage:[UIImage imageNamed:@"nav-close-hit.png"] forState:UIControlStateHighlighted];
+            [self.closeButton setImage:[UIImage imageNamed:@"nav-close-hit.png"] forState:UIControlStateSelected];
             self.closeButton.hidden = FALSE;
             self.closeButton.enabled = YES;
             break;

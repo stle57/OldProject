@@ -25,11 +25,9 @@
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="qh2-Mw-9DX">
                     <rect key="frame" x="297" y="13" width="16" height="22"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <state key="normal" image="nav-close">
+                    <state key="normal">
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
-                    <state key="selected" image="nav-close-hit"/>
-                    <state key="highlighted" image="nav-close-hit"/>
                     <connections>
                         <action selector="closedButtonPressed:" destination="oDZ-QJ-jBD" eventType="touchUpInside" id="g83-Ti-MuA"/>
                     </connections>
@@ -45,10 +43,6 @@
             </connections>
         </view>
     </objects>
-    <resources>
-        <image name="nav-close" width="17" height="17"/>
-        <image name="nav-close-hit" width="17" height="17"/>
-    </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
