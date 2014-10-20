@@ -27,7 +27,7 @@
 
 #define CELL_IDENTIFIER @"TDPostView"
 
-@interface TDHomeViewController ()
+@interface TDHomeViewController () <UIScrollViewDelegate>
 @property (weak, nonatomic) IBOutlet UISegmentedControl *feedSelectionControl;
 @property (weak, nonatomic) IBOutlet UIButton *searchTDUsersButton;
 @property (weak, nonatomic) IBOutlet UILabel *badgeCountLabel;
@@ -41,6 +41,7 @@
 @property (nonatomic) NSArray *notices;
 @property (nonatomic) TDHomeHeaderView *headerView;
 @property (nonatomic, retain) UIDynamicAnimator *animator;
+@property (nonatomic) CGFloat previousScrollViewYOffset;
 
 @end
 
@@ -70,6 +71,7 @@
     [self.feedSelectionControl setContentPositionAdjustment:UIOffsetMake(0, 1) forSegmentType:UISegmentedControlSegmentAny barMetrics:UIBarMetricsDefault];
 
     self.headerView = [[TDHomeHeaderView alloc] initWithTableView:self.tableView];
+    self.previousScrollViewYOffset = 0;
 }
 
 - (void)dealloc {
@@ -546,6 +548,7 @@
 
         TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil];
         vc.slug = modelId;
+        [self animateNavBarTo:20];
         [self.navigationController pushViewController:vc animated:YES];
         return YES;
 
@@ -561,9 +564,12 @@
             UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
             navController.navigationBar.barStyle = UIBarStyleDefault;
             navController.navigationBar.translucent = YES;
+
+            [self animateNavBarTo:20];
             [self.navigationController presentViewController:navController animated:YES completion:nil];
         } else {
             vc.profileType = kFeedProfileTypeOther;
+            [self animateNavBarTo:20];
             [self.navigationController pushViewController:vc animated:YES];
 
         }
@@ -607,6 +613,7 @@
     } else {
         vc.profileType = kFeedProfileTypeOther;
     }
+    [self animateNavBarTo:20];
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -622,6 +629,7 @@
 }
 
 - (void)openDetailView:(NSNumber *)postId {
+    [self animateNavBarTo:20];
     [super openDetailView:postId];
 }
 
@@ -634,7 +642,94 @@
 - (IBAction)searchTDUsersButtonPressed:(id)sender {
     TDFindPeopleViewController *vc = [[TDFindPeopleViewController alloc] initWithNibName:@"TDFindPeopleViewController" bundle:nil ];
     vc.profileUser = [TDCurrentUser sharedInstance].currentUserObject;
+
+    [self animateNavBarTo:20];
     [self.navigationController pushViewController:vc animated:NO];
 }
+
+#pragma mark - ScrollViewDelegate
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    [super scrollViewDidScroll:scrollView];
+
+    if (self.navigationController == nil) {
+        return;
+    }
+
+    CGRect frame = self.navigationController.navigationBar.frame;
+    // table view acts up if there isn't enough content in there so abort if content is smaller than the frame size
+    if (self.tableView.contentSize.height <= self.tableView.frame.size.height) {
+        return;
+    }
+
+    CGFloat size = frame.size.height - 21;
+    CGFloat framePercentageHidden = ((20 - frame.origin.y) / (frame.size.height - 1));
+    CGFloat scrollOffset = scrollView.contentOffset.y;
+    CGFloat scrollDiff = (scrollOffset - self.previousScrollViewYOffset) * 0.5;
+    CGFloat scrollHeight = scrollView.frame.size.height;
+    CGFloat scrollContentSizeHeight = scrollView.contentSize.height + scrollView.contentInset.bottom;
+
+    if (scrollOffset <= -scrollView.contentInset.top) {
+        frame.origin.y = 20;
+    } else if ((scrollOffset + scrollHeight) >= scrollContentSizeHeight) {
+        frame.origin.y = -size;
+    } else {
+        frame.origin.y = MIN(20, MAX(-size, frame.origin.y - scrollDiff));
+    }
+
+    [self setTableViewFrameBasedOn:frame];
+
+    self.navigationController.navigationBar.frame = frame;
+    [self updateNavigationBarButtons:(1.0 - framePercentageHidden)];
+    self.previousScrollViewYOffset = scrollOffset;
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    [self stoppedScrolling];
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    if (!decelerate) {
+        [self stoppedScrolling];
+    }
+}
+
+- (void)stoppedScrolling {
+    CGRect frame = self.navigationController.navigationBar.frame;
+    if (frame.origin.y < 20) {
+        [self animateNavBarTo:(-(frame.size.height - 21))];
+    }
+}
+
+- (void)animateNavBarTo:(CGFloat)y {
+    [UIView animateWithDuration:0.2 animations:^{
+        CGRect frame = self.navigationController.navigationBar.frame;
+        CGFloat alpha = frame.origin.y >= y && y < 20 ? 0 : 1;
+        frame.origin.y = y;
+        self.navigationController.navigationBar.frame = frame;
+        [self updateNavigationBarButtons:alpha];
+        [self setTableViewFrameBasedOn:frame];
+    }];
+}
+
+- (void)setTableViewFrameBasedOn:(CGRect)frame {
+    CGRect scrollFrame = self.tableView.frame;
+    scrollFrame.origin.y = frame.origin.y - 20;
+    scrollFrame.size.height = [UIScreen mainScreen].bounds.size.height - 20;
+    if (!CGRectEqualToRect(scrollFrame, self.tableView.frame)) {
+        self.tableView.frame = scrollFrame;
+    }
+}
+
+- (void)updateNavigationBarButtons:(CGFloat)alpha {
+    for (UIView *navView in self.navigationController.navigationBar.subviews) {
+        if (![navView.description containsString:@"UINavigationBarBackground"] && ![navView.description containsString:@"UINavigationBarBackIndicatorView"]) {
+            navView.alpha = alpha;
+        }
+    }
+    self.navigationController.navigationBar.titleTextAttributes = @{ NSForegroundColorAttributeName: [[UIColor whiteColor] colorWithAlphaComponent:alpha] };
+    self.navigationController.navigationBar.tintColor = [self.navigationController.navigationBar.tintColor colorWithAlphaComponent:alpha];
+}
+
 
 @end
