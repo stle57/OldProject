@@ -150,13 +150,15 @@
                                                 self.closeButton.frame.size.width,
                                                 self.closeButton.frame.size.height);
         } else {
-            self.iconImageView.frame = CGRectMake((self.frame.size.width - self.iconImageView.frame.size.width - self.label.frame.size.width) / 2.0,
+            self.iconImageView.frame = CGRectMake((SCREEN_WIDTH - self.iconImageView.frame.size.width - self.label.frame.size.width) / 2.0,
                                                   self.iconImageView.frame.origin.y,
                                                   self.iconImageView.frame.size.width,
                                                   self.iconImageView.frame.size.height);
             
-            self.label.center = CGPointMake(CGRectGetMaxX(self.iconImageView.frame) + 10.0 + self.label.frame.size.width / 2.0,
-                                            self.center.y);
+            self.label.frame = CGRectMake(self.iconImageView.frame.origin.x + self.iconImageView.frame.size.width +5,
+                                         self.label.frame.origin.y,
+                                         self.label.frame.size.width,
+                                         self.label.frame.size.height);
         }
     } else {
         if (self.label.frame.size.width > self.frame.size.width) {
