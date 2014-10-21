@@ -662,7 +662,7 @@
     vc.profileUser = [TDCurrentUser sharedInstance].currentUserObject;
 
     [self animateNavBarTo:20];
-    [self.navigationController pushViewController:vc animated:NO];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma mark - ScrollViewDelegate
