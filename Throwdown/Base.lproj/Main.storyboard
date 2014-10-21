@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="DPQ-qf-8sb">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="DPQ-qf-8sb">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -1363,12 +1363,6 @@ The Throwdown Community</string>
                         <rect key="frame" x="0.0" y="64" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="feed-background-grey" translatesAutoresizingMaskIntoConstraints="NO" id="oRF-UN-lx1" userLabel="Background Image View">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
-                                <variation key="widthClass=compact" misplaced="YES">
-                                    <rect key="frame" x="0.0" y="0.0" width="400" height="536"/>
-                                </variation>
-                            </imageView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="w9B-bo-GMv">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="536"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -1445,21 +1439,17 @@ The Throwdown Community</string>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="w9B-bo-GMv" firstAttribute="top" secondItem="2sg-k5-FmL" secondAttribute="bottom" id="3PB-hO-3do"/>
-                            <constraint firstItem="oRF-UN-lx1" firstAttribute="width" secondItem="kau-AR-TTK" secondAttribute="width" id="59d-tA-9tU"/>
                             <constraint firstItem="Tdo-gQ-7zF" firstAttribute="centerY" secondItem="QKD-7D-Qb5" secondAttribute="centerY" constant="17" id="80C-5y-Tnl"/>
                             <constraint firstItem="1Ps-Hj-TOv" firstAttribute="top" secondItem="0Pj-wg-KUs" secondAttribute="bottom" id="9Zr-qN-zDb"/>
                             <constraint firstItem="1Ps-Hj-TOv" firstAttribute="top" secondItem="Tdo-gQ-7zF" secondAttribute="bottom" id="C7y-YO-ljS"/>
-                            <constraint firstItem="oRF-UN-lx1" firstAttribute="leading" secondItem="kau-AR-TTK" secondAttribute="leadingMargin" constant="-16" id="I5R-rW-c0o"/>
                             <constraint firstAttribute="centerX" secondItem="0Pj-wg-KUs" secondAttribute="centerX" id="KGq-8h-4PV"/>
                             <constraint firstItem="w9B-bo-GMv" firstAttribute="width" secondItem="kau-AR-TTK" secondAttribute="width" id="OdX-XO-AeV"/>
-                            <constraint firstItem="oRF-UN-lx1" firstAttribute="top" secondItem="2sg-k5-FmL" secondAttribute="bottom" id="Udx-BO-LCH"/>
                             <constraint firstItem="w9B-bo-GMv" firstAttribute="leading" secondItem="kau-AR-TTK" secondAttribute="leadingMargin" constant="-16" id="bnr-0t-jsc"/>
                             <constraint firstItem="1Ps-Hj-TOv" firstAttribute="top" secondItem="Uso-in-hkr" secondAttribute="bottom" id="feP-8d-8gg"/>
                             <constraint firstAttribute="trailing" secondItem="Uso-in-hkr" secondAttribute="trailing" id="hgu-bS-G9T"/>
                             <constraint firstItem="Tdo-gQ-7zF" firstAttribute="centerX" secondItem="QKD-7D-Qb5" secondAttribute="centerX" constant="-15" id="mTB-Vk-5yK"/>
                             <constraint firstItem="Tdo-gQ-7zF" firstAttribute="leading" secondItem="kau-AR-TTK" secondAttribute="leading" id="mYw-JK-rw6"/>
                             <constraint firstItem="w9B-bo-GMv" firstAttribute="height" secondItem="kau-AR-TTK" secondAttribute="height" id="nFR-iJ-Scv"/>
-                            <constraint firstItem="oRF-UN-lx1" firstAttribute="height" secondItem="kau-AR-TTK" secondAttribute="height" id="y2e-KP-HUd"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="q28-Zj-hoc">
@@ -1477,7 +1467,7 @@ The Throwdown Community</string>
                             </button>
                         </barButtonItem>
                         <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="Vwl-FS-yeJ" userLabel="Feed Selection">
-                            <rect key="frame" x="228" y="8" width="145" height="29"/>
+                            <rect key="frame" x="227.5" y="7.5" width="145" height="29"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <segments>
                                 <segment title="All"/>
@@ -1773,7 +1763,6 @@ The Throwdown Community</string>
         <image name="camera_grey_88x55" width="44" height="27"/>
         <image name="camera_grey_88x55_hit" width="44" height="27"/>
         <image name="cf_thrusters" width="667" height="445"/>
-        <image name="feed-background-grey" width="320" height="568"/>
         <image name="icon-add follower in text" width="21" height="17"/>
         <image name="icon-cross" width="28" height="28"/>
         <image name="iphone-1" width="191" height="402"/>
