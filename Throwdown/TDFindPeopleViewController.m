@@ -530,7 +530,8 @@
     [self.filteredUsersArray removeAllObjects];
     
     // Filter the arraphy using NSPredicate
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF.name contains[c] %@",searchText];
+    NSString *regexString = [NSString stringWithFormat:@".*\\B%@.*", searchText];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(SELF.username matches[c] %@) OR (SELF.name matches[c] %@)", regexString, regexString];
     NSArray *tempArray = [self.tdUsers filteredArrayUsingPredicate:predicate];
     
     self.filteredUsersArray = [NSMutableArray arrayWithArray:tempArray];
