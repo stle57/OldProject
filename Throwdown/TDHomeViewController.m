@@ -741,7 +741,8 @@
 
 - (void)updateNavigationBarButtons:(CGFloat)alpha {
     for (UIView *navView in self.navigationController.navigationBar.subviews) {
-        if (![navView.description containsString:@"UINavigationBarBackground"] && ![navView.description containsString:@"UINavigationBarBackIndicatorView"]) {
+        NSString *desc = (NSString *)navView.description;
+        if ([desc rangeOfString:@"UINavigationBarBackground"].length == 0 && [desc rangeOfString:@"UINavigationBarBackground"].length == 0) {
             navView.alpha = alpha;
         }
     }

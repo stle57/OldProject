@@ -90,7 +90,7 @@
     [manager downloadImageWithURL:cell.userImageURL options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
         // no progress bar here
     } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *finalURL) {
-        CGFloat width = cell.profileImage.frame.size.width * [UIScreen mainScreen].nativeScale;
+        CGFloat width = cell.profileImage.frame.size.width * [UIScreen mainScreen].scale;
         image = [image scaleToSize:CGSizeMake(width, width)];
         if (![finalURL isEqual:cell.userImageURL]) {
             return;

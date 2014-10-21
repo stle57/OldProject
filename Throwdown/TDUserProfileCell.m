@@ -194,7 +194,7 @@ static CGFloat const kMinHeight = 230 + kBottomMargin;
     [manager downloadImageWithURL:self.userImageURL options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
         // no progress bar here
     } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *finalURL) {
-        CGFloat width = self.userImageView.frame.size.width * [UIScreen mainScreen].nativeScale;
+        CGFloat width = self.userImageView.frame.size.width * [UIScreen mainScreen].scale;
         image = [image scaleToSize:CGSizeMake(width, width)];
         if (![finalURL isEqual:self.userImageURL]) {
             return;

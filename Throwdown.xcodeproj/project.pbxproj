@@ -184,6 +184,9 @@
 		A1E3A16D18FCC8630038A8A4 /* TDActivitiesCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A1E3A16C18FCC8630038A8A4 /* TDActivitiesCell.xib */; };
 		A1E3A17018FCCF2B0038A8A4 /* TDActivitiesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E3A16F18FCCF2B0038A8A4 /* TDActivitiesCell.m */; };
 		A1E90CDD18B445FC0046D281 /* TDSignupStepTwoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E90CDC18B445FC0046D281 /* TDSignupStepTwoViewController.m */; };
+		A1ECEDBC19F70E7B0088BE70 /* cf_thrusters-2@3x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A1ECEDB919F70E7B0088BE70 /* cf_thrusters-2@3x.jpg */; };
+		A1ECEDBD19F70E7B0088BE70 /* cf_thrusters-2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A1ECEDBA19F70E7B0088BE70 /* cf_thrusters-2.jpg */; };
+		A1ECEDBE19F70E7B0088BE70 /* cf_thrusters-2@2x.jpg in Resources */ = {isa = PBXBuildFile; fileRef = A1ECEDBB19F70E7B0088BE70 /* cf_thrusters-2@2x.jpg */; };
 		A1F02FD418C92277002FEB2F /* TDPostUpload.m in Sources */ = {isa = PBXBuildFile; fileRef = A1F02FD318C92277002FEB2F /* TDPostUpload.m */; };
 		A1F13C6719AD5D7E000DD890 /* TDRadioButtonRowCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A1F13C6519AD5D7E000DD890 /* TDRadioButtonRowCell.m */; };
 		A1F13C6819AD5D7E000DD890 /* TDRadioButtonRowCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A1F13C6619AD5D7E000DD890 /* TDRadioButtonRowCell.xib */; };
@@ -489,6 +492,9 @@
 		A1E3A16F18FCCF2B0038A8A4 /* TDActivitiesCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDActivitiesCell.m; sourceTree = "<group>"; };
 		A1E90CDB18B445FC0046D281 /* TDSignupStepTwoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSignupStepTwoViewController.h; sourceTree = "<group>"; };
 		A1E90CDC18B445FC0046D281 /* TDSignupStepTwoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSignupStepTwoViewController.m; sourceTree = "<group>"; };
+		A1ECEDB919F70E7B0088BE70 /* cf_thrusters-2@3x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "cf_thrusters-2@3x.jpg"; sourceTree = "<group>"; };
+		A1ECEDBA19F70E7B0088BE70 /* cf_thrusters-2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "cf_thrusters-2.jpg"; sourceTree = "<group>"; };
+		A1ECEDBB19F70E7B0088BE70 /* cf_thrusters-2@2x.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "cf_thrusters-2@2x.jpg"; sourceTree = "<group>"; };
 		A1F02FD218C92277002FEB2F /* TDPostUpload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDPostUpload.h; sourceTree = "<group>"; };
 		A1F02FD318C92277002FEB2F /* TDPostUpload.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDPostUpload.m; sourceTree = "<group>"; };
 		A1F13C6419AD5D7E000DD890 /* TDRadioButtonRowCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDRadioButtonRowCell.h; sourceTree = "<group>"; };
@@ -756,6 +762,7 @@
 		A11E04E21888CB79002F981A /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				A1ECEDB819F70E6B0088BE70 /* images */,
 				A1A053FC19D6272300E7556A /* UIActionSheet+Blocks.m */,
 				A1A053FD19D6272300E7556A /* UIActionSheet+Blocks.h */,
 				4D3352D519A29CEC007B3E06 /* iRate.bundle */,
@@ -1122,6 +1129,16 @@
 			name = Activities;
 			sourceTree = "<group>";
 		};
+		A1ECEDB819F70E6B0088BE70 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				A1ECEDB919F70E7B0088BE70 /* cf_thrusters-2@3x.jpg */,
+				A1ECEDBA19F70E7B0088BE70 /* cf_thrusters-2.jpg */,
+				A1ECEDBB19F70E7B0088BE70 /* cf_thrusters-2@2x.jpg */,
+			);
+			name = images;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1212,9 +1229,11 @@
 				4D6FCC2519CAA34D00902719 /* TDContactsViewController.xib in Resources */,
 				2DA39FD718E0B2570004A9C7 /* TDMoreComments.xib in Resources */,
 				A10F9C241909B01600D2CAB0 /* NewMessage.caf in Resources */,
+				A1ECEDBE19F70E7B0088BE70 /* cf_thrusters-2@2x.jpg in Resources */,
 				4D2843CF19C401C000E4A56C /* TDFollowViewController.xib in Resources */,
 				4D2843ED19C9F42200E4A56C /* TDInviteCell.xib in Resources */,
 				A14E38F01992E71B001B46AF /* TDSocialNetworkCell.xib in Resources */,
+				A1ECEDBD19F70E7B0088BE70 /* cf_thrusters-2.jpg in Resources */,
 				A1F13C6819AD5D7E000DD890 /* TDRadioButtonRowCell.xib in Resources */,
 				2DA5F05B18D37C70003D2F99 /* BebasNeue Book.otf in Resources */,
 				2D83200519116D9000A91282 /* TDUserPushNotificationsEditViewController.xib in Resources */,
@@ -1251,6 +1270,7 @@
 				2D648A1718C9415D002FE0AD /* TDDetailsCommentsCell.xib in Resources */,
 				4D3352D619A29CEC007B3E06 /* iRate.bundle in Resources */,
 				2DA5354518F35E4300031128 /* TDUserProfileViewController.xib in Resources */,
+				A1ECEDBC19F70E7B0088BE70 /* cf_thrusters-2@3x.jpg in Resources */,
 				A1D13FF21905F2BE000980E0 /* Podfile in Resources */,
 				2DA5F05C18D37C70003D2F99 /* BebasNeue Light.otf in Resources */,
 				A11E04EF1888CB79002F981A /* Main.storyboard in Resources */,
