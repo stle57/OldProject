@@ -58,7 +58,7 @@
     self.userInteractionEnabled = YES;
     self.payload = payload;
     self.toastType = type;
-    self.label.font =  [TDConstants fontRegularSized:16];
+    self.label.font =  [TDConstants fontSemiBoldSized:16];
     self.label.text = text;
     [TDAppDelegate fixWidthOfThisLabel:self.label];
 
