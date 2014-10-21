@@ -72,6 +72,9 @@
     [self.feedSelectionControl setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontSemiBoldSized:14] } forState:UIControlStateHighlighted];
     [self.feedSelectionControl setContentPositionAdjustment:UIOffsetMake(0, 1) forSegmentType:UISegmentedControlSegmentAny barMetrics:UIBarMetricsDefault];
 
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [self.feedSelectionControl setSelectedSegmentIndex:[defaults integerForKey:@"currentHomeFeedTabIndex"]];
+
     self.headerView = [[TDHomeHeaderView alloc] initWithTableView:self.tableView];
     self.previousScrollViewYOffset = 0;
 }
@@ -649,6 +652,9 @@
 - (IBAction)feedSelectionControlChanged:(id)sender {
     [self reloadPosts];
     [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setInteger:[self.feedSelectionControl selectedSegmentIndex] forKey:@"currentHomeFeedTabIndex"];
+    [defaults synchronize];
 }
 
 - (IBAction)searchTDUsersButtonPressed:(id)sender {
