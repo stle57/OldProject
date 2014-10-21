@@ -1421,7 +1421,7 @@ The Throwdown Community</string>
                                 </connections>
                             </button>
                             <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QKD-7D-Qb5" userLabel="Badge Count Label">
-                                <rect key="frame" x="41" y="475" width="18" height="18"/>
+                                <rect key="frame" x="38" y="480" width="18" height="18"/>
                                 <color key="backgroundColor" red="0.92549019610000005" green="0.2156862745" blue="0.14901960780000001" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="18" id="VMX-Cy-A8x"/>
@@ -1438,7 +1438,7 @@ The Throwdown Community</string>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="w9B-bo-GMv" firstAttribute="top" secondItem="2sg-k5-FmL" secondAttribute="bottom" id="3PB-hO-3do"/>
-                            <constraint firstItem="Tdo-gQ-7zF" firstAttribute="centerY" secondItem="QKD-7D-Qb5" secondAttribute="centerY" constant="17" id="80C-5y-Tnl"/>
+                            <constraint firstItem="Tdo-gQ-7zF" firstAttribute="centerY" secondItem="QKD-7D-Qb5" secondAttribute="centerY" constant="12" id="80C-5y-Tnl"/>
                             <constraint firstItem="1Ps-Hj-TOv" firstAttribute="top" secondItem="0Pj-wg-KUs" secondAttribute="bottom" id="9Zr-qN-zDb"/>
                             <constraint firstItem="1Ps-Hj-TOv" firstAttribute="top" secondItem="Tdo-gQ-7zF" secondAttribute="bottom" id="C7y-YO-ljS"/>
                             <constraint firstAttribute="centerX" secondItem="0Pj-wg-KUs" secondAttribute="centerX" id="KGq-8h-4PV"/>
@@ -1446,7 +1446,7 @@ The Throwdown Community</string>
                             <constraint firstItem="w9B-bo-GMv" firstAttribute="leading" secondItem="kau-AR-TTK" secondAttribute="leadingMargin" constant="-16" id="bnr-0t-jsc"/>
                             <constraint firstItem="1Ps-Hj-TOv" firstAttribute="top" secondItem="Uso-in-hkr" secondAttribute="bottom" id="feP-8d-8gg"/>
                             <constraint firstAttribute="trailing" secondItem="Uso-in-hkr" secondAttribute="trailing" id="hgu-bS-G9T"/>
-                            <constraint firstItem="Tdo-gQ-7zF" firstAttribute="centerX" secondItem="QKD-7D-Qb5" secondAttribute="centerX" constant="-15" id="mTB-Vk-5yK"/>
+                            <constraint firstItem="Tdo-gQ-7zF" firstAttribute="centerX" secondItem="QKD-7D-Qb5" secondAttribute="centerX" constant="-12" id="mTB-Vk-5yK"/>
                             <constraint firstItem="Tdo-gQ-7zF" firstAttribute="leading" secondItem="kau-AR-TTK" secondAttribute="leading" id="mYw-JK-rw6"/>
                             <constraint firstItem="w9B-bo-GMv" firstAttribute="height" secondItem="kau-AR-TTK" secondAttribute="height" id="nFR-iJ-Scv"/>
                         </constraints>
@@ -1466,7 +1466,7 @@ The Throwdown Community</string>
                             </button>
                         </barButtonItem>
                         <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="Vwl-FS-yeJ" userLabel="Feed Selection">
-                            <rect key="frame" x="227.5" y="7.5" width="145" height="29"/>
+                            <rect key="frame" x="228" y="8" width="145" height="29"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <segments>
                                 <segment title="All"/>
