@@ -85,8 +85,8 @@ static int const kUserListHeight = 140;
     self.labelPR.font = [TDConstants fontSemiBoldSized:16];
     self.labelPR.textColor = [TDConstants disabledTextColor];
 
-    [self.postButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[UIColor whiteColor], NSFontAttributeName:[TDConstants fontSemiBoldSized:18] } forState:UIControlStateNormal];
-    [self.postButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[UIColor colorWithWhite:1 alpha:0.5], NSFontAttributeName:[TDConstants fontSemiBoldSized:18] } forState:UIControlStateDisabled];
+    [self.postButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[UIColor whiteColor], NSFontAttributeName:[TDConstants fontRegularSized:18] } forState:UIControlStateNormal];
+    [self.postButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[UIColor colorWithWhite:1 alpha:0.5], NSFontAttributeName:[TDConstants fontRegularSized:18] } forState:UIControlStateDisabled];
     self.postButton.enabled = NO;
 
     // User name filter table view
