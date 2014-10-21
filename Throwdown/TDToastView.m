@@ -58,7 +58,7 @@
     self.userInteractionEnabled = YES;
     self.payload = payload;
     self.toastType = type;
-    self.label.font =  [TDConstants fontSemiBoldSized:16];
+    self.label.font =  [TDConstants fontRegularSized:16];
     self.label.text = text;
     [TDAppDelegate fixWidthOfThisLabel:self.label];
 
@@ -83,25 +83,26 @@
         case kToastType_RateUs:
             iconImage = [UIImage imageNamed:@"td_rateus_icon"];
             self.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:.95f];
-            [self.label setFont:[UIFont systemFontOfSize:14]];
             self.label.textColor = [TDConstants headerTextColor];
+            self.label.font = [TDConstants fontSemiBoldSized:15];
             self.closeButton.hidden = FALSE;
             self.closeButton.enabled = YES;
-            [self.closeButton setImage:[UIImage imageNamed:@"nav_close.png"] forState:UIControlStateNormal];
-            [self.closeButton setImage:[UIImage imageNamed:@"nav_close_hit.png"] forState:UIControlStateHighlighted];
-            [self.closeButton setImage:[UIImage imageNamed:@"nav_close_hit.png"] forState:UIControlStateSelected];
+            [self.closeButton setImage:[UIImage imageNamed:@"nav-close-black.png"] forState:UIControlStateNormal];
+            [self.closeButton setImage:[UIImage imageNamed:@"nav-close-black-hit.png"] forState:UIControlStateHighlighted];
+            [self.closeButton setImage:[UIImage imageNamed:@"nav-close-black-hit.png"] forState:UIControlStateSelected];
             break;
         case kToastType_InviteSent:
             iconImage = [UIImage imageNamed:@"td_notif_toast_icon"];
             self.backgroundColor = [[UIColor whiteColor] colorWithAlphaComponent:.95f];
-            [self.label setFont:[UIFont systemFontOfSize:14]];
             self.label.textColor = [TDConstants headerTextColor];
+            self.label.font = [TDConstants fontRegularSized:15];
             self.closeButton.hidden = YES;
             break;
         case kToastType_InviteWarning:
             iconImage = [UIImage imageNamed:@"td_error_toast_icon"];
             self.backgroundColor = [UIColor colorWithRed:(158./255) green:(11./255) blue:(15./255) alpha:0.85];
             self.label.textColor = [UIColor whiteColor];
+            self.label.text = @"Invites failed.  Tap here to retry";
             [self.closeButton setImage:[UIImage imageNamed:@"nav-close.png"] forState:UIControlStateNormal];
             [self.closeButton setImage:[UIImage imageNamed:@"nav-close-hit.png"] forState:UIControlStateHighlighted];
             [self.closeButton setImage:[UIImage imageNamed:@"nav-close-hit.png"] forState:UIControlStateSelected];
@@ -116,12 +117,6 @@
         self.iconImageView.hidden = NO;
         self.iconImageView.image = iconImage;
 
-        if (self.label.frame.size.width > self.frame.size.width) {
-            CGRect frame = self.label.frame;
-            frame.size.width = self.frame.size.width - self.iconImageView.frame.size.width - 5;
-            self.label.frame = frame;
-        }
-
         self.iconImageView.frame = CGRectMake(self.iconImageView.frame.origin.x,
                                               self.iconImageView.frame.origin.y,
                                               iconImage.size.width,
@@ -135,17 +130,29 @@
         
         // Center text and icon
         if(self.toastType == kToastType_RateUs || self.toastType == kToastType_InviteWarning) {
-            
-            self.label.frame = CGRectMake(SCREEN_WIDTH/2 - self.label.frame.size.width/2,
-                                          self.label.frame.origin.y,
-                                          self.label.frame.size.width,
-                                          self.label.frame.size.height);
-            self.iconImageView.frame = CGRectMake(self.label.frame.origin.x - self.iconImageView.frame.size.width - 5,
+            self.iconImageView.frame = CGRectMake(TD_MARGIN,
                                                   self.iconImageView.frame.origin.y,
                                                   self.iconImageView.frame.size.width,
                                                   self.iconImageView.frame.size.height);
+            self.label.frame = CGRectMake(TD_MARGIN + self.iconImageView.frame.origin.x + self.iconImageView.frame.size.width,
+                                          self.label.frame.origin.y,
+                                          self.label.frame.size.width,
+                                          self.label.frame.size.height);
+            self.label.textAlignment = NSTextAlignmentCenter;
+            [self.label sizeToFit];
             
-            self.closeButton.frame = CGRectMake(self.label.frame.origin.x + self.label.frame.size.width + (self.label.frame.origin.x - (self.iconImageView.frame.origin.x + self.iconImageView.frame.size.width)),
+            CGFloat labelXPosition = SCREEN_WIDTH/2 - self.label.frame.size.width/2;
+            CGRect labelFrame = self.label.frame;
+            labelFrame.origin.x = labelXPosition;
+            labelFrame.origin.y = self.frame.size.height/2 - labelFrame.size.height/2;
+            self.label.frame = labelFrame;
+
+            // Reset the icon position so it's next to label
+            CGRect iconFrame = self.iconImageView.frame;
+            iconFrame.origin.x = labelXPosition - self.iconImageView.frame.size.width - 5;
+            self.iconImageView.frame = iconFrame;
+            
+            self.closeButton.frame = CGRectMake(SCREEN_WIDTH - self.closeButton.frame.size.width -10,
                                                 self.closeButton.frame.origin.y,
                                                 self.closeButton.frame.size.width,
                                                 self.closeButton.frame.size.height);
