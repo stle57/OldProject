@@ -161,6 +161,7 @@
     [[TDUserAPI sharedInstance] getSuggestedUserList:^(BOOL success, NSArray *suggestedList) {
         if (success && suggestedList && suggestedList.count > 0) {
             self.suggestedUsers = [suggestedList copy];
+            debug NSLog(@"suggested users count = %lu", (unsigned long)[self.suggestedUsers count]);
             self.gotFromServer = YES;
             debug NSLog(@"2. reloading suggested users list");
             [self.tableView reloadData];
@@ -174,12 +175,13 @@
     [[TDUserAPI sharedInstance] getCommunityUserList:^(BOOL success, NSArray *returnList) {
         if (success && returnList && returnList.count > 0) {
             self.tdUsers = [returnList copy];
+            debug NSLog(@"td user count=%lu", (unsigned long)[self.tdUsers count]);
             if (self.searchText.length > 0) {
                 debug NSLog(@"  3a. redoing filter");
                 [self filterContentForSearchText:self.searchText scope:nil];
             }
             self.gotFromServer = YES;
-            debug NSLog(@" 3. reloading td user list");
+            debug NSLog(@" 3. reloading td user list, filtered list=%lu", [self.filteredUsersArray count]);
 
             [self.tableView reloadData];
             [self hideActivity];
@@ -230,7 +232,7 @@
     if (self.searchingActive) {
         if (self.filteredUsersArray == nil || [self.filteredUsersArray count] == 0) {
             if ([self.searchText isEqual:@""]) {
-                return self.tableView.frame.size.height;
+                return 65;
             } else {
                 [self createLabels];
                 UILabel *label = [self.labels objectAtIndex:0];
@@ -486,7 +488,7 @@
     [self searchBar:searchBar activate:YES];
     debug NSLog(@"   2. loadData inside textDidBeginEditing");
     [self loadData];
-    [self searchBar:_searchBar textDidChange:self.searchBar.text];
+    [self searchBar:self.searchBar textDidChange:self.searchBar.text];
     
 }
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
