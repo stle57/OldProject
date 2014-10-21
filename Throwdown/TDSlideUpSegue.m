@@ -14,7 +14,7 @@
     debug NSLog(@"PERFORM-SlideUpSegue");
 
     [super perform];
-    [super popDestination];
+    [super dismissSource];
 
     // Set and start animations
     self.screenShotSource.transform = CGAffineTransformMakeScale(1, 1);

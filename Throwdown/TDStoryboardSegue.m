@@ -38,7 +38,7 @@
     [self.sourceViewController presentViewController:self.destinationViewController animated:NO completion:NULL];
 }
 
-- (void)popDestination {
+- (void)dismissSource {
     UIWindow *window = [self.sourceViewController view].window;
     [window addSubview:self.screenShotSource];
     [window addSubview:self.screenShotDestination];
@@ -46,8 +46,18 @@
     [self.destinationViewController view].hidden = YES;
 
     [[self.destinationViewController navigationController] dismissViewControllerAnimated:self.sourceViewController completion:nil];
-//    [self.destinationViewController dismissViewControllerAnimated:NO completion:nil];
+    [self.destinationViewController dismissViewControllerAnimated:NO completion:nil];
 //    [[self.destinationViewController navigationController] popToRootViewControllerAnimated:NO];
+}
+
+- (void)popToRoot {
+    UIWindow *window = [self.sourceViewController view].window;
+    [window addSubview:self.screenShotSource];
+    [window addSubview:self.screenShotDestination];
+    [window setBackgroundColor:[UIColor blackColor]];
+    [self.destinationViewController view].hidden = YES;
+
+    [[self.destinationViewController navigationController] popToRootViewControllerAnimated:NO];
 }
 
 @end

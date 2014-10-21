@@ -17,11 +17,10 @@ static CGFloat const kShowPRTime = 1.5;
 - (void)perform {
     debug NSLog(@"PERFORM-PRSegue");
 
-    // sourceViewController is released in popDestination
     UIWindow *window = [self.sourceViewController view].window;
 
     [super perform];
-    [super popDestination];
+    [super popToRoot];
 
     UIView *background = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
     background.alpha = 0.;
@@ -42,7 +41,7 @@ static CGFloat const kShowPRTime = 1.5;
 }
 
 - (void)showImageOn:(UIView *)background {
-    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(62, 71, 195, 190)];
+    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake((SCREEN_WIDTH / 2.0) - (195.0 / 2.0), 71, 195, 190)];
 
     NSMutableArray *images = [@[] mutableCopy];
     for (int i = 1; i < 37; i++) {
@@ -95,7 +94,7 @@ static CGFloat const kShowPRTime = 1.5;
                        ];
     NSUInteger randomIndex = arc4random() % [texts count];
 
-    TTTAttributedLabel *text = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(0, 280, 320, 120)];
+    TTTAttributedLabel *text = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(10, 280, SCREEN_WIDTH - 20, 120)];
     text.font = [TDConstants fontLightSized:24];
     text.textColor = [TDConstants headerTextColor];
     text.textAlignment = NSTextAlignmentCenter;
