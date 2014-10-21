@@ -780,39 +780,14 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         }];
     } else if (tag == kFollowingButtonTag) {
         debug NSLog(@"unfollow this person");
-        TDUserProfileCell *cell = nil;
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-        UITableViewCell * modifyCell = [self.tableView cellForRowAtIndexPath:indexPath];
-        if(modifyCell != nil) {
-            cell = (TDUserProfileCell*)modifyCell;
-            // Got the cell, change the button
-            UIImage * buttonImage = [UIImage imageNamed:@"btn-follow.png"];
-            [cell.inviteButton setImage:buttonImage forState:UIControlStateNormal];
-            [cell.inviteButton setImage:[UIImage imageNamed:@"btn-follow-hit.png"] forState:UIControlStateHighlighted];
-            [cell.inviteButton setImage:[UIImage imageNamed:@"btn-follow-hit.png"] forState:UIControlStateSelected];
-            [cell.inviteButton setTag:kFollowButtonTag];
-            
-        }
-        // Send unfollow user to server
-        NSNumber * userId = [self getUser].userId;
-        [[TDUserAPI sharedInstance] unFollowUser:userId callback:^(BOOL success) {
-            if (success) {
-                debug NSLog(@"Successfully unfollwed user=%@", userId);
-                // send notification to update user follow count-subtract
-                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[TDCurrentUser sharedInstance].currentUserObject userInfo:@{TD_DECREMENT_STRING: @1}];
-                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowerCount object:userId userInfo:@{TD_DECREMENT_STRING: @1}];
-            } else {
-                [[TDAppDelegate appDelegate] showToastWithText:@"Error occured.  Please try again." type:kToastType_Warning payload:@{} delegate:nil];
+               NSString *reportText = [NSString stringWithFormat:@"Unfollow @%@", [self getUser].username];
+        UIActionSheet * actionSheet = [[UIActionSheet alloc] initWithTitle:nil
+                                                                  delegate:self
+                                                         cancelButtonTitle:@"Cancel"
+                                                    destructiveButtonTitle:reportText
+                                                         otherButtonTitles:nil, nil];
+        [actionSheet showInView:self.view];
 
-                //TODO: Display toast saying error processing, TRY AGAIN
-                // Switch button back to cell
-                UIImage * buttonImage = [UIImage imageNamed:@"btn-following.png"];
-                [cell.inviteButton setImage:buttonImage forState:UIControlStateNormal];
-                [cell.inviteButton setImage:[UIImage imageNamed:@"btn-following.png"] forState:UIControlStateHighlighted];
-                [cell.inviteButton setImage:[UIImage imageNamed:@"btn-following.png"] forState:UIControlStateSelected];
-                [cell.inviteButton setTag:kFollowingButtonTag];
-            }
-        }];
         
     } else if (tag == kInviteButtonTag) {
         TDInviteViewController *vc = [[TDInviteViewController alloc] initWithNibName:@"TDInviteViewController" bundle:nil ];
@@ -838,4 +813,43 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     return noFollowingCell;
 
 }
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    NSNumber *userId = nil;
+    TDUserProfileCell *cell = nil;
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
+    UITableViewCell * modifyCell = [self.tableView cellForRowAtIndexPath:indexPath];
+    if(modifyCell != nil) {
+        cell = (TDUserProfileCell*)modifyCell;
+        // Got the cell, change the button
+        UIImage * buttonImage = [UIImage imageNamed:@"btn-follow.png"];
+        [cell.inviteButton setImage:buttonImage forState:UIControlStateNormal];
+        [cell.inviteButton setImage:[UIImage imageNamed:@"btn-follow-hit.png"] forState:UIControlStateHighlighted];
+        [cell.inviteButton setImage:[UIImage imageNamed:@"btn-follow-hit.png"] forState:UIControlStateSelected];
+        [cell.inviteButton setTag:kFollowButtonTag];
+        
+    }
+    // Send unfollow user to server
+    NSNumber * profileId = [self getUser].userId;
+    [[TDUserAPI sharedInstance] unFollowUser:profileId callback:^(BOOL success) {
+        if (success) {
+            debug NSLog(@"Successfully unfollwed user=%@", userId);
+            // send notification to update user follow count-subtract
+            [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[TDCurrentUser sharedInstance].currentUserObject userInfo:@{TD_DECREMENT_STRING: @1}];
+            [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowerCount object:profileId userInfo:@{TD_DECREMENT_STRING: @1}];
+        } else {
+            [[TDAppDelegate appDelegate] showToastWithText:@"Error occured.  Please try again." type:kToastType_Warning payload:@{} delegate:nil];
+            
+            //TODO: Display toast saying error processing, TRY AGAIN
+            // Switch button back to cell
+            UIImage * buttonImage = [UIImage imageNamed:@"btn-following.png"];
+            [cell.inviteButton setImage:buttonImage forState:UIControlStateNormal];
+            [cell.inviteButton setImage:[UIImage imageNamed:@"btn-following.png"] forState:UIControlStateHighlighted];
+            [cell.inviteButton setImage:[UIImage imageNamed:@"btn-following.png"] forState:UIControlStateSelected];
+            [cell.inviteButton setTag:kFollowingButtonTag];
+        }
+    }];
+    
+}
+
 @end

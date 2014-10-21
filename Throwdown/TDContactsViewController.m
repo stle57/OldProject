@@ -283,12 +283,11 @@
         [self addToInviteList:contactPerson indexPath:indexPath tableView:tableView];
 
     } else {
-        debug NSLog(@"indexPath.row=%d", indexPath.row);
+        debug NSLog(@"indexPath.row=%ld", (long)indexPath.row);
         if ([self.filteredContactArray count] == 0) {
             // We got in this state because the user tapped out of the search bar and had
             // and empty search result.
             return;
-            //[self searchBarTextDidEndEditing:self.searchBar];
         } else {
             TDContactInfo *contactPerson = filteredContactArray[indexPath.row];
 
