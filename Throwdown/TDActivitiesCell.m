@@ -15,6 +15,8 @@
 #import <SDWebImageManager.h>
 #import <UIImage+Resizing.h>
 
+static CGFloat const kCommentWidthWithPreview = 248.;
+static CGFloat const kCommentWidthNoPreview = 306.;
 
 @interface TDActivitiesCell () <TTTAttributedLabelDelegate>
 
