@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="DPQ-qf-8sb">
     <dependencies>
+        <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -882,29 +883,17 @@ other to improve.</string>
                                                     <constraint firstAttribute="height" constant="28" id="XE1-25-YnE"/>
                                                 </constraints>
                                             </imageView>
-                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="32" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wQl-aa-ZVE" userLabel="First NO Label" customClass="TTTAttributedLabel">
-                                                <rect key="frame" x="183" y="164" width="232" height="50"/>
-                                                <constraints>
-                                                    <constraint firstAttribute="width" constant="232" id="I8A-lP-T0p"/>
-                                                    <constraint firstAttribute="height" constant="50" id="Ved-2u-eQA"/>
-                                                </constraints>
-                                                <string key="text">No inappropriate selfies
-or other posts.</string>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
                                             <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon-cross" translatesAutoresizingMaskIntoConstraints="NO" id="mHn-v8-G9i" userLabel="Second NO image">
-                                                <rect key="frame" x="136" y="255" width="28" height="28"/>
+                                                <rect key="frame" x="140" y="255" width="28" height="28"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="28" id="aoC-bg-H6x"/>
                                                     <constraint firstAttribute="width" constant="28" id="r6d-Ny-3vk"/>
                                                 </constraints>
                                             </imageView>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="33" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No direct advertising." lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MGZ-1f-YRx" userLabel="Second NO Label" customClass="TTTAttributedLabel">
-                                                <rect key="frame" x="179" y="255" width="240" height="50"/>
+                                                <rect key="frame" x="183" y="255" width="232" height="50"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="width" constant="240" id="9fV-iv-jkB"/>
+                                                    <constraint firstAttribute="width" constant="232" id="9fV-iv-jkB"/>
                                                     <constraint firstAttribute="height" constant="50" id="FPP-yF-yk3"/>
                                                 </constraints>
                                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -940,6 +929,16 @@ The Throwdown Community</string>
                                                     <segue destination="95Y-qb-4HG" kind="show" id="W0d-jD-T30"/>
                                                 </connections>
                                             </button>
+                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="32" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No inappropriate posts." lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wQl-aa-ZVE" userLabel="First NO Label" customClass="TTTAttributedLabel">
+                                                <rect key="frame" x="183" y="170" width="232" height="50"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" constant="232" id="I8A-lP-T0p"/>
+                                                    <constraint firstAttribute="height" constant="50" id="Ved-2u-eQA"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
                                         </subviews>
                                         <constraints>
                                             <constraint firstAttribute="centerX" secondItem="MGZ-1f-YRx" secondAttribute="centerX" constant="-9" id="4Dq-ct-OJw"/>
@@ -947,16 +946,22 @@ The Throwdown Community</string>
                                             <constraint firstItem="kVg-Pq-Pcv" firstAttribute="bottom" secondItem="mQj-PR-ymn" secondAttribute="bottom" constant="74" id="J4E-5R-pXe"/>
                                             <constraint firstAttribute="centerX" secondItem="mQj-PR-ymn" secondAttribute="centerX" constant="20" id="KOt-cd-YVg"/>
                                             <constraint firstAttribute="centerX" secondItem="CCO-45-a3P" secondAttribute="centerX" constant="20" id="O2U-4q-U6f"/>
-                                            <constraint firstItem="mQj-PR-ymn" firstAttribute="bottom" secondItem="wQl-aa-ZVE" secondAttribute="bottom" constant="-90" id="TOV-eI-Fkv"/>
+                                            <constraint firstItem="mQj-PR-ymn" firstAttribute="bottom" secondItem="wQl-aa-ZVE" secondAttribute="bottom" constant="-96" id="TOV-eI-Fkv"/>
                                             <constraint firstItem="mQj-PR-ymn" firstAttribute="bottom" secondItem="mHn-v8-G9i" secondAttribute="bottom" constant="-159" id="Urv-3a-Una"/>
                                             <constraint firstAttribute="bottom" secondItem="aDn-Ir-UsM" secondAttribute="bottom" constant="100" id="XA1-oE-pS4"/>
                                             <constraint firstAttribute="centerX" secondItem="aDn-Ir-UsM" secondAttribute="centerX" constant="20" id="d0g-Xl-UsO"/>
+                                            <constraint firstItem="kVg-Pq-Pcv" firstAttribute="centerX" secondItem="mHn-v8-G9i" secondAttribute="centerX" id="fzO-hN-iNz"/>
                                             <constraint firstItem="mHn-v8-G9i" firstAttribute="trailing" secondItem="MGZ-1f-YRx" secondAttribute="trailing" constant="-255" id="jip-DJ-Lol"/>
                                             <constraint firstItem="kVg-Pq-Pcv" firstAttribute="trailing" secondItem="wQl-aa-ZVE" secondAttribute="trailing" constant="-247" id="k0e-89-88I"/>
                                             <constraint firstItem="mQj-PR-ymn" firstAttribute="bottom" secondItem="MGZ-1f-YRx" secondAttribute="bottom" constant="-181" id="uXF-cJ-f7A"/>
                                             <constraint firstItem="mQj-PR-ymn" firstAttribute="bottom" secondItem="CCO-45-a3P" secondAttribute="bottom" constant="-278" id="xJw-hb-uH0"/>
                                             <constraint firstItem="mQj-PR-ymn" firstAttribute="top" secondItem="odk-KB-SgF" secondAttribute="top" constant="103" id="zTb-ij-LfS"/>
                                         </constraints>
+                                        <variation key="default">
+                                            <mask key="constraints">
+                                                <exclude reference="jip-DJ-Lol"/>
+                                            </mask>
+                                        </variation>
                                     </view>
                                 </subviews>
                                 <constraints>
