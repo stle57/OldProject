@@ -159,7 +159,8 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
             
                 // This helps realign the text on the screen
                 CGRect bottomLabelFrame = bottomLabel.frame;
-                bottomLabelFrame.size.width = SCREEN_WIDTH- TD_MARGIN;
+                bottomLabelFrame.size.width = SCREEN_WIDTH;
+                bottomLabelFrame.origin.x = SCREEN_WIDTH/2 - bottomLabelFrame.size.width/2;
                 bottomLabel.frame = bottomLabelFrame;
                 [self.headerLabels insertObject:bottomLabel atIndex:section];
             }
