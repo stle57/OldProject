@@ -15,8 +15,6 @@
 #import <SDWebImageManager.h>
 #import <UIImage+Resizing.h>
 
-static CGFloat const kCommentWidthWithPreview = 248.;
-static CGFloat const kCommentWidthNoPreview = 306.;
 
 @interface TDActivitiesCell () <TTTAttributedLabelDelegate>
 
@@ -24,7 +22,8 @@ static CGFloat const kCommentWidthNoPreview = 306.;
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *previewImage;
 @property (nonatomic) NSURL *imageURL;
-
+@property (weak, nonatomic) IBOutlet UIView *bottomLine;
+@property (weak, nonatomic) IBOutlet UIView *topLine;
 @end
 
 @implementation TDActivitiesCell
@@ -37,13 +36,13 @@ static CGFloat const kCommentWidthNoPreview = 306.;
     self.activityLabel.numberOfLines = 2;
 
     self.timeLabel.font = TIME_FONT;
+
 }
 
 - (void)setActivity:(NSDictionary *)activity {
     _activity = activity;
 
     self.timeLabel.text = [[TDViewControllerHelper dateForRFC3339DateTimeString:[activity objectForKey:@"created_at"]] timeAgo];
-
     NSDictionary *post = (NSDictionary *)[activity objectForKey:@"post"];
     NSDictionary *user = (NSDictionary *)[activity objectForKey:@"user"];
     NSString *username = [user objectForKey:@"username"];
@@ -125,6 +124,23 @@ static CGFloat const kCommentWidthNoPreview = 306.;
             self.contentView.backgroundColor = [UIColor whiteColor];
         }
     }
+    
+    // Make bottom line 0.5 pixels
+    CGRect bottomLineFrame = self.bottomLine.frame;
+    bottomLineFrame.size.height = 0.5;
+    bottomLineFrame.size.width = SCREEN_WIDTH;
+    bottomLineFrame.origin.y = self.frame.size.height;
+    self.bottomLine.frame = bottomLineFrame;
+    self.bottomLine.backgroundColor = [TDConstants lightBorderColor];
+    
+    CGRect topLineRect = self.topLine.frame;
+    topLineRect.size.height = (1.0 / [[UIScreen mainScreen] scale]);
+    topLineRect.size.width = SCREEN_WIDTH;
+    self.topLine.frame = topLineRect;
+    self.topLine.backgroundColor = [TDConstants lightBorderColor];
+    
+    debug NSLog(@"bottomLine frame = %@", NSStringFromCGRect(self.bottomLine.frame));
+    debug NSLog(@"topLine frame = %@", NSStringFromCGRect(self.topLine.frame));
 }
 
 #pragma mark - TTTAttributedLabelDelegate

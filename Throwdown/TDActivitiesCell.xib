@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6245" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
     <dependencies>
-        <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
     </dependencies>
     <objects>
@@ -20,7 +19,7 @@
                         <color key="backgroundColor" white="0.75" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </imageView>
                     <label opaque="NO" clipsSubviews="YES" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Rh7-9j-BrW" userLabel="Activity Label" customClass="TTTAttributedLabel">
-                        <rect key="frame" x="7" y="3" width="248" height="50"/>
+                        <rect key="frame" x="7" y="3" width="248" height="50.5"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <attributedString key="attributedText"/>
                         <nil key="highlightedColor"/>
@@ -32,12 +31,24 @@
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <view alpha="0.69999998807907104" contentMode="scaleToFill" id="bPO-Ws-yhl" userLabel="Bottom Line View">
+                        <rect key="frame" x="0.0" y="64" width="320" height="1"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                    </view>
+                    <view contentMode="scaleToFill" id="r3q-aa-e9a">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="1"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <color key="backgroundColor" red="0.7843137255" green="0.7843137255" blue="0.7843137255" alpha="1" colorSpace="calibratedRGB"/>
+                    </view>
                 </subviews>
             </tableViewCellContentView>
             <connections>
                 <outlet property="activityLabel" destination="Rh7-9j-BrW" id="N4B-b5-QET"/>
+                <outlet property="bottomLine" destination="bPO-Ws-yhl" id="scl-jM-iwv"/>
                 <outlet property="previewImage" destination="aky-IX-4Ug" id="v1x-uz-nIh"/>
                 <outlet property="timeLabel" destination="eSn-1P-XJF" id="cub-Ug-RuX"/>
+                <outlet property="topLine" destination="r3q-aa-e9a" id="r4e-bY-Tap"/>
             </connections>
         </tableViewCell>
     </objects>
