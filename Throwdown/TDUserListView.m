@@ -13,6 +13,8 @@
 #import "TDUser.h"
 #import "TDUserListCell.h"
 #import "TDTextViewControllerHelper.h"
+#import <SDWebImageManager.h>
+#import <UIImage+Resizing.h>
 
 @interface TDUserListView ()
 
@@ -71,19 +73,36 @@
     if (![cell.name.text isEqualToString:[user objectForKey:@"name"]] || ![cell.username.text isEqualToString:username]) {
         cell.name.text = [user objectForKey:@"name"];
         cell.username.text = username;
+        cell.profileImage.image = nil;
         if ([user objectForKey:@"picture"] != [NSNull null] && ![[user objectForKey:@"picture"] isEqualToString:@"default"]) {
-            cell.profileImage.image = nil;
-            [[TDAPIClient sharedInstance] setImage:@{@"imageView":cell.profileImage,
-                                                     @"filename":[user objectForKey:@"picture"],
-                                                     @"width":[NSNumber numberWithInt:cell.imageView.frame.size.width],
-                                                     @"height":[NSNumber numberWithInt:cell.imageView.frame.size.height]}];
-
+            [self downloadUserImage:[user objectForKey:@"picture"] cell:cell];
         } else {
             cell.profileImage.image = [UIImage imageNamed:@"prof_pic_default"];
         }
         cell.userId = [[user objectForKey:@"id"] integerValue];
     }
     return cell;
+}
+
+- (void)downloadUserImage:(NSString *)profileImage cell:(TDUserListCell *)cell {
+    cell.userImageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", RSHost, profileImage]];
+    SDWebImageManager *manager = [SDWebImageManager sharedManager];
+    [manager downloadImageWithURL:cell.userImageURL options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+        // no progress bar here
+    } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *finalURL) {
+        CGFloat width = cell.profileImage.frame.size.width * [UIScreen mainScreen].nativeScale;
+        image = [image scaleToSize:CGSizeMake(width, width)];
+        if (![finalURL isEqual:cell.userImageURL]) {
+            return;
+        }
+        if (!error && image) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (cell.profileImage) {
+                    cell.profileImage.image = image;
+                }
+            });
+        }
+    }];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {

@@ -12,6 +12,8 @@
 #import <QuartzCore/QuartzCore.h>
 #import "TDViewControllerHelper.h"
 #import "TDAPIClient.h"
+#import <SDWebImageManager.h>
+#import <UIImage+Resizing.h>
 
 static CGFloat const kBottomMargin = 15;
 static CGFloat const kMinHeight = 230 + kBottomMargin;
@@ -140,10 +142,9 @@ static CGFloat const kMinHeight = 230 + kBottomMargin;
     self.followingButton.frame = newFollowingFrame;
 
     if (user && ![user hasDefaultPicture]) {
-        [[TDAPIClient sharedInstance] setImage:@{@"imageView":self.userImageView,
-                                                 @"filename":user.picture,
-                                                 @"width":@70,
-                                                 @"height":@70}];
+        [self downloadUserImage:user.picture];
+    } else {
+        self.userImageView.image = [UIImage imageNamed:@"prof_pic_default"];
     }
 
     switch (buttonType) {
@@ -185,6 +186,27 @@ static CGFloat const kMinHeight = 230 + kBottomMargin;
     self.whiteUnderView.frame = frame;
     CGFloat lineWidth = (1.0 / [[UIScreen mainScreen] scale]);
     self.bottomLine.frame = CGRectMake(0, frame.size.height, SCREEN_WIDTH, lineWidth);
+}
+
+- (void)downloadUserImage:(NSString *)profileImage {
+    self.userImageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", RSHost, profileImage]];
+    SDWebImageManager *manager = [SDWebImageManager sharedManager];
+    [manager downloadImageWithURL:self.userImageURL options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+        // no progress bar here
+    } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *finalURL) {
+        CGFloat width = self.userImageView.frame.size.width * [UIScreen mainScreen].nativeScale;
+        image = [image scaleToSize:CGSizeMake(width, width)];
+        if (![finalURL isEqual:self.userImageURL]) {
+            return;
+        }
+        if (!error && image) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (self.userImageView) {
+                    self.userImageView.image = image;
+                }
+            });
+        }
+    }];
 }
 
 -(void)modifyStatButtonString:(UIButton*)button statCount:(NSNumber*)statCount textString:(NSString*)textString{

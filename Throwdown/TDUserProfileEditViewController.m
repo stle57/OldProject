@@ -22,6 +22,8 @@
 #import "TDUserPushNotificationsEditViewController.h"
 #import "TDSocialNetworksViewController.h"
 #import "TDAnalytics.h"
+#import <SDWebImageManager.h>
+#import <UIImage+Resizing.h>
 
 @interface TDUserProfileEditViewController ()
 
@@ -569,10 +571,7 @@
                     if (self.editedProfileImage) {
                         cell.userImageView.image = self.editedProfileImage;
                     } else if (self.pictureFileName) {
-                        [[TDAPIClient sharedInstance] setImage:@{@"imageView":cell.userImageView,
-                                                                 @"filename":self.pictureFileName,
-                                                                 @"width":[NSNumber numberWithInt:cell.userImageView.frame.size.width],
-                                                                 @"height":[NSNumber numberWithInt:cell.userImageView.frame.size.height]}];
+                        [self downloadUserImage:self.pictureFileName cell:cell];
                     }
                     cell.leftMiddleLabel.hidden = NO;
                     cell.leftMiddleLabel.text = @"Edit Photo";
@@ -744,6 +743,28 @@
 
     return cell;
 }
+
+- (void)downloadUserImage:(NSString *)profileImage cell:(TDUserEditCell *)cell {
+    cell.userImageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", RSHost, profileImage]];
+    SDWebImageManager *manager = [SDWebImageManager sharedManager];
+    [manager downloadImageWithURL:cell.userImageURL options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+        // no progress bar here
+    } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *finalURL) {
+        CGFloat width = cell.userImageView.frame.size.width * [UIScreen mainScreen].nativeScale;
+        image = [image scaleToSize:CGSizeMake(width, width)];
+        if (![finalURL isEqual:cell.userImageURL]) {
+            return;
+        }
+        if (!error && image) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (cell.userImageView) {
+                    cell.userImageView.image = image;
+                }
+            });
+        }
+    }];
+}
+
 
 - (CGRect)getTextFieldPosition:(CGRect)frameX {
     CGRect newFrame = CGRectMake(frameX.origin.x, frameX.origin.y, frameX.size.width, frameX.size.height);

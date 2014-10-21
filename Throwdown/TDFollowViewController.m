@@ -24,6 +24,8 @@
 #import "TDInviteViewController.h"
 #import "TDUserProfileViewController.h"
 #import "TDFindPeopleViewController.h"
+#import <SDWebImageManager.h>
+#import <UIImage+Resizing.h>
 
 @interface TDFollowViewController ()
 
@@ -325,14 +327,14 @@
     cell.nameLabel.attributedText = attString;
     
     cell.userImageView.hidden = NO;
-  
+    cell.userImageView.image = nil;
     if ([object valueForKey:@"picture"] != [NSNull null] && ![[object valueForKey:@"picture"] isEqualToString:@"default"]) {
-        [[TDAPIClient sharedInstance] setImage:@{@"imageView":cell.userImageView,
-                                                 @"filename":[object valueForKeyPath:@"picture"],
-                                                 @"width":[NSNumber numberWithInt:cell.userImageView.frame.size.width],
-                                                 @"height":[NSNumber numberWithInt:cell.userImageView.frame.size.height]}];
+        [self downloadUserImage:[object valueForKeyPath:@"picture"] cell:cell];
+    } else {
+        cell.userImageView.image = [UIImage imageNamed:@"prof_pic_default"];
     }
-    
+
+
     BOOL following =[[object valueForKey:@"following"] boolValue];
     
     if (!following) {
@@ -357,6 +359,27 @@
         cell.actionButton.hidden = NO;
     }
     return cell;
+}
+
+- (void)downloadUserImage:(NSString *)profileImage cell:(TDFollowProfileCell *)cell {
+    cell.userImageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", RSHost, profileImage]];
+    SDWebImageManager *manager = [SDWebImageManager sharedManager];
+    [manager downloadImageWithURL:cell.userImageURL options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+        // no progress bar here
+    } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *finalURL) {
+        CGFloat width = cell.userImageView.frame.size.width * [UIScreen mainScreen].nativeScale;
+        image = [image scaleToSize:CGSizeMake(width, width)];
+        if (![finalURL isEqual:cell.userImageURL]) {
+            return;
+        }
+        if (!error && image) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (cell.userImageView) {
+                    cell.userImageView.image = image;
+                }
+            });
+        }
+    }];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {

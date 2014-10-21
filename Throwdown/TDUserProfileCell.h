@@ -47,6 +47,7 @@ static CGFloat const kInviteButtonStatButtonPadding = 25; // padding between inv
 @property (weak, nonatomic) IBOutlet UIButton *followingButton;
 @property (weak, nonatomic) IBOutlet UIButton *inviteButton;
 @property (weak, nonatomic) IBOutlet UIView *buttonsTopBorder;
+@property (nonatomic) NSURL *userImageURL;
 
 @property (nonatomic, assign) CGRect origBioLabelRect;
 

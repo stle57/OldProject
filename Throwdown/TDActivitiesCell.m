@@ -12,6 +12,8 @@
 #import "NSDate+TimeAgo.h"
 #import "TDAPIClient.h"
 #import <QuartzCore/QuartzCore.h>
+#import <SDWebImageManager.h>
+#import <UIImage+Resizing.h>
 
 static CGFloat const kCommentWidthWithPreview = 248.;
 static CGFloat const kCommentWidthNoPreview = 306.;
@@ -21,6 +23,7 @@ static CGFloat const kCommentWidthNoPreview = 306.;
 @property (weak, nonatomic) IBOutlet TTTAttributedLabel *activityLabel;
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 @property (weak, nonatomic) IBOutlet UIImageView *previewImage;
+@property (nonatomic) NSURL *imageURL;
 
 @end
 
@@ -50,10 +53,25 @@ static CGFloat const kCommentWidthNoPreview = 306.;
         self.previewImage.hidden = YES;
     } else {
         self.previewImage.hidden = NO;
-        [[TDAPIClient sharedInstance] setImage:@{@"imageView":self.previewImage,
-                                                 @"filename":[[post objectForKey:@"filename"] stringByAppendingString:FTImage],
-                                                 @"width":@54,
-                                                 @"height":@54}];
+        self.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@%@", RSHost, [post objectForKey:@"filename"], FTImage]];
+        SDWebImageManager *manager = [SDWebImageManager sharedManager];
+        [manager downloadImageWithURL:self.imageURL options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+            // no progress bar here
+        } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *finalURL) {
+            CGFloat width = self.previewImage.frame.size.width * [UIScreen mainScreen].nativeScale;
+            image = [image scaleToSize:CGSizeMake(width, width)];
+            // avoid doing anything on a row that's been reused b/c the download took too long and user scrolled away
+            if (![finalURL isEqual:self.imageURL]) {
+                return;
+            }
+            if (!error && image) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    if (self.previewImage) {
+                        self.previewImage.image = image;
+                    }
+                });
+            }
+        }];
     }
 
     NSString *text;

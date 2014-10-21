@@ -36,6 +36,7 @@
 @property (nonatomic, assign) CGFloat bottomLineOrigY;
 @property (nonatomic, assign) CGFloat topLineOrigHeight;
 @property (nonatomic, assign) CGFloat bottomLineOrigHeight;
+@property (nonatomic) NSURL *userImageURL;
 
 
 @end

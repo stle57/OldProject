@@ -14,5 +14,6 @@
 @property (nonatomic) UILabel *username;
 @property (nonatomic) UIImageView *profileImage;
 @property (nonatomic, assign) NSInteger userId;
+@property (nonatomic) NSURL *userImageURL;
 
 @end
