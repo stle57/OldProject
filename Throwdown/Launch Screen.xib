@@ -11,7 +11,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="td-white-emblem" translatesAutoresizingMaskIntoConstraints="NO" id="dGX-gL-qje">
-                    <rect key="frame" x="200" y="200" width="80" height="80"/>
+                    <rect key="frame" x="200" y="190" width="80" height="80"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="80" id="Hte-qg-uQv"/>
                         <constraint firstAttribute="width" constant="80" id="JQ0-nb-GoM"/>
@@ -21,7 +21,7 @@
             <color key="backgroundColor" red="0.92941176469999998" green="0.29411764709999999" blue="0.24313725489999999" alpha="1" colorSpace="calibratedRGB"/>
             <constraints>
                 <constraint firstAttribute="centerX" secondItem="dGX-gL-qje" secondAttribute="centerX" id="Kzb-Oj-TMn"/>
-                <constraint firstAttribute="centerY" secondItem="dGX-gL-qje" secondAttribute="centerY" id="isl-Nr-p0v"/>
+                <constraint firstAttribute="centerY" secondItem="dGX-gL-qje" secondAttribute="centerY" constant="10" id="isl-Nr-p0v"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>

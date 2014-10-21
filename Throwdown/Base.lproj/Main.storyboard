@@ -278,9 +278,9 @@
                             <constraint firstAttribute="trailing" secondItem="aqV-xQ-E5K" secondAttribute="trailing" id="2Rm-Sg-foE"/>
                             <constraint firstItem="GxJ-xN-CjT" firstAttribute="top" secondItem="aqV-xQ-E5K" secondAttribute="bottom" id="SZG-GO-iCY"/>
                             <constraint firstItem="GxJ-xN-CjT" firstAttribute="top" secondItem="qzV-nw-fmu" secondAttribute="bottom" constant="50" id="ZU9-sh-0bZ"/>
-                            <constraint firstItem="qzV-nw-fmu" firstAttribute="leading" secondItem="eRM-eF-DxQ" secondAttribute="leadingMargin" constant="-16" id="bF9-GS-oG5"/>
+                            <constraint firstItem="qzV-nw-fmu" firstAttribute="leading" secondItem="eRM-eF-DxQ" secondAttribute="leading" id="bF9-GS-oG5"/>
                             <constraint firstItem="aqV-xQ-E5K" firstAttribute="leading" secondItem="eRM-eF-DxQ" secondAttribute="leading" id="byB-LM-77T"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="qzV-nw-fmu" secondAttribute="trailing" constant="-16" id="wnF-qJ-Fhy"/>
+                            <constraint firstAttribute="trailing" secondItem="qzV-nw-fmu" secondAttribute="trailing" id="wnF-qJ-Fhy"/>
                             <constraint firstItem="qzV-nw-fmu" firstAttribute="top" secondItem="aqi-dU-DSf" secondAttribute="bottom" id="zt2-Xm-3oi"/>
                         </constraints>
                     </view>
@@ -712,18 +712,19 @@
                             <scrollView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" bounces="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" delaysContentTouches="NO" canCancelContentTouches="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tca-ai-Mgq" userLabel="Background Scroll View">
                                 <rect key="frame" x="0.0" y="-20" width="600" height="620"/>
                                 <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cf_thrusters" translatesAutoresizingMaskIntoConstraints="NO" id="cbM-Aj-zSp" userLabel="Background Image View">
-                                        <rect key="frame" x="-40" y="-20" width="667" height="600"/>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="cf_thrusters-2.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="cbM-Aj-zSp" userLabel="Background Image View">
+                                        <rect key="frame" x="-40" y="-20" width="810" height="540"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="667" id="hDt-hf-gBu"/>
+                                            <constraint firstAttribute="height" constant="540" id="fWv-Hm-bO4"/>
+                                            <constraint firstAttribute="width" constant="810" id="hDt-hf-gBu"/>
                                         </constraints>
                                     </imageView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="bottom" secondItem="cbM-Aj-zSp" secondAttribute="bottom" id="8I4-Vl-7bz"/>
                                     <constraint firstItem="cbM-Aj-zSp" firstAttribute="leading" secondItem="tca-ai-Mgq" secondAttribute="leading" constant="-40" id="BM1-4e-HJT"/>
-                                    <constraint firstAttribute="trailing" secondItem="cbM-Aj-zSp" secondAttribute="trailing" id="brx-91-ZJk"/>
+                                    <constraint firstAttribute="trailing" secondItem="cbM-Aj-zSp" secondAttribute="trailing" constant="-210" id="Ie5-qf-k4d"/>
                                     <constraint firstItem="cbM-Aj-zSp" firstAttribute="top" secondItem="tca-ai-Mgq" secondAttribute="top" constant="-20" id="dPv-bw-NkV"/>
+                                    <constraint firstAttribute="bottom" secondItem="cbM-Aj-zSp" secondAttribute="bottom" constant="100" id="ynv-17-sm8"/>
                                 </constraints>
                             </scrollView>
                             <scrollView autoresizesSubviews="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" directionalLockEnabled="YES" bounces="NO" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nX9-L6-K52">
@@ -1017,6 +1018,11 @@ The Throwdown Community</string>
                             <constraint firstItem="ZGR-yX-tDt" firstAttribute="width" secondItem="ngx-kp-s4L" secondAttribute="width" id="tid-WN-6T0"/>
                             <constraint firstAttribute="trailing" secondItem="nX9-L6-K52" secondAttribute="trailing" constant="-10" id="u0M-rH-yOj"/>
                         </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="rE2-v0-DEB"/>
+                            </mask>
+                        </variation>
                     </view>
                     <navigationItem key="navigationItem" id="jXa-pa-bGh"/>
                     <nil key="simulatedStatusBarMetrics"/>
@@ -1024,6 +1030,7 @@ The Throwdown Community</string>
                     <connections>
                         <outlet property="backgroundImage" destination="cbM-Aj-zSp" id="7Ib-PB-HLP"/>
                         <outlet property="backgroundImageConstraint" destination="BM1-4e-HJT" id="2D0-Ak-0gt"/>
+                        <outlet property="backgroundImageHeightConstraint" destination="fWv-Hm-bO4" id="4Zl-m7-L63"/>
                         <outlet property="backgroundImageWidthConstraint" destination="hDt-hf-gBu" id="gYQ-e0-mQo"/>
                         <outlet property="backgroundScrollView" destination="tca-ai-Mgq" id="JlR-Yr-miX"/>
                         <outlet property="indicatorView" destination="Cg8-Gr-JJ0" id="BtM-eg-DRi"/>
@@ -1448,7 +1455,7 @@ The Throwdown Community</string>
                             <constraint firstItem="1Ps-Hj-TOv" firstAttribute="top" secondItem="Tdo-gQ-7zF" secondAttribute="bottom" id="C7y-YO-ljS"/>
                             <constraint firstAttribute="centerX" secondItem="0Pj-wg-KUs" secondAttribute="centerX" id="KGq-8h-4PV"/>
                             <constraint firstItem="w9B-bo-GMv" firstAttribute="width" secondItem="kau-AR-TTK" secondAttribute="width" id="OdX-XO-AeV"/>
-                            <constraint firstItem="w9B-bo-GMv" firstAttribute="leading" secondItem="kau-AR-TTK" secondAttribute="leadingMargin" constant="-16" id="bnr-0t-jsc"/>
+                            <constraint firstItem="w9B-bo-GMv" firstAttribute="leading" secondItem="kau-AR-TTK" secondAttribute="leading" id="bnr-0t-jsc"/>
                             <constraint firstItem="1Ps-Hj-TOv" firstAttribute="top" secondItem="Uso-in-hkr" secondAttribute="bottom" id="feP-8d-8gg"/>
                             <constraint firstAttribute="trailing" secondItem="Uso-in-hkr" secondAttribute="trailing" id="hgu-bS-G9T"/>
                             <constraint firstItem="Tdo-gQ-7zF" firstAttribute="centerX" secondItem="QKD-7D-Qb5" secondAttribute="centerX" constant="-12" id="mTB-Vk-5yK"/>
@@ -1766,7 +1773,7 @@ The Throwdown Community</string>
         <image name="button_join_us_hit" width="285" height="42"/>
         <image name="camera_grey_88x55" width="44" height="27"/>
         <image name="camera_grey_88x55_hit" width="44" height="27"/>
-        <image name="cf_thrusters" width="667" height="445"/>
+        <image name="cf_thrusters-2.jpg" width="810" height="540"/>
         <image name="icon-add follower in text" width="21" height="17"/>
         <image name="icon-cross" width="28" height="28"/>
         <image name="iphone-1" width="191" height="402"/>

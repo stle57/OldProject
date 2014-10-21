@@ -43,7 +43,7 @@
 
             dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
                 UIImage *image = [self.item previewImage];
-                CGFloat width = self.thumbnailView.frame.size.width * [UIScreen mainScreen].nativeScale;
+                CGFloat width = self.thumbnailView.frame.size.width * [UIScreen mainScreen].scale;
                 image = [image scaleToSize:CGSizeMake(width, width)];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     self.thumbnailView.image = image;

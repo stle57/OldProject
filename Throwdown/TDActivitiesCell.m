@@ -59,7 +59,7 @@ static CGFloat const kCommentWidthNoPreview = 306.;
         [manager downloadImageWithURL:self.imageURL options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
             // no progress bar here
         } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *finalURL) {
-            CGFloat width = self.previewImage.frame.size.width * [UIScreen mainScreen].nativeScale;
+            CGFloat width = self.previewImage.frame.size.width * [UIScreen mainScreen].scale;
             image = [image scaleToSize:CGSizeMake(width, width)];
             // avoid doing anything on a row that's been reused b/c the download took too long and user scrolled away
             if (![finalURL isEqual:self.imageURL]) {

@@ -258,7 +258,7 @@ static NSString *const kTracksKey = @"tracks";
             return;
         }
         if (!error && image) {
-            CGFloat width = self.userProfileImage.frame.size.width * [UIScreen mainScreen].nativeScale;
+            CGFloat width = self.userProfileImage.frame.size.width * [UIScreen mainScreen].scale;
             image = [image scaleToSize:CGSizeMake(width, width)];
             dispatch_async(dispatch_get_main_queue(), ^{
                 self.userProfileImage.image = image;

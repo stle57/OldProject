@@ -30,6 +30,7 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *introSlideConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *backgroundImageConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *backgroundImageWidthConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *backgroundImageHeightConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *slide3TitleConstraint;
 
 @property (nonatomic) int pageWidth;
@@ -49,10 +50,15 @@
     self.pageWidth = width + 20;
     self.currentPage = 0;
 
+    CGFloat imageWidth = self.backgroundImageWidthConstraint.constant;
+    CGFloat imageHeight = self.backgroundImageHeightConstraint.constant;
     CGFloat totalWidth = (self.pageWidth * 4) + 40;
-    CGFloat aspect = 667 / totalWidth; // 667 = width of image
 
-    self.backgroundImageWidthConstraint.constant = totalWidth * aspect;
+    CGFloat aspect = [UIScreen mainScreen].bounds.size.height / imageHeight;
+
+    self.backgroundImageWidthConstraint.constant  = (imageWidth * aspect);
+    self.backgroundImageHeightConstraint.constant = (imageHeight * aspect);
+
     self.scrollView.contentSize = CGSizeMake(totalWidth, height);
     self.scrollView.delegate = self;
 
