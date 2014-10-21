@@ -129,12 +129,10 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    [self.navigationController setNavigationBarHidden:NO animated:NO];
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
     [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
     
-    //self.edgesForExtendedLayout = UIRectEdgeNone;
-    [self.navigationController setNavigationBarHidden:NO animated:NO];
     CGRect frame = self.searchBar.frame;
     frame.size.width = SCREEN_WIDTH;
     self.searchBar.frame = frame;
@@ -144,8 +142,7 @@
     tableFrame.size.width = SCREEN_WIDTH;
     tableFrame.size.height = SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height - self.searchBar.frame.size.height - self.headerView.frame.size.height;
     self.tableView.frame = tableFrame;
-    debug NSLog(@"calling loadData 1");
-
+    
     [self loadData];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
@@ -161,9 +158,7 @@
     [[TDUserAPI sharedInstance] getSuggestedUserList:^(BOOL success, NSArray *suggestedList) {
         if (success && suggestedList && suggestedList.count > 0) {
             self.suggestedUsers = [suggestedList copy];
-            debug NSLog(@"suggested users count = %lu", (unsigned long)[self.suggestedUsers count]);
             self.gotFromServer = YES;
-            debug NSLog(@"2. reloading suggested users list");
             [self.tableView reloadData];
             [self hideActivity];
         } else {
@@ -175,14 +170,10 @@
     [[TDUserAPI sharedInstance] getCommunityUserList:^(BOOL success, NSArray *returnList) {
         if (success && returnList && returnList.count > 0) {
             self.tdUsers = [returnList copy];
-            debug NSLog(@"td user count=%lu", (unsigned long)[self.tdUsers count]);
             if (self.searchText.length > 0) {
-                debug NSLog(@"  3a. redoing filter");
                 [self filterContentForSearchText:self.searchText scope:nil];
             }
             self.gotFromServer = YES;
-            debug NSLog(@" 3. reloading td user list, filtered list=%lu", [self.filteredUsersArray count]);
-
             [self.tableView reloadData];
             [self hideActivity];
         } else {
@@ -200,7 +191,6 @@
 }
 
 -(void)viewDidLayoutSubviews{
-    [self.navigationController setNavigationBarHidden:NO animated:NO];
     [self.searchBar setShowsCancelButton:NO animated:NO];
 }
 
@@ -244,8 +234,6 @@
             return 65.0;
         }
     } else {
-        debug NSLog(@"returning 65");
-
         return 65.0;
     }
 }
@@ -265,21 +253,16 @@
             if ([self.searchText isEqual:@""]) {
                 // If count is 0, we should show suggested user list!
                 [self.view addSubview:self.disableViewOverlay];
-                debug NSLog(@"filtered array is 0, loading %lu for suggestedUsers", (unsigned long)[suggestedUsers count]);
                 return [suggestedUsers count];
             } else if ([filteredUsersArray count] == 0){
                 return 1;
             } else {
-                debug NSLog(@"returning %lu row for filteredUsersArray", (unsigned long)[filteredUsersArray count]);
-
                 return [filteredUsersArray count];
             }
         } else {
             if ([suggestedUsers count] == 0) {
-                debug NSLog(@"  returning 1 ROW for suggested users");
                 return 1;
             } else {
-                debug NSLog(@"  returning %lu row for suggested users", (unsigned long)[suggestedUsers count]);
                 return [suggestedUsers count];
             }
         }
@@ -480,19 +463,16 @@
 
 #pragma mark UISearchBarDelegate
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
-    debug NSLog(@"textDidBeginEditing");
     self.searchingActive = YES;
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants headerTextColor]];
     self.view.backgroundColor = [TDConstants lightBackgroundColor];
     
     [self searchBar:searchBar activate:YES];
-    debug NSLog(@"   2. loadData inside textDidBeginEditing");
     [self loadData];
     [self searchBar:self.searchBar textDidChange:self.searchBar.text];
     
 }
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
-    debug NSLog(@"textDidChange to %@", searchText);
     if (searchText.length > 0) {
         [disableViewOverlay removeFromSuperview];
     }
@@ -500,7 +480,6 @@
     self.searchText = searchText;
     [self filterContentForSearchText:searchText scope:nil];
 
-    debug NSLog(@"  1.reloading table view inside textDidChange");
     [self.tableView reloadData];
 }
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
@@ -515,7 +494,6 @@
 }
 
 - (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
-    debug NSLog(@"DID END EDITING---search bar");
     self.searchingActive = NO;
     [self searchBar:self.searchBar activate:NO];
     [self loadData];
@@ -540,9 +518,6 @@
 
 #pragma mark - TDFollowCellProfileDelegate
 - (void)removeFromInviteList:(UITableView*)tableView indexPath:(NSIndexPath*)indexPath {
-    
-    debug NSLog(@"removing contact at row=%ld", (long)indexPath.row);
-    
     // Remove from invite list on
     if (self.inviteList[indexPath.row] != nil) {
         [self.inviteList removeObjectAtIndex:indexPath.row];
@@ -621,18 +596,14 @@
 
 #pragma mark - TDFollowCellProfileDelegate
 - (void)actionButtonPressedFromRow:(NSInteger)row tag:(NSInteger)tag userId:(NSNumber *)userId{
-    debug NSLog(@"TDFollowViewControllerDelegate: action button pressed with tag=%tu and row=%ld", tag, (long)row);
-    debug NSLog(@"follow/unfollow--");
     self.currentRow = row;
     
     NSNumber *id = nil;
     
     if(self.searchingActive) {
         id = [[self.filteredUsersArray objectAtIndex:row] valueForKeyPath:@"id"];
-        debug NSLog(@"going to follow user w/ id=%@", id);
     } else {
         id = [[self.suggestedUsers objectAtIndex:row] valueForKeyPath:@"id"];
-        debug NSLog(@"going to follow user w/ id=%@", id);
     }
     
     if (tag == kFollowButtonTag) {
@@ -717,13 +688,10 @@
         // Send unfollow user to server
         [[TDUserAPI sharedInstance] unFollowUser:userId callback:^(BOOL success) {
             if (success) {
-                debug NSLog(@"Successfully unfollwed user=%@", userId);
                 // send notification to update user follow count-subtract
                 [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[[TDCurrentUser sharedInstance] currentUserObject].userId userInfo:@{TD_DECREMENT_STRING: @1}];
             } else {
-                debug NSLog(@"could not follow user=%@", userId);
                 [[TDAppDelegate appDelegate] showToastWithText:@"Error occured.  Please try again." type:kToastType_Warning payload:@{} delegate:nil];
-                debug NSLog(@"could not follow user=%@", userId);
                 //TODO: Display toast saying error processing, TRY AGAIN
                 // Switch button back to cell
                 UIImage * buttonImage = [UIImage imageNamed:@"btn-small-following.png"];
