@@ -132,7 +132,7 @@ static NSString *const kTracksKey = @"tracks";
         [self addSubview:self.commentLabel];
 
         self.commentBottomLine = [[UIView alloc] initWithFrame:CGRectMake(kMargin, kHeightOfProfileRow, width - (kMargin * 2), 1 / [[UIScreen mainScreen] scale])];
-        self.commentBottomLine.backgroundColor = [TDConstants lightBorderColor];
+        self.commentBottomLine.backgroundColor = [TDConstants darkBorderColor];
         self.commentBottomLine.hidden = YES;
         [self addSubview:self.commentBottomLine];
 
@@ -205,7 +205,7 @@ static NSString *const kTracksKey = @"tracks";
 
     self.createdLabel.labelDate = post.createdAt;
     self.createdLabel.text = [post.createdAt timeAgo];
-
+    
     if (post.comment) {
         [self.commentLabel setText:post.comment afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
         [TDViewControllerHelper linkUsernamesInLabel:self.commentLabel users:post.mentions];
@@ -641,7 +641,7 @@ static NSString *const kTracksKey = @"tracks";
 + (CGFloat)heightForPost:(TDPost *)post {
     CGFloat width = [UIScreen mainScreen].bounds.size.width;
     CGFloat commentHeight = [TDViewControllerHelper heightForText:post.comment withMentions:post.mentions withFont:[TDConstants fontRegularSized:16] inWidth:width - (kMargin * 2)];
-    commentHeight = commentHeight == 0 ? 0 : commentHeight + kCommentBottomPadding;
+    commentHeight = commentHeight == 0 ? 0 : commentHeight + kCommentBottomPadding +1.; // Add 1. for more padding to show commentBottomLine
     CGFloat mediaSize = (width / kWidthOfMedia) * kWidthOfMedia;
 
     switch (post.kind) {
