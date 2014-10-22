@@ -99,9 +99,9 @@
 }
 
 - (void)logout {
+    [[TDUserList sharedInstance] clearList];
     [[TDAPIClient sharedInstance] logoutUserWithDeviceToken:self.currentUser.deviceToken];
     [self.currentUser logout];
-    [[TDUserList sharedInstance] clearList];
     [self setCrashlyticsMeta];
 }
 
