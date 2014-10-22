@@ -568,6 +568,8 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
                         [self hideActivity];
                     });
                 });
+            } else {
+                [self hideActivity];
             }
         }];
         
