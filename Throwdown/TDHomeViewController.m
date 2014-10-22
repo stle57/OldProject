@@ -718,7 +718,8 @@
 - (void)stoppedScrolling {
     CGRect frame = self.navigationController.navigationBar.frame;
     if (frame.origin.y < 20) {
-        [self animateNavBarTo:(-(frame.size.height - 21))];
+        CGFloat top = -(frame.size.height - 21);
+        [self animateNavBarTo:(top + 20 > frame.origin.y ? top : 20)];
     }
 }
 
