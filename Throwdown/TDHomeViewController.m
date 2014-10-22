@@ -67,7 +67,7 @@
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.translucent = NO;
-
+    
     [self.feedSelectionControl setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontSemiBoldSized:14] } forState:UIControlStateNormal];
     [self.feedSelectionControl setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontSemiBoldSized:14] } forState:UIControlStateHighlighted];
     [self.feedSelectionControl setContentPositionAdjustment:UIOffsetMake(0, 1) forSegmentType:UISegmentedControlSegmentAny barMetrics:UIBarMetricsDefault];
@@ -658,6 +658,8 @@
 }
 
 - (IBAction)searchTDUsersButtonPressed:(id)sender {
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
+
     TDFindPeopleViewController *vc = [[TDFindPeopleViewController alloc] initWithNibName:@"TDFindPeopleViewController" bundle:nil ];
     vc.profileUser = [TDCurrentUser sharedInstance].currentUserObject;
 
@@ -742,7 +744,7 @@
 - (void)updateNavigationBarButtons:(CGFloat)alpha {
     for (UIView *navView in self.navigationController.navigationBar.subviews) {
         NSString *desc = (NSString *)navView.description;
-        if ([desc rangeOfString:@"UINavigationBarBackground"].length == 0 && [desc rangeOfString:@"UINavigationBarBackground"].length == 0) {
+        if ([desc rangeOfString:@"UINavigationBarBackground"].length == 0 && [desc rangeOfString:@"UINavigationBarBackIndicatorView"].length == 0) {
             navView.alpha = alpha;
         }
     }
