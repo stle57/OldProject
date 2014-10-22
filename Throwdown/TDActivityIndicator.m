@@ -39,6 +39,8 @@
     self.backgroundColor = [UIColor clearColor];
     [self addSubview:[nibContents lastObject]];
 
+    self.backgroundView.center = self.center;
+
     self.backgroundView.layer.cornerRadius = 8;
     self.text.font = [TDConstants fontSemiBoldSized:20];
     self.originalTextLocation = self.text.frame;

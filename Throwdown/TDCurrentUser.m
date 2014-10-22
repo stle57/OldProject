@@ -330,11 +330,16 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
         NSArray *keyvalue = [pair componentsSeparatedByString:@"="];
         [credentials setObject:[keyvalue lastObject] forKey:[keyvalue firstObject]];
     }
-    [[TDCurrentUser sharedInstance] registerTwitterAccessToken:[credentials objectForKey:@"oauth_token"]
-                                                        secret:[credentials objectForKey:@"oauth_token_secret"]
-                                                           uid:[credentials objectForKey:@"user_id"]
-                                                    identifier:[@"@" stringByAppendingString:[credentials objectForKey:@"screen_name"]]
-                                                      callback:callback];
+    NSString *screenName = [credentials objectForKey:@"screen_name"];
+    if (screenName) {
+        [[TDCurrentUser sharedInstance] registerTwitterAccessToken:[credentials objectForKey:@"oauth_token"]
+                                                            secret:[credentials objectForKey:@"oauth_token_secret"]
+                                                               uid:[credentials objectForKey:@"user_id"]
+                                                        identifier:[NSString stringWithFormat:@"@%@", screenName]
+                                                          callback:callback];
+    } else {
+        [[TDAnalytics sharedInstance] logEvent:@"error" withInfo:[credentials description] source:@"TDCurrentUser#handleTwitterResponseData"];
+    }
 
 }
 
