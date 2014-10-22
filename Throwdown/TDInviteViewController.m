@@ -559,6 +559,7 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
                         if (!granted){
                             UIAlertView *cantAddContactAlert = [[UIAlertView alloc] initWithTitle: @"Cannot Add Contact" message: @"You must give the app permission to add the contact first." delegate:nil cancelButtonTitle: @"OK" otherButtonTitles: nil];
                             [cantAddContactAlert show];
+                            [self hideActivity];
                             return;
                         }
                         TDContactsViewController *vc = [[TDContactsViewController alloc] initWithNibName:@"TDContactsViewController" bundle:nil ];
