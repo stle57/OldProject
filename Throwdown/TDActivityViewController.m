@@ -120,11 +120,24 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 #pragma mark - UITableViewDelegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSNumber *postId = [[[self.activities objectAtIndex:indexPath.row] valueForKey:@"post"] valueForKey:@"id"];
-    TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil];
-    vc.postId = postId;
-    [self.navigationController pushViewController:vc animated:YES];
+    if (indexPath.row > [self.activities count]) {
+        return;
+    }
+    NSDictionary *activity = [self.activities objectAtIndex:indexPath.row];
     [self updateActivityAsClicked:indexPath];
+
+    if ([activity valueForKey:@"post"]) {
+        NSNumber *postId = [[activity valueForKey:@"post"] valueForKey:@"id"];
+        TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil];
+        vc.postId = postId;
+        [self.navigationController pushViewController:vc animated:YES];
+    } else if ([activity valueForKey:@"user"]) {
+        NSNumber *userId = [[activity valueForKey:@"user"] valueForKey:@"id"];
+        TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
+        vc.userId = userId;
+        vc.profileType = kFeedProfileTypeOther;
+        [self.navigationController pushViewController:vc animated:YES];
+    }
 }
 
 #pragma mark - TDActivitiesCellDelegate

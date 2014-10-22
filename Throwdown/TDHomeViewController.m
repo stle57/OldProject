@@ -683,7 +683,6 @@
     }
 
     CGFloat size = frame.size.height - 21;
-    CGFloat framePercentageHidden = ((20 - frame.origin.y) / (frame.size.height - 1));
     CGFloat scrollOffset = scrollView.contentOffset.y;
     CGFloat scrollDiff = (scrollOffset - self.previousScrollViewYOffset) * 0.5;
     CGFloat scrollHeight = scrollView.frame.size.height;
@@ -700,6 +699,8 @@
     [self setTableViewFrameBasedOn:frame];
 
     self.navigationController.navigationBar.frame = frame;
+
+    CGFloat framePercentageHidden = ((20 - frame.origin.y) / (frame.size.height - 1));
     [self updateNavigationBarButtons:(1.0 - framePercentageHidden)];
     self.previousScrollViewYOffset = scrollOffset;
 }
@@ -717,7 +718,8 @@
 - (void)stoppedScrolling {
     CGRect frame = self.navigationController.navigationBar.frame;
     if (frame.origin.y < 20) {
-        [self animateNavBarTo:(-(frame.size.height - 21))];
+        CGFloat top = -(frame.size.height - 21);
+        [self animateNavBarTo:(top + 20 > frame.origin.y ? top : 20)];
     }
 }
 
