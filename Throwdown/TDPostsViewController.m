@@ -801,7 +801,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 }
 
 - (TDNoFollowingCell*)createNoFollowingCell:(UITableView*)tableView {
-    
     TDNoFollowingCell *noFollowingCell = [tableView dequeueReusableCellWithIdentifier:@"TDNoFollowingCell"];
     if (!noFollowingCell) {
         NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoFollowingCell" owner:self options:nil];
@@ -809,9 +808,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         noFollowingCell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     noFollowingCell.backgroundColor = [UIColor whiteColor];
-    self.tableView.backgroundColor = [UIColor whiteColor];
     return noFollowingCell;
-
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
