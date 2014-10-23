@@ -11,6 +11,7 @@
 #import "TDUserAPI.h"
 #import "NBPhoneNumberUtil.h"
 #import "TDConstants.h"
+#import "TDAppDelegate.h"
 
 @interface TDResetPasswordViewController () <UITextFieldDelegate>
 
@@ -124,7 +125,7 @@
 
                                  if (success) {
                                      [TDViewControllerHelper showAlertMessage:@"Check your email for a link to reset your password." withTitle:nil];
-                                     [TDViewControllerHelper navigateToHomeFrom:self];
+                                     [self showWelcomeController];
                                  } else {
                                      [TDViewControllerHelper showAlertMessage:@"No account found with that email.\nPlease try again." withTitle:nil];
                                      self.resetButton.enabled = YES;
@@ -159,4 +160,14 @@
     }
 }
 
+- (void)showWelcomeController {
+    [self dismissViewControllerAnimated:NO completion:nil];
+    
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *welcomeViewController = [storyboard instantiateViewControllerWithIdentifier:@"WelcomeViewController"];
+    
+    TDAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
+    delegate.window.rootViewController = welcomeViewController;
+    [self.navigationController popToRootViewControllerAnimated:NO];
+}
 @end
