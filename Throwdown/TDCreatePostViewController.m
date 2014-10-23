@@ -23,7 +23,6 @@
 #import "TDKeyboardObserver.h"
 
 static int const kTextViewConstraint = 84;
-static int const kUserListHeight = 140;
 
 @interface TDCreatePostViewController () <UITextViewDelegate, NSLayoutManagerDelegate, TDKeyboardObserverDelegate>
 
@@ -45,7 +44,7 @@ static int const kUserListHeight = 140;
 @property (nonatomic) NSString *filename;
 @property (nonatomic) NSString *thumbnailPath;
 @property (nonatomic) TDUserListView *userListView;
-
+@property (nonatomic) int userListHeight;
 @property (nonatomic) UIImage *prOnImage;
 @property (nonatomic) UIImage *prOffImage;
 @property (nonatomic) TDKeyboardObserver *keyboardObserver;
@@ -91,12 +90,14 @@ static int const kUserListHeight = 140;
 
     // User name filter table view
 	if (self.userListView == nil) {
-		self.userListView = [[TDUserListView alloc] initWithFrame:CGRectMake(0, kUserListHeight, SCREEN_WIDTH, 0)];
+		self.userListView = [[TDUserListView alloc] initWithFrame:CGRectMake(0, self.userListHeight, SCREEN_WIDTH, 0)];
         self.userListView.delegate = self;
         [self.view addSubview:self.userListView];
 	}
 
     self.keyboardObserver = [[TDKeyboardObserver alloc] initWithDelegate:self];
+    
+    self.userListHeight = (SCREEN_HEIGHT - 430);
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -226,8 +227,8 @@ static int const kUserListHeight = 140;
     self.postButton.enabled = (self.filename || [[textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0);
     [self.userListView showUserSuggestions:textView callback:^(BOOL success) {
         if (success) {
-            [self.userListView updateFrame:CGRectMake(0, self.optionsView.frame.origin.y - kUserListHeight, SCREEN_WIDTH, kUserListHeight)];
-            self.textViewConstraint.constant = kTextViewConstraint + kUserListHeight;
+            [self.userListView updateFrame:CGRectMake(0, self.optionsView.frame.origin.y - self.userListHeight, SCREEN_WIDTH, self.userListHeight)];
+            self.textViewConstraint.constant = kTextViewConstraint + self.userListHeight;
             [self.view layoutIfNeeded];
             [self alignCarretInTextView:textView];
         } else {
