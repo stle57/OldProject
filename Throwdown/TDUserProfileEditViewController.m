@@ -199,9 +199,6 @@
                                                 [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateWithUserChangeNotification object:nil];
 
                                                 NSString *message;
-                                                if (![self.phone isEqualToString:[self.settings objectForKey:@"displayed_phone_number"]]) {
-                                                    message = [NSString stringWithFormat:@"Verification SMS sent to:\n%@\n", self.phone];
-                                                }
                                                 if (![self.email isEqualToString:[self.settings objectForKey:@"displayed_email"]]) {
                                                     message = [NSString stringWithFormat:@"%@Verification email sent to:\n%@\n", message ? message : @"", self.email];
                                                 }
@@ -212,8 +209,6 @@
                                                                                                    delegate:nil
                                                                                           cancelButtonTitle:@"OK"
                                                                                           otherButtonTitles:nil];
-                                                    debug NSLog(@"alert frame=%@", NSStringFromCGRect(alert.frame));
-                                                    debug NSLog(@"alert center=%@", NSStringFromCGPoint(alert.center));
                                                     [alert show];
                                                     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationReloadHome object:nil];
                                                 }
