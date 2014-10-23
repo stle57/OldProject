@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6245" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="DPQ-qf-8sb">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6250" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="DPQ-qf-8sb">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -327,7 +328,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NpP-HL-JVP">
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NpP-HL-JVP">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <subviews>
                                     <view hidden="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6lL-Hb-Env" userLabel="View to shut up the auto-layout complaints">
@@ -805,7 +806,7 @@
                                         </constraints>
                                     </view>
                                     <view autoresizesSubviews="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8uS-cY-Dpl" userLabel="Slide 1">
-                                        <rect key="frame" x="0.0" y="0.0" width="600" height="620"/>
+                                        <rect key="frame" x="0.0" y="30" width="600" height="620"/>
                                         <subviews>
                                             <imageView autoresizesSubviews="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="iphone-1" translatesAutoresizingMaskIntoConstraints="NO" id="pxV-Qn-JUc" userLabel="iPhone preview">
                                                 <rect key="frame" x="205" y="42" width="191" height="402"/>
@@ -833,7 +834,7 @@
                                         </constraints>
                                     </view>
                                     <view autoresizesSubviews="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZGR-yX-tDt" userLabel="Slide 2">
-                                        <rect key="frame" x="0.0" y="0.0" width="600" height="620"/>
+                                        <rect key="frame" x="0.0" y="30" width="600" height="620"/>
                                         <subviews>
                                             <imageView autoresizesSubviews="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="iphone-2" translatesAutoresizingMaskIntoConstraints="NO" id="cRm-YR-cIV" userLabel="iPhone preview">
                                                 <rect key="frame" x="205" y="42" width="191" height="402"/>
@@ -967,12 +968,12 @@ The Throwdown Community</string>
                                 <constraints>
                                     <constraint firstItem="ZGR-yX-tDt" firstAttribute="leading" secondItem="nX9-L6-K52" secondAttribute="leading" id="2e1-1b-ywZ"/>
                                     <constraint firstItem="odk-KB-SgF" firstAttribute="leading" secondItem="nX9-L6-K52" secondAttribute="leading" id="8XF-j7-zgy"/>
-                                    <constraint firstItem="8uS-cY-Dpl" firstAttribute="top" secondItem="nX9-L6-K52" secondAttribute="top" id="GxU-WY-O2F"/>
+                                    <constraint firstItem="8uS-cY-Dpl" firstAttribute="top" secondItem="nX9-L6-K52" secondAttribute="top" constant="30" id="GxU-WY-O2F"/>
                                     <constraint firstItem="ZGR-yX-tDt" firstAttribute="height" secondItem="nX9-L6-K52" secondAttribute="height" id="Hdu-k7-u2u"/>
                                     <constraint firstItem="8uS-cY-Dpl" firstAttribute="height" secondItem="nX9-L6-K52" secondAttribute="height" id="MIf-XZ-Qa8"/>
                                     <constraint firstItem="odk-KB-SgF" firstAttribute="top" secondItem="nX9-L6-K52" secondAttribute="top" id="P7D-A1-ifQ"/>
                                     <constraint firstAttribute="height" secondItem="odk-KB-SgF" secondAttribute="height" id="azp-6u-c4r"/>
-                                    <constraint firstItem="ZGR-yX-tDt" firstAttribute="top" secondItem="nX9-L6-K52" secondAttribute="top" id="bkC-Kf-8xa"/>
+                                    <constraint firstItem="ZGR-yX-tDt" firstAttribute="top" secondItem="nX9-L6-K52" secondAttribute="top" constant="30" id="bkC-Kf-8xa"/>
                                     <constraint firstItem="eMa-S5-wwr" firstAttribute="leading" secondItem="nX9-L6-K52" secondAttribute="leading" id="err-aN-WQy"/>
                                     <constraint firstItem="eMa-S5-wwr" firstAttribute="height" secondItem="nX9-L6-K52" secondAttribute="height" id="fKV-5J-PjY"/>
                                     <constraint firstAttribute="bottom" secondItem="odk-KB-SgF" secondAttribute="bottom" id="hei-hb-Vux"/>
@@ -984,19 +985,30 @@ The Throwdown Community</string>
                             <view opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Cg8-Gr-JJ0" userLabel="Page Indicator View">
                                 <rect key="frame" x="278" y="564" width="45" height="9"/>
                                 <subviews>
-                                    <imageView userInteractionEnabled="NO" tag="41" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="page-circle-white" translatesAutoresizingMaskIntoConstraints="NO" id="m5t-hc-QmI" userLabel="indicator 1">
+                                    <imageView userInteractionEnabled="NO" tag="41" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="page-circle-white" translatesAutoresizingMaskIntoConstraints="NO" id="m5t-hc-QmI" userLabel="indicator 1">
                                         <rect key="frame" x="0.0" y="0.0" width="9" height="9"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="9" id="MdC-ci-qrd"/>
+                                        </constraints>
                                     </imageView>
-                                    <imageView userInteractionEnabled="NO" tag="42" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="page-circle-white" translatesAutoresizingMaskIntoConstraints="NO" id="mje-NY-pcU" userLabel="indicator 2">
+                                    <imageView userInteractionEnabled="NO" tag="42" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="page-circle-white" translatesAutoresizingMaskIntoConstraints="NO" id="mje-NY-pcU" userLabel="indicator 2">
                                         <rect key="frame" x="18" y="0.0" width="9" height="9"/>
                                     </imageView>
-                                    <imageView userInteractionEnabled="NO" tag="43" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="page-circle-white" translatesAutoresizingMaskIntoConstraints="NO" id="eTV-im-aeG" userLabel="indicator 3">
+                                    <imageView userInteractionEnabled="NO" tag="43" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="page-circle-white" translatesAutoresizingMaskIntoConstraints="NO" id="eTV-im-aeG" userLabel="indicator 3">
                                         <rect key="frame" x="36" y="0.0" width="9" height="9"/>
                                     </imageView>
                                 </subviews>
                                 <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="eTV-im-aeG" secondAttribute="trailing" id="6gc-3y-Mcz"/>
+                                    <constraint firstItem="eTV-im-aeG" firstAttribute="leading" secondItem="mje-NY-pcU" secondAttribute="trailing" constant="9" id="HAK-cs-9W2"/>
                                     <constraint firstAttribute="width" constant="45" id="IoQ-dg-5xc"/>
+                                    <constraint firstItem="eTV-im-aeG" firstAttribute="top" secondItem="Cg8-Gr-JJ0" secondAttribute="top" id="U5I-P1-Sfn"/>
                                     <constraint firstAttribute="height" constant="9" id="fRx-Pr-obX"/>
+                                    <constraint firstItem="m5t-hc-QmI" firstAttribute="leading" secondItem="Cg8-Gr-JJ0" secondAttribute="leading" id="gqb-N8-3DI"/>
+                                    <constraint firstItem="mje-NY-pcU" firstAttribute="centerX" secondItem="Cg8-Gr-JJ0" secondAttribute="centerX" id="oWY-XH-cdA"/>
+                                    <constraint firstItem="eTV-im-aeG" firstAttribute="top" secondItem="mje-NY-pcU" secondAttribute="top" id="p9M-PI-Y1K"/>
+                                    <constraint firstItem="m5t-hc-QmI" firstAttribute="top" secondItem="mje-NY-pcU" secondAttribute="top" id="uQ9-UY-V6n"/>
+                                    <constraint firstItem="mje-NY-pcU" firstAttribute="leading" secondItem="m5t-hc-QmI" secondAttribute="trailing" constant="9" id="yz6-wM-0re"/>
                                 </constraints>
                             </view>
                         </subviews>
