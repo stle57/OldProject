@@ -138,7 +138,7 @@
     [self dismissViewControllerAnimated:NO completion:nil];
 
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UIViewController *homeViewController = [storyboard instantiateViewControllerWithIdentifier:@"WelcomeViewController"];
+    UIViewController *homeViewController = [storyboard instantiateViewControllerWithIdentifier:@"HomeViewController"];
 
     TDAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
     delegate.window.rootViewController = homeViewController;
