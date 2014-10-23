@@ -106,6 +106,7 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
     NSDictionary *selectedUser = [self.filteredList objectAtIndex:indexPath.row];
     debug NSLog(@"selectedUser=%@", selectedUser);
 
