@@ -71,7 +71,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     self.tableView.dataSource = self;
 
     // Background color
-    self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
 
     // Add refresh control
     self.customRefreshControl = [[TDCustomRefreshControl alloc] init];
@@ -94,6 +93,8 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
+
     [self.tableView reloadData];
 }
 
@@ -808,6 +809,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         noFollowingCell.selectionStyle = UITableViewCellSelectionStyleNone;
     }
     noFollowingCell.backgroundColor = [UIColor whiteColor];
+    self.tableView.backgroundColor = [UIColor whiteColor];
     return noFollowingCell;
 }
 
