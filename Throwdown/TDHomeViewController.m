@@ -57,7 +57,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removePost:) name:TDNotificationRemovePost object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePost:) name:TDNotificationUpdatePost object:nil];
-
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willEnterForegroundCallback:) name:UIApplicationWillEnterForegroundNotification object:nil];
     [self.badgeCountLabel setFont:[TDConstants fontSemiBoldSized:11]];
     [self.badgeCountLabel.layer setCornerRadius:9.0];
 
@@ -117,7 +117,6 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
 }
-
 
 #pragma mark - Notices
 
@@ -202,7 +201,6 @@
         return NO;
     }
     if ([self onAllFeed]) {
-        debug NSLog(@"fetchPostsForAll");
         [[TDPostAPI sharedInstance] fetchPostsForAll:self.nextStartAll success:^(NSDictionary *response) {
             // if the request was aborted by another action
             if (showBottomSpinner) {
@@ -214,7 +212,6 @@
             [self stopBottomLoadingSpinner];
         }];
     } else {
-        debug NSLog(@"fetchPostsForFollowing");
         [[TDPostAPI sharedInstance] fetchPostsForFollowing:self.nextStartFollowing success:^(NSDictionary *response) {
             // if the request was aborted by another action
             if (showBottomSpinner) {
@@ -306,7 +303,6 @@
         NSMutableArray *newList = [[NSMutableArray array] init];
         for (TDPost *post in self.posts) {
             if ([post.postId isEqualToNumber:postId]) {
-                debug NSLog(@"removing post from vc with id %@", postId);
                 changeMade = YES;
             } else {
                 [newList addObject:post];
@@ -326,7 +322,6 @@
         newList = [[NSMutableArray array] init];
         for (TDPost *post in self.postsFollowing) {
             if ([post.postId isEqualToNumber:postId]) {
-                debug NSLog(@"removing post from vc with id %@", postId);
                 changeMade = YES;
             } else {
                 [newList addObject:post];
@@ -388,7 +383,6 @@
 
 #pragma mark - Refresh Control
 - (void)refreshControlUsed {
-    debug NSLog(@"home-refreshControlUsed");
     [self fetchPostsRefresh];
 }
 
@@ -471,7 +465,6 @@
     if (goneDownstream) {
         [self hideBottomButtons];
     }
-    debug NSLog(@"home view unwindToHome with identifier %@", sender.identifier);
 }
 
 - (void)showHomeController {
@@ -536,7 +529,6 @@
 #pragma mark - TDToastViewDelegate
 
 - (void)toastNotificationTappedPayload:(NSDictionary *)payload {
-    debug NSLog(@"Inside toastNotificationTappedPayload");
     [self openPushNotification:payload];
 
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUpdate
@@ -618,7 +610,6 @@
 }
 
 - (void)openProfile:(NSNumber *)userId {
-    debug NSLog(@"gotoProfileForUser:%@", userId);
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
 
     TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
@@ -754,5 +745,8 @@
     self.navigationController.navigationBar.tintColor = [self.navigationController.navigationBar.tintColor colorWithAlphaComponent:alpha];
 }
 
+- (void)willEnterForegroundCallback:(NSNotification *)notification {
+    [self animateNavBarTo:20];
+}
 
 @end
