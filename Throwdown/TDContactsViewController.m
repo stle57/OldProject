@@ -277,13 +277,13 @@
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
     if (!self.searchingActive) {
         // Get contact from contract array
         TDContactInfo *contactPerson = contacts[indexPath.row];
         [self addToInviteList:contactPerson indexPath:indexPath tableView:tableView];
 
     } else {
-        debug NSLog(@"indexPath.row=%ld", (long)indexPath.row);
         if ([self.filteredContactArray count] == 0) {
             // We got in this state because the user tapped out of the search bar and had
             // and empty search result.
@@ -430,8 +430,6 @@
 }
 
 - (void)markCellAsSelected:(TDContactInfo*)contactInfo indexPath:(NSIndexPath*)indexPath tableView:(UITableView*)tableView{
-    debug NSLog(@"mark as selected");
-    
     if (indexPath != nil) {
         UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
         [self reformatCellToSelected:cell contactInfo:contactInfo];
@@ -524,7 +522,6 @@
 }
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchString {
-    debug NSLog(@"textDidChange to %@", searchString);
     if (searchString.length > 0) {
         [disableViewOverlay removeFromSuperview];
     } else {
@@ -539,7 +536,6 @@
     self.searchText = searchString;
     [self filterContentForSearchText:searchText scope:nil];
     
-    debug NSLog(@"  1.reloading table view inside textDidChange");
     [self.tableView reloadData];
 }
 #pragma mark Content Filtering
