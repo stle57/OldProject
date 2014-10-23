@@ -363,6 +363,7 @@
                                        [self tableView:self.tableView heightForRowAtIndexPath:indexPath],
                                        cell.bottomLine.frame.size.width,
                                        cell.bottomLine.frame.size.height);
+    cell.rightArrow.hidden = YES;
 
     switch (indexPath.section) {
         case 0:
