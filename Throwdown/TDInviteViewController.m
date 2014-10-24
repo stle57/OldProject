@@ -563,6 +563,7 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
                             return;
                         }
                         TDContactsViewController *vc = [[TDContactsViewController alloc] initWithNibName:@"TDContactsViewController" bundle:nil ];
+                        vc.delegate = self;
                         [vc setValuesForSharing:self.inviteList];
                         [self.navigationController pushViewController:vc animated:YES];
                         [self hideActivity];
