@@ -7,6 +7,7 @@
 //
 
 #import "TDWelcomeViewController.h"
+#import "TDConstants.h"
 #import "TDAppDelegate.h"
 #import "TDAnalytics.h"
 #import <QuartzCore/QuartzCore.h>

@@ -13,6 +13,11 @@
 #import "TDTextUpload.h"
 #import "TDNotice.h"
 
+const typedef NS_ENUM(NSUInteger, kFetchPostsForFeed) {
+    kFetchPostsForFeedAll,
+    kFetchPostsForFeedFollowing
+};
+
 @interface TDPostAPI : NSObject
 
 + (TDPostAPI *)sharedInstance;
@@ -31,9 +36,7 @@
 - (void)reportPostWithId:(NSNumber *)postId;
 - (void)deletePostWithId:(NSNumber *)postId;
 
-- (void)fetchPostsWithSuccess:(void (^)(NSDictionary*response))successHandler error:(void (^)(void))errorHandler;
-- (void)fetchPostsForAll:(NSNumber *)start success:(void (^)(NSDictionary*response))successHandler error:(void (^)(void))errorHandler;
-- (void)fetchPostsForFollowing:(NSNumber *)start success:(void (^)(NSDictionary*response))successHandler error:(void (^)(void))errorHandler;
+- (void)fetchPostsForFeed:(kFetchPostsForFeed)feed start:(NSNumber *)start success:(void (^)(NSDictionary*response))successHandler error:(void (^)(void))errorHandler;
 - (void)fetchPostsForUser:(NSString *)userIdentifier start:(NSNumber *)start success:(void(^)(NSDictionary *response))successHandler error:(void (^)(void))errorHandler;
 - (void)fetchPRPostsForUser:(NSString *)userIdentifier success:(void(^)(NSDictionary *response))successHandler error:(void (^)(void))errorHandler;
 @end

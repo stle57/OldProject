@@ -89,7 +89,6 @@ static NSString *const TDNotificationNewCommentPostInfo = @"TDNotificationNewCom
 static NSString *const TDNotificationNewCommentFailed = @"TDNotificationNewCommentFailed";
 static NSString *const TDNotificationPauseTapGesture = @"TDNotificationPauseTapGesture";
 static NSString *const TDNotificationResumeTapGesture = @"TDNotificationResumeTapGesture";
-static NSString *const TDRefreshPostsNotification = @"TDRefreshPostsNotification";
 static NSString *const TDUpdateWithUserChangeNotification = @"TDUpdateWithUserChangeNotification";
 static NSString *const TDUpdateFollowingCount = @"TDUpdateFollowingCount";
 static NSString *const TDUpdateFollowerCount = @"TDUpdateFollowerCount";

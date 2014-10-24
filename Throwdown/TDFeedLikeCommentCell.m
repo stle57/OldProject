@@ -8,6 +8,7 @@
 
 #import "TDFeedLikeCommentCell.h"
 #import "TDAppDelegate.h"
+#import "TDConstants.h"
 
 @interface TDFeedLikeCommentCell ()
 @property (nonatomic, assign) BOOL liked;

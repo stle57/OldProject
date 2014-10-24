@@ -107,7 +107,7 @@
 
     if (!self.posts || goneDownstream) {
         [self refreshPostsList];
-        [self fetchPostsRefresh];
+        [self fetchPosts];
     }
     goneDownstream = NO;
 }
@@ -123,7 +123,6 @@
     [super didReceiveMemoryWarning];
     self.user = nil;
     self.posts  = nil;
-    self.removingPosts = nil;
 }
 
 - (IBAction)settingsButtonHit:(id)sender {
@@ -171,7 +170,7 @@
     }
 }
 
-- (void)fetchPostsRefresh {
+- (void)fetchPosts {
     NSString *fetch = self.username ? self.username : [self.userId stringValue];
     if (!self.noProfileHeader) {
         [[TDPostAPI sharedInstance] fetchPostsForUser:fetch start:nil success:^(NSDictionary *response) {
@@ -217,7 +216,6 @@
 
     if (start) {
         self.posts = nil;
-        self.removingPosts = nil;
     }
 
     NSMutableArray *newPosts;
@@ -265,7 +263,7 @@
 #pragma mark - Refresh Control
 
 - (void)refreshControlUsed {
-    [self fetchPostsRefresh];
+    [self fetchPosts];
 }
 
 #pragma mark - PostView Delegate

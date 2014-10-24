@@ -130,7 +130,6 @@ static int const kToolbarHeight = 64;
 
     self.loaded = NO;
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadPosts:) name:TDRefreshPostsNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePost:) name:TDNotificationUpdatePost object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newCommentFailed:) name:TDNotificationNewCommentFailed object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
@@ -268,10 +267,6 @@ static int const kToolbarHeight = 64;
 }
 
 #pragma mark - Notifications
-
-- (void)reloadPosts:(NSNotification*)notification {
-    [self reloadPosts];
-}
 
 - (void)reloadPosts {
     if (!self.liking) {

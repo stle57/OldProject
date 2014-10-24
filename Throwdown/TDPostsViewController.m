@@ -84,11 +84,10 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(startSpinner:) name:START_MAIN_SPINNER_NOTIFICATION object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(stopSpinner:) name:STOP_MAIN_SPINNER_NOTIFICATION object:nil];
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logOutUser:) name:LOG_OUT_NOTIFICATION object:nil];
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(refreshPostsList:) name:TDRefreshPostsNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logOutUser:) name:LOG_OUT_NOTIFICATION object:nil];
 
     [self refreshPostsList];
-    [self fetchPostsRefresh];
+    [self fetchPosts];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -112,7 +111,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 
     self.tableView.delegate = nil;
     self.tableView.dataSource = nil;
-    self.removingPosts = nil;
     self.customRefreshControl = nil;
     self.userId = nil;
 }
@@ -144,8 +142,8 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     return NO;
 }
 
-// Override this to get posts from a pull-to-refresh
-- (void)fetchPostsRefresh {
+// Override this to get posts from a pull-to-refresh and to load posts onload
+- (void)fetchPosts {
 }
 
 // Override this to get more posts at the bottom of the feed
@@ -167,20 +165,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 // Override to return user object if we're on profile view
 - (TDUser *)getUser {
     return nil;
-}
-
-- (void)refreshPostsList:(NSNotification*)notification {
-    // Notification comes in when posts have been fetched
-    self.loaded = YES;
-    self.errorLoading = NO;
-    if (self.userId && notification.userInfo && [notification.userInfo objectForKey:@"userId"]) {
-        NSNumber *userId = (NSNumber *)[notification.userInfo objectForKey:@"userId"];
-        if (![userId isEqualToNumber:self.userId]) {
-            return;
-        }
-    }
-
-    [self refreshPostsList];
 }
 
 /* Refreshes the tableview with current posts list */
@@ -225,9 +209,8 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 }
 
 - (void)reloadPosts {
-    [self stopBottomLoadingSpinner];
     [self endRefreshControl];
-    [self.tableView reloadData];
+    [self stopBottomLoadingSpinner]; // reloads table
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {

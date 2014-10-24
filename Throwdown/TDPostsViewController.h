@@ -44,7 +44,6 @@
     CGFloat topOfBioLabelInProfileHeader;
 }
 
-@property (nonatomic) NSMutableDictionary *removingPosts;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIButton *recordButton;
 @property (weak, nonatomic) IBOutlet UIButton *notificationButton;
@@ -59,8 +58,9 @@
 - (NSArray *)postsForThisScreen;
 - (BOOL)onAllFeed;
 - (TDUser *)getUser;
-- (void)reloadPosts;
-- (void)refreshPostsList;
+- (void)fetchPosts;  // Actually goes out and fetches from server
+- (void)reloadPosts; // Only refreshes the table with currently cached posts
+- (void)refreshPostsList; // Same as above but slight variation TODO: just have one?
 - (void)refreshControlUsed;
 - (void)endRefreshControl;
 - (void)showWelcomeController;

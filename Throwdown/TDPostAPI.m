@@ -19,6 +19,7 @@
 #import "TDDeviceInfo.h"
 #import "iRate.h"
 #import "TDRequestSerializer.h"
+#import "TDHomeViewController.h"
 
 @interface TDPostAPI ()
 
@@ -72,13 +73,21 @@
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager setRequestSerializer:[[TDRequestSerializer alloc] init]];
     [manager POST:url parameters:@{ @"post": post, @"share_to": sharing, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        // Should just put the post in the feed but this is easier to implement for now + takes care of any other new posts in the feed.
-        [self fetchPostsWithSuccess:^(NSDictionary *response) {
-            [self notifyPostsRefreshed];
-        } error:nil];
-        if (success) {
+        [[TDCurrentUser sharedInstance] updateCurrentUserInfo]; // updates post/or counts etc
+
+        // This isn't the prettiest thing. But all the current alternatives aren't great either.
+        // We really need to refactor the way uploads are handled.
+        TDHomeViewController *homeViewController = [TDHomeViewController getHomeViewController];
+        if (homeViewController) {
+            if (success) {
+                [homeViewController fetchPostsWithCompletion:^{
+                    success(responseObject);
+                }];
+            } else {
+                [homeViewController fetchPosts];
+            }
+        } else if (success) {
             success(responseObject);
-            [[TDCurrentUser sharedInstance] updateCurrentUserInfo];
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         NSLog(@"Add Post Error: %@", error);
@@ -92,36 +101,22 @@
     }];
 }
 
-// Fetches posts for both All and Following feeds
-- (void)fetchPostsWithSuccess:(void (^)(NSDictionary*response))successHandler error:(void (^)(void))errorHandler {
-    [self fetchPostsForFeed:@"both" start:nil success:successHandler error:errorHandler];
-}
-
-// Only fetches posts for All feed, ideally for updates at bottom of feed
-- (void)fetchPostsForAll:(NSNumber *)start success:(void (^)(NSDictionary*response))successHandler error:(void (^)(void))errorHandler {
-    [self fetchPostsForFeed:@"posts" start:start success:successHandler error:errorHandler];
-}
-
-// Only fetches posts for Following feed, ideally for updates at bottom of feed
-- (void)fetchPostsForFollowing:(NSNumber *)start success:(void (^)(NSDictionary*response))successHandler error:(void (^)(void))errorHandler {
-    [self fetchPostsForFeed:@"following" start:start success:successHandler error:errorHandler];
-}
-
-// Should only ever be called by the above helper methods
-// feed can be either:
-// - all       = feed for all users
-// - following = feed for currently following
-// - both      = gets both all and following feeds
-// start should be nil for feed option "both" b/c start affects both feed starts
-- (void)fetchPostsForFeed:(NSString *)feed start:(NSNumber *)start success:(void (^)(NSDictionary*response))successHandler error:(void (^)(void))errorHandler {
+- (void)fetchPostsForFeed:(kFetchPostsForFeed)feed start:(NSNumber *)start success:(void (^)(NSDictionary*response))successHandler error:(void (^)(void))errorHandler {
     if (self.fetchingUpstream) {
         return;
     }
     self.fetchingUpstream = YES;
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
-    if (feed) {
-        [params setObject:feed forKey:@"feed"];
+
+    switch (feed) {
+        case kFetchPostsForFeedAll:
+            [params setObject:@"all" forKey:@"feed"];
+            break;
+        case kFetchPostsForFeedFollowing:
+            [params setObject:@"following" forKey:@"feed"];
+            break;
     }
+
     if (start) {
         [params setObject:start forKey:@"start"];
     }
@@ -258,13 +253,6 @@
                                                             object:nil
                                                           userInfo:@{ @"postId": postId }];
     }];
-}
-
-/* Notify any views to reload, does not update or fetch posts from server */
-- (void)notifyPostsRefreshed {
-    [[NSNotificationCenter defaultCenter] postNotificationName:TDRefreshPostsNotification
-                                                        object:self
-                                                      userInfo:nil];
 }
 
 #pragma mark - like & comment

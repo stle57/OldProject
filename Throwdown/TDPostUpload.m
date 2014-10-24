@@ -223,6 +223,7 @@ typedef enum {
 - (void)uploadComplete {
     [self cleanup];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        // TODO: we should be saving it to SDWebImage cache, since this is an old caching system
         [TDFileSystemHelper saveImage:[UIImage imageWithContentsOfFile:self.persistedPhotoPath] filename:self.finalPhotoName];
         [TDFileSystemHelper removeFileAt:self.persistedPhotoPath];
         if (self.videoUpload) {
