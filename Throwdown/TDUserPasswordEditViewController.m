@@ -360,11 +360,10 @@
     UIColor *textFieldPlaceHolderColor = [TDConstants commentTimeTextColor];
     cell.textView.frame = cell.textViewdOrigRect;
     cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
-                                       [self tableView:self.tableView heightForRowAtIndexPath:indexPath],
+                                       cell.bottomLineOrigY + .5,
                                        cell.bottomLine.frame.size.width,
                                        cell.bottomLine.frame.size.height);
     cell.rightArrow.hidden = YES;
-
     switch (indexPath.section) {
         case 0:
             switch (indexPath.row) {
@@ -412,6 +411,7 @@
         break;
     }
 
+    [cell sizeToFit];
     return cell;
 }
 

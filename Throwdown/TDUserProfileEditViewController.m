@@ -553,7 +553,7 @@
     UIColor *textFieldPlaceHolderColor = [TDConstants headerTextColor];
     cell.textView.frame = cell.textViewdOrigRect;
     cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
-                                       cell.bottomLineOrigY,
+                                       cell.bottomLineOrigY +.5,
                                        cell.bottomLine.frame.size.width,
                                        cell.bottomLine.frame.size.height);
     switch (indexPath.section) {
@@ -576,6 +576,7 @@
                 break;
                 case 1:
                 {
+                    cell.topLine.hidden = YES;
                     cell.titleLabel.hidden = NO;
                     cell.textField.hidden = NO;
                     cell.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"name"
@@ -587,6 +588,7 @@
                 break;
                 case 2:
                 {
+                    cell.topLine.hidden = YES;
                     cell.titleLabel.hidden = NO;
                     cell.textField.hidden = NO;
                     cell.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"username"
@@ -598,6 +600,7 @@
                 break;
                 case 3:
                 {
+                    cell.topLine.hidden = YES;
                     cell.titleLabel.hidden = NO;
                     cell.textField.hidden = NO;
 
@@ -610,6 +613,7 @@
 
                 case 4:
                 {
+                    cell.topLine.hidden = YES;
                     cell.titleLabel.hidden = NO;
                     cell.textField.hidden = YES;
                     cell.textView.hidden = NO;
@@ -630,13 +634,17 @@
                     }
                     CGRect newTextFrame = cell.textView.frame;
                     newTextFrame.size.height = [self tableView:tableView heightForRowAtIndexPath:indexPath];
-                    newTextFrame.origin.y = cell.bottomLine.frame.size.height;
+                    newTextFrame.origin.y = cell.bottomLine.frame.size.height-1;
                     cell.textView.frame = newTextFrame;
 
                     cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
                                                        CGRectGetMaxY(newTextFrame),
                                                        cell.bottomLine.frame.size.width,
-                                                       cell.bottomLine.frame.size.height);
+                                                       cell.bottomLineOrigHeight);
+                    debug NSLog(@"TextView frame=%@",NSStringFromCGRect(cell.textView.frame));
+                    debug NSLog(@"cell frame=%@", NSStringFromCGRect(cell.frame));
+                    debug NSLog(@"bottom line frame=%@", NSStringFromCGRect(cell.bottomLine.frame));
+
                 }
                 break;
                 default:
@@ -660,6 +668,7 @@
                 }
                 break;
                 case 1:
+                    cell.topLine.hidden = YES;
                     cell.titleLabel.hidden = NO;
                     cell.textField.hidden = NO;
                     cell.textField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"example@email.com"
@@ -685,12 +694,14 @@
                 }
                     break;
                 case 1:
+                    cell.topLine.hidden = YES;
                     cell.longTitleLabel.hidden = NO;
                     cell.longTitleLabel.text = @"Social Networks";
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
                     cell.rightArrow.hidden = NO;
                     break;
                 case 2:
+                    cell.topLine.hidden = YES;
                     cell.longTitleLabel.hidden = NO;
                     cell.longTitleLabel.text = @"Change Password";
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
@@ -708,6 +719,7 @@
                     cell.rightArrow.hidden = NO;
                     break;
                 case 1:
+                    cell.topLine.hidden = YES;
                     cell.longTitleLabel.hidden = NO;
                     cell.longTitleLabel.text = @"Rate Throwdown in App Store";
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;

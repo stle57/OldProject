@@ -363,7 +363,7 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
         cell.leftMiddleLabel.hidden = YES;
         cell.textView.hidden = YES;
         cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
-                                           cell.bottomLineOrigY,
+                                           cell.bottomLineOrigY+.5,
                                            cell.bottomLine.frame.size.width,
                                            cell.bottomLine.frame.size.height);
         cell.titleLabel.hidden = NO;
@@ -374,7 +374,7 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
         cellFrame.origin.x = 100;
         cell.textField.frame = cellFrame;
         cell.topLine.hidden = NO;
-
+    
         return cell;
     } else {
         return nil;

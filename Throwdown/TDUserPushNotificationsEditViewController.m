@@ -227,6 +227,9 @@ settings: [
         cell.delegate = self;
     }
 
+    if (indexPath.row != 0) {
+        cell.topLine.hidden = YES;
+    }
     cell.indexPath = indexPath;
     cell.longTitleLabel.text = @"";
     cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
@@ -239,6 +242,9 @@ settings: [
                                            [self tableView:self.tableView heightForRowAtIndexPath:indexPath]);
 
     cell.longTitleLabel.text = [[self settingFor:indexPath] objectForKey:@"name"];
+    CGRect bottomLineFrame = cell.bottomLine.frame;
+    bottomLineFrame.origin.y = [self tableView:tableView heightForRowAtIndexPath:indexPath]-.5;
+    cell.bottomLine.frame = bottomLineFrame;
     if ([[self settingFor:indexPath] objectForKey:@"options"]) {
         cell.segmentControl.hidden = NO;
         cell.aSwitch.hidden = YES;
