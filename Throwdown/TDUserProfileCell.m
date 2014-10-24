@@ -53,12 +53,6 @@ static CGFloat const kMinHeight = 230 + kBottomMargin;
     [prLayer setMasksToBounds:YES];
     [prLayer setCornerRadius:0.0]; //when radius is 0, the border is a rectangle
 
-    UIView *followerTopBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0,
-            self.followerButton.frame.size.width, TD_CELL_BORDER_WIDTH) ];
-    followerTopBorder.backgroundColor = [TDConstants commentTimeTextColor];
-    [self.followerButton addSubview:followerTopBorder];
-    self.followerButton.layer.borderWidth = 0.f;
-
     UIView *followerLeftBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0,
                                                                          TD_CELL_BORDER_WIDTH, self.followerButton.frame.size.height) ];
     followerLeftBorder.backgroundColor = [TDConstants darkBorderColor];
@@ -123,6 +117,7 @@ static CGFloat const kMinHeight = 230 + kBottomMargin;
 
     CGRect borderFrame = self.buttonsTopBorder.frame;
     borderFrame.origin.y = yStatButtonPosition;
+    borderFrame.size.height = (1.0 / [[UIScreen mainScreen] scale]);
     self.buttonsTopBorder.frame = borderFrame;
 
     CGRect newPostButtonFrame = self.postButton.frame;
