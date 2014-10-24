@@ -29,7 +29,7 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         self.contactList = [[NSMutableArray alloc] init];
-        self.headerLabels = [[NSMutableArray alloc] initWithCapacity:3];
+        self.headerLabels = [[NSMutableDictionary alloc] initWithCapacity:3];
     }
     return self;
 }
@@ -71,6 +71,8 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
     _tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(hideKeyboard)];
     _tapGesture.enabled = NO;
     [self.view addGestureRecognizer:_tapGesture];
+    
+    self.tableView.scrollEnabled = NO;
 
 }
 
@@ -90,7 +92,6 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
 }
 
 - (IBAction)sendButtonHit:(id)sender {
-    debug NSLog(@"send invitation to users");
     // Get the name of the sender
     NSString *senderName = [self getSenderName];
     if (senderName.length == 0) {
@@ -127,7 +128,6 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
                     }
                 }
                 if (!newList.count) {
-                    debug NSLog(@"successfully send to %@", contacts);
                     [self hideActivity];
                     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
                     [[TDAppDelegate appDelegate] showToastWithText:@"Invites sent successfully!" type:kToastType_InviteSent payload:nil delegate:nil];
@@ -213,6 +213,7 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
 }
 
 - (void) createHeaderLabels:(NSInteger)section {
+    NSString *sectionStr = [NSString stringWithFormat:@"%ld", (long)section ];
     switch (section) {
         case 0: //Top header label
         {
@@ -230,12 +231,7 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
             frame.origin.x = SCREEN_WIDTH/2 - topLabel.frame.size.width/2;
             topLabel.frame = frame;
             
-            if ([self.headerLabels count] == 0) {
-                [self.headerLabels insertObject:topLabel atIndex:section];
-            } else {
-                [self.headerLabels replaceObjectAtIndex:section withObject:topLabel];
-            }
-
+            [self.headerLabels setObject:topLabel forKey:sectionStr];
         }
         break;
         case 1: //Suggestion label
@@ -248,16 +244,15 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
             [topLabel setAttributedText:attString];
             [topLabel setNumberOfLines:0];
             [topLabel sizeToFit];
-            
-            if([self.headerLabels count] == 1) {
-                [self.headerLabels insertObject:topLabel atIndex:section];
-            }
+
+            [self.headerLabels setObject:topLabel forKey:sectionStr];
         }
         break;
         case 2: //Tap Send label
         {
-            if ([self.headerLabels count] ==2) {
-                UILabel *topLabel = [self.headerLabels objectAtIndex:section-1];
+            NSString *topLabelKey=[ NSString stringWithFormat:@"%d", section- 1 ];
+            UILabel *topLabel = [self.headerLabels valueForKey:topLabelKey];
+                //UILabel *topLabel = [self.headerLabels objectAtIndex:section-1];
                 
                 UILabel *bottomLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, topLabel.frame.origin.y + topLabel.frame.size.height + MIDDLE_MARGIN_HEADER2, SCREEN_WIDTH, 100)];
                 CGFloat lineHeight = 17.0;
@@ -273,10 +268,7 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
                 frame.origin.x = SCREEN_WIDTH/2 - bottomLabel.frame.size.width/2;
                 bottomLabel.frame = frame;
 
-                if([self.headerLabels count] == 2) {
-                    [self.headerLabels insertObject:bottomLabel atIndex:section];
-                }
-            }
+            [self.headerLabels setObject:bottomLabel forKey:sectionStr];
         }
         break;
         default: break;
@@ -284,10 +276,13 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
 }
 #pragma mark - TableView Delegates
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    NSString *newValue = [NSString stringWithFormat:@"%d", section ];
+
     switch (section) {
         case 0:
         {
-            UILabel *topLabel = [self.headerLabels objectAtIndex:section];
+            UILabel *topLabel = [self.headerLabels valueForKey:newValue];
+            
             UIView *headerView =[[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, TOP_BOTTOM_HEADER1_MARGIN + topLabel.frame.size.height + TOP_BOTTOM_HEADER1_MARGIN)];
             [headerView addSubview:topLabel];
             
@@ -296,8 +291,9 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
         break;
     
         case 1: {
-            UILabel *topLabel = [self.headerLabels objectAtIndex:section];
-            UILabel *bottomLabel = [self.headerLabels objectAtIndex:section+1];
+            UILabel *topLabel = [self.headerLabels valueForKey:newValue];
+            NSString *newValue2 = [NSString stringWithFormat:@"%d", section+1];
+            UILabel *bottomLabel = [self.headerLabels valueForKey:newValue2];
             UIView *headerView =[[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, TOP_MARGIN_HEADER2 + topLabel.frame.size.height + MIDDLE_MARGIN_HEADER2 + bottomLabel.frame.size.height)];
             [headerView addSubview:topLabel];
             [headerView addSubview:bottomLabel];
@@ -391,11 +387,13 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    NSString *newValue = [NSString stringWithFormat:@"%ld", (long)section];
+
     switch (section) {
         case 0:
         {
             [self createHeaderLabels:section];
-            UILabel *label = [self.headerLabels objectAtIndex:section];
+            UILabel *label = [self.headerLabels valueForKey:newValue];
             return TOP_BOTTOM_HEADER1_MARGIN + label.frame.size.height + TOP_BOTTOM_HEADER1_MARGIN;
         }
         break;
@@ -403,14 +401,13 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
         {
             [self createHeaderLabels:section];
             [self createHeaderLabels:section+1];
-            if ([self.headerLabels count] == 3) {
-                UILabel *topLabel = [self.headerLabels objectAtIndex:section];
-                UILabel *bottomLabel = [self.headerLabels objectAtIndex:section+1];
-                 return TOP_MARGIN_HEADER2 + topLabel.frame.size.height + MIDDLE_MARGIN_HEADER2 + bottomLabel.frame.size.height;
-            } else {
-                return 0.;
-            }
-           
+            UILabel *topLabel = [self.headerLabels valueForKey:newValue];
+
+            NSString *newValue2 = [NSString stringWithFormat:@"%d", section+1];
+
+            UILabel *bottomLabel = [self.headerLabels valueForKey:newValue2];
+            return TOP_MARGIN_HEADER2 + topLabel.frame.size.height + MIDDLE_MARGIN_HEADER2 + bottomLabel.frame.size.height;
+                            
         }
         break;
         default:

@@ -21,7 +21,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet TDActivityIndicator *activityIndicator;
 @property (nonatomic) NSString* sender;
-@property (nonatomic) NSMutableArray *headerLabels;
+@property (nonatomic) NSMutableDictionary *headerLabels;
 @property (nonatomic) UITapGestureRecognizer *tapGesture;
 
 - (IBAction)backButtonHit:(id)sender;
