@@ -373,7 +373,8 @@ static int const kToolbarHeight = 64;
             return self.minLikeheight;    // at least one row to show the like button
         } else {
             CGFloat textHeight = [TDDetailsLikesCell heightOfLikersLabel:self.post.likers];
-            textHeight = (textHeight < self.minLikeheight ? self.minLikeheight : textHeight + 25);
+            // 1 row ~= 19, 2 rows ~= 38 (38 < 49 (min height) so it wouldn't add the proper amount of padding.
+            textHeight = (textHeight < 25 ? self.minLikeheight : textHeight + 25);
             return textHeight;
         }
     }
