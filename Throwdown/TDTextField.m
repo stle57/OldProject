@@ -10,6 +10,7 @@
 #import "TDAppDelegate.h"
 #import "NBPhoneNumber.h"
 #import "NBPhoneNumberUtil.h"
+#import "TDConstants.h"
 
 @implementation TDTextField
 

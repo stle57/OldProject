@@ -7,11 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TDPost.h"
-#import "TDConstants.h"
 #import "TDToastView.h"
-#import "iRate.h"
-#import "TDToastViewController.h"
 #import <FacebookSDK/FacebookSDK.h>
 
 @interface TDAppDelegate : UIResponder <UIApplicationDelegate>

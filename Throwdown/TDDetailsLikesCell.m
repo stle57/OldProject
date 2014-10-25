@@ -14,6 +14,7 @@
 #define USERNAME_FONT [TDConstants fontSemiBoldSized:15];
 static NSString *const kUserIdAttribute = @"user_id";
 static CGFloat const kLikersLineMultiple = 1.05;
+static CGFloat const kWidthNeededForOtherViews = 100; // this is view width - label width
 
 @interface TDDetailsLikesCell () <TTTAttributedLabelDelegate>
 @end
@@ -76,30 +77,24 @@ static CGFloat const kLikersLineMultiple = 1.05;
         return;
     }
 
-    self.likeImageView.hidden = YES;
-    if ([self.likers count] > 0) {
-        self.likeImageView.hidden = NO;
-    }
+    self.likeImageView.hidden = ([self.likers count] == 0);
+
+    CGRect frame = self.likersNamesLabel.frame;
+    frame.size.height = [TDDetailsLikesCell heightOfLikersLabel:likers];
+    self.likersNamesLabel.frame = frame;
 
     // Add likers label
     NSString *text = [[self.likers valueForKeyPath:@"username"] componentsJoinedByString:@", "];
     [self.likersNamesLabel setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
     [TDViewControllerHelper linkUsernamesInLabel:self.likersNamesLabel users:self.likers pattern:@"(\\b\\w+\\b)"];
     self.likersNamesLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:self.likersNamesLabel.attributedText withMultiple:kLikersLineMultiple];
-
-    // manually fix the height b/c we force the width (AppDelegate method doesn't support it)
-    NSInteger height = [TDDetailsLikesCell heightOfLikersLabel:likers];
-    self.likersNamesLabel.frame = CGRectMake(self.likersNamesLabel.frame.origin.x,
-                                             self.likersNamesLabel.frame.origin.y,
-                                             self.likersNamesLabel.frame.size.width,
-                                             height);
 }
 
 + (CGFloat)heightOfLikersLabel:(NSArray *)likers {
-    NSString *text = [[likers valueForKeyPath:@"username"] componentsJoinedByString:@", "];
-    TTTAttributedLabel *label = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH - 75, MAXFLOAT)];
+    TTTAttributedLabel *label = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH - kWidthNeededForOtherViews, MAXFLOAT)];
     label.numberOfLines = 0;
     label.font = USERNAME_FONT;
+    NSString *text = [[likers valueForKeyPath:@"username"] componentsJoinedByString:@", "];
     [label setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
     label.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:label.attributedText withMultiple:kLikersLineMultiple];
     [label sizeToFit];

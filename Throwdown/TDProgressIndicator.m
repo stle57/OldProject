@@ -66,11 +66,7 @@
             self.progressBarView.layer.masksToBounds = YES;
             [self addSubview:self.progressBarView];
         } else {
-            self.activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-            self.activity.frame = CGRectMake(SCREEN_WIDTH - 34, 12., 24., 24.);
-            self.activity.tintColor = [TDConstants darkTextColor];
-            [self addSubview:self.activity];
-            [self.activity startAnimating];
+            [self setupSpinner];
         }
 
         if ([self.item respondsToSelector:@selector(progressTitle)]) {
@@ -94,9 +90,17 @@
 #pragma mark - TDUploadProgressDelegate
 
 - (void)uploadDidUpdate:(CGFloat)progress {
-    CGRect frame = self.progressBarView.frame;
-    frame.size.width = 10.0 + ((SCREEN_WIDTH - 130) * progress);
-    self.progressBarView.frame = frame;
+    if (progress == 1.0) {
+        self.progressBarView.hidden = YES;
+        self.progressBackgroundView.hidden = YES;
+        [self setupSpinner];
+        [self setupLabel];
+        self.titleLabel.text = @"Posting";
+    } else {
+        CGRect frame = self.progressBarView.frame;
+        frame.size.width = 10.0 + ((SCREEN_WIDTH - 130) * progress);
+        self.progressBarView.frame = frame;
+    }
 }
 
 - (void)uploadComplete {
@@ -105,6 +109,16 @@
     self.delegate = nil;
     if (self.activity) {
         [self.activity stopAnimating];
+    }
+}
+
+- (void)setupSpinner {
+    if (!self.activity) {
+        self.activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        self.activity.frame = CGRectMake(SCREEN_WIDTH - 34, 12., 24., 24.);
+        self.activity.tintColor = [TDConstants darkTextColor];
+        [self addSubview:self.activity];
+        [self.activity startAnimating];
     }
 }
 
@@ -166,11 +180,16 @@
     self.retryButton.hidden = YES;
 
     if (self.progressBarView) {
-        self.progressBackgroundView.hidden = NO;
-        self.progressBarView.hidden = NO;
-        CGRect frame = self.progressBarView.frame;
-        frame.size.width = 10.0 + ((SCREEN_WIDTH - 130) * [self.item totalProgress]);
-        self.progressBarView.frame = frame;
+        if ([self.item totalProgress] == 1.0) {
+            self.titleLabel.text = @"Posting";
+            self.titleLabel.hidden = NO;
+        } else {
+            self.progressBackgroundView.hidden = NO;
+            self.progressBarView.hidden = NO;
+            CGRect frame = self.progressBarView.frame;
+            frame.size.width = 10.0 + ((SCREEN_WIDTH - 130) * [self.item totalProgress]);
+            self.progressBarView.frame = frame;
+        }
     }
 
     [self.item uploadRetry];

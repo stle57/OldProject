@@ -124,7 +124,7 @@ static NSString *const kTracksKey = @"tracks";
         self.commentLabel = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(kMargin, kHeightOfProfileRow, width - (kMargin * 2), 0)];
         self.commentLabel.enabledTextCheckingTypes = NSTextCheckingTypeLink;
         self.commentLabel.textColor = [TDConstants commentTextColor];
-        self.commentLabel.font = [TDConstants fontRegularSized:17];
+        self.commentLabel.font = POST_COMMENT_FONT;
         self.commentLabel.delegate = self;
         self.commentLabel.hidden = YES;
         self.commentLabel.numberOfLines = 0;
@@ -205,13 +205,13 @@ static NSString *const kTracksKey = @"tracks";
 
     self.createdLabel.labelDate = post.createdAt;
     self.createdLabel.text = [post.createdAt timeAgo];
-    
+
     if (post.comment) {
         [self.commentLabel setText:post.comment afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
         [TDViewControllerHelper linkUsernamesInLabel:self.commentLabel users:post.mentions];
         self.commentLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:self.commentLabel.attributedText];
 
-        CGFloat commentHeight = [TDViewControllerHelper heightForText:post.comment withMentions:post.mentions withFont:[TDConstants fontRegularSized:16] inWidth:width - (kMargin * 2)];
+        CGFloat commentHeight = [TDViewControllerHelper heightForText:post.comment withMentions:post.mentions withFont:POST_COMMENT_FONT inWidth:width - (kMargin * 2)];
         commentHeight = commentHeight == 0 ? 0 : commentHeight + kCommentBottomPadding;
         CGRect commentFrame = self.commentLabel.frame;
         commentFrame.origin.y = kHeightOfProfileRow + (self.post.kind == TDPostKindText ? 0 : self.mediaSize + kMarginBottomOfMedia);;
@@ -524,6 +524,8 @@ static NSString *const kTracksKey = @"tracks";
     [self updateControlImage:ControlStateLoading];
     [self startLoadingTimeout];
 
+    self.player = nil;
+    self.playerItem = nil;
     self.videoAsset = [[AVURLAsset alloc] initWithURL:videoLocation options:nil];
     [self.videoAsset loadValuesAsynchronouslyForKeys:@[kTracksKey] completionHandler:^{
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -531,18 +533,19 @@ static NSString *const kTracksKey = @"tracks";
             AVKeyValueStatus status = [self.videoAsset statusOfValueForKey:kTracksKey error:&error];
 
             if (status == AVKeyValueStatusLoaded) {
+
                 self.playerItem = [[ObservingPlayerItem alloc] initWithAsset:self.videoAsset];
                 self.playerItem.delegate = self;
+
+                self.player = [[AVPlayer alloc] initWithPlayerItem:self.playerItem];
+                [self.player setActionAtItemEnd:AVPlayerActionAtItemEndPause];
 
                 self.playerLayer = [AVPlayerLayer layer];
                 [self.playerLayer setFrame:CGRectMake(0, 0, self.mediaSize, self.mediaSize)];
                 [self.playerLayer setBackgroundColor:[UIColor clearColor].CGColor];
                 [self.playerLayer setVideoGravity:AVLayerVideoGravityResize];
-                [self.videoHolderView.layer addSublayer:self.playerLayer];
-
-                self.player = [[AVPlayer alloc] initWithPlayerItem:self.playerItem];
-                [self.player setActionAtItemEnd:AVPlayerActionAtItemEndPause];
                 [self.playerLayer setPlayer:self.player];
+                [self.videoHolderView.layer addSublayer:self.playerLayer];
 
                 // Not sure why we have to specify this specifically, since this value is defined as default
                 [[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategorySoloAmbient error: nil];
@@ -640,7 +643,7 @@ static NSString *const kTracksKey = @"tracks";
 
 + (CGFloat)heightForPost:(TDPost *)post {
     CGFloat width = [UIScreen mainScreen].bounds.size.width;
-    CGFloat commentHeight = [TDViewControllerHelper heightForText:post.comment withMentions:post.mentions withFont:[TDConstants fontRegularSized:16] inWidth:width - (kMargin * 2)];
+    CGFloat commentHeight = [TDViewControllerHelper heightForText:post.comment withMentions:post.mentions withFont:POST_COMMENT_FONT inWidth:width - (kMargin * 2)];
     commentHeight = commentHeight == 0 ? 0 : commentHeight + kCommentBottomPadding +1.; // Add 1. for more padding to show commentBottomLine
     CGFloat mediaSize = (width / kWidthOfMedia) * kWidthOfMedia;
 
@@ -667,7 +670,6 @@ static NSString *const kTracksKey = @"tracks";
     // Only play once it's been loaded
     // ready to play is called every time the player is reset
     if (self.state == PlayerStateLoading) {
-        [self updateControlImage:ControlStateNone];
         [self playVideo];
     }
 }

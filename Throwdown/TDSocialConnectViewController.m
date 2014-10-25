@@ -70,12 +70,9 @@
     self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
     [self.view addSubview:self.tableView];
 
-    self.activityIndicator = [[TDActivityIndicator alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    self.activityIndicator.center = [TDViewControllerHelper centerPosition];
-    CGPoint centerFrame = self.activityIndicator.center;
-    centerFrame.y = self.activityIndicator.center.y - self.activityIndicator.backgroundView.frame.size.height/2;
-    self.activityIndicator.center = centerFrame;
-    
+    CGRect frame = [[UIScreen mainScreen] bounds];
+    frame.origin.y = -(navigationBar.frame.size.height + [UIApplication sharedApplication].statusBarFrame.size.height);
+    self.activityIndicator = [[TDActivityIndicator alloc] initWithFrame:frame];
     [self.view addSubview:self.activityIndicator];
 }
 
@@ -213,7 +210,7 @@
     } else if (![TWTAPIManager isLocalTwitterAccountAvailable]) {
         // TODO: open up twitter auth in webview
         [[TDAnalytics sharedInstance] logEvent:@"twitter_no_users"];
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"You have to add an account to the iOS Settings app first." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"You have to add an account to the iOS Settings app first." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
     } else {
         if (!self.accountStore) {
@@ -240,7 +237,7 @@
                  [[TDAnalytics sharedInstance] logEvent:@"twitter_denied"];
                  dispatch_async(dispatch_get_main_queue(), ^{
                      [self.activityIndicator stopSpinner];
-                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
                                                                      message:@"Please enable Twitter for Throwdown in iOS Settings > Privacy > Twitter"
                                                                     delegate:nil
                                                            cancelButtonTitle:@"OK"
@@ -283,6 +280,7 @@
                 [self.activityIndicator stopSpinner];
                 [self showUnknownError];
             });
+            [[TDAnalytics sharedInstance] logEvent:@"error" withInfo:[error localizedDescription] source:@"TDSocialConnectViewController#performReverseAuthForAccount"];
             NSLog(@"Reverse Auth process failed. Error returned was: %@\n", [error localizedDescription]);
         }
     }];

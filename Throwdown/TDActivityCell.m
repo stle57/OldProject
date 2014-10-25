@@ -8,6 +8,7 @@
 
 #import "TDActivityCell.h"
 #import "TDAppDelegate.h"
+#import "TDConstants.h"
 
 @implementation TDActivityCell
 

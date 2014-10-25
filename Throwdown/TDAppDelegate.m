@@ -8,15 +8,13 @@
 
 #import "TDAppDelegate.h"
 #import "TDUserAPI.h"
-#import "TDPostAPI.h"
 #import "TestFlight.h"
 #import "Flurry.h"
 #import <Crashlytics/Crashlytics.h>
 #import "TDAPIClient.h"
-#import "TDHomeViewController.h"
 #import "TDAnalytics.h"
 #import "TDURLHelper.h"
-#import "TDAddressBookAPI.h"
+#import "TDHomeViewController.h"
 
 // Used for class reference:
 #import "TDRecordVideoViewController.h"
@@ -240,14 +238,15 @@
 
     BOOL wasHandled = NO;
     if ([[TDCurrentUser sharedInstance] isLoggedIn]) {
-        UINavigationController *navigationController = (UINavigationController *)_window.rootViewController;
-        TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
-        if (appLinks) {
-            wasHandled = [homeViewController openURL:(NSURL *)[appLinks objectForKey:AppLinkTargetKeyName]];
-        }
+        TDHomeViewController *homeViewController = [TDHomeViewController getHomeViewController];
+        if (homeViewController) {
+            if (appLinks) {
+                wasHandled = [homeViewController openURL:(NSURL *)[appLinks objectForKey:AppLinkTargetKeyName]];
+            }
 
-        if (!wasHandled) {
-            wasHandled = [homeViewController openURL:url];
+            if (!wasHandled) {
+                wasHandled = [homeViewController openURL:url];
+            }
         }
     }
 
@@ -368,8 +367,8 @@
 
 #pragma mark - app delegate
 
-+ (TDAppDelegate*)appDelegate {
-	return (TDAppDelegate*)[[UIApplication sharedApplication] delegate];
++ (TDAppDelegate *)appDelegate {
+	return (TDAppDelegate *)[[UIApplication sharedApplication] delegate];
 }
 
 // TODO: These should be moved to helper class

@@ -110,12 +110,12 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
     if (self.filename) {
         [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUploadComments
                                                             object:nil
-                                                          userInfo:@{ @"filename":self.filename,
-                                                                      @"comment":self.comment,
-                                                                      @"pr": [NSNumber numberWithBool:self.isPR],
+                                                          userInfo:@{ @"filename":      self.filename,
+                                                                      @"comment":       self.comment,
+                                                                      @"pr":            [NSNumber numberWithBool:self.isPR],
                                                                       @"userGenerated": [NSNumber numberWithBool:self.userGenerated],
-                                                                      @"shareOptions": shareOptions,
-                                                                      @"private": [NSNumber numberWithBool:(self.privacy == TDPostPrivacyPrivate)]
+                                                                      @"shareOptions":  shareOptions,
+                                                                      @"private":       [NSNumber numberWithBool:(self.privacy == TDPostPrivacyPrivate)]
                                                                       }];
     } else {
         [[TDPostAPI sharedInstance] addTextPost:self.comment isPR:self.isPR isPrivate:(self.privacy == TDPostPrivacyPrivate) shareOptions:shareOptions];
@@ -385,7 +385,7 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
     if (![TWTAPIManager isLocalTwitterAccountAvailable]) {
         // TODO: open up twitter auth in webview
         [[TDAnalytics sharedInstance] logEvent:@"twitter_no_users"];
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"You have to add an account to the iOS Settings app first." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"" message:@"You have to add an account to the iOS Settings app first." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
         [alert show];
     } else {
         if (!self.accountStore) {
@@ -412,7 +412,7 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
                 [[TDAnalytics sharedInstance] logEvent:@"twitter_denied"];
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [self.activityIndicator stopSpinner];
-                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
                                                                     message:@"Please enable Twitter for Throwdown in iOS Settings > Privacy > Twitter"
                                                                    delegate:nil
                                                           cancelButtonTitle:@"OK"
@@ -456,6 +456,7 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
                 [self.activityIndicator stopSpinner];
                 [self showUnknownError];
             });
+            [[TDAnalytics sharedInstance] logEvent:@"error" withInfo:[error localizedDescription] source:@"TDSharePostViewController#performReverseAuthForAccount"];
             NSLog(@"Reverse Auth process failed. Error returned was: %@\n", [error localizedDescription]);
         }
     }];

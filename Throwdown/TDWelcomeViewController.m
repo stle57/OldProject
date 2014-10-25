@@ -7,6 +7,7 @@
 //
 
 #import "TDWelcomeViewController.h"
+#import "TDConstants.h"
 #import "TDAppDelegate.h"
 #import "TDAnalytics.h"
 #import <QuartzCore/QuartzCore.h>
@@ -32,6 +33,12 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *backgroundImageWidthConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *backgroundImageHeightConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *slide3TitleConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *previewOneTop;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *previewTwoTop;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *previewOneHeight;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *previewTwoHeight;
+@property (weak, nonatomic) IBOutlet UIImageView *previewOne;
+@property (weak, nonatomic) IBOutlet UIImageView *previewTwo;
 
 @property (nonatomic) int pageWidth;
 @property (nonatomic) int currentPage;
@@ -75,6 +82,19 @@
     // moves all the slide 3 titles up if it's a small screen
     if (height == 480) {
         self.slide3TitleConstraint.constant = 20;
+        self.previewOneHeight.constant = 300;
+        self.previewTwoHeight.constant = 300;
+        self.previewOneTop.constant = -10;
+        self.previewTwoTop.constant = -10;
+        self.previewOne.clipsToBounds = YES;
+        self.previewTwo.clipsToBounds = YES;
+    } else if (height == 568) {
+        self.previewOneTop.constant = 0;
+        self.previewTwoTop.constant = 0;
+    } else if (height > 600) {
+        CGFloat offset = (height / 2) - (self.previewOneHeight.constant + 150) / 2;
+        self.previewOneTop.constant = offset;
+        self.previewTwoTop.constant = offset;
     }
 
     self.backgroundImageConstraint.constant = -100 - (-self.pageWidth) / 4.0;

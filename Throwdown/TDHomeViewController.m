@@ -43,12 +43,38 @@
 @property (nonatomic) TDHomeHeaderView *headerView;
 @property (nonatomic, retain) UIDynamicAnimator *animator;
 @property (nonatomic) CGFloat previousScrollViewYOffset;
+@property (nonatomic) CGPoint lastScrollOffset;
+@property (nonatomic) CGPoint scrollOffsetFollowing;
 
 @end
 
 @implementation TDHomeViewController
 
+// Returns nil if TDHomeViewController is not the topmost controller (excl. navigation controller)
++ (TDHomeViewController *)getHomeViewController {
+    id rootController = [[[TDAppDelegate appDelegate] window] rootViewController];
+    if (rootController && [rootController isKindOfClass:[UINavigationController class]]) {
+        UINavigationController *navigationController = rootController;
+        if ([navigationController.viewControllers count] > 0) {
+            UIViewController *controller = (UIViewController *)[navigationController.viewControllers objectAtIndex:0];
+            if ([controller isKindOfClass:[TDHomeViewController class]]) {
+                return (TDHomeViewController*)controller;
+            }
+        }
+    }
+    return nil;
+}
+
+
 - (void)viewDidLoad {
+
+    // setup the feed selection so we don't
+    [self.feedSelectionControl setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontSemiBoldSized:14] } forState:UIControlStateNormal];
+    [self.feedSelectionControl setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontSemiBoldSized:14] } forState:UIControlStateHighlighted];
+    [self.feedSelectionControl setContentPositionAdjustment:UIOffsetMake(0, 1) forSegmentType:UISegmentedControlSegmentAny barMetrics:UIBarMetricsDefault];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [self.feedSelectionControl setSelectedSegmentIndex:[defaults integerForKey:@"currentHomeFeedTabIndex"]];
+
     [super viewDidLoad];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(uploadStarted:) name:TDPostUploadStarted object:nil];
@@ -67,13 +93,6 @@
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.translucent = NO;
-    
-    [self.feedSelectionControl setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontSemiBoldSized:14] } forState:UIControlStateNormal];
-    [self.feedSelectionControl setTitleTextAttributes:@{ NSFontAttributeName:[TDConstants fontSemiBoldSized:14] } forState:UIControlStateHighlighted];
-    [self.feedSelectionControl setContentPositionAdjustment:UIOffsetMake(0, 1) forSegmentType:UISegmentedControlSegmentAny barMetrics:UIBarMetricsDefault];
-
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [self.feedSelectionControl setSelectedSegmentIndex:[defaults integerForKey:@"currentHomeFeedTabIndex"]];
 
     self.headerView = [[TDHomeHeaderView alloc] initWithTableView:self.tableView];
     self.previousScrollViewYOffset = 0;
@@ -83,14 +102,13 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     if (self.scrollToTop) {
-        [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
+        [self scrollTableToTop];
         self.scrollToTop = NO;
     }
-    [self animateNavBarTo:20];
+    [self showNavBar];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -103,7 +121,7 @@
 
     if (self.didUpload) {
         self.didUpload = NO;
-        [[TDCurrentUser sharedInstance] registerForPushNotifications:@"Thanks for making a post! We'd\nlike to notify you when someone\nlikes or comments on it. But, we'd\nlike to ask you first. On the next\nscreen, please tap \"OK\" to give\nus permission."];
+        [self askForPushNotification];
     }
 }
 
@@ -116,6 +134,10 @@
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
+}
+
+- (void)askForPushNotification {
+    [[TDCurrentUser sharedInstance] registerForPushNotifications:@"Thanks for making a post! We'd\nlike to notify you when someone\nlikes or comments on it. But, we'd\nlike to ask you first. On the next\nscreen, please tap \"OK\" to give\nus permission."];
 }
 
 #pragma mark - Notices
@@ -158,12 +180,56 @@
 }
 
 - (void)reloadHome:(NSNotification *)notification {
-    [self fetchPostsRefresh];
+    [self fetchPosts];
 }
 
-- (void)fetchPostsRefresh {
+- (void)fetchPosts {
     [self stopBottomLoadingSpinner];
-    [[TDPostAPI sharedInstance] fetchPostsWithSuccess:^(NSDictionary *response) {
+    [self fetchPostsAtStart:nil completion:nil];
+}
+
+- (void)fetchPostsWithCompletion:(void (^)(void))completion {
+    [self stopBottomLoadingSpinner];
+    [self fetchPostsAtStart:nil completion:completion];
+}
+
+- (BOOL)fetchMorePostsAtBottom {
+    return [self fetchPostsAtStart:([self onAllFeed] ? self.nextStartAll : self.nextStartFollowing) completion:nil];
+}
+
+- (BOOL)fetchPostsAtStart:(NSNumber *)start completion:(void (^)(void))completion {
+    if (start != nil && ![self hasMorePosts]) {
+        return NO;
+    }
+    [[TDPostAPI sharedInstance] fetchPostsForFeed:([self onAllFeed] ? kFetchPostsForFeedAll : kFetchPostsForFeedFollowing) start:start success:^(NSDictionary *response) {
+        [self handlePostsResponse:response fromStart:(start == nil)];
+        if (completion) {
+            completion();
+        }
+    } error:^{
+        if (completion) {
+            completion();
+            [[TDAppDelegate appDelegate] showToastWithText:@"Upload complete but couldn't refresh feed" type:kToastType_Info payload:@{} delegate:nil];
+        } else {
+            [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastType_Warning payload:@{} delegate:nil];
+        }
+
+        if (start == nil) {
+            self.loaded = YES;
+            self.errorLoading = YES;
+        }
+
+        [self stopBottomLoadingSpinner]; // calls tableview reloaddata
+        [self endRefreshControl];
+    }];
+    return YES;
+}
+
+- (void)handlePostsResponse:(NSDictionary *)response fromStart:(BOOL)start {
+    self.loaded = YES;
+    self.errorLoading = NO;
+
+    if (start) {
         // Set notices (shows in both all and following on home feed)
         if ([response objectForKey:@"notices"]) {
             NSMutableArray *tmp = [[NSMutableArray alloc] init];
@@ -182,62 +248,20 @@
                                                                 object:self
                                                               userInfo:@{@"notificationCount": [response valueForKey:@"notification_count"]}];
         }
-
-        // do this last b/c it reloads the table
-        [self handleNextStarts:response];
-        [self handlePostsResponse:response fromStart:YES];
-
-    } error:^{
-        self.loaded = YES;
-        self.errorLoading = YES;
-        [self endRefreshControl];
-        [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastType_Warning payload:@{} delegate:nil];
-        [self.tableView reloadData];
-    }];
-}
-
-- (BOOL)fetchMorePostsAtBottom {
-    if (![self hasMorePosts]) {
-        return NO;
-    }
-    if ([self onAllFeed]) {
-        [[TDPostAPI sharedInstance] fetchPostsForAll:self.nextStartAll success:^(NSDictionary *response) {
-            // if the request was aborted by another action
-            if (showBottomSpinner) {
-                [self handleNextStarts:response];
-                [self handlePostsResponse:response fromStart:NO];
-            }
-        } error:^{
-            [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastType_Warning payload:@{} delegate:nil];
-            [self stopBottomLoadingSpinner];
-        }];
-    } else {
-        [[TDPostAPI sharedInstance] fetchPostsForFollowing:self.nextStartFollowing success:^(NSDictionary *response) {
-            // if the request was aborted by another action
-            if (showBottomSpinner) {
-                [self handleNextStarts:response];
-                [self handlePostsResponse:response fromStart:NO];
-            }
-        } error:^{
-            [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastType_Warning payload:@{} delegate:nil];
-            [self stopBottomLoadingSpinner];
-        }];
-    }
-    return YES;
-}
-
-- (void)handlePostsResponse:(NSDictionary *)response fromStart:(BOOL)start {
-    self.loaded = YES;
-    self.errorLoading = NO;
-
-    if (start) {
-        self.posts = nil;
-        self.postsFollowing = nil;
-        self.removingPosts = nil;
     }
 
     // All feed
     if ([response valueForKeyPath:@"posts"]) {
+        if (start) {
+            self.posts = nil;
+        }
+
+        if ([response valueForKey:@"next_start"] && [[[response valueForKey:@"next_start"] class] isSubclassOfClass:[NSNumber class]]) {
+            self.nextStartAll = [response valueForKey:@"next_start"];
+        } else {
+            self.nextStartAll = nil;
+        }
+
         NSMutableArray *newPosts;
         if (self.posts) {
             newPosts = [[NSMutableArray alloc] initWithArray:self.posts];
@@ -253,6 +277,16 @@
 
     // Following feed
     if ([response valueForKeyPath:@"following"]) {
+        if (start) {
+            self.postsFollowing = nil;
+        }
+
+        if ([response valueForKey:@"following_next_start"] && [[[response valueForKey:@"following_next_start"] class] isSubclassOfClass:[NSNumber class]]) {
+            self.nextStartFollowing = [response valueForKey:@"following_next_start"];
+        } else {
+            self.nextStartFollowing = nil;
+        }
+
         NSMutableArray *newPosts;
         if (self.postsFollowing) {
             newPosts = [[NSMutableArray alloc] initWithArray:self.postsFollowing];
@@ -269,19 +303,6 @@
     [self refreshPostsList];
 }
 
-- (void)handleNextStarts:(NSDictionary *)response {
-    if ([response valueForKey:@"next_start"] && [[[response valueForKey:@"next_start"] class] isSubclassOfClass:[NSNumber class]]) {
-        self.nextStartAll = [response valueForKey:@"next_start"];
-    } else {
-        self.nextStartAll = nil;
-    }
-    if ([response valueForKey:@"following_next_start"] && [[[response valueForKey:@"following_next_start"] class] isSubclassOfClass:[NSNumber class]]) {
-        self.nextStartFollowing = [response valueForKey:@"following_next_start"];
-    } else {
-        self.nextStartFollowing = nil;
-    }
-}
-
 - (BOOL)onAllFeed {
     return [self.feedSelectionControl selectedSegmentIndex] == 0;
 }
@@ -291,7 +312,7 @@
 }
 
 - (BOOL)hasMorePosts {
-    NSNumber *more = [self.feedSelectionControl selectedSegmentIndex] == 0 ? self.nextStartAll : self.nextStartFollowing;
+    NSNumber *more = [self onAllFeed] ? self.nextStartAll : self.nextStartFollowing;
     return more != nil;
 }
 
@@ -383,19 +404,24 @@
 
 #pragma mark - Refresh Control
 - (void)refreshControlUsed {
-    [self fetchPostsRefresh];
+    [self fetchPosts];
 }
 
 #pragma mark - video upload indicator
 
 - (void)uploadStarted:(NSNotification *)notification {
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (![[TDCurrentUser sharedInstance] isRegisteredForPush]) {
-            self.didUpload = YES;
-        }
 
         [self.headerView addUpload:notification.object];
-        self.scrollToTop = YES;
+
+        // Check if we were already presented before the notifcation came through
+        if ([[self.navigationController viewControllers] lastObject] == self) {
+            [self askForPushNotification];
+            [self scrollTableToTop];
+        } else {
+            self.didUpload = YES;
+            self.scrollToTop = YES;
+        }
     });
 }
 
@@ -453,7 +479,7 @@
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
-    [self animateNavBarTo:20];
+    [self showNavBar];
 
     if([segue isKindOfClass:[VideoButtonSegue class]]) {
         goneDownstream = YES;
@@ -523,7 +549,6 @@
     } else {
         self.badgeCountLabel.hidden = YES;
     }
-
 }
 
 #pragma mark - TDToastViewDelegate
@@ -556,7 +581,7 @@
 
         TDDetailViewController *vc = [[TDDetailViewController alloc] initWithNibName:@"TDDetailViewController" bundle:nil];
         vc.slug = modelId;
-        [self animateNavBarTo:20];
+        [self showNavBar];
         [self.navigationController pushViewController:vc animated:YES];
         return YES;
 
@@ -573,11 +598,11 @@
             navController.navigationBar.barStyle = UIBarStyleDefault;
             navController.navigationBar.translucent = YES;
 
-            [self animateNavBarTo:20];
+            [self showNavBar];
             [self.navigationController presentViewController:navController animated:YES completion:nil];
         } else {
             vc.profileType = kFeedProfileTypeOther;
-            [self animateNavBarTo:20];
+            [self showNavBar];
             [self.navigationController pushViewController:vc animated:YES];
 
         }
@@ -586,7 +611,7 @@
     return NO;
 }
 
-#pragma mark - Notifications and sub view
+#pragma mark - Navigation
 
 - (void)openPushNotification:(NSDictionary *)notification {
     [self unwindAllViewControllers];
@@ -620,7 +645,7 @@
     } else {
         vc.profileType = kFeedProfileTypeOther;
     }
-    [self animateNavBarTo:20];
+    [self showNavBar];
     [self.navigationController pushViewController:vc animated:YES];
 }
 
@@ -636,13 +661,24 @@
 }
 
 - (void)openDetailView:(NSNumber *)postId {
-    [self animateNavBarTo:20];
+    [self showNavBar];
     [super openDetailView:postId];
 }
 
 - (IBAction)feedSelectionControlChanged:(id)sender {
+    CGPoint scrollTo = self.lastScrollOffset;
+    self.lastScrollOffset = self.tableView.contentOffset;
+
+    // User switched tab and that tab is empty:
+    if (![self postsForThisScreen] || [[self postsForThisScreen] count] == 0) {
+        self.loaded = NO;
+        self.errorLoading = NO;
+        [self fetchPosts];
+    }
     [self reloadPosts];
-    [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
+    self.tableView.contentOffset = scrollTo;
+    [self showNavBar];
+
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setInteger:[self.feedSelectionControl selectedSegmentIndex] forKey:@"currentHomeFeedTabIndex"];
     [defaults synchronize];
@@ -654,11 +690,15 @@
     TDFindPeopleViewController *vc = [[TDFindPeopleViewController alloc] initWithNibName:@"TDFindPeopleViewController" bundle:nil ];
     vc.profileUser = [TDCurrentUser sharedInstance].currentUserObject;
 
-    [self animateNavBarTo:20];
+    [self showNavBar];
     [self.navigationController pushViewController:vc animated:YES];
 }
 
-#pragma mark - ScrollViewDelegate
+#pragma mark - ScrollViewDelegate (hiding nav bar when scrolling)
+
+- (void)scrollTableToTop {
+    [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
+}
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     [super scrollViewDidScroll:scrollView];
@@ -714,6 +754,10 @@
     }
 }
 
+- (void)showNavBar {
+    [self animateNavBarTo:20];
+}
+
 - (void)animateNavBarTo:(CGFloat)y {
     [UIView animateWithDuration:0.2 animations:^{
         CGRect frame = self.navigationController.navigationBar.frame;
@@ -746,7 +790,7 @@
 }
 
 - (void)willEnterForegroundCallback:(NSNotification *)notification {
-    [self animateNavBarTo:20];
+    [self showNavBar];
 }
 
 @end

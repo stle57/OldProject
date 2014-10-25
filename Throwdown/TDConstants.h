@@ -89,7 +89,6 @@ static NSString *const TDNotificationNewCommentPostInfo = @"TDNotificationNewCom
 static NSString *const TDNotificationNewCommentFailed = @"TDNotificationNewCommentFailed";
 static NSString *const TDNotificationPauseTapGesture = @"TDNotificationPauseTapGesture";
 static NSString *const TDNotificationResumeTapGesture = @"TDNotificationResumeTapGesture";
-static NSString *const TDRefreshPostsNotification = @"TDRefreshPostsNotification";
 static NSString *const TDUpdateWithUserChangeNotification = @"TDUpdateWithUserChangeNotification";
 static NSString *const TDUpdateFollowingCount = @"TDUpdateFollowingCount";
 static NSString *const TDUpdateFollowerCount = @"TDUpdateFollowerCount";
@@ -136,6 +135,7 @@ static NSInteger const kFollowingButtonTag = 20003;
 #define COMMENT_MESSAGE_FONT             [TDConstants fontRegularSized:COMMENT_MESSAGE_FONT_SIZE]
 #define BIO_FONT                         [TDConstants fontRegularSized:16.0]
 #define TIME_FONT                        [TDConstants fontLightSized:14.0]
+#define POST_COMMENT_FONT                [TDConstants fontRegularSized:17]
 #define kCommentDefaultText              @"Write a comment..."
 #define START_MAIN_SPINNER_NOTIFICATION  @"TDMainSpinnerStart"
 #define STOP_MAIN_SPINNER_NOTIFICATION   @"TDMainSpinnerStop"

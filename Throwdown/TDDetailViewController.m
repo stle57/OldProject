@@ -130,7 +130,6 @@ static int const kToolbarHeight = 64;
 
     self.loaded = NO;
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadPosts:) name:TDRefreshPostsNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePost:) name:TDNotificationUpdatePost object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newCommentFailed:) name:TDNotificationNewCommentFailed object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
@@ -269,10 +268,6 @@ static int const kToolbarHeight = 64;
 
 #pragma mark - Notifications
 
-- (void)reloadPosts:(NSNotification*)notification {
-    [self reloadPosts];
-}
-
 - (void)reloadPosts {
     if (!self.liking) {
         [[TDPostAPI sharedInstance] getFullPostInfoForPost:[self.postId stringValue] success:^(NSDictionary *response) {
@@ -378,7 +373,8 @@ static int const kToolbarHeight = 64;
             return self.minLikeheight;    // at least one row to show the like button
         } else {
             CGFloat textHeight = [TDDetailsLikesCell heightOfLikersLabel:self.post.likers];
-            textHeight = (textHeight < self.minLikeheight ? self.minLikeheight : textHeight + 25);
+            // 1 row ~= 19, 2 rows ~= 38 (38 < 49 (min height) so it wouldn't add the proper amount of padding.
+            textHeight = (textHeight < 25 ? self.minLikeheight : textHeight + 25);
             return textHeight;
         }
     }

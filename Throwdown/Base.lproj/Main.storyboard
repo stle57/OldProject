@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6250" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="DPQ-qf-8sb">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6250" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="DPQ-qf-8sb">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
@@ -23,7 +23,6 @@
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yCY-OC-yOW" userLabel="Black Cover View">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tgj-aS-c8v" userLabel="Record controls">
@@ -123,9 +122,12 @@
                                     <constraint firstAttribute="height" constant="44" id="aHK-0p-KaM"/>
                                 </constraints>
                             </view>
-                            <view userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="X0a-I3-x3Z" userLabel="Progress Indicator">
-                                <rect key="frame" x="-320" y="0.0" width="320" height="44"/>
-                                <color key="backgroundColor" red="0.92549019610000005" green="0.2156862745" blue="0.14901960780000001" alpha="0.5" colorSpace="calibratedRGB"/>
+                            <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="X0a-I3-x3Z" userLabel="Progress Indicator">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                                <color key="backgroundColor" red="0.92941176469999998" green="0.29411764709999999" blue="0.24313725489999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="fhk-T4-s9z"/>
+                                </constraints>
                             </view>
                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="p2X-Qr-6Vj" userLabel="Flash Button">
                                 <rect key="frame" x="250" y="0.0" width="100" height="44"/>
@@ -191,6 +193,7 @@
                             <constraint firstItem="VYp-zZ-cCO" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="8gu-XI-JJn"/>
                             <constraint firstAttribute="trailingMargin" secondItem="cZv-bv-JN9" secondAttribute="trailing" constant="-16" id="IF0-1j-ood"/>
                             <constraint firstItem="B9k-Nz-lX4" firstAttribute="top" secondItem="VYp-zZ-cCO" secondAttribute="bottom" id="J7Q-Gd-jvR"/>
+                            <constraint firstItem="X0a-I3-x3Z" firstAttribute="top" secondItem="mxB-VH-Wbd" secondAttribute="bottom" id="JY8-uM-2s1"/>
                             <constraint firstItem="VYp-zZ-cCO" firstAttribute="top" secondItem="mxB-VH-Wbd" secondAttribute="bottom" id="LVe-cS-mlM"/>
                             <constraint firstAttribute="centerY" secondItem="tgj-aS-c8v" secondAttribute="centerY" constant="-250" id="LvN-29-LYG"/>
                             <constraint firstItem="6yY-RR-kvO" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="Nj6-3w-fZU"/>
@@ -199,7 +202,9 @@
                             <constraint firstAttribute="width" secondItem="tgj-aS-c8v" secondAttribute="width" id="f0U-mr-Y8m"/>
                             <constraint firstItem="p2X-Qr-6Vj" firstAttribute="top" secondItem="mxB-VH-Wbd" secondAttribute="bottom" id="fWr-5n-YSb"/>
                             <constraint firstAttribute="trailing" secondItem="93b-E6-3u5" secondAttribute="trailing" id="fvw-So-PLx"/>
+                            <constraint firstItem="X0a-I3-x3Z" firstAttribute="width" secondItem="kh9-bI-dsS" secondAttribute="width" id="geW-Ct-LxS"/>
                             <constraint firstItem="cZv-bv-JN9" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="j6h-m1-ngN"/>
+                            <constraint firstItem="X0a-I3-x3Z" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="k4s-7w-yMn"/>
                             <constraint firstItem="Emc-Hw-KVu" firstAttribute="top" secondItem="mxB-VH-Wbd" secondAttribute="bottom" id="s3v-pc-CY9"/>
                             <constraint firstItem="6yY-RR-kvO" firstAttribute="top" secondItem="mxB-VH-Wbd" secondAttribute="bottom" id="tGw-ao-zUC"/>
                             <constraint firstAttribute="centerX" secondItem="p2X-Qr-6Vj" secondAttribute="centerX" id="vCY-mn-57t"/>
@@ -224,6 +229,7 @@
                         <outlet property="flashButton" destination="p2X-Qr-6Vj" id="DVl-BZ-K3W"/>
                         <outlet property="modeIndicator" destination="cnB-Wd-Stf" id="Psk-Za-gmy"/>
                         <outlet property="photoButton" destination="adF-V8-fH8" id="Wcd-66-ucI"/>
+                        <outlet property="progressBarLocation" destination="k4s-7w-yMn" id="Q2e-Up-t5a"/>
                         <outlet property="progressBarView" destination="X0a-I3-x3Z" id="N5z-24-RwP"/>
                         <outlet property="recordButton" destination="1Jc-mN-hx2" id="gEP-7f-AEm"/>
                         <outlet property="switchCamerabutton" destination="93b-E6-3u5" id="gdi-bG-RHF"/>
@@ -330,11 +336,6 @@
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NpP-HL-JVP">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                                <subviews>
-                                    <view hidden="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6lL-Hb-Env" userLabel="View to shut up the auto-layout complaints">
-                                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                                    </view>
-                                </subviews>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="600" id="CZ1-jK-coQ"/>
                                     <constraint firstAttribute="width" constant="600" id="cx3-zV-I1j"/>
@@ -808,7 +809,7 @@
                                     <view autoresizesSubviews="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8uS-cY-Dpl" userLabel="Slide 1">
                                         <rect key="frame" x="0.0" y="30" width="600" height="620"/>
                                         <subviews>
-                                            <imageView autoresizesSubviews="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="iphone-1" translatesAutoresizingMaskIntoConstraints="NO" id="pxV-Qn-JUc" userLabel="iPhone preview">
+                                            <imageView autoresizesSubviews="NO" userInteractionEnabled="NO" contentMode="bottom" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="iphone-1" translatesAutoresizingMaskIntoConstraints="NO" id="pxV-Qn-JUc" userLabel="iPhone preview one">
                                                 <rect key="frame" x="205" y="42" width="191" height="402"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="191" id="KU1-cr-ajK"/>
@@ -828,15 +829,23 @@
                                         </subviews>
                                         <constraints>
                                             <constraint firstAttribute="centerX" secondItem="MxW-EF-ini" secondAttribute="centerX" id="83a-mh-JvN"/>
+                                            <constraint firstItem="MxW-EF-ini" firstAttribute="bottom" secondItem="pxV-Qn-JUc" secondAttribute="bottom" constant="140" id="Kca-9w-T6T"/>
+                                            <constraint firstItem="pxV-Qn-JUc" firstAttribute="top" secondItem="8uS-cY-Dpl" secondAttribute="top" constant="42" id="aPC-sP-UbZ"/>
                                             <constraint firstAttribute="bottom" secondItem="MxW-EF-ini" secondAttribute="bottom" constant="36" id="cDt-Bb-jfN"/>
                                             <constraint firstAttribute="bottom" secondItem="pxV-Qn-JUc" secondAttribute="bottom" constant="176" id="hBS-pP-yux"/>
                                             <constraint firstAttribute="centerX" secondItem="pxV-Qn-JUc" secondAttribute="centerX" id="ryP-gY-1iY"/>
                                         </constraints>
+                                        <variation key="default">
+                                            <mask key="constraints">
+                                                <exclude reference="hBS-pP-yux"/>
+                                                <exclude reference="cDt-Bb-jfN"/>
+                                            </mask>
+                                        </variation>
                                     </view>
                                     <view autoresizesSubviews="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZGR-yX-tDt" userLabel="Slide 2">
                                         <rect key="frame" x="0.0" y="30" width="600" height="620"/>
                                         <subviews>
-                                            <imageView autoresizesSubviews="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="iphone-2" translatesAutoresizingMaskIntoConstraints="NO" id="cRm-YR-cIV" userLabel="iPhone preview">
+                                            <imageView autoresizesSubviews="NO" userInteractionEnabled="NO" contentMode="bottom" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="iphone-2" translatesAutoresizingMaskIntoConstraints="NO" id="cRm-YR-cIV" userLabel="iPhone preview two">
                                                 <rect key="frame" x="205" y="42" width="191" height="402"/>
                                                 <constraints>
                                                     <constraint firstAttribute="width" constant="191" id="8gM-tQ-tGN"/>
@@ -861,8 +870,16 @@ other to improve.</string>
                                             <constraint firstAttribute="bottom" secondItem="cRm-YR-cIV" secondAttribute="bottom" constant="176" id="Njk-1f-ATy"/>
                                             <constraint firstAttribute="centerX" secondItem="QiD-Oj-LJM" secondAttribute="centerX" id="Otc-0Q-cr0"/>
                                             <constraint firstAttribute="bottom" secondItem="QiD-Oj-LJM" secondAttribute="bottom" constant="36" id="UHj-Tx-19m"/>
+                                            <constraint firstItem="cRm-YR-cIV" firstAttribute="bottom" secondItem="QiD-Oj-LJM" secondAttribute="bottom" constant="-140" id="a0Z-qq-Bn7"/>
+                                            <constraint firstItem="cRm-YR-cIV" firstAttribute="top" secondItem="ZGR-yX-tDt" secondAttribute="top" constant="42" id="a25-Sw-oLN"/>
                                             <constraint firstAttribute="centerX" secondItem="cRm-YR-cIV" secondAttribute="centerX" id="dbe-Ec-2bV"/>
                                         </constraints>
+                                        <variation key="default">
+                                            <mask key="constraints">
+                                                <exclude reference="Njk-1f-ATy"/>
+                                                <exclude reference="UHj-Tx-19m"/>
+                                            </mask>
+                                        </variation>
                                     </view>
                                     <view autoresizesSubviews="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="odk-KB-SgF" userLabel="Slide 3">
                                         <rect key="frame" x="0.0" y="0.0" width="580" height="620"/>
@@ -1050,6 +1067,12 @@ The Throwdown Community</string>
                         <outlet property="introSlide" destination="eMa-S5-wwr" id="Q9N-Mm-vW1"/>
                         <outlet property="introSlideConstraint" destination="err-aN-WQy" id="dut-gG-UIQ"/>
                         <outlet property="loginButton" destination="Fmj-bf-miS" id="nEm-YA-fjm"/>
+                        <outlet property="previewOne" destination="pxV-Qn-JUc" id="YNc-ND-x7L"/>
+                        <outlet property="previewOneHeight" destination="saB-Hs-wGf" id="Dg9-P5-4Lk"/>
+                        <outlet property="previewOneTop" destination="aPC-sP-UbZ" id="u9f-JJ-AUT"/>
+                        <outlet property="previewTwo" destination="cRm-YR-cIV" id="j8x-8L-pAS"/>
+                        <outlet property="previewTwoHeight" destination="c1q-cd-4AK" id="vO3-X9-vtu"/>
+                        <outlet property="previewTwoTop" destination="a25-Sw-oLN" id="hdd-x8-SuX"/>
                         <outlet property="scrollView" destination="nX9-L6-K52" id="UMQ-Z1-M6m"/>
                         <outlet property="signupButton" destination="VDE-Ch-9BS" id="4VO-Tg-vM5"/>
                         <outlet property="slide1" destination="8uS-cY-Dpl" id="gb8-ES-213"/>
@@ -1165,7 +1188,7 @@ The Throwdown Community</string>
                             <constraint firstItem="Ogv-sY-XJ1" firstAttribute="leading" secondItem="Dc1-2i-cmX" secondAttribute="leadingMargin" constant="-16" id="Gk3-Mm-rpD"/>
                             <constraint firstItem="cfJ-UT-zDU" firstAttribute="height" secondItem="o6K-LP-B8p" secondAttribute="height" id="IJH-XQ-xuK"/>
                             <constraint firstItem="1b9-CU-S0a" firstAttribute="top" secondItem="HGR-Qx-Gmy" secondAttribute="bottom" id="JIm-b2-3tK"/>
-                            <constraint firstItem="HGR-Qx-Gmy" firstAttribute="leading" secondItem="Dc1-2i-cmX" secondAttribute="leadingMargin" constant="-16" id="Qja-gf-GcD"/>
+                            <constraint firstItem="HGR-Qx-Gmy" firstAttribute="leading" secondItem="Dc1-2i-cmX" secondAttribute="leading" id="Qja-gf-GcD"/>
                             <constraint firstItem="Ogv-sY-XJ1" firstAttribute="bottom" secondItem="2a1-Ot-oBr" secondAttribute="bottom" constant="-43" id="VQP-tt-C9a"/>
                             <constraint firstItem="HGR-Qx-Gmy" firstAttribute="top" secondItem="qHq-Sl-Pan" secondAttribute="bottom" constant="-20" id="Y6N-Nu-Eg1"/>
                             <constraint firstItem="xn3-C3-4fe" firstAttribute="bottom" secondItem="cfJ-UT-zDU" secondAttribute="bottom" constant="86" id="ZeD-Vm-FcN"/>
@@ -1177,7 +1200,7 @@ The Throwdown Community</string>
                             <constraint firstItem="cfJ-UT-zDU" firstAttribute="width" secondItem="o6K-LP-B8p" secondAttribute="width" id="j8E-jT-e2f"/>
                             <constraint firstItem="xn3-C3-4fe" firstAttribute="bottom" secondItem="o6K-LP-B8p" secondAttribute="bottom" constant="42" id="lwZ-lo-eBY"/>
                             <constraint firstItem="cfJ-UT-zDU" firstAttribute="top" secondItem="qHq-Sl-Pan" secondAttribute="bottom" constant="93" id="mAi-6A-3nB"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="HGR-Qx-Gmy" secondAttribute="trailing" constant="-16" id="rJI-MD-Z94"/>
+                            <constraint firstAttribute="trailing" secondItem="HGR-Qx-Gmy" secondAttribute="trailing" id="rJI-MD-Z94"/>
                         </constraints>
                     </view>
                     <toolbarItems/>
@@ -1309,7 +1332,7 @@ The Throwdown Community</string>
                             <constraint firstItem="fck-dW-ZXE" firstAttribute="top" secondItem="lpZ-qM-lGH" secondAttribute="bottom" constant="-19" id="4VM-wv-ZJa"/>
                             <constraint firstItem="V8E-nr-b5D" firstAttribute="centerY" secondItem="MeY-k8-LXa" secondAttribute="centerY" id="5Ve-hy-tbx"/>
                             <constraint firstItem="RmO-DV-puf" firstAttribute="top" secondItem="sLp-nt-o1w" secondAttribute="bottom" constant="10" id="Akg-lt-ZBC"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="9un-Bh-G9R" secondAttribute="trailing" constant="-16" id="BoO-YX-yf2"/>
+                            <constraint firstAttribute="trailing" secondItem="9un-Bh-G9R" secondAttribute="trailing" id="BoO-YX-yf2"/>
                             <constraint firstItem="fck-dW-ZXE" firstAttribute="leading" secondItem="ZTt-RW-p4R" secondAttribute="leadingMargin" constant="-16" id="BuN-UL-nDZ"/>
                             <constraint firstAttribute="trailingMargin" secondItem="N00-Xq-GPj" secondAttribute="trailing" constant="-16" id="CTE-aK-KYa"/>
                             <constraint firstItem="9un-Bh-G9R" firstAttribute="top" secondItem="9y1-EU-K4C" secondAttribute="bottom" constant="-20" id="Ejt-CA-XAx"/>
@@ -1319,7 +1342,7 @@ The Throwdown Community</string>
                             <constraint firstItem="RmO-DV-puf" firstAttribute="leading" secondItem="ZTt-RW-p4R" secondAttribute="leadingMargin" constant="-16" id="Pid-H7-WhE"/>
                             <constraint firstAttribute="trailingMargin" secondItem="fck-dW-ZXE" secondAttribute="trailing" constant="-16" id="VNe-Hl-nII"/>
                             <constraint firstItem="V8E-nr-b5D" firstAttribute="top" secondItem="fck-dW-ZXE" secondAttribute="bottom" constant="17" id="XKj-nP-zBr"/>
-                            <constraint firstItem="9un-Bh-G9R" firstAttribute="leading" secondItem="ZTt-RW-p4R" secondAttribute="leadingMargin" constant="-16" id="aWT-c7-dph"/>
+                            <constraint firstItem="9un-Bh-G9R" firstAttribute="leading" secondItem="ZTt-RW-p4R" secondAttribute="leading" id="aWT-c7-dph"/>
                             <constraint firstItem="sLp-nt-o1w" firstAttribute="top" secondItem="N00-Xq-GPj" secondAttribute="bottom" constant="28" id="b4J-TA-O8U"/>
                             <constraint firstItem="N00-Xq-GPj" firstAttribute="leading" secondItem="ZTt-RW-p4R" secondAttribute="leadingMargin" constant="-16" id="dx2-xj-tCr"/>
                             <constraint firstAttribute="trailingMargin" secondItem="sLp-nt-o1w" secondAttribute="trailing" constant="-16" id="e6Q-XB-lVh"/>
@@ -1617,14 +1640,14 @@ The Throwdown Community</string>
                             <constraint firstItem="mCS-aa-5yt" firstAttribute="top" secondItem="q1y-Mh-dLK" secondAttribute="bottom" constant="10" id="0VA-22-alm"/>
                             <constraint firstItem="QQM-HU-aED" firstAttribute="leading" secondItem="0N4-JK-mTc" secondAttribute="leadingMargin" constant="-16" id="0iV-4H-5wg"/>
                             <constraint firstItem="Yw6-ck-N27" firstAttribute="top" secondItem="QQM-HU-aED" secondAttribute="bottom" constant="62" id="6nQ-Og-kT8"/>
-                            <constraint firstItem="qpr-or-L7i" firstAttribute="leading" secondItem="0N4-JK-mTc" secondAttribute="leadingMargin" constant="-16" id="9YK-4y-l9X"/>
+                            <constraint firstItem="qpr-or-L7i" firstAttribute="leading" secondItem="0N4-JK-mTc" secondAttribute="leading" id="9YK-4y-l9X"/>
                             <constraint firstItem="4Ja-F3-QXx" firstAttribute="leading" secondItem="0N4-JK-mTc" secondAttribute="leadingMargin" constant="-16" id="BQ5-Sg-P4T"/>
                             <constraint firstItem="zFm-WF-360" firstAttribute="height" secondItem="QQM-HU-aED" secondAttribute="height" id="HNx-9u-nY7"/>
                             <constraint firstItem="zFm-WF-360" firstAttribute="leading" secondItem="0N4-JK-mTc" secondAttribute="leadingMargin" constant="-16" id="JBJ-O1-nAS"/>
                             <constraint firstItem="4Ja-F3-QXx" firstAttribute="top" secondItem="q1y-Mh-dLK" secondAttribute="bottom" constant="10" id="JrN-2e-y5q"/>
                             <constraint firstItem="zFm-WF-360" firstAttribute="top" secondItem="4Ja-F3-QXx" secondAttribute="bottom" constant="25" id="LFG-8A-0VL"/>
                             <constraint firstItem="mxd-hT-bnR" firstAttribute="top" secondItem="qpr-or-L7i" secondAttribute="bottom" id="O8P-xJ-aXc"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="qpr-or-L7i" secondAttribute="trailing" constant="-16" id="OYg-nB-MZv"/>
+                            <constraint firstAttribute="trailing" secondItem="qpr-or-L7i" secondAttribute="trailing" id="OYg-nB-MZv"/>
                             <constraint firstAttribute="centerX" secondItem="Yw6-ck-N27" secondAttribute="centerX" constant="-0.5" id="RCn-zq-Wcy"/>
                             <constraint firstItem="arb-7G-Tmh" firstAttribute="bottom" secondItem="Yw6-ck-N27" secondAttribute="bottom" constant="45" id="SVc-wz-6oE"/>
                             <constraint firstItem="QQM-HU-aED" firstAttribute="top" secondItem="zFm-WF-360" secondAttribute="bottom" constant="25" id="Uht-hx-IZX"/>
@@ -1746,14 +1769,14 @@ The Throwdown Community</string>
                             <constraint firstItem="zjP-Hn-Phf" firstAttribute="top" secondItem="hbz-UI-DNj" secondAttribute="bottom" constant="7" id="7vY-Vx-pjG"/>
                             <constraint firstItem="tFj-vN-754" firstAttribute="top" secondItem="hbz-UI-DNj" secondAttribute="bottom" constant="-20" id="Af8-iD-RlC"/>
                             <constraint firstAttribute="trailingMargin" secondItem="OUP-ja-Ya8" secondAttribute="trailing" constant="-16" id="DNp-4I-awv"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="tFj-vN-754" secondAttribute="trailing" constant="-16" id="M0R-wB-USW"/>
+                            <constraint firstAttribute="trailing" secondItem="tFj-vN-754" secondAttribute="trailing" id="M0R-wB-USW"/>
                             <constraint firstItem="Hyj-r7-EUO" firstAttribute="centerX" secondItem="MZb-4K-W09" secondAttribute="centerX" id="OyL-Hp-TAg"/>
                             <constraint firstItem="jGS-CU-oiz" firstAttribute="top" secondItem="hbz-UI-DNj" secondAttribute="bottom" constant="9" id="PZN-dh-X05"/>
                             <constraint firstItem="Hyj-r7-EUO" firstAttribute="top" secondItem="hbz-UI-DNj" secondAttribute="bottom" constant="157" id="XUh-f8-2SW"/>
                             <constraint firstItem="OUP-ja-Ya8" firstAttribute="top" secondItem="hbz-UI-DNj" secondAttribute="bottom" constant="65" id="Z4x-us-rUQ"/>
                             <constraint firstItem="zSj-tM-2AJ" firstAttribute="top" secondItem="tFj-vN-754" secondAttribute="bottom" id="iiK-Aa-TyA"/>
                             <constraint firstItem="zjP-Hn-Phf" firstAttribute="leading" secondItem="hJe-T7-Zfz" secondAttribute="leadingMargin" constant="-16" id="xLW-A4-8ux"/>
-                            <constraint firstItem="tFj-vN-754" firstAttribute="leading" secondItem="hJe-T7-Zfz" secondAttribute="leadingMargin" constant="-16" id="ypq-sJ-NqR"/>
+                            <constraint firstItem="tFj-vN-754" firstAttribute="leading" secondItem="hJe-T7-Zfz" secondAttribute="leading" id="ypq-sJ-NqR"/>
                         </constraints>
                     </view>
                     <toolbarItems/>

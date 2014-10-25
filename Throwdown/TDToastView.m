@@ -9,6 +9,7 @@
 #import "TDToastView.h"
 #import "TDAppDelegate.h"
 #import "TDNavigationController.h"
+#import "TDConstants.h"
 
 #define kToastTimeOnScreen  3.0
 #define kToastHeight        50.0
