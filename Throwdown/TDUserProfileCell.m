@@ -180,9 +180,7 @@ static CGFloat const kMinHeight = 230 + kBottomMargin;
     frame.size.height = [[self class] heightForUserProfile:user] - kBottomMargin;
     self.whiteUnderView.frame = frame;
     CGFloat lineWidth = (1.0 / [[UIScreen mainScreen] scale]);
-    debug NSLog(@"lineWidth=%f", lineWidth);
     self.bottomLine.frame = CGRectMake(0, frame.size.height, SCREEN_WIDTH, lineWidth);
-    debug NSLog(@"self.bottom.frame=%@", NSStringFromCGRect(self.bottomLine.frame));
 }
 
 - (void)downloadUserImage:(NSString *)profileImage {

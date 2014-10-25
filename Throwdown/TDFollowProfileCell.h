@@ -18,11 +18,11 @@
 
 @interface TDFollowProfileCell : UITableViewCell
 {
-    id <TDFollowProfileCellDelegate> __unsafe_unretained delegate;
+    id <TDFollowProfileCellDelegate> __weak delegate;
     CGFloat bottomLineOrigY;
 }
 
-@property (nonatomic, assign) id <TDFollowProfileCellDelegate> __unsafe_unretained delegate;
+@property (weak, nonatomic) id <TDFollowProfileCellDelegate> delegate;
 @property (weak, nonatomic) IBOutlet UIImageView *userImageView;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *descriptionLabel;

@@ -140,9 +140,6 @@ static CGFloat const kCommentWidthNoPreview = 306.;
     topLineRect.size.width = SCREEN_WIDTH;
     self.topLine.frame = topLineRect;
     self.topLine.backgroundColor = [TDConstants lightBorderColor];
-    
-    debug NSLog(@"bottomLine frame = %@", NSStringFromCGRect(self.bottomLine.frame));
-    debug NSLog(@"topLine frame = %@", NSStringFromCGRect(self.topLine.frame));
 }
 
 #pragma mark - TTTAttributedLabelDelegate

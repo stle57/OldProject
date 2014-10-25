@@ -641,9 +641,6 @@
                                                        CGRectGetMaxY(newTextFrame),
                                                        cell.bottomLine.frame.size.width,
                                                        cell.bottomLineOrigHeight);
-                    debug NSLog(@"TextView frame=%@",NSStringFromCGRect(cell.textView.frame));
-                    debug NSLog(@"cell frame=%@", NSStringFromCGRect(cell.frame));
-                    debug NSLog(@"bottom line frame=%@", NSStringFromCGRect(cell.bottomLine.frame));
 
                 }
                 break;
