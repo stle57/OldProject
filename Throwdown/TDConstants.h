@@ -135,6 +135,7 @@ static NSInteger const kFollowingButtonTag = 20003;
 #define COMMENT_MESSAGE_FONT             [TDConstants fontRegularSized:COMMENT_MESSAGE_FONT_SIZE]
 #define BIO_FONT                         [TDConstants fontRegularSized:16.0]
 #define TIME_FONT                        [TDConstants fontLightSized:14.0]
+#define POST_COMMENT_FONT                [TDConstants fontRegularSized:17]
 #define kCommentDefaultText              @"Write a comment..."
 #define START_MAIN_SPINNER_NOTIFICATION  @"TDMainSpinnerStart"
 #define STOP_MAIN_SPINNER_NOTIFICATION   @"TDMainSpinnerStop"
