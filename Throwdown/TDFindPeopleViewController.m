@@ -352,9 +352,11 @@
         cell.delegate = self;
     }
     
-    cell.topLine.hidden = NO;
+
     cell.userId = [object valueForKey:@"id"];
     cell.row = indexPath.row;
+    cell.topLine.hidden = cell.row != 0;
+
     NSAttributedString *usernameAttStr = nil;
     NSString *str = [NSString stringWithFormat:@"%@", [object valueForKey:@"bio"]];
     if (str == nil || str.length == 0 || [[object valueForKey:@"bio"] isKindOfClass:[NSNull class]]) {
