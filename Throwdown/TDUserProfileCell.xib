@@ -96,7 +96,7 @@
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" red="0.82745098039999998" green="0.82745098039999998" blue="0.82745098039999998" alpha="1" colorSpace="calibratedRGB"/>
                     </imageView>
-                    <view contentMode="scaleToFill" id="if2-hz-B1y" userLabel="Bottom Line View">
+                    <view autoresizesSubviews="NO" contentMode="scaleToFill" id="if2-hz-B1y" userLabel="Bottom Line View">
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" red="0.63529411764705879" green="0.63529411764705879" blue="0.63529411764705879" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
