@@ -196,8 +196,10 @@ static const NSString *ItemStatusContext;
 # pragma mark - saving
 
 - (void)stopExistingUploads {
-    // Stop any current uploads if user edited the video after starting the upload
-    if (self.filename != nil) {
+    // Stop any current uploads if user edited the video after starting the upload.
+    // If the doneButton is disabled this was called automatically by scrollViewDidScroll
+    // after the done button was pressed. Weird.
+    if (self.doneButton.enabled && self.filename != nil) {
         [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUploadCancelled
                                                             object:nil
                                                           userInfo:@{ @"filename":[self.filename copy] }];
@@ -248,7 +250,7 @@ static const NSString *ItemStatusContext;
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-     [self stopExistingUploads]; // b/c user has changed the crop for photo/video
+    [self stopExistingUploads]; // b/c user has changed the crop for photo/video
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {

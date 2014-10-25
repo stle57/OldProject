@@ -524,6 +524,8 @@ static NSString *const kTracksKey = @"tracks";
     [self updateControlImage:ControlStateLoading];
     [self startLoadingTimeout];
 
+    self.player = nil;
+    self.playerItem = nil;
     self.videoAsset = [[AVURLAsset alloc] initWithURL:videoLocation options:nil];
     [self.videoAsset loadValuesAsynchronouslyForKeys:@[kTracksKey] completionHandler:^{
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -531,18 +533,19 @@ static NSString *const kTracksKey = @"tracks";
             AVKeyValueStatus status = [self.videoAsset statusOfValueForKey:kTracksKey error:&error];
 
             if (status == AVKeyValueStatusLoaded) {
+
                 self.playerItem = [[ObservingPlayerItem alloc] initWithAsset:self.videoAsset];
                 self.playerItem.delegate = self;
+
+                self.player = [[AVPlayer alloc] initWithPlayerItem:self.playerItem];
+                [self.player setActionAtItemEnd:AVPlayerActionAtItemEndPause];
 
                 self.playerLayer = [AVPlayerLayer layer];
                 [self.playerLayer setFrame:CGRectMake(0, 0, self.mediaSize, self.mediaSize)];
                 [self.playerLayer setBackgroundColor:[UIColor clearColor].CGColor];
                 [self.playerLayer setVideoGravity:AVLayerVideoGravityResize];
-                [self.videoHolderView.layer addSublayer:self.playerLayer];
-
-                self.player = [[AVPlayer alloc] initWithPlayerItem:self.playerItem];
-                [self.player setActionAtItemEnd:AVPlayerActionAtItemEndPause];
                 [self.playerLayer setPlayer:self.player];
+                [self.videoHolderView.layer addSublayer:self.playerLayer];
 
                 // Not sure why we have to specify this specifically, since this value is defined as default
                 [[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategorySoloAmbient error: nil];
@@ -667,7 +670,6 @@ static NSString *const kTracksKey = @"tracks";
     // Only play once it's been loaded
     // ready to play is called every time the player is reset
     if (self.state == PlayerStateLoading) {
-        [self updateControlImage:ControlStateNone];
         [self playVideo];
     }
 }

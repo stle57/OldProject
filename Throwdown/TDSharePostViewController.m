@@ -110,12 +110,12 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
     if (self.filename) {
         [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUploadComments
                                                             object:nil
-                                                          userInfo:@{ @"filename":self.filename,
-                                                                      @"comment":self.comment,
-                                                                      @"pr": [NSNumber numberWithBool:self.isPR],
+                                                          userInfo:@{ @"filename":      self.filename,
+                                                                      @"comment":       self.comment,
+                                                                      @"pr":            [NSNumber numberWithBool:self.isPR],
                                                                       @"userGenerated": [NSNumber numberWithBool:self.userGenerated],
-                                                                      @"shareOptions": shareOptions,
-                                                                      @"private": [NSNumber numberWithBool:(self.privacy == TDPostPrivacyPrivate)]
+                                                                      @"shareOptions":  shareOptions,
+                                                                      @"private":       [NSNumber numberWithBool:(self.privacy == TDPostPrivacyPrivate)]
                                                                       }];
     } else {
         [[TDPostAPI sharedInstance] addTextPost:self.comment isPR:self.isPR isPrivate:(self.privacy == TDPostPrivacyPrivate) shareOptions:shareOptions];

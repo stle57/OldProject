@@ -23,7 +23,6 @@
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yCY-OC-yOW" userLabel="Black Cover View">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </view>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tgj-aS-c8v" userLabel="Record controls">
@@ -123,9 +122,12 @@
                                     <constraint firstAttribute="height" constant="44" id="aHK-0p-KaM"/>
                                 </constraints>
                             </view>
-                            <view userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="X0a-I3-x3Z" userLabel="Progress Indicator">
-                                <rect key="frame" x="-320" y="0.0" width="320" height="44"/>
-                                <color key="backgroundColor" red="0.92549019610000005" green="0.2156862745" blue="0.14901960780000001" alpha="0.5" colorSpace="calibratedRGB"/>
+                            <view userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="X0a-I3-x3Z" userLabel="Progress Indicator">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
+                                <color key="backgroundColor" red="0.92941176469999998" green="0.29411764709999999" blue="0.24313725489999999" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="fhk-T4-s9z"/>
+                                </constraints>
                             </view>
                             <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="p2X-Qr-6Vj" userLabel="Flash Button">
                                 <rect key="frame" x="250" y="0.0" width="100" height="44"/>
@@ -191,6 +193,7 @@
                             <constraint firstItem="VYp-zZ-cCO" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="8gu-XI-JJn"/>
                             <constraint firstAttribute="trailingMargin" secondItem="cZv-bv-JN9" secondAttribute="trailing" constant="-16" id="IF0-1j-ood"/>
                             <constraint firstItem="B9k-Nz-lX4" firstAttribute="top" secondItem="VYp-zZ-cCO" secondAttribute="bottom" id="J7Q-Gd-jvR"/>
+                            <constraint firstItem="X0a-I3-x3Z" firstAttribute="top" secondItem="mxB-VH-Wbd" secondAttribute="bottom" id="JY8-uM-2s1"/>
                             <constraint firstItem="VYp-zZ-cCO" firstAttribute="top" secondItem="mxB-VH-Wbd" secondAttribute="bottom" id="LVe-cS-mlM"/>
                             <constraint firstAttribute="centerY" secondItem="tgj-aS-c8v" secondAttribute="centerY" constant="-250" id="LvN-29-LYG"/>
                             <constraint firstItem="6yY-RR-kvO" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="Nj6-3w-fZU"/>
@@ -199,7 +202,9 @@
                             <constraint firstAttribute="width" secondItem="tgj-aS-c8v" secondAttribute="width" id="f0U-mr-Y8m"/>
                             <constraint firstItem="p2X-Qr-6Vj" firstAttribute="top" secondItem="mxB-VH-Wbd" secondAttribute="bottom" id="fWr-5n-YSb"/>
                             <constraint firstAttribute="trailing" secondItem="93b-E6-3u5" secondAttribute="trailing" id="fvw-So-PLx"/>
+                            <constraint firstItem="X0a-I3-x3Z" firstAttribute="width" secondItem="kh9-bI-dsS" secondAttribute="width" id="geW-Ct-LxS"/>
                             <constraint firstItem="cZv-bv-JN9" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="j6h-m1-ngN"/>
+                            <constraint firstItem="X0a-I3-x3Z" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="k4s-7w-yMn"/>
                             <constraint firstItem="Emc-Hw-KVu" firstAttribute="top" secondItem="mxB-VH-Wbd" secondAttribute="bottom" id="s3v-pc-CY9"/>
                             <constraint firstItem="6yY-RR-kvO" firstAttribute="top" secondItem="mxB-VH-Wbd" secondAttribute="bottom" id="tGw-ao-zUC"/>
                             <constraint firstAttribute="centerX" secondItem="p2X-Qr-6Vj" secondAttribute="centerX" id="vCY-mn-57t"/>
@@ -224,6 +229,7 @@
                         <outlet property="flashButton" destination="p2X-Qr-6Vj" id="DVl-BZ-K3W"/>
                         <outlet property="modeIndicator" destination="cnB-Wd-Stf" id="Psk-Za-gmy"/>
                         <outlet property="photoButton" destination="adF-V8-fH8" id="Wcd-66-ucI"/>
+                        <outlet property="progressBarLocation" destination="k4s-7w-yMn" id="Q2e-Up-t5a"/>
                         <outlet property="progressBarView" destination="X0a-I3-x3Z" id="N5z-24-RwP"/>
                         <outlet property="recordButton" destination="1Jc-mN-hx2" id="gEP-7f-AEm"/>
                         <outlet property="switchCamerabutton" destination="93b-E6-3u5" id="gdi-bG-RHF"/>

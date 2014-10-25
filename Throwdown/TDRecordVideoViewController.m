@@ -64,6 +64,7 @@ static void *RecordingContext = &RecordingContext;
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *topCoverHeightConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *bottomCoverHeightConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *progressBarLocation;
 
 @end
 
@@ -207,10 +208,8 @@ static void *RecordingContext = &RecordingContext;
 
     self.timeLabel.hidden = YES;
     self.timeLabel.text = @"00:00";
-    CGRect progressBarFrame = self.progressBarView.frame;
-    progressBarFrame.size.width = SCREEN_WIDTH;
-    progressBarFrame.origin.x = -SCREEN_WIDTH;
-    self.progressBarView.frame = progressBarFrame;
+
+    self.progressBarLocation.constant = -SCREEN_WIDTH;
 
     dispatch_async([self sessionQueue], ^{
         [self addObservers];
@@ -326,15 +325,14 @@ static void *RecordingContext = &RecordingContext;
                                                                      userInfo:nil
                                                                       repeats:YES];
 
-                CGRect progressBarFrame = self.progressBarView.frame;
-                progressBarFrame.origin.x = 0;
                 [UIView animateWithDuration:kMaxRecordingSeconds
                                       delay:0.0
                                     options:UIViewAnimationOptionCurveLinear
                                  animations:^{
-                                     self.progressBarView.frame = progressBarFrame;
+                                     self.progressBarLocation.constant = 0;
+                                     [self.view layoutIfNeeded];
                                  }
-                                 completion:NULL];
+                                 completion:nil];
             });
 
             [self setLockInterfaceRotation:YES];
@@ -363,9 +361,8 @@ static void *RecordingContext = &RecordingContext;
 
                 [self.timeLabelTimer invalidate];
 
-                CALayer *currentLayer = self.progressBarView.layer.presentationLayer;
                 [self.progressBarView.layer removeAllAnimations];
-                self.progressBarView.layer.frame = currentLayer.frame;
+                self.progressBarLocation.constant = -SCREEN_WIDTH;
             });
 
             [[self movieFileOutput] stopRecording];

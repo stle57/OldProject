@@ -7,7 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TDStoryboardSegue.h"
 
-@interface TDUnwindSlideLeftSegue : UIStoryboardSegue
+@interface TDUnwindSlideLeftSegue : TDStoryboardSegue
 
 @end

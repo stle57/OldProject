@@ -154,6 +154,7 @@ typedef enum {
 
 - (void)uploadCommentsReceived:(NSNotification *)notification {
     NSString *notificationFilename = (NSString *)[notification.userInfo objectForKey:@"filename"];
+    NSLog(@"comment received from %@ for %@", self.filename, notificationFilename);
     if ([self.filename isEqualToString:notificationFilename]) {
         debug NSLog(@"Received correct comment notification");
         self.hasReceivedComment = YES;
@@ -194,6 +195,7 @@ typedef enum {
 }
 
 - (void)finalizeUpload {
+    NSLog(@"Finalize upload with: %d, %d, %d, %d", self.hasReceivedComment, self.postStatus, self.photoStatus, self.videoStatus);
     if (self.hasReceivedComment &&
         self.postStatus  != UploadCompleted &&
         self.photoStatus == UploadCompleted &&
@@ -334,12 +336,6 @@ typedef enum {
         progress = (CGFloat)(self.videoFileSize * self.videoProgress + self.photoFileSize * self.photoProgress) / (self.videoFileSize + self.photoFileSize);
     } else {
         progress = (CGFloat)(self.photoFileSize * self.photoProgress) / self.photoFileSize;
-    }
-    // - 0.05 is for the application server post to register the post
-    if (progress > 0.0 && progress < 0.05) {
-        progress = 0;
-    } else {
-        progress -= 0.05;
     }
 
     // Random occurance of progress being NaN found (not sure why)
