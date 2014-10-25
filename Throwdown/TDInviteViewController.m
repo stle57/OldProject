@@ -580,10 +580,8 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
 #pragma mark TDFollowProfileCellDelegate
 - (void)contactPressedFromRow:(TDContactInfo*)contact {
     // Check if we've already added the person
-    NSArray *filteredArray =
-    [self.inviteList filteredArrayUsingPredicate:[NSPredicate
-            predicateWithFormat:@"self.selectedData == %@", contact.selectedData]];
-    if (!filteredArray.count){
+    NSArray *filteredArray = [self.inviteList filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"self.selectedData == %@", contact.selectedData]];
+    if (!filteredArray.count) {
         [self addToInviteList:contact];
     }
 }

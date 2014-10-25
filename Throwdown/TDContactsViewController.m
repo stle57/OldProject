@@ -490,10 +490,9 @@
 }
 - (void)addToInviteList:(TDContactInfo*)contact {
     // Check if we've already added the person
-    NSArray *filteredArray =
-    [self.inviteList filteredArrayUsingPredicate:[NSPredicate
-                                                  predicateWithFormat:@"self.id == %@", contact.id]];
-    if (!filteredArray.count){
+    NSArray *filteredArray = [self.inviteList filteredArrayUsingPredicate:[NSPredicate
+                                                      predicateWithFormat:@"self.id == %@", contact.id]];
+    if (!filteredArray.count) {
         [self.inviteList insertObject:contact atIndex:0];
     }
 }
@@ -507,7 +506,7 @@
     self.view.backgroundColor = [TDConstants lightBackgroundColor];
     self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
     self.searchingActive = YES;
-    
+
     [self searchBar:self.searchBar activate:YES];
     
 }
@@ -623,8 +622,7 @@
     }
 }
 
-- (void)searchBar:(UISearchBar *)searchBar activate:(BOOL) active{
-    self.tableView.allowsSelection = active;
+- (void)searchBar:(UISearchBar *)searchBar activate:(BOOL) active {
     if (!active) {
         [disableViewOverlay removeFromSuperview];
         [searchBar resignFirstResponder];
