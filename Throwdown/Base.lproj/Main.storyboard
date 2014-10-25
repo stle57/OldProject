@@ -330,11 +330,6 @@
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NpP-HL-JVP">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                                <subviews>
-                                    <view hidden="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6lL-Hb-Env" userLabel="View to shut up the auto-layout complaints">
-                                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                                    </view>
-                                </subviews>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="600" id="CZ1-jK-coQ"/>
                                     <constraint firstAttribute="width" constant="600" id="cx3-zV-I1j"/>

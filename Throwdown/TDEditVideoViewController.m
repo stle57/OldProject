@@ -189,8 +189,7 @@ static const NSString *ItemStatusContext;
 }
 
 - (CGRect)previewRect {
-    CGRect bounds = [UIScreen mainScreen].bounds;
-    CGFloat y = (bounds.size.height - bounds.size.width) / 2.;
+    CGFloat y = (SCREEN_HEIGHT - SCREEN_WIDTH) / 2.;
     return CGRectMake(0, y, SCREEN_WIDTH, SCREEN_WIDTH);
 }
 
@@ -372,42 +371,53 @@ static const NSString *ItemStatusContext;
     self.helpLabel.text = @"Position & Zoom Image";
     self.helpLabel.hidden = NO;
     self.playButton.hidden = YES;
-    self.previewImageView = [[UIImageView alloc] initWithFrame:[self previewRect]];
-    if (self.assetImage) {
-        self.previewImageView.image = self.assetImage;
-    } else {
-        self.photoData = [NSData dataWithContentsOfFile:self.photoPath];
-        self.previewImageView.image = [UIImage imageWithData:self.photoData];
-    }
 
     [self.scrollView setBackgroundColor:[UIColor blackColor]];
     [self.scrollView setDelegate:self];
     [self.scrollView setShowsHorizontalScrollIndicator:NO];
     [self.scrollView setShowsVerticalScrollIndicator:NO];
     [self.scrollView setMaximumZoomScale:2.0];
+    
+    self.previewImageView = [[UIImageView alloc] initWithFrame:[self previewRect]];
+    if (self.assetImage) {
+        [self setPreviewImage:self.assetImage];
+    } else {
+        // Load image in background queue
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            self.photoData = [NSData dataWithContentsOfFile:self.photoPath];
+            UIImage *image = [UIImage imageWithData:self.photoData];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self setPreviewImage:image];
+            });
+        });
+    }
+}
+
+- (void)setPreviewImage:(UIImage *)image {
+    self.previewImageView.image = image;
 
     CGRect rect = CGRectMake(0, 0, self.previewImageView.image.size.width, self.previewImageView.image.size.height);
     CGFloat shorter = MIN(rect.size.width, rect.size.height);
 
     [self.previewImageView setFrame:rect];
 
-    [self.scrollView setContentSize:self.previewImageView.frame.size];
-    [self.scrollView setMinimumZoomScale:self.scrollView.frame.size.width / shorter];
-    [self.scrollView setZoomScale:[self.scrollView minimumZoomScale]];
     [self.scrollView addSubview:self.previewImageView];
+    [self.scrollView setContentSize:rect.size];
+    [self.scrollView setMinimumZoomScale:SCREEN_WIDTH / shorter];
+    [self.scrollView setZoomScale:[self.scrollView minimumZoomScale]];
 
     [self centerScrollViewContents];
+    self.scrollView.scrollEnabled = YES;
 
     debug NSLog(@"photo size %@", NSStringFromCGSize(self.previewImageView.image.size));
-    debug NSLog(@"scroll size %@", NSStringFromCGRect(self.scrollView.frame));
     debug NSLog(@"content size %@", NSStringFromCGSize(self.scrollView.contentSize));
 }
 
 - (void)centerScrollViewContents {
-    // center image
-    CGFloat x = (self.scrollView.contentSize.width - self.scrollView.frame.size.width);
-    CGFloat y = (self.scrollView.contentSize.height - self.scrollView.frame.size.width);
-    [self.scrollView scrollRectToVisible:CGRectMake(x - (x / 2), y - (y / 2), self.scrollView.frame.size.width, self.scrollView.frame.size.width) animated:NO];
+    // center image or video
+    CGFloat x = (self.scrollView.contentSize.width - SCREEN_WIDTH);
+    CGFloat y = (self.scrollView.contentSize.height - SCREEN_WIDTH);
+    [self.scrollView scrollRectToVisible:CGRectMake(x - (x / 2), y - (y / 2), SCREEN_WIDTH, SCREEN_WIDTH) animated:NO];
 }
 
 #pragma mark - Video editing
@@ -506,7 +516,6 @@ static const NSString *ItemStatusContext;
 
                 debug NSLog(@"video scale %f", scale);
                 debug NSLog(@"video size %@", NSStringFromCGSize(videoSize));
-                debug NSLog(@"scroll size %@", NSStringFromCGRect(self.scrollView.frame));
                 debug NSLog(@"content size %@", NSStringFromCGSize(self.scrollView.contentSize));
                 debug NSLog(@"player layer size %@", NSStringFromCGRect(self.playerLayer.frame));
                 debug NSLog(@"container size %@", NSStringFromCGRect(self.videoContainerView.frame));
@@ -646,25 +655,25 @@ static const NSString *ItemStatusContext;
     switch (orientation) {
         case UIImageOrientationRight:
             rotation = M_PI_2;
-            tx = -(rect.origin.y * videoSize.height / self.scrollView.frame.size.height);
+            tx = -(rect.origin.y * videoSize.height / SCREEN_WIDTH);
             ty = -shorter;
             break;
 
         case UIImageOrientationLeft:
             rotation = -M_PI_2;
-            tx = 0 - (longer - (rect.origin.y * videoSize.height / self.scrollView.frame.size.height));
+            tx = 0 - (longer - (rect.origin.y * videoSize.height / SCREEN_WIDTH));
             ty = 0;
             break;
 
         case UIImageOrientationDown:
             rotation = M_PI;
-            tx = 0 - (longer - (rect.origin.x * videoSize.height / self.scrollView.frame.size.height));
+            tx = 0 - (longer - (rect.origin.x * videoSize.height / SCREEN_WIDTH));
             ty = -shorter;
             break;
 
         case UIImageOrientationUp:
             rotation = 0;
-            tx = -(rect.origin.x * videoSize.height / self.scrollView.frame.size.height);
+            tx = -(rect.origin.x * videoSize.height / SCREEN_WIDTH);
             ty = 0;
             break;
 
