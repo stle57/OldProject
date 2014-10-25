@@ -720,11 +720,13 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     debug NSLog(@"segue to posts button");
 }
 - (void)prStatButtonPressed {
-    TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
-    vc.userId = self.userId;
-    vc.noProfileHeader = YES;
-    vc.profileType = kFeedProfileTypeNone;
-    [self.navigationController pushViewController:vc animated:YES];
+    if ([[self getUser].prCount intValue] != 0) {
+        TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
+        vc.userId = self.userId;
+        vc.noProfileHeader = YES;
+        vc.profileType = kFeedProfileTypeNone;
+        [self.navigationController pushViewController:vc animated:YES];
+    }
 }
 - (void)followingStatButtonPressed {
     TDFollowViewController *vc = [[TDFollowViewController alloc] initWithNibName:@"TDFollowViewController" bundle:nil ];
