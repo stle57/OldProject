@@ -281,6 +281,8 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         TDUser *user = [self getUser];
         if (!user || self.profileType == kFeedProfileTypeNone) {
             [cell setUser:user withButton:UserProfileButtonTypeUnknown];
+        } else if ([user.userId isEqualToNumber:[TDCurrentUser sharedInstance].userId]) {
+            [cell setUser:user withButton:UserProfileButtonTypeInvite];
         } else if (self.profileType == kFeedProfileTypeOther) {
             [cell setUser:user withButton:(user.following ? UserProfileButtonTypeFollowing : UserProfileButtonTypeFollow)];
         } else {
