@@ -765,16 +765,14 @@ static CGFloat const kHeightOfStatusBar = 64.0;
             }
         }];
     } else if (tag == kFollowingButtonTag) {
-        debug NSLog(@"unfollow this person");
-               NSString *reportText = [NSString stringWithFormat:@"Unfollow @%@", [self getUser].username];
-        UIActionSheet * actionSheet = [[UIActionSheet alloc] initWithTitle:nil
+        NSString *reportText = [NSString stringWithFormat:@"Unfollow @%@", [self getUser].username];
+        UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:nil
                                                                   delegate:self
                                                          cancelButtonTitle:@"Cancel"
                                                     destructiveButtonTitle:reportText
                                                          otherButtonTitles:nil, nil];
         [actionSheet showInView:self.view];
 
-        
     } else if (tag == kInviteButtonTag) {
         TDInviteViewController *vc = [[TDInviteViewController alloc] initWithNibName:@"TDInviteViewController" bundle:nil ];
         vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
@@ -799,6 +797,9 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == actionSheet.cancelButtonIndex) {
+        return;
+    }
     NSNumber *userId = nil;
     TDUserProfileCell *cell = nil;
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
