@@ -18,14 +18,14 @@
 
 @interface TDDetailsLikesCell : UITableViewCell
 {
-    id <TDDetailsLikesCellDelegate> __unsafe_unretained delegate;
+    id <TDDetailsLikesCellDelegate> __weak delegate;
     NSInteger row;
     BOOL like;
     NSArray *likers;
     NSArray *comments;
 }
 
-@property (nonatomic, assign) id <TDDetailsLikesCellDelegate> __unsafe_unretained delegate;
+@property (nonatomic, weak) id <TDDetailsLikesCellDelegate> delegate;
 @property (nonatomic, assign) NSInteger row;
 @property (nonatomic, retain) NSArray *likers;
 @property (nonatomic, retain) NSArray *comments;

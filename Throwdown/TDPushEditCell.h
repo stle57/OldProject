@@ -15,7 +15,7 @@
 
 @interface TDPushEditCell : UITableViewCell
 
-@property (nonatomic, assign) id <TDPushEditCellDelegate> __unsafe_unretained delegate;
+@property (nonatomic, weak) id <TDPushEditCellDelegate> delegate;
 @property (weak, nonatomic) IBOutlet UILabel *longTitleLabel;
 @property (weak, nonatomic) IBOutlet UIView *bottomLine;
 @property (weak, nonatomic) IBOutlet UIView *topLine;

@@ -34,7 +34,7 @@ static CGFloat const kInviteButtonStatButtonPadding = 25; // padding between inv
 
 @interface TDUserProfileCell : UITableViewCell
 
-@property (nonatomic, assign) id <TDUserProfileCellDelegate> __unsafe_unretained delegate;
+@property (nonatomic, weak) id <TDUserProfileCellDelegate> delegate;
 @property (weak, nonatomic) IBOutlet UIImageView *userImageView;
 @property (weak, nonatomic) IBOutlet UILabel *userNameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *bioLabel;

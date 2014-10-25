@@ -19,7 +19,7 @@
 
 @interface TDDetailsCommentsCell : UITableViewCell <TTTAttributedLabelDelegate>
 
-@property (nonatomic, assign) id <TDDetailsCommentsCellDelegate> __unsafe_unretained delegate;
+@property (nonatomic, weak) id <TDDetailsCommentsCellDelegate> delegate;
 @property (nonatomic, assign) NSInteger row;
 @property (nonatomic, assign) NSInteger commentNumber;
 @property (weak, nonatomic) IBOutlet UIImageView *commentIcon;

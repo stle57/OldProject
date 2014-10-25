@@ -29,7 +29,7 @@ typedef enum {
 
 @interface TDToastView : UIView <UIGestureRecognizerDelegate>
 
-@property (nonatomic, assign) id <TDToastViewDelegate> __unsafe_unretained delegate;
+@property (nonatomic, weak) id <TDToastViewDelegate> delegate;
 @property (weak, nonatomic) IBOutlet UIImageView *iconImageView;
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
 @property (weak, nonatomic) IBOutlet UILabel *label;

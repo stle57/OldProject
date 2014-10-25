@@ -16,7 +16,7 @@
 
 @interface TDNoFollowProfileCell : UITableViewCell
 
-@property (nonatomic, assign) id <TDNoFollowProfileCellDelegate> __unsafe_unretained delegate;
+@property (nonatomic, weak) id <TDNoFollowProfileCellDelegate> delegate;
 @property (weak, nonatomic) IBOutlet UILabel *noFollowLabel;
 @property (weak, nonatomic) IBOutlet UIView *view;
 @property (weak, nonatomic) IBOutlet UIButton *findPeopleButton;

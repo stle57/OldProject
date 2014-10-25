@@ -24,7 +24,7 @@ static const CGFloat MIDDLE_CELL_Y_AXIS = 23.75;
 
 @interface TDContactsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate,TDFollowProfileCellDelegate, UIActionSheetDelegate, TDNoFollowProfileCellDelegate>
 
-@property (nonatomic, assign) id <TDContactsViewControllerDelegate> __unsafe_unretained delegate;
+@property (nonatomic, weak) id <TDContactsViewControllerDelegate> delegate;
 @property (weak, nonatomic) IBOutlet UILabel *navLabel;
 @property (weak, nonatomic) IBOutlet UIButton *backButton;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;

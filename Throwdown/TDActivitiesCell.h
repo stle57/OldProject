@@ -16,7 +16,7 @@
 
 @interface TDActivitiesCell : UITableViewCell
 
-@property (nonatomic, assign) id <TDActivitiesCellDelegate> __unsafe_unretained delegate;
+@property (nonatomic, weak) id <TDActivitiesCellDelegate> delegate;
 @property (nonatomic) NSDictionary *activity;
 @property (nonatomic, assign) NSInteger row;
 

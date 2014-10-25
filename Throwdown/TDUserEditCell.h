@@ -14,14 +14,14 @@
 
 @interface TDUserEditCell : UITableViewCell
 {
-    id <TDUserEditCellDelegate> __unsafe_unretained delegate;
+    id <TDUserEditCellDelegate> __weak delegate;
     CGRect textViewdOrigRect;
     CGFloat bottomLineOrigY;
     CGFloat topLineOrigHeight;
     CGFloat bottomLineOrigHeight;
 }
 
-@property (nonatomic, assign) id <TDUserEditCellDelegate> __unsafe_unretained delegate;
+@property (nonatomic, weak) id <TDUserEditCellDelegate> delegate;
 @property (weak, nonatomic) IBOutlet UIImageView *userImageView;
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *longTitleLabel;

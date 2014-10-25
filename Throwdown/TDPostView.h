@@ -20,7 +20,7 @@
 
 @interface TDPostView : UITableViewCell
 
-@property (nonatomic, assign) id <TDPostViewDelegate> __unsafe_unretained delegate;
+@property (nonatomic, weak) id <TDPostViewDelegate> delegate;
 @property (nonatomic) UILabel *usernameLabel;
 @property (nonatomic) UIImageView *previewImage;
 @property (nonatomic) UIImageView *userProfileImage;

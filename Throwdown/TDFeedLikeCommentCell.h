@@ -18,7 +18,7 @@
 
 @interface TDFeedLikeCommentCell : UITableViewCell
 
-@property (nonatomic, assign) id <TDFeedLikeCommentDelegate> __unsafe_unretained delegate;
+@property (nonatomic, weak) id <TDFeedLikeCommentDelegate> delegate;
 @property (nonatomic, assign) NSInteger row;
 @property (weak, nonatomic) IBOutlet UIButton *likeButton;
 @property (weak, nonatomic) IBOutlet UIButton *commentButton;

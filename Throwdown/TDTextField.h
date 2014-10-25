@@ -28,12 +28,12 @@ typedef NSUInteger kTDTextFieldType;
 
 @interface TDTextField : UIView <UITextFieldDelegate>
 {
-    id <TDTextFieldDelegate> __unsafe_unretained delegate;
+    id <TDTextFieldDelegate> __weak delegate;
     kTDTextFieldType type;
     BOOL valid;
 }
 
-@property (nonatomic, assign) id <TDTextFieldDelegate> __unsafe_unretained delegate;
+@property (nonatomic, weak) id <TDTextFieldDelegate> delegate;
 @property (weak, nonatomic) IBOutlet UIImageView *iconImageView;
 @property (weak, nonatomic) IBOutlet UITextField *textfield;
 @property (weak, nonatomic) IBOutlet UILabel *placeholderLabel;

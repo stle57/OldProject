@@ -41,7 +41,7 @@ static NSString *const kStatusKeyPath = @"status";
 }
 
 - (void)removeObservers {
-    if (self.delegate != nil) {
+    if (self.delegate) {
         [self removeObserver:self forKeyPath:kStatusKeyPath context:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self
                                                         name:AVPlayerItemDidPlayToEndTimeNotification

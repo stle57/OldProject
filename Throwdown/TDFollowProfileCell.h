@@ -22,7 +22,7 @@
     CGFloat bottomLineOrigY;
 }
 
-@property (weak, nonatomic) id <TDFollowProfileCellDelegate> delegate;
+@property (nonatomic, weak) id <TDFollowProfileCellDelegate> delegate;
 @property (weak, nonatomic) IBOutlet UIImageView *userImageView;
 @property (weak, nonatomic) IBOutlet UILabel *nameLabel;
 @property (weak, nonatomic) IBOutlet UILabel *descriptionLabel;

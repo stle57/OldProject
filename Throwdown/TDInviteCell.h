@@ -15,7 +15,7 @@
 
 @interface TDInviteCell : UITableViewCell
 
-@property (nonatomic, assign) id <TDInviteCellDelegate> __unsafe_unretained delegate;
+@property (nonatomic, weak) id <TDInviteCellDelegate> delegate;
 
 @property (weak, nonatomic) IBOutlet UITextField *contactTextField;
 @property (nonatomic) BOOL addedButton;
