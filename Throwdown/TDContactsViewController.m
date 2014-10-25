@@ -153,7 +153,7 @@
 }
 
 -(void)viewDidLayoutSubviews{
-    [self.navigationController setNavigationBarHidden:NO animated:NO];
+    //[self.navigationController setNavigationBarHidden:NO animated:NO];
     [self.searchBar setShowsCancelButton:NO animated:NO];
 }
 
@@ -268,7 +268,6 @@
                     [self reformatCellToSelected:cell contactInfo:contactPerson];
                 }
             }
-                
             return cell;
             }
         }
@@ -376,10 +375,15 @@
         self.origNameLabelFrame = cell.nameLabel.frame;
     }
 
+    //TODO: Setting height to 1 for ios7 bug, but need to fix this
+    cell.topLine.frame = CGRectMake(0, 0, SCREEN_WIDTH, 1);
+    cell.bottomLine.frame = CGRectMake(0, 64, SCREEN_WIDTH, 1);
+    
+
     // Reset everything in cell.
     cell.row = indexPath.row;
-    cell.topLine.hidden = YES;
-    cell.bottomLine.hidden = NO;
+    cell.topLine.hidden = cell.row != 0;
+    
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.descriptionLabel.hidden = YES;
@@ -388,13 +392,7 @@
     cell.actionButton.hidden = YES;
     [cell.userImageView setImage:[UIImage imageNamed:@"prof_pic_default.png"]];
     cell.userId = contact.id;
-    
-    if (indexPath.section == 0 && indexPath.row == 0) {
-        cell.topLine.hidden = NO;
-    } else {
-        cell.topLine.hidden = NO;
-        cell.bottomLine.hidden = NO;
-    }
+
     cell.nameLabel.textColor = [TDConstants headerTextColor];
     cell.nameLabel.font = [TDConstants fontRegularSized:16];
     
