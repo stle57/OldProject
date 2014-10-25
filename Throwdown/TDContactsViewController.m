@@ -376,10 +376,10 @@
     }
 
     //TODO: Setting height to 1 for ios7 bug, but need to fix this
-    cell.topLine.frame = CGRectMake(0, 0, SCREEN_WIDTH, 1);
-    cell.bottomLine.frame = CGRectMake(0, 64, SCREEN_WIDTH, 1);
-    
-
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] == 7.0){
+        cell.topLine.frame = CGRectMake(0, 0, SCREEN_WIDTH, 1);
+        cell.bottomLine.frame = CGRectMake(0, 64, SCREEN_WIDTH, 1);
+    }
     // Reset everything in cell.
     cell.row = indexPath.row;
     cell.topLine.hidden = cell.row != 0;
