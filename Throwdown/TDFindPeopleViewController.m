@@ -140,7 +140,7 @@
     
     CGRect tableFrame = self.tableView.frame;
     tableFrame.size.width = SCREEN_WIDTH;
-    tableFrame.size.height = SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height - self.searchBar.frame.size.height - self.headerView.frame.size.height;
+    tableFrame.size.height = SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height - self.searchBar.frame.size.height - [UIApplication sharedApplication].statusBarFrame.size.height;
     self.tableView.frame = tableFrame;
     
     [self loadData];
@@ -409,7 +409,7 @@
         [cell.actionButton setTag:kFollowingButtonTag];
     }
     
-    if (cell.userId == [[TDCurrentUser sharedInstance] currentUserObject].userId) {
+    if ([cell.userId isEqualToNumber:[[TDCurrentUser sharedInstance] currentUserObject].userId]) {
         cell.actionButton.hidden = YES;
     } else {
         cell.actionButton.hidden = NO;

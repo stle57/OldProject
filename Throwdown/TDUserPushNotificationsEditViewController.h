@@ -18,6 +18,8 @@
 #import "TDConstants.h"
 #import "TDActivityIndicator.h"
 
+#define HEADER_TOP_MARGIN    20
+#define HEADER_BOTTOM_MARGIN 10
 @interface TDUserPushNotificationsEditViewController : UIViewController
 
 @end

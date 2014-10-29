@@ -608,6 +608,7 @@
                     cell.textField.text = self.location;
                     cell.textField.frame = [self getTextFieldPosition:cell.textField.frame];
                     cell.textField.textColor = [TDConstants commentTextColor];
+                    
                 }
                 break;
 
@@ -623,10 +624,10 @@
                     } else {
                         NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:self.bio];
                         NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-                        [paragraphStyle setLineHeightMultiple:(19.0/16.0)];
-                        [paragraphStyle setMinimumLineHeight:19.0];
-                        [paragraphStyle setMaximumLineHeight:19.0];
-                        paragraphStyle.alignment = NSTextAlignmentLeft;
+                        [paragraphStyle setLineHeightMultiple:(20.0/16.0)];
+                        [paragraphStyle setMinimumLineHeight:20.0];
+                        [paragraphStyle setMaximumLineHeight:20.0];
+                        [paragraphStyle setAlignment:NSTextAlignmentLeft];
                         [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, self.bio.length)];
                         [attributedString addAttribute:NSFontAttributeName value:[TDConstants fontRegularSized:16.0] range:NSMakeRange(0, self.bio.length)];
                         [attributedString addAttribute:NSForegroundColorAttributeName value:[TDConstants headerTextColor] range:NSMakeRange(0, self.bio.length)];
@@ -634,14 +635,13 @@
                     }
                     CGRect newTextFrame = cell.textView.frame;
                     newTextFrame.size.height = [self tableView:tableView heightForRowAtIndexPath:indexPath];
-                    newTextFrame.origin.y = cell.bottomLine.frame.size.height-1;
                     cell.textView.frame = newTextFrame;
-
                     cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
                                                        CGRectGetMaxY(newTextFrame),
                                                        cell.bottomLine.frame.size.width,
                                                        cell.bottomLineOrigHeight);
-
+                    cell.textView.textContainer.lineFragmentPadding = 0;
+                    cell.textView.textContainerInset = UIEdgeInsetsZero;
                 }
                 break;
                 default:

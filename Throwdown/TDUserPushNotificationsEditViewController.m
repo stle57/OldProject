@@ -18,9 +18,6 @@
 #import "TDAPIClient.h"
 #import "UIAlertView+TDBlockAlert.h"
 
-
-static CGFloat const kMinRowHeight = 42.;
-
 /*
 {
 settings: [
@@ -64,6 +61,7 @@ settings: [
 @property (nonatomic) NSDictionary *originalSettings;
 @property (nonatomic) BOOL gotFromServer;
 @property (nonatomic) UIButton *backButton;
+@property (nonatomic) NSMutableDictionary *headerLabels;
 
 @end
 
@@ -73,6 +71,7 @@ settings: [
 - (void)dealloc {
     self.pushSettings = nil;
     self.originalSettings = nil;
+    self.headerLabels = nil;
 }
 
 - (void)viewDidLoad {
@@ -83,7 +82,7 @@ settings: [
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
     
     // Title
-    self.titleLabel.text = @"Push Notifications";
+    self.titleLabel.text = @"Notifications";
     self.titleLabel.textColor = [UIColor whiteColor];
     self.titleLabel.font = [TDConstants fontSemiBoldSized:18];
     [self.navigationItem setTitleView:self.titleLabel];
@@ -95,6 +94,8 @@ settings: [
     self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
     
     self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
+    
+    self.headerLabels = [[NSMutableDictionary alloc] init];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -184,21 +185,22 @@ settings: [
 #pragma mark - TableViewDelegate
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    UIView *header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 35.0)];
-
-    if (self.gotFromServer && section < [self.settings count]) {
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(5, 7, SCREEN_WIDTH, 18)];
-        label.text = [[self.settings objectAtIndex:section] objectForKey:@"name"];
-        label.font = [TDConstants fontRegularSized:16.0];
-        label.textColor = [TDConstants headerTextColor];
-        [header addSubview:label];
-    }
-
-    return header;
+    NSString *newValue = [NSString stringWithFormat:@"%ld", (long)section ];
+    
+    UILabel *label = [self.headerLabels valueForKey:newValue];
+    
+    UIView *headerView =[[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, HEADER_TOP_MARGIN + label.frame.size.height + HEADER_BOTTOM_MARGIN)];
+    [headerView addSubview:label];
+    
+    return headerView;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return 30.;
+    NSString *newValue = [NSString stringWithFormat:@"%ld", (long)section];
+    [self createHeaderLabels:section];
+    UILabel *label = [self.headerLabels valueForKey:newValue];
+    debug NSLog(@"height for Header=%f in section %@", HEADER_TOP_MARGIN + label.frame.size.height + HEADER_BOTTOM_MARGIN, newValue);
+    return HEADER_TOP_MARGIN + label.frame.size.height + HEADER_BOTTOM_MARGIN;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -245,9 +247,21 @@ settings: [
     CGRect bottomLineFrame = cell.bottomLine.frame;
     bottomLineFrame.origin.y = [self tableView:tableView heightForRowAtIndexPath:indexPath]-.5;
     cell.bottomLine.frame = bottomLineFrame;
+    if ([[self settingFor:indexPath] objectForKey:@"email"]) {
+        [cell.emailButton setImage:[UIImage imageNamed:@"email-on.png"] forState:UIControlStateNormal];
+    } else {
+        [cell.emailButton setImage:[UIImage imageNamed:@"email-off.png"] forState:UIControlStateNormal];
+    }
+    if ([[self settingFor:indexPath] objectForKey:@"push"]) {
+        [cell.pushButton setImage:[UIImage imageNamed:@"push-on.png"] forState:UIControlStateNormal];
+    } else {
+        [cell.pushButton setImage:[UIImage imageNamed:@"push-off.png"] forState:UIControlStateNormal];
+    }
     if ([[self settingFor:indexPath] objectForKey:@"options"]) {
         cell.segmentControl.hidden = NO;
-        cell.aSwitch.hidden = YES;
+        cell.pushButton.hidden = YES;
+        cell.emailButton.hidden = YES;
+        //cell.aSwitch.hidden = YES;
         cell.segmentControl.selectedSegmentIndex =[[[self settingFor:indexPath] objectForKey:@"value"] integerValue];
         NSUInteger index = 0;
         for (NSString *opt in [[self settingFor:indexPath] objectForKey:@"options"]) {
@@ -256,27 +270,39 @@ settings: [
         }
     } else {
         cell.segmentControl.hidden = YES;
-        cell.aSwitch.hidden = NO;
-        cell.aSwitch.on = [[[self settingFor:indexPath] objectForKey:@"value"] boolValue];
+        cell.pushButton.hidden = NO;
+        cell.emailButton.hidden = NO;
+        
+        //cell.aSwitch.hidden = NO;
+        //cell.aSwitch.on = [[[self settingFor:indexPath] objectForKey:@"value"] boolValue];
     }
 
     return cell;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (self.gotFromServer) {
-        NSString *text = [[self settingFor:indexPath] objectForKey:@"name"];
-        UILabel *label = [[UILabel alloc] init];
-        label.text = text;
-        CGFloat height = [label sizeThatFits:CGSizeMake(242., MAXFLOAT)].height;
-        return height > kMinRowHeight ? height : kMinRowHeight;
-    }
-    return 0;
+    return 44.;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
 }
+
+- (void) createHeaderLabels:(NSInteger)section {
+    NSString *sectionStr = [NSString stringWithFormat:@"%ld", (long)section ];
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 20, SCREEN_WIDTH, 100)];
+//    CGFloat lineHeight = 18.0;
+//    NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:[[self.settings objectAtIndex:section] objectForKey:@"name"] font:[TDConstants fontSemiBoldSized:18] color:[TDConstants commentTimeTextColor] lineHeight:lineHeight lineHeightMultipler:(lineHeight/18.0)];
+    
+    label.text =[[self.settings objectAtIndex:section] objectForKey:@"name"] ;
+    label.font = [TDConstants fontSemiBoldSized:13];
+    label.textColor = [TDConstants commentTimeTextColor];
+    [label sizeToFit];
+    
+    debug NSLog(@"label frame=%@", NSStringFromCGRect(label.frame));
+    [self.headerLabels setObject:label forKey:sectionStr];
+}
+
 
 #pragma mark - TDPushEditCellDelegate
 
@@ -285,6 +311,19 @@ settings: [
     [self.pushSettings setObject:value forKey:key];
     debug NSLog(@"DICT:%@", self.pushSettings);
 
+}
+
+- (void)emailValue:(NSNumber *)value forIndexPath:(NSIndexPath *)indexPath {
+    debug NSLog(@"inside emailValue");
+    NSString *key = [[self settingFor:indexPath] objectForKey:@"key"];
+    [self.pushSettings setObject:value forKey:key];
+    debug NSLog(@"DICT:%@", self.pushSettings);
+}
+- (void)pushValue:(NSNumber *)value forIndexPath:(NSIndexPath *)indexPath {
+    debug NSLog(@"inside pushValue");
+    NSString *key = [[self settingFor:indexPath] objectForKey:@"key"];
+    [self.pushSettings setObject:value forKey:key];
+    debug NSLog(@"DICT:%@", self.pushSettings);
 }
 
 #pragma mark - Activity

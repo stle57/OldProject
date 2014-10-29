@@ -158,6 +158,7 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     paragraphStyle.tailIndent = -10.0f;
     paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
     [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [text length])];
+    [attributedString addAttribute:NSFontAttributeName value:BIO_FONT range:NSMakeRange(0, text.length)];
     return attributedString;
 }
 
