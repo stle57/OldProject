@@ -235,33 +235,33 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
       NSInteger currentRow = indexPath.row;
-    if (tableView == self.tableView) {
-        if (self.followUsers == nil || self.followUsers.count == 0) {
-            self.tableView.backgroundColor = [UIColor whiteColor];
+    if (self.followUsers == nil || self.followUsers.count == 0) {
+        self.tableView.backgroundColor = [UIColor whiteColor];
+        
+        if (self.followControllerType == kUserListType_Followers) {
+            TDNoFollowProfileCell* cell = [self createNoFollowCell:indexPath tableView:tableView text:@"No followers yet" hideFindButton:YES hideInviteButton:YES];
             
-            if (self.followControllerType == kUserListType_Followers) {
-                TDNoFollowProfileCell* cell = [self createNoFollowCell:indexPath tableView:tableView text:@"No followers yet" hideFindButton:YES hideInviteButton:YES];
-                
-                return cell;
-            } else if (self.followControllerType == kUserListType_Following){
-                if (self.profileUser.userId == [TDCurrentUser sharedInstance].currentUserObject.userId) {
-                    TDNoFollowProfileCell *cell = [self createNoFollowCell:indexPath tableView:tableView text:@"Not following anyone" hideFindButton:NO hideInviteButton:NO];
-                    
-                    return cell;
-                } else {
-                    // Only allow the invite and find button for the current device/user that is in operation.
-                    TDNoFollowProfileCell *cell = [self createNoFollowCell:indexPath tableView:tableView text:@"Not following anyone" hideFindButton:YES hideInviteButton:YES];
-                    
-                    return cell;
-                }
-            }
-        } else {
-            self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
-            NSArray *object = [self.followUsers objectAtIndex:currentRow];
-            
-            TDFollowProfileCell *cell = [self createCell:indexPath tableView:tableView object:object];
             return cell;
+        } else if (self.followControllerType == kUserListType_Following){
+            if ([self.profileUser.userId isEqualToNumber:[TDCurrentUser sharedInstance].currentUserObject.userId]) {
+                TDNoFollowProfileCell *cell = [self createNoFollowCell:indexPath tableView:tableView text:@"Not following anyone" hideFindButton:NO hideInviteButton:NO];
+                debug NSLog(@"self.profileUser.userId=%@", [self.profileUser.userId stringValue]);
+                return cell;
+            } else {
+                // Only allow the invite and find button for the current device/user that is in operation.
+                TDNoFollowProfileCell *cell = [self createNoFollowCell:indexPath tableView:tableView text:@"Not following anyone" hideFindButton:YES hideInviteButton:YES];
+                debug NSLog(@" not current user self.profileUser.userId=%@, name=%@", [self.profileUser.userId stringValue], self.profileUser.username);
+                
+                debug NSLog(@"current user object=%@", [[TDCurrentUser sharedInstance].currentUserObject.userId stringValue]);
+                return cell;
+            }
         }
+    } else {
+        self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
+        NSArray *object = [self.followUsers objectAtIndex:currentRow];
+        
+        TDFollowProfileCell *cell = [self createCell:indexPath tableView:tableView object:object];
+        return cell;
     }
     return nil;
 }
@@ -277,18 +277,9 @@
 
     cell.noFollowLabel.text = text;
     cell.findPeopleButton.hidden = hideFindButton;
-    cell.invitePeopleButton.hidden = hideFindButton;
-    if (hideInviteButton == NO) {
-        cell.findPeopleButton.enabled = !hideInviteButton;
-    } else {
-        cell.findPeopleButton.enabled = !hideInviteButton;
-    }
-    
-    if (hideFindButton == NO) {
-        cell.invitePeopleButton.enabled = !hideFindButton;
-    } else {
-        cell.invitePeopleButton.enabled = !hideFindButton;
-    }
+    cell.invitePeopleButton.hidden = hideInviteButton;
+    cell.findPeopleButton.enabled = !hideFindButton;
+    cell.invitePeopleButton.enabled = !hideInviteButton;
     
     return cell;
 }
@@ -353,7 +344,7 @@
         [cell.actionButton setTag:kFollowingButtonTag];
     }
 
-    if (cell.userId == [[TDCurrentUser sharedInstance] currentUserObject].userId) {
+    if ([cell.userId isEqualToNumber:[[TDCurrentUser sharedInstance] currentUserObject].userId]) {
         cell.actionButton.hidden = YES;
     } else {
         cell.actionButton.hidden = NO;
@@ -383,12 +374,12 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (tableView == self.tableView) {
-        if (self.followUsers == nil || self.followUsers.count == 0) {
-            return TD_NOFOLLOWCELL_HEIGHT; // For the no following/no followers cell
-        } else {
-            return TD_FOLLOW_CELL_HEIGHT;
-        }
+    if (self.followUsers == nil || self.followUsers.count == 0) {
+        debug NSLog(@"returnign no follow cell height");
+        return TD_NOFOLLOWCELL_HEIGHT; // For the no following/no followers cell
+    } else {
+        debug NSLog(@"returning follow cell height");
+        return TD_FOLLOW_CELL_HEIGHT;
     }
     return 0;
 }

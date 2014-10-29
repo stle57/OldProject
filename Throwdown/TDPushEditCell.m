@@ -24,6 +24,24 @@
     titleLabelFrame.origin.x = TD_MARGIN;
     self.longTitleLabel.frame = titleLabelFrame;
     
+    CGRect emailButtonFrame = self.emailButton.frame;
+    emailButtonFrame.origin.x = SCREEN_WIDTH - TD_MARGIN - self.emailButton.frame.size.width;
+    emailButtonFrame.origin.y = 10;
+    self.emailButton.frame = emailButtonFrame;
+    [self addSubview:self.emailButton];
+    
+    CGRect pushButtonFrame = self.pushButton.frame;
+    pushButtonFrame.origin.x = SCREEN_WIDTH - TD_MARGIN - self.pushButton.frame.size.width - 30;
+    pushButtonFrame.origin.y = 10;
+    self.pushButton.frame = pushButtonFrame;
+    [self addSubview:self.pushButton];
+    
+    CGRect segmentControlFrame = self.segmentControl.frame;
+    segmentControlFrame.origin.x = SCREEN_WIDTH -TD_MARGIN -self.segmentControl.frame.size.width;
+    segmentControlFrame.origin.y = 10;
+    self.segmentControl.frame = segmentControlFrame;
+    [self addSubview:self.segmentControl];
+    
     CGRect cellFrame = self.frame;
     cellFrame.size.width = SCREEN_WIDTH;
     self.frame = cellFrame;
@@ -40,13 +58,6 @@
     
     self.bottomLineOrigY = self.bottomLine.frame.origin.y;
     
-    CGRect switchFrame = self.aSwitch.frame;
-    switchFrame.origin.x = SCREEN_WIDTH - switchFrame.size.width - TD_MARGIN;
-    self.aSwitch.frame = switchFrame;
-    
-    CGRect frame = self.segmentControl.frame;
-    frame.origin.x = SCREEN_WIDTH - frame.size.width - TD_MARGIN;
-    self.segmentControl.frame = frame;
 }
 
 - (IBAction)segmentChanged:(id)sender {
@@ -57,8 +68,19 @@
 
 - (IBAction)switch:(id)sender {
     if (self.delegate && [self.delegate respondsToSelector:@selector(switchValue:forIndexPath:)]) {
-        [self.delegate switchValue:[NSNumber numberWithBool:self.aSwitch.on] forIndexPath:self.indexPath];
+//        [self.delegate switchValue:[NSNumber numberWithBool:self.aSwitch.on] forIndexPath:self.indexPath];
     }
 }
 
+- (IBAction)emailButtonPressed:(UIButton*)sender {
+    debug NSLog(@"email button pressed");
+    if (self.delegate && [self.delegate respondsToSelector:@selector(emailValue:forIndexPath:)]) {
+        [self.delegate emailValue:[NSNumber numberWithBool:YES] forIndexPath:self.indexPath];
+    }
+}
+
+- (IBAction)pushButtonPressed:(UIButton*)sender {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(pushValue:forIndexPath:)]) {
+        [self.delegate pushValue:[NSNumber numberWithBool:YES] forIndexPath:self.indexPath];
+    }}
 @end

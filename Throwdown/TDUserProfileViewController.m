@@ -354,7 +354,7 @@
 #pragma mark - Update Following Count after User follow notification
 - (void)updateUserFollowingCount:(NSNotification *)notification {
      debug NSLog(@"%@ updateUserFollowingCount:%@", [self class], notification.object);
-    if (self.getUser.userId == notification.object) {
+    if ([self.getUser.userId isEqual:notification.object]) {
         if ([notification.userInfo objectForKey:TD_INCREMENT_STRING]) {
             // We are following someone on their profile screen
             self.getUser.followingCount = [NSNumber numberWithLong:[self.getUser.followingCount integerValue] + [((NSNumber *)[notification.userInfo objectForKey:TD_INCREMENT_STRING]) integerValue]];

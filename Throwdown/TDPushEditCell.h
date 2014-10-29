@@ -11,6 +11,8 @@
 @protocol TDPushEditCellDelegate <NSObject>
 @optional
 - (void)switchValue:(NSNumber *)value forIndexPath:(NSIndexPath *)indexPath;
+- (void)emailValue:(NSNumber *)value forIndexPath:(NSIndexPath *)indexPath;
+- (void)pushValue:(NSNumber *)value forIndexPath:(NSIndexPath *)indexPath;
 @end
 
 @interface TDPushEditCell : UITableViewCell
@@ -19,11 +21,13 @@
 @property (weak, nonatomic) IBOutlet UILabel *longTitleLabel;
 @property (weak, nonatomic) IBOutlet UIView *bottomLine;
 @property (weak, nonatomic) IBOutlet UIView *topLine;
-@property (weak, nonatomic) IBOutlet UISwitch *aSwitch;
+@property (weak, nonatomic) IBOutlet UIButton *pushButton;
+@property (weak, nonatomic) IBOutlet UIButton *emailButton;
 @property (nonatomic) CGFloat bottomLineOrigY;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentControl;
 @property (nonatomic) NSIndexPath *indexPath;
 
 - (IBAction)switch:(id)sender;
-
+- (IBAction)emailButtonPressed:(UIButton*)sender;
+- (IBAction)pushButtonPressed:(UIButton*)sender;
 @end

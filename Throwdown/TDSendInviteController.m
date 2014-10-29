@@ -250,7 +250,7 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
         break;
         case 2: //Tap Send label
         {
-            NSString *topLabelKey=[ NSString stringWithFormat:@"%d", section- 1 ];
+            NSString *topLabelKey=[ NSString stringWithFormat:@"%ld", section- 1 ];
             UILabel *topLabel = [self.headerLabels valueForKey:topLabelKey];
                 //UILabel *topLabel = [self.headerLabels objectAtIndex:section-1];
                 
@@ -276,7 +276,7 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
 }
 #pragma mark - TableView Delegates
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    NSString *newValue = [NSString stringWithFormat:@"%d", section ];
+    NSString *newValue = [NSString stringWithFormat:@"%ld", (long)section ];
 
     switch (section) {
         case 0:
@@ -292,7 +292,7 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
     
         case 1: {
             UILabel *topLabel = [self.headerLabels valueForKey:newValue];
-            NSString *newValue2 = [NSString stringWithFormat:@"%d", section+1];
+            NSString *newValue2 = [NSString stringWithFormat:@"%ld", section+1];
             UILabel *bottomLabel = [self.headerLabels valueForKey:newValue2];
             UIView *headerView =[[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, TOP_MARGIN_HEADER2 + topLabel.frame.size.height + MIDDLE_MARGIN_HEADER2 + bottomLabel.frame.size.height)];
             [headerView addSubview:topLabel];
@@ -403,7 +403,7 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
             [self createHeaderLabels:section+1];
             UILabel *topLabel = [self.headerLabels valueForKey:newValue];
 
-            NSString *newValue2 = [NSString stringWithFormat:@"%d", section+1];
+            NSString *newValue2 = [NSString stringWithFormat:@"%ld", section+1];
 
             UILabel *bottomLabel = [self.headerLabels valueForKey:newValue2];
             return TOP_MARGIN_HEADER2 + topLabel.frame.size.height + MIDDLE_MARGIN_HEADER2 + bottomLabel.frame.size.height;

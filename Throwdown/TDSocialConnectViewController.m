@@ -72,7 +72,13 @@
 
     CGRect frame = [[UIScreen mainScreen] bounds];
     frame.origin.y = -(navigationBar.frame.size.height + [UIApplication sharedApplication].statusBarFrame.size.height);
-    self.activityIndicator = [[TDActivityIndicator alloc] initWithFrame:frame];
+    self.activityIndicator = [[TDActivityIndicator alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.activityIndicator.center = [TDViewControllerHelper centerPosition];
+    
+    CGPoint centerFrame = self.activityIndicator.center;
+    centerFrame.y = self.activityIndicator.center.y - self.activityIndicator.backgroundView.frame.size.height/2;
+    self.activityIndicator.center = centerFrame;
+
     [self.view addSubview:self.activityIndicator];
 }
 

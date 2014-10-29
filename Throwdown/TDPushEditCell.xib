@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6245" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6250" systemVersion="13F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6238"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="UITableViewCell"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="TDPushEditCell" rowHeight="42" id="wCZ-UE-T81" customClass="TDPushEditCell">
-            <rect key="frame" x="0.0" y="0.0" width="320" height="42"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="TDPushEditCell" rowHeight="44" id="wCZ-UE-T81" customClass="TDPushEditCell">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="wCZ-UE-T81" id="Bwt-g5-LTv">
                 <rect key="frame" x="0.0" y="0.0" width="320" height="41"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="long title label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Biy-hP-sgD">
-                        <rect key="frame" x="7" y="1" width="242" height="42"/>
+                        <rect key="frame" x="10" y="1" width="242" height="44"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -22,7 +23,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <view contentMode="scaleToFill" id="5ga-t9-4Nj">
-                        <rect key="frame" x="0.0" y="41" width="320" height="1"/>
+                        <rect key="frame" x="0.0" y="43" width="320" height="1"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" red="0.78431372549019607" green="0.78431372549019607" blue="0.78431372549019607" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
@@ -31,39 +32,60 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <color key="backgroundColor" red="0.78431372549019607" green="0.78431372549019607" blue="0.78431372549019607" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
-                    <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" id="8fI-de-X19">
-                        <rect key="frame" x="255" y="5" width="51" height="31"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <connections>
-                            <action selector="switch:" destination="wCZ-UE-T81" eventType="valueChanged" id="BHt-yj-2Kl"/>
-                        </connections>
-                    </switch>
-                    <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" id="5Ow-1x-RA9" userLabel="Segmented Control">
-                        <rect key="frame" x="191" y="7" width="115" height="29"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <segments>
-                            <segment title="0"/>
-                            <segment title="1"/>
-                            <segment title="2"/>
-                        </segments>
-                        <color key="tintColor" red="0.29803921568627451" green="0.78431372549019607" blue="0.39215686274509803" alpha="1" colorSpace="calibratedRGB"/>
-                        <connections>
-                            <action selector="segmentChanged:" destination="wCZ-UE-T81" eventType="valueChanged" id="tc1-p8-bKi"/>
-                        </connections>
-                    </segmentedControl>
                 </subviews>
                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             </tableViewCellContentView>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <connections>
-                <outlet property="aSwitch" destination="8fI-de-X19" id="Agj-Rs-C3z"/>
                 <outlet property="bottomLine" destination="5ga-t9-4Nj" id="egH-dn-Wfa"/>
+                <outlet property="emailButton" destination="ec2-7N-lbj" id="s24-4N-rfq"/>
                 <outlet property="longTitleLabel" destination="Biy-hP-sgD" id="cj0-1f-lDe"/>
+                <outlet property="pushButton" destination="KWt-Vw-ZIJ" id="meV-KM-son"/>
                 <outlet property="segmentControl" destination="5Ow-1x-RA9" id="HcC-c2-UmO"/>
                 <outlet property="topLine" destination="8A1-O9-lTg" id="z17-0f-1wE"/>
             </connections>
         </tableViewCell>
+        <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" id="5Ow-1x-RA9" userLabel="Segmented Control">
+            <rect key="frame" x="0.0" y="0.0" width="115" height="29"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <segments>
+                <segment title="0"/>
+                <segment title="1"/>
+                <segment title="2"/>
+            </segments>
+            <color key="tintColor" red="0.29803921568627451" green="0.78431372549019607" blue="0.39215686274509803" alpha="1" colorSpace="calibratedRGB"/>
+            <connections>
+                <action selector="segmentChanged:" destination="wCZ-UE-T81" eventType="valueChanged" id="tc1-p8-bKi"/>
+            </connections>
+            <point key="canvasLocation" x="-42.5" y="245"/>
+        </segmentedControl>
+        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="ec2-7N-lbj">
+            <rect key="frame" x="13" y="4" width="20" height="22"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <state key="normal" image="email-off">
+                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+            </state>
+            <connections>
+                <action selector="emailButtonPressed:" destination="wCZ-UE-T81" eventType="touchUpInside" id="Ixq-80-08G"/>
+            </connections>
+            <point key="canvasLocation" x="133" y="287"/>
+        </button>
+        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="KWt-Vw-ZIJ">
+            <rect key="frame" x="0.0" y="-2" width="10" height="24"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <state key="normal" image="push-off">
+                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+            </state>
+            <connections>
+                <action selector="pushButtonPressed:" destination="wCZ-UE-T81" eventType="touchUpInside" id="NTn-1a-J63"/>
+            </connections>
+            <point key="canvasLocation" x="224" y="288"/>
+        </button>
     </objects>
+    <resources>
+        <image name="email-off" width="20" height="14"/>
+        <image name="push-off" width="10" height="20"/>
+    </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
         <simulatedOrientationMetrics key="orientation"/>
