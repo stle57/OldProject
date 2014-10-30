@@ -158,29 +158,45 @@
     [[TDUserAPI sharedInstance] getSuggestedUserList:^(BOOL success, NSArray *suggestedList) {
         if (success && suggestedList && suggestedList.count > 0) {
             self.suggestedUsers = [suggestedList copy];
-            self.gotFromServer = YES;
-            [self.tableView reloadData];
-            [self hideActivity];
+            debug NSLog(@"got suggested user list");
+            [[TDUserAPI sharedInstance] getCommunityUserList:^(BOOL success, NSArray *returnList) {
+                if (success && returnList && returnList.count > 0) {
+                    debug NSLog(@"got community user list");
+                    self.tdUsers = [returnList copy];
+                    if (self.searchText.length > 0) {
+                        [self filterContentForSearchText:self.searchText scope:nil];
+                    }
+                    self.gotFromServer = YES;
+                    [self.tableView reloadData];
+                    [self hideActivity];
+                } else {
+                    self.gotFromServer = NO;
+                    [self hideActivity];
+                }
+            }];
+//            self.gotFromServer = YES;
+//            [self.tableView reloadData];
+//            [self hideActivity];
         } else {
             self.gotFromServer = NO;
             [self hideActivity];
         }
     }];
     
-    [[TDUserAPI sharedInstance] getCommunityUserList:^(BOOL success, NSArray *returnList) {
-        if (success && returnList && returnList.count > 0) {
-            self.tdUsers = [returnList copy];
-            if (self.searchText.length > 0) {
-                [self filterContentForSearchText:self.searchText scope:nil];
-            }
-            self.gotFromServer = YES;
-            [self.tableView reloadData];
-            [self hideActivity];
-        } else {
-            self.gotFromServer = NO;
-            [self hideActivity];
-        }
-    }];
+//    [[TDUserAPI sharedInstance] getCommunityUserList:^(BOOL success, NSArray *returnList) {
+//        if (success && returnList && returnList.count > 0) {
+//            self.tdUsers = [returnList copy];
+//            if (self.searchText.length > 0) {
+//                [self filterContentForSearchText:self.searchText scope:nil];
+//            }
+//            self.gotFromServer = YES;
+//            [self.tableView reloadData];
+//            [self hideActivity];
+//        } else {
+//            self.gotFromServer = NO;
+//            [self hideActivity];
+//        }
+//    }];
     
 }
 
