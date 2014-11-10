@@ -274,17 +274,19 @@ static NSString *const kTracksKey = @"tracks";
     self.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@%@", RSHost, self.filename, FTImage]];
     SDWebImageManager *manager = [SDWebImageManager sharedManager];
     [manager downloadImageWithURL:self.imageURL options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            // progress bar could have been removed
-            // we have to do this on the main thread for thread safety
-            if (self.progressBarView) {
-                CGRect frame = self.progressBarView.frame;
-                frame.size.width = 200.0 * ((double)receivedSize / (double)expectedSize);
-                if (frame.size.width > 10) {
+        CGFloat width = 200.0 * ((double)receivedSize / (double)expectedSize);
+        // Progress can be NaN!
+        if (!isnan(width) && width > 10 && width <= 200 && self.progressBarView != nil) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                // progress bar could have been removed
+                // we have to do this on the main thread for thread safety
+                if (self.progressBarView && width > 10) {
+                    CGRect frame = self.progressBarView.frame;
+                    frame.size.width = width;
                     self.progressBarView.frame = frame;
                 }
-            }
-        });
+            });
+        }
     } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *finalURL) {
         dispatch_async(dispatch_get_main_queue(), ^{
             // avoid doing anything on a row that's been reused b/c the download took too long and user scrolled away
