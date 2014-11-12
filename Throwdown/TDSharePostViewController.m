@@ -31,7 +31,7 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
 
 @property (weak, nonatomic) IBOutlet UINavigationItem *navigationBarItem;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (weak, nonatomic) IBOutlet TDActivityIndicator *activityIndicator;
+@property (nonatomic) IBOutlet TDActivityIndicator *activityIndicator;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *saveButton;
 
 @property (nonatomic) BOOL shareToFacebook;
@@ -76,6 +76,16 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
     self.shareToFacebook = ([[TDCurrentUser sharedInstance] canPostToFacebook] && [[[NSUserDefaults standardUserDefaults] objectForKey:kFacebookShareKey] boolValue]);
     self.shareToTwitter = ([[TDCurrentUser sharedInstance] canPostToTwitter] && [[[NSUserDefaults standardUserDefaults] objectForKey:kTwitterShareKey] boolValue]);
     self.privacy = TDPostPrivacyPublic;
+    
+    self.activityIndicator = [[TDActivityIndicator alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    self.activityIndicator.center = [TDViewControllerHelper centerPosition];
+    
+    CGPoint centerFrame = self.activityIndicator.center;
+    centerFrame.y = self.activityIndicator.center.y - self.activityIndicator.backgroundView.frame.size.height/2;
+    self.activityIndicator.center = centerFrame;
+
+    [self.view addSubview:self.activityIndicator];
+
 }
 
 - (void)backButtonPressed {
