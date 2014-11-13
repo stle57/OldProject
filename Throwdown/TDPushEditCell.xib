@@ -71,7 +71,7 @@
             <point key="canvasLocation" x="133" y="287"/>
         </button>
         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="KWt-Vw-ZIJ">
-            <rect key="frame" x="0.0" y="-2" width="10" height="24"/>
+            <rect key="frame" x="0.0" y="0.0" width="20" height="24"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <state key="normal" image="push-off">
                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>

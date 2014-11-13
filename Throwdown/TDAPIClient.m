@@ -282,7 +282,21 @@
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/push_notification_settings.json"]];
 
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
-
+//    NSMutableDictionary *settings = [[NSMutableDictionary alloc] init];
+//    for (id key in pushSettings) {
+//        NSString * keyEmailStr = [key stringByAppendingString:@"_email"];
+//        NSString * keyPushStr = [key stringByAppendingString:@"_push"];
+//        NSDictionary *values = pushSettings[key];
+//        if (values.count > 1) {
+//            settings [keyEmailStr] = values[@"email"];
+//            settings [keyPushStr] = values[@"push"];
+//        } else {
+//            // For the posts_push value
+//            settings[keyPushStr] = values[@"value"];
+//        }
+//    }
+    debug NSLog(@"settings to send to server=%@", pushSettings);
+    
     NSDictionary *params = @{@"settings": pushSettings, @"user_token": [TDCurrentUser sharedInstance].authToken};
     [self.httpManager PUT:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {

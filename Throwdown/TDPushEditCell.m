@@ -31,7 +31,7 @@
     [self addSubview:self.emailButton];
     
     CGRect pushButtonFrame = self.pushButton.frame;
-    pushButtonFrame.origin.x = SCREEN_WIDTH - TD_MARGIN - self.pushButton.frame.size.width - 30;
+    pushButtonFrame.origin.x = SCREEN_WIDTH - TD_MARGIN - self.emailButton.frame.size.width - self.pushButton.frame.size.width - 30;
     pushButtonFrame.origin.y = 10;
     self.pushButton.frame = pushButtonFrame;
     [self addSubview:self.pushButton];
@@ -58,6 +58,9 @@
     
     self.bottomLineOrigY = self.bottomLine.frame.origin.y;
     
+    self.longTitleLabel.font = [TDConstants fontRegularSized:16];
+    self.longTitleLabel.textColor = [TDConstants commentTextColor];
+    
 }
 
 - (IBAction)segmentChanged:(id)sender {
@@ -74,13 +77,16 @@
 
 - (IBAction)emailButtonPressed:(UIButton*)sender {
     debug NSLog(@"email button pressed");
+    self.emailValue = !self.emailValue;
+    
     if (self.delegate && [self.delegate respondsToSelector:@selector(emailValue:forIndexPath:)]) {
-        [self.delegate emailValue:[NSNumber numberWithBool:YES] forIndexPath:self.indexPath];
+        [self.delegate emailValue:[NSNumber numberWithBool:self.emailValue] forIndexPath:self.indexPath];
     }
 }
 
 - (IBAction)pushButtonPressed:(UIButton*)sender {
+    self.pushValue = !self.pushValue;
     if (self.delegate && [self.delegate respondsToSelector:@selector(pushValue:forIndexPath:)]) {
-        [self.delegate pushValue:[NSNumber numberWithBool:YES] forIndexPath:self.indexPath];
+        [self.delegate pushValue:[NSNumber numberWithBool:self.pushValue] forIndexPath:self.indexPath];
     }}
 @end

@@ -17,6 +17,7 @@
 #import "NBPhoneNumberUtil.h"
 #import "TDAPIClient.h"
 #import "UIAlertView+TDBlockAlert.h"
+#import "TDAnalytics.h"
 
 /*
 {
@@ -69,6 +70,7 @@ settings: [
 @implementation TDUserPushNotificationsEditViewController
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     self.pushSettings = nil;
     self.originalSettings = nil;
     self.headerLabels = nil;
@@ -77,6 +79,11 @@ settings: [
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(willEnterForegroundCallback:)
+                                                 name:UIApplicationWillEnterForegroundNotification
+                                               object:nil];
+    
     // Background
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
@@ -109,12 +116,22 @@ settings: [
     [[TDAPIClient sharedInstance] getPushNotificationSettingsForUserToken:[TDCurrentUser sharedInstance].authToken success:^(id settings) {
         if ([settings isKindOfClass:[NSArray class]]) {
             self.settings = settings;
+            debug NSLog(@"settings =%@", self.settings);
             self.pushSettings = [@{} mutableCopy];
             for (NSDictionary *group in settings) {
                 for (NSDictionary *setting in [group objectForKey:@"keys"]) {
-                    [self.pushSettings addEntriesFromDictionary:@{[setting objectForKey:@"key"]: [setting objectForKey:@"value"]}];
+                    if ([setting objectForKey:@"email"] != nil) {
+                        NSString *emailStr = [NSString stringWithFormat:@"%@_email", [setting objectForKey:@"key"]];
+                        NSString *pushStr = [NSString stringWithFormat:@"%@_push", [setting objectForKey:@"key"]];
+                        [self.pushSettings addEntriesFromDictionary:@{emailStr: [setting objectForKey:@"email"]}];
+                         [self.pushSettings addEntriesFromDictionary:@{pushStr: [setting objectForKey:@"push"]}];
+                    } else {
+                        NSString *pStr = [NSString stringWithFormat:@"%@_push", [setting objectForKey:@"key"]];
+                        [self.pushSettings addEntriesFromDictionary:@{pStr: [setting objectForKey:@"value"]}];
+                    }
                 }
             }
+            debug NSLog(@"pushSettings = %@", self.pushSettings);
             self.originalSettings = [self.pushSettings copy];
             self.gotFromServer = YES;
             [self.tableView reloadData];
@@ -247,12 +264,14 @@ settings: [
     CGRect bottomLineFrame = cell.bottomLine.frame;
     bottomLineFrame.origin.y = [self tableView:tableView heightForRowAtIndexPath:indexPath]-.5;
     cell.bottomLine.frame = bottomLineFrame;
-    if ([[self settingFor:indexPath] objectForKey:@"email"]) {
+    cell.emailValue = [[[self settingFor:indexPath] objectForKey:@"email"] boolValue];
+    cell.pushValue =[[[self settingFor:indexPath] objectForKey:@"push"] boolValue];
+    if ([[[self settingFor:indexPath] objectForKey:@"email"] boolValue]) {
         [cell.emailButton setImage:[UIImage imageNamed:@"email-on.png"] forState:UIControlStateNormal];
     } else {
         [cell.emailButton setImage:[UIImage imageNamed:@"email-off.png"] forState:UIControlStateNormal];
     }
-    if ([[self settingFor:indexPath] objectForKey:@"push"]) {
+    if ([[[self settingFor:indexPath] objectForKey:@"push"] boolValue]) {
         [cell.pushButton setImage:[UIImage imageNamed:@"push-on.png"] forState:UIControlStateNormal];
     } else {
         [cell.pushButton setImage:[UIImage imageNamed:@"push-off.png"] forState:UIControlStateNormal];
@@ -303,27 +322,120 @@ settings: [
     [self.headerLabels setObject:label forKey:sectionStr];
 }
 
-
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    return 0.001;
+}
 #pragma mark - TDPushEditCellDelegate
 
 - (void)switchValue:(NSNumber *)value forIndexPath:(NSIndexPath *)indexPath {
     NSString *key = [[self settingFor:indexPath] objectForKey:@"key"];
-    [self.pushSettings setObject:value forKey:key];
+    [self.pushSettings setObject:value forKey:[NSString stringWithFormat:@"%@_push", key]];
     debug NSLog(@"DICT:%@", self.pushSettings);
 
+    
 }
 
 - (void)emailValue:(NSNumber *)value forIndexPath:(NSIndexPath *)indexPath {
     debug NSLog(@"inside emailValue");
-    NSString *key = [[self settingFor:indexPath] objectForKey:@"key"];
+    NSString *key = [NSString stringWithFormat:@"%@_email", [[self settingFor:indexPath] objectForKey:@"key"]];
     [self.pushSettings setObject:value forKey:key];
+    
+    TDPushEditCell *cell = (TDPushEditCell*) [self.tableView cellForRowAtIndexPath:indexPath];
+    if ([[self.pushSettings objectForKey:key] boolValue]) {
+        [cell.emailButton setImage:[UIImage imageNamed:@"email-on.png"] forState:UIControlStateNormal];
+    } else {
+        [cell.emailButton setImage:[UIImage imageNamed:@"email-off.png"] forState:UIControlStateNormal];
+    }
+    
     debug NSLog(@"DICT:%@", self.pushSettings);
 }
 - (void)pushValue:(NSNumber *)value forIndexPath:(NSIndexPath *)indexPath {
     debug NSLog(@"inside pushValue");
-    NSString *key = [[self settingFor:indexPath] objectForKey:@"key"];
-    [self.pushSettings setObject:value forKey:key];
-    debug NSLog(@"DICT:%@", self.pushSettings);
+    if ([[TDCurrentUser sharedInstance] didAskForPush] && [[TDCurrentUser sharedInstance] isRegisteredForPush])
+    {
+        debug NSLog(@"   ALREADY ASKED");
+        // change the value and move on
+        NSString *key = [NSString stringWithFormat:@"%@_push", [[self settingFor:indexPath] objectForKey:@"key"]];
+        [self.pushSettings setObject:value forKey:key];
+        TDPushEditCell *cell = (TDPushEditCell*) [self.tableView cellForRowAtIndexPath:indexPath];
+        if ([[self.pushSettings objectForKey:key] boolValue]) {
+            [cell.pushButton setImage:[UIImage imageNamed:@"push-on.png"] forState:UIControlStateNormal];
+        } else {
+            [cell.pushButton setImage:[UIImage imageNamed:@"push-off.png"] forState:UIControlStateNormal];
+        }
+        debug NSLog(@"DICT:%@", self.pushSettings);
+        return;
+    }
+    
+    if (![[TDCurrentUser sharedInstance] didAskForPush] && ![[TDCurrentUser sharedInstance] isRegisteredForPush]) {
+        // Show for prompt, user never been on this page before
+        NSString * message = @"We'd like to ask for your\n permission for push notifications.\n On the next screen, please tap\n \"OK\" to give us permission.";
+
+        [[TDAnalytics sharedInstance] logEvent:@"notification_asked"];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Permission Requested" message:message delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"Ask me", nil];
+        [alert showWithCompletionBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
+            if (buttonIndex != alertView.cancelButtonIndex) {
+                [[TDAnalytics sharedInstance] logEvent:@"notification_accept"];
+                [[TDCurrentUser sharedInstance] registerForRemoteNotificationTypes];
+                
+                // Change all settings to push
+                NSDictionary *dictionary = [self.pushSettings copy];
+                
+                for (NSString *key in dictionary) {
+                    if ([key containsString:@"email"]) {
+                        [self.pushSettings setValue:@0 forKey:key];
+                    }
+                    else if ([key containsString:@"push"]) {
+                        [self.pushSettings setValue:@1 forKey:key];
+                    }
+                }
+
+                for (int secNum = 0; secNum < [self.tableView numberOfSections]; secNum ++) {
+                    for (int row= 0; row < [self.tableView numberOfRowsInSection:secNum]; row++) {
+                        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:secNum];
+                        TDPushEditCell *cell = (TDPushEditCell*)[self.tableView cellForRowAtIndexPath:indexPath];
+                        cell.pushValue=true;
+                        cell.emailValue = false;
+                        [cell.pushButton setImage:[UIImage imageNamed:@"push-on.png"] forState:UIControlStateNormal];
+                        [cell.emailButton setImage:[UIImage imageNamed:@"email-off.png"] forState:UIControlStateNormal];
+                        
+                        if (!cell.segmentControl.isHidden) {
+                            [cell.segmentControl setSelectedSegmentIndex:1];
+                        }
+                    }
+                }
+                debug NSLog(@"switched all settings to push %@", self.pushSettings);
+            } else {
+                debug NSLog(@"GOT INTO CANCEL SITUATION");
+                // User hit cancel, revert the value back.
+                NSString *key = [NSString stringWithFormat:@"%@_push", [[self settingFor:indexPath] objectForKey:@"key"]];
+                TDPushEditCell *cell = (TDPushEditCell*) [self.tableView cellForRowAtIndexPath:indexPath];
+                cell.pushValue = [[self.pushSettings objectForKey:key] boolValue];
+                if ([[self.pushSettings objectForKey:key] boolValue]) {
+                    [cell.pushButton setImage:[UIImage imageNamed:@"push-on.png"] forState:UIControlStateNormal];
+                } else {
+                    [cell.pushButton setImage:[UIImage imageNamed:@"push-off.png"] forState:UIControlStateNormal];
+                }
+                debug NSLog(@"DICT:%@", self.pushSettings);
+                return;
+            }
+        }];
+        
+        return;
+
+    }
+    
+    if ([[TDCurrentUser sharedInstance] didAskForPush] && ![[TDCurrentUser sharedInstance] isRegisteredForPush]) {
+        debug NSLog(@"showing alert");
+        // Show an alert
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Push Notifications"
+                                                        message:@"Enable push notifications in Settings App > Notifications > Throwdown"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+        return;
+    }
 }
 
 #pragma mark - Activity
@@ -347,4 +459,9 @@ settings: [
     [self.activityIndicator stopSpinner];
 }
 
+#pragma  mark - NSNotification
+- (void)willEnterForegroundCallback:(NSNotification *)notification {
+    debug NSLog(@"got into the callback");
+    [self.tableView reloadData];
+}
 @end

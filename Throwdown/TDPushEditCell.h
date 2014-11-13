@@ -26,6 +26,8 @@
 @property (nonatomic) CGFloat bottomLineOrigY;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *segmentControl;
 @property (nonatomic) NSIndexPath *indexPath;
+@property (nonatomic) BOOL emailValue;
+@property (nonatomic) BOOL pushValue;
 
 - (IBAction)switch:(id)sender;
 - (IBAction)emailButtonPressed:(UIButton*)sender;

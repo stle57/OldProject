@@ -1055,25 +1055,10 @@
 
 #pragma mark - Edit Push Notifications
 - (void)gotoEditPushNotifications {
-    // Check to see if we asked for push already
-    if (![[TDCurrentUser sharedInstance] didAskForPush]) {
-        NSString * message = @"We'd like to ask for your\n permission for push notifications.\n On the next screen, please tap\n \"OK\" to give us permission.";
-        
-        [[TDAnalytics sharedInstance] logEvent:@"notification_asked"];
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Permission Requested" message:message delegate:nil cancelButtonTitle:@"Cancel" otherButtonTitles:@"Ask me", nil];
-        [alert showWithCompletionBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
-            if (buttonIndex != alertView.cancelButtonIndex) {
-                [[TDAnalytics sharedInstance] logEvent:@"notification_accept"];
-                [[TDCurrentUser sharedInstance] registerForRemoteNotificationTypes];
-                TDUserPushNotificationsEditViewController *vc = [[TDUserPushNotificationsEditViewController alloc] initWithNibName:@"TDUserPushNotificationsEditViewController" bundle:nil ];
-                [self.navigationController pushViewController:vc animated:YES];
-            }
-        }];
 
-    } else {
-        TDUserPushNotificationsEditViewController *vc = [[TDUserPushNotificationsEditViewController alloc] initWithNibName:@"TDUserPushNotificationsEditViewController" bundle:nil ];
-        [self.navigationController pushViewController:vc animated:YES];
-    }
+    TDUserPushNotificationsEditViewController *vc = [[TDUserPushNotificationsEditViewController alloc] initWithNibName:@"TDUserPushNotificationsEditViewController" bundle:nil ];
+    [self.navigationController pushViewController:vc animated:YES];
+
 }
 
 #pragma mark - Activity

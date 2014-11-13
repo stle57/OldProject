@@ -149,6 +149,7 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
     // FYI: _deviceToken not part of dictionary
     [self save];
 
+    //[self resetAskedForPush]; //- This is for testing purposes
     if ([self isLoggedIn] && [self didAskForPush]) {
         [self registerForRemoteNotificationTypes];
     }
@@ -391,6 +392,12 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
     [SSKeychain setPassword:kConfirmed forService:service account:kPushNotificationAsked];
 }
 
+// Used for resetting push settings during testing
+- (void)resetAskedForPush {
+    NSString *service = [[NSBundle mainBundle] bundleIdentifier];
+    [SSKeychain setPassword:@"NO" forService:service account:kPushNotificationAsked];
+}
+
 - (void)registerForPushNotifications:(NSString *)message {
     if ([[TDCurrentUser sharedInstance] isLoggedIn] && ![self isRegisteredForPush]) {
         // for some reason we don't have the device token stored, so we'll either ask for it if never asked before or register it
@@ -403,6 +410,8 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
                 if (buttonIndex != alertView.cancelButtonIndex) {
                     [[TDAnalytics sharedInstance] logEvent:@"notification_accept"];
                     [self registerForRemoteNotificationTypes];
+                    
+                    [self changeUserPushSettings];
                 }
             }];
         }
@@ -427,15 +436,75 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
     if ([self isLoggedIn]) {
         [self setAskedForPush];
         if ([[UIApplication sharedApplication] respondsToSelector:@selector(registerUserNotificationSettings:)]) { // iOS 8
+            debug NSLog(@"  inside IF of APN::registerForRemoteNotificationTypes");
             UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound) categories:nil];
             [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
             [[UIApplication sharedApplication] registerForRemoteNotifications];
         } else {
+            debug NSLog(@"  inside else of APN::registerForRemoteNotificationTypes");
             [[UIApplication sharedApplication] registerForRemoteNotificationTypes:(UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound)];
         }
     }
 }
 
+- (NSMutableDictionary*)changeUserPushSettings {
+    debug NSLog(@"inside changeUserPushSettings");
+    NSMutableDictionary *pushSettings = [@{} mutableCopy];
+    if ([self isLoggedIn]) {
+        if ([self didAskForPush]) {
+            [[TDAPIClient sharedInstance] getPushNotificationSettingsForUserToken:[TDCurrentUser sharedInstance].authToken success:^(id settings) {
+                if ([settings isKindOfClass:[NSArray class]]) {
+                    debug NSLog(@"settings=%@", settings);
+                    for (NSDictionary *group in settings) {
+                        for (NSDictionary *setting in [group objectForKey:@"keys"]) {
+                            if ([setting objectForKey:@"email"] != nil) {
+                                NSString *key = [NSString stringWithFormat:@"%@_push", [setting objectForKey:@"key"]];
+                                [pushSettings setObject:@1 forKey:key];
+                                NSString *key2 = [NSString stringWithFormat:@"%@_email", [setting objectForKey:@"key"]];
+                                [pushSettings setObject:@0 forKey:key2];
+
+                            } else {
+                                NSString *key = [NSString stringWithFormat:@"%@_push", [setting objectForKey:@"key"]];
+                                [pushSettings setObject:@1 forKey:key];
+                            }
+                        }
+                    }
+                    debug NSLog(@"  changing settings to %@", pushSettings);
+                    // Copy settings then call save
+                    [[TDAPIClient sharedInstance] sendPushNotificationSettings:pushSettings callback:^(BOOL success) {
+                        if (success) {
+                        } else {
+                            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                                            message:@"Sorry, there was an unexpected error while saving your changes"
+                                                                           delegate:nil
+                                                                  cancelButtonTitle:@"Cancel"
+                                                                  otherButtonTitles:@"Try Again", nil];
+                            [alert showWithCompletionBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
+                                if (alertView.cancelButtonIndex == buttonIndex) {
+                                    return;
+                                } else {
+                                    [self save];
+                                }
+                            }];
+                        }
+                    }];
+                }
+            } failure:^{
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                                message:@"Sorry, there was an unexpected error while loading the settings"
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"Cancel"
+                                                      otherButtonTitles:nil];
+                [alert showWithCompletionBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
+                    if (alertView.cancelButtonIndex == buttonIndex) {
+                    } else {
+                    }
+                }];
+            }];
+        }
+    }
+    return pushSettings;
+}
 - (BOOL)nullcheck:(id)object {
     return (object && ![object isKindOfClass:[NSNull class]]);
 }
