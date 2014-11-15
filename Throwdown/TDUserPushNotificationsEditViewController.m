@@ -115,7 +115,6 @@ settings: [
     [[TDAPIClient sharedInstance] getPushNotificationSettingsForUserToken:[TDCurrentUser sharedInstance].authToken success:^(id settings) {
         if ([settings isKindOfClass:[NSArray class]]) {
             self.settings = settings;
-            debug NSLog(@"settings =%@", self.settings);
             self.pushSettings = [@{} mutableCopy];
             for (NSDictionary *group in settings) {
                 for (NSDictionary *setting in [group objectForKey:@"keys"]) {
@@ -130,7 +129,6 @@ settings: [
                     }
                 }
             }
-            debug NSLog(@"pushSettings = %@", self.pushSettings);
             self.originalSettings = [self.pushSettings copy];
             self.gotFromServer = YES;
             [self.tableView reloadData];
@@ -215,7 +213,6 @@ settings: [
     NSString *newValue = [NSString stringWithFormat:@"%ld", (long)section];
     [self createHeaderLabels:section];
     UILabel *label = [self.headerLabels valueForKey:newValue];
-    debug NSLog(@"height for Header=%f in section %@", HEADER_TOP_MARGIN + label.frame.size.height + HEADER_BOTTOM_MARGIN, newValue);
     return HEADER_TOP_MARGIN + label.frame.size.height + HEADER_BOTTOM_MARGIN;
 }
 
@@ -233,6 +230,13 @@ settings: [
     } else {
         return 0;
     }
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    if ([[self settingFor:indexPath] objectForKey:@"options"]) {
+        return 64.;
+    }
+    return 44.;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -259,16 +263,27 @@ settings: [
                                            cell.longTitleLabel.frame.size.width,
                                            [self tableView:self.tableView heightForRowAtIndexPath:indexPath]);
 
-    cell.longTitleLabel.text = [[self settingFor:indexPath] objectForKey:@"name"];
+    NSString *text =[[self settingFor:indexPath] objectForKey:@"name"];
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:text];
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    [paragraphStyle setLineHeightMultiple:20/16];
+    [paragraphStyle setMinimumLineHeight:20];
+    [paragraphStyle setMaximumLineHeight:20];
+    paragraphStyle.alignment = NSTextAlignmentLeft;
+    [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, text.length)];
+    [attributedString addAttribute:NSFontAttributeName value:[TDConstants fontRegularSized:16] range:NSMakeRange(0, text.length)];
+    [attributedString addAttribute:NSForegroundColorAttributeName value:[TDConstants commentTextColor] range:NSMakeRange(0, text.length)];
+    cell.longTitleLabel.attributedText = attributedString;
+    
     CGRect bottomLineFrame = cell.bottomLine.frame;
     bottomLineFrame.origin.y = [self tableView:tableView heightForRowAtIndexPath:indexPath]-.5;
     cell.bottomLine.frame = bottomLineFrame;
-    if ([[self settingFor:indexPath] objectForKey:@"email"]) {
+    if ([[[self settingFor:indexPath] objectForKey:@"email"] boolValue]) {
         [cell.emailButton setImage:[UIImage imageNamed:@"email-on.png"] forState:UIControlStateNormal];
     } else {
         [cell.emailButton setImage:[UIImage imageNamed:@"email-off.png"] forState:UIControlStateNormal];
     }
-    if ([[self settingFor:indexPath] objectForKey:@"push"]) {
+    if ([[[self settingFor:indexPath] objectForKey:@"push"] boolValue]) {
         [cell.pushButton setImage:[UIImage imageNamed:@"push-on.png"] forState:UIControlStateNormal];
     } else {
         [cell.pushButton setImage:[UIImage imageNamed:@"push-off.png"] forState:UIControlStateNormal];
@@ -277,28 +292,35 @@ settings: [
         cell.segmentControl.hidden = NO;
         cell.pushButton.hidden = YES;
         cell.emailButton.hidden = YES;
-        //cell.aSwitch.hidden = YES;
         cell.segmentControl.selectedSegmentIndex =[[[self settingFor:indexPath] objectForKey:@"value"] integerValue];
         NSUInteger index = 0;
         for (NSString *opt in [[self settingFor:indexPath] objectForKey:@"options"]) {
             [cell.segmentControl setTitle:opt forSegmentAtIndex:index];
             index++;
         }
+        
+        CGRect frame = cell.segmentControl.frame;
+        frame.origin.y =
+        [self tableView:self.tableView heightForRowAtIndexPath:indexPath]/2 - cell.segmentControl.frame.size.height/2;
+        cell.segmentControl.frame = frame;
     } else {
         cell.segmentControl.hidden = YES;
         cell.pushButton.hidden = NO;
         cell.emailButton.hidden = NO;
         
-        //cell.aSwitch.hidden = NO;
-        //cell.aSwitch.on = [[[self settingFor:indexPath] objectForKey:@"value"] boolValue];
+        CGRect pushButtonFrame = cell.pushButton.frame;
+        pushButtonFrame.origin.y = [self tableView:self.tableView heightForRowAtIndexPath:indexPath]/2 - cell.pushButton.frame.size.height/2;
+        cell.pushButton.frame = pushButtonFrame;
+        
+        CGRect emailButtonFrame = cell.emailButton.frame;
+        emailButtonFrame.origin.y = [self tableView:self.tableView heightForRowAtIndexPath:indexPath]/2 - cell.emailButton.frame.size.height/2;
+        cell.emailButton.frame = emailButtonFrame;
+        
     }
 
     return cell;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 44.;
-}
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
@@ -307,15 +329,11 @@ settings: [
 - (void) createHeaderLabels:(NSInteger)section {
     NSString *sectionStr = [NSString stringWithFormat:@"%ld", (long)section ];
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(10, 20, SCREEN_WIDTH, 100)];
-//    CGFloat lineHeight = 18.0;
-//    NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:[[self.settings objectAtIndex:section] objectForKey:@"name"] font:[TDConstants fontSemiBoldSized:18] color:[TDConstants commentTimeTextColor] lineHeight:lineHeight lineHeightMultipler:(lineHeight/18.0)];
-    
     label.text =[[self.settings objectAtIndex:section] objectForKey:@"name"] ;
     label.font = [TDConstants fontSemiBoldSized:13];
     label.textColor = [TDConstants commentTimeTextColor];
     [label sizeToFit];
     
-    debug NSLog(@"label frame=%@", NSStringFromCGRect(label.frame));
     [self.headerLabels setObject:label forKey:sectionStr];
 }
 
@@ -328,12 +346,9 @@ settings: [
     NSString *key = [[self settingFor:indexPath] objectForKey:@"key"];
     [self.pushSettings setObject:value forKey:[NSString stringWithFormat:@"%@_push", key]];
     debug NSLog(@"DICT:%@", self.pushSettings);
-
-    
 }
 
 - (void)emailValue:(NSNumber *)value forIndexPath:(NSIndexPath *)indexPath {
-    debug NSLog(@"inside emailValue");
     NSString *key = [NSString stringWithFormat:@"%@_email", [[self settingFor:indexPath] objectForKey:@"key"]];
     [self.pushSettings setObject:value forKey:key];
     
@@ -347,10 +362,8 @@ settings: [
     debug NSLog(@"DICT:%@", self.pushSettings);
 }
 - (void)pushValue:(NSNumber *)value forIndexPath:(NSIndexPath *)indexPath {
-    debug NSLog(@"inside pushValue");
     if ([[TDCurrentUser sharedInstance] didAskForPush] && [[TDCurrentUser sharedInstance] isRegisteredForPush])
     {
-        debug NSLog(@"   ALREADY ASKED");
         // change the value and move on
         NSString *key = [NSString stringWithFormat:@"%@_push", [[self settingFor:indexPath] objectForKey:@"key"]];
         [self.pushSettings setObject:value forKey:key];
@@ -403,7 +416,6 @@ settings: [
                 }
                 debug NSLog(@"switched all settings to push %@", self.pushSettings);
             } else {
-                debug NSLog(@"GOT INTO CANCEL SITUATION");
                 // User hit cancel, revert the value back.
                 NSString *key = [NSString stringWithFormat:@"%@_push", [[self settingFor:indexPath] objectForKey:@"key"]];
                 TDPushEditCell *cell = (TDPushEditCell*) [self.tableView cellForRowAtIndexPath:indexPath];
@@ -423,7 +435,6 @@ settings: [
     }
     
     if ([[TDCurrentUser sharedInstance] didAskForPush] && ![[TDCurrentUser sharedInstance] isRegisteredForPush]) {
-        debug NSLog(@"showing alert");
         // Show an alert
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Push Notifications"
                                                         message:@"Enable push notifications in Settings App > Notifications > Throwdown"
@@ -434,19 +445,6 @@ settings: [
         return;
     }
 }
-
-//- (void)emailValue:(NSNumber *)value forIndexPath:(NSIndexPath *)indexPath {
-//    debug NSLog(@"inside emailValue");
-//    NSString *key = [[self settingFor:indexPath] objectForKey:@"key"];
-//    [self.pushSettings setObject:value forKey:key];
-//    debug NSLog(@"DICT:%@", self.pushSettings);
-//}
-//- (void)pushValue:(NSNumber *)value forIndexPath:(NSIndexPath *)indexPath {
-//    debug NSLog(@"inside pushValue");
-//    NSString *key = [[self settingFor:indexPath] objectForKey:@"key"];
-//    [self.pushSettings setObject:value forKey:key];
-//    debug NSLog(@"DICT:%@", self.pushSettings);
-//}
 
 #pragma mark - Activity
 
@@ -471,7 +469,6 @@ settings: [
 
 #pragma  mark - NSNotification
 - (void)willEnterForegroundCallback:(NSNotification *)notification {
-    debug NSLog(@"got into the callback");
     [self.tableView reloadData];
 }
 @end
