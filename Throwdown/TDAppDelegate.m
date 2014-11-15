@@ -15,6 +15,7 @@
 #import "TDAnalytics.h"
 #import "TDURLHelper.h"
 #import "TDHomeViewController.h"
+#import "TDRateAppView.h"
 
 // Used for class reference:
 #import "TDRecordVideoViewController.h"
@@ -139,13 +140,37 @@
 
 - (BOOL)iRateShouldPromptForRating
 {
-    if ([TDAPIClient toastControllerDelegate]) {
-        [[TDAppDelegate appDelegate] showToastWithText:@"Like Throwdown? Tap here to rate us!" type:kToastType_RateUs payload:nil delegate:[TDAPIClient toastControllerDelegate]];
-        [[TDAnalytics sharedInstance] logEvent:@"rating_asked"];
-    }
+//    if ([TDAPIClient toastControllerDelegate]) {
+//        [[TDAppDelegate appDelegate] showToastWithText:@"Like Throwdown? Tap here to rate us!" type:kToastType_RateUs payload:nil delegate:[TDAPIClient toastControllerDelegate]];
+//        [[TDAnalytics sharedInstance] logEvent:@"rating_asked"];
+//    }
+    UINavigationController *navigationController = (UINavigationController*)_window.rootViewController;
+    TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
+    
+    [homeViewController addOverlay];
+    [[TDAppDelegate appDelegate] showRateAppView];
+    [[TDAnalytics sharedInstance] logEvent:@"rating_asked"];
+
     return NO;
 }
 
+- (void)showRateAppView {
+    debug NSLog(@"inside showRateAppView");
+//    TDRateAppView *rateView = [[TDRateAppView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/2 - 290/2, SCREEN_HEIGHT/2 - 310/2, 290, 310)];
+    // Build new one
+    TDRateAppView * rateView = [TDRateAppView rateView];
+    //    TDToastView *toastView = [TDToastView toastView];
+//    [self.window addSubview:toastView];
+//    
+//    if (delegate) {
+//        toastView.delegate = delegate;
+//    }
+//    
+//    [toastView text:text type:type payload:payload];
+//    [toastView showToast];
+    [rateView showInView];
+    
+    }
 #pragma mark - Push notifications
 
 // iOS 8 only

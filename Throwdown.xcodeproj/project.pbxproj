@@ -59,6 +59,7 @@
 		2DE4653318F605DC0042D81C /* TDUserProfileEditViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE4653118F605DC0042D81C /* TDUserProfileEditViewController.xib */; };
 		2DE4653718F614150042D81C /* TDUserEditCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2DE4653518F614150042D81C /* TDUserEditCell.m */; };
 		2DE4653818F614150042D81C /* TDUserEditCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2DE4653618F614150042D81C /* TDUserEditCell.xib */; };
+		4D1A84A91A14A4C10059645A /* TDRateAppView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D1A84A71A14A4C10059645A /* TDRateAppView.m */; };
 		4D1F8395196F89FB00B5DB76 /* TDUserList.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D1F8394196F89FB00B5DB76 /* TDUserList.m */; };
 		4D2843CE19C401C000E4A56C /* TDFollowViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D2843CC19C401C000E4A56C /* TDFollowViewController.m */; };
 		4D2843CF19C401C000E4A56C /* TDFollowViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D2843CD19C401C000E4A56C /* TDFollowViewController.xib */; };
@@ -81,6 +82,9 @@
 		4D5D43EC19EB8A2D00046772 /* TDNoFollowingCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D5D43EA19EB8A2D00046772 /* TDNoFollowingCell.xib */; };
 		4D6FCC2419CAA34D00902719 /* TDContactsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D6FCC2219CAA34D00902719 /* TDContactsViewController.m */; };
 		4D6FCC2519CAA34D00902719 /* TDContactsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D6FCC2319CAA34D00902719 /* TDContactsViewController.xib */; };
+		4D8BEBAA1A156BDE00C5D80A /* TDFeedbackViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D8BEBA81A156BDE00C5D80A /* TDFeedbackViewController.m */; };
+		4D8BEBAB1A156BDE00C5D80A /* TDFeedbackViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D8BEBA91A156BDE00C5D80A /* TDFeedbackViewController.xib */; };
+		4D8BEBE21A16772500C5D80A /* TDRateAppView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D8BEBE11A16772500C5D80A /* TDRateAppView.xib */; };
 		4DC2C9981968F69C00A210CF /* TDTextViewControllerHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC2C9971968F69C00A210CF /* TDTextViewControllerHelper.m */; };
 		4DC2C9A31969F72600A210CF /* TDUserListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC2C9A11969F72600A210CF /* TDUserListView.m */; };
 		4DD0837019AC585C00149968 /* TDToastViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DD0836F19AC585C00149968 /* TDToastViewController.m */; };
@@ -281,6 +285,8 @@
 		2DE4653418F614150042D81C /* TDUserEditCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserEditCell.h; sourceTree = "<group>"; };
 		2DE4653518F614150042D81C /* TDUserEditCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUserEditCell.m; sourceTree = "<group>"; };
 		2DE4653618F614150042D81C /* TDUserEditCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDUserEditCell.xib; sourceTree = "<group>"; };
+		4D1A84A61A14A4C10059645A /* TDRateAppView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDRateAppView.h; sourceTree = "<group>"; };
+		4D1A84A71A14A4C10059645A /* TDRateAppView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDRateAppView.m; sourceTree = "<group>"; };
 		4D1F8393196F89FB00B5DB76 /* TDUserList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserList.h; sourceTree = "<group>"; };
 		4D1F8394196F89FB00B5DB76 /* TDUserList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUserList.m; sourceTree = "<group>"; };
 		4D2843CB19C401C000E4A56C /* TDFollowViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDFollowViewController.h; sourceTree = "<group>"; };
@@ -315,6 +321,10 @@
 		4D6FCC2119CAA34D00902719 /* TDContactsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDContactsViewController.h; sourceTree = "<group>"; };
 		4D6FCC2219CAA34D00902719 /* TDContactsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDContactsViewController.m; sourceTree = "<group>"; };
 		4D6FCC2319CAA34D00902719 /* TDContactsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDContactsViewController.xib; sourceTree = "<group>"; };
+		4D8BEBA71A156BDE00C5D80A /* TDFeedbackViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDFeedbackViewController.h; sourceTree = "<group>"; };
+		4D8BEBA81A156BDE00C5D80A /* TDFeedbackViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDFeedbackViewController.m; sourceTree = "<group>"; };
+		4D8BEBA91A156BDE00C5D80A /* TDFeedbackViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDFeedbackViewController.xib; sourceTree = "<group>"; };
+		4D8BEBE11A16772500C5D80A /* TDRateAppView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDRateAppView.xib; sourceTree = "<group>"; };
 		4DC2C9961968F69C00A210CF /* TDTextViewControllerHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTextViewControllerHelper.h; sourceTree = "<group>"; };
 		4DC2C9971968F69C00A210CF /* TDTextViewControllerHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTextViewControllerHelper.m; sourceTree = "<group>"; };
 		4DC2C9A01969F72600A210CF /* TDUserListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserListView.h; sourceTree = "<group>"; };
@@ -687,6 +697,12 @@
 				A11999D918D929E200C39ABF /* UIPlaceHolderTextView.m */,
 				A1BB462E18F5FDD700BD9527 /* UIAlertView+TDBlockAlert.h */,
 				A1BB462F18F5FDD700BD9527 /* UIAlertView+TDBlockAlert.m */,
+				4D1A84A61A14A4C10059645A /* TDRateAppView.h */,
+				4D1A84A71A14A4C10059645A /* TDRateAppView.m */,
+				4D8BEBA71A156BDE00C5D80A /* TDFeedbackViewController.h */,
+				4D8BEBA81A156BDE00C5D80A /* TDFeedbackViewController.m */,
+				4D8BEBA91A156BDE00C5D80A /* TDFeedbackViewController.xib */,
+				4D8BEBE11A16772500C5D80A /* TDRateAppView.xib */,
 			);
 			name = Components;
 			sourceTree = "<group>";
@@ -1239,6 +1255,7 @@
 				2D83200519116D9000A91282 /* TDUserPushNotificationsEditViewController.xib in Resources */,
 				2DA420DD18E63E1A006F4D9C /* TDActivityCell.xib in Resources */,
 				4D5D43EC19EB8A2D00046772 /* TDNoFollowingCell.xib in Resources */,
+				4D8BEBAB1A156BDE00C5D80A /* TDFeedbackViewController.xib in Resources */,
 				2D63FA881909D22200FEBA3C /* TDActivityIndicator.xib in Resources */,
 				2D83200A1911740A00A91282 /* TDPushEditCell.xib in Resources */,
 				2DC7B6AB18FF3D8500261BF7 /* TDToastView.xib in Resources */,
@@ -1255,6 +1272,7 @@
 				4D2843E819C8A7A700E4A56C /* TDInviteViewController.xib in Resources */,
 				2DE2C6A61908657F00E51156 /* TDUserPasswordEditViewController.xib in Resources */,
 				2DA5F05418D36745003D2F99 /* ProximaNova-Semibold.otf in Resources */,
+				4D8BEBE21A16772500C5D80A /* TDRateAppView.xib in Resources */,
 				A1E3A16D18FCC8630038A8A4 /* TDActivitiesCell.xib in Resources */,
 				A11E04E61888CB79002F981A /* InfoPlist.strings in Resources */,
 				2DA5F05318D36745003D2F99 /* ProximaNova-Regular.otf in Resources */,
@@ -1356,6 +1374,7 @@
 				4D2843D819C649D600E4A56C /* TDNoFollowProfileCell.m in Sources */,
 				A124E93919B019A100DC65C1 /* TDURLHelper.m in Sources */,
 				A11999DD18DC0D4200C39ABF /* TDFileSystemHelper.m in Sources */,
+				4D8BEBAA1A156BDE00C5D80A /* TDFeedbackViewController.m in Sources */,
 				A1BB463318F7767200BD9527 /* TDActivityViewController.m in Sources */,
 				2D2E832E18CA579B00846B2E /* TDComment.m in Sources */,
 				A19FF60D18970BBB001A0AD0 /* RSCDNContainer.m in Sources */,
@@ -1448,6 +1467,7 @@
 				4D2843E719C8A7A700E4A56C /* TDInviteViewController.m in Sources */,
 				A1E3A17018FCCF2B0038A8A4 /* TDActivitiesCell.m in Sources */,
 				A1C2481118C6B9CA00F187D9 /* TDProgressIndicator.m in Sources */,
+				4D1A84A91A14A4C10059645A /* TDRateAppView.m in Sources */,
 				A1D7072B19DBE8ED00ECB221 /* ObservingPlayerItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1581,7 +1601,7 @@
 				BUNDLE_DISPLAY_NAME_SUFFIX = "-α";
 				BUNDLE_ID_SUFFIX = .dev;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Andy Crookston (4H23FB7AFD)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Stephanie Le (PXQB9WK964)";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				EXCLUDED_SOURCE_FILE_NAMES = "";
 				FACEBOOK_APP_ID = 1470514189854120;
@@ -1615,8 +1635,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_DISPLAY_NAME_SUFFIX = "";
 				BUNDLE_ID_SUFFIX = "";
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				EXCLUDED_SOURCE_FILE_NAMES = "FLEX*";
 				FACEBOOK_APP_ID = 1419119258326947;
@@ -1727,8 +1747,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_DISPLAY_NAME_SUFFIX = "-ß";
 				BUNDLE_ID_SUFFIX = .staging;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				EXCLUDED_SOURCE_FILE_NAMES = "";
 				FACEBOOK_APP_ID = 1470514189854120;

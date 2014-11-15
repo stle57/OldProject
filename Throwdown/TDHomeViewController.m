@@ -45,6 +45,7 @@
 @property (nonatomic) CGFloat previousScrollViewYOffset;
 @property (nonatomic) CGPoint lastScrollOffset;
 @property (nonatomic) CGPoint scrollOffsetFollowing;
+@property (retain) UIView *disableViewOverlay;
 
 @end
 
@@ -84,6 +85,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removePost:) name:TDNotificationRemovePost object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePost:) name:TDNotificationUpdatePost object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willEnterForegroundCallback:) name:UIApplicationWillEnterForegroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeOverlay) name:TDRemoveHomeViewControllerOverlay object:nil];
+    
     [self.badgeCountLabel setFont:[TDConstants fontSemiBoldSized:11]];
     [self.badgeCountLabel.layer setCornerRadius:9.0];
 
@@ -96,6 +99,11 @@
 
     self.headerView = [[TDHomeHeaderView alloc] initWithTableView:self.tableView];
     self.previousScrollViewYOffset = 0;
+    
+    self.disableViewOverlay = [[UIView alloc]
+                               initWithFrame:CGRectMake(0.0f,0,SCREEN_WIDTH,SCREEN_HEIGHT)];
+    self.disableViewOverlay.backgroundColor=[UIColor blackColor];
+    self.disableViewOverlay.alpha = 0;
 }
 
 - (void)dealloc {
@@ -793,4 +801,19 @@
     [self showNavBar];
 }
 
+- (void)addOverlay {
+
+    self.disableViewOverlay.alpha = 0;
+    [self.view addSubview:self.disableViewOverlay];
+    
+    [UIView beginAnimations:@"FadeIn" context:nil];
+    [UIView setAnimationDuration:0.5];
+    self.disableViewOverlay.alpha = 0.6;
+    [UIView commitAnimations];
+    
+}
+
+- (void)removeOverlay {
+    [self.disableViewOverlay removeFromSuperview];
+}
 @end

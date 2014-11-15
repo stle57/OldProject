@@ -266,6 +266,7 @@
     NSString *url = [NSString stringWithFormat:@"%@/api/v1/push_notification_settings.json?user_token=%@", [TDConstants getBaseURL], userToken];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    debug NSLog(@"bundleVersion-%@", TDDeviceInfo.bundleVersion);
     [manager.requestSerializer setValue:TDDeviceInfo.bundleVersion forHTTPHeaderField:kHTTPHeaderBundleVersion];
     [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if (success) {
@@ -282,6 +283,8 @@
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/push_notification_settings.json"]];
 
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [self.httpManager.requestSerializer setValue:TDDeviceInfo.bundleVersion forHTTPHeaderField:kHTTPHeaderBundleVersion];
+
 //    NSMutableDictionary *settings = [[NSMutableDictionary alloc] init];
 //    for (id key in pushSettings) {
 //        NSString * keyEmailStr = [key stringByAppendingString:@"_email"];

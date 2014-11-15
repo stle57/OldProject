@@ -96,6 +96,8 @@ static NSString *const TDUploadCompleteNotification = @"TDUploadCompleteOK";
 static NSString *const TDUploadFailedNotification = @"TDUploadCompleteFailed";
 static NSString *const TDAvatarUploadCompleteNotification = @"TDAvatarUploadCompleteOK";
 static NSString *const TDAvatarUploadFailedNotification = @"TDAvatarUploadCompleteFailed";
+static NSString *const TDRemoveHomeViewControllerOverlay = @"TDRemoveHomeViewControllerOverlay";
+static NSString *const TDRemoveRateView= @"TDRemoveRateView";
 
 static NSString *const TDFontProximaNovaRegular = @"ProximaNova-Regular";
 static NSString *const TDFontProximaNovaSemibold = @"ProximaNova-Semibold";
