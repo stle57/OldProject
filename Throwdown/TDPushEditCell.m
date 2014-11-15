@@ -58,9 +58,6 @@
     
     self.bottomLineOrigY = self.bottomLine.frame.origin.y;
     
-    self.longTitleLabel.font = [TDConstants fontRegularSized:16];
-    self.longTitleLabel.textColor = [TDConstants commentTextColor];
-    
 }
 
 - (IBAction)segmentChanged:(id)sender {

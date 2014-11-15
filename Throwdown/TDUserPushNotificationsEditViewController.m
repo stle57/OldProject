@@ -18,7 +18,6 @@
 #import "TDAPIClient.h"
 #import "UIAlertView+TDBlockAlert.h"
 #import "TDAnalytics.h"
-
 /*
 {
 settings: [
@@ -264,14 +263,12 @@ settings: [
     CGRect bottomLineFrame = cell.bottomLine.frame;
     bottomLineFrame.origin.y = [self tableView:tableView heightForRowAtIndexPath:indexPath]-.5;
     cell.bottomLine.frame = bottomLineFrame;
-    cell.emailValue = [[[self settingFor:indexPath] objectForKey:@"email"] boolValue];
-    cell.pushValue =[[[self settingFor:indexPath] objectForKey:@"push"] boolValue];
-    if ([[[self settingFor:indexPath] objectForKey:@"email"] boolValue]) {
+    if ([[self settingFor:indexPath] objectForKey:@"email"]) {
         [cell.emailButton setImage:[UIImage imageNamed:@"email-on.png"] forState:UIControlStateNormal];
     } else {
         [cell.emailButton setImage:[UIImage imageNamed:@"email-off.png"] forState:UIControlStateNormal];
     }
-    if ([[[self settingFor:indexPath] objectForKey:@"push"] boolValue]) {
+    if ([[self settingFor:indexPath] objectForKey:@"push"]) {
         [cell.pushButton setImage:[UIImage imageNamed:@"push-on.png"] forState:UIControlStateNormal];
     } else {
         [cell.pushButton setImage:[UIImage imageNamed:@"push-off.png"] forState:UIControlStateNormal];
@@ -437,6 +434,19 @@ settings: [
         return;
     }
 }
+
+//- (void)emailValue:(NSNumber *)value forIndexPath:(NSIndexPath *)indexPath {
+//    debug NSLog(@"inside emailValue");
+//    NSString *key = [[self settingFor:indexPath] objectForKey:@"key"];
+//    [self.pushSettings setObject:value forKey:key];
+//    debug NSLog(@"DICT:%@", self.pushSettings);
+//}
+//- (void)pushValue:(NSNumber *)value forIndexPath:(NSIndexPath *)indexPath {
+//    debug NSLog(@"inside pushValue");
+//    NSString *key = [[self settingFor:indexPath] objectForKey:@"key"];
+//    [self.pushSettings setObject:value forKey:key];
+//    debug NSLog(@"DICT:%@", self.pushSettings);
+//}
 
 #pragma mark - Activity
 
