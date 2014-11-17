@@ -49,4 +49,5 @@
 
 - (void)registerTwitterAccessToken:(NSString *)token tokenSecret:(NSString *)secret userId:(NSString *)userId identifier:(NSString *)identifier callback:(void (^)(BOOL success))callback;
 - (void)deleteTwitterAccessTokenForUID:(NSString *)userId;
+- (void)sendFeedbackEmail:(NSString*)body callback:(void (^)(BOOL success))callback;
 @end

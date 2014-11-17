@@ -105,9 +105,7 @@
     [self.label2 setNumberOfLines:0];
     [self.label2 sizeToFit];
     [self addSubview:self.label2];
-    self.label2.layer.borderWidth = 2.;
-    self.label2.layer.borderColor = [[UIColor blueColor] CGColor];
-    
+
     CGFloat space = self.frame.size.height - self.tdIcon.frame.size.height - self.label2.frame.size.height - self.label1.frame.size.height - 21 - 19 -8 -self.rateButton.frame.size.height - self.dismissButton.frame.size.height - self.feedbackButton.frame.size.height;
     
     debug NSLog(@"space left=%f", space);
@@ -115,9 +113,12 @@
     CGRect divider1Frame = self.divider.frame;
     divider1Frame.origin.x = 0;
     divider1Frame.origin.y = self.label2.frame.origin.y + self.label2.frame.size.height + space;
+    divider1Frame.size.height = .5;
     self.divider.frame = divider1Frame;
-    self.divider.layer.borderColor = [[TDConstants darkBackgroundColor] CGColor];
+    //self.divider.layer.borderColor = [[TDConstants darkBackgroundColor] CGColor];
     debug NSLog(@"divider frame=%@",NSStringFromCGRect( self.divider.frame));
+    self.divider.layer.backgroundColor = [[TDConstants darkBackgroundColor] CGColor];
+//    self.divider.layer.borderWidth = 2.0;
     
     NSString *rateLabel = @"Yes, rate it now!";
 //    self.rateButton = [[UIButton alloc] initWithFrame:CGRectMake(0, self.label2.frame.origin.y + self.label2.frame.size.height + 20, self.frame.size.width, TD_BUTTON_HEIGHT)];
@@ -133,6 +134,17 @@
     rateFrame.size.width = self.frame.size.width;
     rateFrame.size.height = TD_BUTTON_HEIGHT;
     self.rateButton.frame = rateFrame;
+    debug NSLog(@"self.rateButton.frame = %@", NSStringFromCGRect(self.rateButton.frame));
+    
+    CGRect divider2Frame = self.divider2.frame;
+    divider2Frame.origin.x = 0;
+    divider2Frame.origin.y = self.rateButton.frame.origin.y + self.rateButton.frame.size.height;
+    divider2Frame.size.height = .5;
+    self.divider2.frame = divider2Frame;
+    //self.divider.layer.borderColor = [[TDConstants darkBackgroundColor] CGColor];
+    debug NSLog(@"divider2 frame=%@",NSStringFromCGRect( self.divider2.frame));
+    self.divider2.layer.backgroundColor = [[TDConstants darkBackgroundColor] CGColor];
+
     
     NSString *feedbackLabel = @"No, send feedback";
 //    self.feedbackButton = [[UIButton alloc] initWithFrame:CGRectMake(0, self.rateButton.frame.origin.y + self.rateButton.frame.size.height, self.frame.size.width, TD_BUTTON_HEIGHT)];
@@ -142,8 +154,8 @@
     [self.feedbackButton setTitleColor:[TDConstants commentTextColor] forState:UIControlStateSelected];
 //    [self.feedbackButton addTarget:self action: @selector(feedbackButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 //    [self addSubview:self.feedbackButton];
-    self.feedbackButton.layer.borderColor = [[UIColor blueColor] CGColor];
-    self.feedbackButton.layer.borderWidth = 2.;
+//    self.feedbackButton.layer.borderColor = [[UIColor blueColor] CGColor];
+//    self.feedbackButton.layer.borderWidth = 2.;
 
     CGRect feedbackFrame = self.feedbackButton.frame;
     feedbackFrame.origin.x = 0;
@@ -151,6 +163,16 @@
     feedbackFrame.size.width = self.frame.size.width;
     feedbackFrame.size.height = TD_BUTTON_HEIGHT;
     self.feedbackButton.frame = feedbackFrame;
+    debug NSLog(@"self.feedbackButton frame = %@", NSStringFromCGRect(self.rateButton.frame));
+
+    CGRect divider3Frame = self.divider3.frame;
+    divider3Frame.origin.x = 0;
+    divider3Frame.origin.y = self.feedbackButton.frame.origin.y + self.feedbackButton.frame.size.height;
+    divider3Frame.size.height = .5;
+    self.divider3.frame = divider3Frame;
+    //self.divider.layer.borderColor = [[TDConstants darkBackgroundColor] CGColor];
+    debug NSLog(@"divider3 frame=%@",NSStringFromCGRect( self.divider3.frame));
+    self.divider3.layer.backgroundColor = [[TDConstants darkBackgroundColor] CGColor];
     
     NSString *dismissLabel = @"Dismiss";
 //    self.dismissButton = [[UIButton alloc] initWithFrame:CGRectMake(0, self.feedbackButton.frame.origin.y + self.feedbackButton.frame.size.height, self.frame.size.width, TD_BUTTON_HEIGHT)];
@@ -168,8 +190,8 @@
     dismissFrame.size.height = TD_BUTTON_HEIGHT;
     self.dismissButton.frame = dismissFrame;
     
-    self.dismissButton.layer.borderColor = [[UIColor greenColor] CGColor];
-    self.dismissButton.layer.borderWidth = 2.;
+//    self.dismissButton.layer.borderColor = [[UIColor greenColor] CGColor];
+//    self.dismissButton.layer.borderWidth = 2.;
 
     debug NSLog(@"rateButton frame=%@", NSStringFromCGRect(self.rateButton.frame));
     debug NSLog(@"feedbackButton frame = %@", NSStringFromCGRect(self.feedbackButton.frame));

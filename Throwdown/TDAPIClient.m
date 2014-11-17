@@ -15,6 +15,8 @@
 #import "UIImage+Resizing.h"
 #import "TDViewControllerHelper.h"
 #import "TDURLHelper.h"
+#include <sys/types.h>
+#include <sys/sysctl.h>
 
 @interface TDAPIClient ()
 
@@ -729,4 +731,43 @@
     }];
 }
 
+#pragma mark - Feedback Email
+- (void)sendFeedbackEmail:(NSString*)body callback:(void (^)(BOOL success))callback{
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/feedback.json"];
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+
+    // We're keeping email param name for backward compatibility
+    [self.httpManager POST:url parameters:@{@"body": body,
+                                            @"bundle_version": [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"],
+                                            @"os":  [[UIDevice currentDevice] systemVersion],
+                                            @"model" : [self platform],
+                                            @"carrier" : TDDeviceInfo.carrier,
+                                            @"user_token" : [TDCurrentUser sharedInstance].authToken}
+                   success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *response = (NSDictionary *)responseObject;
+            NSNumber *success = [response objectForKey:@"success"];
+            if (success && [success boolValue]) {
+            } else {
+                callback(NO);
+            }
+        } else {
+            debug NSLog(@"ERROR sending feedback email, got: %@", [responseObject class]);
+            callback(NO);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"ERROR in sending feedback email: %@", [error localizedDescription]);
+        callback(NO);
+    }];
+}
+
+- (NSString *) platform{
+    size_t size;
+    sysctlbyname("hw.machine", NULL, &size, NULL, 0);
+    char *machine = malloc(size);
+    sysctlbyname("hw.machine", machine, &size, NULL, 0);
+    NSString *platform = [NSString stringWithCString:machine encoding:NSUTF8StringEncoding];
+    free(machine);
+    return platform;
+}
 @end

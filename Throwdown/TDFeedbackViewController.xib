@@ -8,6 +8,8 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TDFeedbackViewController">
             <connections>
                 <outlet property="cancelButton" destination="UYv-dh-6Jp" id="I6D-n4-Goq"/>
+                <outlet property="divider1" destination="sRu-p7-CBa" id="ekc-iv-L12"/>
+                <outlet property="divider2" destination="0ZQ-wr-SCm" id="gWf-Xr-s4h"/>
                 <outlet property="sendButton" destination="Ilh-be-KDo" id="WN1-Ke-0K9"/>
                 <outlet property="textView" destination="NXw-pa-5A6" id="NtN-SJ-lM6"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
@@ -25,6 +27,11 @@
                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                 </textView>
+                <view contentMode="scaleToFill" id="sRu-p7-CBa">
+                    <rect key="frame" x="0.0" y="0.0" width="290" height="1"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </view>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="Ilh-be-KDo">
                     <rect key="frame" x="15" y="260" width="290" height="49"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -32,6 +39,11 @@
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
                 </button>
+                <view contentMode="scaleToFill" id="0ZQ-wr-SCm">
+                    <rect key="frame" x="15" y="284" width="290" height="1"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </view>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="UYv-dh-6Jp">
                     <rect key="frame" x="15" y="260" width="290" height="49"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
