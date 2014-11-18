@@ -176,6 +176,9 @@
 - (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings {
     NSLog(@"didRegisterUserNotificationSettings");
     // We actually don't care here, what's important is getting the remote notification below
+    if (![[TDCurrentUser sharedInstance] isRegisteredForPush]) {
+        [[NSNotificationCenter defaultCenter] postNotificationName:TDPostNotificationDeclined object:self userInfo:nil];
+    }
 }
 
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {

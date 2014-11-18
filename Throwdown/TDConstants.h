@@ -99,6 +99,7 @@ static NSString *const TDAvatarUploadFailedNotification = @"TDAvatarUploadComple
 static NSString *const TDRemoveHomeViewControllerOverlay = @"TDRemoveHomeViewControllerOverlay";
 static NSString *const TDRemoveRateView= @"TDRemoveRateView";
 static NSString *const TDShowFeedbackViewController = @"TDShowFeedbackViewController";
+static NSString *const TDPostNotificationDeclined = @"TDPostNotificationDeclined";
 
 static NSString *const TDFontProximaNovaRegular = @"ProximaNova-Regular";
 static NSString *const TDFontProximaNovaSemibold = @"ProximaNova-Semibold";

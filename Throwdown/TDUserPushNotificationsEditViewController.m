@@ -83,7 +83,11 @@ settings: [
                                                  name:UIApplicationWillEnterForegroundNotification
                                                object:nil];
     
-    // Background
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(revertPushNotifications)
+                                                 name:TDPostNotificationDeclined
+                                               object:nil];    // Background
     UINavigationBar *navigationBar = self.navigationController.navigationBar;
     [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
     
@@ -388,26 +392,33 @@ settings: [
                 [[TDAnalytics sharedInstance] logEvent:@"notification_accept"];
                 [[TDCurrentUser sharedInstance] registerForRemoteNotificationTypes];
                 
-                // Change all settings to push
-                NSDictionary *dictionary = [self.pushSettings copy];
-                
+            // Change all settings to push
+               NSDictionary *dictionary = [self.pushSettings copy];
                 for (NSString *key in dictionary) {
-                    if ([key containsString:@"email"]) {
-                        [self.pushSettings setValue:@0 forKey:key];
+                    if ([key rangeOfString:@"email"].location != NSNotFound) {
+                        debug NSLog(@"key=%@", key);
+                        if (([key rangeOfString:@"follows"].location == NSNotFound ) &&
+                            [key rangeOfString:@"friend_joins"].location == NSNotFound ) {
+                            debug NSLog(@"change email setting for =%@", key);
+                            [self.pushSettings setValue:@0 forKey:key];
+                        }
                     }
-                    else if ([key containsString:@"push"]) {
-                        [self.pushSettings setValue:@1 forKey:key];
-                    }
+                     else if ([key rangeOfString:@"push"].location != NSNotFound) {
+                         [self.pushSettings setValue:@1 forKey:key];
+                     }
                 }
-
+                
                 for (int secNum = 0; secNum < [self.tableView numberOfSections]; secNum ++) {
                     for (int row= 0; row < [self.tableView numberOfRowsInSection:secNum]; row++) {
                         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:secNum];
                         TDPushEditCell *cell = (TDPushEditCell*)[self.tableView cellForRowAtIndexPath:indexPath];
                         cell.pushValue=true;
-                        cell.emailValue = false;
                         [cell.pushButton setImage:[UIImage imageNamed:@"push-on.png"] forState:UIControlStateNormal];
-                        [cell.emailButton setImage:[UIImage imageNamed:@"email-off.png"] forState:UIControlStateNormal];
+                        if (secNum != 1) {
+                            debug NSLog(@"secNum = %d", secNum);
+                            cell.emailValue = false;
+                            [cell.emailButton setImage:[UIImage imageNamed:@"email-off.png"] forState:UIControlStateNormal];
+                        }
                         
                         if (!cell.segmentControl.isHidden) {
                             [cell.segmentControl setSelectedSegmentIndex:1];
@@ -469,6 +480,11 @@ settings: [
 
 #pragma  mark - NSNotification
 - (void)willEnterForegroundCallback:(NSNotification *)notification {
+    [self.tableView reloadData];
+}
+
+- (void)revertPushNotifications {
+    self.pushSettings = [self.originalSettings copy];
     [self.tableView reloadData];
 }
 @end
