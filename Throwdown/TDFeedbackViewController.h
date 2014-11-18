@@ -14,13 +14,12 @@
 @interface TDFeedbackViewController : UIViewController<UITextViewDelegate, TDKeyboardObserverDelegate>
 
 @property (nonatomic, retain) IBOutlet UIView *view;
+@property (weak, nonatomic) IBOutlet UITextField *emailField;
 @property (nonatomic, retain) IBOutlet UIButton *sendButton;
 @property (nonatomic, retain) IBOutlet UIButton *cancelButton;
 @property (weak, nonatomic) IBOutlet UITextView *textView;
 @property (weak, nonatomic) IBOutlet UIView *divider1;
 @property (weak, nonatomic) IBOutlet UIView *divider2;
-//
-//- (IBAction)sendButtonHit:(id)sender;
-//- (IBAction)cancelButtonHit:(id)sender;
+@property (weak, nonatomic) IBOutlet UIView *emailDivider;
 
 @end

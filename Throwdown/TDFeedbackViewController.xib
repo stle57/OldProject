@@ -10,6 +10,8 @@
                 <outlet property="cancelButton" destination="UYv-dh-6Jp" id="I6D-n4-Goq"/>
                 <outlet property="divider1" destination="sRu-p7-CBa" id="ekc-iv-L12"/>
                 <outlet property="divider2" destination="0ZQ-wr-SCm" id="gWf-Xr-s4h"/>
+                <outlet property="emailDivider" destination="VWy-3G-od0" id="cEs-Z5-Emy"/>
+                <outlet property="emailField" destination="5GG-Xv-Rbl" id="GSC-SX-15V"/>
                 <outlet property="sendButton" destination="Ilh-be-KDo" id="WN1-Ke-0K9"/>
                 <outlet property="textView" destination="NXw-pa-5A6" id="NtN-SJ-lM6"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
@@ -20,8 +22,19 @@
             <rect key="frame" x="0.0" y="64" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
+                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" minimumFontSize="17" id="5GG-Xv-Rbl">
+                    <rect key="frame" x="0.0" y="0.0" width="290" height="40"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits"/>
+                </textField>
+                <view contentMode="scaleToFill" id="VWy-3G-od0">
+                    <rect key="frame" x="0.0" y="30" width="290" height="1"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </view>
                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" id="NXw-pa-5A6">
-                    <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                    <rect key="frame" x="0.0" y="50" width="320" height="568"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <fontDescription key="fontDescription" type="system" pointSize="14"/>

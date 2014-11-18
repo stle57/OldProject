@@ -24,6 +24,7 @@
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include "TDFindPeopleViewController.h"
+#include "TDFeedbackViewController.h"
 
 #define CELL_IDENTIFIER @"TDPostView"
 
@@ -46,7 +47,7 @@
 @property (nonatomic) CGPoint lastScrollOffset;
 @property (nonatomic) CGPoint scrollOffsetFollowing;
 @property (retain) UIView *disableViewOverlay;
-
+@property (nonatomic) TDFeedbackViewController *feedbackVC;
 @end
 
 @implementation TDHomeViewController
@@ -86,7 +87,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePost:) name:TDNotificationUpdatePost object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willEnterForegroundCallback:) name:UIApplicationWillEnterForegroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeOverlay) name:TDRemoveHomeViewControllerOverlay object:nil];
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showFeedbackViewController) name:TDShowFeedbackViewController object:nil];
     [self.badgeCountLabel setFont:[TDConstants fontSemiBoldSized:11]];
     [self.badgeCountLabel.layer setCornerRadius:9.0];
 
@@ -815,5 +816,17 @@
 
 - (void)removeOverlay {
     [self.disableViewOverlay removeFromSuperview];
+}
+
+- (void)showFeedbackViewController {
+    self.feedbackVC = [[TDFeedbackViewController alloc] initWithNibName:@"TDFeedbackViewController" bundle:nil ];
+    
+    CGRect feedbackFrame = self.feedbackVC.view.frame;
+    feedbackFrame.origin.x = SCREEN_WIDTH/2 - self.feedbackVC.view.frame.size.width/2;
+    feedbackFrame.origin.y = (self.view.frame.size.height/2  - self.feedbackVC.view.frame.size.height/2) - ([UIApplication sharedApplication].statusBarFrame.size.height + self.navigationController.navigationBar.frame.size.height/2);
+
+    self.feedbackVC.view.frame = feedbackFrame;
+    [self addOverlay];
+    [self.view addSubview:self.feedbackVC.view];
 }
 @end

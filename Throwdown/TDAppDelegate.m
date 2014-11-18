@@ -76,7 +76,7 @@
     }
 
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-    
+
     debug NSLog(@"app launched with options: %@", launchOptions);
     return YES;
 }
@@ -133,17 +133,26 @@
 	[iRate sharedInstance].onlyPromptIfLatestVersion = NO;
     
     //enable preview mode
-    [iRate sharedInstance].previewMode = NO;
+    if ([TDConstants environment] != TDEnvProduction) {
+
+        [iRate sharedInstance].previewMode = NO;
+    } else {
+        debug NSLog(@"Show previewMode of rate ui");
+        [iRate sharedInstance].previewMode = YES;
+    }
     
     debug NSLog(@"iRate events=%lu", (unsigned long)[iRate sharedInstance].eventCount);
 }
 
+- (void)callRateView {
+    UINavigationController *navigationController = (UINavigationController*)_window.rootViewController;
+    TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
+    
+    [homeViewController addOverlay];
+    [[TDAppDelegate appDelegate] showRateAppView];
+}
 - (BOOL)iRateShouldPromptForRating
 {
-//    if ([TDAPIClient toastControllerDelegate]) {
-//        [[TDAppDelegate appDelegate] showToastWithText:@"Like Throwdown? Tap here to rate us!" type:kToastType_RateUs payload:nil delegate:[TDAPIClient toastControllerDelegate]];
-//        [[TDAnalytics sharedInstance] logEvent:@"rating_asked"];
-//    }
     UINavigationController *navigationController = (UINavigationController*)_window.rootViewController;
     TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
     
@@ -156,21 +165,11 @@
 
 - (void)showRateAppView {
     debug NSLog(@"inside showRateAppView");
-//    TDRateAppView *rateView = [[TDRateAppView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/2 - 290/2, SCREEN_HEIGHT/2 - 310/2, 290, 310)];
-    // Build new one
+
     TDRateAppView * rateView = [TDRateAppView rateView];
-    //    TDToastView *toastView = [TDToastView toastView];
-//    [self.window addSubview:toastView];
-//    
-//    if (delegate) {
-//        toastView.delegate = delegate;
-//    }
-//    
-//    [toastView text:text type:type payload:payload];
-//    [toastView showToast];
     [rateView showInView];
     
-    }
+}
 #pragma mark - Push notifications
 
 // iOS 8 only

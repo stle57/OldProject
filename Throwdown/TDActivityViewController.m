@@ -14,6 +14,7 @@
 #import "TDUserProfileViewController.h"
 #import "TDUser.h"
 #import "TDPost.h"
+#import "TDFeedbackViewController.h"
 
 static NSString *const kActivityCell = @"TDActivitiesCell";
 
@@ -23,14 +24,18 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 @property (nonatomic, retain) UIRefreshControl *refreshControl;
 @property (weak, nonatomic) IBOutlet UIButton *feedbackButton;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableBottomOffset;
-
+@property (nonatomic, retain) TDFeedbackViewController *feedbackViewController;
+@property (retain) UIView *disableViewOverlay;
 @end
 
 @implementation TDActivityViewController
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
     self.tableView.delegate = nil;
     self.tableView.dataSource = nil;
+    self.feedbackViewController = nil;
 }
 
 - (void)viewDidLoad {
@@ -65,6 +70,12 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
     [self.tableView addSubview:self.refreshControl];
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
 
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(animateHide) name:TDRemoveRateView object:nil];
+    self.disableViewOverlay = [[UIView alloc]
+                               initWithFrame:CGRectMake(0.0f,0,SCREEN_WIDTH,SCREEN_HEIGHT)];
+    self.disableViewOverlay.backgroundColor=[UIColor blackColor];
+    self.disableViewOverlay.alpha = 0;
+    
     [self refresh];
 }
 
@@ -172,7 +183,7 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 
 #pragma mark - Feedback
 - (IBAction)feedbackButton:(id)sender {
-    [self displayFeedbackEmail];
+    [self displayFeedbackViewController];
 }
 
 - (NSString *) platform{
@@ -185,39 +196,17 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 	return platform;
 }
 
-- (void)displayFeedbackEmail {
-    if (![MFMailComposeViewController canSendMail]) {
-        // can't send email, don't try!
-        return;
-    }
-    MFMailComposeViewController *picker = [[MFMailComposeViewController alloc] init];
-    picker.mailComposeDelegate = self;
-
-    [picker setSubject:@"Throwdown Feedback"];
-
-    // Set up the recipients.
-    NSArray *toRecipients = [NSArray arrayWithObjects:@"feedback@throwdown.us",
-                             nil];
-
-    [picker setToRecipients:toRecipients];
-
-    // Fill out the email body text.
-    NSMutableString *emailBody = [NSMutableString string];
-    [emailBody appendString:[NSString stringWithFormat:@"Thanks for using Throwdown! We appreciate any thoughts you have on making it better or if you found a bug, let us know here."]];
-
-    [emailBody appendString:[NSString stringWithFormat:@"\n\n\n\n\nApp Version:%@", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleShortVersionString"]]];
-    [emailBody appendString:[NSString stringWithFormat:@"\nApp Build #:%@", [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"]]];
-    [emailBody appendString:[NSString stringWithFormat:@"\nOS:%@", [[UIDevice currentDevice] systemVersion]]];
-    [emailBody appendString:[NSString stringWithFormat:@"\nModel:%@", [self platform]]];
-    [emailBody appendString:[NSString stringWithFormat:@"\nID:%@", [TDCurrentUser sharedInstance].userId]];
-    [emailBody appendString:[NSString stringWithFormat:@"\nName:%@", [TDCurrentUser sharedInstance].username]];
-
-    [picker setMessageBody:emailBody isHTML:NO];
-
-    // Present the mail composition interface.
-    if (picker) {
-        [self presentViewController:picker animated:YES completion:nil];
-    }
+- (void)displayFeedbackViewController {
+    
+    [self addOverlay];
+    self.feedbackViewController = [[TDFeedbackViewController alloc] initWithNibName:@"TDFeedbackViewController" bundle:nil ];
+    
+    CGRect feedbackFrame = self.feedbackViewController.view.frame;
+    feedbackFrame.origin.x = self.view.frame.size.width/2 - self.feedbackViewController.view.frame.size.width/2;
+    feedbackFrame.origin.y = (self.view.frame.size.height/2  - self.feedbackViewController.view.frame.size.height/2) - ([UIApplication sharedApplication].statusBarFrame.size.height + self.navigationController.navigationBar.frame.size.height/2);
+    self.feedbackViewController.view.frame = feedbackFrame;
+    [self.view addSubview:self.feedbackViewController.view];
+    
 }
 
 // The mail compose view controller delegate method
@@ -227,6 +216,27 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 {
     [self dismissViewControllerAnimated:YES
                              completion:nil];
+}
+
+- (void) animateHide {
+    //[self.feedbackViewController.view removeFromSuperview];
+    [self removeOverlay];
+}
+
+- (void)addOverlay {
+    
+    self.disableViewOverlay.alpha = 0;
+    [self.view addSubview:self.disableViewOverlay];
+    
+    [UIView beginAnimations:@"FadeIn" context:nil];
+    [UIView setAnimationDuration:0.5];
+    self.disableViewOverlay.alpha = 0.6;
+    [UIView commitAnimations];
+    
+}
+
+- (void)removeOverlay {
+    [self.disableViewOverlay removeFromSuperview];
 }
 
 @end

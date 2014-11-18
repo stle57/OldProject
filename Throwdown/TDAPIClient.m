@@ -732,24 +732,28 @@
 }
 
 #pragma mark - Feedback Email
-- (void)sendFeedbackEmail:(NSString*)body callback:(void (^)(BOOL success))callback{
+- (void)sendFeedbackEmail:(NSString*)body email:(NSString*)email callback:(void (^)(BOOL success))callback{
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/feedback.json"];
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
 
+    NSDictionary *params = @{@"feedback": @{ @"body": body,
+                              @"email" : email,
+                              @"bundle_version": [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"],
+                              @"os": [[UIDevice currentDevice] systemVersion],
+                              @"model": [self platform],
+                              @"carrier": TDDeviceInfo.carrier ? TDDeviceInfo.carrier : @""},
+                              @"user_token": [TDCurrentUser sharedInstance].authToken};
+    
     // We're keeping email param name for backward compatibility
-    [self.httpManager POST:url parameters:@{@"body": body,
-                                            @"bundle_version": [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"],
-                                            @"os":  [[UIDevice currentDevice] systemVersion],
-                                            @"model" : [self platform],
-                                            @"carrier" : TDDeviceInfo.carrier,
-                                            @"user_token" : [TDCurrentUser sharedInstance].authToken}
+    [self.httpManager POST:url parameters:params
                    success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             NSDictionary *response = (NSDictionary *)responseObject;
             NSNumber *success = [response objectForKey:@"success"];
             if (success && [success boolValue]) {
+                callback([success boolValue]);
             } else {
-                callback(NO);
+                callback([success boolValue]);
             }
         } else {
             debug NSLog(@"ERROR sending feedback email, got: %@", [responseObject class]);
