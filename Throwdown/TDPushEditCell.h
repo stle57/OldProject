@@ -11,8 +11,8 @@
 @protocol TDPushEditCellDelegate <NSObject>
 @optional
 - (void)switchValue:(NSNumber *)value forIndexPath:(NSIndexPath *)indexPath;
-- (void)emailValue:(NSNumber *)value forIndexPath:(NSIndexPath *)indexPath;
-- (void)pushValue:(NSNumber *)value forIndexPath:(NSIndexPath *)indexPath;
+- (void)emailValue:(BOOL)value forIndexPath:(NSIndexPath *)indexPath;
+- (void)pushValue:(BOOL)value forIndexPath:(NSIndexPath *)indexPath;
 @end
 
 @interface TDPushEditCell : UITableViewCell

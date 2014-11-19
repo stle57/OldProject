@@ -137,6 +137,7 @@ settings: [
             self.gotFromServer = YES;
             [self.tableView reloadData];
             [self hideActivity];
+            debug NSLog(@"initial settings=%@", self.pushSettings);
         }
     } failure:^{
         self.gotFromServer = NO;
@@ -283,13 +284,17 @@ settings: [
     bottomLineFrame.origin.y = [self tableView:tableView heightForRowAtIndexPath:indexPath]-.5;
     cell.bottomLine.frame = bottomLineFrame;
     if ([[[self settingFor:indexPath] objectForKey:@"email"] boolValue]) {
+        cell.emailValue = YES;
         [cell.emailButton setImage:[UIImage imageNamed:@"email-on.png"] forState:UIControlStateNormal];
     } else {
+        cell.emailValue = NO;
         [cell.emailButton setImage:[UIImage imageNamed:@"email-off.png"] forState:UIControlStateNormal];
     }
     if ([[[self settingFor:indexPath] objectForKey:@"push"] boolValue]) {
+        cell.pushValue = YES;
         [cell.pushButton setImage:[UIImage imageNamed:@"push-on.png"] forState:UIControlStateNormal];
     } else {
+        cell.pushValue = NO;
         [cell.pushButton setImage:[UIImage imageNamed:@"push-off.png"] forState:UIControlStateNormal];
     }
     if ([[self settingFor:indexPath] objectForKey:@"options"]) {
@@ -352,9 +357,9 @@ settings: [
     debug NSLog(@"DICT:%@", self.pushSettings);
 }
 
-- (void)emailValue:(NSNumber *)value forIndexPath:(NSIndexPath *)indexPath {
+- (void)emailValue:(BOOL)value forIndexPath:(NSIndexPath *)indexPath {
     NSString *key = [NSString stringWithFormat:@"%@_email", [[self settingFor:indexPath] objectForKey:@"key"]];
-    [self.pushSettings setObject:value forKey:key];
+    [self.pushSettings setObject:[NSNumber numberWithBool:value] forKey:key];
     
     TDPushEditCell *cell = (TDPushEditCell*) [self.tableView cellForRowAtIndexPath:indexPath];
     if ([[self.pushSettings objectForKey:key] boolValue]) {
@@ -365,12 +370,12 @@ settings: [
     
     debug NSLog(@"DICT:%@", self.pushSettings);
 }
-- (void)pushValue:(NSNumber *)value forIndexPath:(NSIndexPath *)indexPath {
+- (void)pushValue:(BOOL)value forIndexPath:(NSIndexPath *)indexPath {
     if ([[TDCurrentUser sharedInstance] didAskForPush] && [[TDCurrentUser sharedInstance] isRegisteredForPush])
     {
         // change the value and move on
         NSString *key = [NSString stringWithFormat:@"%@_push", [[self settingFor:indexPath] objectForKey:@"key"]];
-        [self.pushSettings setObject:value forKey:key];
+        [self.pushSettings setObject:[NSNumber numberWithBool:value] forKey:key];
         TDPushEditCell *cell = (TDPushEditCell*) [self.tableView cellForRowAtIndexPath:indexPath];
         if ([[self.pushSettings objectForKey:key] boolValue]) {
             [cell.pushButton setImage:[UIImage imageNamed:@"push-on.png"] forState:UIControlStateNormal];
@@ -412,11 +417,11 @@ settings: [
                     for (int row= 0; row < [self.tableView numberOfRowsInSection:secNum]; row++) {
                         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:secNum];
                         TDPushEditCell *cell = (TDPushEditCell*)[self.tableView cellForRowAtIndexPath:indexPath];
-                        cell.pushValue=true;
+                        cell.pushValue=YES;
                         [cell.pushButton setImage:[UIImage imageNamed:@"push-on.png"] forState:UIControlStateNormal];
                         if (secNum != 1) {
                             debug NSLog(@"secNum = %d", secNum);
-                            cell.emailValue = false;
+                            cell.emailValue = NO;
                             [cell.emailButton setImage:[UIImage imageNamed:@"email-off.png"] forState:UIControlStateNormal];
                         }
                         
