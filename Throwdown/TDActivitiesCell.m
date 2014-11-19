@@ -80,7 +80,12 @@ static CGFloat const kCommentWidthNoPreview = 306.;
     if ([@"comment" isEqualToString:[activity objectForKey:@"action"]]) {
         NSString *body = [[activity objectForKey:@"comment"] objectForKey:@"body"];
         users = [[activity objectForKey:@"comment"] objectForKey:@"mentions"];
-        text = [NSString stringWithFormat:@"%@ said: \"%@\"", username, body];
+        if (!users.count) {
+            text = [NSString stringWithFormat:@"%@ said: \"%@\"", username, body];
+        } else {
+            text =  [NSString stringWithFormat:@"%@ mentioned you: \"%@\"", username, body];
+        }
+            
     } else if ([@"like" isEqualToString:[activity objectForKey:@"action"]]) {
         text = [NSString stringWithFormat:@"%@ liked your post", username];
     } else if ([@"activity" isEqualToString:[activity objectForKey:@"action"]]) {
