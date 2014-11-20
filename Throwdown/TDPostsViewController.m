@@ -576,6 +576,15 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 - (void)userButtonPressedFromRow:(NSInteger)row {
 }
 
+- (void)horizontalScrollingStarted {
+    self.tableView.scrollEnabled = NO;
+}
+
+- (void)horizontalScrollingEnded {
+    self.tableView.scrollEnabled = YES;
+}
+
+
 #pragma mark - TDPostViewDelegate and TDDetailsCommentsCellDelegate
 
 - (void)userProfilePressedWithId:(NSNumber *)userId {
