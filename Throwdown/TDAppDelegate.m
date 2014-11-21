@@ -144,21 +144,24 @@
 }
 
 - (void)callRateView {
-    UINavigationController *navigationController = (UINavigationController*)_window.rootViewController;
-    TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
-    
-    [homeViewController addOverlay];
-    [[TDAppDelegate appDelegate] showRateAppView];
-}
-- (BOOL)iRateShouldPromptForRating
-{
-    UINavigationController *navigationController = (UINavigationController*)_window.rootViewController;
-    TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
-    
-    [homeViewController addOverlay];
-    [[TDAppDelegate appDelegate] showRateAppView];
-    [[TDAnalytics sharedInstance] logEvent:@"rating_asked"];
+    if ([[TDCurrentUser sharedInstance] isLoggedIn]) {
+        UINavigationController *navigationController = (UINavigationController*)_window.rootViewController;
+        TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
 
+        [homeViewController addOverlay];
+        [[TDAppDelegate appDelegate] showRateAppView];
+    }
+}
+
+- (BOOL)iRateShouldPromptForRating {
+    if ([[TDCurrentUser sharedInstance] isLoggedIn]) {
+        UINavigationController *navigationController = (UINavigationController*)_window.rootViewController;
+        TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
+
+        [homeViewController addOverlay];
+        [[TDAppDelegate appDelegate] showRateAppView];
+        [[TDAnalytics sharedInstance] logEvent:@"rating_asked"];
+    }
     return NO;
 }
 
