@@ -10,7 +10,7 @@
 
 static float const kFPS = 1/60.0;
 
-@interface ScrollWheel () <UIScrollViewDelegate, UIGestureRecognizerDelegate>
+@interface ScrollWheel () <UIGestureRecognizerDelegate>
 
 @property (nonatomic) int width;
 @property (nonatomic) int height;
@@ -48,7 +48,28 @@ static float const kFPS = 1/60.0;
 @implementation ScrollWheel
 
 - (void)dealloc {
+    NSLog(@"dealloc scroll");
+    [self removeFromSuperview];
+}
+
+- (void)removeFromSuperview {
+    if (self.panGesture) {
+        [self removeGestureRecognizer:self.panGesture];
+        self.panGesture.delegate = nil;
+        self.panGesture = nil;
+    }
+    if (self.longPressGesture) {
+        [self removeGestureRecognizer:self.longPressGesture];
+        self.longPressGesture.delegate = nil;
+        self.longPressGesture = nil;
+    }
+
+    for (int i = 0; i < [self.ticks count]; i++) {
+        UIView *tick = (UIView *)self.ticks[i];
+        [tick removeFromSuperview];
+    }
     self.delegate = nil;
+    [super removeFromSuperview];
 }
 
 - (instancetype)initWithRecommendedSizeAtY:(CGFloat)yPosition {
@@ -198,6 +219,10 @@ static float const kFPS = 1/60.0;
 }
 
 - (void)stopAnimation {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(scrollWheelEndedInteraction)]) {
+        [self.delegate scrollWheelEndedInteraction];
+    }
+
     [self.animationTimer invalidate];
     self.animationTimer = nil;
     self.animating = NO;
@@ -242,9 +267,9 @@ static float const kFPS = 1/60.0;
     }
 }
 
-#pragma mark - UIGestureRecogniserDelegate
+#pragma mark - UIGestureRecognizerDelegate
 
-// This allow both gesture to always fire. We control stopping the animation manually.
+// This allow both pan and tap gestures to always fire. We control stopping the animation manually.
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer{
     return YES;
 }
@@ -255,6 +280,11 @@ static float const kFPS = 1/60.0;
 // b = start value
 // c = change in value
 // d = duration
+
+// exponential easing out
+float easeOutExpo(float t, float b, float c, float d) {
+    return c * ( -powf( 2, -10 * t/d ) + 1 ) + b;
+}
 
 // sinusoidal easing out
 float easeOutSine(float t, float b, float c, float d) {

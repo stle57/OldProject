@@ -179,7 +179,7 @@ static NSString *const kTracksKey = @"tracks";
     if ([self.post.postId isEqual:post.postId] && [self.usernameLabel.text isEqualToString:post.user.username] && [self.userPicture isEqualToString:post.user.picture]) {
         return;
     }
-    // If it's the same (eg table was refreshed), bail so that we don't stop video playback
+    // If it's the same post bail so that we don't stop video playback (eg table was refreshed)
     if ([self.post.postId isEqual:post.postId] && self.state == PlayerStatePlaying ) {
         return;
     }
@@ -399,26 +399,24 @@ static NSString *const kTracksKey = @"tracks";
     [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationResumeTapGesture object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationStopPlayers object:self];
 
-    if (self.scrollWheel) {
-        [self.scrollWheel removeFromSuperview];
-        self.scrollWheel = nil;
-        [self.timeProgressBar removeFromSuperview];
-        self.timeProgressBar = nil;
-        [self.timeLabel removeFromSuperview];
-        self.timeLabel = nil;
-    }
-
     [self.playerItem removeObservers];
     self.playerItem = nil;
-    if (self.videoHolderView) {
-        [self.playerLayer removeFromSuperlayer];
-        [self.videoHolderView removeFromSuperview];
-        [self.playerSpinner removeFromSuperview];
-        self.player = nil;
-        self.playerLayer = nil;
-        self.videoHolderView = nil;
-        self.playerSpinner = nil;
-    }
+    [self.playerLayer removeFromSuperlayer];
+    [self.videoHolderView removeFromSuperview];
+    [self.playerSpinner removeFromSuperview];
+    self.player = nil;
+    self.playerLayer = nil;
+    self.videoHolderView = nil;
+    self.playerSpinner = nil;
+
+    [self.timeProgressBar removeFromSuperview];
+    self.timeProgressBar = nil;
+    [self.scrollWheel removeFromSuperview];
+    self.scrollWheel = nil;
+    [self.timeLabel removeFromSuperview];
+    self.timeLabel = nil;
+
+    [self setNeedsDisplay];
 }
 
 // used for video and for retrying preview download if it fails
@@ -513,6 +511,9 @@ static NSString *const kTracksKey = @"tracks";
 
     self.totalSeconds = CMTimeGetSeconds([self.playerItem duration]);
 
+    if (isnan(self.totalSeconds)) {
+        return;
+    }
     CGFloat width = [UIScreen mainScreen].bounds.size.width;
     CGRect frame = self.timeProgressBar.frame;
     frame.size.width = width * (time / self.totalSeconds);
@@ -648,8 +649,6 @@ static NSString *const kTracksKey = @"tracks";
         }
     }];
 
-//    self.scrollWheel.hidden = YES;
-//    self.timeLabel.hidden = YES;
     self.state = PlayerStatePlaying;
     [self updateControlImage:ControlStateNone];
     [self.player play];
@@ -667,6 +666,8 @@ static NSString *const kTracksKey = @"tracks";
     [self updateControlImage:ControlStateLoading];
 
     if (![[TDAPIClient sharedInstance] videoExists:self.filename]) {
+        [self updateControlImage:ControlStateNone];
+        self.controlView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
         [self setupProgressBar];
     }
     NSURL *finalURL = [NSURL URLWithString:self.filename];
@@ -675,6 +676,7 @@ static NSString *const kTracksKey = @"tracks";
         if (![finalURL isEqual:self.downloadURL] || !self.previewImage || self.state != PlayerStateLoading) {
             return;
         }
+        self.controlView.backgroundColor = [UIColor clearColor];
         [self removeProgressBar];
         [self playVideoAt:videoLocation];
     } error:^{
@@ -755,7 +757,7 @@ static NSString *const kTracksKey = @"tracks";
 
 - (void)showLoadingError {
     [self updateControlImage:ControlStateNone];
-    self.controlView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.7];
+    self.controlView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
     [self.controlView setImage:[UIImage imageNamed:@"video_status_retry"]];
 }
 
