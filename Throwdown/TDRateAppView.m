@@ -252,6 +252,8 @@
 
 - (IBAction)feedbackButtonPressed:(UIButton *)sender {
     debug NSLog(@"feedback button pressed");
+    [iRate sharedInstance].declinedThisVersion = YES;
+    [[TDAnalytics sharedInstance] logEvent:@"rating_closed"];
     [[NSNotificationCenter defaultCenter] postNotificationName:TDShowFeedbackViewController object:self userInfo:nil];
     [self removeFromSuperview];
 }
