@@ -13,6 +13,7 @@
 #import "TDAnalytics.h"
 #import <FacebookSDK/FacebookSDK.h>
 #import <SSKeychain.h>
+#import "TDConstants.h"
 
 static NSString *const DATA_LOCATION = @"/Documents/current_user.bin";
 static NSString *const kConfirmed = @"YES";
@@ -149,7 +150,9 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
     // FYI: _deviceToken not part of dictionary
     [self save];
 
-    //[self resetAskedForPush]; //- This is for testing purposes
+    if ([TDConstants environment] != TDEnvProduction) {
+        [self resetAskedForPush]; //- This is for testing purposes
+    }
     if ([self isLoggedIn] && [self didAskForPush]) {
         [self registerForRemoteNotificationTypes];
     }
@@ -461,7 +464,13 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
                                 NSString *key = [NSString stringWithFormat:@"%@_push", [setting objectForKey:@"key"]];
                                 [pushSettings setObject:@1 forKey:key];
                                 NSString *key2 = [NSString stringWithFormat:@"%@_email", [setting objectForKey:@"key"]];
-                                [pushSettings setObject:@0 forKey:key2];
+                                if ([[setting objectForKey:@"key"]  isEqual: @"follows"] ||
+                                    [[setting objectForKey:@"key"]  isEqual: @"friend_joins"]){
+                                    [pushSettings setObject:@1 forKey:key2];
+                                    debug NSLog(@"key=%@", [setting objectForKey:@"key"]);
+                                } else {
+                                    [pushSettings setObject:@0 forKey:key2];
+                                }
 
                             } else {
                                 NSString *key = [NSString stringWithFormat:@"%@_push", [setting objectForKey:@"key"]];
