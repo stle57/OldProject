@@ -33,9 +33,7 @@ static int const kTextViewHeightWithUserList = 70;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *postButton;
 @property (weak, nonatomic) IBOutlet UILabel *labelPR;
 @property (weak, nonatomic) IBOutlet UILabel *labelMedia;
-@property (weak, nonatomic) IBOutlet UILabel *labelLocation;
 @property (weak, nonatomic) IBOutlet UIButton *mediaButton;
-@property (weak, nonatomic) IBOutlet UIButton *locationButton;
 @property (weak, nonatomic) IBOutlet UIButton *prButton;
 @property (weak, nonatomic) IBOutlet UIView *topLineView;
 @property (weak, nonatomic) IBOutlet UIView *optionsView;
@@ -76,20 +74,15 @@ static int const kTextViewHeightWithUserList = 70;
     [self.commentTextView setPlaceholder:@"What's happening?"];
 
     // preloading images
-    self.prOffImage = [UIImage imageNamed:@"trophy_off"];
-    self.prOnImage =  [UIImage imageNamed:@"trophy_on"];
+    self.prOffImage = [UIImage imageNamed:@"trophy_off_74x74"];
+    self.prOnImage =  [UIImage imageNamed:@"trophy_74x74"];
 
     self.isPR = false;
 
-    
-     NSAttributedString *locationStr = [TDViewControllerHelper makeParagraphedTextWithString:@"Location" font:[TDConstants fontRegularSized:14] color:[TDConstants commentTimeTextColor] lineHeight:16. lineHeightMultipler:16/14.];
-    [self.locationButton setAttributedTitle:locationStr forState:UIControlStateNormal];
-    
-    NSAttributedString *prStr = [TDViewControllerHelper makeParagraphedTextWithString:@"New PR" font:[TDConstants fontRegularSized:14] color:[TDConstants commentTimeTextColor] lineHeight:16. lineHeightMultipler:16/14.];
-    [self.prButton setAttributedTitle:prStr forState:UIControlStateNormal];
-    
-    //self.labelPR.font = [TDConstants fontRegularSized:16];
-    //self.labelPR.textColor = [TDConstants commentTimeTextColor];
+    self.labelMedia.font = [TDConstants fontSemiBoldSized:16];
+    self.labelMedia.textColor = [TDConstants disabledTextColor];
+    self.labelPR.font = [TDConstants fontSemiBoldSized:16];
+    self.labelPR.textColor = [TDConstants disabledTextColor];
 
     [self.postButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[UIColor whiteColor], NSFontAttributeName:[TDConstants fontRegularSized:18] } forState:UIControlStateNormal];
     [self.postButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[UIColor colorWithWhite:1 alpha:0.5], NSFontAttributeName:[TDConstants fontRegularSized:18] } forState:UIControlStateDisabled];
@@ -103,25 +96,6 @@ static int const kTextViewHeightWithUserList = 70;
 	}
 
     self.keyboardObserver = [[TDKeyboardObserver alloc] initWithDelegate:self];
-    
-//    self.optionsView.layer.borderWidth = 2.;
-//    self.optionsView.layer.borderColor = [[UIColor blueColor] CGColor];
-    
-//    self.topLineView.layer.borderColor = [[UIColor redColor] CGColor];
-//    self.topLineView.layer.borderWidth = 2.;
-//    
-//    self.locationButton.layer.borderWidth = 2.0;
-//    self.locationButton.layer.borderColor = [[UIColor greenColor] CGColor];
-    
-    debug NSLog(@"options view frame = %@", NSStringFromCGRect(self.optionsView.frame));
-    debug NSLog(@"locationLabel frame = %@", NSStringFromCGRect(self.labelLocation.frame));
-    debug NSLog(@"locationButton frame = %@", NSStringFromCGRect(self.locationButton.frame));
-    debug NSLog(@"prButton frame = %@", NSStringFromCGRect(self.prButton.frame));
-    debug NSLog(@"prLabel frame = %@", NSStringFromCGRect(self.labelPR.frame));
-    debug NSLog(@"topLine view frame = %@", NSStringFromCGRect(self.topLineView.frame));
-    
-    self.labelLocation.hidden = YES;
-    self.labelPR.hidden = YES;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
