@@ -19,6 +19,7 @@
 
 @interface ObservingPlayerItem : AVPlayerItem
 
+- (void)removeObservers;
 @property (nonatomic, weak) id<ObservingPlayerItemDelegate> delegate;
 
 @end

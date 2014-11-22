@@ -18,6 +18,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <SDWebImage/SDWebImageManager.h>
 #import "UIImage+Resizing.h"
+#import "ScrollWheel.h"
 
 typedef enum {
     ControlStatePaused,
@@ -41,7 +42,7 @@ static CGFloat const kCommentBottomPadding = 15.;
 static CGFloat const kWidthOfMedia = 320.;
 static NSString *const kTracksKey = @"tracks";
 
-@interface TDPostView () <TTTAttributedLabelDelegate, ObservingPlayerItemDelegate>
+@interface TDPostView () <TTTAttributedLabelDelegate, ObservingPlayerItemDelegate, ScrollWheelDelegate>
 
 @property (nonatomic) UIView *videoHolderView;
 @property (nonatomic) TTTAttributedLabel *commentLabel;
@@ -57,15 +58,20 @@ static NSString *const kTracksKey = @"tracks";
 @property (nonatomic) AVPlayerLayer *playerLayer;
 @property (nonatomic) TDPost *post;
 @property (nonatomic) PlayerState state;
-@property (nonatomic) NSTimer *loadingTimeout;
 @property (nonatomic) UITapGestureRecognizer *tapGestureRecognizer;
 @property (nonatomic) CGFloat mediaSize;
 @property (nonatomic) UIView *progressBackgroundView;
 @property (nonatomic) UIView *progressBarView;
+@property (nonatomic) ScrollWheel *scrollWheel;
+@property (nonatomic) UIView *timeProgressBar;
+@property (nonatomic) UILabel *timeLabel;
+@property (nonatomic) float totalSeconds;
+@property (nonatomic) float pausedSeconds;
 @property (nonatomic) BOOL previewLoadError;
+@property (nonatomic) float lastPosition;
 
 // Used for caching and checking if the row has been updated
-@property (nonatomic) NSURL *imageURL;
+@property (nonatomic) NSURL *downloadURL;
 @property (nonatomic) NSURL *userURL;
 
 @end
@@ -173,7 +179,7 @@ static NSString *const kTracksKey = @"tracks";
     if ([self.post.postId isEqual:post.postId] && [self.usernameLabel.text isEqualToString:post.user.username] && [self.userPicture isEqualToString:post.user.picture]) {
         return;
     }
-    // If it's the same (eg table was refreshed), bail so that we don't stop video playback
+    // If it's the same post bail so that we don't stop video playback (eg table was refreshed)
     if ([self.post.postId isEqual:post.postId] && self.state == PlayerStatePlaying ) {
         return;
     }
@@ -271,28 +277,16 @@ static NSString *const kTracksKey = @"tracks";
     self.previewLoadError = NO;
     [self setupProgressBar];
 
-    self.imageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@%@", RSHost, self.filename, FTImage]];
+    self.downloadURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@%@", RSHost, self.filename, FTImage]];
     SDWebImageManager *manager = [SDWebImageManager sharedManager];
-    [manager downloadImageWithURL:self.imageURL options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
-        CGFloat width = 200.0 * ((double)receivedSize / (double)expectedSize);
-        // Progress can be NaN!
-        if (!isnan(width) && width > 10 && width <= 200 && self.progressBarView != nil) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                // progress bar could have been removed
-                // we have to do this on the main thread for thread safety
-                if (self.progressBarView && width > 10) {
-                    CGRect frame = self.progressBarView.frame;
-                    frame.size.width = width;
-                    self.progressBarView.frame = frame;
-                }
-            });
-        }
+    [manager downloadImageWithURL:self.downloadURL options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+        [self updateProgressBar:(float)receivedSize expected:(float)expectedSize];
     } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *finalURL) {
         dispatch_async(dispatch_get_main_queue(), ^{
             // avoid doing anything on a row that's been reused b/c the download took too long and user scrolled away
             // self.imageURL will have changed and previewImage will be remove if it's a text post
             // we have to do this on the main thread for thread safety
-            if (![finalURL isEqual:self.imageURL] || !self.previewImage) {
+            if (![finalURL isEqual:self.downloadURL] || !self.previewImage) {
                 return;
             }
             if (error || !image) {
@@ -362,6 +356,22 @@ static NSString *const kTracksKey = @"tracks";
     [self addSubview:self.progressBarView];
 }
 
+- (void)updateProgressBar:(float)receivedSize expected:(float)expectedSize {
+    CGFloat width = 200.0 * (receivedSize / expectedSize);
+    // Progress can be NaN! eg on Verizon.
+    if (!isnan(width) && width > 10 && width <= 200 && self.progressBarView != nil) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // progress bar could have been removed
+            // we have to do this on the main thread for thread safety
+            if (self.progressBarView && width > 10) {
+                CGRect frame = self.progressBarView.frame;
+                frame.size.width = width;
+                self.progressBarView.frame = frame;
+            }
+        });
+    }
+}
+
 - (void)removeProgressBar {
     if (self.progressBarView) {
         [self.progressBarView removeFromSuperview];
@@ -372,18 +382,16 @@ static NSString *const kTracksKey = @"tracks";
 }
 
 - (void)setupVideo {
-    if (!self.controlView) {
-        self.playerSpinner = [[UIImageView alloc] init];
-        [self addSubview:self.playerSpinner];
-        self.videoHolderView = [[UIView alloc] initWithFrame:CGRectMake(0, kHeightOfProfileRow, self.mediaSize, self.mediaSize)];
-        [self addSubview:self.videoHolderView];
-        [self insertSubview:self.videoHolderView aboveSubview:self.previewImage];
-        [self insertSubview:self.playerSpinner aboveSubview:self.videoHolderView];
-        [self setupTapControl];
+    self.playerSpinner = [[UIImageView alloc] initWithFrame:CGRectMake((self.mediaSize / 2) - 35, kHeightOfProfileRow + (self.mediaSize / 2) - 35, 70, 70)];
+    [self addSubview:self.playerSpinner];
+    self.videoHolderView = [[UIView alloc] initWithFrame:CGRectMake(0, kHeightOfProfileRow, self.mediaSize, self.mediaSize)];
+    [self addSubview:self.videoHolderView];
+    [self insertSubview:self.videoHolderView aboveSubview:self.previewImage];
+    [self insertSubview:self.playerSpinner aboveSubview:self.videoHolderView];
+    [self setupTapControl];
 
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pauseTapGesture:) name:TDNotificationPauseTapGesture object:nil];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resumeTapGesture:) name:TDNotificationResumeTapGesture object:nil];
-    }
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pauseTapGesture:) name:TDNotificationPauseTapGesture object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(resumeTapGesture:) name:TDNotificationResumeTapGesture object:nil];
 }
 
 - (void)removeVideo {
@@ -391,16 +399,24 @@ static NSString *const kTracksKey = @"tracks";
     [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationResumeTapGesture object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:TDNotificationStopPlayers object:self];
 
+    [self.playerItem removeObservers];
     self.playerItem = nil;
-    if (self.videoHolderView) {
-        [self.playerLayer removeFromSuperlayer];
-        [self.videoHolderView removeFromSuperview];
-        [self.playerSpinner removeFromSuperview];
-        self.player = nil;
-        self.playerLayer = nil;
-        self.videoHolderView = nil;
-        self.playerSpinner = nil;
-    }
+    [self.playerLayer removeFromSuperlayer];
+    [self.videoHolderView removeFromSuperview];
+    [self.playerSpinner removeFromSuperview];
+    self.player = nil;
+    self.playerLayer = nil;
+    self.videoHolderView = nil;
+    self.playerSpinner = nil;
+
+    [self.timeProgressBar removeFromSuperview];
+    self.timeProgressBar = nil;
+    [self.scrollWheel removeFromSuperview];
+    self.scrollWheel = nil;
+    [self.timeLabel removeFromSuperview];
+    self.timeLabel = nil;
+
+    [self setNeedsDisplay];
 }
 
 // used for video and for retrying preview download if it fails
@@ -428,7 +444,120 @@ static NSString *const kTracksKey = @"tracks";
     }
 }
 
+- (void)setupScrollWheel {
+    int height = 0;
+    switch ((int)[UIScreen mainScreen].bounds.size.width) {
+        case 320:
+            height = 44;
+            break;
+        case 375:
+            height = 50;
+            break;
+        case 414:
+            height = 58;
+            break;
+    }
+    int labelHeight = 20;
+
+    if (!self.scrollWheel) {
+        // must init with height, used to draw heigth of ticks
+        self.scrollWheel = [[ScrollWheel alloc] initWithFrame:CGRectMake(0, kHeightOfProfileRow + self.mediaSize, [UIScreen mainScreen].bounds.size.width, height)];
+        self.scrollWheel.delegate = self;
+        self.scrollWheel.minPosition = 0;
+        self.scrollWheel.maxPosition = self.totalSeconds;
+        self.scrollWheel.modifier = 0.003;
+        self.scrollWheel.clipsToBounds = YES;
+        [self addSubview:self.scrollWheel];
+        self.timeLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, kHeightOfProfileRow + self.mediaSize - labelHeight - 6, 60, 20)];
+        self.timeLabel.alpha = 0;
+        self.timeLabel.backgroundColor = [UIColor colorWithWhite:0 alpha:0.7];
+        self.timeLabel.font = [TDConstants fontRegularSized:13];
+        self.timeLabel.textColor = [UIColor whiteColor];
+        self.timeLabel.layer.cornerRadius = 4;
+        self.timeLabel.clipsToBounds = YES;
+        self.timeLabel.textAlignment = NSTextAlignmentCenter;
+        self.timeLabel.userInteractionEnabled = YES;
+        [self addSubview:self.timeLabel];
+        UIPanGestureRecognizer *panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panTimeLabel:)];
+        [self.timeLabel addGestureRecognizer:panRecognizer];
+    }
+    [self.scrollWheel setPosition:self.pausedSeconds];
+    [self updateTimeProgreesBarTo:self.pausedSeconds];
+
+    CGRect timeFrame = self.timeProgressBar.frame;
+    timeFrame.origin.y = kHeightOfProfileRow + self.mediaSize - height - 3;
+
+    CGRect scrollFrame = self.scrollWheel.frame;
+    scrollFrame.size.height = 0;
+    self.scrollWheel.frame = scrollFrame;
+
+    scrollFrame.origin.y = kHeightOfProfileRow + self.mediaSize - height;
+    scrollFrame.size.height = height;
+
+    CGRect timeLabelFrame = self.timeLabel.frame;
+    timeLabelFrame.origin.y = kHeightOfProfileRow + self.mediaSize - height - labelHeight - 6;
+
+    self.scrollWheel.hidden = NO;
+    self.timeLabel.hidden = NO;
+    [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+        self.scrollWheel.frame = scrollFrame;
+        self.timeLabel.alpha = 1.0;
+        self.timeLabel.frame = timeLabelFrame;
+        self.timeProgressBar.frame = timeFrame;
+    } completion:nil];
+}
+
+- (void)updateTimeProgreesBarTo:(float)time {
+
+    self.totalSeconds = CMTimeGetSeconds([self.playerItem duration]);
+
+    if (isnan(self.totalSeconds)) {
+        return;
+    }
+    CGFloat width = [UIScreen mainScreen].bounds.size.width;
+    CGRect frame = self.timeProgressBar.frame;
+    frame.size.width = width * (time / self.totalSeconds);
+    self.timeProgressBar.frame = frame;
+
+    if (self.timeLabel) {
+        CGRect timeFrame = self.timeLabel.frame;
+        int x = frame.size.width - timeFrame.size.width / 2;
+        if (x < 3) {
+            x = 3;
+        } else if (x > width - timeFrame.size.width) {
+            x = width - timeFrame.size.width - 3;
+        }
+        timeFrame.origin.x = x;
+        self.timeLabel.frame = timeFrame;
+
+        // time is in seconds
+        float seconds = floorf(fmodf(time, 60));
+        float minutes = floorf(fmodf(time / 60, 60));
+        float hundred = floorf(fmodf(time * 100.0, 100));
+        NSString *format = [NSString stringWithFormat:@"%%0%dd:%%0%dd:%%0%dd", 2, 2, 2];
+        self.timeLabel.text = [NSString stringWithFormat:format, (int)minutes, (int)seconds, (int)hundred];
+    }
+}
+
 #pragma mark - UI callbacks
+
+- (void)panTimeLabel:(UIPanGestureRecognizer *)gesture {
+    if (gesture.state == UIGestureRecognizerStateBegan) {
+        [self scrollWheelStartedInteraction];
+    } else if (gesture.state == UIGestureRecognizerStateChanged) {
+        CGPoint location = [gesture locationInView:self];
+        CGFloat width = [UIScreen mainScreen].bounds.size.width;
+
+        float seconds = (location.x / width) * self.totalSeconds;
+        [self.scrollWheel setPosition:seconds];
+        [self updateTimeProgreesBarTo:seconds];
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            [self.playerItem seekToTime:CMTimeMakeWithSeconds(seconds, NSEC_PER_SEC) toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
+        });
+    } else if (gesture.state == UIGestureRecognizerStateEnded) {
+        [self scrollWheelEndedInteraction];
+    }
+}
 
 - (void)pauseTapGesture:(NSNotification *)n {
     [self.controlView removeGestureRecognizer:self.tapGestureRecognizer];
@@ -453,10 +582,8 @@ static NSString *const kTracksKey = @"tracks";
                 break;
 
             case PlayerStateReachedEnd:
-                self.state = PlayerStateLoading;
-                [self updateControlImage:ControlStateLoading];
-                [self startLoadingTimeout];
                 [self.player seekToTime:kCMTimeZero];
+                [self playVideo];
                 break;
 
             case PlayerStatePaused:
@@ -477,26 +604,12 @@ static NSString *const kTracksKey = @"tracks";
     if (!self.playerSpinner) {
         return;
     }
-
-    [self stopSpinner];
-    debug NSLog(@"update control state to: %d", controlState);
-
-    if (controlState != ControlStatePlay) {
-        self.playerSpinner.frame = CGRectMake(self.mediaSize - 30, kHeightOfProfileRow + self.mediaSize - 30, 20.0, 20.0);
-    }
-
     switch (controlState) {
         case ControlStatePlay:
-            self.playerSpinner.frame = CGRectMake((self.mediaSize / 2) - 35, kHeightOfProfileRow + (self.mediaSize / 2) - 35, 70, 70); // 70/2 = 35
             [self.playerSpinner setImage:[UIImage imageNamed:@"play_button_140x140"]];
             break;
         case ControlStatePaused:
-            [self.playerSpinner setImage:[UIImage imageNamed:@"video_status_pause"]];
-            break;
         case ControlStateLoading:
-            [self.playerSpinner setImage:[UIImage imageNamed:@"video_status_spinner"]];
-            [self startSpinner];
-            break;
         case ControlStateNone:
             [self.playerSpinner setImage:nil];
             break;
@@ -507,9 +620,35 @@ static NSString *const kTracksKey = @"tracks";
     self.state = PlayerStatePaused;
     [self.player pause];
     [self updateControlImage:ControlStatePaused];
+    if (self.playerItem) {
+        self.pausedSeconds = CMTimeGetSeconds([self.playerItem currentTime]);
+        [self setupScrollWheel];
+    }
 }
 
 - (void)playVideo {
+    CGRect timeFrame = self.timeProgressBar.frame;
+    timeFrame.origin.y = kHeightOfProfileRow + self.mediaSize - 3;
+
+    CGRect scrollFrame = self.scrollWheel.frame;
+    scrollFrame.origin.y = kHeightOfProfileRow + self.mediaSize;
+    scrollFrame.size.height = 0;
+
+    CGRect timeLabelFrame = self.timeLabel.frame;
+    timeLabelFrame.origin.y = kHeightOfProfileRow + self.mediaSize - 26;
+
+    [UIView animateWithDuration:0.3 delay:0.0 options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+        self.scrollWheel.frame = scrollFrame;
+        self.timeLabel.alpha = 0.0;
+        self.timeLabel.frame = timeLabelFrame;
+        self.timeProgressBar.frame = timeFrame;
+    } completion:^(BOOL finished) {
+        if (finished) {
+            self.scrollWheel.hidden = NO;
+            self.timeLabel.hidden = NO;
+        }
+    }];
+
     self.state = PlayerStatePlaying;
     [self updateControlImage:ControlStateNone];
     [self.player play];
@@ -519,16 +658,44 @@ static NSString *const kTracksKey = @"tracks";
     // Stop any previous players
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:self.filename];
 
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(stopVideoFromNotification:) name:TDNotificationStopPlayers object:self];
+
     self.state = PlayerStateLoading;
     [self hideLoadingError];
 
-    NSURL *videoLocation = [TDConstants getStreamingUrlFor:self.filename];
     [self updateControlImage:ControlStateLoading];
-    [self startLoadingTimeout];
 
-    self.player = nil;
+    if (![[TDAPIClient sharedInstance] videoExists:self.filename]) {
+        [self updateControlImage:ControlStateNone];
+        self.controlView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
+        [self setupProgressBar];
+    }
+    NSURL *finalURL = [NSURL URLWithString:self.filename];
+    self.downloadURL = [finalURL copy];
+    [[TDAPIClient sharedInstance] getVideo:self.filename callback:^(NSURL *videoLocation) {
+        if (![finalURL isEqual:self.downloadURL] || !self.previewImage || self.state != PlayerStateLoading) {
+            return;
+        }
+        self.controlView.backgroundColor = [UIColor clearColor];
+        [self removeProgressBar];
+        [self playVideoAt:videoLocation];
+    } error:^{
+        if (![finalURL isEqual:self.downloadURL] || !self.previewImage || self.state != PlayerStateLoading) {
+            return;
+        }
+        self.state = PlayerStateNotLoaded;
+        [self removeProgressBar];
+        [self showLoadingError];
+    } progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+        [self updateProgressBar:(float)receivedSize expected:(float)expectedSize];
+    }];
+}
+
+- (void)playVideoAt:(NSURL *)location {
+    [self.playerItem removeObservers];
     self.playerItem = nil;
-    self.videoAsset = [[AVURLAsset alloc] initWithURL:videoLocation options:nil];
+    self.player = nil;
+    self.videoAsset = [[AVURLAsset alloc] initWithURL:location options:nil];
     [self.videoAsset loadValuesAsynchronouslyForKeys:@[kTracksKey] completionHandler:^{
         dispatch_async(dispatch_get_main_queue(), ^{
             NSError *error;
@@ -548,6 +715,19 @@ static NSString *const kTracksKey = @"tracks";
                 [self.playerLayer setVideoGravity:AVLayerVideoGravityResize];
                 [self.playerLayer setPlayer:self.player];
                 [self.videoHolderView.layer addSublayer:self.playerLayer];
+
+                self.timeProgressBar = [[UIView alloc] initWithFrame:CGRectMake(0, kHeightOfProfileRow + self.mediaSize - 3, 0, 3)];
+                self.timeProgressBar.backgroundColor = [UIColor colorWithRed:0 green:153.0/255.0 blue:224.0/255.0 alpha:1];
+                [self addSubview:self.timeProgressBar];
+
+                __weak typeof(self) _self = self;
+                [self.player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(0.05, NSEC_PER_SEC) queue:NULL usingBlock:^(CMTime time) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        if (_self != nil) {
+                            [_self updateTimeProgreesBarTo:CMTimeGetSeconds(time)];
+                        }
+                    });
+                }];
 
                 // Not sure why we have to specify this specifically, since this value is defined as default
                 [[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategorySoloAmbient error: nil];
@@ -575,28 +755,9 @@ static NSString *const kTracksKey = @"tracks";
     }
 }
 
-- (void)startLoadingTimeout {
-    if (self.loadingTimeout) {
-        [self.loadingTimeout invalidate];
-    }
-    self.loadingTimeout = [NSTimer scheduledTimerWithTimeInterval:30.0
-                                                           target:self
-                                                         selector:@selector(loadingTimedOut:)
-                                                         userInfo:nil
-                                                          repeats:NO];
-}
-
-- (void)loadingTimedOut:(NSTimer *)timer {
-    if (self.state == PlayerStateLoading) {
-        debug NSLog(@"PLAYBACK: timeout");
-        self.state = PlayerStateNotLoaded;
-        [self showLoadingError];
-    }
-}
-
 - (void)showLoadingError {
     [self updateControlImage:ControlStateNone];
-    self.controlView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.7];
+    self.controlView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.5];
     [self.controlView setImage:[UIImage imageNamed:@"video_status_retry"]];
 }
 
@@ -605,22 +766,6 @@ static NSString *const kTracksKey = @"tracks";
         self.controlView.backgroundColor = [UIColor clearColor];
         [self.controlView setImage:nil];
     }
-}
-
-- (void)startSpinner {
-    CABasicAnimation* rotationAnimation;
-    rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
-    rotationAnimation.toValue = [NSNumber numberWithFloat: M_PI * 2.0];
-    rotationAnimation.duration = 1.0;
-    rotationAnimation.cumulative = YES;
-    rotationAnimation.repeatCount = HUGE_VALF;
-    rotationAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
-
-    [self.playerSpinner.layer addAnimation:rotationAnimation forKey:kSpinningAnimation];
-}
-
-- (void)stopSpinner {
-    [self.playerSpinner.layer removeAnimationForKey:kSpinningAnimation];
 }
 
 #pragma mark - User Name Button
@@ -699,5 +844,36 @@ static NSString *const kTracksKey = @"tracks";
     [self hideLoadingError];
 }
 
+#pragma mark - ScrollWheelDelegate
+
+- (void)scrollWheelDidChange:(float)position {
+    // If user hits play before the scroll finishes scrolling we ignore it
+    if (self.state == PlayerStatePaused && self.lastPosition != position) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+            if (position <= 0) {
+                [self.playerItem seekToTime:kCMTimeZero];
+            } else {
+                CMTime time = CMTimeMakeWithSeconds(position, NSEC_PER_SEC);
+                [self.playerItem seekToTime:time toleranceBefore:kCMTimeZero toleranceAfter:kCMTimeZero];
+            }
+        });
+        [self updateTimeProgreesBarTo:position];
+    }
+    self.lastPosition = position;
+}
+
+- (void)scrollWheelStartedInteraction {
+    // just send these up the chain for the tableview to disable scroll
+    if (self.delegate && [self.delegate respondsToSelector:@selector(horizontalScrollingStarted)]) {
+        [self.delegate horizontalScrollingStarted];
+    }
+}
+
+- (void)scrollWheelEndedInteraction {
+    // just send these up the chain for the tableview to enable scroll
+    if (self.delegate && [self.delegate respondsToSelector:@selector(horizontalScrollingEnded)]) {
+        [self.delegate horizontalScrollingEnded];
+    }
+}
 
 @end

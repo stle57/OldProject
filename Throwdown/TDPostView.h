@@ -16,6 +16,8 @@
 - (void)postTouchedFromRow:(NSInteger)row;
 - (void)userButtonPressedFromRow:(NSInteger)row;
 - (void)userProfilePressedWithId:(NSNumber *)userId;
+- (void)horizontalScrollingStarted;
+- (void)horizontalScrollingEnded;
 @end
 
 @interface TDPostView : UITableViewCell

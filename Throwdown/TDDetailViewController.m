@@ -437,6 +437,14 @@ static int const kToolbarHeight = 64;
     [self showUserProfile:self.post.user.userId];
 }
 
+- (void)horizontalScrollingStarted {
+    self.tableView.scrollEnabled = NO;
+}
+
+- (void)horizontalScrollingEnded {
+    self.tableView.scrollEnabled = YES;
+}
+
 #pragma mark - TDPostViewDelegate and TDDetailsCommentsCellDelegate
 
 - (void)userProfilePressedWithId:(NSNumber *)userId {

@@ -34,8 +34,8 @@
 - (void)getFollowerSettings:(NSNumber*)userId currentUserToken:(NSString *)currentUserToken success:(void (^)(NSArray *users))success failure:(void (^)(void))failure;
 - (void)sendInvites:(NSString*)senderName contactList:(NSArray*)contactList callback:(void (^)(BOOL success, NSArray *contacts))callback;
 
-- (void)setImage:(NSDictionary *)options;
-- (void)getVideo:(NSString *)filename callback:(void(^)(NSURL *videoLocation))callback error:(void(^)(void))errorCallback;
+- (BOOL)videoExists:(NSString *)filename;
+- (void)getVideo:(NSString *)filename callback:(void(^)(NSURL *videoLocation))callback error:(void(^)(void))errorCallback progress:(void(^)(NSInteger receivedSize, NSInteger expectedSize))progress;
 
 - (void)logEvent:(NSString *)event sessionId:(NSNumber *)sessionId withInfo:(NSString *)info source:(NSString *)source;
 - (void)logAppLinksVisit:(NSDictionary *)appLinks sourceApplication:(NSString *)sourceApplication;

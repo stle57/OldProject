@@ -160,6 +160,7 @@
 		A19FF61018970BBB001A0AD0 /* RSModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF60318970BBB001A0AD0 /* RSModel.m */; };
 		A19FF61118970BBB001A0AD0 /* RSStorageObject.m in Sources */ = {isa = PBXBuildFile; fileRef = A19FF60518970BBB001A0AD0 /* RSStorageObject.m */; };
 		A1A053FE19D6272300E7556A /* UIActionSheet+Blocks.m in Sources */ = {isa = PBXBuildFile; fileRef = A1A053FC19D6272300E7556A /* UIActionSheet+Blocks.m */; };
+		A1AB84CC1A1B0032007DEF64 /* ScrollWheel.m in Sources */ = {isa = PBXBuildFile; fileRef = A1AB84CB1A1B0032007DEF64 /* ScrollWheel.m */; };
 		A1B11920190E030700FE7102 /* TDDeviceInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = A1B1191F190E030700FE7102 /* TDDeviceInfo.m */; };
 		A1B3EF3B193E8D240014B619 /* TDNoticeViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A1B3EF39193E8D240014B619 /* TDNoticeViewCell.m */; };
 		A1B3EF3C193E8D240014B619 /* TDNoticeViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A1B3EF3A193E8D240014B619 /* TDNoticeViewCell.xib */; };
@@ -453,6 +454,8 @@
 		A19FF60518970BBB001A0AD0 /* RSStorageObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSStorageObject.m; sourceTree = "<group>"; };
 		A1A053FC19D6272300E7556A /* UIActionSheet+Blocks.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIActionSheet+Blocks.m"; sourceTree = "<group>"; };
 		A1A053FD19D6272300E7556A /* UIActionSheet+Blocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIActionSheet+Blocks.h"; sourceTree = "<group>"; };
+		A1AB84CA1A1B0032007DEF64 /* ScrollWheel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollWheel.h; sourceTree = "<group>"; };
+		A1AB84CB1A1B0032007DEF64 /* ScrollWheel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScrollWheel.m; sourceTree = "<group>"; };
 		A1B1191E190E030700FE7102 /* TDDeviceInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDDeviceInfo.h; sourceTree = "<group>"; };
 		A1B1191F190E030700FE7102 /* TDDeviceInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDDeviceInfo.m; sourceTree = "<group>"; };
 		A1B3EF38193E8D240014B619 /* TDNoticeViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDNoticeViewCell.h; sourceTree = "<group>"; };
@@ -729,6 +732,7 @@
 		A11E04DA1888CB79002F981A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A1AB84C91A1B0020007DEF64 /* ScrollWheel */,
 				A1D7072819DBE8ED00ECB221 /* ObservingPlayerItem */,
 				4D2843EE19CA299900E4A56C /* AddressBook.framework */,
 				A14483B719A8026000B3BC8D /* ABOAuthCore */,
@@ -989,6 +993,15 @@
 			);
 			name = RSCloudFiles;
 			path = RackspaceCloudFiles/Source;
+			sourceTree = "<group>";
+		};
+		A1AB84C91A1B0020007DEF64 /* ScrollWheel */ = {
+			isa = PBXGroup;
+			children = (
+				A1AB84CA1A1B0032007DEF64 /* ScrollWheel.h */,
+				A1AB84CB1A1B0032007DEF64 /* ScrollWheel.m */,
+			);
+			name = ScrollWheel;
 			sourceTree = "<group>";
 		};
 		A1C1D0A5189ADAED00666D2A /* Views */ = {
@@ -1466,6 +1479,7 @@
 				A180D4DF18C14EA7003B9378 /* TDNavigationController.m in Sources */,
 				4D2843E719C8A7A700E4A56C /* TDInviteViewController.m in Sources */,
 				A1E3A17018FCCF2B0038A8A4 /* TDActivitiesCell.m in Sources */,
+				A1AB84CC1A1B0032007DEF64 /* ScrollWheel.m in Sources */,
 				A1C2481118C6B9CA00F187D9 /* TDProgressIndicator.m in Sources */,
 				4D1A84A91A14A4C10059645A /* TDRateAppView.m in Sources */,
 				A1D7072B19DBE8ED00ECB221 /* ObservingPlayerItem.m in Sources */,
@@ -1600,8 +1614,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_DISPLAY_NAME_SUFFIX = "-α";
 				BUNDLE_ID_SUFFIX = .dev;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Stephanie Le (PXQB9WK964)";
+				CODE_SIGN_IDENTITY = "iPhone Developer: Andy Crookston (4H23FB7AFD)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Andy Crookston (4H23FB7AFD)";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				EXCLUDED_SOURCE_FILE_NAMES = "";
 				FACEBOOK_APP_ID = 1470514189854120;

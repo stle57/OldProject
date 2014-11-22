@@ -22,6 +22,7 @@
 
 @property (strong, nonatomic) AFHTTPRequestOperationManager *httpManager;
 @property (strong, nonatomic) AFHTTPRequestOperation *credentialsTask;
+@property (nonatomic) NSMutableArray *currentVideoDownloads;
 @end
 
 @implementation TDAPIClient
@@ -497,89 +498,15 @@
 }
 
 
-#pragma mark - set or get cached images from web and resizing image to fit view
+#pragma mark - Download and cache videos
 
-- (void)setImage:(NSDictionary *)options {
-    UIImageView *imageView = options[@"imageView"];
-    NSString *filename = options[@"filename"];
-
-    if ([options objectForKey:@"width"] && [options objectForKey:@"height"]) {
-        NSNumber *width = options[@"width"];
-        NSNumber *height = options[@"height"];
-        NSString *filenameWithSize = [NSString stringWithFormat:@"%@_%@x%@%@",
-                                      options[@"filename"],
-                                      width,
-                                      height,
-                                      FTImage];
-        CGSize size = CGSizeMake([width floatValue], [height floatValue]);
-
-        // First check for sized image cached
-        // Then resize and save larger res image
-        // Then download original and save as both original size and resized
-        if ([TDFileSystemHelper imageExists:filenameWithSize]) {
-            [self setImageFromFile:filenameWithSize toView:imageView size:CGSizeZero sizedFilename:nil];
-        } else if ([TDFileSystemHelper imageExists:filenameWithSize]) {
-            [self setImageFromFile:filename toView:imageView size:size sizedFilename:filenameWithSize];
-        } else {
-            [self downloadImage:filename imageView:imageView size:size sizedFilename:filenameWithSize];
-        }
-    } else {
-        if ([TDFileSystemHelper imageExists:filename]) {
-            [self setImageFromFile:filename toView:imageView size:CGSizeZero sizedFilename:nil];
-        } else {
-            [self downloadImage:filename imageView:imageView size:CGSizeZero sizedFilename:nil];
-        }
-    }
+- (BOOL)videoExists:(NSString *)filename {
+    return [TDFileSystemHelper videoExists:[NSString stringWithFormat:@"%@%@", filename, FTVideo]];
 }
 
-- (void)setImageFromFile:(NSString *)filename toView:(UIImageView *)view size:(CGSize)size sizedFilename:(NSString *)sizedFilename {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        UIImage *image = [TDFileSystemHelper getImage:filename];
-        if (!CGSizeEqualToSize(size, CGSizeZero)) {
-            image = [image scaleToSize:size];
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            view.image = image;
-        });
-        if (!CGSizeEqualToSize(size, CGSizeZero) && ![TDFileSystemHelper imageExists:sizedFilename]) {
-            [TDFileSystemHelper saveImage:image filename:sizedFilename];
-        }
-    });
-}
-
-- (void)setImage:(UIImage *)image filename:(NSString *)filename toView:(UIImageView *)view size:(CGSize)size sizedFilename:(NSString *)sizedFilename {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        UIImage *newImage = image;
-        if (!CGSizeEqualToSize(size, CGSizeZero)) {
-            newImage = [image scaleToSize:size];
-        }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            view.image = newImage;
-        });
-        if (![TDFileSystemHelper imageExists:filename]) {
-            [TDFileSystemHelper saveImage:image filename:filename];
-        }
-        if (!CGSizeEqualToSize(size, CGSizeZero) && ![TDFileSystemHelper imageExists:sizedFilename]) {
-            [TDFileSystemHelper saveImage:newImage filename:sizedFilename];
-        }
-    });
-}
-
-- (void)downloadImage:(NSString *)filename imageView:(UIImageView *)imageView size:(CGSize)size sizedFilename:(NSString *)sizedFilename {
-    NSURL *imageURL = [NSURL URLWithString:[RSHost stringByAppendingFormat:@"/%@", filename]];
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[NSURLRequest alloc] initWithURL:imageURL]];
-    operation.responseSerializer = [AFImageResponseSerializer serializer];
-    [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        if ([responseObject isKindOfClass:[UIImage class]]) {
-            [self setImage:(UIImage *)responseObject filename:filename toView:imageView size:size sizedFilename:sizedFilename];
-        }
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        debug NSLog(@"Image error: %@, %@", filename, error);
-    }];
-    [operation start];
-}
-
-- (void)getVideo:(NSString *)filename callback:(void(^)(NSURL *videoLocation))callback error:(void(^)(void))errorCallback {
+- (void)getVideo:(NSString *)filename callback:(void(^)(NSURL *videoLocation))callback error:(void(^)(void))errorCallback progress:(void(^)(NSInteger receivedSize, NSInteger expectedSize))progress {
+    NSParameterAssert(filename);
+    filename = [NSString stringWithFormat:@"%@%@", filename, FTVideo];
 
     if ([TDFileSystemHelper videoExists:filename]) {
         if (callback) {
@@ -588,11 +515,25 @@
         return;
     }
 
-    NSURL *imageURL = [NSURL URLWithString:[RSHost stringByAppendingFormat:@"/%@", filename]];
-    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[NSURLRequest alloc] initWithURL:imageURL]];
+    for (NSDictionary *download in self.currentVideoDownloads) {
+        if ([download objectForKey:@"filename"] && [filename isEqualToString:[download objectForKey:@"filename"]]) {
+            NSLog(@"Already downloading! Update this code to append a callback");
+            return;
+        }
+    }
+
+    [self.currentVideoDownloads addObject:@{@"filename": filename}];
+
+    NSURL *videoURL = [NSURL URLWithString:[RSHost stringByAppendingFormat:@"/%@", filename]];
+    AFHTTPRequestOperation *operation = [[AFHTTPRequestOperation alloc] initWithRequest:[[NSURLRequest alloc] initWithURL:videoURL]];
     operation.responseSerializer = [AFHTTPResponseSerializer serializer];
+    [operation setDownloadProgressBlock:^(NSUInteger bytesRead, long long totalBytesRead, long long totalBytesExpectedToRead) {
+        if (progress && totalBytesRead && totalBytesExpectedToRead) {
+            progress(totalBytesRead, totalBytesExpectedToRead);
+        }
+    }];
     [operation setCompletionBlockWithSuccess:^(AFHTTPRequestOperation *operation, id responseObject) {
-        // Because it could have been downloaded twice (hopefully not)
+        [self removeVideoDownload:filename];
         if (responseObject && [responseObject isKindOfClass:[NSData class]]) {
             if (![TDFileSystemHelper videoExists:filename]) {
                 [TDFileSystemHelper saveData:responseObject filename:filename];
@@ -605,11 +546,22 @@
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
         debug NSLog(@"Video error: %@, %@", filename, error);
+        [self removeVideoDownload:filename];
         if (errorCallback) {
             errorCallback();
         }
     }];
     [operation start];
+}
+
+- (void)removeVideoDownload:(NSString *)filename {
+    for (int i = 0; i < [self.currentVideoDownloads count]; i++) {
+        NSDictionary *download = [self.currentVideoDownloads objectAtIndex:i];
+        if ([download objectForKey:@"filename"] && [filename isEqualToString:[download objectForKey:@"filename"]]) {
+            [self.currentVideoDownloads removeObjectAtIndex:i];
+            return;
+        }
+    }
 }
 
 

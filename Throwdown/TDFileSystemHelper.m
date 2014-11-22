@@ -86,25 +86,31 @@
 
 # pragma mark - getting and saving cached files
 
-+ (NSString *)getCachePath {
-    NSArray* cachePathArray = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-    return [cachePathArray lastObject];
-}
++ (NSString *)getCacheDirectory {
+    NSString *cachesDirectory = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject];
+    NSString *directory = [cachesDirectory stringByAppendingFormat:@"/us.throwdown.cache"];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if (![fm fileExistsAtPath:directory]) {
+        NSError *error;
+        [fm createDirectoryAtPath:directory withIntermediateDirectories:YES attributes:nil error:&error];
+        if (error) {
+            NSLog(@"Failed to create caches directory: %@", error);
+        }
+    }
 
-+ (BOOL)imageExists:(NSString *)filename {
-    return [TDFileSystemHelper fileExistsAtPath:[[self getCachePath] stringByAppendingFormat:@"/%@", filename]];
+    return directory;
 }
 
 + (BOOL)videoExists:(NSString *)filename {
-    return [TDFileSystemHelper fileExistsAtPath:[[self getCachePath] stringByAppendingFormat:@"/%@", filename]];
+    return [TDFileSystemHelper fileExistsAtPath:[[self getCacheDirectory] stringByAppendingFormat:@"/%@", filename]];
 }
 
 + (NSURL *)getVideoLocation:(NSString *)filename {
-    return [[NSURL alloc] initFileURLWithPath:[[self getCachePath] stringByAppendingFormat:@"/%@", filename]];
+    return [[NSURL alloc] initFileURLWithPath:[[self getCacheDirectory] stringByAppendingFormat:@"/%@", filename]];
 }
 
 + (UIImage *)getImage:(NSString *)filename {
-    filename = [[self getCachePath] stringByAppendingFormat:@"/%@", filename];
+    filename = [[self getCacheDirectory] stringByAppendingFormat:@"/%@", filename];
     NSData *data = [NSData dataWithContentsOfFile:filename];
     return [UIImage imageWithData:data];
 }
@@ -115,7 +121,7 @@
 }
 
 + (void)saveData:(NSData *)data filename:(NSString*)filename {
-    filename = [[self getCachePath] stringByAppendingFormat:@"/%@", filename];
+    filename = [[self getCacheDirectory] stringByAppendingFormat:@"/%@", filename];
     [data writeToFile:filename atomically:YES];
 }
 
