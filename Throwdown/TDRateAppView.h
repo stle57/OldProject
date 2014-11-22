@@ -8,12 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import "TDFeedbackViewController.h"
+#import "iRate.h"
 
 #define TD_BUTTON_HEIGHT 49.
 @protocol CustomAlertDelegate
 @end
 
-@interface TDRateAppView : UIView
+@interface TDRateAppView : UIView<iRateDelegate>
 {
     id delegate;
     UIView *AlertView;

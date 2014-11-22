@@ -11,7 +11,6 @@
 #import "TDViewControllerHelper.h"
 #import "TDAppDelegate.h"
 #import "TDAnalytics.h"
-#import "iRate.h"
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #include "TDCurrentUser.h"
@@ -274,6 +273,8 @@
 
 - (IBAction)dismissButtonPressed:(UIButton *)sender {
     debug NSLog(@"dismiss button pressed");
+    [iRate sharedInstance].declinedThisVersion = YES;
+    [[TDAnalytics sharedInstance] logEvent:@"rating_closed"];
     [self animateHide];
 }
 

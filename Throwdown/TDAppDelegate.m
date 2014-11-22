@@ -127,7 +127,7 @@
         //but we want to test with an app that's actually on the store
         [iRate sharedInstance].applicationBundleID = @"us.throwdown.throwdown";
     }
-    [iRate sharedInstance].daysUntilPrompt = 2;
+    [iRate sharedInstance].daysUntilPrompt = 0;
     [iRate sharedInstance].eventsUntilPrompt = 20;
     [iRate sharedInstance].promptForNewVersionIfUserRated = YES;
 	[iRate sharedInstance].onlyPromptIfLatestVersion = NO;
@@ -141,24 +141,22 @@
     }
     
     debug NSLog(@"iRate events=%lu", (unsigned long)[iRate sharedInstance].eventCount);
+    debug NSLog(@"iRate use count=%lu", (unsigned long)[iRate sharedInstance].usesCount);
 }
 
-- (void)callRateView {
-    UINavigationController *navigationController = (UINavigationController*)_window.rootViewController;
-    TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
-    
-    [homeViewController addOverlay];
-    [[TDAppDelegate appDelegate] showRateAppView];
-}
 - (BOOL)iRateShouldPromptForRating
 {
     UINavigationController *navigationController = (UINavigationController*)_window.rootViewController;
     TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
     
-    [homeViewController addOverlay];
-    [[TDAppDelegate appDelegate] showRateAppView];
-    [[TDAnalytics sharedInstance] logEvent:@"rating_asked"];
-
+    if([navigationController.topViewController isMemberOfClass:[TDHomeViewController class]])
+    {
+        [homeViewController addOverlay];
+        [[TDAppDelegate appDelegate] showRateAppView];
+        [[TDAnalytics sharedInstance] logEvent:@"rating_asked"];
+        
+        return NO;
+    }
     return NO;
 }
 
