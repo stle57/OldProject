@@ -128,7 +128,7 @@
         [iRate sharedInstance].applicationBundleID = @"us.throwdown.throwdown";
     }
     [iRate sharedInstance].daysUntilPrompt = 0;
-    [iRate sharedInstance].eventsUntilPrompt = 20;
+    [iRate sharedInstance].eventsUntilPrompt = 30;
     [iRate sharedInstance].promptForNewVersionIfUserRated = YES;
 	[iRate sharedInstance].onlyPromptIfLatestVersion = NO;
     
