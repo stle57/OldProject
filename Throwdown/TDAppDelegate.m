@@ -148,8 +148,8 @@
 {
     UINavigationController *navigationController = (UINavigationController*)_window.rootViewController;
     TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
-    
-    if([navigationController.topViewController isMemberOfClass:[TDHomeViewController class]])
+
+    if ([navigationController.visibleViewController isMemberOfClass:[TDHomeViewController class]])
     {
         [homeViewController addOverlay];
         [[TDAppDelegate appDelegate] showRateAppView];
