@@ -133,12 +133,7 @@
 	[iRate sharedInstance].onlyPromptIfLatestVersion = NO;
     
     //enable preview mode
-    if ([TDConstants environment] != TDEnvProduction) {
-        debug NSLog(@"Show previewMode of rate ui");
-        [iRate sharedInstance].previewMode = YES;
-    } else {
-        [iRate sharedInstance].previewMode = NO;
-    }
+    [iRate sharedInstance].previewMode = NO;
     
     debug NSLog(@"iRate events=%lu", (unsigned long)[iRate sharedInstance].eventCount);
     debug NSLog(@"iRate use count=%lu", (unsigned long)[iRate sharedInstance].usesCount);
