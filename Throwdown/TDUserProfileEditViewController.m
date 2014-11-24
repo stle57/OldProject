@@ -614,6 +614,8 @@
 
                 case 4:
                 {
+                    cell.textView.textContainer.lineFragmentPadding = 0;
+                    cell.textView.textContainerInset = UIEdgeInsetsMake(5, 0, 8, 0);
                     cell.topLine.hidden = YES;
                     cell.titleLabel.hidden = NO;
                     cell.textField.hidden = YES;
@@ -640,8 +642,7 @@
                                                        CGRectGetMaxY(newTextFrame),
                                                        cell.bottomLine.frame.size.width,
                                                        cell.bottomLineOrigHeight);
-                    cell.textView.textContainer.lineFragmentPadding = 0;
-                    cell.textView.textContainerInset = UIEdgeInsetsZero;
+
                 }
                 break;
                 default:
