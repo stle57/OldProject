@@ -107,23 +107,23 @@ static float const kFPS = 1/60.0;
         self.width = frame.size.width;
         self.height = frame.size.height;
         switch (self.width) {
-            case 320:
+            case 320: // iPhone 4S/5/5S
                 self.tickWidth = 1.5;
-                self.tickCount = 33;
-                self.theta = 2.740806;
-                self.radius = 158.165;
+                self.tickCount = 32;
+                self.theta = 2.727599;
+                self.radius = 158.381;
                 break;
-            case 375:
+            case 375: // iPhone 6
                 self.tickWidth = 2;
                 self.tickCount = 32;
                 self.theta = 2.752576;
                 self.radius = 186.008;
                 break;
-            case 414:
+            case 414: // iPhone 6+
                 self.tickWidth = 2;
                 self.tickCount = 36;
-                self.theta = 2.720837;
-                self.radius = 206.554;
+                self.theta = 2.813112;
+                self.radius = 204.755;
                 break;
 
             default:
