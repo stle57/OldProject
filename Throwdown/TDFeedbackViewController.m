@@ -14,8 +14,10 @@
 
 @interface TDFeedbackViewController ()
 @property (nonatomic) UIGestureRecognizer *tapGesture;
+@property (nonatomic) UIGestureRecognizer *emailGesture;
 @property (nonatomic) TDKeyboardObserver *keyboardObserver;
 @property (nonatomic) CGRect origFrame;
+
 @end
 
 @implementation TDFeedbackViewController
@@ -56,9 +58,18 @@
     
     self.textView.frame = CGRectMake(0, self.emailField.frame.origin.y + self.emailField.frame.size.height+1, TD_VIEW_WIDTH, self.view.frame.size.height -self.emailField.frame.size.height - (TD_BUTTON_HEIGHT *2));
     self.textView.font = [TDConstants fontRegularSized:16];
+    //[self.textView setSelectedRange:NSMakeRange(5, 0)];
     
-    self.cancelButton.frame = CGRectMake(0, self.textView.frame.origin.y + self.textView.frame.size.height, TD_VIEW_WIDTH, TD_BUTTON_HEIGHT);
-    
+    self.textView.textContainer.lineFragmentPadding = 0;
+    self.textView.textContainerInset = UIEdgeInsetsMake(5, 10, 8, 10);
+
+    self.sendButton.frame = CGRectMake(0, self.textView.frame.origin.y + self.textView.frame.size.height, TD_VIEW_WIDTH, TD_BUTTON_HEIGHT);
+    NSString *sendButtonStr = @"Send";
+    [self.sendButton setTitle:sendButtonStr forState:UIControlStateNormal];
+    self.sendButton.titleLabel.font = [TDConstants fontRegularSized:18];
+    [self.sendButton setTitleColor:[TDConstants commentTextColor] forState:UIControlStateNormal];
+    [self.sendButton setTitleColor:[TDConstants commentTextColor] forState:UIControlStateSelected];
+    [self.sendButton addTarget:self action: @selector(sendButtonHit:) forControlEvents:UIControlEventTouchUpInside];
     CGRect divider1Frame = self.divider1.frame;
     
     divider1Frame.origin.x = 0;
@@ -66,7 +77,15 @@
     divider1Frame.size.height = .5;
     self.divider1.frame = divider1Frame;
     self.divider1.layer.backgroundColor = [[TDConstants darkBackgroundColor] CGColor];
-
+    
+    CGRect divider2Frame = self.divider2.frame;
+    divider2Frame.origin.x = 0;
+    divider2Frame.origin.y = self.sendButton.frame.origin.y  + self.sendButton.frame.size.height ;
+    divider2Frame.size.height = .5;
+    self.divider2.frame = divider2Frame;
+    self.divider2.layer.backgroundColor = [[TDConstants darkBackgroundColor] CGColor];
+    
+    self.cancelButton.frame = CGRectMake(0, self.sendButton.frame.origin.y + TD_BUTTON_HEIGHT, TD_VIEW_WIDTH, TD_BUTTON_HEIGHT);
     NSString *cancelButtonStr = @"Cancel";
     [self.cancelButton setTitle:cancelButtonStr forState:UIControlStateNormal];
     self.cancelButton.titleLabel.font = [TDConstants fontRegularSized:18];
@@ -74,22 +93,8 @@
     [self.cancelButton setTitleColor:[TDConstants commentTextColor] forState:UIControlStateSelected];
     [self.cancelButton addTarget:self action: @selector(cancelButtonHit:) forControlEvents:UIControlEventTouchUpInside];
     
-    CGRect divider2Frame = self.divider2.frame;
-    divider2Frame.origin.x = 0;
-    divider2Frame.origin.y = self.cancelButton.frame.origin.y  + self.cancelButton.frame.size.height ;
-    divider2Frame.size.height = .5;
-    self.divider2.frame = divider2Frame;
-    self.divider2.layer.backgroundColor = [[TDConstants darkBackgroundColor] CGColor];
-    
-    self.sendButton.frame = CGRectMake(0, self.cancelButton.frame.origin.y + TD_BUTTON_HEIGHT, TD_VIEW_WIDTH, TD_BUTTON_HEIGHT);
-    NSString *sendButtonStr = @"Send";
-    [self.sendButton setTitle:sendButtonStr forState:UIControlStateNormal];
-    self.sendButton.titleLabel.font = [TDConstants fontRegularSized:18];
-    [self.sendButton setTitleColor:[TDConstants commentTextColor] forState:UIControlStateNormal];
-    [self.sendButton setTitleColor:[TDConstants commentTextColor] forState:UIControlStateSelected];
-    [self.sendButton addTarget:self action: @selector(sendButtonHit:) forControlEvents:UIControlEventTouchUpInside];
-    
     self.textView.delegate = self;
+    //[self.textView becomeFirstResponder];
     self.keyboardObserver = [[TDKeyboardObserver alloc] initWithDelegate:self];
 }
 
@@ -130,6 +135,7 @@
 
     [[TDAPIClient sharedInstance] sendFeedbackEmail:self.textView.text email:email callback:^(BOOL success) {
        if (success) {
+           
            [[NSNotificationCenter defaultCenter] postNotificationName:TDRemoveHomeViewControllerOverlay
                                                                object:self
                                                              userInfo:nil];
@@ -137,6 +143,13 @@
                                                                object:self
                                                              userInfo:nil];
            [self.view removeFromSuperview];
+           
+           UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Feedback Received"
+                                                           message:@"Thank you for your feedback.\nWe will get back to you shortly.\n- The Throwdown Team"
+                                                          delegate:nil
+                                                 cancelButtonTitle:@"OK"
+                                                 otherButtonTitles:nil];
+           [alert show];
 
        } else {
            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Sending Feedback Error"
@@ -151,54 +164,88 @@
 }
 
 - (void)keyboardWillShow:(NSNotification *)notification {
-    
-    NSDictionary *info = [notification userInfo];
-    
-    // get the size of the keyboard
-    CGSize keyboardSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
-    // resize the view
-    CGRect newFrame = self.origFrame;
-    newFrame.origin.y -= (keyboardSize.height/3);
-    NSNumber *curveValue = [info objectForKey:UIKeyboardAnimationCurveUserInfoKey];
-    UIViewAnimationCurve animationCurve = curveValue.intValue;
-    NSTimeInterval animationDuration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
-    
-    // animationCurve << 16 to convert it from a view animation curve to a view animation option
-    [UIView animateWithDuration:animationDuration delay:0.0 options:(animationCurve << 16) animations:^{
 
-            self.view.frame = newFrame;
-    } completion:nil];
+        NSDictionary *info = [notification userInfo];
+        
+        // get the size of the keyboard
+        CGSize keyboardSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+        // resize the view
+        CGRect newFrame = self.origFrame;
+        newFrame.origin.y -= (keyboardSize.height/3);
+        NSNumber *curveValue = [info objectForKey:UIKeyboardAnimationCurveUserInfoKey];
+        UIViewAnimationCurve animationCurve = curveValue.intValue;
+        NSTimeInterval animationDuration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+        
+        // animationCurve << 16 to convert it from a view animation curve to a view animation option
+        [UIView animateWithDuration:animationDuration delay:0.0 options:(animationCurve << 16) animations:^{
+
+                self.view.frame = newFrame;
+        } completion:^(BOOL done) {
+            if (done) {
+                //keybdUp = YES;
+            }
+        }];
+
+//    }
 }
 
 - (void)keyboardDidShow:(NSNotification *)notification {
     self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapFrom:)];
     [self.textView addGestureRecognizer:self.tapGesture];
+
+    self.emailGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleEmailTapFrom:)];
+    [self.emailField addGestureRecognizer:self.emailGesture];
+
 }
 
 - (void)handleTapFrom:(UITapGestureRecognizer *)tap {
-    [self.textView resignFirstResponder];
+    if ([self.textView isFirstResponder]) {
+        [self.emailField becomeFirstResponder];
+        [self.textView resignFirstResponder];
+    } else if ([self.emailField isFirstResponder]) {
+        [self.textView becomeFirstResponder];
+        [self.emailField resignFirstResponder];
+    }
 }
 
+- (void)handleEmailTapFrom:(UITapGestureRecognizer *)tap {
+    if ([self.textView isFirstResponder]) {
+        [self.textView resignFirstResponder];
+        [self.emailField becomeFirstResponder];
+    } else if ([self.emailField isFirstResponder]) {
+        [self.emailField resignFirstResponder];
+        [self.textView becomeFirstResponder];
+    }
+
+}
 - (void)keyboardDidHide:(NSNotification *)notification {
     [self.textView removeGestureRecognizer:self.tapGesture];
+    [self.emailField removeGestureRecognizer:self.emailGesture];
     self.tapGesture = nil;
-    
+    self.emailGesture = nil;
     [UIView animateWithDuration: 0.3
                           delay: 0.0
                         options: UIViewAnimationOptionCurveEaseIn
                      animations:^{
                          
-                         self.view.frame = self.origFrame;
-                         //self.view.superview.frame = self.origFrame;
-                         
+                         self.view.frame = self.origFrame;                         
                      }
                      completion:^(BOOL done) {
                          
                          if (done)
                          {
-                             //keybdUp = YES;
+                             //keybdUp = NO;
                          }
                      }];
 
 }
+
+- (void) textViewDidBeginEditing:(UITextView *)textView {
+    self.textView.selectedRange = NSMakeRange(50, 0);
+}
+
+- (void) textViewDidEndEditing:(UITextView *)textView {
+    debug NSLog(@"textView did end editing");
+}
+
 @end

@@ -71,6 +71,8 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(animateHide) name:TDRemoveRateView object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(animateNavBar) name:TDActivityNavBar object:nil];
+
     self.disableViewOverlay = [[UIView alloc]
                                initWithFrame:CGRectMake(0.0f,0,SCREEN_WIDTH,SCREEN_HEIGHT)];
     self.disableViewOverlay.backgroundColor=[UIColor blackColor];
@@ -200,13 +202,11 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
     
     [self addOverlay];
     self.feedbackViewController = [[TDFeedbackViewController alloc] initWithNibName:@"TDFeedbackViewController" bundle:nil ];
-    
     CGRect feedbackFrame = self.feedbackViewController.view.frame;
     feedbackFrame.origin.x = self.view.frame.size.width/2 - self.feedbackViewController.view.frame.size.width/2;
     feedbackFrame.origin.y = (self.view.frame.size.height/2  - self.feedbackViewController.view.frame.size.height/2) - ([UIApplication sharedApplication].statusBarFrame.size.height + self.navigationController.navigationBar.frame.size.height/2);
     self.feedbackViewController.view.frame = feedbackFrame;
     [self.view addSubview:self.feedbackViewController.view];
-    
 }
 
 // The mail compose view controller delegate method
@@ -238,5 +238,52 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 - (void)removeOverlay {
     [self.disableViewOverlay removeFromSuperview];
 }
+
+
+- (void)setTableViewFrameBasedOn:(CGRect)frame {
+    CGRect scrollFrame = self.tableView.frame;
+    scrollFrame.origin.y = frame.origin.y - 20;
+    scrollFrame.size.height = [UIScreen mainScreen].bounds.size.height - 20;
+    if (!CGRectEqualToRect(scrollFrame, self.tableView.frame)) {
+        self.tableView.frame = scrollFrame;
+    }
+}
+
+- (void)updateNavigationBarButtons:(CGFloat)alpha {
+    for (UIView *navView in self.navigationController.navigationBar.subviews) {
+        NSString *desc = (NSString *)navView.description;
+        if ([desc rangeOfString:@"UINavigationBarBackground"].length == 0 && [desc rangeOfString:@"UINavigationBarBackIndicatorView"].length == 0) {
+            navView.alpha = alpha;
+        }
+    }
+    self.navigationController.navigationBar.titleTextAttributes = @{ NSForegroundColorAttributeName: [[UIColor whiteColor] colorWithAlphaComponent:alpha] };
+    self.navigationController.navigationBar.tintColor = [self.navigationController.navigationBar.tintColor colorWithAlphaComponent:alpha];
+}
+
+- (void)animateNavBarTo:(CGFloat)y {
+    [UIView animateWithDuration:0.2 animations:^{
+        CGRect frame = self.navigationController.navigationBar.frame;
+        CGFloat alpha = frame.origin.y >= y && y < 20 ? 0 : 1;
+        frame.origin.y = y;
+        self.navigationController.navigationBar.frame = frame;
+        [self updateNavigationBarButtons:alpha];
+        [self setTableViewFrameBasedOn:frame];
+    }];
+}
+
+- (void)showNavBar {
+    [self animateNavBarTo:20];
+}
+
+- (void)animateNavBar {
+    debug NSLog(@"inside animateNavBar");
+    [self.navigationController.navigationBar setHidden:YES];
+    CGRect frame = self.navigationController.navigationBar.frame;
+    if (frame.origin.y < 20) {
+        CGFloat top = -(frame.size.height - 21);
+        [self animateNavBarTo:(top + 20 > frame.origin.y ? top : 20)];
+    }
+}
+
 
 @end

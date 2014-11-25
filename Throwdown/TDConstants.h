@@ -100,6 +100,7 @@ static NSString *const TDRemoveHomeViewControllerOverlay = @"TDRemoveHomeViewCon
 static NSString *const TDRemoveRateView= @"TDRemoveRateView";
 static NSString *const TDShowFeedbackViewController = @"TDShowFeedbackViewController";
 static NSString *const TDPostNotificationDeclined = @"TDPostNotificationDeclined";
+static NSString *const TDActivityNavBar = @"TDActivityNavBar";
 
 static NSString *const TDFontProximaNovaRegular = @"ProximaNova-Regular";
 static NSString *const TDFontProximaNovaSemibold = @"ProximaNova-Semibold";
