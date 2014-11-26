@@ -150,9 +150,9 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
     // FYI: _deviceToken not part of dictionary
     [self save];
 
-    if ([TDConstants environment] != TDEnvProduction) {
-        [self resetAskedForPush]; //- This is for testing purposes
-    }
+//    if ([TDConstants environment] != TDEnvProduction) {
+//        [self resetAskedForPush]; //- This is for testing purposes
+//    }
     if ([self isLoggedIn] && [self didAskForPush]) {
         [self registerForRemoteNotificationTypes];
     }
