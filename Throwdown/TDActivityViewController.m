@@ -75,8 +75,7 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 
     self.disableViewOverlay = [[UIView alloc]
                                initWithFrame:CGRectMake(0.0f,0,SCREEN_WIDTH,SCREEN_HEIGHT)];
-    self.disableViewOverlay.backgroundColor=[UIColor blackColor];
-    self.disableViewOverlay.alpha = 0;
+    self.disableViewOverlay.backgroundColor = [UIColor colorWithWhite:0 alpha:0.8];
     
     [self refresh];
 }
@@ -117,8 +116,6 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUpdate
                                                         object:self
                                                       userInfo:@{@"notificationCount": @0}];
-
-
     [self.refreshControl beginRefreshing];
     [[TDAPIClient sharedInstance] getActivityForUserToken:[TDCurrentUser sharedInstance].authToken success:^(NSArray *activities) {
         self.activities = activities;
@@ -204,35 +201,21 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
     self.feedbackViewController = [[TDFeedbackViewController alloc] initWithNibName:@"TDFeedbackViewController" bundle:nil ];
     CGRect feedbackFrame = self.feedbackViewController.view.frame;
     feedbackFrame.origin.x = self.view.frame.size.width/2 - self.feedbackViewController.view.frame.size.width/2;
-    feedbackFrame.origin.y = (self.view.frame.size.height/2  - self.feedbackViewController.view.frame.size.height/2) - ([UIApplication sharedApplication].statusBarFrame.size.height + self.navigationController.navigationBar.frame.size.height/2);
+    feedbackFrame.origin.y = SCREEN_HEIGHT/2 - self.feedbackViewController.view.frame.size.height/2;
     self.feedbackViewController.view.frame = feedbackFrame;
-    [self.view addSubview:self.feedbackViewController.view];
-}
-
-// The mail compose view controller delegate method
-- (void)mailComposeController:(MFMailComposeViewController *)controller
-          didFinishWithResult:(MFMailComposeResult)result
-                        error:(NSError *)error
-{
-    [self dismissViewControllerAnimated:YES
-                             completion:nil];
+    [self.disableViewOverlay addSubview:self.feedbackViewController.view];
 }
 
 - (void) animateHide {
-    //[self.feedbackViewController.view removeFromSuperview];
     [self removeOverlay];
 }
 
 - (void)addOverlay {
-    
-    self.disableViewOverlay.alpha = 0;
-    [self.view addSubview:self.disableViewOverlay];
+    [[TDAppDelegate appDelegate].window addSubview:self.disableViewOverlay];
     
     [UIView beginAnimations:@"FadeIn" context:nil];
     [UIView setAnimationDuration:0.5];
-    self.disableViewOverlay.alpha = 0.6;
     [UIView commitAnimations];
-    
 }
 
 - (void)removeOverlay {
@@ -276,7 +259,6 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 }
 
 - (void)animateNavBar {
-    debug NSLog(@"inside animateNavBar");
     [self.navigationController.navigationBar setHidden:YES];
     CGRect frame = self.navigationController.navigationBar.frame;
     if (frame.origin.y < 20) {

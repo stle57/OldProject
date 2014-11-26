@@ -12,8 +12,8 @@
 
 @interface TDHomeViewController : TDPostsViewController<TDToastViewDelegate>
 - (void)openPushNotification:(NSDictionary *)notification;
-- (void)addOverlay;
 - (BOOL)openURL:(NSURL *)url;
 - (void)fetchPostsWithCompletion:(void (^)(void))completion;
+- (void)addOverlay;
 + (TDHomeViewController *)getHomeViewController;
 @end

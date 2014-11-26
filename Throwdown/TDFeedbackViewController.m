@@ -17,7 +17,6 @@
 @property (nonatomic) UIGestureRecognizer *emailGesture;
 @property (nonatomic) TDKeyboardObserver *keyboardObserver;
 @property (nonatomic) CGRect origFrame;
-
 @end
 
 @implementation TDFeedbackViewController
@@ -58,7 +57,6 @@
     
     self.textView.frame = CGRectMake(0, self.emailField.frame.origin.y + self.emailField.frame.size.height+1, TD_VIEW_WIDTH, self.view.frame.size.height -self.emailField.frame.size.height - (TD_BUTTON_HEIGHT *2));
     self.textView.font = [TDConstants fontRegularSized:16];
-    //[self.textView setSelectedRange:NSMakeRange(5, 0)];
     
     self.textView.textContainer.lineFragmentPadding = 0;
     self.textView.textContainerInset = UIEdgeInsetsMake(5, 10, 8, 10);
@@ -94,8 +92,11 @@
     [self.cancelButton addTarget:self action: @selector(cancelButtonHit:) forControlEvents:UIControlEventTouchUpInside];
     
     self.textView.delegate = self;
-    //[self.textView becomeFirstResponder];
     self.keyboardObserver = [[TDKeyboardObserver alloc] initWithDelegate:self];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -104,18 +105,12 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    [self.keyboardObserver startListening];
+    [super viewDidAppear:animated];
     self.origFrame = self.view.frame;
-}
-/*
-#pragma mark - Navigation
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    [self.keyboardObserver startListening];
+    [self.textView becomeFirstResponder];
 }
-*/
 
 - (void)cancelButtonHit:(id)sender {
     [[NSNotificationCenter defaultCenter] postNotificationName:TDRemoveHomeViewControllerOverlay
@@ -164,29 +159,54 @@
 }
 
 - (void)keyboardWillShow:(NSNotification *)notification {
+    if (keybdUp) {
+        return;
+    }
+    NSDictionary *info = [notification userInfo];
+    
+    CGFloat adjustHeight = self.cancelButton.frame.size.height + self.sendButton.frame.size.height + self.emailField.frame.size.height;
+    CGSize keyboardSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    CGFloat yPositionOfView = self.view.frame.origin.x <= 15 ? 20 : self.view.frame.origin.x;
+    CGFloat heightOfView = SCREEN_HEIGHT - TD_FEEDBACK_BOTTOM_PADDING - yPositionOfView - keyboardSize.height;
 
-        NSDictionary *info = [notification userInfo];
-        
-        // get the size of the keyboard
-        CGSize keyboardSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
-        // resize the view
+    NSNumber *curveValue = [info objectForKey:UIKeyboardAnimationCurveUserInfoKey];
+    UIViewAnimationCurve animationCurve = curveValue.intValue;
+    NSTimeInterval animationDuration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    CGFloat textViewHeight = heightOfView - adjustHeight;
+
+    // animationCurve << 16 to convert it from a view animation curve to a view animation option
+    [UIView animateWithDuration:animationDuration delay:0.0 options:(animationCurve << 8) animations:^{
+
         CGRect newFrame = self.origFrame;
-        newFrame.origin.y -= (keyboardSize.height/3);
-        NSNumber *curveValue = [info objectForKey:UIKeyboardAnimationCurveUserInfoKey];
-        UIViewAnimationCurve animationCurve = curveValue.intValue;
-        NSTimeInterval animationDuration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+        newFrame.size.height = heightOfView;
+        newFrame.origin.y = yPositionOfView;
+        self.view.frame = newFrame;
         
-        // animationCurve << 16 to convert it from a view animation curve to a view animation option
-        [UIView animateWithDuration:animationDuration delay:0.0 options:(animationCurve << 16) animations:^{
+        CGRect textViewFrame = self.textView.frame;
+        textViewFrame.size.height = textViewHeight;
+        self.textView.frame = textViewFrame;
+        
+        CGRect divider1Frame = self.divider1.frame;
+        divider1Frame.origin.y = self.textView.frame.origin.y + self.textView.frame.size.height ;
+        self.divider1.frame = divider1Frame;
+        
+        CGRect sendButtonFrame = self.sendButton.frame;
+        sendButtonFrame.origin.y = self.textView.frame.origin.y + self.textView.frame.size.height;
+        self.sendButton.frame = sendButtonFrame;
+        
+        CGRect divider2Frame = self.divider2.frame;
+        divider2Frame.origin.y = self.sendButton.frame.origin.y  + self.sendButton.frame.size.height ;
+        self.divider2.frame = divider2Frame;
+        
+        CGRect cancelButtonFrame = self.cancelButton.frame;
+        cancelButtonFrame.origin.y = self.sendButton.frame.origin.y + self.sendButton.frame.size.height;
+        self.cancelButton.frame = cancelButtonFrame;
 
-                self.view.frame = newFrame;
-        } completion:^(BOOL done) {
-            if (done) {
-                //keybdUp = YES;
-            }
-        }];
-
-//    }
+    } completion:^(BOOL done) {
+        if (done) {
+            keybdUp = YES;
+        }
+    }];
 }
 
 - (void)keyboardDidShow:(NSNotification *)notification {
@@ -195,7 +215,6 @@
 
     self.emailGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleEmailTapFrom:)];
     [self.emailField addGestureRecognizer:self.emailGesture];
-
 }
 
 - (void)handleTapFrom:(UITapGestureRecognizer *)tap {
@@ -210,15 +229,18 @@
 
 - (void)handleEmailTapFrom:(UITapGestureRecognizer *)tap {
     if ([self.textView isFirstResponder]) {
-        [self.textView resignFirstResponder];
         [self.emailField becomeFirstResponder];
+        [self.textView resignFirstResponder];
     } else if ([self.emailField isFirstResponder]) {
-        [self.emailField resignFirstResponder];
         [self.textView becomeFirstResponder];
+        [self.emailField resignFirstResponder];
     }
 
 }
 - (void)keyboardDidHide:(NSNotification *)notification {
+    if (keybdUp == NO) {
+        return;
+    }
     [self.textView removeGestureRecognizer:self.tapGesture];
     [self.emailField removeGestureRecognizer:self.emailGesture];
     self.tapGesture = nil;
@@ -227,25 +249,16 @@
                           delay: 0.0
                         options: UIViewAnimationOptionCurveEaseIn
                      animations:^{
-                         
-                         self.view.frame = self.origFrame;                         
+                         //self.view.frame = self.origFrame;
                      }
                      completion:^(BOOL done) {
                          
                          if (done)
                          {
-                             //keybdUp = NO;
+                             keybdUp = NO;
                          }
                      }];
 
-}
-
-- (void) textViewDidBeginEditing:(UITextView *)textView {
-    self.textView.selectedRange = NSMakeRange(50, 0);
-}
-
-- (void) textViewDidEndEditing:(UITextView *)textView {
-    debug NSLog(@"textView did end editing");
 }
 
 @end

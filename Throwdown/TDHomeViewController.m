@@ -103,8 +103,6 @@
     
     self.disableViewOverlay = [[UIView alloc]
                                initWithFrame:CGRectMake(0.0f,0,SCREEN_WIDTH,SCREEN_HEIGHT)];
-    self.disableViewOverlay.backgroundColor=[UIColor blackColor];
-    self.disableViewOverlay.alpha = 0;
 }
 
 - (void)dealloc {
@@ -703,6 +701,15 @@
     [self.navigationController pushViewController:vc animated:YES];
 }
 
+- (void)addOverlay {
+    
+    self.disableViewOverlay.backgroundColor = [UIColor colorWithWhite:0 alpha:0.8];
+    [[TDAppDelegate appDelegate].window addSubview:self.disableViewOverlay];
+    [UIView beginAnimations:@"FadeIn" context:nil];
+    [UIView setAnimationDuration:0.5];
+    [UIView commitAnimations];
+
+}
 #pragma mark - ScrollViewDelegate (hiding nav bar when scrolling)
 
 - (void)scrollTableToTop {
@@ -802,18 +809,6 @@
     [self showNavBar];
 }
 
-- (void)addOverlay {
-
-    self.disableViewOverlay.alpha = 0;
-    [self.view addSubview:self.disableViewOverlay];
-    
-    [UIView beginAnimations:@"FadeIn" context:nil];
-    [UIView setAnimationDuration:0.5];
-    self.disableViewOverlay.alpha = 0.6;
-    [UIView commitAnimations];
-    
-}
-
 - (void)removeOverlay {
     [self.disableViewOverlay removeFromSuperview];
 }
@@ -823,10 +818,9 @@
     
     CGRect feedbackFrame = self.feedbackVC.view.frame;
     feedbackFrame.origin.x = SCREEN_WIDTH/2 - self.feedbackVC.view.frame.size.width/2;
-    feedbackFrame.origin.y = (self.view.frame.size.height/2  - self.feedbackVC.view.frame.size.height/2) - ([UIApplication sharedApplication].statusBarFrame.size.height + self.navigationController.navigationBar.frame.size.height/2);
-
+    feedbackFrame.origin.y = SCREEN_HEIGHT/2 - self.feedbackVC.view.frame.size.height/2;
     self.feedbackVC.view.frame = feedbackFrame;
     [self addOverlay];
-    [self.view addSubview:self.feedbackVC.view];
+    [self.disableViewOverlay addSubview:self.feedbackVC.view];
 }
 @end

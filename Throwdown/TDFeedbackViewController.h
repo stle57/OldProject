@@ -11,7 +11,11 @@
 
 #define TD_BUTTON_HEIGHT 49
 #define TD_VIEW_WIDTH 290
-@interface TDFeedbackViewController : UIViewController<UITextViewDelegate, TDKeyboardObserverDelegate>
+#define TD_FEEDBACK_BOTTOM_PADDING 15
+@interface TDFeedbackViewController : UIViewController<UITextViewDelegate, TDKeyboardObserverDelegate> {
+    BOOL keybdUp;
+
+}
 
 @property (nonatomic, retain) IBOutlet UIView *view;
 @property (weak, nonatomic) IBOutlet UITextField *emailField;
