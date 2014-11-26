@@ -133,7 +133,7 @@
 	[iRate sharedInstance].onlyPromptIfLatestVersion = NO;
     
     //enable preview mode
-    [iRate sharedInstance].previewMode = YES;
+    [iRate sharedInstance].previewMode = NO;
     
     debug NSLog(@"iRate events=%lu", (unsigned long)[iRate sharedInstance].eventCount);
     debug NSLog(@"iRate use count=%lu", (unsigned long)[iRate sharedInstance].usesCount);
