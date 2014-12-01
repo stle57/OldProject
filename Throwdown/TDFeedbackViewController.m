@@ -60,7 +60,9 @@
     
     self.textView.textContainer.lineFragmentPadding = 0;
     self.textView.textContainerInset = UIEdgeInsetsMake(5, 10, 8, 10);
-
+    self.textView.text = @"Please share your feedback with us.\nThanks!";
+    self.textView.textColor = [UIColor lightGrayColor];
+    
     self.sendButton.frame = CGRectMake(0, self.textView.frame.origin.y + self.textView.frame.size.height, TD_VIEW_WIDTH, TD_BUTTON_HEIGHT);
     NSString *sendButtonStr = @"Send";
     [self.sendButton setTitle:sendButtonStr forState:UIControlStateNormal];
@@ -68,6 +70,7 @@
     [self.sendButton setTitleColor:[TDConstants commentTextColor] forState:UIControlStateNormal];
     [self.sendButton setTitleColor:[TDConstants commentTextColor] forState:UIControlStateSelected];
     [self.sendButton addTarget:self action: @selector(sendButtonHit:) forControlEvents:UIControlEventTouchUpInside];
+    self.sendButton.enabled = NO;
     CGRect divider1Frame = self.divider1.frame;
     
     divider1Frame.origin.x = 0;
@@ -109,7 +112,6 @@
     self.origFrame = self.view.frame;
 
     [self.keyboardObserver startListening];
-    [self.textView becomeFirstResponder];
 }
 
 - (void)cancelButtonHit:(id)sender {
@@ -259,6 +261,19 @@
                          }
                      }];
 
+}
+
+- (void)textViewDidBeginEditing:(UITextView *)textView {
+    self.textView.text = @"";
+    self.textView.textColor = [UIColor blackColor];
+}
+
+- (void)textViewDidChange:(UITextView *)textView {
+    if([self.textView.text length] == 0) {
+        self.sendButton.enabled = NO;
+    } else {
+        self.sendButton.enabled = YES;
+    }
 }
 
 @end
