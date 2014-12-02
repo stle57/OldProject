@@ -531,7 +531,7 @@ static const NSString *ItemStatusContext;
     CGAffineTransform txf = [videoTrack preferredTransform];
     CGSize size = [videoTrack naturalSize];
 
-    NSLog(@"Orientation: %f/%f/%f/%f Size: %@", txf.a, txf.b, txf.c, txf.d, NSStringFromCGSize(size));
+    NSLog(@"Orientation: %f/%f/%f/%f Size: %@ TX: %f TY: %f", txf.a, txf.b, txf.c, txf.d, NSStringFromCGSize(size), txf.tx, txf.ty);
 
     if (txf.a == 0    && txf.b == 1.0  && txf.c == -1.0 && txf.d == 0)    { return UIImageOrientationRight; } // or UIInterfaceOrientationPortrait = home button at the bottom
     if (txf.a == 0    && txf.b == -1.0 && txf.c == 1.0  && txf.d == 0)    { return UIImageOrientationLeft; } // or UIInterfaceOrientationPortraitUpsideDown = home button at top
@@ -616,7 +616,7 @@ static const NSString *ItemStatusContext;
     CGImageRelease(image);
 
     // Crop it
-    CGFloat zoomScale = 1 / (320 / MIN(thumbnail.size.width, thumbnail.size.height));
+    CGFloat zoomScale = (float)MIN(thumbnail.size.width, thumbnail.size.height) / (float)MIN([self.scrollView bounds].size.width, [self.scrollView bounds].size.height);
 	CGRect rect;
 	rect.origin.x = [self.scrollView contentOffset].x * zoomScale;
 	rect.origin.y = [self.scrollView contentOffset].y * zoomScale;
