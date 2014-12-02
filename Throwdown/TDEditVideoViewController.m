@@ -651,9 +651,9 @@ static const NSString *ItemStatusContext;
     CGSize videoSize = videoTrack.naturalSize;
     CGFloat shorter = MIN(videoSize.height, videoSize.width);
     CGFloat longer = MAX(videoSize.height, videoSize.width);
+
     CGFloat rotation, tx, ty;
     UIImageOrientation orientation = [self orientationForTrack:videoTrack];
-    NSLog(@"Orientation result: %ld", orientation);
     switch (orientation) {
         case UIImageOrientationRight:
             rotation = M_PI_2;
@@ -663,20 +663,29 @@ static const NSString *ItemStatusContext;
 
         case UIImageOrientationLeft:
             rotation = -M_PI_2;
-            tx = 0 - (longer - (rect.origin.y * videoSize.height / SCREEN_WIDTH));
+            tx = -(longer - (rect.origin.y * videoSize.height / SCREEN_WIDTH));
             ty = 0;
             break;
 
         case UIImageOrientationDown:
             rotation = M_PI;
-            tx = 0 - (longer - (rect.origin.x * videoSize.height / SCREEN_WIDTH));
+            tx = -(longer - (rect.origin.x * videoSize.height / SCREEN_WIDTH));
             ty = -shorter;
             break;
 
         case UIImageOrientationUp:
             rotation = 0;
-            tx = -(rect.origin.x * videoSize.height / SCREEN_WIDTH);
-            ty = 0;
+            if (videoSize.height > videoSize.width) {
+                // For some reason this situation happens at times when the video's transform is giving us the UP value.
+                // But the video's height is greater than its width which doesn't match the transform.
+                // This seems to happen to videos that were stored by certain applications.
+                // So we then need to flip some numbers:
+                tx = 0;
+                ty = -(rect.origin.y * videoSize.width / SCREEN_WIDTH);
+            } else {
+                tx = -(rect.origin.x * videoSize.height / SCREEN_WIDTH);
+                ty = 0;
+            }
             break;
 
         default:
@@ -684,8 +693,9 @@ static const NSString *ItemStatusContext;
             tx = 0;
             ty = 0;
             break;
-
     }
+
+    NSLog(@"Orientation result: %ld, rotation: %f, tx: %f, ty: %f", orientation, rotation, tx, ty);
 
     //create a video instruction
     AVMutableVideoCompositionInstruction *instruction = [AVMutableVideoCompositionInstruction videoCompositionInstruction];
@@ -715,6 +725,9 @@ static const NSString *ItemStatusContext;
 
     NSError *werror = nil;
     self.assetWriter = [[AVAssetWriter alloc] initWithURL:self.exportedVideoUrl fileType:AVFileTypeMPEG4 error:&werror];
+    if (werror) {
+        NSLog(@"Asset writer error: %@", werror);
+    }
 
     // Video input
     AVAssetWriterInput* videoWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeVideo outputSettings:[TDConstants defaultVideoCompressionSettings]];
@@ -723,6 +736,11 @@ static const NSString *ItemStatusContext;
 
     NSError *verror = nil;
     AVAssetReader *videoReader = [[AVAssetReader alloc] initWithAsset:asset error:&verror];
+//    videoReader.timeRange = videoTrack.timeRange;
+    if (verror) {
+        NSLog(@"Asset video reader error: %@", verror);
+    }
+
     AVAssetReaderVideoCompositionOutput *assetVideoReaderOutput = [AVAssetReaderVideoCompositionOutput assetReaderVideoCompositionOutputWithVideoTracks:@[videoTrack] videoSettings:nil];
     assetVideoReaderOutput.videoComposition = videoComposition;
     [videoReader addOutput:assetVideoReaderOutput];
@@ -747,6 +765,9 @@ static const NSString *ItemStatusContext;
         audioWriterInput = [AVAssetWriterInput assetWriterInputWithMediaType:AVMediaTypeAudio outputSettings:nil sourceFormatHint:formatDescription];
         audioWriterInput.expectsMediaDataInRealTime = YES;
         audioReader = [AVAssetReader assetReaderWithAsset:asset error:&aerror];
+        if (aerror) {
+            NSLog(@"Asset audio reader error: %@", aerror);
+        }
 
         readerOutput = [AVAssetReaderTrackOutput assetReaderTrackOutputWithTrack:audioTrack outputSettings:nil];
         [audioReader addOutput:readerOutput];
@@ -762,8 +783,7 @@ static const NSString *ItemStatusContext;
         while ([videoWriterInput isReadyForMoreMediaData]) {
 
             CMSampleBufferRef sampleBuffer;
-            if ([videoReader status] == AVAssetReaderStatusReading &&
-                (sampleBuffer = [assetVideoReaderOutput copyNextSampleBuffer])) {
+            if ([videoReader status] == AVAssetReaderStatusReading && (sampleBuffer = [assetVideoReaderOutput copyNextSampleBuffer])) {
 
                 BOOL result = [videoWriterInput appendSampleBuffer:sampleBuffer];
                 CFRelease(sampleBuffer);
@@ -782,6 +802,14 @@ static const NSString *ItemStatusContext;
                     case AVAssetReaderStatusReading:
                         // the reader has more for other tracks, even if this one is done
                         NSLog(@"PROBLEM: AVAssetReaderStatusReading");
+                        break;
+
+                    case AVAssetReaderStatusUnknown:
+                        NSLog(@"PROBLEM: AVAssetReaderStatusUnknown");
+                        break;
+
+                    case AVAssetReaderStatusCancelled:
+                        NSLog(@"PROBLEM: AVAssetReaderStatusCancelled");
                         break;
 
                     case AVAssetReaderStatusCompleted: {
