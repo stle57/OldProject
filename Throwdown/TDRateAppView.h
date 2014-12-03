@@ -11,6 +11,7 @@
 #import "iRate.h"
 
 #define TD_BUTTON_HEIGHT 49.
+
 @protocol CustomAlertDelegate
 @end
 

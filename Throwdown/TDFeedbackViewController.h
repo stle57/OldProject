@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "TDKeyboardObserver.h"
+#import "UIPlaceHolderTextView.h"
 
 #define TD_BUTTON_HEIGHT 49
 #define TD_VIEW_WIDTH 290
@@ -21,7 +22,7 @@
 @property (weak, nonatomic) IBOutlet UITextField *emailField;
 @property (nonatomic, retain) IBOutlet UIButton *sendButton;
 @property (nonatomic, retain) IBOutlet UIButton *cancelButton;
-@property (weak, nonatomic) IBOutlet UITextView *textView;
+@property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *textView;
 @property (weak, nonatomic) IBOutlet UIView *divider1;
 @property (weak, nonatomic) IBOutlet UIView *divider2;
 @property (weak, nonatomic) IBOutlet UIView *emailDivider;

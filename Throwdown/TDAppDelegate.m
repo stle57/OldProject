@@ -139,24 +139,20 @@
     debug NSLog(@"iRate use count=%lu", (unsigned long)[iRate sharedInstance].usesCount);
 }
 
-- (BOOL)iRateShouldPromptForRating
-{
-    UINavigationController *navigationController = (UINavigationController*)_window.rootViewController;
-    TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
-
-    if ([navigationController.visibleViewController isMemberOfClass:[TDHomeViewController class]])
-    {
-        [homeViewController addOverlay];
+- (BOOL)iRateShouldPromptForRating {
+    TDHomeViewController *homeViewController = [TDHomeViewController getHomeViewController];
+    if (homeViewController) {
         [[TDAppDelegate appDelegate] showRateAppView];
         [[TDAnalytics sharedInstance] logEvent:@"rating_asked"];
-        
-        return NO;
     }
     return NO;
 }
 
 - (void)showRateAppView {
     debug NSLog(@"inside showRateAppView");
+
+    TDHomeViewController *homeViewController = [TDHomeViewController getHomeViewController];
+    [homeViewController addOverlay];
 
     TDRateAppView * rateView = [TDRateAppView rateView];
     [rateView showInView];
@@ -191,8 +187,7 @@
 {
 	debug NSLog(@"Received notification: %@", userInfo);
 
-    UINavigationController *navigationController = (UINavigationController*)_window.rootViewController;
-    TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
+    TDHomeViewController *homeViewController = [TDHomeViewController getHomeViewController];
 
     if ([application applicationState] == UIApplicationStateInactive) {
         // App was re-launched by tapping a notification
@@ -231,11 +226,9 @@
     // Reset app badge count when user opens directly
     [[UIApplication sharedApplication] setApplicationIconBadgeNumber:0];
 
-    if ([[TDCurrentUser sharedInstance] isLoggedIn]) {
+    TDHomeViewController *homeViewController = [TDHomeViewController getHomeViewController];
 
-        UINavigationController *navigationController = (UINavigationController*)_window.rootViewController;
-        TDHomeViewController *homeViewController = (TDHomeViewController *)[navigationController.viewControllers objectAtIndex:0];
-
+    if (homeViewController) {
         if ([notification objectForKey:@"activity_id"]) {
             [[TDAPIClient sharedInstance] updateActivity:[notification objectForKey:@"activity_id"] seen:YES clicked:YES];
         }
