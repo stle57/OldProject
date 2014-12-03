@@ -25,6 +25,7 @@
 #include <sys/sysctl.h>
 #include "TDFindPeopleViewController.h"
 #include "TDFeedbackViewController.h"
+#import "iRate.h"
 
 #define CELL_IDENTIFIER @"TDPostView"
 
@@ -144,7 +145,10 @@
 }
 
 - (void)askForPushNotification {
-    [[TDCurrentUser sharedInstance] registerForPushNotifications:@"Thanks for making a post! We'd\nlike to notify you when someone\nlikes or comments on it. But, we'd\nlike to ask you first. On the next\nscreen, please tap \"OK\" to give\nus permission."];
+    BOOL asked = [[TDCurrentUser sharedInstance] registerForPushNotifications:@"Thanks for making a post! We'd\nlike to notify you when someone\nlikes or comments on it. But, we'd\nlike to ask you first. On the next\nscreen, please tap \"OK\" to give\nus permission."];
+    if (!asked && [[iRate sharedInstance] shouldPromptForRating]) {
+        [[iRate sharedInstance] promptIfNetworkAvailable];
+    }
 }
 
 #pragma mark - Notices
@@ -702,7 +706,6 @@
 }
 
 - (void)addOverlay {
-    
     self.disableViewOverlay.backgroundColor = [UIColor colorWithWhite:0 alpha:0.8];
     [[TDAppDelegate appDelegate].window addSubview:self.disableViewOverlay];
     [UIView beginAnimations:@"FadeIn" context:nil];

@@ -401,7 +401,7 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
     [SSKeychain setPassword:@"NO" forService:service account:kPushNotificationAsked];
 }
 
-- (void)registerForPushNotifications:(NSString *)message {
+- (BOOL)registerForPushNotifications:(NSString *)message {
     if ([[TDCurrentUser sharedInstance] isLoggedIn] && ![self isRegisteredForPush]) {
         // for some reason we don't have the device token stored, so we'll either ask for it if never asked before or register it
         if ([self didAskForPush]) {
@@ -417,8 +417,10 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
                     [self changeUserPushSettings];
                 }
             }];
+            return YES;
         }
     }
+    return NO;
 }
 
 - (void)registerDeviceToken:(NSString *)token {

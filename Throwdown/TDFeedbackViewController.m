@@ -11,6 +11,7 @@
 #import "TDAPIClient.h"
 #import "TDCurrentUser.h"
 #import "TDRateAppView.h"
+#import "UIPlaceHolderTextView.h"
 
 @interface TDFeedbackViewController ()
 @property (nonatomic) UIGestureRecognizer *tapGesture;
@@ -20,6 +21,7 @@
 @end
 
 @implementation TDFeedbackViewController
+
 @synthesize sendButton;
 @synthesize cancelButton;
 @synthesize tapGesture;
@@ -31,9 +33,6 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    [[UITextField appearance] setTintColor:[UIColor blackColor]];
-    [[UITextView appearance] setTintColor:[UIColor blackColor]];
     
     CGRect frame = self.view.frame;
     frame.size.width = 290;
@@ -54,15 +53,16 @@
     UIView *paddingView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 20)];
     self.emailField.leftView = paddingView;
     self.emailField.leftViewMode = UITextFieldViewModeAlways;
+    self.emailField.textColor = [TDConstants commentTextColor];
     
     self.textView.frame = CGRectMake(0, self.emailField.frame.origin.y + self.emailField.frame.size.height+1, TD_VIEW_WIDTH, self.view.frame.size.height -self.emailField.frame.size.height - (TD_BUTTON_HEIGHT *2));
     self.textView.font = [TDConstants fontRegularSized:16];
-    
+
     self.textView.textContainer.lineFragmentPadding = 0;
-    self.textView.textContainerInset = UIEdgeInsetsMake(5, 10, 8, 10);
-    self.textView.text = @"Please share your feedback with us.\nThanks!";
-    self.textView.textColor = [UIColor lightGrayColor];
-    
+    self.textView.textContainerInset = UIEdgeInsetsMake(8, 10, 8, 10);
+    self.textView.placeholder = @"Please share your feedback with us.\nThanks!";
+    self.textView.textColor = [TDConstants commentTextColor];
+
     self.sendButton.frame = CGRectMake(0, self.textView.frame.origin.y + self.textView.frame.size.height, TD_VIEW_WIDTH, TD_BUTTON_HEIGHT);
     NSString *sendButtonStr = @"Send";
     [self.sendButton setTitle:sendButtonStr forState:UIControlStateNormal];
@@ -112,6 +112,7 @@
     self.origFrame = self.view.frame;
 
     [self.keyboardObserver startListening];
+    [self.textView becomeFirstResponder];
 }
 
 - (void)cancelButtonHit:(id)sender {
@@ -261,11 +262,6 @@
                          }
                      }];
 
-}
-
-- (void)textViewDidBeginEditing:(UITextView *)textView {
-    self.textView.text = @"";
-    self.textView.textColor = [UIColor blackColor];
 }
 
 - (void)textViewDidChange:(UITextView *)textView {

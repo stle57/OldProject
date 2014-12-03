@@ -46,7 +46,7 @@
 - (BOOL)isLoggedIn;
 - (void)logout;
 - (void)checkPushNotificationToken;
-- (void)registerForPushNotifications:(NSString *)message;
+- (BOOL)registerForPushNotifications:(NSString *)message;
 - (void)registerForRemoteNotificationTypes;
 - (void)registerDeviceToken:(NSString *)token;
 - (NSMutableDictionary*)changeUserPushSettings;

@@ -610,6 +610,9 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         [post addLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
         [self.tableView reloadData];
         [[TDPostAPI sharedInstance] likePostWithId:post.postId];
+        if ([[iRate sharedInstance] shouldPromptForRating]) {
+            [[iRate sharedInstance] promptIfNetworkAvailable];
+        }
     }
 }
 
