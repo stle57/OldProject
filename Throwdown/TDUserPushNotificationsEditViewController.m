@@ -369,6 +369,7 @@ settings: [
     
     debug NSLog(@"DICT:%@", self.pushSettings);
 }
+
 - (void)pushValue:(BOOL)value forIndexPath:(NSIndexPath *)indexPath {
     if ([[TDCurrentUser sharedInstance] didAskForPush] && ![[TDCurrentUser sharedInstance] isRegisteredForPush]) {
         // Show an alert
@@ -384,7 +385,6 @@ settings: [
         [self.pushSettings setObject:[NSNumber numberWithBool:value] forKey:key];
         
         [self togglePushImage:value indexPath:indexPath];
-        debug NSLog(@"DICT:%@", self.pushSettings);
     } else {
         // Show for prompt, user never been on this page before
         NSString * message = @"We'd like to ask for your\n permission for push notifications.\n On the next screen, please tap\n \"OK\" to give us permission.";
@@ -400,16 +400,14 @@ settings: [
                NSDictionary *dictionary = [self.pushSettings copy];
                 for (NSString *key in dictionary) {
                     if ([key rangeOfString:@"email"].location != NSNotFound) {
-                        debug NSLog(@"key=%@", key);
                         if (([key rangeOfString:@"follows"].location == NSNotFound ) &&
                             [key rangeOfString:@"friend_joins"].location == NSNotFound ) {
-                            debug NSLog(@"change email setting for =%@", key);
                             [self.pushSettings setValue:@0 forKey:key];
                         }
                     }
-                     else if ([key rangeOfString:@"push"].location != NSNotFound) {
+                    else if ([key rangeOfString:@"push"].location != NSNotFound) {
                          [self.pushSettings setValue:@1 forKey:key];
-                     }
+                    }
                 }
                 
                 for (int secNum = 0; secNum < [self.tableView numberOfSections]; secNum ++) {
@@ -419,7 +417,6 @@ settings: [
                         cell.pushValue=YES;
                         [cell.pushButton setImage:[UIImage imageNamed:@"push-on.png"] forState:UIControlStateNormal];
                         if (secNum != 1) {
-                            debug NSLog(@"secNum = %d", secNum);
                             cell.emailValue = NO;
                             [cell.emailButton setImage:[UIImage imageNamed:@"email-off.png"] forState:UIControlStateNormal];
                         }
@@ -429,7 +426,6 @@ settings: [
                         }
                     }
                 }
-                debug NSLog(@"switched all settings to push %@", self.pushSettings);
             } else {
                 // User hit cancel, revert the value back.
                 NSString *key = [NSString stringWithFormat:@"%@_push", [[self settingFor:indexPath] objectForKey:@"key"]];
@@ -439,7 +435,6 @@ settings: [
                 // Change the image.
                 [self togglePushImage:cell.pushValue indexPath:indexPath];
                 
-                debug NSLog(@"DICT:%@", self.pushSettings);
             }
         }];
     }
@@ -455,6 +450,7 @@ settings: [
         [cell.pushButton setImage:[UIImage imageNamed:@"push-off.png"] forState:UIControlStateNormal];
     }
 }
+
 #pragma mark - Activity
 
 - (void)showActivity {
