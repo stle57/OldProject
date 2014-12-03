@@ -102,47 +102,19 @@ static NSString *header2Text2 = @"Tap \"Send\" to send your invites!";
                                               otherButtonTitles:nil];
         [alert show];
     } else {
-        // Get the list
-        [self hideKeyboard];
-        self.activityIndicator.text.text = @"Sending...";
         NSArray *sentContacts = [self contacts];
-        [self showActivity];
-        [[TDAPIClient sharedInstance] sendInvites:senderName contactList:sentContacts callback:^(BOOL success, NSArray *contacts)
-        {
-            debug NSLog(@"waiting on callback");
+        [[TDAPIClient sharedInstance] sendInvites:senderName contactList:sentContacts callback:^(BOOL success, NSArray *contacts) {
             if (success) {
-                NSMutableArray *newList = [[NSMutableArray alloc] init];
-                debug NSLog(@"contacts=%@", contacts);
-                for (id temp in contacts) {
-                    debug NSLog(@"objectAtIndex:1=%@", [temp objectAtIndex:1]);
-                    if (![[temp objectAtIndex:1] boolValue]) {
-                        NSString *info = [temp objectAtIndex:0];
-                        debug NSLog(@"look for info%@", info);
-                        for (id s in sentContacts) {
-                            debug NSLog(@"s=%@", s);
-                            if ([s allKeysForObject:info]){
-                                [newList addObject:s];
-                                break;
-                            }
-                        }
-                    }
-                }
-                if (!newList.count) {
-                    [self hideActivity];
-                    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-                    [[TDAppDelegate appDelegate] showToastWithText:@"Invites sent successfully!" type:kToastType_InviteSent payload:nil delegate:nil];
-                    [[TDAnalytics sharedInstance] logEvent:@"invites_sent"];
-                } else {
-                    [self hideActivity];
-                    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
-                    [[TDAppDelegate appDelegate] showToastWithText:@"Invites failed.  Tap here to retry" type:kToastType_InviteWarning payload:@{@"senderName":senderName, @"retryList":newList} delegate:[TDAPIClient toastControllerDelegate]];
-                }
+                [[TDAppDelegate appDelegate] showToastWithText:@"Invites sent successfully!" type:kToastType_InviteSent payload:nil delegate:nil];
+                [[TDAnalytics sharedInstance] logEvent:@"invites_sent"];
             } else {
-                [self hideActivity];
                 [self.navigationController dismissViewControllerAnimated:YES completion:nil];
                 [[TDAppDelegate appDelegate] showToastWithText:@"Invites failed.  Tap here to retry" type:kToastType_InviteWarning payload:@{@"senderName":senderName, @"retryList":sentContacts} delegate:[TDAPIClient toastControllerDelegate]];
             }
         }];
+
+        [self hideKeyboard];
+        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     }
 }
 

@@ -388,17 +388,17 @@
             NSDictionary *response = (NSDictionary *)responseObject;
             NSNumber *success = [response objectForKey:@"success"];
             if (success && [success boolValue]) {
-                debug NSLog(@"success response=%@", [response objectForKey:@"contacts"]);
+                debug NSLog(@"success send invites response=%@", [response objectForKey:@"contacts"]);
                 callback([success boolValue], [response objectForKey:@"contacts"]);
             } else {
                 callback(NO, [response objectForKey:@"contacts"]);
             }
         } else {
-            debug NSLog(@"ERROR in signup response, got: %@", [responseObject class]);
+            debug NSLog(@"ERROR in send invites, got: %@", [responseObject class]);
             callback(NO, nil);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        debug NSLog(@"ERROR in signup call: %@", [error localizedDescription]);
+        debug NSLog(@"ERROR in send invites: %@", [error localizedDescription]);
         callback(NO, nil);
     }];
 }
