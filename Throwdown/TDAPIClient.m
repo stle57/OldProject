@@ -17,6 +17,7 @@
 #import "TDURLHelper.h"
 #include <sys/types.h>
 #include <sys/sysctl.h>
+#import "TDDeviceInfo.h"
 
 @interface TDAPIClient ()
 
@@ -90,7 +91,7 @@
 {
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/users.json"];
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
-    [self.httpManager POST:url parameters:@{@"user": userAttributes} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [self.httpManager POST:url parameters:@{@"user": userAttributes, @"uuid": [TDDeviceInfo uuid]} success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             NSDictionary *response = (NSDictionary *)responseObject;
             NSNumber *success = [response objectForKey:@"success"];
@@ -115,7 +116,7 @@
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
 
     // We're keeping email param name for backward compatibility
-    [self.httpManager POST:url parameters:@{@"user": @{ @"email": email, @"password": password }} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+    [self.httpManager POST:url parameters:@{@"user": @{ @"email": email, @"password": password }, @"uuid": [TDDeviceInfo uuid]} success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             NSDictionary *response = (NSDictionary *)responseObject;
             NSNumber *success = [response objectForKey:@"success"];
