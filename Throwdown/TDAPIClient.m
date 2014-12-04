@@ -689,14 +689,16 @@
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/feedback.json"];
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
 
-    NSDictionary *params = @{@"feedback": @{ @"body": body,
-                              @"email" : email,
-                              @"bundle_version": [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"],
-                              @"os": [[UIDevice currentDevice] systemVersion],
-                              @"model": [self platform],
-                              @"carrier": TDDeviceInfo.carrier ? TDDeviceInfo.carrier : @""},
-                              @"user_token": [TDCurrentUser sharedInstance].authToken};
-    
+    NSDictionary *params = @{@"user_token": [TDCurrentUser sharedInstance].authToken,
+                             @"feedback": @{
+                                 @"body": body,
+                                 @"email" : email,
+                                 @"bundle_version": [TDDeviceInfo bundleVersion] ? [TDDeviceInfo bundleVersion] : @"",
+                                 @"os": [TDDeviceInfo osVersion] ? [TDDeviceInfo osVersion] : @"",
+                                 @"model": [TDDeviceInfo device] ? [TDDeviceInfo device] : @"",
+                                 @"carrier": [TDDeviceInfo carrier] ? [TDDeviceInfo carrier] : @""
+                             }};
+
     // We're keeping email param name for backward compatibility
     [self.httpManager POST:url parameters:params
                    success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -718,13 +720,4 @@
     }];
 }
 
-- (NSString *) platform{
-    size_t size;
-    sysctlbyname("hw.machine", NULL, &size, NULL, 0);
-    char *machine = malloc(size);
-    sysctlbyname("hw.machine", machine, &size, NULL, 0);
-    NSString *platform = [NSString stringWithCString:machine encoding:NSUTF8StringEncoding];
-    free(machine);
-    return platform;
-}
 @end
