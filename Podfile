@@ -1,5 +1,5 @@
 # Uncomment this line to define a global platform for your project
-platform :ios, "6.0"
+platform :ios, "7.0"
 
 pod 'GPUImage'
 pod 'AFNetworking'
@@ -11,6 +11,7 @@ pod 'TTTAttributedLabel'
 pod 'FLEX'
 pod 'SDWebImage'
 pod 'SSKeychain'
+pod 'CSStickyHeaderFlowLayout'
 
 # target "Throwdown" do
 # 

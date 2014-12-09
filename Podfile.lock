@@ -17,6 +17,7 @@ PODS:
   - AFNetworking/Serialization (2.1.0)
   - AFNetworking/UIKit (2.1.0):
     - AFNetworking/NSURLConnection
+  - CSStickyHeaderFlowLayout (0.2.3)
   - FLEX (1.1.0)
   - GPUImage (0.1.5)
   - libPhoneNumber-iOS (0.7.1)
@@ -31,6 +32,7 @@ PODS:
 
 DEPENDENCIES:
   - AFNetworking
+  - CSStickyHeaderFlowLayout
   - FLEX
   - GPUImage
   - libPhoneNumber-iOS
@@ -43,6 +45,7 @@ DEPENDENCIES:
 
 SPEC CHECKSUMS:
   AFNetworking: 7c33510b46f994bc75b75c6e63c1d83414ca40f2
+  CSStickyHeaderFlowLayout: c5595da1cf91cce22aca70c44ab80b59247c723c
   FLEX: fa5e81b7b25ba64afe4fad14deb27d4b95efd75e
   GPUImage: 5114a47f5fc33eb312f3731550a3cea379416d04
   libPhoneNumber-iOS: a9ce7eaee294cd81beb5c3eb0e5b9f7a045007a1
@@ -53,4 +56,4 @@ SPEC CHECKSUMS:
   TestFlightSDK: 36b8a207c5a119a3144aa2e6d24973eb9d5e0d0a
   TTTAttributedLabel: 9f727215d63a358f92317a24c83c94c72de78e80
 
-COCOAPODS: 0.33.1
+COCOAPODS: 0.34.4
