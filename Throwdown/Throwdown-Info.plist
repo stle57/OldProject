@@ -43,8 +43,14 @@
 	<string>16</string>
 	<key>FacebookAppID</key>
 	<string>${FACEBOOK_APP_ID}</string>
+	<key>FourSquareClientID</key>
+	<string>${FOURSQUARE_CLIENT_KEY}</string>
+	<key>FourSquareClientSecret</key>
+	<string>${FOURSQUARE_CLIENT_SECRET}</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>.</string>
 	<key>TWITTER_CONSUMER_KEY</key>
 	<string>${TWITTER_CONSUMER_KEY}</string>
 	<key>TWITTER_CONSUMER_SECRET</key>
@@ -69,6 +75,7 @@
 	<string>Main</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
+		<string>location-services</string>
 		<string>armv7</string>
 	</array>
 	<key>UIStatusBarHidden</key>

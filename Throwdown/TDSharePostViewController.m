@@ -41,6 +41,7 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
 @property (nonatomic) BOOL isPR;
 @property (nonatomic) BOOL userGenerated;
 @property (nonatomic) TDPostPrivacy privacy;
+@property (nonatomic) NSMutableDictionary *locationData;
 
 @property (nonatomic) ACAccountStore *accountStore;
 @property (nonatomic) TWTAPIManager *apiManager;
@@ -55,7 +56,7 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
     [[TDAnalytics sharedInstance] logEvent:@"camera_share_with_opened"];
 
     // Background
-    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
+    self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
 
     UIButton *button = [TDViewControllerHelper navBackButton];
     [button addTarget:self action:@selector(backButtonPressed) forControlEvents:UIControlEventTouchUpInside];
@@ -94,15 +95,17 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
 
 # pragma mark - setting data from previous controller
 
-- (void)setValuesForSharing:(NSString *)filename withComment:(NSString *)comment isPR:(BOOL)isPR userGenerated:(BOOL)ug {
+- (void)setValuesForSharing:(NSString *)filename withComment:(NSString *)comment isPR:(BOOL)isPR userGenerated:(BOOL)ug locationData:(NSDictionary*)locationData {
     self.filename = filename;
     self.comment = comment;
     self.isPR = isPR;
     self.userGenerated = ug;
+    self.locationData = [locationData copy];
 }
 
 - (IBAction)saveButtonPressed:(id)sender {
     NSMutableArray *shareOptions = [[NSMutableArray alloc] init];
+    NSMutableDictionary *location = [[NSMutableDictionary alloc] init];
     if (self.shareToFacebook) {
         [shareOptions addObject:@"facebook"];
         [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:kFacebookShareKey];
@@ -115,6 +118,21 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
     } else if ([[TDCurrentUser sharedInstance] canPostToTwitter]) {
         [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:NO] forKey:kTwitterShareKey];
     }
+    
+    if (self.locationData) {
+        
+        NSString *latLon = [NSString stringWithFormat:@"%@,%@", [[self.locationData objectForKey:@"location"] objectForKey:@"lat"], [[self.locationData objectForKey:@"location"] objectForKey:@"lng"]];
+        [location setObject:[self.locationData objectForKey:@"id"] forKey:@"venue_id"];
+        [location setObject:[self.locationData objectForKey:@"name"] forKey:@"name"];
+        [location setObject:[[self.locationData objectForKey:@"location"] objectForKey:@"address"] forKey:@"address"];
+        [location setObject:[[self.locationData objectForKey:@"location"] objectForKey:@"city"] forKey:@"city"];
+        [location setObject:[[self.locationData objectForKey:@"location"] objectForKey:@"state"] forKey:@"state"];
+        [location setObject:[[self.locationData objectForKey:@"location"] objectForKey:@"country"] forKey:@"country"];
+        [location setObject:[[self.locationData objectForKey:@"location"] objectForKey:@"cc"] forKey:@"cc"];
+        [location setObject:latLon forKey:@"ll"];
+
+
+    }
     [[NSUserDefaults standardUserDefaults] synchronize];
 
     if (self.filename) {
@@ -125,10 +143,11 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
                                                                       @"pr":            [NSNumber numberWithBool:self.isPR],
                                                                       @"userGenerated": [NSNumber numberWithBool:self.userGenerated],
                                                                       @"shareOptions":  shareOptions,
-                                                                      @"private":       [NSNumber numberWithBool:(self.privacy == TDPostPrivacyPrivate)]
+                                                                      @"private":       [NSNumber numberWithBool:(self.privacy == TDPostPrivacyPrivate)],
+                                                                      @"location":      location
                                                                       }];
     } else {
-        [[TDPostAPI sharedInstance] addTextPost:self.comment isPR:self.isPR isPrivate:(self.privacy == TDPostPrivacyPrivate) shareOptions:shareOptions];
+        [[TDPostAPI sharedInstance] addTextPost:self.comment isPR:self.isPR isPrivate:(self.privacy == TDPostPrivacyPrivate) shareOptions:shareOptions location:location];
     }
     if (self.isPR) {
         [self performSegueWithIdentifier:@"PRSegue" sender:self];
@@ -173,7 +192,7 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 42.;
+    return 44.;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -202,6 +221,7 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
                 cell.checkmark.hidden = (self.privacy != TDPostPrivacyPrivate);
                 break;
         }
+
         finalCell = cell;
     } else {
         TDShareViewCell *cell = (TDShareViewCell *)[tableView dequeueReusableCellWithIdentifier:@"TDShareViewCell"];

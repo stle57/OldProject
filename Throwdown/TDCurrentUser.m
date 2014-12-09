@@ -530,4 +530,16 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
     [defaults setBool:yes forKey:@"hasAskedContacts"];
     [defaults synchronize];
 }
+
+- (void)didAskForPhotos:(BOOL)yes {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:yes forKey:@"hasAskedForPhotos"];
+    [defaults synchronize];
+}
+
+- (BOOL)didAskForPhotos {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    return [defaults boolForKey:@"hasAskedForPhotos"];
+}
+
 @end

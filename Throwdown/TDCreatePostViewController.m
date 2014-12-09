@@ -21,39 +21,80 @@
 #import "TDAPIClient.h"
 #import "TDUserListView.h"
 #import "TDKeyboardObserver.h"
+#import "TDCreatePostHeaderCell.h"
+#import "CSStickyHeaderFlowLayout.h"
+#import "TDPhotoCellCollectionViewCell.h"
+#import "TDLocationViewController.h"
+#import "TDEditVideoViewController.h"
 
-static int const kTextViewConstraint = 84;
-static int const kTextViewHeightWithUserList = 70;
+#import "TDAppDelegate.h"
 
-@interface TDCreatePostViewController () <UITextViewDelegate, NSLayoutManagerDelegate, TDKeyboardObserverDelegate>
-
+//static int const kTextViewConstraint = 84;
+//static int const kTextViewHeightWithUserList = 70;
+static int const kCellPerRow = 3;
+@interface TDCreatePostViewController () <UITextViewDelegate>
+@property (nonatomic)  TDCreatePostHeaderCell *postHeaderCell;
+@property (nonatomic) UICollectionView *collectionView;
+@property (nonatomic) UIView *hitStateOverlay;
+@property (nonatomic) UIView *viewOverlay;
+@property (nonatomic, retain) UIViewController *overlayVc;
+@property (nonatomic, strong) UINib *headerNib;
+@property (nonatomic, strong) NSArray *sections;
+@property (nonatomic, strong) NSArray *assets;
+@property (nonatomic) CGPoint origContentOffset;
+@property (nonatomic) NSURL *recordedURL;
+@property (nonatomic) NSURL *croppedURL;
+@property (nonatomic) NSURL *assetURL;
+@property (nonatomic) UIImage *assetImage;
 @property (weak, nonatomic) IBOutlet UINavigationItem *navigationBarItem;
-@property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *commentTextView;
-@property (weak, nonatomic) IBOutlet UIImageView *previewImage;
+
+//@property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *commentTextView;
+//@property (weak, nonatomic) IBOutlet UIImageView *previewImage;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *postButton;
-@property (weak, nonatomic) IBOutlet UILabel *labelPR;
-@property (weak, nonatomic) IBOutlet UILabel *labelMedia;
-@property (weak, nonatomic) IBOutlet UILabel *labelLocation;
-@property (weak, nonatomic) IBOutlet UIButton *mediaButton;
-@property (weak, nonatomic) IBOutlet UIButton *locationButton;
-@property (weak, nonatomic) IBOutlet UIButton *prButton;
-@property (weak, nonatomic) IBOutlet UIView *topLineView;
-@property (weak, nonatomic) IBOutlet UIView *optionsView;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *optionsViewConstraint;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *textViewConstraint;
+//@property (weak, nonatomic) IBOutlet UILabel *labelPR;
+//@property (weak, nonatomic) IBOutlet UILabel *labelMedia;
+//@property (weak, nonatomic) IBOutlet UILabel *labelLocation;
+//@property (weak, nonatomic) IBOutlet UIButton *mediaButton;
+//@property (weak, nonatomic) IBOutlet UIButton *locationButton;
+//@property (weak, nonatomic) IBOutlet UIButton *prButton;
+//@property (weak, nonatomic) IBOutlet UIView *topLineView;
+//@property (weak, nonatomic) IBOutlet UIView *optionsView;
+//@property (weak, nonatomic) IBOutlet NSLayoutConstraint *optionsViewConstraint;
+//@property (weak, nonatomic) IBOutlet NSLayoutConstraint *textViewConstraint;f
 
 @property (nonatomic) BOOL isOriginal;
 @property (nonatomic) BOOL isPR;
+@property (nonatomic) BOOL minimizeIconIsShowing;
 @property (nonatomic) NSString *filename;
 @property (nonatomic) NSString *thumbnailPath;
 @property (nonatomic) TDUserListView *userListView;
 @property (nonatomic) UIImage *prOnImage;
 @property (nonatomic) UIImage *prOffImage;
-@property (nonatomic) TDKeyboardObserver *keyboardObserver;
+@property (nonatomic) BOOL location;
+@property (nonatomic) NSDictionary *locationData;
+@property (nonatomic) float cellLength;
+//@property (nonatomic) TDKeyboardObserver *keyboardObserver;
 
 @end
 
 @implementation TDCreatePostViewController
++ (ALAssetsLibrary *)defaultAssetsLibrary
+{
+    static dispatch_once_t pred = 0;
+    static ALAssetsLibrary *library = nil;
+    dispatch_once(&pred, ^{
+        library = [[ALAssetsLibrary alloc] init];
+    });
+    return library;
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        self.headerNib = [UINib nibWithNibName:CELL_IDENTIFIER_CREATE_POSTHEADER bundle:nil];
+    }
+    return self;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -69,87 +110,127 @@ static int const kTextViewHeightWithUserList = 70;
     UIButton *button = [TDViewControllerHelper navCloseButton];
     [button addTarget:self action:@selector(closeButtonPressed) forControlEvents:UIControlEventTouchUpInside];
     self.navigationBarItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
+   
+    CSStickyHeaderFlowLayout *layout = [[CSStickyHeaderFlowLayout alloc] init];
+    // Create the header size.
+    layout.parallaxHeaderReferenceSize = CGSizeMake(self.view.frame.size.width, SCREEN_HEIGHT/2-15);
 
-    self.commentTextView.delegate = self;
-    self.commentTextView.font = [TDConstants fontRegularSized:17];
-    self.commentTextView.layoutManager.delegate = self;
-    [self.commentTextView setPlaceholder:@"What's happening?"];
+    //layout.parallaxHeaderMinimumReferenceSize = CGSizeMake(self.view.frame.size.width, 0);
+    layout.itemSize = CGSizeMake(self.cellLength, self.cellLength);
+    layout.parallaxHeaderAlwaysOnTop = YES;
+//    layout.minimumInteritemSpacing = 1.25;
+//    layout.minimumLineSpacing = 1.25;
+    // If we want to disable the sticky header effect
+    layout.disableStickyHeaders = YES;
 
-    // preloading images
-    self.prOffImage = [UIImage imageNamed:@"trophy_off"];
-    self.prOnImage =  [UIImage imageNamed:@"trophy_on"];
+    self.collectionView=[[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) collectionViewLayout:layout];
+    self.collectionView.delegate = self;
+    self.collectionView.dataSource = self;
 
-    self.isPR = false;
+    // Also insets the scroll indicator so it appears below the search bar
+    self.collectionView.scrollIndicatorInsets = UIEdgeInsetsMake(44, 0, 0, 0);
+    
+    [self.collectionView registerNib:self.headerNib
+          forSupplementaryViewOfKind:CSStickyHeaderParallaxHeader
+                 withReuseIdentifier:CELL_IDENTIFIER_CREATE_POSTHEADER];
+    
+    [self.collectionView registerClass:[TDPhotoCellCollectionViewCell class] forCellWithReuseIdentifier:@"TDPhotoCellCollectionViewCell"];
+    self.collectionView.backgroundColor = [UIColor whiteColor];
+    
+    [self.view addSubview:self.collectionView];
+    
+    self.viewOverlay = [[UIView alloc]
+                               initWithFrame:CGRectMake(0.0f,0,SCREEN_WIDTH,SCREEN_HEIGHT)];
+    self.viewOverlay.backgroundColor = [UIColor colorWithWhite:0 alpha:0.7];
 
+    self.overlayVc = [[UIViewController alloc] init];
     
-     NSAttributedString *locationStr = [TDViewControllerHelper makeParagraphedTextWithString:@"Location" font:[TDConstants fontRegularSized:14] color:[TDConstants commentTimeTextColor] lineHeight:16. lineHeightMultipler:16/14.];
-    [self.locationButton setAttributedTitle:locationStr forState:UIControlStateNormal];
-    
-    NSAttributedString *prStr = [TDViewControllerHelper makeParagraphedTextWithString:@"New PR" font:[TDConstants fontRegularSized:14] color:[TDConstants commentTimeTextColor] lineHeight:16. lineHeightMultipler:16/14.];
-    [self.prButton setAttributedTitle:prStr forState:UIControlStateNormal];
-    
-    //self.labelPR.font = [TDConstants fontRegularSized:16];
-    //self.labelPR.textColor = [TDConstants commentTimeTextColor];
+    ALAuthorizationStatus status = [ALAssetsLibrary authorizationStatus];
 
-    [self.postButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[UIColor whiteColor], NSFontAttributeName:[TDConstants fontRegularSized:18] } forState:UIControlStateNormal];
-    [self.postButton setTitleTextAttributes:@{ NSForegroundColorAttributeName:[UIColor colorWithWhite:1 alpha:0.5], NSFontAttributeName:[TDConstants fontRegularSized:18] } forState:UIControlStateDisabled];
-    self.postButton.enabled = NO;
-
-    // User name filter table view
-	if (self.userListView == nil) {
-		self.userListView = [[TDUserListView alloc] initWithFrame:CGRectMake(0, kTextViewHeightWithUserList, SCREEN_WIDTH, 0)];
-        self.userListView.delegate = self;
-        [self.view addSubview:self.userListView];
-	}
-
-    self.keyboardObserver = [[TDKeyboardObserver alloc] initWithDelegate:self];
+    if (status == ALAuthorizationStatusAuthorized) {
+        [self loadPhotoAlbum];
+    }
     
-//    self.optionsView.layer.borderWidth = 2.;
-//    self.optionsView.layer.borderColor = [[UIColor blueColor] CGColor];
+    [self.postHeaderCell.commentTextView becomeFirstResponder];
     
-//    self.topLineView.layer.borderColor = [[UIColor redColor] CGColor];
-//    self.topLineView.layer.borderWidth = 2.;
-//    
-//    self.locationButton.layer.borderWidth = 2.0;
-//    self.locationButton.layer.borderColor = [[UIColor greenColor] CGColor];
-    
-    debug NSLog(@"options view frame = %@", NSStringFromCGRect(self.optionsView.frame));
-    debug NSLog(@"locationLabel frame = %@", NSStringFromCGRect(self.labelLocation.frame));
-    debug NSLog(@"locationButton frame = %@", NSStringFromCGRect(self.locationButton.frame));
-    debug NSLog(@"prButton frame = %@", NSStringFromCGRect(self.prButton.frame));
-    debug NSLog(@"prLabel frame = %@", NSStringFromCGRect(self.labelPR.frame));
-    debug NSLog(@"topLine view frame = %@", NSStringFromCGRect(self.topLineView.frame));
-    
-    self.labelLocation.hidden = YES;
-    self.labelPR.hidden = YES;
+    float spacingPixelTotal = 2.5 *(kCellPerRow+1);
+    self.cellLength= (SCREEN_WIDTH - spacingPixelTotal)/kCellPerRow;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
+    if (self.minimizeIconIsShowing) {
+        UIButton *button = [TDViewControllerHelper navCloseButton];
+        [button addTarget:self action:@selector(closeButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+        self.navigationBarItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
+        self.minimizeIconIsShowing = NO;
+    }
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    [self.keyboardObserver startListening];
-    [self.commentTextView becomeFirstResponder];
+    self.postHeaderCell.mediaButton.enabled = YES;
+    //[self.postHeaderCell.keyboardObserver startListening];
+    [self.postHeaderCell.commentTextView becomeFirstResponder];
+    
+    CSStickyHeaderFlowLayout *layout =  (id)self.collectionView.collectionViewLayout;
+    if ([layout isKindOfClass:[CSStickyHeaderFlowLayout class]]) {
+        layout.parallaxHeaderReferenceSize = CGSizeMake(SCREEN_WIDTH, self.postHeaderCell.commentTextView.frame.size.height + self.postHeaderCell.optionsView.frame.size.height + 15); // 15 is kTextViewMargin from postheadercell
+    }
+    //[self minimizeButtonPressed];
+    
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [self.commentTextView resignFirstResponder];
-    [self.keyboardObserver stopListening];
+    //[self.postHeaderCell.commentTextView resignFirstResponder];
+    [self.postHeaderCell.keyboardObserver stopListening];
 }
 
 - (void)dealloc {
-    self.commentTextView.delegate = nil;
+    //self.commentTextView.delegate = nil;
     [self.userListView removeFromSuperview];
     self.userListView.delegate = nil;
     self.userListView = nil;
-    [self.keyboardObserver stopListening];
-    self.keyboardObserver = nil;
+    self.thumbnailPath = nil;
+    self.filename = nil;
+    self.isOriginal = NO;
+    self.headerNib = nil;
+    self.postHeaderCell = nil;
+    self.viewOverlay = nil;
 }
 
+- (void) loadPhotoAlbum {
+    // Load photo library
+    _assets = [@[] mutableCopy];
+    __block NSMutableArray *tmpAssets = [@[] mutableCopy];
+    // 1
+    ALAssetsLibrary *assetsLibrary = [TDCreatePostViewController defaultAssetsLibrary];
+    // 2
+    [assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+        [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+            if(result)
+            {
+                // 3
+                [[TDCurrentUser sharedInstance] didAskForPhotos:YES];
+                [tmpAssets addObject:result];
+            }
+        }];
+
+        // 4
+        //NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:NO];
+        //self.assets = [tmpAssets sortedArrayUsingDescriptors:@[sort]];
+        self.assets = tmpAssets;
+        
+        // 5
+        //[self.collectionView reloadData];
+    } failureBlock:^(NSError *error) {
+        NSLog(@"Error loading images %@", error);
+    }];
+    
+
+}
 - (void)cancelUpload {
     if (self.filename) {
         [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUploadCancelled object:nil userInfo:@{ @"filename":[self.filename copy] }];
@@ -160,41 +241,34 @@ static int const kTextViewHeightWithUserList = 70;
 #pragma mark - segue / vc to vc interface
 
 - (void)addMedia:(NSString *)filename thumbnail:(NSString *)thumbnailPath isOriginal:(BOOL)original {
-    self.thumbnailPath = thumbnailPath;
-    self.filename = filename;
-    self.isOriginal = original;
-    [self.previewImage setImage:[UIImage imageWithContentsOfFile:self.thumbnailPath]];
-    self.previewImage.hidden = NO;
-    self.postButton.enabled = YES;
-    self.labelMedia.textColor = [TDConstants headerTextColor];
-    self.labelMedia.text = @"Remove";
-    [self.mediaButton setImage:nil forState:UIControlStateNormal];
-    [self.mediaButton setImage:nil forState:UIControlStateHighlighted];
-    [self.mediaButton setImage:nil forState:UIControlStateSelected];
+    if( self.postHeaderCell != nil) {
+        self.filename = filename;
+        self.thumbnailPath = thumbnailPath;
+        self.isOriginal = original;
+        [self.postHeaderCell addMedia:filename thumbnail:thumbnailPath isOriginal:original];
+        self.postButton.enabled = YES;
+    }
 }
+
 #pragma mark - Keyboard / TextView management
 
-- (void)removeMedia {
+- (void)removeButtonPressed {
     [self cancelUpload];
     self.thumbnailPath = nil;
     self.filename = nil;
     self.isOriginal = NO;
-    self.previewImage.image = nil;
-    self.previewImage.hidden = YES;
-    self.postButton.enabled = [[self.commentTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0;
-    self.labelMedia.textColor = [TDConstants disabledTextColor];
-    self.labelMedia.text = @"Add Media";
-    [self.mediaButton setImage:[UIImage imageNamed:@"camera_grey_88x55"] forState:UIControlStateNormal];
-    [self.mediaButton setImage:[UIImage imageNamed:@"camera_grey_88x55_hit"] forState:UIControlStateHighlighted];
-    [self.mediaButton setImage:[UIImage imageNamed:@"camera_grey_88x55_hit"] forState:UIControlStateSelected];
+    self.postButton.enabled = [[self.postHeaderCell.commentTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0;
 }
 
 - (IBAction)unwindToShareView:(UIStoryboardSegue *)sender {
     // Empty on purpose
 }
 
+- (IBAction)unwindToCreatePostView:(UIStoryboardSegue *)sender {
+    // Empty on purpose
+}
+
 - (UIStoryboardSegue *)segueForUnwindingToViewController:(UIViewController *)toViewController fromViewController:(UIViewController *)fromViewController identifier:(NSString *)identifier {
-    debug NSLog(@"share video unwind segue: %@", identifier);
 
     if ([@"MediaCloseSegue" isEqualToString:identifier]) {
         return [[TDSlideUpSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
@@ -207,76 +281,75 @@ static int const kTextViewHeightWithUserList = 70;
     }
 }
 
-#pragma mark - TDKeyboardObserverDelegate
+#pragma mark - UICollectionViewDataSource
 
-- (void)keyboardWillShow:(NSNotification *)notification {
-    NSDictionary *info = [notification userInfo];
-
-    NSValue *kbFrame = [info objectForKey:UIKeyboardFrameEndUserInfoKey];
-    CGRect keyboardFrame = [kbFrame CGRectValue];
-
-    BOOL isPortrait = UIDeviceOrientationIsPortrait([UIApplication sharedApplication].statusBarOrientation);
-    CGFloat keyboardHeight = isPortrait ? keyboardFrame.size.height : keyboardFrame.size.width;
-
-    NSNumber *curveValue = [info objectForKey:UIKeyboardAnimationCurveUserInfoKey];
-    UIViewAnimationCurve animationCurve = curveValue.intValue;
-    NSTimeInterval animationDuration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
-
-    // animationCurve << 16 to convert it from a view animation curve to a view animation option
-    [UIView animateWithDuration:animationDuration delay:0.0 options:(animationCurve << 16) animations:^{
-        self.optionsViewConstraint.constant = keyboardHeight;
-        [self.view layoutIfNeeded];
-    } completion:nil];
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView {
+    return 1;
 }
 
-- (void)keyboardWillHide:(NSNotification *)notification {
-    // animationCurve << 16 to convert it from a view animation curve to a view animation option
-    NSDictionary *info = [notification userInfo];
-    NSNumber *curveValue = [info objectForKey:UIKeyboardAnimationCurveUserInfoKey];
-    UIViewAnimationCurve animationCurve = curveValue.intValue;
-    NSTimeInterval animationDuration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
-    [UIView animateWithDuration:animationDuration delay:0.0 options:(animationCurve << 16) animations:^{
-        self.optionsViewConstraint.constant = 0;
-        [self.view layoutIfNeeded];
-    } completion:nil];
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    return [self.assets count];
 }
 
-#pragma mark UITextViewDelegate
+- (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    TDPhotoCellCollectionViewCell *cell = (TDPhotoCellCollectionViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:@"TDPhotoCellCollectionViewCell" forIndexPath:indexPath];
+    CGRect frame = cell.frame;
+    frame.size.width = self.cellLength;
+    frame.size.height = self.cellLength;
+    cell.frame = frame;
+    if (indexPath.section == 0 && indexPath.row == 0) {
+        UIImage * image = [UIImage imageNamed:@"select_camera.png"];
+        UIImageView *cameraImageView =[[UIImageView alloc] initWithImage:image];
+        CGRect cameraFrame = cameraImageView.frame;
+        cameraFrame.size.height = self.cellLength;
+        cameraFrame.size.width = self.cellLength;
+        cameraImageView.frame = cameraFrame;
+        [cell addSubview:cameraImageView];
+        //cell.backgroundColor = [UIColor redColor];
+        
+    } else {
+        ALAsset *asset = self.assets[indexPath.row];
+        cell.asset = asset;
+        
+        UIImage *image = [UIImage imageWithCGImage:[asset thumbnail]];
+        NSLog(@"image.size=%@", NSStringFromCGSize(image.size));
+        UIImageView* photoImageView = [[UIImageView alloc] initWithImage:image];
+        CGRect photoFrame = photoImageView.frame;
+        photoFrame.size.height = self.cellLength;
+        photoFrame.size.width = self.cellLength;
+        photoImageView.frame = photoFrame;
+        
+        [cell addSubview:photoImageView];
+        photoImageView.contentMode = UIViewContentModeScaleAspectFit;
+        photoImageView.clipsToBounds = YES;
+        cell.backgroundColor = [UIColor redColor];
+    }
 
-- (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
-    return [TDTextViewControllerHelper textView:textView shouldChangeTextInRange:range replacementText:text];
+    return cell;
 }
 
-- (void)textViewDidChange:(UITextView *)textView {
-    self.postButton.enabled = (self.filename || [[textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0);
-    [self.userListView showUserSuggestions:textView callback:^(BOOL success) {
-        if (success) {
-            CGFloat height = self.optionsView.frame.origin.y + self.optionsView.frame.size.height - kTextViewHeightWithUserList;
-            [self.userListView updateFrame:CGRectMake(0, kTextViewHeightWithUserList, SCREEN_WIDTH, height)];
-            self.textViewConstraint.constant = height;
-            [self.view layoutIfNeeded];
-            [self alignCarretInTextView:textView];
-        } else {
-            [self resetTextViewSize];
+
+#pragma mark - UICollectionViewDelegate
+- (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
+    if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {
+        NSDictionary *obj = self.sections[indexPath.section];
+        
+        TDPhotoCellCollectionViewCell *cell = [collectionView dequeueReusableSupplementaryViewOfKind:kind
+                                                          withReuseIdentifier:@"sectionHeader"
+                                                                 forIndexPath:indexPath];
+        
+    } else if ([kind isEqualToString:CSStickyHeaderParallaxHeader]) {
+        UICollectionReusableView *cell = [collectionView dequeueReusableSupplementaryViewOfKind:kind
+                                                                            withReuseIdentifier:CELL_IDENTIFIER_CREATE_POSTHEADER
+                                                                                   forIndexPath:indexPath];
+        if ([cell isKindOfClass:[TDCreatePostHeaderCell class]]) {
+            self.postHeaderCell = (TDCreatePostHeaderCell*)cell;
+            self.postHeaderCell.delegate = self;
+            [self.postHeaderCell.commentTextView becomeFirstResponder];
         }
-    }];
-}
-
-- (void)alignCarretInTextView:(UITextView *)textView {
-    [textView scrollRangeToVisible:textView.selectedRange];
-}
-
-- (void)resetTextViewSize {
-    self.textViewConstraint.constant = kTextViewConstraint;
-    [self.view layoutIfNeeded];
-    [self alignCarretInTextView:self.commentTextView];
-}
-
-
-#pragma mark - NSLayoutManagerDelegate
-
-- (CGFloat)layoutManager:(NSLayoutManager *)layoutManager lineSpacingAfterGlyphAtIndex:(NSUInteger)glyphIndex withProposedLineFragmentRect:(CGRect)rect {
-    return 3;
+        return cell;
+    }
+    return nil;
 }
 
 #pragma mark - UI buttons
@@ -286,60 +359,246 @@ static int const kTextViewHeightWithUserList = 70;
     [self performSegueWithIdentifier:@"VideoCloseSegue" sender:self];
 }
 
-- (IBAction)mediaButtonPressed:(id)sender {
-    if (self.filename) {
-        if (self.isOriginal) {
-            UIAlertView *confirm = [[UIAlertView alloc] initWithTitle:@"Delete?" message:nil delegate:self cancelButtonTitle:@"Keep" otherButtonTitles:@"Delete", nil];
-            [confirm showWithCompletionBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
-                if (alertView.cancelButtonIndex != buttonIndex) {
-                    [self removeMedia];
-                }
-            }];
-        } else {
-            [self removeMedia];
-        }
-    } else {
-        [self.commentTextView resignFirstResponder];
-        [self performSegueWithIdentifier:@"OpenRecordViewSegue" sender:self];
-    }
-}
-
-- (IBAction)prButtonPressed:(id)sender {
-    self.isPR = !self.isPR;
-    if (self.isPR) {
-        [self.prButton setImage:self.prOnImage forState:UIControlStateNormal];
-        [self.prButton setImage:self.prOnImage forState:UIControlStateHighlighted];
-        [self.prButton setImage:self.prOnImage forState:UIControlStateSelected];
-        self.labelPR.textColor = [TDConstants brandingRedColor];
-    } else {
-        [self.prButton setImage:self.prOffImage forState:UIControlStateNormal];
-        [self.prButton setImage:self.prOffImage forState:UIControlStateHighlighted];
-        [self.prButton setImage:self.prOffImage forState:UIControlStateSelected];
-        self.labelPR.textColor = [TDConstants disabledTextColor];
-    }
-}
-
 - (IBAction)postButtonPressed:(id)sender {
     [self performSegueWithIdentifier:@"OpenShareWithViewSegue" sender:self];
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([@"OpenShareWithViewSegue" isEqualToString:segue.identifier]) {
-        NSString *comment = [self.commentTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-        TDSharePostViewController *vc = [segue destinationViewController];
-        [vc setValuesForSharing:self.filename withComment:comment isPR:self.isPR userGenerated:self.isOriginal];
+- (void)minimizeButtonPressed {
+    // Go back to showing the comment text view.
+    [self.collectionView setContentOffset:self.origContentOffset animated:NO];
+}
+
+#pragma mark TDCreatePostHeaderCellDelegate Methods
+- (void)mediaButtonPressed {
+    ALAuthorizationStatus status = [ALAssetsLibrary authorizationStatus];
+    
+    if (status != ALAuthorizationStatusAuthorized && [[TDCurrentUser sharedInstance] didAskForPhotos] ) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Permission Requested" message:@"To access your photo library, please go to iPhone Settings > Privacy > Photos, and switch Throwdown to ON" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles:nil, nil];
+        [alert show];
+    } else {
+        if (!self.assets.count) {
+            [self loadPhotoAlbum];
+        }
+        [self.collectionView reloadData];
+        self.origContentOffset = [self.collectionView contentOffset];
+    }
+ }
+
+- (void)locationButtonPressed {
+    [self openLocationViewController];
+ }
+
+- (void)prButtonPressed {
+    self.isPR = !self.isPR;
+}
+
+-(void)postButtonEnabled:(BOOL)enable {
+    self.postButton.enabled = enable;
+}
+
+- (void)openLocationViewController {
+    TDLocationViewController *vc = [[TDLocationViewController alloc] initWithNibName:@"TDLocationViewController" bundle:nil ];
+    vc.delegate = self;
+    //vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void) showLocationActionSheet:location {
+    NSString *newPlaceStr = @"Select Another Place";
+    NSString *removeStr = @"Remove Location";
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] < 8.0){
+        UIActionSheet *actionSheet = [[UIActionSheet alloc] initWithTitle:location
+                                                                  delegate:self
+                                                         cancelButtonTitle:@"Cancel"
+                                                   destructiveButtonTitle:newPlaceStr
+                                                        otherButtonTitles:removeStr, nil];
+        [self addOverlay];
+        [actionSheet showInView:self.viewOverlay];
+    } else {
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:location message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+        UIAlertAction* selectAnotherLocationAction = [UIAlertAction actionWithTitle:newPlaceStr style:UIAlertActionStyleDefault
+                                                              handler:^(UIAlertAction * action) {
+                                                                  [self openLocationViewController];
+                                                              }];
+        UIAlertAction *removeLocationAction =[UIAlertAction actionWithTitle:removeStr style:UIAlertActionStyleDefault
+                                                                    handler:^(UIAlertAction * action) {
+                                                                        if(self.postHeaderCell) {
+                                                                            self.location = NO;
+                                                                            [self.postHeaderCell changeLocationButton:@"Location" locationSet:self.location];
+                                                                        }
+                                                                    }];
+        UIAlertAction* cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault
+                                                       handler:^(UIAlertAction * action) {
+                                                           [alert dismissViewControllerAnimated:YES completion:nil];
+                                                       }];
+        
+        [alert addAction:selectAnotherLocationAction];
+        [alert addAction:removeLocationAction];
+        [alert addAction:cancel];
+        alert.view.tintColor = [TDConstants headerTextColor];
+        
+        [self presentViewController:alert animated:YES completion:nil];
     }
 }
 
-#pragma mark - TDUserListViewDelegate
-
-- (void)selectedUser:(NSDictionary *)user forUserNameFilter:(NSString *)userNameFilter {
-    NSString *currentText = self.commentTextView.text;
-    NSString *userName = [[user objectForKey:@"username"] stringByAppendingString:@" "];
-    NSString *newText = [currentText substringToIndex:(currentText.length - userNameFilter.length)] ;
-
-    self.commentTextView.text = [newText stringByAppendingString:userName];
-    [self resetTextViewSize];
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([@"EditVideoSegue" isEqualToString:segue.identifier]) {
+        TDEditVideoViewController *vc = [segue destinationViewController];
+        if (self.assetURL) {
+                [vc editVideoAt:[self.assetURL path] original:NO];
+                self.assetURL = nil;
+        } else if (self.croppedURL) {
+            [vc editVideoAt:[self.croppedURL path] original:YES];
+            self.croppedURL = nil;
+        } else if (self.assetImage) {
+            [vc editImage:self.assetImage];
+            self.assetImage = nil;
+        } else {
+            NSString *filename = [NSHomeDirectory() stringByAppendingPathComponent:kPhotoFilePath];
+            //[vc editPhotoAt:filename metadata:self.currentCaptureMetadata];
+            //self.currentCaptureMetadata = nil;
+        }
+    } else if ([@"OpenShareWithViewSegue" isEqualToString:segue.identifier]) {
+        NSString *comment = [self.postHeaderCell.commentTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        TDSharePostViewController *vc = [segue destinationViewController];
+        [vc setValuesForSharing:self.filename withComment:comment isPR:self.isPR userGenerated:self.isOriginal locationData:self.locationData];
+    }
 }
 
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    return CGSizeMake(self.cellLength, self.cellLength);
+}
+
+#pragma mark UICollectionViewDelegate
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    [self.collectionView deselectItemAtIndexPath:indexPath animated:NO];
+    
+    if (indexPath.section == 0 && indexPath.row == 0) {
+        if (self.filename) {
+            if (self.isOriginal) {
+                UIAlertView *confirm = [[UIAlertView alloc] initWithTitle:@"Delete?" message:nil delegate:self cancelButtonTitle:@"Keep" otherButtonTitles:@"Delete", nil];
+                [confirm showWithCompletionBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
+                    if (alertView.cancelButtonIndex != buttonIndex) {
+                        [self.postHeaderCell removeButtonPressed:self];
+                    }
+                }];
+            } else {
+                [self.postHeaderCell removeButtonPressed:self];
+
+            }
+        } else {
+            [self performSegueWithIdentifier:@"OpenRecordViewSegue" sender:self];
+        }
+    } else {
+        TDPhotoCellCollectionViewCell * cell = (TDPhotoCellCollectionViewCell*)[self.collectionView cellForItemAtIndexPath:indexPath];
+        self.postButton.enabled = YES;
+        ALAssetRepresentation *defaultRepresentation = cell.asset.defaultRepresentation;
+        if ([[cell.asset valueForProperty:ALAssetPropertyType] isEqualToString:ALAssetTypeVideo]) {
+            self.assetURL = [defaultRepresentation url];
+        } else if([[cell.asset valueForProperty:ALAssetPropertyType] isEqualToString:ALAssetTypePhoto]) {
+            CGImageRef iref = [defaultRepresentation fullResolutionImage];
+            self.assetImage = [UIImage imageWithCGImage:iref scale:[defaultRepresentation scale] orientation:(UIImageOrientation)[defaultRepresentation orientation]];
+        }
+        [self performSegueWithIdentifier:@"EditVideoSegue" sender:nil];
+        [self minimizeButtonPressed];
+    }
+}
+
+- (UIEdgeInsets)collectionView:
+(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
+    return UIEdgeInsetsMake(0, 0, 0, 0);
+}
+
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
+    return 1.25;
+}
+
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
+    return 1.25;
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    CGFloat yOffset = scrollView.contentOffset.y;
+    if ((yOffset > (self.postHeaderCell.commentTextView.frame.size.height + self.postHeaderCell.optionsView.frame.size.height))
+        && !self.minimizeIconIsShowing) {
+        self.minimizeIconIsShowing = YES;
+        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
+        [self.navigationBarItem.leftBarButtonItem setImage:[UIImage imageNamed:@"minimize"]];
+        
+        UIImage *image = [UIImage imageNamed:@"minimize"];
+        CGRect buttonFrame = CGRectMake(0, 0, image.size.width, image.size.height);
+        
+        UIButton *button = [[UIButton alloc] initWithFrame:buttonFrame];
+        [button setImage:image forState:UIControlStateNormal];
+        [button setImage:[UIImage imageNamed:@"minimize_hit"] forState:UIControlStateHighlighted];
+        [button addTarget:self action:@selector(minimizeButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+        self.navigationBarItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
+
+    } else {
+        if (self.minimizeIconIsShowing && yOffset < self.postHeaderCell.commentTextView.frame.size.height) {
+            [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
+            UIButton *button = [TDViewControllerHelper navCloseButton];
+            [button addTarget:self action:@selector(closeButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+            self.navigationBarItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
+            self.minimizeIconIsShowing = NO;
+        }
+    }
+}
+
+#pragma mark TDLocationViewControllerDelgate
+- (void)locationAdded:(NSDictionary*)data {
+    // Data from foursquare
+    self.location = YES;
+    self.locationData = data;
+    [self.postHeaderCell changeLocationButton:[data objectForKey:@"name"] locationSet:self.location];
+}
+
+#pragma mark UIActionSheetDelegate
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == actionSheet.cancelButtonIndex) {
+        [self removeOverlay];
+        return;
+    } else if (buttonIndex == actionSheet.destructiveButtonIndex) {
+        [self removeOverlay];
+        [self openLocationViewController];
+    } else {
+        // Remove the location
+        if(self.postHeaderCell) {
+            self.location = NO;
+            [self.postHeaderCell changeLocationButton:@"Location" locationSet:self.location];
+            [self removeOverlay];
+        }
+    }
+}
+
+- (void)willPresentActionSheet:(UIActionSheet *)actionSheet {
+    for (id actionSubview in actionSheet.subviews) {
+        if ([actionSubview isKindOfClass:[UIButton class]]) {
+            UIButton *button = (UIButton *)actionSubview;
+            button.titleLabel.textColor = [TDConstants headerTextColor];
+        }
+    }
+}
+
+- (void)willPresentAlertView:(UIAlertView *)alertView {
+    if (self.postHeaderCell) {
+        [self.postHeaderCell.commentTextView becomeFirstResponder];
+    }
+}
+- (void)addOverlay {
+    [[TDAppDelegate appDelegate].window addSubview:self.viewOverlay];
+    
+    [UIView beginAnimations:@"FadeIn" context:nil];
+    [UIView setAnimationDuration:0.5];
+    [UIView commitAnimations];
+}
+
+- (void)removeOverlay {
+    [self.viewOverlay removeFromSuperview];
+}
+
+- (BOOL)disablesAutomaticKeyboardDismissal {
+    return NO;
+}
 @end

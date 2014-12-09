@@ -43,13 +43,11 @@
 }
 
 - (IBAction)inviteButtonPressed:(UIButton*)sender{
-    debug NSLog(@"invite button pressed-show invite vc");
     if (delegate && [delegate respondsToSelector:@selector(inviteButtonPressed)]) {
         [delegate inviteButtonPressed];
     }
 }
 - (IBAction)findButtonPressed:(UIButton*)sender {
-    debug NSLog(@"find button pressed-show find vc");
     if(delegate && [delegate respondsToSelector:@selector(findButtonPressed)]) {
         [delegate findButtonPressed];
     }

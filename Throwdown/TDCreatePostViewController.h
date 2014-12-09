@@ -7,8 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <AssetsLibrary/AssetsLibrary.h>
 #import "TDUserListView.h"
+#import "TDCreatePostHeaderCell.h"
+#import "TDLocationViewController.h"
 
-@interface TDCreatePostViewController : UIViewController<UITableViewDelegate, TDUserListViewDelegate>
+@interface TDCreatePostViewController : UIViewController<UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, TDCreatePostHeaderCellDelegate, UIScrollViewAccessibilityDelegate, UIScrollViewDelegate, TDLocationViewControllerDelegate, UIActionSheetDelegate, UIAlertViewDelegate>
 - (void)addMedia:(NSString *)filename thumbnail:(NSString *)thumbnailPath isOriginal:(BOOL)original;
 @end

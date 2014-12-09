@@ -123,17 +123,19 @@ static NSInteger const kFollowingButtonTag = 20003;
 @interface TDConstants : NSObject
 
 #define APP_STORE_ID 886061848
-#define CELL_IDENTIFIER_POST_VIEW        @"TDPostView"
-#define CELL_IDENTIFIER_LIKE_VIEW        @"TDFeedLikeCommentCell"
-#define CELL_IDENTIFIER_MORE_COMMENTS    @"TDMoreComments"
-#define CELL_IDENTIFIER_COMMENT_DETAILS  @"TDDetailsCommentsCell"
-#define CELL_IDENTIFIER_POST_PADDING     @"postPaddingCell"
-#define CELL_IDENTIFIER_ACTIVITY         @"TDActivityCell"
-#define CELL_IDENTIFIER_PROFILE          @"TDUserProfileCell"
-#define CELL_IDENTIFIER_EDITPROFILE      @"TDUserEditCell"
-#define CELL_NO_MORE_POSTS               @"TDNoMorePostsCell"
-#define CELL_IDENTIFIER_FOLLOWPROFILE    @"TDFollowProfileCell"
-#define CELL_IDENTIFIER_INVITE           @"TDInviteCell"
+#define CELL_IDENTIFIER_POST_VIEW          @"TDPostView"
+#define CELL_IDENTIFIER_LIKE_VIEW          @"TDFeedLikeCommentCell"
+#define CELL_IDENTIFIER_MORE_COMMENTS      @"TDMoreComments"
+#define CELL_IDENTIFIER_COMMENT_DETAILS    @"TDDetailsCommentsCell"
+#define CELL_IDENTIFIER_POST_PADDING       @"postPaddingCell"
+#define CELL_IDENTIFIER_ACTIVITY           @"TDActivityCell"
+#define CELL_IDENTIFIER_PROFILE            @"TDUserProfileCell"
+#define CELL_IDENTIFIER_EDITPROFILE        @"TDUserEditCell"
+#define CELL_NO_MORE_POSTS                 @"TDNoMorePostsCell"
+#define CELL_IDENTIFIER_FOLLOWPROFILE      @"TDFollowProfileCell"
+#define CELL_IDENTIFIER_INVITE             @"TDInviteCell"
+#define CELL_IDENTIFIER_CREATE_POSTHEADER  @"TDCreatePostHeaderCell"
+#define CELL_IDENTIFIER_TD_LOCATION                   @"TDLocationCell"
 #define TOAST_TAG                        87352
 #define COMMENT_MESSAGE_WIDTH            306.0
 #define COMMENT_MESSAGE_FONT_SIZE        15.0
@@ -155,6 +157,7 @@ static NSInteger const kFollowingButtonTag = 20003;
 #define SCREEN_WIDTH                     [UIScreen mainScreen].bounds.size.width
 #define SCREEN_HEIGHT                    [UIScreen mainScreen].bounds.size.height
 #define TD_MARGIN                        10.0
+#define TD_PHOTO_CELL_LENGTH             105.
 
 + (TDEnvironment)environment;
 + (NSString *)appScheme;

@@ -720,4 +720,68 @@
     }];
 }
 
+#pragma mark Foursquare
+- (void)loadNearbyLocations:(NSString*)latLon callback:(void (^)(BOOL success, NSArray *locations))callback {
+    NSString *fourSquareClientId = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"FourSquareClientID"];
+    NSString *fourSquareSecretKey = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"FourSquareClientSecret"];
+    NSURL *baseURL = [NSURL URLWithString:@"https://api.foursquare.com"];
+
+    NSString *url = [NSString stringWithFormat:@"%@/v2/venues/search", baseURL];
+    
+    NSDictionary *queryParams = @{@"ll" : latLon,
+                                  @"client_id" : fourSquareClientId,
+                                  @"client_secret" : fourSquareSecretKey,
+                                  @"categoryId" : @"4bf58dd8d48988d175941735,4bf58dd8d48988d1f9941735", // gym, food & drink shop
+                                  @"radius" : @"1610", //approx 1 mile
+                                  @"v" : @"20140118"};
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [manager GET:url parameters:queryParams success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            debug NSLog(@"got some data");
+            NSDictionary *response = (NSDictionary*)responseObject;
+            callback(YES, [[response objectForKey:@"response"] objectForKey:@"venues"]);
+        } else {
+            debug NSLog(@"did not get location list");
+            callback(NO, @[]);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"Get location list Error: %@", error);
+        callback(NO, @[]);
+    }];
+}
+
+- (void)searchForLocation:(NSString*)latLon searchString:(NSString*)searchString callback:(void (^)(BOOL success, NSArray *locations))callback {
+    NSString *fourSquareClientId = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"FourSquareClientID"];
+    NSString *fourSquareSecretKey = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"FourSquareClientSecret"];
+    NSURL *baseURL = [NSURL URLWithString:@"https://api.foursquare.com"];
+    
+    NSString *url = [NSString stringWithFormat:@"%@/v2/venues/suggestcompletion", baseURL];
+    
+    NSDictionary *queryParams = @{@"ll" : latLon,
+                                  @"client_id" : fourSquareClientId,
+                                  @"client_secret" : fourSquareSecretKey,
+                                  @"query" : searchString,
+                                  @"v" : @"20140118"};
+    
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [manager GET:url parameters:queryParams success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            debug NSLog(@"got some data");
+            NSDictionary *response = (NSDictionary*)responseObject;
+            callback(YES, [[response objectForKey:@"response"] objectForKey:@"minivenues"]);
+        } else {
+            debug NSLog(@"did not get location list");
+            callback(NO, @[]);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"Get location list Error: %@", error);
+        callback(NO, @[]);
+    }];
+}
+
 @end

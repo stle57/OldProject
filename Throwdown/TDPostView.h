@@ -23,7 +23,8 @@
 @interface TDPostView : UITableViewCell
 
 @property (nonatomic, weak) id <TDPostViewDelegate> delegate;
-@property (nonatomic) UILabel *usernameLabel;
+@property (nonatomic) UILabel *usernameLabel; // Added over the text field to call usernameTapped
+@property (nonatomic) UITextField *usernameText; // Needed to get the field aligned
 @property (nonatomic) UIImageView *previewImage;
 @property (nonatomic) UIImageView *userProfileImage;
 @property (nonatomic) TDUpdatingDateLabel *createdLabel;

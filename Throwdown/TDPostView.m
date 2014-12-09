@@ -52,6 +52,7 @@ static NSString *const kTracksKey = @"tracks";
 @property (nonatomic) UIImageView *privatePost;
 @property (nonatomic) UIImageView *controlImage;
 @property (nonatomic) UIImageView *playerSpinner;
+@property (nonatomic) UIButton *locationButton;
 @property (nonatomic) AVURLAsset *videoAsset;
 @property (nonatomic) AVPlayer *player;
 @property (nonatomic) ObservingPlayerItem *playerItem;
@@ -118,15 +119,29 @@ static NSString *const kTracksKey = @"tracks";
         self.prStar.hidden = YES;
         [self addSubview:self.prStar];
 
+        self.usernameText = [[UITextField alloc] initWithFrame:CGRectMake(65, kMargin, width - 85, 45)];
+        self.usernameText.font = [TDConstants fontSemiBoldSized:17.0];
+        self.usernameText.textColor = [TDConstants brandingRedColor];
+        self.usernameText.userInteractionEnabled = NO;
+        self.usernameText.text = @"";
+        [self addSubview:self.usernameText];
+        
         self.usernameLabel = [[UILabel alloc] initWithFrame:CGRectMake(65, kMargin, width - 85, 45)];
-        self.usernameLabel.font = [TDConstants fontSemiBoldSized:17.0];
-        self.usernameLabel.textColor = [TDConstants brandingRedColor];
-        self.usernameLabel.numberOfLines = 1;
         self.usernameLabel.userInteractionEnabled = YES;
         UITapGestureRecognizer *usernameTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(usernamePressed:)];
         [self.usernameLabel addGestureRecognizer:usernameTap];
+        self.usernameLabel.text = @"";
         [self addSubview:self.usernameLabel];
 
+        self.locationButton = [[UIButton alloc] initWithFrame:CGRectMake(65, kMargin + 6 + self.usernameLabel.frame.size.height + 3, width - 85, 17)];
+        self.locationButton.userInteractionEnabled = YES;
+        self.locationButton.hidden = YES;
+        self.locationButton.enabled = NO;
+        self.locationButton.titleLabel.numberOfLines = 0;
+        [self.locationButton addTarget:self action:@selector(locationButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+        [self.locationButton setImage:[UIImage imageNamed:@"icon_pindrop_off"] forState:UIControlStateNormal];
+        [self addSubview:self.locationButton];
+        
         self.commentLabel = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(kMargin, kHeightOfProfileRow, width - (kMargin * 2), 0)];
         self.commentLabel.enabledTextCheckingTypes = NSTextCheckingTypeLink;
         self.commentLabel.textColor = [TDConstants commentTextColor];
@@ -193,13 +208,42 @@ static NSString *const kTracksKey = @"tracks";
 
     CGFloat width = [UIScreen mainScreen].bounds.size.width;
 
+//    self.usernameLabel.layer.borderWidth = 2.;
+//    self.usernameLabel.layer.borderColor = [[UIColor greenColor] CGColor];
+//    
+//    self.usernameText.layer.borderColor = [[UIColor blackColor] CGColor];
+//    self.usernameText.layer.borderWidth = 4.;
     // Set username label and size (for tap area)
-    self.usernameLabel.text = post.user.username;
-    CGSize size = [self.usernameLabel sizeThatFits:CGSizeMake(width - 85, 45)];
-    CGRect frame = self.usernameLabel.frame;
-    frame.size.width = size.width;
-    self.usernameLabel.frame = frame;
+    if(self.post.locationId) {
+        self.usernameText.frame = CGRectMake(65,0, width/2, 32);
+        self.usernameText.hidden = NO;
+        self.usernameLabel.frame =CGRectMake(65,0, width/2, 32);
+        self.usernameLabel.text = @"";
+        
+        self.usernameText.text= post.user.username;
+        [self.usernameText setContentVerticalAlignment:UIControlContentVerticalAlignmentBottom];
+        NSAttributedString *locationString = [TDViewControllerHelper makeParagraphedTextWithString:post.locationName font:[TDConstants fontSemiBoldSized:14] color:[TDConstants commentTimeTextColor] lineHeight:17.0];
+        self.locationButton.imageEdgeInsets = UIEdgeInsetsMake(0, -3, 0, 3);
+        self.locationButton.titleEdgeInsets = UIEdgeInsetsMake(0, 3, 0, -3);
+        self.locationButton.contentEdgeInsets = UIEdgeInsetsMake(0, 3, 0, 3);
+        [self.locationButton setAttributedTitle:locationString forState:UIControlStateNormal];
+        [self.locationButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
+        [self.locationButton setContentVerticalAlignment:UIControlContentVerticalAlignmentTop];
+        self.locationButton.frame = CGRectMake(65, self.usernameLabel.frame.size.height, width/2, 17*2);
 
+        self.locationButton.hidden = NO;
+        self.locationButton.enabled = YES;
+    } else {
+        self.usernameLabel.text = post.user.username;
+        self.usernameLabel.font = [TDConstants fontSemiBoldSized:17.0];
+        self.usernameLabel.textColor = [TDConstants brandingRedColor];
+        CGSize size = [self.usernameLabel sizeThatFits:CGSizeMake(width - 85, 45)];
+        CGRect frame = self.usernameLabel.frame;
+        frame.size.width = size.width;
+        self.usernameLabel.frame = frame;
+        self.usernameText.hidden = YES;
+        self.usernameText.text = @"";
+    }
     self.prStar.hidden = !post.personalRecord;
     self.privatePost.hidden = !post.isPrivate;
 
@@ -776,6 +820,12 @@ static NSString *const kTracksKey = @"tracks";
     }
 }
 
+#pragma mark - Location Button
+
+- (void)locationButtonPressed {
+    debug NSLog(@"open new post view with location");
+}
+
 #pragma mark - TTTAttributedLabelDelegate
 
 - (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithURL:(NSURL *)url {
@@ -875,5 +925,4 @@ static NSString *const kTracksKey = @"tracks";
         [self.delegate horizontalScrollingEnded];
     }
 }
-
 @end

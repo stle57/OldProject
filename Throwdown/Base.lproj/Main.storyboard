@@ -2,7 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="DPQ-qf-8sb">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -69,7 +69,7 @@
                                             <action selector="videoButtonPressed:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="wrC-za-gfJ"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2a9-PF-90i" userLabel="Album Button">
+                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2a9-PF-90i" userLabel="Album Button">
                                         <rect key="frame" x="0.0" y="0.0" width="65" height="100"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="100" id="55U-6y-9Mk"/>
@@ -392,6 +392,7 @@
                                         <state key="highlighted" image="v_closebutton_hit"/>
                                         <connections>
                                             <action selector="cancelButtonPressed:" destination="mmN-3Z-6Sw" eventType="touchUpInside" id="IXA-vK-pKf"/>
+                                            <segue destination="Mi2-Xw-H7z" kind="unwind" unwindAction="unwindToCreatePostView:" id="vhc-j3-u2k"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Njs-Cf-zmw" userLabel="Done Button">
@@ -475,116 +476,7 @@
                     <view key="view" autoresizesSubviews="NO" contentMode="scaleToFill" id="MOU-MM-eli">
                         <rect key="frame" x="0.0" y="64" width="600" height="536"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                        <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dkj-mq-ZcI" userLabel="Options View">
-                                <rect key="frame" x="0.0" y="498" width="600" height="38"/>
-                                <subviews>
-                                    <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="4ai-Dh-yd6" userLabel="Preview Image View">
-                                        <rect key="frame" x="10" y="10" width="50" height="50"/>
-                                        <color key="backgroundColor" red="0.74901960779999999" green="0.74901960779999999" blue="0.74901960779999999" alpha="1" colorSpace="calibratedRGB"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="50" id="COW-dl-Bds"/>
-                                            <constraint firstAttribute="height" constant="50" id="aou-Cj-fl2"/>
-                                        </constraints>
-                                    </imageView>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3bl-UR-ozz" userLabel="Location Button">
-                                        <rect key="frame" x="0.0" y="0.0" width="301" height="38"/>
-                                        <inset key="contentEdgeInsets" minX="14" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                        <inset key="titleEdgeInsets" minX="0.0" minY="10" maxX="0.0" maxY="12"/>
-                                        <inset key="imageEdgeInsets" minX="0.0" minY="10" maxX="12" maxY="12"/>
-                                        <state key="normal" title="" image="icon_pindrop_off"/>
-                                        <state key="selected" image="camera_grey_88x55_hit"/>
-                                        <state key="highlighted" image="camera_grey_88x55_hit"/>
-                                        <connections>
-                                            <action selector="mediaButtonPressed:" destination="yPB-2g-BQK" eventType="touchUpInside" id="HNQ-Wu-hch"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gNv-SN-PKN" userLabel="PR Button">
-                                        <rect key="frame" x="300" y="0.0" width="300" height="38"/>
-                                        <inset key="contentEdgeInsets" minX="13" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                        <inset key="titleEdgeInsets" minX="0.0" minY="10" maxX="0.0" maxY="12"/>
-                                        <inset key="imageEdgeInsets" minX="0.0" minY="10" maxX="12" maxY="12"/>
-                                        <state key="normal" image="trophy_off">
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <state key="selected" image="trophy_off_74x74"/>
-                                        <state key="highlighted" image="trophy_off_74x74"/>
-                                        <connections>
-                                            <action selector="prButtonPressed:" destination="yPB-2g-BQK" eventType="touchUpInside" id="bSl-qn-RDo"/>
-                                        </connections>
-                                    </button>
-                                    <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Location" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ful-ET-chj" userLabel="Add Location Label">
-                                        <rect key="frame" x="70" y="0.0" width="90" height="38"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="90" id="2sC-W9-wEp"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                        <color key="textColor" red="0.74117647058823533" green="0.74117647058823533" blue="0.74117647058823533" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <label hidden="YES" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="New PR" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eTs-OU-161" userLabel="PR Label">
-                                        <rect key="frame" x="370" y="0.0" width="90" height="38"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="90" id="P56-5z-mBv"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                        <color key="textColor" red="0.74117647060000003" green="0.74117647060000003" blue="0.74117647060000003" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GEl-Bw-n2B" userLabel="Top Line View">
-                                        <rect key="frame" x="0.0" y="0.0" width="600" height="1"/>
-                                        <color key="backgroundColor" red="0.84313725490196079" green="0.84313725490196079" blue="0.84313725490196079" alpha="1" colorSpace="calibratedRGB"/>
-                                    </view>
-                                    <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="OZg-vZ-sfn" userLabel="middle view for aligning">
-                                        <rect key="frame" x="300" y="35" width="1" height="1"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="1" id="4na-cl-opK"/>
-                                            <constraint firstAttribute="width" constant="1" id="QNu-iE-cFV"/>
-                                        </constraints>
-                                    </view>
-                                </subviews>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" secondItem="eTs-OU-161" secondAttribute="height" id="CSB-eq-cuC"/>
-                                    <constraint firstItem="3bl-UR-ozz" firstAttribute="height" secondItem="dkj-mq-ZcI" secondAttribute="height" id="Cmx-rG-Gri"/>
-                                    <constraint firstItem="Ful-ET-chj" firstAttribute="height" secondItem="dkj-mq-ZcI" secondAttribute="height" id="DCj-Xb-w4K"/>
-                                    <constraint firstAttribute="bottom" secondItem="gNv-SN-PKN" secondAttribute="bottom" id="Ig3-8v-DpL"/>
-                                    <constraint firstItem="3bl-UR-ozz" firstAttribute="trailing" secondItem="OZg-vZ-sfn" secondAttribute="trailing" id="Kut-HY-yP6"/>
-                                    <constraint firstItem="gNv-SN-PKN" firstAttribute="leading" secondItem="OZg-vZ-sfn" secondAttribute="leading" id="NzA-LM-utw"/>
-                                    <constraint firstItem="gNv-SN-PKN" firstAttribute="leading" secondItem="eTs-OU-161" secondAttribute="leading" constant="-70" id="OhM-js-Rzs"/>
-                                    <constraint firstItem="Ful-ET-chj" firstAttribute="top" secondItem="dkj-mq-ZcI" secondAttribute="top" id="RRF-Td-PaI"/>
-                                    <constraint firstItem="4ai-Dh-yd6" firstAttribute="leading" secondItem="3bl-UR-ozz" secondAttribute="leading" constant="10" id="Ti3-4l-VPS"/>
-                                    <constraint firstItem="4ai-Dh-yd6" firstAttribute="top" secondItem="3bl-UR-ozz" secondAttribute="top" constant="10" id="WDR-Ot-Nku"/>
-                                    <constraint firstAttribute="trailing" secondItem="gNv-SN-PKN" secondAttribute="trailing" id="XZx-VT-d4J"/>
-                                    <constraint firstItem="gNv-SN-PKN" firstAttribute="top" secondItem="dkj-mq-ZcI" secondAttribute="top" id="XjH-CV-BEw"/>
-                                    <constraint firstItem="3bl-UR-ozz" firstAttribute="leading" secondItem="dkj-mq-ZcI" secondAttribute="leading" id="fD0-cj-QbE"/>
-                                    <constraint firstAttribute="centerX" secondItem="OZg-vZ-sfn" secondAttribute="centerX" id="gDp-dq-mZ6"/>
-                                    <constraint firstItem="Ful-ET-chj" firstAttribute="leading" secondItem="3bl-UR-ozz" secondAttribute="leading" constant="70" id="gMN-CK-B9M"/>
-                                    <constraint firstAttribute="height" constant="38" id="kCJ-VF-OU9"/>
-                                    <constraint firstAttribute="centerY" secondItem="OZg-vZ-sfn" secondAttribute="centerY" constant="-16.5" id="rbS-iM-6w8"/>
-                                    <constraint firstItem="3bl-UR-ozz" firstAttribute="top" secondItem="dkj-mq-ZcI" secondAttribute="top" id="sh7-KN-Ovb"/>
-                                    <constraint firstItem="eTs-OU-161" firstAttribute="top" secondItem="dkj-mq-ZcI" secondAttribute="top" id="szy-jK-VvB"/>
-                                </constraints>
-                            </view>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" directionalLockEnabled="YES" showsHorizontalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5b3-xh-UMB" customClass="UIPlaceHolderTextView">
-                                <rect key="frame" x="14" y="14" width="572" height="438"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <color key="tintColor" red="0.0" green="0.47450980390000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                <color key="textColor" red="0.29803921570000003" green="0.29803921570000003" blue="0.29803921570000003" alpha="1" colorSpace="calibratedRGB"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences" keyboardType="twitter"/>
-                            </textView>
-                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstAttribute="trailing" secondItem="dkj-mq-ZcI" secondAttribute="trailing" id="42o-yc-Kd0"/>
-                            <constraint firstAttribute="trailing" secondItem="5b3-xh-UMB" secondAttribute="trailing" constant="14" id="7gi-01-fRw"/>
-                            <constraint firstAttribute="bottomMargin" secondItem="dkj-mq-ZcI" secondAttribute="bottom" id="IJI-Xe-M0m"/>
-                            <constraint firstItem="5b3-xh-UMB" firstAttribute="top" secondItem="3xm-CZ-Usp" secondAttribute="bottom" constant="14" id="SVo-p6-SFh"/>
-                            <constraint firstItem="5b3-xh-UMB" firstAttribute="leading" secondItem="MOU-MM-eli" secondAttribute="leading" constant="14" id="SWF-e2-PkB"/>
-                            <constraint firstItem="dkj-mq-ZcI" firstAttribute="bottom" secondItem="5b3-xh-UMB" secondAttribute="bottom" constant="84" id="e4V-E7-Syw"/>
-                            <constraint firstItem="dkj-mq-ZcI" firstAttribute="leading" secondItem="MOU-MM-eli" secondAttribute="leading" id="tGe-s9-keU"/>
-                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="New Post" id="LHh-Qz-75R">
                         <barButtonItem key="rightBarButtonItem" enabled="NO" title="Next" id="xuU-HW-Eap">
@@ -597,21 +489,12 @@
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
                     <connections>
-                        <outlet property="commentTextView" destination="5b3-xh-UMB" id="9AP-j2-vq1"/>
-                        <outlet property="labelLocation" destination="Ful-ET-chj" id="EJt-sm-pDH"/>
-                        <outlet property="labelPR" destination="eTs-OU-161" id="JhS-oM-xZz"/>
-                        <outlet property="locationButton" destination="3bl-UR-ozz" id="PTW-kX-7Of"/>
                         <outlet property="navigationBarItem" destination="LHh-Qz-75R" id="rfv-hb-xfG"/>
-                        <outlet property="optionsView" destination="dkj-mq-ZcI" id="v5C-wg-etQ"/>
-                        <outlet property="optionsViewConstraint" destination="IJI-Xe-M0m" id="PmW-fB-vdt"/>
                         <outlet property="postButton" destination="xuU-HW-Eap" id="8Kt-lj-obj"/>
-                        <outlet property="prButton" destination="gNv-SN-PKN" id="l1z-Jo-SMP"/>
-                        <outlet property="previewImage" destination="4ai-Dh-yd6" id="HhV-Ni-wZB"/>
-                        <outlet property="textViewConstraint" destination="e4V-E7-Syw" id="iLR-WX-t87"/>
-                        <outlet property="topLineView" destination="GEl-Bw-n2B" id="Mw7-su-29x"/>
                         <segue destination="wbX-js-8Nr" kind="unwind" identifier="VideoCloseSegue" unwindAction="unwindToHome:" id="8Fq-KE-QYm"/>
                         <segue destination="vXZ-lx-hvc" kind="custom" identifier="OpenRecordViewSegue" customClass="TDSlideDownSegue" id="tGN-r2-ECE"/>
                         <segue destination="GNX-te-i5r" kind="show" identifier="OpenShareWithViewSegue" id="d38-Mo-iUV"/>
+                        <segue destination="mmN-3Z-6Sw" kind="custom" identifier="EditVideoSegue" customClass="TDSlideLeftSegue" id="Hec-LM-AuF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6gq-Mf-yfy" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1515,7 +1398,7 @@ The Throwdown Community</string>
                             </button>
                         </barButtonItem>
                         <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="Vwl-FS-yeJ" userLabel="Feed Selection">
-                            <rect key="frame" x="228" y="8" width="145" height="29"/>
+                            <rect key="frame" x="227.5" y="7.5" width="145" height="29"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <segments>
                                 <segment title="Explore"/>
@@ -1808,11 +1691,9 @@ The Throwdown Community</string>
         <image name="button_get_started_hit" width="285" height="42"/>
         <image name="button_join_us" width="285" height="42"/>
         <image name="button_join_us_hit" width="285" height="42"/>
-        <image name="camera_grey_88x55_hit" width="44" height="27"/>
         <image name="cf_thrusters-2.jpg" width="810" height="540"/>
         <image name="icon-add follower in text" width="21" height="17"/>
         <image name="icon-cross" width="28" height="28"/>
-        <image name="icon_pindrop_off" width="10" height="14"/>
         <image name="iphone-1" width="191" height="402"/>
         <image name="iphone-2" width="191" height="402"/>
         <image name="nav-add-follower" width="21" height="17"/>
@@ -1849,8 +1730,6 @@ The Throwdown Community</string>
         <image name="reg_resetpass_disabled" width="285" height="42"/>
         <image name="reg_resetpass_hit" width="285" height="42"/>
         <image name="reg_signup_hit" width="285" height="42"/>
-        <image name="trophy_off" width="16" height="16"/>
-        <image name="trophy_off_74x74" width="37" height="37"/>
         <image name="v_checkbutton" width="30" height="30"/>
         <image name="v_checkbutton_hit" width="30" height="30"/>
         <image name="v_closebutton" width="30" height="30"/>
@@ -1866,5 +1745,8 @@ The Throwdown Community</string>
         <image name="x_32x32" width="16" height="16"/>
         <image name="x_32x32_hit" width="16" height="16"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="Hec-LM-AuF"/>
+    </inferredMetricsTieBreakers>
     <color key="tintColor" red="0.92941176469999998" green="0.92941176469999998" blue="0.92941176469999998" alpha="1" colorSpace="calibratedRGB"/>
 </document>
