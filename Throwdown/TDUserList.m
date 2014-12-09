@@ -17,6 +17,8 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
 
 @property (nonatomic) NSArray *userList;
 @property (nonatomic) NSDate *lastFetched;
+@property (nonatomic) BOOL isWaitingForCallback;
+
 
 @end
 
@@ -62,6 +64,7 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
     self = [super init];
     if (self) {
         [self getCommunityUserList];
+        self.isWaitingForCallback = NO;
     }
     return self;
 }
@@ -72,16 +75,21 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
         self.userList = [dict objectForKey:@"userList"];
         if (!self.userList || [self.userList count] == 0) {
             [self getCommunityUserList];
+            self.isWaitingForCallback = NO;
         }
     }
     return self;
 }
 
 - (void)getListWithCallback:(void (^)(NSArray *list))callback {
+    if (self.userList) {
+        callback(self.userList);
+    } else {
+        callback(@[]);
+    }
+
     if (!self.lastFetched || fabs([self.lastFetched timeIntervalSinceNow]) > kReloadUserListTime) {
         [self getCommunityUserListWithCallback:callback];
-    } else {
-        callback(self.userList);
     }
 }
 
@@ -104,22 +112,26 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
 }
 
 - (void)getCommunityUserListWithCallback:(void (^)(NSArray *list))callback {
-    debug NSLog(@"Fetching user list for mentions");
-    [[TDUserAPI sharedInstance] getCommunityUserList:^(BOOL success, NSArray *returnList) {
-        if (success && returnList && returnList.count > 0) {
-            self.userList = [returnList copy];
-            self.lastFetched = [NSDate date];
-            [self save];
-            if (callback) {
-                callback(self.userList);
+    if (!self.isWaitingForCallback) {
+        self.isWaitingForCallback = YES;
+        debug NSLog(@"Fetching user list for mentions");
+        [[TDUserAPI sharedInstance] getCommunityUserList:^(BOOL success, NSArray *returnList) {
+            self.isWaitingForCallback = NO;
+            if (success && returnList && returnList.count > 0) {
+                self.userList = [returnList copy];
+                self.lastFetched = [NSDate date];
+                [self save];
+                if (callback) {
+                    callback(self.userList);
+                }
+            } else {
+                debug NSLog(@"no list");
+                if (callback) {
+                    callback(@[]);
+                }
             }
-        } else {
-            debug NSLog(@"no list");
-            if (callback) {
-                callback(@[]);
-            }
-        }
-    }];
+        }];
+    }
 }
 
 @end

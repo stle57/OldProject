@@ -17,7 +17,6 @@
 
 @interface TDUserListView : UIView<UITableViewDelegate, UITableViewDataSource>
 
-@property (nonatomic, strong) TDUserList *userList;
 @property (nonatomic, strong) NSMutableArray *filteredList;
 @property (nonatomic) NSMutableArray  *userNames;
 @property (nonatomic, weak) id <TDUserListViewDelegate> delegate;

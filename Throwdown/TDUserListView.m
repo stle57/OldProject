@@ -20,7 +20,6 @@
 
 @property (nonatomic) UITableView *tableView;
 @property (nonatomic) NSString *userNameFilter;
-@property (nonatomic) BOOL isWaitingForCallback;
 @property (nonatomic) UITextView *currentTextView;
 
 @end
@@ -42,9 +41,7 @@
         topLine.backgroundColor = [TDConstants lightBorderColor];
         [self addSubview:topLine];
 
-        self.userList = [TDUserList sharedInstance];
         self.hidden = YES;
-        self.isWaitingForCallback = NO;
     }
     return self;
 }
@@ -134,28 +131,25 @@
                 [textView becomeFirstResponder];
             }
         }
-        if (!self.isWaitingForCallback) {
-            self.isWaitingForCallback = YES;
-            [self.userList getListWithCallback:^(NSArray *list) {
-                self.isWaitingForCallback = NO;
-                [self.filteredList removeAllObjects];
-                NSString *regexString = [NSString stringWithFormat:@".*\\B%@.*", self.userNameFilter];
-                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(SELF.username matches[c] %@) OR (SELF.name matches[c] %@)", regexString, regexString];
-                self.filteredList = [NSMutableArray arrayWithArray:[list filteredArrayUsingPredicate:predicate]];
-                if ([self.filteredList count] != 0) {
-                    [self.tableView reloadData];
-                    self.hidden = NO;
-                    if (callback) {
-                        callback(YES);
-                    }
-                } else {
-                    [self hideView];
-                    if (callback) {
-                        callback(NO);
-                    }
+
+        [[TDUserList sharedInstance] getListWithCallback:^(NSArray *list) {
+            [self.filteredList removeAllObjects];
+            NSString *regexString = [NSString stringWithFormat:@".*\\B%@.*", self.userNameFilter];
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(SELF.username matches[c] %@) OR (SELF.name matches[c] %@)", regexString, regexString];
+            self.filteredList = [NSMutableArray arrayWithArray:[list filteredArrayUsingPredicate:predicate]];
+            if ([self.filteredList count] != 0) {
+                [self.tableView reloadData];
+                self.hidden = NO;
+                if (callback) {
+                    callback(YES);
                 }
-            }];
-        }
+            } else {
+                [self hideView];
+                if (callback) {
+                    callback(NO);
+                }
+            }
+        }];
     } else if (!self.hidden) {
         [self hideView];
         if (callback) {
