@@ -34,6 +34,8 @@ typedef enum {
 @property (nonatomic, readonly) NSArray *likers;
 @property (nonatomic, readonly) NSNumber *commentsTotalCount;
 @property (nonatomic, readonly) NSNumber *likersTotalCount;
+@property (nonatomic, readonly) NSNumber *locationId;
+@property (nonatomic, readonly) NSString *locationName;
 
 - (id)initWithDictionary:(NSDictionary *)dict;
 

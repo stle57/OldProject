@@ -179,11 +179,11 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (!self.searchingActive || [self.searchText isEqual:@""]) {
-        return 65;
+        return 65.5;
     }
     else {
         if ([filteredContactArray count] > 0) {
-            return 65;
+            return 65.5;
         } else {
             return 220;
         }
@@ -377,8 +377,8 @@
 
     //TODO: Setting height to 1 for ios7 bug, but need to fix this
     if ([[[UIDevice currentDevice] systemVersion] floatValue] == 7.0){
-        cell.topLine.frame = CGRectMake(0, 0, SCREEN_WIDTH, 1);
-        cell.bottomLine.frame = CGRectMake(0, 64, SCREEN_WIDTH, 1);
+        cell.topLine.frame = CGRectMake(0, 0, SCREEN_WIDTH, .5);
+        cell.bottomLine.frame = CGRectMake(0, 64, SCREEN_WIDTH, .5);
     }
     // Reset everything in cell.
     cell.row = indexPath.row;

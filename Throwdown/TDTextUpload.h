@@ -14,7 +14,7 @@
 @property (nonatomic, assign) id<TDUploadProgressDelegate> delegate;
 @property (nonatomic) NSArray *shareOptions;
 
-- (instancetype)initWithComment:(NSString *)comment isPR:(BOOL)isPR isPrivate:(BOOL)isPrivate;
+- (instancetype)initWithComment:(NSString *)comment isPR:(BOOL)isPR isPrivate:(BOOL)isPrivate location:(NSDictionary*)location;
 
 #pragma mark TDUploadProgressUIDelegate
 - (void)setUploadProgressDelegate:(id<TDUploadProgressDelegate>)delegate;

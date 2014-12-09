@@ -66,5 +66,7 @@
 
 - (BOOL)didAskForContacts;
 - (void)didAskForContacts:(BOOL)yes;
+- (void)didAskForPhotos:(BOOL)yes;
+- (BOOL)didAskForPhotos;
 
 @end

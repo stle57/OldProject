@@ -1,0 +1,510 @@
+//
+//  TDLocationViewController.m
+//  Throwdown
+//
+//  Created by Stephanie Le on 12/2/14.
+//  Copyright (c) 2014 Throwdown. All rights reserved.
+//
+
+#import "TDLocationViewController.h"
+#import "TDConstants.h"
+#import "TDViewControllerHelper.h"
+#import "TDLocationCell.h"
+#import "TDAPIClient.h"
+#import "TDNoResultsCell.h"
+
+@interface TDLocationViewController ()
+
+@end
+
+@implementation TDLocationViewController
+
+@synthesize filteredLocations;
+@synthesize gotFromServer;
+@synthesize searchingActive;
+@synthesize locationsData;
+@synthesize searchStr;
+@synthesize delegate;
+@synthesize locationManager;
+
+- (void)dealloc {
+    self.filteredLocations = nil;
+    self.locationsData = nil;
+    self.locationManager = nil;
+}
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    debug NSLog(@"TDLocationViewController-initWithNibName");
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        self.filteredLocations = [[NSMutableArray alloc] init];
+    }
+    return self;
+}
+- (void)viewDidLoad {
+    debug NSLog(@"TDLocationViewController-viewDidLoad");
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+    
+    UINavigationBar *navigationBar = self.navigationController.navigationBar;
+    [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
+    
+    // Background color
+    self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
+    
+    self.view.backgroundColor = [TDConstants lightBackgroundColor];
+    
+    UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.closeButton];     // 'X'
+    self.navigationItem.leftBarButtonItem = leftBarButton;
+    [navigationBar setBarStyle:UIBarStyleBlack];
+    [navigationBar setTranslucent:NO];
+    [navigationBar setOpaque:YES];
+    
+    // Title
+    self.navLabel.textColor = [UIColor whiteColor];
+    self.navLabel.font = [TDConstants fontSemiBoldSized:18];
+    self.navLabel.textAlignment = NSTextAlignmentCenter;
+    [self.navLabel sizeToFit];
+    [self.navigationItem setTitleView:self.navLabel];
+    
+    
+    // Search Bar
+    [[UISearchBar appearance] setBackgroundImage:[UIImage imageNamed:@"f5f5f5_square.png"] forBarPosition:0 barMetrics:UIBarMetricsDefault]; // Sets the search bar to a solid color(no transparancy)
+    self.searchBar.translucent = NO;
+    self.searchBar.layer.borderColor = [[TDConstants darkBorderColor] CGColor];
+    self.searchBar.layer.borderWidth = TD_CELL_BORDER_WIDTH;
+    self.searchBar.clipsToBounds = YES;
+    
+    [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
+    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
+    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextAlignment:NSTextAlignmentLeft];
+    
+    self.headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 25)];
+    UILabel *suggestedLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, SCREEN_WIDTH/3, 25)];
+    UILabel *fourSquareLabel = [[UILabel alloc] initWithFrame:CGRectMake((SCREEN_WIDTH-15) - SCREEN_WIDTH/3, 0, SCREEN_WIDTH/2, 25)];
+    fourSquareLabel.text = @"Powered By FourSquare";
+    fourSquareLabel.font = [TDConstants fontSemiBoldSized:13];
+    fourSquareLabel.textColor = [TDConstants helpTextColor];
+    [fourSquareLabel sizeToFit];
+    CGRect labelFrame = fourSquareLabel.frame;
+    labelFrame.origin.x = SCREEN_WIDTH - fourSquareLabel.frame.size.width -15;
+    labelFrame.origin.y = fourSquareLabel.frame.size.height/2;
+    debug NSLog(@"labelFrame = %@", NSStringFromCGRect(fourSquareLabel.frame));
+    fourSquareLabel.frame = labelFrame;
+    
+    suggestedLabel.text = @"NEARBY";
+    suggestedLabel.font = [TDConstants fontRegularSized:13.0];
+    suggestedLabel.textColor = [TDConstants helpTextColor];
+    
+    [self.headerView addSubview:suggestedLabel];
+    [self.headerView addSubview:fourSquareLabel];
+    self.tableView.tableHeaderView = self.headerView;
+
+    // Title
+    self.navLabel.text = @"Search Nearby Places";
+    
+    self.filteredLocations = [NSMutableArray arrayWithCapacity:[self.locationsData count]];
+    
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
+    [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
+    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
+    
+    CGRect frame = self.searchBar.frame;
+    frame.size.width = SCREEN_WIDTH;
+    self.searchBar.frame = frame;
+    [self.searchBar sizeToFit];
+    
+    CGRect tableFrame = self.tableView.frame;
+    tableFrame.size.width = SCREEN_WIDTH;
+    tableFrame.size.height = SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height - self.searchBar.frame.size.height - [UIApplication sharedApplication].statusBarFrame.size.height;
+    self.tableView.frame = tableFrame;
+    
+    //[self loadNearbyPlaces];
+    [self startLocationServices];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+    
+}
+
+- (void)startLocationServices {
+    locationManager = [[CLLocationManager alloc] init];
+    [locationManager setDelegate:self];
+    
+    //Replace the methods below with your required method name. //this is iOS8 call only
+    if ([self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)])
+    {
+        [self.locationManager requestWhenInUseAuthorization];
+    }
+    
+    locationManager.distanceFilter = 1000;
+    locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    [locationManager startUpdatingLocation];
+}
+
+- (void) loadNearbyPlaces {
+    self.gotFromServer = NO;
+    NSString *latLon;
+    self.activityIndicator.text.text = @"Loading";
+    [self showActivity];
+    // Load data from server foursquare after getting coordinates
+    if (self.currentLocation != nil) {
+        latLon = [NSString stringWithFormat:@"%f,%f", self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
+        [[TDAPIClient sharedInstance] loadNearbyLocations:latLon callback:^(BOOL success, NSArray *locations) {
+            if (success && locations && locations.count > 0) {
+                self.locationsData = [locations copy];
+                [self.tableView reloadData];
+                [self hideActivity];
+                self.gotFromServer = YES;
+            } else {
+                self.gotFromServer = NO;
+                [self hideActivity];
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Could not load locations."
+                                                                message:@"Please close and try again."
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"OK"
+                                                      otherButtonTitles:nil];
+                [alert show];
+            }
+        }];
+
+    }
+}
+
+- (void) loadLocation {
+    self.gotFromServer = NO;
+    NSString *latLon;
+    self.activityIndicator.text.text = @"Loading";
+    [self showActivity];
+    // Load data from server foursquare after getting coordinates
+    if (self.currentLocation != nil) {
+        latLon = [NSString stringWithFormat:@"%f,%f", self.currentLocation.coordinate.latitude, self.currentLocation.coordinate.longitude];
+        [[TDAPIClient sharedInstance] searchForLocation:latLon searchString:self.searchStr callback:^(BOOL success, NSArray *locations) {
+            if (success && locations && locations.count > 0) {
+                self.searchData = [locations copy];
+                [self.tableView reloadData];
+                [self hideActivity];
+                self.gotFromServer = YES;
+            } else if (success && locations.count == 0){
+                self.gotFromServer = NO;
+                [self hideActivity];
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"No matches."
+                                                                message:@"Please try again."
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"OK"
+                                                      otherButtonTitles:nil];
+                [alert show];
+            } else {
+                self.gotFromServer = NO;
+                [self hideActivity];
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Could not load locations."
+                                                                message:@"Please close and try again."
+                                                               delegate:nil
+                                                      cancelButtonTitle:@"OK"
+                                                      otherButtonTitles:nil];
+                [alert show];
+            }
+        }];
+        
+    }
+}
+
+-(void)viewDidLayoutSubviews{
+    [self.searchBar setShowsCancelButton:NO animated:NO];
+}
+
+- (IBAction)closeButtonHit:(id)sender {
+    [self leave];
+}
+
+- (void) leave {
+    [self.navigationController popViewControllerAnimated:YES];
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
+    return 0.0;
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
+    return 1;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 65.5;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    if (!self.searchingActive || [self.searchStr isEqual:@""]) {
+        return [self.locationsData count];
+    }
+    else {
+        if ([filteredLocations count] > 0) {
+            return [filteredLocations count] + 1;
+        } else {
+            return 1;
+        }
+    }
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    debug NSLog(@"cellForRowAtIndexPath with indexPath=%ld", (long)indexPath.row);
+    if ((!self.searchingActive) || [self.searchStr isEqual:@""]) {
+        if (self.headerView.hidden) {
+            self.headerView.hidden = NO;
+        }
+        TDLocationCell *cell = (TDLocationCell*)[tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_TD_LOCATION];
+        if (!cell) {
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_TD_LOCATION owner:self options:nil];
+            cell = [topLevelObjects objectAtIndex:0];
+        }
+        [self createCell:cell indexPath:indexPath data:self.locationsData[indexPath.row]];
+        
+        return cell;
+    } else {
+        if (filteredLocations.count == 0) {
+            self.headerView.hidden = YES;
+            if (self.headerView.hidden) {
+                self.headerView.hidden = NO;
+            }
+            
+            TDLocationCell *cell = (TDLocationCell*)[tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_TD_LOCATION];
+            if (!cell) {
+                NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_TD_LOCATION owner:self options:nil];
+                cell = [topLevelObjects objectAtIndex:0];
+            }
+            
+            [self createCell:cell indexPath:indexPath data:nil];
+        
+            
+            return cell;
+            
+        } else {
+            debug NSLog(@"filteredCount=%lu", (unsigned long)self.filteredLocations.count);
+            if (self.headerView.hidden) {
+                self.headerView.hidden = NO;
+            }
+            
+            TDLocationCell *cell = (TDLocationCell*)[tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_TD_LOCATION];
+            if (!cell) {
+                NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_TD_LOCATION owner:self options:nil];
+                cell = [topLevelObjects objectAtIndex:0];
+            }
+            
+            if (indexPath.row == self.filteredLocations.count) {
+                [self createCell:cell indexPath:indexPath data:nil];
+            } else {
+                [self createCell:cell indexPath:indexPath data:self.filteredLocations[indexPath.row]];
+            }
+            return cell;
+        }
+    }
+    return nil;
+}
+
+- (void)createCell:(TDLocationCell*)cell indexPath:(NSIndexPath*)indexPath data:(NSDictionary*)data {
+    
+    cell.topLine.hidden = indexPath.row != 0;
+    
+    CGRect topLineFrame = cell.topLine.frame;
+    topLineFrame.origin.y = .5;
+    cell.topLine.frame = topLineFrame;
+    
+    cell.bottomLine.frame = CGRectMake(cell.bottomLine.frame.origin.x,
+                                       cell.bottomLine.frame.origin.y,
+                                       cell.bottomLine.frame.size.width,
+                                       cell.bottomLine.frame.size.height);
+    
+    if (data) {
+        NSString *locationString = [data objectForKey:@"name"];
+        cell.locationName.text = locationString;
+        
+        CGRect frame = CGRectMake(10,10,SCREEN_WIDTH, 22);
+        cell.locationName.frame = frame;
+        
+        NSString *address = [[data objectForKey:@"location"] objectForKey:@"address"];
+        
+        address = [address stringByAppendingString:[NSString stringWithFormat:@" %@",[[data objectForKey:@"location"] objectForKey:@"city"] ]];
+        address = [address stringByAppendingString:[NSString stringWithFormat:@", %@", [[data objectForKey:@"location"] objectForKey:@"state"] ] ];
+        if(address.length) {
+            cell.descriptionLabel.text = address;
+            cell.descriptionLabel.hidden = NO;
+        } else {
+            // Move the location label to the middle if there is no address
+            cell.descriptionLabel.hidden = YES;
+            CGRect locationFrame = cell.locationName.frame;
+            locationFrame.origin.y = cell.frame.size.height/2 - locationFrame.size.height/2;
+            cell.locationName.frame = locationFrame;
+        }
+    } else {
+        NSString *label = [NSString stringWithFormat:@"%@\"\%@\"", @"Search for ", self.searchStr];
+        cell.locationName.text = label;
+        cell.descriptionLabel.hidden = YES;
+        cell.locationName.textColor = [UIColor orangeColor];
+        cell.locationName.font = [TDConstants fontSemiBoldSized:18];
+        CGRect frame = cell.locationName.frame;
+        frame.origin.y = cell.frame.size.height/2 - cell.locationName.frame.size.height/2;
+        cell.locationName.frame = frame;
+    }
+}
+
+- (void)showActivity {
+    self.closeButton.enabled = NO;
+    self.activityIndicator.center = [TDViewControllerHelper centerPosition];
+    
+    CGPoint centerFrame = self.activityIndicator.center;
+    centerFrame.y = self.activityIndicator.center.y - self.activityIndicator.backgroundView.frame.size.height/2;
+    self.activityIndicator.center = centerFrame;
+    [self.view bringSubviewToFront:self.activityIndicator];
+    [self.activityIndicator startSpinner];
+    self.activityIndicator.hidden = NO;
+}
+
+- (void)hideActivity {
+    self.closeButton.enabled = YES;
+    self.activityIndicator.hidden = YES;
+    [self.activityIndicator stopSpinner];
+}
+
+#pragma mark UISearchBarDelegate
+- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
+    self.searchingActive = YES;
+    [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants headerTextColor]];
+    self.view.backgroundColor = [TDConstants lightBackgroundColor];
+    
+}
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
+    
+    [self filterContentForSearchText:searchText scope:nil];
+    
+    [self.tableView reloadData];
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    UITouch *touch = [[event allTouches] anyObject];
+    if ([self.searchBar isFirstResponder] && [touch view] != self.searchBar)
+    {
+        [self.searchBar resignFirstResponder];
+        
+    }
+    [super touchesBegan:touches withEvent:event];
+}
+
+- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
+    self.searchingActive = NO;
+    self.searchStr = self.searchBar.text;
+    //[self loadNearbyPlaces];
+}
+
+#pragma mark Content Filtering
+- (void)filterContentForSearchText:(NSString*)searchText scope:(NSString*)scope
+{
+    // Update the filtered array based on the search text and scope.
+    self.searchStr = searchText;
+    // Remove all objects from the filtered search array
+    [self.filteredLocations removeAllObjects];
+    
+    // Filter the arraphy using NSPredicate
+    NSString *regexString = [NSString stringWithFormat:@".*\\B%@.*", searchText];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(name matches[c] %@)", regexString, regexString];
+    NSArray *tempArray = [self.locationsData filteredArrayUsingPredicate:predicate];
+    
+    self.filteredLocations = [NSMutableArray arrayWithArray:tempArray];
+}
+
+#pragma mark - Keyboard / Textfield
+
+- (void)keyboardWillHide:(NSNotification *)notification {
+    NSNumber *rate = notification.userInfo[UIKeyboardAnimationDurationUserInfoKey];
+    [UIView animateWithDuration:rate.floatValue animations:^{
+        self.tableView.contentInset = UIEdgeInsetsZero;
+        self.tableView.scrollIndicatorInsets = UIEdgeInsetsZero;
+    }];
+}
+
+- (void)keyboardWillShow:(NSNotification *)notification {
+    CGSize keyboardSize = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    NSNumber *rate = notification.userInfo[UIKeyboardAnimationDurationUserInfoKey];
+    UIEdgeInsets contentInsets;
+    if (UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation])) {
+        contentInsets = UIEdgeInsetsMake(0.0, 0.0, (keyboardSize.height), 0.0);
+    } else {
+        contentInsets = UIEdgeInsetsMake(0.0, 0.0, (keyboardSize.width), 0.0);
+    }
+    
+    [UIView animateWithDuration:rate.floatValue animations:^{
+        self.tableView.contentInset = contentInsets;
+        self.tableView.scrollIndicatorInsets = contentInsets;
+    }];
+    //[self.tableView scrollToRowAtIndexPath:self.editingIndexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
+    if (!self.searchingActive) {
+        NSDictionary *data = self.locationsData[indexPath.row];
+        [self sendLocationDatatoPost:data];
+    } else {
+        if ([self.filteredLocations count] == indexPath.row) {
+            [self loadLocation];
+        } else {
+            NSDictionary *data = self.filteredLocations[indexPath.row];
+            [self sendLocationDatatoPost:data];
+        }
+    }
+}
+
+- (void) sendLocationDatatoPost:(NSDictionary*)data {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(locationAdded:)]) {
+        [delegate locationAdded:(data)];
+        [self leave];
+    }
+}
+
+#pragma mark - CLLocationManagerDelegate
+
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
+{
+    NSLog(@"didFailWithError: %@", error);
+    BOOL locationAllowed = [CLLocationManager locationServicesEnabled];
+    if (locationAllowed == kCLErrorDenied)
+    {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Permission Requested"
+                                                        message:@"To access your location,\nplease go to\niPhone Settings > Privacy\n> Location Services, and\nswitch Throwdown to\n \"While Using the App\"."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+    }
+}
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+{
+    NSLog(@"didUpdateToLocation: %@", locations);
+    self.currentLocation = [locations lastObject];
+    CLLocation *oldLocation;
+    if (locations.count > 1) {
+        oldLocation = [locations objectAtIndex:locations.count-2];
+    } else {
+        oldLocation = nil;
+    }
+    
+    [locationManager stopUpdatingLocation];
+    NSLog(@"didUpdateToLocation %@ from %@", self.currentLocation, oldLocation);
+    [self loadNearbyPlaces];
+
+}
+
+
+@end

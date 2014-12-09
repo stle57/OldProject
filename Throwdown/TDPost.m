@@ -73,6 +73,8 @@ static NSString *const kKindText  = @"text";
     }
 
     _comments = commentsArray;
+    _locationId = [[dict objectForKey:@"location"] objectForKey:@"id"];
+    _locationName = [[dict objectForKey:@"location"] objectForKey:@"name"];
 }
 
 - (void)addLikerUser:(TDUser *)likerUser {

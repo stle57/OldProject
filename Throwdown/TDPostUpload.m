@@ -51,7 +51,7 @@ typedef enum {
 @property (nonatomic) RSClient *client;
 @property (nonatomic) RSContainer *container;
 @property (nonatomic) NSArray *shareOptions;
-
+@property (nonatomic) NSDictionary *locationData;
 
 @end
 
@@ -163,6 +163,7 @@ typedef enum {
         self.isPrivate = [[notification.userInfo objectForKey:@"private"] boolValue];
         self.userGenerated = [[notification.userInfo objectForKey:@"userGenerated"] boolValue];
         self.shareOptions = [notification.userInfo objectForKey:@"shareOptions"];
+        self.locationData = [notification.userInfo objectForKey:@"location"];
         [self finalizeUpload];
     }
 }
@@ -210,6 +211,7 @@ typedef enum {
                               userGenerated:self.userGenerated
                                   sharingTo:self.shareOptions
                                   isPrivate:self.isPrivate
+                                   location:self.locationData
                                     success:^(NSDictionary *response) {
                                         self.postStatus = UploadCompleted;
                                         [self uploadComplete];

@@ -53,12 +53,13 @@
 
 #pragma mark - posts get/add/remove
 
-- (void)addPost:(NSString *)filename comment:(NSString *)comment isPR:(BOOL)pr kind:(NSString *)kind userGenerated:(BOOL)ug sharingTo:(NSArray *)sharing isPrivate:(BOOL)isPrivate success:(void (^)(NSDictionary *response))success failure:(void (^)(void))failure {
+- (void)addPost:(NSString *)filename comment:(NSString *)comment isPR:(BOOL)pr kind:(NSString *)kind userGenerated:(BOOL)ug sharingTo:(NSArray *)sharing isPrivate:(BOOL)isPrivate location:(NSDictionary*)location success:(void (^)(NSDictionary *response))success failure:(void (^)(void))failure {
     NSMutableDictionary *post = [@{
                                    @"kind": kind,
                                    @"personal_record": [NSNumber numberWithBool:pr],
                                    @"user_generated": [NSNumber numberWithBool:ug],
-                                   @"private": [NSNumber numberWithBool:isPrivate]
+                                   @"private": [NSNumber numberWithBool:isPrivate],
+                                   @"location" : location
                                 } mutableCopy];
     if (filename) {
         [post addEntriesFromDictionary:@{@"filename": filename}];
@@ -414,10 +415,10 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:TDPostUploadStarted object:upload userInfo:nil];
 }
 
-- (void)addTextPost:(NSString *)comment isPR:(BOOL)isPR isPrivate:(BOOL)isPrivate shareOptions:(NSArray *)shareOptions {
+- (void)addTextPost:(NSString *)comment isPR:(BOOL)isPR isPrivate:(BOOL)isPrivate shareOptions:(NSArray *)shareOptions location:(NSDictionary*)location{
     [iRate sharedInstance].eventCount = [iRate sharedInstance].eventCount + TD_POST_EVENT_COUNT;
 
-    TDTextUpload *upload = [[TDTextUpload alloc] initWithComment:comment isPR:isPR isPrivate:isPrivate];
+    TDTextUpload *upload = [[TDTextUpload alloc] initWithComment:comment isPR:isPR isPrivate:isPrivate location:location];
     upload.shareOptions = shareOptions;
     [[NSNotificationCenter defaultCenter] postNotificationName:TDPostUploadStarted object:upload userInfo:nil];
 }
