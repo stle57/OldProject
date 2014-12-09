@@ -58,8 +58,8 @@
                                 <state key="normal" title="Location" image="icon_pindrop_off">
                                     <color key="titleColor" red="1" green="0.0" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
-                                <state key="selected" image="camera_grey_88x55_hit"/>
-                                <state key="highlighted" image="camera_grey_88x55_hit"/>
+                                <state key="selected" image="icon_pindrop_off"/>
+                                <state key="highlighted" image="icon_pindrop_off"/>
                                 <connections>
                                     <action selector="locationButtonPressed:" destination="F1a-ry-mhq" eventType="touchUpInside" id="oaU-HY-lNf"/>
                                 </connections>
@@ -73,8 +73,8 @@
                                 <state key="normal" image="trophy_off">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
-                                <state key="selected" image="trophy_off_74x74"/>
-                                <state key="highlighted" image="trophy_off_74x74"/>
+                                <state key="selected" image="trophy_off"/>
+                                <state key="highlighted" image="trophy_off"/>
                                 <connections>
                                     <action selector="prButtonPressed:" destination="F1a-ry-mhq" eventType="touchUpInside" id="vEb-fH-0gv"/>
                                 </connections>
@@ -98,13 +98,11 @@
         </collectionViewCell>
     </objects>
     <resources>
-        <image name="camera_grey_88x55_hit" width="44" height="27"/>
         <image name="icon_pindrop_off" width="10" height="14"/>
         <image name="media_attach_placeholder" width="60" height="60"/>
         <image name="media_attach_placeholder_hit" width="60" height="60"/>
         <image name="remove_media_x" width="22" height="22"/>
         <image name="trophy_off" width="16" height="16"/>
-        <image name="trophy_off_74x74" width="37" height="37"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>
