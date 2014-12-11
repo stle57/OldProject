@@ -326,11 +326,11 @@ static NSString *helpText = @"Please enter at least three characters.";
         cell.locationName.text = locationString;
         
         // Format the address.
-        NSString *address = @"";
+        NSString *address = nil;
         NSDictionary *locationData = [data objectForKey:@"location"];
         
         if (![[locationData objectForKey:@"address"] isEqual:@""] ||
-            (![[locationData objectForKey:@"address"] isEqual:[NSNull null]])) {
+            [locationData objectForKey:@"address"] != nil) {
             address = [locationData objectForKey:@"address"];
         }
         
@@ -339,17 +339,17 @@ static NSString *helpText = @"Please enter at least three characters.";
         
         if ( city != nil && city.length) {
             if (address.length) {
-                address = [address stringByAppendingFormat:@" %@",city];
+                address = [NSString stringWithFormat:@"%@ %@",address, city];
             } else {
-                address = [address stringByAppendingFormat:@"%@", city];
+                address = [NSString stringWithFormat:@"%@", city];
             }
         }
         
         if (state != nil && state.length) {
             if (address.length) {
-                address = [address stringByAppendingFormat:@", %@", state];
+                address = [NSString stringWithFormat:@"%@, %@", address, state];
             } else {
-                address = [address stringByAppendingFormat:@"%@", state];
+                address = [NSString stringWithFormat:@"%@", state];
             }
         }
         

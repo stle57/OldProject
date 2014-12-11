@@ -306,11 +306,20 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     
     NSString * city =[locationData objectForKey:@"city"];
     if (city != nil && city.length) {
-        formatedAddress = [formatedAddress stringByAppendingString:[NSString stringWithFormat:@"\n%@",[locationData objectForKey:@"city"] ]];
+        if (formatedAddress.length) {
+            formatedAddress = [NSString stringWithFormat:@"%@\n%@",formatedAddress, city ];
+        } else {
+            formatedAddress = [NSString stringWithFormat:@"%@", city];
+        }
     }
-    if ([locationData objectForKey:@"state"] != nil && formatedAddress.length) {
-        formatedAddress = [formatedAddress stringByAppendingString:[NSString stringWithFormat:@", %@", [locationData objectForKey:@"state"] ] ];
-
+    
+    NSString *state = [locationData objectForKey:@"state"];
+    if (state != nil && state.length) {
+        if (formatedAddress.length) {
+            formatedAddress = [NSString stringWithFormat:@"%@\n%@", formatedAddress, state ];
+        } else {
+            formatedAddress = [NSString stringWithFormat:@"%@", state];
+        }
     }
     return formatedAddress;
 }
