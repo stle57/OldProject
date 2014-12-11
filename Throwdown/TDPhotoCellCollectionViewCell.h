@@ -12,6 +12,5 @@
 @interface TDPhotoCellCollectionViewCell : UICollectionViewCell
 @property(nonatomic, strong) ALAsset *asset;
 
-- (void)addOverlay:(CGFloat)length;
 - (void)removeOverlay;
 @end

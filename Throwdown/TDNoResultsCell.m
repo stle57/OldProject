@@ -21,6 +21,7 @@
     self.noMatchesLabel.textColor = [TDConstants headerTextColor];
     
     self.noMatchesLabel.frame= CGRectMake(0, 30, SCREEN_WIDTH, 29);
+    
     [self addSubview:self.noMatchesLabel];
     
     [self.descriptionLabel setNumberOfLines:0];
@@ -30,7 +31,8 @@
     descriptionFrame.origin.y = SCREEN_HEIGHT/2;
     self.descriptionLabel.frame = descriptionFrame;
     
-    [self addSubview:self.descriptionLabel];}
+    [self addSubview:self.descriptionLabel];
+}
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
     [super setSelected:selected animated:animated];

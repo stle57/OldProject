@@ -290,4 +290,24 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     return CGPointMake([UIScreen mainScreen].bounds.size.width/2, [UIScreen mainScreen].bounds.size.height/2);
 
 }
+
++ (NSString*)getAddressFormat:(NSDictionary*)data {
+    NSString* formatedAddress = @"";
+    NSDictionary *locationData = [data objectForKey:@"location"];
+    
+    if (![[locationData objectForKey:@"address"] isEqual:@""] ||
+        (![[locationData objectForKey:@"address"] isEqual:[NSNull null]])) {
+        formatedAddress = [locationData objectForKey:@"address"];
+    }
+    
+    NSString * city =[locationData objectForKey:@"city"];
+    if (city != nil && city.length) {
+        formatedAddress = [formatedAddress stringByAppendingString:[NSString stringWithFormat:@"\n%@",[locationData objectForKey:@"city"] ]];
+    }
+    if ([locationData objectForKey:@"state"] != nil && formatedAddress.length) {
+        formatedAddress = [formatedAddress stringByAppendingString:[NSString stringWithFormat:@", %@", [locationData objectForKey:@"state"] ] ];
+
+    }
+    return formatedAddress;
+}
 @end

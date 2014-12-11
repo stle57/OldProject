@@ -36,4 +36,5 @@
 + (BOOL)askUserToOpenInSafari:(NSURL *)url;
 + (CGFloat)heightForText:(NSString*)bodyText font:(UIFont*)font;
 + (CGPoint)centerPosition;
++ (NSString*)getAddressFormat:(NSDictionary*)data;
 @end

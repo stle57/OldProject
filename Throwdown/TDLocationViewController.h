@@ -24,15 +24,17 @@
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
 @property (weak, nonatomic) IBOutlet UISearchBar *searchBar;
 @property (weak, nonatomic) IBOutlet TDActivityIndicator *activityIndicator;
-@property (nonatomic) NSArray *locationsData;
-@property (nonatomic) NSArray *searchData;
-@property (nonatomic) NSMutableArray *filteredLocations;
+@property (nonatomic) NSArray *nearbyLocations;
+@property (nonatomic) NSMutableArray *searchedLocationList;
+@property (nonatomic) NSMutableArray *filteredNearbyLocations;
 @property (nonatomic) CLLocationManager *locationManager;
 
 @property (retain) UIView *headerView;
 @property (nonatomic) BOOL gotFromServer;
-@property (nonatomic) BOOL searchingActive;
+@property (nonatomic) BOOL searchingNearbyLocations;
+@property (nonatomic) BOOL searchingExactLocation;
 @property (nonatomic) NSString *searchStr;
+@property (nonatomic) BOOL searchButtonPressed;
 @property (nonatomic, retain) CLLocation* currentLocation;
 
 - (IBAction)closeButtonHit:(id)sender;

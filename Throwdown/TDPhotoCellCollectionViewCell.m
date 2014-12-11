@@ -28,12 +28,6 @@
     _asset = asset;
 }
 
-- (void) addOverlay:(CGFloat)length {
-    self.hitStateOverlay = [[UIView alloc] initWithFrame:CGRectMake(0, 0, length, length)];
-    self.hitStateOverlay.backgroundColor = [UIColor colorWithWhite:0 alpha:0.7];
-    [self addSubview:self.hitStateOverlay];
-}
-
 - (void) removeOverlay {
     [self.hitStateOverlay removeFromSuperview];
 }

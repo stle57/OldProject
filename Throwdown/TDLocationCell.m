@@ -15,7 +15,7 @@
 - (void)awakeFromNib {
     self.topLine.hidden = YES;
     
-    CGRect locationFrame = CGRectMake(10,10,SCREEN_WIDTH, 22);
+    CGRect locationFrame = CGRectMake(self.locationName.frame.origin.x,self.locationName.frame.origin.y,SCREEN_WIDTH, 22);
     self.locationName.frame = locationFrame;
     
     locationName.font = [TDConstants fontSemiBoldSized:16];
@@ -33,7 +33,7 @@
     self.topLine.frame = bottomLineRect;
     self.topLine.backgroundColor = [TDConstants lightBorderColor];
 
-    CGRect descriptionFrame = CGRectMake(10,40,SCREEN_WIDTH, 22);
+    CGRect descriptionFrame = CGRectMake(self.descriptionLabel.frame.origin.x, self.descriptionLabel.frame.origin.y,SCREEN_WIDTH, 22);
     self.descriptionLabel.frame = descriptionFrame;
     
     self.descriptionLabel.font = [TDConstants fontRegularSized:14];

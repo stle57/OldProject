@@ -733,6 +733,7 @@
                                   @"client_secret" : fourSquareSecretKey,
                                   @"categoryId" : @"4bf58dd8d48988d175941735,4bf58dd8d48988d1f9941735", // gym, food & drink shop
                                   @"radius" : @"1610", //approx 1 mile
+                                  @"limit" : @"50",
                                   @"v" : @"20140118"};
     
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
@@ -740,11 +741,9 @@
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     [manager GET:url parameters:queryParams success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            debug NSLog(@"got some data");
             NSDictionary *response = (NSDictionary*)responseObject;
             callback(YES, [[response objectForKey:@"response"] objectForKey:@"venues"]);
         } else {
-            debug NSLog(@"did not get location list");
             callback(NO, @[]);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
@@ -759,7 +758,8 @@
     NSURL *baseURL = [NSURL URLWithString:@"https://api.foursquare.com"];
     
     NSString *url = [NSString stringWithFormat:@"%@/v2/venues/suggestcompletion", baseURL];
-    
+    //NSString *url = [NSString stringWithFormat:@"%@/v2/venues/search", baseURL];
+
     NSDictionary *queryParams = @{@"ll" : latLon,
                                   @"client_id" : fourSquareClientId,
                                   @"client_secret" : fourSquareSecretKey,
@@ -771,11 +771,9 @@
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     [manager GET:url parameters:queryParams success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
-            debug NSLog(@"got some data");
             NSDictionary *response = (NSDictionary*)responseObject;
             callback(YES, [[response objectForKey:@"response"] objectForKey:@"minivenues"]);
         } else {
-            debug NSLog(@"did not get location list");
             callback(NO, @[]);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {

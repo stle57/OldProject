@@ -412,10 +412,17 @@ static int const kCellPerRow = 3;
                                                          cancelButtonTitle:@"Cancel"
                                                    destructiveButtonTitle:newPlaceStr
                                                         otherButtonTitles:removeStr, nil];
-        [self addOverlay];
+        //[self addOverlay];
         [actionSheet showInView:self.viewOverlay];
     } else {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:location message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+        debug NSLog(@"location=%@", location);
+        NSString *address = [TDViewControllerHelper getAddressFormat:self.locationData];
+        NSString *title = [self.locationData objectForKey:@"name"];
+        if (address.length) {
+            title = [title stringByAppendingFormat:@"\n%@", address];
+        }
+
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:title  message:nil preferredStyle:UIAlertControllerStyleActionSheet];
         UIAlertAction* selectAnotherLocationAction = [UIAlertAction actionWithTitle:newPlaceStr style:UIAlertActionStyleDefault
                                                               handler:^(UIAlertAction * action) {
                                                                   [self openLocationViewController];
@@ -427,7 +434,7 @@ static int const kCellPerRow = 3;
                                                                             [self.postHeaderCell changeLocationButton:@"Location" locationSet:self.location];
                                                                         }
                                                                     }];
-        UIAlertAction* cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleDefault
+        UIAlertAction* cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
                                                        handler:^(UIAlertAction * action) {
                                                            [alert dismissViewControllerAnimated:YES completion:nil];
                                                        }];
