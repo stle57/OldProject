@@ -622,6 +622,14 @@
     return NO;
 }
 
+#pragma mark - TDPostViewDelegate and TDDetailsCommentsCellDelegate
+
+// When an @-mention is pressed, not a post-header's username label
+- (void)userProfilePressedWithId:(NSNumber *)userId {
+    [self showNavBar];
+    [super userProfilePressedWithId:userId];
+}
+
 #pragma mark - Navigation
 
 - (void)openPushNotification:(NSDictionary *)notification {
