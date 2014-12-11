@@ -20,6 +20,7 @@
 #import "TDUserListView.h"
 #import "TDActivityIndicator.h"
 #import "TDKeyboardObserver.h"
+#import "TDLocationFeedViewController.h"
 
 static float const kInputLineSpacing = 3;
 static float const kMinInputHeight = 33.;
@@ -435,6 +436,14 @@ static int const kToolbarHeight = 64;
 - (void)userButtonPressedFromRow:(NSInteger)row {
     // Because we're on the detail page the only user available is the post's user
     [self showUserProfile:self.post.user.userId];
+}
+
+- (void)locationButtonPressedFromRow:(NSInteger)row {
+    if (self.post && self.post.locationId) {
+        TDLocationFeedViewController *vc = [[TDLocationFeedViewController alloc] initWithNibName:@"TDLocationFeedViewController" bundle:nil];
+        vc.locationId = self.post.locationId;
+        [self.navigationController pushViewController:vc animated:YES];
+    }
 }
 
 - (void)horizontalScrollingStarted {
