@@ -18,7 +18,7 @@
 @end
 
 @implementation TDLocationViewController
-static NSString *helpText = @"Please enter at least 3 characters.";
+static NSString *helpText = @"Please enter at least three characters.";
 
 @synthesize filteredNearbyLocations;
 @synthesize gotFromServer;
@@ -103,7 +103,7 @@ static NSString *helpText = @"Please enter at least 3 characters.";
     self.tableView.tableHeaderView = self.headerView;
 
     // Title
-    self.navLabel.text = @"Search Nearby Places";
+    self.navLabel.text = @"Search Nearby Place";
     
     self.filteredNearbyLocations = [NSMutableArray arrayWithCapacity:[self.nearbyLocations count]];
 }
@@ -277,7 +277,7 @@ static NSString *helpText = @"Please enter at least 3 characters.";
         
         cell.descriptionLabel.frame = CGRectMake(0, descripFrame.origin.y, SCREEN_WIDTH, 57);
         CGFloat lineHeight = 19;
-        NSString *text = @"Sorry we weren't able to find the\nlocation you're looking.";
+        NSString *text = @"Sorry, we weren't able to find the location you're looking for.";
         attString = [TDViewControllerHelper makeParagraphedTextWithString:text font:[TDConstants fontRegularSized:15.0] color:[TDConstants headerTextColor] lineHeight:lineHeight lineHeightMultipler:(lineHeight/15.0)];
         cell.descriptionLabel.attributedText = attString;
         cell.descriptionLabel.textAlignment = NSTextAlignmentCenter;
