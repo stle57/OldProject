@@ -14,10 +14,6 @@
 
 #pragma mark - Helper Functions
 
-NSString *TDJSONFromObject(id object);
-NSString *TDURLEscapedString(NSString *string);
-NSString *TDURLUnescapedString(NSString *string);
-
 NSString* TDJSONFromObject(id object) {
 	NSError *error = nil;
 	NSData *data = [NSJSONSerialization dataWithJSONObject:object options:0 error:&error];

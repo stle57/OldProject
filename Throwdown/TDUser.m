@@ -10,6 +10,7 @@
 #import "TDAppDelegate.h"
 #import "TDConstants.h"
 #import "TDViewControllerHelper.h"
+
 @implementation TDUser
 
 - (id)initWithDictionary:(NSDictionary *)dict {

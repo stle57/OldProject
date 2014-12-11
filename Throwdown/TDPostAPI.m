@@ -161,6 +161,16 @@
     [self fetchPostsPath:url parameters:nil success:successHandler error:errorHandler];
 }
 
+#pragma mark - Posts for location
+
+- (void)fetchPostsForLocationId:(NSNumber *)locationId start:(NSNumber *)start success:(void(^)(NSDictionary *response))successHandler error:(void (^)(void))errorHandler {
+    NSMutableString *url = [NSMutableString stringWithFormat:@"/api/v1/locations/%@.json?user_token=%@", locationId, [TDCurrentUser sharedInstance].authToken];
+    if (start) {
+        [url appendString:[NSString stringWithFormat:@"&start=%@", start]];
+    }
+    [self fetchPostsPath:url parameters:nil success:successHandler error:errorHandler];
+}
+
 #pragma mark Posts fetcher
 
 - (void)fetchPostsPath:(NSString *)path parameters:(NSDictionary *)params success:(void(^)(NSDictionary *response))successHandler error:(void (^)(void))errorHandler {

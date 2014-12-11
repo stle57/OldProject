@@ -24,6 +24,10 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     return [self navBarButton:@"nav-close" hit:@"nav-close-hit"];
 }
 
++ (UIButton *)navShareButton {
+    return [self navBarButton:@"nav_share_white" hit:@"nav_share_white_hit"];
+}
+
 + (UIButton *)navBarButton:(NSString *)normal hit:(NSString *)hit {
     UIImage *image = [UIImage imageNamed:normal];
     CGRect buttonFrame = CGRectMake(0, 0, image.size.width, image.size.height);

@@ -57,7 +57,7 @@
       buildConfiguration = "Release"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
-      allowLocationSimulation = "YES">
+      allowLocationSimulation = "NO">
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
@@ -69,13 +69,13 @@
       </BuildableProductRunnable>
       <AdditionalOptions>
          <AdditionalOption
-            key = "OBJC_PRINT_EXCEPTIONS"
-            value = "YES"
+            key = "DYLD_PRINT_LIBRARIES"
+            value = ""
             isEnabled = "YES">
          </AdditionalOption>
          <AdditionalOption
-            key = "DYLD_PRINT_LIBRARIES"
-            value = ""
+            key = "OBJC_PRINT_EXCEPTIONS"
+            value = "YES"
             isEnabled = "YES">
          </AdditionalOption>
       </AdditionalOptions>

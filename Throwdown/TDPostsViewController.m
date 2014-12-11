@@ -16,6 +16,7 @@
 #import "TDFollowViewController.h"
 #import "TDInviteViewController.h"
 #import "TDNoFollowingCell.h"
+#import "TDLocationFeedViewController.h"
 
 static CGFloat const kWhiteBottomPadding = 6;
 static CGFloat const kPostMargin = 22;
@@ -95,6 +96,18 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     self.tableView.backgroundColor = [TDConstants darkBackgroundColor];
 
     [self.tableView reloadData];
+
+    // Stop any current playbacks
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
+
+    [self.navigationController setNavigationBarHidden:NO animated:NO];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+
+    // Stop any current playbacks
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle {
@@ -592,6 +605,15 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     vc.userId = userId;
     vc.profileType = kFeedProfileTypeOther;
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void)locationButtonPressedFromRow:(NSInteger)row {
+    TDPost *post = [self postForRow:row];
+    if (post && post.locationId) {
+        TDLocationFeedViewController *vc = [[TDLocationFeedViewController alloc] initWithNibName:@"TDLocationFeedViewController" bundle:nil];
+        vc.locationId = post.locationId;
+        [self.navigationController pushViewController:vc animated:YES];
+    }
 }
 
 

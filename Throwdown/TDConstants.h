@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <MapKit/MapKit.h>
 
 const typedef NS_ENUM(NSInteger, TDEnvironment) {
     TDEnvProduction,
@@ -75,6 +76,10 @@ static int const kMaxRecordingSeconds = 30;
 static double const kMinFileSpaceForRecording = 50 * 1024^2; // 50mb
 static double const kGlobalVideoTrimTime = 0.05; // seconds
 
+// Map settings
+// Amount of north-to-south distance (measured in meters) to use for the span. (note used for east-to-west too):
+static CLLocationDistance const kMapDefaultDistance = 10000;
+
 // NSNotification types
 static NSString *const TDNotificationReloadHome = @"TDNotificationReloadHome";
 static NSString *const TDPostUploadStarted = @"TDPostUploadStarted";
@@ -135,7 +140,7 @@ static NSInteger const kFollowingButtonTag = 20003;
 #define CELL_IDENTIFIER_FOLLOWPROFILE      @"TDFollowProfileCell"
 #define CELL_IDENTIFIER_INVITE             @"TDInviteCell"
 #define CELL_IDENTIFIER_CREATE_POSTHEADER  @"TDCreatePostHeaderCell"
-#define CELL_IDENTIFIER_TD_LOCATION                   @"TDLocationCell"
+#define CELL_IDENTIFIER_TD_LOCATION        @"TDLocationCell"
 #define TOAST_TAG                        87352
 #define COMMENT_MESSAGE_WIDTH            306.0
 #define COMMENT_MESSAGE_FONT_SIZE        15.0

@@ -13,6 +13,8 @@
 
 + (UIButton *)navBackButton;
 + (UIButton *)navCloseButton;
++ (UIButton *)navShareButton;
+
 + (void)showAlertMessage:(NSString *)message withTitle:(NSString *)title;
 + (void)navigateToHomeFrom:(UIViewController *)fromController;
 + (BOOL)validateEmail:(NSString *)email;

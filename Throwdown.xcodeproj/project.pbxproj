@@ -197,6 +197,11 @@
 		A1D7072B19DBE8ED00ECB221 /* ObservingPlayerItem.m in Sources */ = {isa = PBXBuildFile; fileRef = A1D7072A19DBE8ED00ECB221 /* ObservingPlayerItem.m */; };
 		A1D7073119E0C3E800ECB221 /* TDKeyboardObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = A1D7073019E0C3E800ECB221 /* TDKeyboardObserver.m */; };
 		A1DAEEB318EB79FA00742949 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1DAEEB218EB79FA00742949 /* Crashlytics.framework */; };
+		A1DD182A1A3839CB00B12BDC /* TDLocationFeedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1DD18281A3839CB00B12BDC /* TDLocationFeedViewController.m */; };
+		A1DD182B1A3839CB00B12BDC /* TDLocationFeedViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A1DD18291A3839CB00B12BDC /* TDLocationFeedViewController.xib */; };
+		A1DD18321A38FC2200B12BDC /* sweden.gpx in Resources */ = {isa = PBXBuildFile; fileRef = A1DD18311A38FC2200B12BDC /* sweden.gpx */; };
+		A1DD18341A38FF3600B12BDC /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1DD18331A38FF3600B12BDC /* MapKit.framework */; };
+		A1DD18371A39034F00B12BDC /* TDLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = A1DD18361A39034F00B12BDC /* TDLocation.m */; };
 		A1E3A16D18FCC8630038A8A4 /* TDActivitiesCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = A1E3A16C18FCC8630038A8A4 /* TDActivitiesCell.xib */; };
 		A1E3A17018FCCF2B0038A8A4 /* TDActivitiesCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E3A16F18FCCF2B0038A8A4 /* TDActivitiesCell.m */; };
 		A1E90CDD18B445FC0046D281 /* TDSignupStepTwoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E90CDC18B445FC0046D281 /* TDSignupStepTwoViewController.m */; };
@@ -530,6 +535,13 @@
 		A1D7072F19E0C3E800ECB221 /* TDKeyboardObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDKeyboardObserver.h; sourceTree = "<group>"; };
 		A1D7073019E0C3E800ECB221 /* TDKeyboardObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDKeyboardObserver.m; sourceTree = "<group>"; };
 		A1DAEEB218EB79FA00742949 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
+		A1DD18271A3839CB00B12BDC /* TDLocationFeedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDLocationFeedViewController.h; sourceTree = "<group>"; };
+		A1DD18281A3839CB00B12BDC /* TDLocationFeedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDLocationFeedViewController.m; sourceTree = "<group>"; };
+		A1DD18291A3839CB00B12BDC /* TDLocationFeedViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDLocationFeedViewController.xib; sourceTree = "<group>"; };
+		A1DD18311A38FC2200B12BDC /* sweden.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = sweden.gpx; path = ../sweden.gpx; sourceTree = "<group>"; };
+		A1DD18331A38FF3600B12BDC /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		A1DD18351A39034F00B12BDC /* TDLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDLocation.h; sourceTree = "<group>"; };
+		A1DD18361A39034F00B12BDC /* TDLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDLocation.m; sourceTree = "<group>"; };
 		A1E3A16C18FCC8630038A8A4 /* TDActivitiesCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDActivitiesCell.xib; sourceTree = "<group>"; };
 		A1E3A16E18FCCF2B0038A8A4 /* TDActivitiesCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDActivitiesCell.h; sourceTree = "<group>"; };
 		A1E3A16F18FCCF2B0038A8A4 /* TDActivitiesCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDActivitiesCell.m; sourceTree = "<group>"; };
@@ -555,6 +567,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1DD18341A38FF3600B12BDC /* MapKit.framework in Frameworks */,
 				4D2843EF19CA299900E4A56C /* AddressBook.framework in Frameworks */,
 				A14483B619A7F05300B3BC8D /* Social.framework in Frameworks */,
 				A1D13FF01905E93A000980E0 /* CoreImage.framework in Frameworks */,
@@ -778,12 +791,13 @@
 			children = (
 				A1AB84C91A1B0020007DEF64 /* ScrollWheel */,
 				A1D7072819DBE8ED00ECB221 /* ObservingPlayerItem */,
-				4D2843EE19CA299900E4A56C /* AddressBook.framework */,
 				A14483B719A8026000B3BC8D /* ABOAuthCore */,
 				A102FE9E18ECF43C00139606 /* Flurry */,
 				A182D827188B60CD00F794A5 /* SAVideoRangeSlider */,
 				A19FF5FB18970BBA001A0AD0 /* RSCloudFiles */,
 				A14483C119A807C900B3BC8D /* TWReverseAuth */,
+				A1DD18331A38FF3600B12BDC /* MapKit.framework */,
+				4D2843EE19CA299900E4A56C /* AddressBook.framework */,
 				A14483B519A7F05200B3BC8D /* Social.framework */,
 				A14483B319A7F04400B3BC8D /* Twitter.framework */,
 				A1280628198ADE6E0038AC2E /* FacebookSDK.framework */,
@@ -827,6 +841,7 @@
 			isa = PBXGroup;
 			children = (
 				A1ECEDB819F70E6B0088BE70 /* images */,
+				A1DD18311A38FC2200B12BDC /* sweden.gpx */,
 				A1A053FC19D6272300E7556A /* UIActionSheet+Blocks.m */,
 				A1A053FD19D6272300E7556A /* UIActionSheet+Blocks.h */,
 				4D3352D519A29CEC007B3E06 /* iRate.bundle */,
@@ -1005,6 +1020,9 @@
 				A1BB463118F7767200BD9527 /* TDActivityViewController.h */,
 				A1BB463218F7767200BD9527 /* TDActivityViewController.m */,
 				A18D9A5D19D9F551006A0658 /* Launch Screen.xib */,
+				A1DD18271A3839CB00B12BDC /* TDLocationFeedViewController.h */,
+				A1DD18281A3839CB00B12BDC /* TDLocationFeedViewController.m */,
+				A1DD18291A3839CB00B12BDC /* TDLocationFeedViewController.xib */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -1030,6 +1048,8 @@
 				4D1F8394196F89FB00B5DB76 /* TDUserList.m */,
 				4D4714B619CBF14F003AA69F /* TDContactInfo.h */,
 				4D4714B719CBF14F003AA69F /* TDContactInfo.m */,
+				A1DD18351A39034F00B12BDC /* TDLocation.h */,
+				A1DD18361A39034F00B12BDC /* TDLocation.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -1321,6 +1341,7 @@
 				4D2843CF19C401C000E4A56C /* TDFollowViewController.xib in Resources */,
 				4D2843ED19C9F42200E4A56C /* TDInviteCell.xib in Resources */,
 				4D3EA8EF1A379C190014F2A6 /* TDLocationCell.xib in Resources */,
+				A1DD18321A38FC2200B12BDC /* sweden.gpx in Resources */,
 				A14E38F01992E71B001B46AF /* TDSocialNetworkCell.xib in Resources */,
 				A1ECEDBD19F70E7B0088BE70 /* cf_thrusters-2.jpg in Resources */,
 				A1F13C6819AD5D7E000DD890 /* TDRadioButtonRowCell.xib in Resources */,
@@ -1364,6 +1385,7 @@
 				2DA5354518F35E4300031128 /* TDUserProfileViewController.xib in Resources */,
 				A1ECEDBC19F70E7B0088BE70 /* cf_thrusters-2@3x.jpg in Resources */,
 				A1D13FF21905F2BE000980E0 /* Podfile in Resources */,
+				A1DD182B1A3839CB00B12BDC /* TDLocationFeedViewController.xib in Resources */,
 				2DA5F05C18D37C70003D2F99 /* BebasNeue Light.otf in Resources */,
 				A11E04EF1888CB79002F981A /* Main.storyboard in Resources */,
 				2DA5F05A18D37C70003D2F99 /* BebasNeue Bold.otf in Resources */,
@@ -1438,6 +1460,7 @@
 				A19FF61118970BBB001A0AD0 /* RSStorageObject.m in Sources */,
 				A1D36D5A19CCF66600AFE730 /* TDCameraPreviewView.m in Sources */,
 				4D6FCC2419CAA34D00902719 /* TDContactsViewController.m in Sources */,
+				A1DD182A1A3839CB00B12BDC /* TDLocationFeedViewController.m in Sources */,
 				A1F02FD418C92277002FEB2F /* TDPostUpload.m in Sources */,
 				A151958B18BAE8FD0050A45B /* TDUser.m in Sources */,
 				2DA39FD618E0B2570004A9C7 /* TDMoreComments.m in Sources */,
@@ -1495,6 +1518,7 @@
 				4DD170DB19EF15D600979EC8 /* TDFindPeopleViewController.m in Sources */,
 				A1F13C6719AD5D7E000DD890 /* TDRadioButtonRowCell.m in Sources */,
 				A19FF60E18970BBB001A0AD0 /* RSClient.m in Sources */,
+				A1DD18371A39034F00B12BDC /* TDLocation.m in Sources */,
 				4DD0837019AC585C00149968 /* TDToastViewController.m in Sources */,
 				A182D833188B60CD00F794A5 /* SAVideoRangeSlider.m in Sources */,
 				A182D832188B60CD00F794A5 /* SASliderRight.m in Sources */,
@@ -1719,8 +1743,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_DISPLAY_NAME_SUFFIX = "";
 				BUNDLE_ID_SUFFIX = "";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				EXCLUDED_SOURCE_FILE_NAMES = "FLEX*";
 				FACEBOOK_APP_ID = 1419119258326947;
@@ -1833,8 +1857,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_DISPLAY_NAME_SUFFIX = "-ß";
 				BUNDLE_ID_SUFFIX = .staging;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				EXCLUDED_SOURCE_FILE_NAMES = "";
 				FACEBOOK_APP_ID = 1470514189854120;

@@ -38,6 +38,11 @@ typedef enum {
 static CGFloat const kMargin = 10;
 static CGFloat const kMarginBottomOfMedia = 13;
 static CGFloat const kHeightOfProfileRow = 65.;
+static CGFloat const kTextRightMargin = 85.;
+static CGFloat const kUsernameMargin = 3;
+static CGFloat const kUsernameNormalHeight = 62.0;
+static CGFloat const kUsernameLocationHeight = 31.5;
+static CGFloat const kUsernameLabelOffset = 65.;
 static CGFloat const kCommentBottomPadding = 15.;
 static CGFloat const kWidthOfMedia = 320.;
 static NSString *const kTracksKey = @"tracks";
@@ -52,7 +57,8 @@ static NSString *const kTracksKey = @"tracks";
 @property (nonatomic) UIImageView *privatePost;
 @property (nonatomic) UIImageView *controlImage;
 @property (nonatomic) UIImageView *playerSpinner;
-@property (nonatomic) UIButton *locationButton;
+@property (nonatomic) UIImageView *locationPinImage;
+@property (nonatomic) TTTAttributedLabel *locationLabel;
 @property (nonatomic) AVURLAsset *videoAsset;
 @property (nonatomic) AVPlayer *player;
 @property (nonatomic) ObservingPlayerItem *playerItem;
@@ -114,34 +120,38 @@ static NSString *const kTracksKey = @"tracks";
         self.mediaSize = (width / kWidthOfMedia) * kWidthOfMedia;
 
         // add pr star at lowest level
-        self.prStar = [[UIImageView alloc] initWithFrame:CGRectMake(width - 65, kMargin + 6, 32, 32)];
+        self.prStar = [[UIImageView alloc] initWithFrame:CGRectMake(width - kUsernameLabelOffset, kMargin + 6, 32, 32)];
         self.prStar.image = [UIImage imageNamed:@"trophy_64x64"];
         self.prStar.hidden = YES;
         [self addSubview:self.prStar];
 
-        self.usernameText = [[UITextField alloc] initWithFrame:CGRectMake(65, kMargin, width - 85, 45)];
-        self.usernameText.font = [TDConstants fontSemiBoldSized:17.0];
-        self.usernameText.textColor = [TDConstants brandingRedColor];
-        self.usernameText.userInteractionEnabled = NO;
-        self.usernameText.text = @"";
-        [self addSubview:self.usernameText];
-        
-        self.usernameLabel = [[UILabel alloc] initWithFrame:CGRectMake(65, kMargin, width - 85, 45)];
+        self.usernameLabel = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(kUsernameLabelOffset, kUsernameMargin, width - kTextRightMargin, kUsernameNormalHeight)];
         self.usernameLabel.userInteractionEnabled = YES;
-        UITapGestureRecognizer *usernameTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(usernamePressed:)];
-        [self.usernameLabel addGestureRecognizer:usernameTap];
+        self.usernameLabel.font = [TDConstants fontSemiBoldSized:17.0];
+        self.usernameLabel.textColor = [TDConstants brandingRedColor];
         self.usernameLabel.text = @"";
+        [self.usernameLabel addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(usernamePressed:)]];
         [self addSubview:self.usernameLabel];
 
-        self.locationButton = [[UIButton alloc] initWithFrame:CGRectMake(65, kMargin + 6 + self.usernameLabel.frame.size.height + 3, width - 85, 17)];
-        self.locationButton.userInteractionEnabled = YES;
-        self.locationButton.hidden = YES;
-        self.locationButton.enabled = NO;
-        self.locationButton.titleLabel.numberOfLines = 0;
-        [self.locationButton addTarget:self action:@selector(locationButtonPressed) forControlEvents:UIControlEventTouchUpInside];
-        [self.locationButton setImage:[UIImage imageNamed:@"icon_pindrop_off"] forState:UIControlStateNormal];
-        [self addSubview:self.locationButton];
-        
+        self.locationPinImage = [[UIImageView alloc] initWithFrame:CGRectMake(kUsernameLabelOffset, kUsernameMargin + kUsernameLocationHeight, 10, 14)];
+        self.locationPinImage.hidden = YES;
+        self.locationPinImage.userInteractionEnabled = YES;
+        [self.locationPinImage addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(locationButtonPressed)]];
+        [self.locationPinImage setImage:[UIImage imageNamed:@"icon_pindrop_off"]];
+        [self addSubview:self.locationPinImage];
+
+        CGFloat locationLeftOffset = self.locationPinImage.frame.origin.x + self.locationPinImage.frame.size.width + 6;
+
+        self.locationLabel = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(locationLeftOffset, kUsernameMargin + kUsernameLocationHeight, width - kTextRightMargin - locationLeftOffset, kUsernameLocationHeight)];
+        self.locationLabel.textInsets = UIEdgeInsetsMake(1, 0, 0, 0); // centers the text with the pin-image
+        self.locationLabel.font = [TDConstants fontSemiBoldSized:14];
+        self.locationLabel.textColor =[TDConstants commentTimeTextColor];
+        self.locationLabel.hidden = YES;
+        self.locationLabel.userInteractionEnabled = YES;
+        self.locationLabel.verticalAlignment = TTTAttributedLabelVerticalAlignmentTop;
+        [self.locationLabel addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(locationButtonPressed)]];
+        [self addSubview:self.locationLabel];
+
         self.commentLabel = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(kMargin, kHeightOfProfileRow, width - (kMargin * 2), 0)];
         self.commentLabel.enabledTextCheckingTypes = NSTextCheckingTypeLink;
         self.commentLabel.textColor = [TDConstants commentTextColor];
@@ -208,42 +218,43 @@ static NSString *const kTracksKey = @"tracks";
 
     CGFloat width = [UIScreen mainScreen].bounds.size.width;
 
-//    self.usernameLabel.layer.borderWidth = 2.;
-//    self.usernameLabel.layer.borderColor = [[UIColor greenColor] CGColor];
-//    
-//    self.usernameText.layer.borderColor = [[UIColor blackColor] CGColor];
-//    self.usernameText.layer.borderWidth = 4.;
     // Set username label and size (for tap area)
-    if(self.post.locationId) {
-        self.usernameText.frame = CGRectMake(65,0, width/2, 32);
-        self.usernameText.hidden = NO;
-        self.usernameLabel.frame =CGRectMake(65,0, width/2, 32);
-        self.usernameLabel.text = @"";
-        
-        self.usernameText.text= post.user.username;
-        [self.usernameText setContentVerticalAlignment:UIControlContentVerticalAlignmentBottom];
-        NSAttributedString *locationString = [TDViewControllerHelper makeParagraphedTextWithString:post.locationName font:[TDConstants fontSemiBoldSized:14] color:[TDConstants commentTimeTextColor] lineHeight:17.0];
-        self.locationButton.imageEdgeInsets = UIEdgeInsetsMake(0, -3, 0, 3);
-        self.locationButton.titleEdgeInsets = UIEdgeInsetsMake(0, 3, 0, -3);
-        self.locationButton.contentEdgeInsets = UIEdgeInsetsMake(0, 3, 0, 3);
-        [self.locationButton setAttributedTitle:locationString forState:UIControlStateNormal];
-        [self.locationButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
-        [self.locationButton setContentVerticalAlignment:UIControlContentVerticalAlignmentTop];
-        self.locationButton.frame = CGRectMake(65, self.usernameLabel.frame.size.height, width/2, 17*2);
+    self.usernameLabel.text = post.user.username;
 
-        self.locationButton.hidden = NO;
-        self.locationButton.enabled = YES;
-    } else {
-        self.usernameLabel.text = post.user.username;
-        self.usernameLabel.font = [TDConstants fontSemiBoldSized:17.0];
-        self.usernameLabel.textColor = [TDConstants brandingRedColor];
-        CGSize size = [self.usernameLabel sizeThatFits:CGSizeMake(width - 85, 45)];
+    // TODO : test overlap with PR button
+    if (self.post.locationId) {
+        self.usernameLabel.verticalAlignment = TTTAttributedLabelVerticalAlignmentBottom;
+        CGSize size = [self.usernameLabel sizeThatFits:CGSizeMake(width - kTextRightMargin, kUsernameLocationHeight)];
         CGRect frame = self.usernameLabel.frame;
         frame.size.width = size.width;
+        frame.size.height = kUsernameLocationHeight;
         self.usernameLabel.frame = frame;
-        self.usernameText.hidden = YES;
-        self.usernameText.text = @"";
+
+        self.locationLabel.text = post.locationName;
+        CGFloat locationMaxWidth = width - kTextRightMargin - self.locationPinImage.frame.origin.x + self.locationPinImage.frame.size.width + 6;
+        size = [self.locationLabel sizeThatFits:CGSizeMake(locationMaxWidth, kUsernameLocationHeight)];
+        frame = self.locationLabel.frame;
+        frame.size.width = size.width;
+        frame.size.height = kUsernameLocationHeight;
+        self.locationLabel.frame = frame;
+
+        self.locationLabel.hidden = NO;
+        self.locationPinImage.hidden = NO;
+
+    } else {
+
+        self.usernameLabel.verticalAlignment = TTTAttributedLabelVerticalAlignmentCenter;
+        CGSize size = [self.usernameLabel sizeThatFits:CGSizeMake(width - kTextRightMargin, kUsernameNormalHeight)];
+        CGRect frame = self.usernameLabel.frame;
+        frame.size.width = size.width;
+        frame.size.height = kUsernameNormalHeight;
+        self.usernameLabel.frame = frame;
+
+        self.locationPinImage.hidden = YES;
+        self.locationLabel.hidden = YES;
     }
+    self.usernameLabel.text = post.user.username;
+
     self.prStar.hidden = !post.personalRecord;
     self.privatePost.hidden = !post.isPrivate;
 
@@ -823,7 +834,9 @@ static NSString *const kTracksKey = @"tracks";
 #pragma mark - Location Button
 
 - (void)locationButtonPressed {
-    debug NSLog(@"open new post view with location");
+    if (self.delegate && [self.delegate respondsToSelector:@selector(locationButtonPressedFromRow:)]) {
+        [self.delegate locationButtonPressedFromRow:self.row];
+    }
 }
 
 #pragma mark - TTTAttributedLabelDelegate

@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+NSString *TDJSONFromObject(id object);
+NSString *TDURLEscapedString(NSString *string);
+NSString *TDURLUnescapedString(NSString *string);
+
 @interface TDAnalytics : NSObject // <NSCoding>
 + (TDAnalytics *)sharedInstance;
 - (void)start;

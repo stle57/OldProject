@@ -3,17 +3,17 @@
     {
       "idiom" : "universal",
       "scale" : "1x",
-      "filename" : "icon_pindrop_on.png"
+      "filename" : "large_location_pin.png"
     },
     {
       "idiom" : "universal",
       "scale" : "2x",
-      "filename" : "icon_pindrop_on@2x.png"
+      "filename" : "large_location_pin@2x.png"
     },
     {
       "idiom" : "universal",
       "scale" : "3x",
-      "filename" : "icon_pindrop_on@3x.png"
+      "filename" : "large_location_pin@3x.png"
     }
   ],
   "info" : {

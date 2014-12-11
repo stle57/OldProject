@@ -630,6 +630,12 @@
     [super userProfilePressedWithId:userId];
 }
 
+- (void)locationButtonPressedFromRow:(NSInteger)row {
+    [self showNavBar];
+    [super locationButtonPressedFromRow:row];
+}
+
+
 #pragma mark - Navigation
 
 - (void)openPushNotification:(NSDictionary *)notification {

@@ -100,23 +100,12 @@
     [super viewWillAppear:animated];
     
     [self.tableView reloadData];
-    // Stop any current playbacks
-    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
-
-    [self.navigationController setNavigationBarHidden:NO animated:NO];
 
     if (!self.posts || goneDownstream) {
         [self refreshPostsList];
         [self fetchPosts];
     }
     goneDownstream = NO;
-}
-
-- (void)viewWillDisappear:(BOOL)animated {
-    [super viewWillDisappear:animated];
-
-    // Stop any current playbacks
-    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
 }
 
 - (void)didReceiveMemoryWarning {

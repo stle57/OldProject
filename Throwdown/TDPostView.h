@@ -10,10 +10,12 @@
 #import "TDPost.h"
 #import "TDFeedLikeCommentCell.h"
 #import "TDUpdatingDateLabel.h"
+#import <TTTAttributedLabel/TTTAttributedLabel.h>
 
 @protocol TDPostViewDelegate <NSObject>
 @optional
 - (void)postTouchedFromRow:(NSInteger)row;
+- (void)locationButtonPressedFromRow:(NSInteger)row;
 - (void)userButtonPressedFromRow:(NSInteger)row;
 - (void)userProfilePressedWithId:(NSNumber *)userId;
 - (void)horizontalScrollingStarted;
@@ -23,8 +25,7 @@
 @interface TDPostView : UITableViewCell
 
 @property (nonatomic, weak) id <TDPostViewDelegate> delegate;
-@property (nonatomic) UILabel *usernameLabel; // Added over the text field to call usernameTapped
-@property (nonatomic) UITextField *usernameText; // Needed to get the field aligned
+@property (nonatomic) TTTAttributedLabel *usernameLabel;
 @property (nonatomic) UIImageView *previewImage;
 @property (nonatomic) UIImageView *userProfileImage;
 @property (nonatomic) TDUpdatingDateLabel *createdLabel;
