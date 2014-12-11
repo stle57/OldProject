@@ -229,7 +229,7 @@ static NSString *helpText = @"Please enter at least three characters.";
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (!self.searchingNearbyLocations || [self.searchStr isEqual:@""]) {
+    if (!self.searchingNearbyLocations || [self.searchStr isEqual:@""] || !self.searchStr.length) {
         return [self.nearbyLocations count];
     }
     else if (self.searchingExactLocation){
@@ -248,7 +248,7 @@ static NSString *helpText = @"Please enter at least three characters.";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if ((!self.searchingNearbyLocations) || [self.searchStr isEqual:@""]) {
+    if ((!self.searchingNearbyLocations) || [self.searchStr isEqual:@""] || !self.searchStr.length) {
         self.tableView.tableHeaderView = self.headerView;
 
         UITableViewCell *cell = [self createCell:indexPath data:self.nearbyLocations[indexPath.row]];
@@ -284,7 +284,7 @@ static NSString *helpText = @"Please enter at least three characters.";
         
         return cell;
 
-    } else if (filteredNearbyLocations.count == 0) {
+    } else if (self.searchStr.length && filteredNearbyLocations.count == 0) {
         self.tableView.tableHeaderView = self.headerView;
         UITableViewCell *cell = [self createCell:indexPath data:nil];
     
@@ -293,7 +293,6 @@ static NSString *helpText = @"Please enter at least three characters.";
     } else {
         self.tableView.tableHeaderView = self.headerView;
         UITableViewCell *cell;
-        
         if (indexPath.row == self.filteredNearbyLocations.count) {
             cell = [self createCell:indexPath data:nil];
         } else {
@@ -368,7 +367,7 @@ static NSString *helpText = @"Please enter at least three characters.";
         if (self.searchButtonPressed) {
             label = helpText;
             self.searchButtonPressed = NO;
-        } else {
+        } else if (self.searchStr.length){
             label = [NSString stringWithFormat:@"%@\"\%@\"", @"Search for ", self.searchStr];
         }
         cell.locationName.text = label;
@@ -421,9 +420,11 @@ static NSString *helpText = @"Please enter at least three characters.";
         return;
     }
     
-    // If we got here, we are filtering the nearby locations
-    [self filterContentForSearchText:searchText scope:nil];
-    [self.tableView reloadData];
+    if (self.searchStr.length) {
+        // If we got here, we are filtering the nearby locations
+        [self filterContentForSearchText:searchText scope:nil];
+        [self.tableView reloadData];
+    }
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
