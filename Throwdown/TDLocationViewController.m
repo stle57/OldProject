@@ -258,7 +258,7 @@ static NSString *helpText = @"Please enter at least 3 characters.";
         }
     
     } else if ([filteredNearbyLocations count] > 0) {
-        return [filteredNearbyLocations count] + 1;
+        return [filteredNearbyLocations count] + 1; // Add a row for the search row
     } else {
         return 1;
     }
@@ -269,25 +269,17 @@ static NSString *helpText = @"Please enter at least 3 characters.";
     if ((!self.searchingNearbyLocations) || [self.searchStr isEqual:@""]) {
         self.tableView.tableHeaderView = self.headerView;
 
-        TDLocationCell *cell = (TDLocationCell*)[tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_TD_LOCATION];
-        if (!cell) {
-            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_TD_LOCATION owner:self options:nil];
-            cell = [topLevelObjects objectAtIndex:0];
-        }
-        [self createCell:cell indexPath:indexPath data:self.nearbyLocations[indexPath.row]];
+        UITableViewCell *cell = [self createCell:indexPath data:self.nearbyLocations[indexPath.row]];
         
         return cell;
     } else if( self.searchingExactLocation && self.searchedLocationList.count){
         // We need to load the view with different data
-        TDLocationCell *cell = (TDLocationCell*)[tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_TD_LOCATION];
-        if (!cell) {
-            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_TD_LOCATION owner:self options:nil];
-            cell = [topLevelObjects objectAtIndex:0];
-        }
-        [self createCell:cell indexPath:indexPath data:self.searchedLocationList[indexPath.row]];
+        UITableViewCell *cell = [self createCell:indexPath data:self.searchedLocationList[indexPath.row]];
+        
         return cell;
     } else if (self.searchingExactLocation && !self.searchedLocationList.count) {
         self.tableView.tableHeaderView = nil;
+        
         TDNoResultsCell * cell = (TDNoResultsCell*)[tableView dequeueReusableCellWithIdentifier:@"TDNoResultsCell"];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoResultsCell" owner:self options:nil];
@@ -312,37 +304,30 @@ static NSString *helpText = @"Please enter at least 3 characters.";
 
     } else if (filteredNearbyLocations.count == 0) {
         self.tableView.tableHeaderView = self.headerView;
-        TDLocationCell *cell = (TDLocationCell*)[tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_TD_LOCATION];
-        if (!cell) {
-            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_TD_LOCATION owner:self options:nil];
-            cell = [topLevelObjects objectAtIndex:0];
-        }
-        
-        [self createCell:cell indexPath:indexPath data:nil];
+        UITableViewCell *cell = [self createCell:indexPath data:nil];
     
         return cell;
             
     } else {
         self.tableView.tableHeaderView = self.headerView;
-        
-        TDLocationCell *cell = (TDLocationCell*)[tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_TD_LOCATION];
-        if (!cell) {
-            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_TD_LOCATION owner:self options:nil];
-            cell = [topLevelObjects objectAtIndex:0];
-        }
+        UITableViewCell *cell;
         
         if (indexPath.row == self.filteredNearbyLocations.count) {
-            [self createCell:cell indexPath:indexPath data:nil];
+            cell = [self createCell:indexPath data:nil];
         } else {
-            [self createCell:cell indexPath:indexPath data:self.filteredNearbyLocations[indexPath.row]];
+            cell = [self createCell:indexPath data:self.filteredNearbyLocations[indexPath.row]];
         }
         return cell;
     }
     return nil;
 }
 
-- (void)createCell:(TDLocationCell*)cell indexPath:(NSIndexPath*)indexPath data:(NSDictionary*)data {
-    
+- (UITableViewCell*)createCell:(NSIndexPath*)indexPath data:(NSDictionary*)data {
+    TDLocationCell *cell = (TDLocationCell*)[self.tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_TD_LOCATION];
+    if (!cell) {
+        NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_TD_LOCATION owner:self options:nil];
+        cell = [topLevelObjects objectAtIndex:0];
+    }
     cell.topLine.hidden = indexPath.row != 0;
     
     CGRect topLineFrame = cell.topLine.frame;
@@ -358,9 +343,7 @@ static NSString *helpText = @"Please enter at least 3 characters.";
         NSString *locationString = [data objectForKey:@"name"];
         cell.locationName.text = locationString;
         
-        CGRect frame = CGRectMake(10,10,SCREEN_WIDTH, 22);
-        cell.locationName.frame = frame;
-        
+        // Format the address.
         NSString *address = @"";
         NSDictionary *locationData = [data objectForKey:@"location"];
         
@@ -415,6 +398,8 @@ static NSString *helpText = @"Please enter at least 3 characters.";
         cell.locationName.frame = frame;
         cell.tag = 1000;
     }
+    
+    return cell;
 }
 
 - (void)showActivity {
@@ -598,7 +583,7 @@ static NSString *helpText = @"Please enter at least 3 characters.";
     }
     
     [locationManager stopUpdatingLocation];
-    NSLog(@"didUpdateToLocation %@ from %@", self.currentLocation, oldLocation);
+    //NSLog(@"didUpdateToLocation %@ from %@", self.currentLocation, oldLocation);
     [self loadNearbyPlaces];
 
 }
