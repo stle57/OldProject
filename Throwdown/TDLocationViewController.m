@@ -28,14 +28,12 @@ static NSString *helpText = @"Please enter at least 3 characters.";
 @synthesize nearbyLocations;
 @synthesize searchStr;
 @synthesize delegate;
-@synthesize locationManager;
 
 - (void)dealloc {
     self.filteredNearbyLocations = nil;
     self.nearbyLocations = nil;
     self.searchedLocationList = nil;
     self.nearbyLocations = nil;
-    self.locationManager = nil;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -97,7 +95,7 @@ static NSString *helpText = @"Please enter at least 3 characters.";
     fourSquareLabel.frame = labelFrame;
     
     suggestedLabel.text = @"NEARBY";
-    suggestedLabel.font = [TDConstants fontRegularSized:13.0];
+    suggestedLabel.font = [TDConstants fontSemiBoldSized:13.0];
     suggestedLabel.textColor = [TDConstants helpTextColor];
     
     [self.headerView addSubview:suggestedLabel];
@@ -108,7 +106,6 @@ static NSString *helpText = @"Please enter at least 3 characters.";
     self.navLabel.text = @"Search Nearby Places";
     
     self.filteredNearbyLocations = [NSMutableArray arrayWithCapacity:[self.nearbyLocations count]];
-    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -130,28 +127,13 @@ static NSString *helpText = @"Please enter at least 3 characters.";
     tableFrame.size.width = SCREEN_WIDTH;
     tableFrame.size.height = SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height - self.searchBar.frame.size.height - [UIApplication sharedApplication].statusBarFrame.size.height;
     self.tableView.frame = tableFrame;
-    
-    //[self loadNearbyPlaces];
-    [self startLocationServices];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
-    
-}
 
-- (void)startLocationServices {
-    locationManager = [[CLLocationManager alloc] init];
-    [locationManager setDelegate:self];
+    [[TDLocationManager getSharedInstance]setDelegate:self];
+    [[TDLocationManager getSharedInstance]startUpdating];
     
-    //Replace the methods below with your required method name. //this is iOS8 call only
-    if ([self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)])
-    {
-        [self.locationManager requestWhenInUseAuthorization];
-    }
-    
-    locationManager.distanceFilter = 1000;
-    locationManager.desiredAccuracy = kCLLocationAccuracyBest;
-    [locationManager startUpdatingLocation];
 }
 
 - (void) loadNearbyPlaces {
@@ -521,7 +503,6 @@ static NSString *helpText = @"Please enter at least 3 characters.";
         self.tableView.contentInset = contentInsets;
         self.tableView.scrollIndicatorInsets = contentInsets;
     }];
-    //[self.tableView scrollToRowAtIndexPath:self.editingIndexPath atScrollPosition:UITableViewScrollPositionTop animated:YES];
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -572,21 +553,10 @@ static NSString *helpText = @"Please enter at least 3 characters.";
     }
 }
 
-- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
-{
-    self.currentLocation = [locations lastObject];
-    CLLocation *oldLocation;
-    if (locations.count > 1) {
-        oldLocation = [locations objectAtIndex:locations.count-2];
-    } else {
-        oldLocation = nil;
-    }
-    
-    [locationManager stopUpdatingLocation];
-    //NSLog(@"didUpdateToLocation %@ from %@", self.currentLocation, oldLocation);
+-(void) didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation{
+    self.currentLocation = newLocation;
+    [[TDLocationManager getSharedInstance]stopUpdating];
     [self loadNearbyPlaces];
-
 }
-
 
 @end

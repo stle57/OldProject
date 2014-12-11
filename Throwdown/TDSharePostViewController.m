@@ -120,18 +120,28 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
     }
     
     if (self.locationData) {
-        
+        NSDictionary *locationDict = [self.locationData objectForKey:@"location"];
         NSString *latLon = [NSString stringWithFormat:@"%@,%@", [[self.locationData objectForKey:@"location"] objectForKey:@"lat"], [[self.locationData objectForKey:@"location"] objectForKey:@"lng"]];
         [location setObject:[self.locationData objectForKey:@"id"] forKey:@"venue_id"];
         [location setObject:[self.locationData objectForKey:@"name"] forKey:@"name"];
-        [location setObject:[[self.locationData objectForKey:@"location"] objectForKey:@"address"] forKey:@"address"];
-        [location setObject:[[self.locationData objectForKey:@"location"] objectForKey:@"city"] forKey:@"city"];
-        [location setObject:[[self.locationData objectForKey:@"location"] objectForKey:@"state"] forKey:@"state"];
-        [location setObject:[[self.locationData objectForKey:@"location"] objectForKey:@"country"] forKey:@"country"];
-        [location setObject:[[self.locationData objectForKey:@"location"] objectForKey:@"cc"] forKey:@"cc"];
         [location setObject:latLon forKey:@"ll"];
 
+        if ([locationDict objectForKey:@"address"] && ![[locationDict objectForKey:@"address"] isEqual:[NSNull null]]) {
+            [location setObject:[locationDict objectForKey:@"address"] forKey:@"address"];
+        }
+        if ([locationDict objectForKey:@"city"] && ![[locationDict objectForKey:@"city"] isEqual:[NSNull null]]) {
+            [location setObject:[locationDict objectForKey:@"city"] forKey:@"city"];
+        }
+        if ([locationDict objectForKey:@"state"] && ![[locationDict objectForKey:@"state"] isEqual:[NSNull null]]) {
 
+            [location setObject:[locationDict objectForKey:@"state"] forKey:@"state"];
+        }
+        if ([locationDict objectForKey:@"country"] && ![[locationDict objectForKey:@"country"] isEqual:[NSNull null]]) {
+            [location setObject:[locationDict objectForKey:@"country"] forKey:@"country"];
+        }
+        if ([locationDict objectForKey:@"cc"] && ![[locationDict objectForKey:@"cc"] isEqual:[NSNull null]]) {
+            [location setObject:[locationDict objectForKey:@"cc"] forKey:@"cc"];
+        }
     }
     [[NSUserDefaults standardUserDefaults] synchronize];
 

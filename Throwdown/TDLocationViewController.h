@@ -10,13 +10,14 @@
 #import <CoreLocation/CoreLocation.h>
 
 #import "TDActivityIndicator.h"
+#import "TDLocationManager.h"
+
 @protocol TDLocationViewControllerDelegate <NSObject>
 @optional
-//- (void)locationAdded:(NSString*)locationName;
 - (void)locationAdded:(NSDictionary *)data;
 @end
 
-@interface TDLocationViewController : UIViewController<UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate, CLLocationManagerDelegate>
+@interface TDLocationViewController : UIViewController<TDLocationManagerHandlerDelegate, UISearchBarDelegate, UITableViewDataSource, UITableViewDelegate>
 
 @property (nonatomic, weak) id <TDLocationViewControllerDelegate> delegate;
 @property (weak, nonatomic) IBOutlet UILabel *navLabel;
@@ -27,7 +28,6 @@
 @property (nonatomic) NSArray *nearbyLocations;
 @property (nonatomic) NSMutableArray *searchedLocationList;
 @property (nonatomic) NSMutableArray *filteredNearbyLocations;
-@property (nonatomic) CLLocationManager *locationManager;
 
 @property (retain) UIView *headerView;
 @property (nonatomic) BOOL gotFromServer;

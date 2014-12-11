@@ -76,6 +76,7 @@
 		4D3352D619A29CEC007B3E06 /* iRate.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 4D3352D519A29CEC007B3E06 /* iRate.bundle */; };
 		4D36F51919CCE66700A279A5 /* TDSendInviteController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D36F51719CCE66700A279A5 /* TDSendInviteController.m */; };
 		4D36F51A19CCE66700A279A5 /* TDSendInviteController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D36F51819CCE66700A279A5 /* TDSendInviteController.xib */; };
+		4D38426E1A398FD3001F64B4 /* TDLocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D38426D1A398FD3001F64B4 /* TDLocationManager.m */; };
 		4D3DDDE219DDB2790057A8B2 /* TDAddressBookAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D3DDDE119DDB2790057A8B2 /* TDAddressBookAPI.m */; };
 		4D3EA8E21A379BEE0014F2A6 /* TDNoResultsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D3EA8DD1A379BEE0014F2A6 /* TDNoResultsCell.m */; };
 		4D3EA8E31A379BEE0014F2A6 /* TDNoResultsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D3EA8DE1A379BEE0014F2A6 /* TDNoResultsCell.xib */; };
@@ -324,6 +325,8 @@
 		4D36F51619CCE66700A279A5 /* TDSendInviteController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSendInviteController.h; sourceTree = "<group>"; };
 		4D36F51719CCE66700A279A5 /* TDSendInviteController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSendInviteController.m; sourceTree = "<group>"; };
 		4D36F51819CCE66700A279A5 /* TDSendInviteController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDSendInviteController.xib; sourceTree = "<group>"; };
+		4D38426C1A398FD3001F64B4 /* TDLocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDLocationManager.h; sourceTree = "<group>"; };
+		4D38426D1A398FD3001F64B4 /* TDLocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDLocationManager.m; sourceTree = "<group>"; };
 		4D3DDDE019DDB2790057A8B2 /* TDAddressBookAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDAddressBookAPI.h; sourceTree = "<group>"; };
 		4D3DDDE119DDB2790057A8B2 /* TDAddressBookAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDAddressBookAPI.m; sourceTree = "<group>"; };
 		4D3EA8DC1A379BEE0014F2A6 /* TDNoResultsCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDNoResultsCell.h; sourceTree = "<group>"; };
@@ -921,6 +924,8 @@
 				A124E93819B019A100DC65C1 /* TDURLHelper.m */,
 				A1D7072F19E0C3E800ECB221 /* TDKeyboardObserver.h */,
 				A1D7073019E0C3E800ECB221 /* TDKeyboardObserver.m */,
+				4D38426C1A398FD3001F64B4 /* TDLocationManager.h */,
+				4D38426D1A398FD3001F64B4 /* TDLocationManager.m */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -1544,6 +1549,7 @@
 				A1AB84CC1A1B0032007DEF64 /* ScrollWheel.m in Sources */,
 				A1C2481118C6B9CA00F187D9 /* TDProgressIndicator.m in Sources */,
 				4D1A84A91A14A4C10059645A /* TDRateAppView.m in Sources */,
+				4D38426E1A398FD3001F64B4 /* TDLocationManager.m in Sources */,
 				A1D7072B19DBE8ED00ECB221 /* ObservingPlayerItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
