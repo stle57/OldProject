@@ -24,6 +24,7 @@
 -(void)showLocationActionSheet:(NSString*)location;
 -(void)prButtonPressed;
 -(void)postButtonEnabled:(BOOL)enable;
+-(void)commentTextViewBeginResponder:(BOOL)yes;
 @end
 
 @interface TDCreatePostHeaderCell : UICollectionViewCell<UITextViewDelegate, NSLayoutManagerDelegate, TDUserListViewDelegate, TDKeyboardObserverDelegate>

@@ -191,6 +191,9 @@ static NSString  *location = @"Location";
 - (void)textViewDidBeginEditing:(UITextView *)inView
 {
     [self performSelector:@selector(setCursorToBeginning:) withObject:inView afterDelay:0.01];
+    if (delegate && [delegate respondsToSelector:@selector(commentTextViewBeginResponder:)]) {
+        [delegate commentTextViewBeginResponder:YES];
+    }
 }
 
 - (void)setCursorToBeginning:(UITextView *)inView

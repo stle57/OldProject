@@ -178,7 +178,7 @@ static int const kCellPerRow = 3;
     if ([layout isKindOfClass:[CSStickyHeaderFlowLayout class]]) {
         layout.parallaxHeaderReferenceSize = CGSizeMake(SCREEN_WIDTH, self.postHeaderCell.commentTextView.frame.size.height + self.postHeaderCell.optionsView.frame.size.height + 15); // 15 is kTextViewMargin from postheadercell
     }
-    //[self minimizeButtonPressed];
+    [self minimizeButtonPressed];
     
 }
 
@@ -207,6 +207,7 @@ static int const kCellPerRow = 3;
     __block NSMutableArray *tmpAssets = [@[] mutableCopy];
     // 1
     ALAssetsLibrary *assetsLibrary = [TDCreatePostViewController defaultAssetsLibrary];
+    
     // 2
     [assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
         [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
@@ -227,10 +228,19 @@ static int const kCellPerRow = 3;
         //[self.collectionView reloadData];
     } failureBlock:^(NSError *error) {
         NSLog(@"Error loading images %@", error);
+        NSString *errorMessage = nil;
+        switch ([error code]) {
+            case ALAssetsLibraryAccessUserDeniedError:
+            case ALAssetsLibraryAccessGloballyDeniedError:
+                errorMessage = @"The user has declined access to it.";
+                break;
+            default:
+                errorMessage = @"Reason unknown.";
+                break;
+        }
     }];
-    
-
 }
+
 - (void)cancelUpload {
     if (self.filename) {
         [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUploadCancelled object:nil userInfo:@{ @"filename":[self.filename copy] }];
@@ -332,12 +342,7 @@ static int const kCellPerRow = 3;
 #pragma mark - UICollectionViewDelegate
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
     if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {
-        NSDictionary *obj = self.sections[indexPath.section];
-        
-        TDPhotoCellCollectionViewCell *cell = [collectionView dequeueReusableSupplementaryViewOfKind:kind
-                                                          withReuseIdentifier:@"sectionHeader"
-                                                                 forIndexPath:indexPath];
-        
+        return nil;
     } else if ([kind isEqualToString:CSStickyHeaderParallaxHeader]) {
         UICollectionReusableView *cell = [collectionView dequeueReusableSupplementaryViewOfKind:kind
                                                                             withReuseIdentifier:CELL_IDENTIFIER_CREATE_POSTHEADER
@@ -403,6 +408,11 @@ static int const kCellPerRow = 3;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
+-(void)commentTextViewBeginResponder:(BOOL)yes {
+    if(yes) {
+        [self minimizeButtonPressed];
+    }
+}
 - (void) showLocationActionSheet:location {
     NSString *newPlaceStr = @"Select Another Place";
     NSString *removeStr = @"Remove Location";
@@ -495,6 +505,7 @@ static int const kCellPerRow = 3;
 
             }
         } else {
+            [self.collectionView setContentOffset:self.origContentOffset animated:NO];
             [self performSegueWithIdentifier:@"OpenRecordViewSegue" sender:self];
         }
     } else {
