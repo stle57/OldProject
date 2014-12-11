@@ -17,6 +17,7 @@ static int const kTextViewConstraint = 84;
 static int const kTextViewHeightWithUserList = 70;
 static int const kTextViewMargin = 15;
 static int const kMaxLocationStrLength = 14;
+static int const kBezierMargin = 18;
 static NSString  *newPRStr = @"New PR";
 static NSString  *location = @"Location";
 
@@ -31,7 +32,9 @@ static NSString  *location = @"Location";
     self.commentTextView.font = [TDConstants fontRegularSized:17];
     self.commentTextView.layoutManager.delegate = self;
     [self.commentTextView setPlaceholder:@"What's happening?"];
-    //self.commentTextView.textContainerInset = UIEdgeInsetsMake(0.f, 0.f, 0.0f, 0.f);
+    CGRect commentFrame = self.commentTextView.frame;
+    commentFrame.size.width = SCREEN_WIDTH - kTextViewMargin;
+    self.commentTextView.frame = commentFrame;
     
     // preloading images
     self.prOffImage = [UIImage imageNamed:@"trophy_off"];
@@ -117,12 +120,11 @@ static NSString  *location = @"Location";
     [self.commentTextView addSubview:self.mediaButton];
     [self.commentTextView addSubview:self.removeButton];
     
-    CGRect bezFrame = self.mediaButton.frame;
-    bezFrame.origin.x = SCREEN_WIDTH - self.mediaButton.frame.size.width - kTextViewMargin - 18;
-    bezFrame.size.width = bezFrame.size.width + 15;
-    UIBezierPath *rect   = [ UIBezierPath bezierPathWithRect: bezFrame ];
+    CGRect bezFrame = CGRectMake(self.mediaButton.frame.origin.x- kBezierMargin, self.mediaButton.frame.origin.y, self.mediaButton.frame.size.width + kBezierMargin +kTextViewMargin , self.mediaButton.frame.size.height);
+    UIBezierPath *rect   = [ UIBezierPath bezierPathWithRect: bezFrame];
     
     self.commentTextView.textContainer.exclusionPaths = @[rect];
+
 }
 
 - (void)dealloc {
