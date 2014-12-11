@@ -214,14 +214,15 @@ static int const kCellPerRow = 3;
             if(result)
             {
                 // 3
+                debug NSLog(@" date is%@", [result valueForProperty:ALAssetPropertyDate]);
                 [[TDCurrentUser sharedInstance] didAskForPhotos:YES];
                 [tmpAssets addObject:result];
             }
         }];
 
         // 4
-        //NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:NO];
-        //self.assets = [tmpAssets sortedArrayUsingDescriptors:@[sort]];
+//        NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:NO];
+//        self.assets = [tmpAssets sortedArrayUsingDescriptors:@[sort]];
         self.assets = tmpAssets;
         
         // 5
@@ -404,8 +405,14 @@ static int const kCellPerRow = 3;
 - (void)openLocationViewController {
     TDLocationViewController *vc = [[TDLocationViewController alloc] initWithNibName:@"TDLocationViewController" bundle:nil ];
     vc.delegate = self;
-    //vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    [self.navigationController pushViewController:vc animated:YES];
+    
+    // - Created a new navigation controller because pushing view controller onto existing navigation cannot
+    // - do a bottom to top transition.
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
+    navController.navigationBar.barStyle = UIBarStyleDefault;
+    navController.navigationBar.translucent = YES;
+    [self.navigationController presentViewController:navController animated:YES completion:nil];
+
 }
 
 -(void)commentTextViewBeginResponder:(BOOL)yes {

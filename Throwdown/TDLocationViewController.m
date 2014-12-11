@@ -209,6 +209,7 @@ static NSString *helpText = @"Please enter at least three characters.";
 
 - (void) leave {
     [self.navigationController popViewControllerAnimated:YES];
+    [self.navigationController dismissViewControllerAnimated:YES completion:nil];
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     return 0.0;
