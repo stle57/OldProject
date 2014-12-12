@@ -103,7 +103,7 @@ static NSString *helpText = @"Please enter at least three characters.";
     self.tableView.tableHeaderView = self.headerView;
 
     // Title
-    self.navLabel.text = @"Search Nearby Place";
+    self.navLabel.text = @"Select Nearby Place";
     
     self.filteredNearbyLocations = [NSMutableArray arrayWithCapacity:[self.nearbyLocations count]];
 }
@@ -278,11 +278,11 @@ static NSString *helpText = @"Please enter at least three characters.";
         
         cell.descriptionLabel.frame = CGRectMake(0, descripFrame.origin.y, SCREEN_WIDTH, 57);
         CGFloat lineHeight = 19;
-        NSString *text = @"Sorry, we weren't able to find the location you're looking for.";
+        NSString *text = @"Sorry, we weren't able to find\nthe location you're looking for.";
         attString = [TDViewControllerHelper makeParagraphedTextWithString:text font:[TDConstants fontRegularSized:15.0] color:[TDConstants headerTextColor] lineHeight:lineHeight lineHeightMultipler:(lineHeight/15.0)];
         cell.descriptionLabel.attributedText = attString;
         cell.descriptionLabel.textAlignment = NSTextAlignmentCenter;
-        
+        cell.userInteractionEnabled = NO;
         return cell;
 
     } else if (self.searchStr.length && filteredNearbyLocations.count == 0) {
@@ -526,7 +526,8 @@ static NSString *helpText = @"Please enter at least three characters.";
     } else if (self.searchingNearbyLocations && self.filteredNearbyLocations.count ) {
         NSDictionary *data = self.filteredNearbyLocations[indexPath.row];
         [self sendLocationDatatoPost:data];
-    } else {
+    }
+    else {
         NSDictionary *data = self.nearbyLocations[indexPath.row];
         [self sendLocationDatatoPost:data];
     }
