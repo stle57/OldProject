@@ -28,8 +28,8 @@
     _asset = asset;
 }
 
-- (void) removeOverlay {
-    [self.hitStateOverlay removeFromSuperview];
+- (NSDate*) date {
+    return [self.asset valueForProperty:ALAssetPropertyDate];
 }
 @end
 

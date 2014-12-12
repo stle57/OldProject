@@ -32,6 +32,8 @@
 //static int const kTextViewConstraint = 84;
 //static int const kTextViewHeightWithUserList = 70;
 static int const kCellPerRow = 3;
+static const NSUInteger BufferSize = 1024*1024;
+
 @interface TDCreatePostViewController () <UITextViewDelegate>
 @property (nonatomic)  TDCreatePostHeaderCell *postHeaderCell;
 @property (nonatomic) UICollectionView *collectionView;
@@ -214,17 +216,19 @@ static int const kCellPerRow = 3;
             if(result)
             {
                 // 3
-                debug NSLog(@" date is%@", [result valueForProperty:ALAssetPropertyDate]);
-                [[TDCurrentUser sharedInstance] didAskForPhotos:YES];
-                [tmpAssets addObject:result];
+                //debug NSLog(@" date is%@", [result valueForProperty:ALAssetPropertyDate]);
+                NSString *videoURL = [[result defaultRepresentation] UTI];
+                NSDictionary *photoInfo = @{@"asset" : result, @"date" : [result valueForProperty:ALAssetPropertyDate], @"uti" :videoURL};
+                debug NSLog(@"videoURL-%@", videoURL);
+                [tmpAssets addObject:photoInfo];
             }
         }];
 
         // 4
-//        NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:NO];
-//        self.assets = [tmpAssets sortedArrayUsingDescriptors:@[sort]];
-        self.assets = tmpAssets;
-        
+        NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:NO];
+        self.assets = [tmpAssets sortedArrayUsingDescriptors:@[sort]];
+        [[TDCurrentUser sharedInstance] didAskForPhotos:YES];
+
         // 5
         //[self.collectionView reloadData];
     } failureBlock:^(NSError *error) {
@@ -249,6 +253,36 @@ static int const kCellPerRow = 3;
     }
 }
 
+//- (UIImage *)imageFromVideoURL:(NSURL*)videoURL
+//{
+//    // result
+//    UIImage *image = nil;
+//    
+//    // AVAssetImageGenerator
+//    AVAsset *asset = [[AVURLAsset alloc] initWithURL:videoURL options:nil];;
+//    AVAssetImageGenerator *imageGenerator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
+//    imageGenerator.appliesPreferredTrackTransform = YES;
+//    
+//    // calc midpoint time of video
+//    Float64 durationSeconds = CMTimeGetSeconds([asset duration]);
+//    CMTime midpoint = CMTimeMakeWithSeconds(durationSeconds/2.0, 600);
+//    
+//    // get the image from
+//    NSError *error = nil;
+//    CMTime actualTime;
+//    CGImageRef halfWayImage = [imageGenerator copyCGImageAtTime:midpoint actualTime:&actualTime error:&error];
+//    
+//    if (halfWayImage != NULL)
+//    {
+//        // CGImage to UIImage
+//        image = [[UIImage alloc] initWithCGImage:halfWayImage];
+//        [dic setValue:image forKey:@"name"];
+//        NSLog(@"Values of dictionary==>%@", dic);
+//        NSLog(@"Videos Are:%@",videoURL);
+//        CGImageRelease(halfWayImage);
+//    }
+//    return image;
+//}
 #pragma mark - segue / vc to vc interface
 
 - (void)addMedia:(NSString *)filename thumbnail:(NSString *)thumbnailPath isOriginal:(BOOL)original {
@@ -319,7 +353,8 @@ static int const kCellPerRow = 3;
         //cell.backgroundColor = [UIColor redColor];
         
     } else {
-        ALAsset *asset = self.assets[indexPath.row];
+        NSDictionary *assetDict = self.assets[indexPath.row];
+        ALAsset *asset = [assetDict objectForKey:@"asset"];
         cell.asset = asset;
         
         UIImage *image = [UIImage imageWithCGImage:[asset thumbnail]];
@@ -479,8 +514,8 @@ static int const kCellPerRow = 3;
             self.assetImage = nil;
         } else {
             NSString *filename = [NSHomeDirectory() stringByAppendingPathComponent:kPhotoFilePath];
-            //[vc editPhotoAt:filename metadata:self.currentCaptureMetadata];
-            //self.currentCaptureMetadata = nil;
+//            [vc editPhotoAt:filename metadata:self.currentCaptureMetadata];
+//            self.currentCaptureMetadata = nil;
         }
     } else if ([@"OpenShareWithViewSegue" isEqualToString:segue.identifier]) {
         NSString *comment = [self.postHeaderCell.commentTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
@@ -521,12 +556,16 @@ static int const kCellPerRow = 3;
         ALAssetRepresentation *defaultRepresentation = cell.asset.defaultRepresentation;
         if ([[cell.asset valueForProperty:ALAssetPropertyType] isEqualToString:ALAssetTypeVideo]) {
             self.assetURL = [defaultRepresentation url];
+            NSError *error;
+            if(![self exportDataToURL:defaultRepresentation error:&error]) {
+                debug NSLog(@"Error:%@", [error localizedDescription]);
+            }
         } else if([[cell.asset valueForProperty:ALAssetPropertyType] isEqualToString:ALAssetTypePhoto]) {
             CGImageRef iref = [defaultRepresentation fullResolutionImage];
             self.assetImage = [UIImage imageWithCGImage:iref scale:[defaultRepresentation scale] orientation:(UIImageOrientation)[defaultRepresentation orientation]];
         }
-        [self performSegueWithIdentifier:@"EditVideoSegue" sender:nil];
         [self minimizeButtonPressed];
+        [self performSegueWithIdentifier:@"EditVideoSegue" sender:nil];
     }
 }
 
@@ -625,5 +664,36 @@ static int const kCellPerRow = 3;
 
 - (BOOL)disablesAutomaticKeyboardDismissal {
     return NO;
+}
+
+- (BOOL) exportDataToURL:(ALAssetRepresentation*)defaultRepresentation error:(NSError**) error
+{
+    NSURL *selectedURLVideo = [NSURL fileURLWithPath:[NSHomeDirectory() stringByAppendingPathComponent:kAssetsVideoFilePath]];
+    [[NSFileManager defaultManager] createFileAtPath:[selectedURLVideo path] contents:nil attributes:nil];
+    NSFileHandle *handle = [NSFileHandle fileHandleForWritingToURL:selectedURLVideo error:error];
+    if (!handle) {
+        [*error localizedDescription];
+        return NO;
+    }
+    
+    ALAssetRepresentation *rep = defaultRepresentation;
+    uint8_t *buffer = calloc(BufferSize, sizeof(*buffer));
+    NSUInteger offset = 0, bytesRead = 0;
+    
+    do {
+        @try {
+            bytesRead = [rep getBytes:buffer fromOffset:offset length:BufferSize error:error];
+            [handle writeData:[NSData dataWithBytesNoCopy:buffer length:bytesRead freeWhenDone:NO]];
+            offset += bytesRead;
+        } @catch (NSException *exception) {
+            free(buffer);
+            return NO;
+        }
+    } while (bytesRead > 0);
+    
+    free(buffer);
+    
+    self.assetURL = selectedURLVideo;
+    return YES;
 }
 @end

@@ -12,5 +12,5 @@
 @interface TDPhotoCellCollectionViewCell : UICollectionViewCell
 @property(nonatomic, strong) ALAsset *asset;
 
-- (void)removeOverlay;
+- (NSDate*) date;
 @end

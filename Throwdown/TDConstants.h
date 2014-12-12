@@ -66,6 +66,7 @@ static NSString *const kApplicationUUIDKey = @"TDApplicationUUIDKey";
 static NSString *const kVideoTrimmedFilePath = @"Documents/current_trimmed_video.mp4";
 static NSString *const kVideoExportedFilePath = @"Documents/current_exported_video.mp4";
 static NSString *const kThumbnailExportFilePath = @"Documents/current_thumbnail.jpg";
+static NSString *const kAssetsVideoFilePath = @"Documents/current_video.mp4";
 
 static NSString *const kPhotoFilePath = @"Documents/current_photo.jpg";
 static NSString *const kRecordedMovieFilePath = @"Documents/current_recorded_video.mov";
