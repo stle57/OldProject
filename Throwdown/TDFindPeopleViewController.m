@@ -111,7 +111,6 @@
     [self.headerView addSubview:suggestedLabel];
     self.tableView.tableHeaderView = self.headerView;
 
-    
     // Title
     self.navLabel.text = @"Find People";
     self.inviteButton.hidden = NO;
@@ -126,31 +125,33 @@
     emptyCell.invitePeopleButton.hidden = YES;
     emptyCell.findPeopleButton.hidden = YES;
     emptyCell.backgroundColor = [TDConstants lightBackgroundColor];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userFollowed:) name:TDNotificationUserFollow object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userUnfollowed:) name:TDNotificationUserUnfollow object:nil];
+    [self loadData];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:NO animated:animated];
     [[UILabel appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants commentTimeTextColor]];
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setFont:[TDConstants fontRegularSized:16.0]];
-    
+
     CGRect frame = self.searchBar.frame;
     frame.size.width = SCREEN_WIDTH;
     self.searchBar.frame = frame;
     [self.searchBar sizeToFit];
-    
+
     CGRect tableFrame = self.tableView.frame;
     tableFrame.size.width = SCREEN_WIDTH;
     tableFrame.size.height = SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height - self.searchBar.frame.size.height - [UIApplication sharedApplication].statusBarFrame.size.height;
     self.tableView.frame = tableFrame;
-    
-    [self loadData];
-    
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 
 }
 
-- (void) loadData {
+- (void)loadData {
     self.gotFromServer = NO;
     self.activityIndicator.text.text = @"Loading";
     [self showActivity];
@@ -174,32 +175,12 @@
                     [self hideActivity];
                 }
             }];
-//            self.gotFromServer = YES;
-//            [self.tableView reloadData];
-//            [self hideActivity];
         } else {
             self.gotFromServer = NO;
             [self hideActivity];
         }
     }];
-    
-//    [[TDUserAPI sharedInstance] getCommunityUserList:^(BOOL success, NSArray *returnList) {
-//        if (success && returnList && returnList.count > 0) {
-//            self.tdUsers = [returnList copy];
-//            if (self.searchText.length > 0) {
-//                [self filterContentForSearchText:self.searchText scope:nil];
-//            }
-//            self.gotFromServer = YES;
-//            [self.tableView reloadData];
-//            [self hideActivity];
-//        } else {
-//            self.gotFromServer = NO;
-//            [self hideActivity];
-//        }
-//    }];
-    
 }
-
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -228,7 +209,42 @@
     [self.navigationController presentViewController:navController animated:YES completion:nil];
 }
 
+#pragma mark - Follow and unfollow notification
+
+- (void)userFollowed:(NSNotification *)n {
+    self.filteredUsersArray = [self changeFollowingForUserId:n.object to:YES inList:self.filteredUsersArray];
+    self.suggestedUsers = [self changeFollowingForUserId:n.object to:YES inList:self.suggestedUsers];
+    self.tdUsers = [self changeFollowingForUserId:n.object to:YES inList:self.tdUsers];
+    [self.tableView reloadData];
+}
+
+- (void)userUnfollowed:(NSNotification *)n {
+    self.filteredUsersArray = [self changeFollowingForUserId:n.object to:NO inList:self.filteredUsersArray];
+    self.suggestedUsers = [self changeFollowingForUserId:n.object to:NO inList:self.suggestedUsers];
+    self.tdUsers = [self changeFollowingForUserId:n.object to:NO inList:self.tdUsers];
+    [self.tableView reloadData];
+}
+
+- (NSMutableArray *)changeFollowingForUserId:(NSNumber *)userId to:(BOOL)following inList:(NSArray *)list {
+    if (list) {
+        NSMutableArray *newList = [[NSMutableArray alloc] init];
+        for (int c = 0; c < [list count]; c++) {
+            NSDictionary *user = [list objectAtIndex:c];
+            if ([[user objectForKey:@"id"] isEqualToNumber:userId]) {
+                NSMutableDictionary *newUser = [user mutableCopy];
+                [newUser setObject:[[NSNumber alloc] initWithBool:following] forKey:@"following"];
+                [newList addObject:newUser];
+            } else {
+                [newList addObject:user];
+            }
+        }
+        return newList;
+    }
+    return nil;
+}
+
 #pragma mark UITableViewDelegate
+
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     return 0.0;
 }
@@ -294,7 +310,6 @@
             return emptyCell;
         } else {
             NSArray *object = [self.suggestedUsers objectAtIndex:current];
-            
             TDFollowProfileCell *cell = [self createCell:indexPath tableView:tableView object:object];
             return cell;
         }
@@ -407,7 +422,7 @@
     }
 
     
-    BOOL following =[[object valueForKey:@"following"] boolValue];
+    BOOL following = [[object valueForKey:@"following"] boolValue];
     
     if (!following) {
         // Not follow - change action button
@@ -455,7 +470,6 @@
 }
 
 - (void)createLabels {
-
     NSString *text1 = @"No matches found";
     UILabel *noMatchesLabel =
     [[UILabel alloc] initWithFrame:CGRectMake(0, 30, SCREEN_WIDTH, 100)];
@@ -481,16 +495,17 @@
 }
 
 #pragma mark UISearchBarDelegate
+
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
     self.searchingActive = YES;
     [[UITextField appearanceWhenContainedIn:[UISearchBar class], nil] setTextColor:[TDConstants headerTextColor]];
     self.view.backgroundColor = [TDConstants lightBackgroundColor];
     
     [self searchBar:searchBar activate:YES];
-    [self loadData];
     [self searchBar:self.searchBar textDidChange:self.searchBar.text];
     
 }
+
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText {
     if (searchText.length > 0) {
         [disableViewOverlay removeFromSuperview];
@@ -501,8 +516,8 @@
 
     [self.tableView reloadData];
 }
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     UITouch *touch = [[event allTouches] anyObject];
     if ([self.searchBar isFirstResponder] && [touch view] != self.searchBar)
     {
@@ -515,27 +530,24 @@
 - (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar {
     self.searchingActive = NO;
     [self searchBar:self.searchBar activate:NO];
-    [self loadData];
 }
 
 #pragma mark Content Filtering
-- (void)filterContentForSearchText:(NSString*)searchText scope:(NSString*)scope
-{
+
+- (void)filterContentForSearchText:(NSString*)searchText scope:(NSString*)scope {
     // Update the filtered array based on the search text and scope.
-    
     // Remove all objects from the filtered search array
     [self.filteredUsersArray removeAllObjects];
-    
+
     // Filter the arraphy using NSPredicate
     NSString *regexString = [NSString stringWithFormat:@".*\\B%@.*", searchText];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(SELF.username matches[c] %@) OR (SELF.name matches[c] %@)", regexString, regexString];
     NSArray *tempArray = [self.tdUsers filteredArrayUsingPredicate:predicate];
-    
     self.filteredUsersArray = [NSMutableArray arrayWithArray:tempArray];
 }
 
-
 #pragma mark - TDFollowCellProfileDelegate
+
 - (void)removeFromInviteList:(UITableView*)tableView indexPath:(NSIndexPath*)indexPath {
     // Remove from invite list on
     if (self.inviteList[indexPath.row] != nil) {
@@ -617,67 +629,23 @@
 - (void)actionButtonPressedFromRow:(NSInteger)row tag:(NSInteger)tag userId:(NSNumber *)userId{
     self.currentRow = row;
     
-    NSNumber *id = nil;
-    
-    if(self.searchingActive) {
-        id = [[self.filteredUsersArray objectAtIndex:row] valueForKeyPath:@"id"];
-    } else {
-        id = [[self.suggestedUsers objectAtIndex:row] valueForKeyPath:@"id"];
-    }
-    
     if (tag == kFollowButtonTag) {
-        TDFollowProfileCell * cell;
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
-        UITableViewCell * modifyCell = [self.tableView cellForRowAtIndexPath:indexPath];
-        
-        if(modifyCell != nil) {
-            cell = (TDFollowProfileCell*)modifyCell;
-            // Got the cell, change the button
-            UIImage * buttonImage = [UIImage imageNamed:@"btn-small-following.png"];
-            [cell.actionButton setImage:buttonImage forState:UIControlStateNormal];
-            [cell.actionButton setImage:[UIImage imageNamed:@"btn-small-following-hit.png"] forState:UIControlStateHighlighted];
-            [cell.actionButton setImage:[UIImage imageNamed:@"btn-small-following-hit.png"] forState:UIControlStateSelected];
-            [cell.actionButton setTag:kFollowingButtonTag];
-            
-        }
-        // Send follow user to server
         [[TDUserAPI sharedInstance] followUser:userId callback:^(BOOL success) {
-            if (success) {
-                // Send notification to update user profile stat button-add
-                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[[TDCurrentUser sharedInstance] currentUserObject].userId userInfo:@{TD_INCREMENT_STRING: @1}];
-            } else {
+            if (!success) {
                 [[TDAppDelegate appDelegate] showToastWithText:@"Error occured.  Please try again." type:kToastType_Warning payload:@{} delegate:nil];
-                // Switch button back
-                if (cell != nil) {
-                    // Got the cell, change the button
-                    UIImage * buttonImage = [UIImage imageNamed:@"btn-small-follow.png"];
-                    [cell.actionButton setImage:buttonImage forState:UIControlStateNormal];
-                    [cell.actionButton setImage:[UIImage imageNamed:@"btn-small-follow-hit.png"] forState:UIControlStateHighlighted];
-                    [cell.actionButton setImage:[UIImage imageNamed:@"btn-small-follow-hit.png"] forState:UIControlStateSelected];
-                    [cell.actionButton setTag:kFollowButtonTag];
-                }
             }
         }];
+
     } else if (tag == kFollowingButtonTag) {
-        if (self.searchingActive) {
-            NSString *reportText = [NSString stringWithFormat:@"Unfollow @%@", [[self.filteredUsersArray objectAtIndex:row] valueForKeyPath:@"username"]];
-            UIActionSheet * actionSheet = [[UIActionSheet alloc] initWithTitle:nil
-                                                                      delegate:self
-                                                             cancelButtonTitle:@"Cancel"
-                                                        destructiveButtonTitle:reportText
-                                                             otherButtonTitles:nil, nil];
-            [actionSheet showInView:self.view];
-        } else {
-            NSString *reportText = [NSString stringWithFormat:@"Unfollow @%@", [[self.suggestedUsers objectAtIndex:row] valueForKeyPath:@"username"]];
-            UIActionSheet * actionSheet = [[UIActionSheet alloc] initWithTitle:nil
-                                                                      delegate:self
-                                                             cancelButtonTitle:@"Cancel"
-                                                        destructiveButtonTitle:reportText
-                                                             otherButtonTitles:nil, nil];
-            [actionSheet showInView:self.view];
-        }
+
+        NSString *reportText = [NSString stringWithFormat:@"Unfollow @%@", [[(self.searchingActive ? self.filteredUsersArray : self.suggestedUsers) objectAtIndex:row] valueForKeyPath:@"username"]];
+        UIActionSheet * actionSheet = [[UIActionSheet alloc] initWithTitle:nil
+                                                                  delegate:self
+                                                         cancelButtonTitle:@"Cancel"
+                                                    destructiveButtonTitle:reportText
+                                                         otherButtonTitles:nil, nil];
+        [actionSheet showInView:self.view];
     }
-    
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
@@ -687,45 +655,15 @@
     } else {
         userId = [[self.suggestedUsers objectAtIndex:self.currentRow] valueForKeyPath:@"id"];
     }
-    
-    TDFollowProfileCell * cell;
+
     if (buttonIndex == actionSheet.destructiveButtonIndex) {
-        // If confirmed, switch the button
-        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.currentRow inSection:0];
-        UITableViewCell * modifyCell = [self.tableView cellForRowAtIndexPath:indexPath];
-        if(modifyCell != nil) {
-            cell = (TDFollowProfileCell*)modifyCell;
-            // Got the cell, change the button
-            UIImage * buttonImage = [UIImage imageNamed:@"btn-small-follow.png"];
-            [cell.actionButton setImage:buttonImage forState:UIControlStateNormal];
-            [cell.actionButton setImage:[UIImage imageNamed:@"btn-small-follow-hit.png"] forState:UIControlStateHighlighted];
-            [cell.actionButton setImage:[UIImage imageNamed:@"btn-small-follow-hit.png"] forState:UIControlStateSelected];
-            [cell.actionButton setTag:kFollowButtonTag];
-            
-        }
-        
-        // Send unfollow user to server
         [[TDUserAPI sharedInstance] unFollowUser:userId callback:^(BOOL success) {
-            if (success) {
-                // send notification to update user follow count-subtract
-                [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[[TDCurrentUser sharedInstance] currentUserObject].userId userInfo:@{TD_DECREMENT_STRING: @1}];
-            } else {
+            if (!success) {
                 [[TDAppDelegate appDelegate] showToastWithText:@"Error occured.  Please try again." type:kToastType_Warning payload:@{} delegate:nil];
-                //TODO: Display toast saying error processing, TRY AGAIN
-                // Switch button back to cell
-                UIImage * buttonImage = [UIImage imageNamed:@"btn-small-following.png"];
-                [cell.actionButton setImage:buttonImage forState:UIControlStateNormal];
-                [cell.actionButton setImage:[UIImage imageNamed:@"btn-small-following-hit.png"] forState:UIControlStateHighlighted];
-                [cell.actionButton setImage:[UIImage imageNamed:@"btn-small-following-hit.png"] forState:UIControlStateSelected];
-                [cell.actionButton setTag:kFollowingButtonTag];
             }
         }];
     }
 }
-
-- (void) scrollViewDidScroll:(UIScrollView *)scrollView {
-}
-
 
 - (void)searchBar:(UISearchBar *)searchBar activate:(BOOL) active{
     self.tableView.allowsSelection = !active;
@@ -752,7 +690,6 @@
                                              animated:NO];
         }
     }
-    //[searchBar setShowsCancelButton:active animated:YES];
 }
 
 #pragma mark - Keyboard / Textfield

@@ -172,7 +172,10 @@
 
 - (void)followUser:(NSNumber *)userID callback:(void (^)(BOOL))callback {
     NSString *url = [NSString stringWithFormat:@"%@/api/v1/users/%@/follow.json", [TDConstants getBaseURL], userID];
-    
+
+    // posting this notificaiton makes all UI update immidiately
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUserFollow object:userID];
+
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     [manager POST:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken }
@@ -180,7 +183,11 @@
               debug NSLog(@"Following %@", userID);
               callback(YES);
               [[TDCurrentUser sharedInstance] updateCurrentUserInfo];
+              // Send notification to update user profile stat button-add
+              [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[[TDCurrentUser sharedInstance] currentUserObject].userId userInfo:@{TD_INCREMENT_STRING: @1}];
           } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+              // Triggering this will make UI revert the previous update
+              [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUserUnfollow object:userID];
               debug NSLog(@"Error following: %@ with error%@", userID, error);
               callback(NO);
           }];
@@ -189,7 +196,10 @@
 
 - (void)unFollowUser:(NSNumber *)userID callback:(void (^)(BOOL))callback {
     NSString *url = [NSString stringWithFormat:@"%@/api/v1/users/%@/follow.json", [TDConstants getBaseURL], userID];
-    
+
+    // posting this notificaiton makes all UI update immidiately
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUserUnfollow object:userID];
+
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     [manager DELETE:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken }
@@ -197,7 +207,12 @@
               debug NSLog(@"Unfollowed %@", userID);
               callback(YES);
               [[TDCurrentUser sharedInstance] updateCurrentUserInfo];
+              // send notification to update user follow count-subtract
+              [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[[TDCurrentUser sharedInstance] currentUserObject].userId userInfo:@{TD_DECREMENT_STRING: @1}];
           } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+              // Triggering this will make UI revert the previous update
+              [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUserFollow object:userID];
+
               debug NSLog(@"Error unfollowing: %@ with error%@", userID, error);
               callback(NO);
           }];
