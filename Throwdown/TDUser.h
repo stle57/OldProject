@@ -18,8 +18,8 @@
 @property (strong, nonatomic, readonly) NSString *location;
 @property (nonatomic, assign) CGFloat bioHeight;
 @property (nonatomic, assign) CGFloat locationHeight;
-@property (strong, nonatomic, readonly) NSNumber *postCount;
-@property (strong, nonatomic, readonly) NSNumber *prCount;
+@property (strong, nonatomic) NSNumber *postCount;
+@property (strong, nonatomic) NSNumber *prCount;
 @property (strong, nonatomic) NSNumber *followerCount;
 @property (strong, nonatomic) NSNumber *followingCount; 
 @property (nonatomic) BOOL following;

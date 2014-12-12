@@ -106,6 +106,7 @@ static NSString *const TDRemoveRateView= @"TDRemoveRateView";
 static NSString *const TDShowFeedbackViewController = @"TDShowFeedbackViewController";
 static NSString *const TDPostNotificationDeclined = @"TDPostNotificationDeclined";
 static NSString *const TDActivityNavBar = @"TDActivityNavBar";
+static NSString *const TDUpdatePostCount = @"TDUpdatePostCount";
 
 static NSString *const TDFontProximaNovaRegular = @"ProximaNova-Regular";
 static NSString *const TDFontProximaNovaSemibold = @"ProximaNova-Semibold";

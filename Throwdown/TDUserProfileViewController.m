@@ -94,6 +94,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePost:) name:TDNotificationUpdatePost object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateUserFollowingCount:) name:TDUpdateFollowingCount object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateUserFollowerCount:) name:TDUpdateFollowerCount object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostCount:) name:TDUpdatePostCount object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -370,6 +372,17 @@
             if (self.getUser.userId != [TDCurrentUser sharedInstance].currentUserObject.userId) {
                 [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[[TDCurrentUser sharedInstance] currentUserObject].userId userInfo:@{TD_DECREMENT_STRING: @1}];
             }
+        }
+        [self.tableView reloadData];
+    }
+}
+
+- (void)updatePostCount:(NSNotification *)notification {
+    if (notification.object == self.getUser.userId) {
+        self.getUser.postCount = [NSNumber numberWithLong:[self.getUser.postCount integerValue] - [((NSNumber *)[notification.userInfo objectForKey:TD_DECREMENT_STRING]) integerValue]];
+        
+        if ([(NSNumber *)[notification.userInfo objectForKey:@"PR"] integerValue]) {
+            self.getUser.prCount = [NSNumber numberWithLong:[self.getUser.prCount integerValue] - [((NSNumber *)[notification.userInfo objectForKey:@"PR"]) integerValue]];
         }
         [self.tableView reloadData];
     }

@@ -219,7 +219,7 @@
 
 #pragma delete post
 
-- (void)deletePostWithId:(NSNumber *)postId {
+- (void)deletePostWithId:(NSNumber *)postId isPR:(BOOL)isPR {
     debug NSLog(@"API-delete post with id:%@", postId);
 
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts/[POST_ID].json"];
@@ -233,6 +233,13 @@
                     if ([returnDict objectForKey:@"success"] && [[returnDict objectForKey:@"success"] boolValue]) {
                         // Notify any view controllers about the removal which will cache the post and refresh table
                         [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationRemovePost object:nil userInfo:@{@"postId": postId}];
+                        
+                        NSMutableDictionary *userInfo = [[NSMutableDictionary alloc] init];
+                        [userInfo setObject:@1 forKey:TD_DECREMENT_STRING];
+                        if (isPR) {
+                            [userInfo setObject:@1 forKey:@"PR"];
+                        }
+                        [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdatePostCount object:[TDCurrentUser sharedInstance].userId userInfo:userInfo];
                     } else {
                         [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationRemovePostFailed object:nil userInfo:@{@"postId": postId}];
                     }

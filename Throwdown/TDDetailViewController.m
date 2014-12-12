@@ -253,7 +253,7 @@ static int const kToolbarHeight = 64;
         [self.activityIndicator startSpinner];
 
         self.navigationItem.rightBarButtonItem.enabled = NO;
-        [[TDPostAPI sharedInstance] deletePostWithId:self.postId];
+        [[TDPostAPI sharedInstance] deletePostWithId:self.postId isPR:self.post.personalRecord];
     } else if (alertView.tag == 18890 && buttonIndex != alertView.cancelButtonIndex) {
         // Report!
         [[TDPostAPI sharedInstance] reportPostWithId:self.postId];
