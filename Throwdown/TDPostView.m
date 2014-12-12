@@ -674,12 +674,14 @@ static NSString *const kTracksKey = @"tracks";
 }
 
 - (void)stopVideo {
-    self.state = PlayerStatePaused;
-    [self.player pause];
-    [self updateControlImage:ControlStatePaused];
-    if (self.playerItem) {
-        self.pausedSeconds = CMTimeGetSeconds([self.playerItem currentTime]);
-        [self setupScrollWheel];
+    if (self.state == PlayerStatePlaying) {
+        self.state = PlayerStatePaused;
+        [self.player pause];
+        [self updateControlImage:ControlStatePaused];
+        if (self.playerItem) {
+            self.pausedSeconds = CMTimeGetSeconds([self.playerItem currentTime]);
+            [self setupScrollWheel];
+        }
     }
 }
 
@@ -715,7 +717,7 @@ static NSString *const kTracksKey = @"tracks";
     // Stop any previous players
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:self.filename];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(stopVideoFromNotification:) name:TDNotificationStopPlayers object:self];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(stopVideoFromNotification:) name:TDNotificationStopPlayers object:nil];
 
     self.state = PlayerStateLoading;
     [self hideLoadingError];
@@ -804,7 +806,6 @@ static NSString *const kTracksKey = @"tracks";
         if (self.state == PlayerStateLoading || self.state == PlayerStateNotLoaded) {
             self.state = PlayerStateNotLoaded;
         } else {
-            self.state = PlayerStatePaused;
             [self stopVideo];
         }
     } else {
