@@ -133,18 +133,18 @@ static NSString *const kTracksKey = @"tracks";
         [self.usernameLabel addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(usernamePressed:)]];
         [self addSubview:self.usernameLabel];
 
-        self.locationPinImage = [[UIImageView alloc] initWithFrame:CGRectMake(kUsernameLabelOffset, kUsernameMargin + kUsernameLocationHeight, 10, 14)];
+        self.locationPinImage = [[UIImageView alloc] initWithFrame:CGRectMake(kUsernameLabelOffset, 1 + kUsernameMargin + kUsernameLocationHeight, 10, 14)];
         self.locationPinImage.hidden = YES;
         self.locationPinImage.userInteractionEnabled = YES;
         [self.locationPinImage addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(locationButtonPressed)]];
         [self.locationPinImage setImage:[UIImage imageNamed:@"icon_pindrop_off"]];
         [self addSubview:self.locationPinImage];
 
-        CGFloat locationLeftOffset = self.locationPinImage.frame.origin.x + self.locationPinImage.frame.size.width + 6;
+        CGFloat locationLeftOffset = self.locationPinImage.frame.origin.x + self.locationPinImage.frame.size.width + 4;
 
         self.locationLabel = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(locationLeftOffset, kUsernameMargin + kUsernameLocationHeight, width - kTextRightMargin - locationLeftOffset, kUsernameLocationHeight)];
-        self.locationLabel.textInsets = UIEdgeInsetsMake(1, 0, 0, 0); // centers the text with the pin-image
-        self.locationLabel.font = [TDConstants fontSemiBoldSized:14];
+        self.locationLabel.textInsets = UIEdgeInsetsMake(2, 0, 0, 0); // centers the text with the pin-image
+        self.locationLabel.font = [TDConstants fontRegularSized:14];
         self.locationLabel.textColor =[TDConstants commentTimeTextColor];
         self.locationLabel.hidden = YES;
         self.locationLabel.userInteractionEnabled = YES;
@@ -223,6 +223,7 @@ static NSString *const kTracksKey = @"tracks";
 
     // TODO : test overlap with PR button
     if (self.post.locationId) {
+        self.usernameLabel.textInsets = UIEdgeInsetsMake(0, 0, 1, 0);
         self.usernameLabel.verticalAlignment = TTTAttributedLabelVerticalAlignmentBottom;
         CGSize size = [self.usernameLabel sizeThatFits:CGSizeMake(width - kTextRightMargin, kUsernameLocationHeight)];
         CGRect frame = self.usernameLabel.frame;
@@ -243,6 +244,7 @@ static NSString *const kTracksKey = @"tracks";
 
     } else {
 
+        self.usernameLabel.textInsets = UIEdgeInsetsZero;
         self.usernameLabel.verticalAlignment = TTTAttributedLabelVerticalAlignmentCenter;
         CGSize size = [self.usernameLabel sizeThatFits:CGSizeMake(width - kTextRightMargin, kUsernameNormalHeight)];
         CGRect frame = self.usernameLabel.frame;
@@ -672,12 +674,14 @@ static NSString *const kTracksKey = @"tracks";
 }
 
 - (void)stopVideo {
-    self.state = PlayerStatePaused;
-    [self.player pause];
-    [self updateControlImage:ControlStatePaused];
-    if (self.playerItem) {
-        self.pausedSeconds = CMTimeGetSeconds([self.playerItem currentTime]);
-        [self setupScrollWheel];
+    if (self.state == PlayerStatePlaying) {
+        self.state = PlayerStatePaused;
+        [self.player pause];
+        [self updateControlImage:ControlStatePaused];
+        if (self.playerItem) {
+            self.pausedSeconds = CMTimeGetSeconds([self.playerItem currentTime]);
+            [self setupScrollWheel];
+        }
     }
 }
 
@@ -713,7 +717,7 @@ static NSString *const kTracksKey = @"tracks";
     // Stop any previous players
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:self.filename];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(stopVideoFromNotification:) name:TDNotificationStopPlayers object:self];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(stopVideoFromNotification:) name:TDNotificationStopPlayers object:nil];
 
     self.state = PlayerStateLoading;
     [self hideLoadingError];
@@ -802,7 +806,6 @@ static NSString *const kTracksKey = @"tracks";
         if (self.state == PlayerStateLoading || self.state == PlayerStateNotLoaded) {
             self.state = PlayerStateNotLoaded;
         } else {
-            self.state = PlayerStatePaused;
             [self stopVideo];
         }
     } else {

@@ -78,17 +78,15 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
     self.inviteList = nil;
 }
 
-- (void)didReceiveMemoryWarning
-{
+- (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
-- (void) viewWillAppear:(BOOL)animated {
+- (void)viewWillAppear:(BOOL)animated {
     CGRect tableViewFrame = self.tableView.frame;
     tableViewFrame.size.width = SCREEN_WIDTH;
-    tableViewFrame.size.height = [UIScreen mainScreen].bounds.size.height -
-        self.navigationController.navigationBar.frame.size.height;
+    tableViewFrame.size.height = [UIScreen mainScreen].bounds.size.height - self.navigationController.navigationBar.frame.size.height;
     
     self.tableView.frame = tableViewFrame;
     

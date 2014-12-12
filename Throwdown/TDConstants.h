@@ -84,6 +84,8 @@ static CLLocationDistance const kMapDefaultDistance = 10000;
 // NSNotification types
 static NSString *const TDNotificationReloadHome = @"TDNotificationReloadHome";
 static NSString *const TDPostUploadStarted = @"TDPostUploadStarted";
+static NSString *const TDNotificationUserFollow = @"TDNotificationUserFollow";
+static NSString *const TDNotificationUserUnfollow = @"TDNotificationUserUnfollow";
 static NSString *const TDNotificationStopPlayers = @"TDNotificationStopPlayers";
 static NSString *const TDNotificationUploadComments = @"TDNotificationUploadComments";
 static NSString *const TDNotificationUploadCancelled = @"TDNotificationUploadCancelled";

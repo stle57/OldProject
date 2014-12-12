@@ -73,9 +73,6 @@ static CGFloat const kMinHeight = 230 + kBottomMargin;
 }
 
 - (void)setUser:(TDUser *)user withButton:(UserProfileButtonType)buttonType {
-    self.bioLabel.hidden = YES;
-    self.locationLabel.hidden = YES;
-    
     CGFloat offset = self.bioLabel.frame.origin.y;
 
     if (user) {
@@ -88,22 +85,23 @@ static CGFloat const kMinHeight = 230 + kBottomMargin;
             self.bioLabel.frame = bioFrame;
             self.bioLabel.hidden = NO;
             offset += user.bioHeight;
+        } else {
+            self.bioLabel.hidden = YES;
         }
-        
+
         if (user.location && ![user.location isKindOfClass:[NSNull class]]) {
             self.locationLabel.attributedText = (NSMutableAttributedString *)[TDViewControllerHelper makeParagraphedTextWithBioString:user.location];
-            
+
+            self.locationLabel.hidden = NO;
+
             CGRect locationFrame = self.locationLabel.frame;
             locationFrame.size.height = user.locationHeight;
-            
-            if (user.bio && ![user.bio isKindOfClass:[NSNull class]]) {
-                locationFrame.origin.y = self.bioLabel.frame.origin.y + self.bioLabel.frame.size.height;
-                offset += self.locationLabel.frame.size.height;
-            } else {
-                offset = self.locationLabel.frame.origin.y;
-            }
+            locationFrame.origin.y = offset;
             self.locationLabel.frame = locationFrame;
-            self.locationLabel.hidden = NO;
+
+            offset += user.locationHeight;
+        } else {
+            self.locationLabel.hidden = YES;
         }
     }
 

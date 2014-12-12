@@ -165,10 +165,10 @@
     NSString *fetch = self.username ? self.username : [self.userId stringValue];
     if (!self.noProfileHeader) {
         [[TDPostAPI sharedInstance] fetchPostsForUser:fetch start:nil success:^(NSDictionary *response) {
-            [self handleNextStart:[response objectForKey:@"next_start"]];
-            [self handlePostsResponse:response fromStart:YES];
             self.user = [[TDUser alloc] initWithDictionary:[response valueForKeyPath:@"user"]];
             self.titleLabel.text = self.user.username;
+            [self handleNextStart:[response objectForKey:@"next_start"]];
+            [self handlePostsResponse:response fromStart:YES];
         } error:^{
             [self endRefreshControl];
             [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastType_Warning payload:@{} delegate:nil];
@@ -178,10 +178,10 @@
         }];
     } else {
         [[TDPostAPI sharedInstance] fetchPRPostsForUser:fetch success:^(NSDictionary *response) {
+            self.titleLabel.text = @"Personal Records";
+            self.user = [[TDUser alloc] initWithDictionary:[response valueForKeyPath:@"user"]];
             [self handleNextStart:[response objectForKey:@"next_start"]];
             [self handlePostsResponse:response fromStart:YES];
-            self.user = [[TDUser alloc] initWithDictionary:[response valueForKeyPath:@"user"]];
-            self.titleLabel.text = @"Personal Records";
         } error:^{
             [self endRefreshControl];
             [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastType_Warning payload:@{} delegate:nil];
