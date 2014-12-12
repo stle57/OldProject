@@ -660,18 +660,8 @@
 }
 
 - (void)openProfile:(NSNumber *)userId {
-    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
-
-    TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
-    vc.userId = userId;
-    // Slightly different if current user
-    if ([userId isEqualToNumber:[[TDCurrentUser sharedInstance] currentUserObject].userId]) {
-        vc.profileType = kFeedProfileTypeOwn;
-    } else {
-        vc.profileType = kFeedProfileTypeOther;
-    }
     [self showNavBar];
-    [self.navigationController pushViewController:vc animated:YES];
+    [super openProfile:userId];
 }
 
 - (IBAction)notificationButtonPressed:(id)sender {
