@@ -120,7 +120,10 @@ static NSString  *location = @"Location";
     [self.commentTextView addSubview:self.mediaButton];
     [self.commentTextView addSubview:self.removeButton];
     
-    CGRect bezFrame = CGRectMake(self.mediaButton.frame.origin.x- kBezierMargin, self.mediaButton.frame.origin.y, self.mediaButton.frame.size.width + kBezierMargin +kTextViewMargin , self.mediaButton.frame.size.height);
+    CGRect bezFrame = CGRectMake(self.mediaButton.frame.origin.x- kBezierMargin,
+                                 self.mediaButton.frame.origin.y,
+                                 self.mediaButton.frame.size.width + kBezierMargin +kTextViewMargin ,
+                                 self.mediaButton.frame.size.height+ kTextViewMargin);
     UIBezierPath *rect   = [ UIBezierPath bezierPathWithRect: bezFrame];
     
     self.commentTextView.textContainer.exclusionPaths = @[rect];
