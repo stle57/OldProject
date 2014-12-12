@@ -167,6 +167,10 @@ static NSInteger const kFollowingButtonTag = 20003;
 #define SCREEN_HEIGHT                    [UIScreen mainScreen].bounds.size.height
 #define TD_MARGIN                        10.0
 #define TD_PHOTO_CELL_LENGTH             105.
+#define TD_IPHONE_4_KEYBOARD_HEIGHT      216
+#define TD_IPHONE_5_KEYBOARD_HEIGHT      216
+#define TD_IPHONE_6_KEYBOARD_HEIGHT      225
+#define TD_IPHONE_6PLUS_KEYBOARD_HEIGHT  236
 
 + (TDEnvironment)environment;
 + (NSString *)appScheme;

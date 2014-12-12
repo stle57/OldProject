@@ -29,10 +29,9 @@
 
 #import "TDAppDelegate.h"
 
-//static int const kTextViewConstraint = 84;
-//static int const kTextViewHeightWithUserList = 70;
 static int const kCellPerRow = 3;
 static const NSUInteger BufferSize = 1024*1024;
+static int const kVideoImageMargin = 7;
 
 @interface TDCreatePostViewController () <UITextViewDelegate>
 @property (nonatomic)  TDCreatePostHeaderCell *postHeaderCell;
@@ -49,20 +48,7 @@ static const NSUInteger BufferSize = 1024*1024;
 @property (nonatomic) NSURL *assetURL;
 @property (nonatomic) UIImage *assetImage;
 @property (weak, nonatomic) IBOutlet UINavigationItem *navigationBarItem;
-
-//@property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *commentTextView;
-//@property (weak, nonatomic) IBOutlet UIImageView *previewImage;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *postButton;
-//@property (weak, nonatomic) IBOutlet UILabel *labelPR;
-//@property (weak, nonatomic) IBOutlet UILabel *labelMedia;
-//@property (weak, nonatomic) IBOutlet UILabel *labelLocation;
-//@property (weak, nonatomic) IBOutlet UIButton *mediaButton;
-//@property (weak, nonatomic) IBOutlet UIButton *locationButton;
-//@property (weak, nonatomic) IBOutlet UIButton *prButton;
-//@property (weak, nonatomic) IBOutlet UIView *topLineView;
-//@property (weak, nonatomic) IBOutlet UIView *optionsView;
-//@property (weak, nonatomic) IBOutlet NSLayoutConstraint *optionsViewConstraint;
-//@property (weak, nonatomic) IBOutlet NSLayoutConstraint *textViewConstraint;f
 
 @property (nonatomic) BOOL isOriginal;
 @property (nonatomic) BOOL isPR;
@@ -75,7 +61,6 @@ static const NSUInteger BufferSize = 1024*1024;
 @property (nonatomic) BOOL location;
 @property (nonatomic) NSDictionary *locationData;
 @property (nonatomic) float cellLength;
-//@property (nonatomic) TDKeyboardObserver *keyboardObserver;
 
 @end
 
@@ -116,12 +101,8 @@ static const NSUInteger BufferSize = 1024*1024;
     CSStickyHeaderFlowLayout *layout = [[CSStickyHeaderFlowLayout alloc] init];
     // Create the header size.
     layout.parallaxHeaderReferenceSize = CGSizeMake(self.view.frame.size.width, SCREEN_HEIGHT/2-15);
-
-    //layout.parallaxHeaderMinimumReferenceSize = CGSizeMake(self.view.frame.size.width, 0);
     layout.itemSize = CGSizeMake(self.cellLength, self.cellLength);
     layout.parallaxHeaderAlwaysOnTop = YES;
-//    layout.minimumInteritemSpacing = 1.25;
-//    layout.minimumLineSpacing = 1.25;
     // If we want to disable the sticky header effect
     layout.disableStickyHeaders = YES;
 
@@ -147,14 +128,6 @@ static const NSUInteger BufferSize = 1024*1024;
 
     self.overlayVc = [[UIViewController alloc] init];
     
-    ALAuthorizationStatus status = [ALAssetsLibrary authorizationStatus];
-
-    if (status == ALAuthorizationStatusAuthorized) {
-        [self loadPhotoAlbum];
-    }
-    
-    [self.postHeaderCell.commentTextView becomeFirstResponder];
-    
     float spacingPixelTotal = 2.5 *(kCellPerRow+1);
     self.cellLength= (SCREEN_WIDTH - spacingPixelTotal)/kCellPerRow;
 }
@@ -168,30 +141,36 @@ static const NSUInteger BufferSize = 1024*1024;
         self.navigationBarItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
         self.minimizeIconIsShowing = NO;
     }
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
-    self.postHeaderCell.mediaButton.enabled = YES;
-    //[self.postHeaderCell.keyboardObserver startListening];
-    [self.postHeaderCell.commentTextView becomeFirstResponder];
-    
-    CSStickyHeaderFlowLayout *layout =  (id)self.collectionView.collectionViewLayout;
-    if ([layout isKindOfClass:[CSStickyHeaderFlowLayout class]]) {
-        layout.parallaxHeaderReferenceSize = CGSizeMake(SCREEN_WIDTH, self.postHeaderCell.commentTextView.frame.size.height + self.postHeaderCell.optionsView.frame.size.height + 15); // 15 is kTextViewMargin from postheadercell
-    }
+    [self moveCollectionView];
     [self minimizeButtonPressed];
     
+    if (self.filename != nil && self.thumbnailPath != nil) {
+        [self.postHeaderCell.commentTextView becomeFirstResponder];
+        return; // return here because we don't need to load the photo album again.  we have a photo
+    }
+    
+    ALAuthorizationStatus status = [ALAssetsLibrary authorizationStatus];
+
+    if (status == ALAuthorizationStatusAuthorized) {
+        self.postHeaderCell.mediaButton.enabled = NO;
+        [self loadPhotoAlbum];
+    } else {
+        self.postHeaderCell.mediaButton.enabled = YES;
+        [self.postHeaderCell.commentTextView becomeFirstResponder];
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    //[self.postHeaderCell.commentTextView resignFirstResponder];
     [self.postHeaderCell.keyboardObserver stopListening];
 }
 
 - (void)dealloc {
-    //self.commentTextView.delegate = nil;
     [self.userListView removeFromSuperview];
     self.userListView.delegate = nil;
     self.userListView = nil;
@@ -209,41 +188,51 @@ static const NSUInteger BufferSize = 1024*1024;
     __block NSMutableArray *tmpAssets = [@[] mutableCopy];
     // 1
     ALAssetsLibrary *assetsLibrary = [TDCreatePostViewController defaultAssetsLibrary];
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
+
+    dispatch_async(queue, ^{
+        
     
-    // 2
-    [assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
-        [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
-            if(result)
-            {
-                // 3
-                //debug NSLog(@" date is%@", [result valueForProperty:ALAssetPropertyDate]);
-                NSString *videoURL = [[result defaultRepresentation] UTI];
-                NSDictionary *photoInfo = @{@"asset" : result, @"date" : [result valueForProperty:ALAssetPropertyDate], @"uti" :videoURL};
-                debug NSLog(@"videoURL-%@", videoURL);
-                [tmpAssets addObject:photoInfo];
+        // 2
+        [assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+            [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+                if(result)
+                {
+                    // 3
+                    //debug NSLog(@" date is%@", [result valueForProperty:ALAssetPropertyDate]);
+                    NSString *videoURL = [[result defaultRepresentation] UTI];
+                    NSDictionary *photoInfo = @{@"asset" : result, @"date" : [result valueForProperty:ALAssetPropertyDate], @"uti" :videoURL};
+                    [tmpAssets addObject:photoInfo];
+                }
+            }];
+            // 4
+            NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:NO];
+            self.assets = [tmpAssets sortedArrayUsingDescriptors:@[sort]];
+            [[TDCurrentUser sharedInstance] didAskForPhotos:YES];
+            
+            // 5
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.collectionView reloadData];
+            });
+
+            //[self.collectionView reloadData];
+            debug NSLog(@"done reloading collection view");
+
+         } failureBlock:^(NSError *error) {
+            NSLog(@"Error loading images %@", error);
+            NSString *errorMessage = nil;
+            switch ([error code]) {
+                case ALAssetsLibraryAccessUserDeniedError:
+                case ALAssetsLibraryAccessGloballyDeniedError:
+                    errorMessage = @"The user has declined access to it.";
+                    break;
+                default:
+                    errorMessage = @"Reason unknown.";
+                    break;
             }
-        }];
-
-        // 4
-        NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:NO];
-        self.assets = [tmpAssets sortedArrayUsingDescriptors:@[sort]];
-        [[TDCurrentUser sharedInstance] didAskForPhotos:YES];
-
-        // 5
-        //[self.collectionView reloadData];
-    } failureBlock:^(NSError *error) {
-        NSLog(@"Error loading images %@", error);
-        NSString *errorMessage = nil;
-        switch ([error code]) {
-            case ALAssetsLibraryAccessUserDeniedError:
-            case ALAssetsLibraryAccessGloballyDeniedError:
-                errorMessage = @"The user has declined access to it.";
-                break;
-            default:
-                errorMessage = @"Reason unknown.";
-                break;
-        }
-    }];
+             [error localizedDescription];
+         }];
+          });
 }
 
 - (void)cancelUpload {
@@ -253,36 +242,6 @@ static const NSUInteger BufferSize = 1024*1024;
     }
 }
 
-//- (UIImage *)imageFromVideoURL:(NSURL*)videoURL
-//{
-//    // result
-//    UIImage *image = nil;
-//    
-//    // AVAssetImageGenerator
-//    AVAsset *asset = [[AVURLAsset alloc] initWithURL:videoURL options:nil];;
-//    AVAssetImageGenerator *imageGenerator = [[AVAssetImageGenerator alloc] initWithAsset:asset];
-//    imageGenerator.appliesPreferredTrackTransform = YES;
-//    
-//    // calc midpoint time of video
-//    Float64 durationSeconds = CMTimeGetSeconds([asset duration]);
-//    CMTime midpoint = CMTimeMakeWithSeconds(durationSeconds/2.0, 600);
-//    
-//    // get the image from
-//    NSError *error = nil;
-//    CMTime actualTime;
-//    CGImageRef halfWayImage = [imageGenerator copyCGImageAtTime:midpoint actualTime:&actualTime error:&error];
-//    
-//    if (halfWayImage != NULL)
-//    {
-//        // CGImage to UIImage
-//        image = [[UIImage alloc] initWithCGImage:halfWayImage];
-//        [dic setValue:image forKey:@"name"];
-//        NSLog(@"Values of dictionary==>%@", dic);
-//        NSLog(@"Videos Are:%@",videoURL);
-//        CGImageRelease(halfWayImage);
-//    }
-//    return image;
-//}
 #pragma mark - segue / vc to vc interface
 
 - (void)addMedia:(NSString *)filename thumbnail:(NSString *)thumbnailPath isOriginal:(BOOL)original {
@@ -333,6 +292,7 @@ static const NSUInteger BufferSize = 1024*1024;
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    debug NSLog(@"numberOfItems called %lu", (unsigned long)[self.assets count]);
     return [self.assets count];
 }
 
@@ -358,7 +318,6 @@ static const NSUInteger BufferSize = 1024*1024;
         cell.asset = asset;
         
         UIImage *image = [UIImage imageWithCGImage:[asset thumbnail]];
-        NSLog(@"image.size=%@", NSStringFromCGSize(image.size));
         UIImageView* photoImageView = [[UIImageView alloc] initWithImage:image];
         CGRect photoFrame = photoImageView.frame;
         photoFrame.size.height = self.cellLength;
@@ -366,6 +325,13 @@ static const NSUInteger BufferSize = 1024*1024;
         photoImageView.frame = photoFrame;
         
         [cell addSubview:photoImageView];
+        
+        if ([[cell.asset valueForProperty:ALAssetPropertyType] isEqualToString:ALAssetTypeVideo]) {
+            UIImage *videoImage = [UIImage imageNamed:@"icon_video_marker_alt"];
+            UIImageView* videoImageView = [[UIImageView alloc] initWithImage:videoImage];
+            videoImageView.frame = CGRectMake(kVideoImageMargin, photoImageView.frame.size.height - kVideoImageMargin - videoImage.size.height, videoImage.size.width, videoImage.size.height);
+            [photoImageView addSubview:videoImageView];
+        }
         photoImageView.contentMode = UIViewContentModeScaleAspectFit;
         photoImageView.clipsToBounds = YES;
         cell.backgroundColor = [UIColor redColor];
@@ -386,8 +352,8 @@ static const NSUInteger BufferSize = 1024*1024;
         if ([cell isKindOfClass:[TDCreatePostHeaderCell class]]) {
             self.postHeaderCell = (TDCreatePostHeaderCell*)cell;
             self.postHeaderCell.delegate = self;
-            [self.postHeaderCell.commentTextView becomeFirstResponder];
         }
+        debug NSLog(@"returning header cell");
         return cell;
     }
     return nil;
@@ -422,6 +388,7 @@ static const NSUInteger BufferSize = 1024*1024;
         }
         [self.collectionView reloadData];
         self.origContentOffset = [self.collectionView contentOffset];
+        self.collectionView.scrollEnabled = YES;
     }
  }
 
@@ -453,8 +420,25 @@ static const NSUInteger BufferSize = 1024*1024;
 -(void)commentTextViewBeginResponder:(BOOL)yes {
     if(yes) {
         [self minimizeButtonPressed];
+        self.collectionView.scrollEnabled = NO;
+        [self moveCollectionView];
     }
 }
+
+- (void)adjustCollectionViewHeight {
+    [self moveCollectionView];
+}
+
+- (void) moveCollectionView {
+    CSStickyHeaderFlowLayout *layout =  (id)self.collectionView.collectionViewLayout;
+    if ([layout isKindOfClass:[CSStickyHeaderFlowLayout class]]) {
+        [self.collectionView.collectionViewLayout invalidateLayout];
+        layout.parallaxHeaderReferenceSize =
+        CGSizeMake(SCREEN_WIDTH, self.postHeaderCell.commentTextView.frame.size.height + self.postHeaderCell.optionsView.frame.size.height + 15); // 15 is kTextViewMargin from postheadercell
+    }
+}
+
+#pragma mark action sheet methods
 - (void) showLocationActionSheet:location {
     NSString *newPlaceStr = @"Select Another Place";
     NSString *removeStr = @"Remove Location";
@@ -464,7 +448,6 @@ static const NSUInteger BufferSize = 1024*1024;
                                                          cancelButtonTitle:@"Cancel"
                                                    destructiveButtonTitle:newPlaceStr
                                                         otherButtonTitles:removeStr, nil];
-        //[self addOverlay];
         [actionSheet showInView:self.viewOverlay];
     } else {
         debug NSLog(@"location=%@", location);
@@ -621,17 +604,14 @@ static const NSUInteger BufferSize = 1024*1024;
 #pragma mark UIActionSheetDelegate
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == actionSheet.cancelButtonIndex) {
-        [self removeOverlay];
         return;
     } else if (buttonIndex == actionSheet.destructiveButtonIndex) {
-        [self removeOverlay];
         [self openLocationViewController];
     } else {
         // Remove the location
         if(self.postHeaderCell) {
             self.location = NO;
             [self.postHeaderCell changeLocationButton:@"Location" locationSet:self.location];
-            [self removeOverlay];
         }
     }
 }

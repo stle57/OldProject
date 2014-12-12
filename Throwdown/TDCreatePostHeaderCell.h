@@ -25,6 +25,7 @@
 -(void)prButtonPressed;
 -(void)postButtonEnabled:(BOOL)enable;
 -(void)commentTextViewBeginResponder:(BOOL)yes;
+-(void)adjustCollectionViewHeight;
 @end
 
 @interface TDCreatePostHeaderCell : UICollectionViewCell<UITextViewDelegate, NSLayoutManagerDelegate, TDUserListViewDelegate, TDKeyboardObserverDelegate>

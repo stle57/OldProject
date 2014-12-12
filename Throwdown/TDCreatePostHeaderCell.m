@@ -12,6 +12,7 @@
 #import "TDViewControllerHelper.h"
 #import "TDTextViewControllerHelper.h"
 #import "UIAlertView+TDBlockAlert.h"
+#import "TDDeviceInfo.h"
 
 static int const kTextViewConstraint = 84;
 static int const kTextViewHeightWithUserList = 70;
@@ -26,6 +27,7 @@ static NSString  *location = @"Location";
 
 - (void)awakeFromNib {
     // Initialization code
+    debug NSLog(@"inside awakeFromNib-");
     self.backgroundColor = [UIColor whiteColor];
     
     self.commentTextView.delegate = self;
@@ -53,12 +55,100 @@ static NSString  *location = @"Location";
         self.userListView.delegate = self;
         [self addSubview:self.userListView];
     }
+    [self adjustFramesForView];
+    
+    self.keyboardObserver = [[TDKeyboardObserver alloc] initWithDelegate:self];
+
+    
+    // preloading images
+    self.prOffImage = [UIImage imageNamed:@"trophy_off"];
+    self.prOnImage =  [UIImage imageNamed:@"trophy_on"];
+    
+    // User name filter table view
+    if (self.userListView == nil) {
+        self.userListView = [[TDUserListView alloc] initWithFrame:CGRectMake(0, kTextViewHeightWithUserList, SCREEN_WIDTH, 0)];
+        self.userListView.delegate = self;
+        [self.optionsView addSubview:self.userListView];
+    }
+
+    debug NSLog(@"comment view frame = %@", NSStringFromCGRect(self.commentTextView.frame));
+    debug NSLog(@"options view frame = %@", NSStringFromCGRect(self.optionsView.frame));
+    debug NSLog(@"locationButton frame = %@", NSStringFromCGRect(self.locationButton.frame));
+    debug NSLog(@"prButton frame = %@", NSStringFromCGRect(self.prButton.frame));
+    debug NSLog(@"topLine view frame = %@", NSStringFromCGRect(self.topLineView.frame));
+    
+    [self.keyboardObserver startListening];
+    
+    CGRect mediaFrame = self.mediaButton.frame;
+    mediaFrame.origin.x = SCREEN_WIDTH - 15 - self.mediaButton.frame.size.width - kTextViewMargin;
+    mediaFrame.origin.y = 0;
+    mediaFrame.size.height = [[UIImage imageNamed:@"media_attach_placeholder"] size].height ;
+    mediaFrame.size.width = [[UIImage imageNamed:@"media_attach_placeholder"] size].width ;
+    self.mediaButton.frame = mediaFrame;
+    
+    CGRect removeButtonFrame = CGRectMake(self.mediaButton.frame.origin.x + self.mediaButton.frame.size.width -15,
+                                          self.mediaButton.frame.origin.y + self.mediaButton.frame.size.height-15,
+                                          [[UIImage imageNamed:@"remove_media_x"] size].width,
+                                          [[UIImage imageNamed:@"remove_media_x"] size].height);
+    
+    self.removeButton.frame = removeButtonFrame;
+    self.removeButton.hidden = YES;
+    
+    [self.commentTextView addSubview:self.mediaButton];
+    [self.commentTextView addSubview:self.removeButton];
+    
+    CGRect bezFrame = CGRectMake(self.mediaButton.frame.origin.x- kBezierMargin,
+                                 self.mediaButton.frame.origin.y,
+                                 self.mediaButton.frame.size.width + kBezierMargin +kTextViewMargin ,
+                                 self.mediaButton.frame.size.height+ kTextViewMargin);
+    
+    UIBezierPath *rect   = [ UIBezierPath bezierPathWithRect: bezFrame];
+    
+    self.commentTextView.textContainer.exclusionPaths = @[rect];
+    debug NSLog(@"done awakeFromNib");
+}
+
+- (void)dealloc {
+    self.delegate = nil;
+    self.commentTextView.delegate = nil;
+    [self.userListView removeFromSuperview];
+    self.userListView.delegate = nil;
+    self.userListView = nil;
+    [self.keyboardObserver stopListening];
+    self.keyboardObserver = nil;
+}
+
+- (void)adjustFramesForView {
+    CGFloat keyboardHeight;
+    
+    switch ((int)[UIScreen mainScreen].bounds.size.width) {
+        case 320: // iPhone 4S/5/5S
+            keyboardHeight = TD_IPHONE_4_KEYBOARD_HEIGHT;
+            break;
+        case 375: // iPhone 6
+            keyboardHeight = TD_IPHONE_6_KEYBOARD_HEIGHT;
+            break;
+        case 414: // iPhone 6+
+            keyboardHeight = TD_IPHONE_6PLUS_KEYBOARD_HEIGHT;
+            break;
+        default:
+            keyboardHeight = 0;
+            break;
+    }
+    debug NSLog(@"keyboardHeight on intial load =%f", keyboardHeight);
+    
+    CGRect frame = self.frame;
+    frame.origin.x = 0;
+    frame.origin.y = 0;
+    frame.size.width = SCREEN_WIDTH;
+    frame.size.height= SCREEN_HEIGHT - 64 - keyboardHeight;
+    self.frame = frame;
     
     CGRect optionsViewFrame = self.optionsView.frame;
     optionsViewFrame.size.height = 38;
     optionsViewFrame.size.width = SCREEN_WIDTH;
     optionsViewFrame.origin.x = 0;
-    optionsViewFrame.origin.y = SCREEN_HEIGHT - self.commentTextView.frame.size.height - 64;
+    optionsViewFrame.origin.y = self.frame.size.height - self.optionsView.frame.size.height;
     self.optionsView.frame = optionsViewFrame;
     
     CGRect locationFrame = self.locationButton.frame;
@@ -74,72 +164,9 @@ static NSString  *location = @"Location";
     
     CGRect textViewFrame = self.commentTextView.frame;
     textViewFrame.size.width = SCREEN_WIDTH- kTextViewMargin;
-    textViewFrame.size.height = SCREEN_HEIGHT - self.optionsView.frame.size.height - 64;
+    textViewFrame.size.height = SCREEN_HEIGHT - self.optionsView.frame.size.height - 64 - keyboardHeight - kTextViewMargin;
     self.commentTextView.frame = textViewFrame;
-    self.keyboardObserver = [[TDKeyboardObserver alloc] initWithDelegate:self];
-    
-    CGRect frame = self.frame;
-    frame.origin.x = 0;
-    frame.origin.y = 0;
-    frame.size.width = SCREEN_WIDTH;
-    frame.size.height = self.commentTextView.frame.size.height + self.optionsView.frame.size.height;
-    self.frame = frame;
-    
-    // preloading images
-    self.prOffImage = [UIImage imageNamed:@"trophy_off"];
-    self.prOnImage =  [UIImage imageNamed:@"trophy_on"];
-    
-    // User name filter table view
-    if (self.userListView == nil) {
-        self.userListView = [[TDUserListView alloc] initWithFrame:CGRectMake(0, kTextViewHeightWithUserList, SCREEN_WIDTH, 0)];
-        self.userListView.delegate = self;
-        [self.optionsView addSubview:self.userListView];
-    }
-
-//    debug NSLog(@"comment view frame = %@", NSStringFromCGRect(self.commentTextView.frame));
-//    debug NSLog(@"options view frame = %@", NSStringFromCGRect(self.optionsView.frame));
-//    debug NSLog(@"locationButton frame = %@", NSStringFromCGRect(self.locationButton.frame));
-//    debug NSLog(@"prButton frame = %@", NSStringFromCGRect(self.prButton.frame));
-//    debug NSLog(@"topLine view frame = %@", NSStringFromCGRect(self.topLineView.frame));
-    
-    [self.keyboardObserver startListening];
-    [self.commentTextView becomeFirstResponder];
-    
-    CGRect mediaFrame = self.mediaButton.frame;
-    mediaFrame.origin.x = SCREEN_WIDTH - 15 - self.mediaButton.frame.size.width - kTextViewMargin;
-    mediaFrame.origin.y = 0;
-    mediaFrame.size.height = [[UIImage imageNamed:@"media_attach_placeholder"] size].height ;
-    mediaFrame.size.width = [[UIImage imageNamed:@"media_attach_placeholder"] size].width ;
-    self.mediaButton.frame = mediaFrame;
-    
-    CGRect removeButtonFrame = CGRectMake(self.mediaButton.frame.origin.x + self.mediaButton.frame.size.width -15, self.mediaButton.frame.origin.y + self.mediaButton.frame.size.height-15, [[UIImage imageNamed:@"remove_media_x"] size].width, [[UIImage imageNamed:@"remove_media_x"] size].height);
-    
-    self.removeButton.frame = removeButtonFrame;
-    self.removeButton.hidden = YES;
-    
-    [self.commentTextView addSubview:self.mediaButton];
-    [self.commentTextView addSubview:self.removeButton];
-    
-    CGRect bezFrame = CGRectMake(self.mediaButton.frame.origin.x- kBezierMargin,
-                                 self.mediaButton.frame.origin.y,
-                                 self.mediaButton.frame.size.width + kBezierMargin +kTextViewMargin ,
-                                 self.mediaButton.frame.size.height+ kTextViewMargin);
-    UIBezierPath *rect   = [ UIBezierPath bezierPathWithRect: bezFrame];
-    
-    self.commentTextView.textContainer.exclusionPaths = @[rect];
-
 }
-
-- (void)dealloc {
-    self.delegate = nil;
-    self.commentTextView.delegate = nil;
-    [self.userListView removeFromSuperview];
-    self.userListView.delegate = nil;
-    self.userListView = nil;
-    [self.keyboardObserver stopListening];
-    self.keyboardObserver = nil;
-}
-
 
 #pragma mark - TDUserListViewDelegate
 
@@ -286,6 +313,7 @@ static NSString  *location = @"Location";
     } completion:nil];
     
     self.mediaButton.enabled = YES;
+    
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification {
@@ -299,6 +327,14 @@ static NSString  *location = @"Location";
         //[self.contentView layoutIfNeeded];
     } completion:nil];
 }
+
+- (void)keyboardFrameChanged:(CGRect)keyboardFrame {
+    debug NSLog(@"frame changed for keyboard - height-%f", keyboardFrame.size.height);
+    if (delegate && [delegate respondsToSelector:@selector(adjustCollectionViewHeight)]) {
+        [delegate adjustCollectionViewHeight];
+    }
+}
+
 
 - (void)addMedia:(NSString *)filename thumbnail:(NSString *)thumbnailPath isOriginal:(BOOL)original {
     [self.mediaButton setImage:[UIImage imageWithContentsOfFile:thumbnailPath] forState:UIControlStateNormal];
