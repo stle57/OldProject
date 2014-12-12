@@ -316,7 +316,7 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     NSString *state = [locationData objectForKey:@"state"];
     if (state != nil && state.length) {
         if (formatedAddress.length) {
-            formatedAddress = [NSString stringWithFormat:@"%@\n%@", formatedAddress, state ];
+            formatedAddress = [NSString stringWithFormat:@"%@, %@", formatedAddress, state ];
         } else {
             formatedAddress = [NSString stringWithFormat:@"%@", state];
         }
