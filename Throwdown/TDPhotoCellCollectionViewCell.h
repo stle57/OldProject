@@ -10,7 +10,10 @@
 #import <AssetsLibrary/AssetsLibrary.h>
 
 @interface TDPhotoCellCollectionViewCell : UICollectionViewCell
-@property(nonatomic, strong) ALAsset *asset;
 
-- (NSDate*) date;
+@property (nonatomic, strong) ALAsset *asset;
+
+- (NSDate *) date;
+- (void)setImage:(UIImage *)image;
+
 @end
