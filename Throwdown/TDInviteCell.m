@@ -21,7 +21,6 @@
     CGRect cellFrame = self.frame;
     cellFrame.size.width = SCREEN_WIDTH;
     self.frame = cellFrame;
-    debug NSLog(@"invite cell frame-%@", NSStringFromCGRect(self.frame));
     self.layer.borderColor = [[TDConstants lightBorderColor] CGColor];
     self.layer.borderWidth = TD_CELL_BORDER_WIDTH;
     self.contactTextField.font = [TDConstants fontRegularSized:16];
