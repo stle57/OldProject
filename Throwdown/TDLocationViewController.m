@@ -540,21 +540,6 @@ static NSString *helpText = @"Please enter at least three characters.";
     }
 }
 
-#pragma mark - CLLocationManagerDelegate
-
-- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
-{
-    NSLog(@"didFailWithError: %@", error);
-    if (error.code == kCLErrorDenied)
-    {
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Permission Requested"
-                                                        message:@"To access your location,\nplease go to\niPhone Settings > Privacy\n> Location Services, and\nswitch Throwdown to\n \"While Using the App\"."
-                                                       delegate:nil
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:nil];
-        [alert show];
-    }
-}
 
 -(void) didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation{
     self.currentLocation = newLocation;
