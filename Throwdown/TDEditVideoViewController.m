@@ -226,11 +226,9 @@ static const NSString *ItemStatusContext;
 # pragma mark - segues
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:@"MediaCloseSegue"]) {
+    if (self.filename && [segue.identifier isEqualToString:@"MediaCloseSegue"]) {
         TDCreatePostViewController *vc = [segue destinationViewController];
-        if (self.filename) {
-            [vc addMedia:self.filename thumbnail:self.thumbnailPath isOriginal:self.isOriginal];
-        }
+        [vc addMedia:self.filename thumbnail:self.thumbnailPath isOriginal:self.isOriginal];
     }
 }
 
