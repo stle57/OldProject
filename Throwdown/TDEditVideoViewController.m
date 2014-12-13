@@ -228,7 +228,9 @@ static const NSString *ItemStatusContext;
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"MediaCloseSegue"]) {
         TDCreatePostViewController *vc = [segue destinationViewController];
-        [vc addMedia:self.filename thumbnail:self.thumbnailPath isOriginal:self.isOriginal];
+        if (self.filename) {
+            [vc addMedia:self.filename thumbnail:self.thumbnailPath isOriginal:self.isOriginal];
+        }
     }
 }
 
