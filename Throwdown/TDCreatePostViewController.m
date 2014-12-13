@@ -171,7 +171,6 @@ static const NSUInteger BufferSize = 1024*1024;
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [self.postHeaderCell.keyboardObserver stopListening];
 }
 
 - (void)dealloc {
