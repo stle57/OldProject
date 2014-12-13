@@ -364,6 +364,8 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
                 } else {
                     [followCell.userImageView setImage:[UIImage imageNamed:@"prof_pic_default"]];
                 }
+                
+                followCell.topLine.hidden = indexPath.row;
                 return followCell;
             }
         }
