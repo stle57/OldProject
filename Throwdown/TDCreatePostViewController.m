@@ -218,9 +218,6 @@ static const NSUInteger BufferSize = 1024*1024;
                 [self.collectionView reloadData];
             });
 
-            //[self.collectionView reloadData];
-            debug NSLog(@"done reloading collection view");
-
          } failureBlock:^(NSError *error) {
             NSLog(@"Error loading images %@", error);
             NSString *errorMessage = nil;
@@ -295,7 +292,6 @@ static const NSUInteger BufferSize = 1024*1024;
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    debug NSLog(@"numberOfItems called %lu", (unsigned long)[self.assets count]);
     return [self.assets count];
 }
 
@@ -311,7 +307,6 @@ static const NSUInteger BufferSize = 1024*1024;
         cell.image = [UIImage imageWithCGImage:[asset thumbnail]];
         
         if ([[asset valueForProperty:ALAssetPropertyType] isEqualToString:ALAssetTypeVideo]) {
-            debug NSLog(@"got video");
             [cell setVideoImage];
         }
     }
@@ -332,7 +327,6 @@ static const NSUInteger BufferSize = 1024*1024;
             self.postHeaderCell = (TDCreatePostHeaderCell*)cell;
             self.postHeaderCell.delegate = self;
         }
-        debug NSLog(@"returning header cell");
         return cell;
     }
     return nil;
@@ -434,7 +428,6 @@ static const NSUInteger BufferSize = 1024*1024;
         [self addOverlay];
         [actionSheet showInView:self.viewOverlay];
     } else {
-        debug NSLog(@"location=%@", location);
         [self addOverlay];
         NSString *address = [TDViewControllerHelper getAddressFormat:self.locationData];
         NSString *title = [self.locationData objectForKey:@"name"];

@@ -27,7 +27,6 @@ static NSString  *location = @"Location";
 
 - (void)awakeFromNib {
     // Initialization code
-    debug NSLog(@"inside awakeFromNib-");
     self.backgroundColor = [UIColor whiteColor];
     
     self.commentTextView.delegate = self;
@@ -71,11 +70,11 @@ static NSString  *location = @"Location";
         [self.optionsView addSubview:self.userListView];
     }
 
-    debug NSLog(@"comment view frame = %@", NSStringFromCGRect(self.commentTextView.frame));
-    debug NSLog(@"options view frame = %@", NSStringFromCGRect(self.optionsView.frame));
-    debug NSLog(@"locationButton frame = %@", NSStringFromCGRect(self.locationButton.frame));
-    debug NSLog(@"prButton frame = %@", NSStringFromCGRect(self.prButton.frame));
-    debug NSLog(@"topLine view frame = %@", NSStringFromCGRect(self.topLineView.frame));
+//    debug NSLog(@"comment view frame = %@", NSStringFromCGRect(self.commentTextView.frame));
+//    debug NSLog(@"options view frame = %@", NSStringFromCGRect(self.optionsView.frame));
+//    debug NSLog(@"locationButton frame = %@", NSStringFromCGRect(self.locationButton.frame));
+//    debug NSLog(@"prButton frame = %@", NSStringFromCGRect(self.prButton.frame));
+//    debug NSLog(@"topLine view frame = %@", NSStringFromCGRect(self.topLineView.frame));
     
     [self.keyboardObserver startListening];
     
@@ -105,7 +104,6 @@ static NSString  *location = @"Location";
     UIBezierPath *rect   = [ UIBezierPath bezierPathWithRect: bezFrame];
     
     self.commentTextView.textContainer.exclusionPaths = @[rect];
-    debug NSLog(@"done awakeFromNib");
 }
 
 - (void)dealloc {
@@ -135,8 +133,6 @@ static NSString  *location = @"Location";
             keyboardHeight = 0;
             break;
     }
-    debug NSLog(@"keyboardHeight on intial load =%f", keyboardHeight);
-    
     CGRect frame = self.frame;
     frame.origin.x = 0;
     frame.origin.y = 0;
@@ -329,7 +325,6 @@ static NSString  *location = @"Location";
 }
 
 - (void)keyboardFrameChanged:(CGRect)keyboardFrame {
-    debug NSLog(@"frame changed for keyboard - height-%f", keyboardFrame.size.height);
     if (delegate && [delegate respondsToSelector:@selector(adjustCollectionViewHeight)]) {
         [delegate adjustCollectionViewHeight];
     }
