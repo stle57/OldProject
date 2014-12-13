@@ -2,7 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="DPQ-qf-8sb">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -243,7 +243,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
                 <exit id="YgZ-o0-OG3" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="-590.625" y="1737.676056338028"/>
+            <point key="canvasLocation" x="-625" y="1923"/>
         </scene>
         <!--Notifications-->
         <scene sceneID="e5Y-hG-4Fp">
@@ -392,7 +392,6 @@
                                         <state key="highlighted" image="v_closebutton_hit"/>
                                         <connections>
                                             <action selector="cancelButtonPressed:" destination="mmN-3Z-6Sw" eventType="touchUpInside" id="IXA-vK-pKf"/>
-                                            <segue destination="Mi2-Xw-H7z" kind="unwind" unwindAction="unwindToCreatePostView:" id="vhc-j3-u2k"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Njs-Cf-zmw" userLabel="Done Button">
@@ -463,7 +462,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="K7O-RT-cG4" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="Mi2-Xw-H7z" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="240" y="1737"/>
+            <point key="canvasLocation" x="92" y="1175"/>
         </scene>
         <!--Create Post View Controller-->
         <scene sceneID="7CD-ei-BPl">
@@ -494,7 +493,7 @@
                         <segue destination="wbX-js-8Nr" kind="unwind" identifier="VideoCloseSegue" unwindAction="unwindToHome:" id="8Fq-KE-QYm"/>
                         <segue destination="vXZ-lx-hvc" kind="custom" identifier="OpenRecordViewSegue" customClass="TDSlideDownSegue" id="tGN-r2-ECE"/>
                         <segue destination="GNX-te-i5r" kind="show" identifier="OpenShareWithViewSegue" id="d38-Mo-iUV"/>
-                        <segue destination="mmN-3Z-6Sw" kind="custom" identifier="EditVideoSegue" customClass="TDSlideLeftSegue" id="Hec-LM-AuF"/>
+                        <segue destination="mmN-3Z-6Sw" kind="custom" identifier="EditVideoSegue" customClass="TDSlideDownSegue" id="Hec-LM-AuF"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6gq-Mf-yfy" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -558,7 +557,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qgm-gn-cXc" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="WhV-JA-HnF" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="-590.625" y="1025.7042253521126"/>
+            <point key="canvasLocation" x="-1607" y="2027"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="GnA-Ak-vhR">
@@ -1398,7 +1397,7 @@ The Throwdown Community</string>
                             </button>
                         </barButtonItem>
                         <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="Vwl-FS-yeJ" userLabel="Feed Selection">
-                            <rect key="frame" x="227.5" y="7.5" width="145" height="29"/>
+                            <rect key="frame" x="228" y="8" width="145" height="29"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <segments>
                                 <segment title="Explore"/>

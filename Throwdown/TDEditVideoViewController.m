@@ -177,7 +177,7 @@ static const NSString *ItemStatusContext;
         [confirm show];
     } else {
         [self stopExistingUploads];
-        [self performSegueWithIdentifier:@"UnwindSlideLeftSegue" sender:self];
+        [self performSegueWithIdentifier:@"MediaCloseSegue" sender:self];
     }
 }
 
