@@ -587,6 +587,10 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 }
 
 - (void)userButtonPressedFromRow:(NSInteger)row {
+    TDPost *post = [self postForRow:row];
+    if (post) {
+        [self openProfile:post.user.userId];
+    }
 }
 
 - (void)horizontalScrollingStarted {
@@ -733,11 +737,26 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
+- (void)openProfile:(NSNumber *)userId {
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
+
+    TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
+    vc.userId = userId;
+    // Slightly different if current user
+    if ([userId isEqualToNumber:[[TDCurrentUser sharedInstance] currentUserObject].userId]) {
+        vc.profileType = kFeedProfileTypeOwn;
+    } else {
+        vc.profileType = kFeedProfileTypeOther;
+    }
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
 #pragma mark - TDUserProfileCellDelegate
 
 - (void)postsStatButtonPressed {
     debug NSLog(@"segue to posts button");
 }
+
 - (void)prStatButtonPressed {
     if ([[self getUser].prCount intValue] != 0) {
         TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];

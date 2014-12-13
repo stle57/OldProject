@@ -144,6 +144,7 @@ static NSInteger const kFollowingButtonTag = 20003;
 #define CELL_IDENTIFIER_FOLLOWPROFILE      @"TDFollowProfileCell"
 #define CELL_IDENTIFIER_INVITE             @"TDInviteCell"
 #define CELL_IDENTIFIER_CREATE_POSTHEADER  @"TDCreatePostHeaderCell"
+#define CELL_IDENTIFIER_CREATE_IMAGE_CELL  @"TDPhotoCellCollectionViewCell"
 #define CELL_IDENTIFIER_TD_LOCATION        @"TDLocationCell"
 #define TOAST_TAG                        87352
 #define COMMENT_MESSAGE_WIDTH            306.0

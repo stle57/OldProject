@@ -69,6 +69,7 @@
 - (void)stopBottomLoadingSpinner;
 - (void)startLoadingSpinner;
 - (void)openDetailView:(NSNumber *)postId;
+- (void)openProfile:(NSNumber *)userId;
 
 - (NSUInteger)noticeCount;
 - (TDNotice *)getNoticeAt:(NSUInteger)index;

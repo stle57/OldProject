@@ -66,6 +66,10 @@
 
     CGRect frame = [[UIScreen mainScreen] bounds];
     frame.origin.y = -(navigationBar.frame.size.height + [UIApplication sharedApplication].statusBarFrame.size.height);
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removePost:) name:TDNotificationRemovePost object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePost:) name:TDNotificationUpdatePost object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -90,6 +94,58 @@
 - (BOOL)hasMorePosts {
     return self.nextStart != nil;
 }
+
+- (void)updatePost:(NSNotification *)n {
+    BOOL changeMade = NO;
+    NSNumber *postId = (NSNumber *)[n.userInfo objectForKey:@"postId"];
+
+    for (TDPost *post in self.posts) {
+        if ([post.postId isEqualToNumber:postId]) {
+            [post updateFromNotification:n];
+            changeMade = YES;
+            break;
+        }
+    }
+
+    if (changeMade) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.tableView reloadData];
+        });
+    }
+}
+
+- (void)removePost:(NSNotification *)n {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        // Main posts
+        BOOL changeMade = NO;
+        NSNumber *postId = (NSNumber *)[n.userInfo objectForKey:@"postId"];
+        NSMutableArray *newList = [[NSMutableArray array] init];
+        for (TDPost *post in self.posts) {
+            if ([post.postId isEqualToNumber:postId]) {
+                changeMade = YES;
+            } else {
+                [newList addObject:post];
+            }
+        }
+        if (changeMade) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.posts = [[NSArray alloc] initWithArray:newList];
+                [self.tableView reloadData];
+            });
+        }
+    });
+}
+
+- (void)updatePostsAfterUserUpdate:(NSNotification *)notification {
+    debug NSLog(@"%@ updatePostsAfterUserUpdate:%@", [self class], [[TDCurrentUser sharedInstance] currentUserObject]);
+
+    for (TDPost *aPost in self.posts) {
+        [aPost updateUserInfoFor:[[TDCurrentUser sharedInstance] currentUserObject]];
+    }
+
+    [self.tableView reloadData];
+}
+
 
 - (TDPost *)postForRow:(NSInteger)row {
     if (row < self.posts.count) {

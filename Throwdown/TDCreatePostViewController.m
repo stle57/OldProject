@@ -29,9 +29,10 @@
 
 #import "TDAppDelegate.h"
 
-static int const kCellPerRow = 3;
+//static int const kTextViewConstraint = 84;
+//static int const kTextViewHeightWithUserList = 70;
+static int const kCellsPerRow = 3;
 static const NSUInteger BufferSize = 1024*1024;
-static int const kVideoImageMargin = 7;
 
 @interface TDCreatePostViewController () <UITextViewDelegate>
 @property (nonatomic)  TDCreatePostHeaderCell *postHeaderCell;
@@ -101,12 +102,20 @@ static int const kVideoImageMargin = 7;
     CSStickyHeaderFlowLayout *layout = [[CSStickyHeaderFlowLayout alloc] init];
     // Create the header size.
     layout.parallaxHeaderReferenceSize = CGSizeMake(self.view.frame.size.width, SCREEN_HEIGHT/2-15);
+
+    self.cellLength = SCREEN_WIDTH / kCellsPerRow;
+
+    //layout.parallaxHeaderMinimumReferenceSize = CGSizeMake(self.view.frame.size.width, 0);
     layout.itemSize = CGSizeMake(self.cellLength, self.cellLength);
     layout.parallaxHeaderAlwaysOnTop = YES;
+    layout.minimumInteritemSpacing = 0;
+    layout.minimumLineSpacing = 0;
+
     // If we want to disable the sticky header effect
     layout.disableStickyHeaders = YES;
 
-    self.collectionView=[[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) collectionViewLayout:layout];
+    CGFloat viewHeight = SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height - self.navigationController.navigationBar.frame.origin.y;
+    self.collectionView=[[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, viewHeight) collectionViewLayout:layout];
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self;
 
@@ -116,20 +125,19 @@ static int const kVideoImageMargin = 7;
     [self.collectionView registerNib:self.headerNib
           forSupplementaryViewOfKind:CSStickyHeaderParallaxHeader
                  withReuseIdentifier:CELL_IDENTIFIER_CREATE_POSTHEADER];
-    
-    [self.collectionView registerClass:[TDPhotoCellCollectionViewCell class] forCellWithReuseIdentifier:@"TDPhotoCellCollectionViewCell"];
+
+    [self.collectionView registerNib:[UINib nibWithNibName:CELL_IDENTIFIER_CREATE_IMAGE_CELL bundle:nil] forCellWithReuseIdentifier:CELL_IDENTIFIER_CREATE_IMAGE_CELL];
     self.collectionView.backgroundColor = [UIColor whiteColor];
     
     [self.view addSubview:self.collectionView];
     
-    self.viewOverlay = [[UIView alloc]
-                               initWithFrame:CGRectMake(0.0f,0,SCREEN_WIDTH,SCREEN_HEIGHT)];
+    self.viewOverlay = [[UIView alloc] initWithFrame:CGRectMake(0.0f,0,SCREEN_WIDTH,SCREEN_HEIGHT)];
     self.viewOverlay.backgroundColor = [UIColor colorWithWhite:0 alpha:0.7];
 
     self.overlayVc = [[UIViewController alloc] init];
     
-    float spacingPixelTotal = 2.5 *(kCellPerRow+1);
-    self.cellLength= (SCREEN_WIDTH - spacingPixelTotal)/kCellPerRow;
+    //float spacingPixelTotal = 2.5 *(kCellPerRow+1);
+    //self.cellLength= (SCREEN_WIDTH - spacingPixelTotal)/kCellPerRow;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -297,51 +305,27 @@ static int const kVideoImageMargin = 7;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    TDPhotoCellCollectionViewCell *cell = (TDPhotoCellCollectionViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:@"TDPhotoCellCollectionViewCell" forIndexPath:indexPath];
-    CGRect frame = cell.frame;
-    frame.size.width = self.cellLength;
-    frame.size.height = self.cellLength;
-    cell.frame = frame;
+    TDPhotoCellCollectionViewCell *cell = (TDPhotoCellCollectionViewCell *)[collectionView dequeueReusableCellWithReuseIdentifier:CELL_IDENTIFIER_CREATE_IMAGE_CELL forIndexPath:indexPath];
+
     if (indexPath.section == 0 && indexPath.row == 0) {
-        UIImage * image = [UIImage imageNamed:@"select_camera.png"];
-        UIImageView *cameraImageView =[[UIImageView alloc] initWithImage:image];
-        CGRect cameraFrame = cameraImageView.frame;
-        cameraFrame.size.height = self.cellLength;
-        cameraFrame.size.width = self.cellLength;
-        cameraImageView.frame = cameraFrame;
-        [cell addSubview:cameraImageView];
-        //cell.backgroundColor = [UIColor redColor];
-        
-    } else {
-        NSDictionary *assetDict = self.assets[indexPath.row];
+        cell.image = [UIImage imageNamed:@"select_camera.png"];
+    } else if ([self.assets count] > indexPath.row - 1) {
+        NSDictionary *assetDict = self.assets[indexPath.row - 1];
         ALAsset *asset = [assetDict objectForKey:@"asset"];
         cell.asset = asset;
+        cell.image = [UIImage imageWithCGImage:[asset thumbnail]];
         
-        UIImage *image = [UIImage imageWithCGImage:[asset thumbnail]];
-        UIImageView* photoImageView = [[UIImageView alloc] initWithImage:image];
-        CGRect photoFrame = photoImageView.frame;
-        photoFrame.size.height = self.cellLength;
-        photoFrame.size.width = self.cellLength;
-        photoImageView.frame = photoFrame;
-        
-        [cell addSubview:photoImageView];
-        
-        if ([[cell.asset valueForProperty:ALAssetPropertyType] isEqualToString:ALAssetTypeVideo]) {
-            UIImage *videoImage = [UIImage imageNamed:@"icon_video_marker_alt"];
-            UIImageView* videoImageView = [[UIImageView alloc] initWithImage:videoImage];
-            videoImageView.frame = CGRectMake(kVideoImageMargin, photoImageView.frame.size.height - kVideoImageMargin - videoImage.size.height, videoImage.size.width, videoImage.size.height);
-            [photoImageView addSubview:videoImageView];
+        if ([[asset valueForProperty:ALAssetPropertyType] isEqualToString:ALAssetTypeVideo]) {
+            debug NSLog(@"got video");
+            [cell setVideoImage];
         }
-        photoImageView.contentMode = UIViewContentModeScaleAspectFit;
-        photoImageView.clipsToBounds = YES;
-        cell.backgroundColor = [UIColor redColor];
     }
 
     return cell;
 }
 
-
 #pragma mark - UICollectionViewDelegate
+
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
     if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {
         return nil;
@@ -552,17 +536,16 @@ static int const kVideoImageMargin = 7;
     }
 }
 
-- (UIEdgeInsets)collectionView:
-(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
+- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
     return UIEdgeInsetsMake(0, 0, 0, 0);
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
-    return 1.25;
+    return 0;
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
-    return 1.25;
+    return 0;
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
