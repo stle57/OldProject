@@ -421,7 +421,7 @@ static NSString *helpText = @"Please enter at least three characters.";
         return;
     }
     
-    if (self.searchStr.length) {
+    if (self.searchingNearbyLocations) {
         // If we got here, we are filtering the nearby locations
         [self filterContentForSearchText:searchText scope:nil];
         [self.tableView reloadData];
