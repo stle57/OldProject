@@ -131,13 +131,9 @@ static const NSUInteger BufferSize = 1024*1024;
     
     [self.view addSubview:self.collectionView];
     
+    // Overlay used for IOS7 action sheet.
     self.viewOverlay = [[UIView alloc] initWithFrame:CGRectMake(0.0f,0,SCREEN_WIDTH,SCREEN_HEIGHT)];
-    self.viewOverlay.backgroundColor = [UIColor colorWithWhite:0 alpha:0.7];
-
-    self.overlayVc = [[UIViewController alloc] init];
-    
-    //float spacingPixelTotal = 2.5 *(kCellPerRow+1);
-    //self.cellLength= (SCREEN_WIDTH - spacingPixelTotal)/kCellPerRow;
+    self.viewOverlay.backgroundColor = [UIColor whiteColor];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -406,6 +402,10 @@ static const NSUInteger BufferSize = 1024*1024;
         [self minimizeButtonPressed];
         self.collectionView.scrollEnabled = NO;
         [self moveCollectionView];
+        
+        if (self.filename == nil) {
+            self.postHeaderCell.mediaButton.enabled = YES;
+        }
     }
 }
 
@@ -432,9 +432,11 @@ static const NSUInteger BufferSize = 1024*1024;
                                                          cancelButtonTitle:@"Cancel"
                                                    destructiveButtonTitle:newPlaceStr
                                                         otherButtonTitles:removeStr, nil];
+        [self addOverlay];
         [actionSheet showInView:self.viewOverlay];
     } else {
         debug NSLog(@"location=%@", location);
+        [self addOverlay];
         NSString *address = [TDViewControllerHelper getAddressFormat:self.locationData];
         NSString *title = [self.locationData objectForKey:@"name"];
         if (address.length) {
@@ -444,10 +446,12 @@ static const NSUInteger BufferSize = 1024*1024;
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:title  message:nil preferredStyle:UIAlertControllerStyleActionSheet];
         UIAlertAction* selectAnotherLocationAction = [UIAlertAction actionWithTitle:newPlaceStr style:UIAlertActionStyleDefault
                                                               handler:^(UIAlertAction * action) {
+                                                                  [self removeOverlay];
                                                                   [self openLocationViewController];
                                                               }];
         UIAlertAction *removeLocationAction =[UIAlertAction actionWithTitle:removeStr style:UIAlertActionStyleDefault
                                                                     handler:^(UIAlertAction * action) {
+                                                                        [self removeOverlay];
                                                                         if(self.postHeaderCell) {
                                                                             self.location = NO;
                                                                             [self.postHeaderCell changeLocationButton:@"Location" locationSet:self.location];
@@ -455,6 +459,7 @@ static const NSUInteger BufferSize = 1024*1024;
                                                                     }];
         UIAlertAction* cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
                                                        handler:^(UIAlertAction * action) {
+                                                           [self removeOverlay];
                                                            [alert dismissViewControllerAnimated:YES completion:nil];
                                                        }];
         
@@ -587,10 +592,13 @@ static const NSUInteger BufferSize = 1024*1024;
 #pragma mark UIActionSheetDelegate
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
     if (buttonIndex == actionSheet.cancelButtonIndex) {
+        [self removeOverlay];
         return;
     } else if (buttonIndex == actionSheet.destructiveButtonIndex) {
+        [self removeOverlay];
         [self openLocationViewController];
     } else {
+        [self removeOverlay];
         // Remove the location
         if(self.postHeaderCell) {
             self.location = NO;
@@ -613,12 +621,20 @@ static const NSUInteger BufferSize = 1024*1024;
         [self.postHeaderCell.commentTextView becomeFirstResponder];
     }
 }
+
 - (void)addOverlay {
     [[TDAppDelegate appDelegate].window addSubview:self.viewOverlay];
-    
-    [UIView beginAnimations:@"FadeIn" context:nil];
-    [UIView setAnimationDuration:0.5];
-    [UIView commitAnimations];
+    CSStickyHeaderFlowLayout *layout =  (id)self.collectionView.collectionViewLayout;
+    CGSize layoutSize;
+    if ([layout isKindOfClass:[CSStickyHeaderFlowLayout class]]) {
+        layoutSize = layout.parallaxHeaderReferenceSize;
+    }
+    CGRect overlayFrame = self.viewOverlay.frame;
+    overlayFrame.origin.y = layoutSize.height;
+
+    overlayFrame.size.height = SCREEN_HEIGHT - layoutSize.height;
+    self.viewOverlay.frame = overlayFrame;
+    [self.view addSubview:self.viewOverlay];
 }
 
 - (void)removeOverlay {
