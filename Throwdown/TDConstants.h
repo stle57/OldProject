@@ -79,7 +79,7 @@ static double const kGlobalVideoTrimTime = 0.05; // seconds
 
 // Map settings
 // Amount of north-to-south distance (measured in meters) to use for the span. (note used for east-to-west too):
-static CLLocationDistance const kMapDefaultDistance = 10000;
+static CLLocationDistance const kMapDefaultDistance = 9000;
 
 // NSNotification types
 static NSString *const TDNotificationReloadHome = @"TDNotificationReloadHome";
