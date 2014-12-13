@@ -86,10 +86,8 @@ static NSString *topHeaderText2 = @"Invite friends to join with a phone number o
 - (void)viewWillAppear:(BOOL)animated {
     CGRect tableViewFrame = self.tableView.frame;
     tableViewFrame.size.width = SCREEN_WIDTH;
-    tableViewFrame.size.height = [UIScreen mainScreen].bounds.size.height - self.navigationController.navigationBar.frame.size.height;
-    
+    tableViewFrame.size.height = SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height - [UIApplication sharedApplication].statusBarFrame.size.height;
     self.tableView.frame = tableViewFrame;
-    
     [super viewWillAppear:animated];
     
     [self displayNextButton];
