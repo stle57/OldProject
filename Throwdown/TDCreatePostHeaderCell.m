@@ -26,9 +26,9 @@ static NSString  *location = @"Location";
 @synthesize delegate;
 
 - (void)awakeFromNib {
-    // Initialization code
     self.backgroundColor = [UIColor whiteColor];
-    
+
+    self.commentTextView.scrollsToTop = NO;
     self.commentTextView.delegate = self;
     self.commentTextView.font = [TDConstants fontRegularSized:17];
     self.commentTextView.layoutManager.delegate = self;
@@ -36,6 +36,7 @@ static NSString  *location = @"Location";
     CGRect commentFrame = self.commentTextView.frame;
     commentFrame.size.width = SCREEN_WIDTH - kTextViewMargin;
     self.commentTextView.frame = commentFrame;
+    self.mediaButton.enabled = YES;
     
     // preloading images
     self.prOffImage = [UIImage imageNamed:@"trophy_off"];
@@ -216,16 +217,14 @@ static NSString  *location = @"Location";
     }];
 }
 
-- (void)textViewDidBeginEditing:(UITextView *)inView
-{
+- (void)textViewDidBeginEditing:(UITextView *)inView {
     [self performSelector:@selector(setCursorToBeginning:) withObject:inView afterDelay:0.01];
     if (delegate && [delegate respondsToSelector:@selector(commentTextViewBeginResponder:)]) {
         [delegate commentTextViewBeginResponder:YES];
     }
 }
 
-- (void)setCursorToBeginning:(UITextView *)inView
-{
+- (void)setCursorToBeginning:(UITextView *)inView {
     if (self.commentTextView.text.length == 0) {
         self.commentTextView.selectedRange = NSMakeRange(15, 0);
     }
@@ -236,7 +235,6 @@ static NSString  *location = @"Location";
 - (IBAction)mediaButtonPressed:(id)sender {
     if (delegate && [delegate respondsToSelector:@selector(mediaButtonPressed)]) {
         [self.commentTextView resignFirstResponder];
-        [self.mediaButton setEnabled:NO];
         [delegate mediaButtonPressed];
     }
 }
@@ -262,8 +260,6 @@ static NSString  *location = @"Location";
         [delegate prButtonPressed];
     }
 }
-
-
 
 - (IBAction)locationButtonPressed:(id)sender {
     if (self.locationButton.tag == TD_LOCATION_BUTTON_ON) {
@@ -307,21 +303,6 @@ static NSString  *location = @"Location";
         self.contentView.frame = self.bounds;
         
     } completion:nil];
-    
-    self.mediaButton.enabled = YES;
-    
-}
-
-- (void)keyboardWillHide:(NSNotification *)notification {
-    // animationCurve << 16 to convert it from a view animation curve to a view animation option
-    NSDictionary *info = [notification userInfo];
-    NSNumber *curveValue = [info objectForKey:UIKeyboardAnimationCurveUserInfoKey];
-    UIViewAnimationCurve animationCurve = curveValue.intValue;
-    NSTimeInterval animationDuration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
-    [UIView animateWithDuration:animationDuration delay:0.0 options:(animationCurve << 16) animations:^{
-        //self.optionsViewConstraint.constant = 0;
-        //[self.contentView layoutIfNeeded];
-    } completion:nil];
 }
 
 - (void)keyboardFrameChanged:(CGRect)keyboardFrame {
@@ -330,14 +311,10 @@ static NSString  *location = @"Location";
     }
 }
 
-
 - (void)addMedia:(NSString *)filename thumbnail:(NSString *)thumbnailPath isOriginal:(BOOL)original {
     [self.mediaButton setImage:[UIImage imageWithContentsOfFile:thumbnailPath] forState:UIControlStateNormal];
-    
-    [self.mediaButton setEnabled:NO];
     [self.removeButton setHidden:NO];
-    [self.commentTextView becomeFirstResponder];
-    
+
 }
 
 - (IBAction)removeButtonPressed:(id)sender {
@@ -345,7 +322,6 @@ static NSString  *location = @"Location";
         [self.mediaButton setImage:[UIImage imageNamed:@"media_attach_placeholder"] forState:UIControlStateNormal];
         [self.mediaButton setImage:[UIImage imageNamed:@"media_attach_placeholder_hit"] forState:UIControlStateHighlighted];
         [self.mediaButton setImage:[UIImage imageNamed:@"media_attach_placeholder_hit"] forState:UIControlStateSelected];
-        [self.mediaButton setEnabled:YES];
         [self.removeButton setHidden:YES];
         [delegate removeButtonPressed];
     }

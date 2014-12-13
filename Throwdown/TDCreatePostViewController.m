@@ -20,7 +20,6 @@
 #import "TDUserAPI.h"
 #import "TDAPIClient.h"
 #import "TDUserListView.h"
-#import "TDKeyboardObserver.h"
 #import "TDCreatePostHeaderCell.h"
 #import "CSStickyHeaderFlowLayout.h"
 #import "TDPhotoCellCollectionViewCell.h"
@@ -29,8 +28,6 @@
 
 #import "TDAppDelegate.h"
 
-//static int const kTextViewConstraint = 84;
-//static int const kTextViewHeightWithUserList = 70;
 static int const kCellsPerRow = 3;
 static const NSUInteger BufferSize = 1024*1024;
 
@@ -40,10 +37,8 @@ static const NSUInteger BufferSize = 1024*1024;
 @property (nonatomic) UIView *hitStateOverlay;
 @property (nonatomic) UIView *viewOverlay;
 @property (nonatomic, retain) UIViewController *overlayVc;
-@property (nonatomic, strong) UINib *headerNib;
 @property (nonatomic, strong) NSArray *sections;
 @property (nonatomic, strong) NSArray *assets;
-@property (nonatomic) CGPoint origContentOffset;
 @property (nonatomic) NSURL *recordedURL;
 @property (nonatomic) NSURL *croppedURL;
 @property (nonatomic) NSURL *assetURL;
@@ -62,26 +57,19 @@ static const NSUInteger BufferSize = 1024*1024;
 @property (nonatomic) BOOL location;
 @property (nonatomic) NSDictionary *locationData;
 @property (nonatomic) float cellLength;
+@property (nonatomic) BOOL reloadAssets;
 
 @end
 
 @implementation TDCreatePostViewController
-+ (ALAssetsLibrary *)defaultAssetsLibrary
-{
+
++ (ALAssetsLibrary *)defaultAssetsLibrary {
     static dispatch_once_t pred = 0;
     static ALAssetsLibrary *library = nil;
     dispatch_once(&pred, ^{
         library = [[ALAssetsLibrary alloc] init];
     });
     return library;
-}
-
-- (id)initWithCoder:(NSCoder *)aDecoder {
-    self = [super initWithCoder:aDecoder];
-    if (self) {
-        self.headerNib = [UINib nibWithNibName:CELL_IDENTIFIER_CREATE_POSTHEADER bundle:nil];
-    }
-    return self;
 }
 
 - (void)viewDidLoad {
@@ -105,7 +93,6 @@ static const NSUInteger BufferSize = 1024*1024;
 
     self.cellLength = SCREEN_WIDTH / kCellsPerRow;
 
-    //layout.parallaxHeaderMinimumReferenceSize = CGSizeMake(self.view.frame.size.width, 0);
     layout.itemSize = CGSizeMake(self.cellLength, self.cellLength);
     layout.parallaxHeaderAlwaysOnTop = YES;
     layout.minimumInteritemSpacing = 0;
@@ -118,22 +105,29 @@ static const NSUInteger BufferSize = 1024*1024;
     self.collectionView=[[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, viewHeight) collectionViewLayout:layout];
     self.collectionView.delegate = self;
     self.collectionView.dataSource = self;
+    self.collectionView.scrollsToTop = YES;
 
     // Also insets the scroll indicator so it appears below the search bar
     self.collectionView.scrollIndicatorInsets = UIEdgeInsetsMake(44, 0, 0, 0);
     
-    [self.collectionView registerNib:self.headerNib
+    [self.collectionView registerNib:[UINib nibWithNibName:CELL_IDENTIFIER_CREATE_POSTHEADER bundle:nil]
           forSupplementaryViewOfKind:CSStickyHeaderParallaxHeader
                  withReuseIdentifier:CELL_IDENTIFIER_CREATE_POSTHEADER];
 
     [self.collectionView registerNib:[UINib nibWithNibName:CELL_IDENTIFIER_CREATE_IMAGE_CELL bundle:nil] forCellWithReuseIdentifier:CELL_IDENTIFIER_CREATE_IMAGE_CELL];
     self.collectionView.backgroundColor = [UIColor whiteColor];
-    
+
     [self.view addSubview:self.collectionView];
-    
+
     // Overlay used for IOS7 action sheet.
     self.viewOverlay = [[UIView alloc] initWithFrame:CGRectMake(0.0f,0,SCREEN_WIDTH,SCREEN_HEIGHT)];
     self.viewOverlay.backgroundColor = [UIColor whiteColor];
+
+    if ([ALAssetsLibrary authorizationStatus] == ALAuthorizationStatusAuthorized) {
+        [self loadPhotoAlbum];
+    }
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willEnterForegroundCallback:) name:UIApplicationWillEnterForegroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleAssetChangedNotification:) name:ALAssetsLibraryChangedNotification object:[TDCreatePostViewController defaultAssetsLibrary]];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -151,20 +145,9 @@ static const NSUInteger BufferSize = 1024*1024;
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [self moveCollectionView];
-    [self minimizeButtonPressed];
-    
-    if (self.filename != nil && self.thumbnailPath != nil) {
-        [self.postHeaderCell.commentTextView becomeFirstResponder];
-        return; // return here because we don't need to load the photo album again.  we have a photo
-    }
-    
-    ALAuthorizationStatus status = [ALAssetsLibrary authorizationStatus];
+    [self resetCollectionViewOffset];
 
-    if (status == ALAuthorizationStatusAuthorized) {
-        self.postHeaderCell.mediaButton.enabled = NO;
-        [self loadPhotoAlbum];
-    } else {
-        self.postHeaderCell.mediaButton.enabled = YES;
+    if ([ALAssetsLibrary authorizationStatus] != ALAuthorizationStatusAuthorized) {
         [self.postHeaderCell.commentTextView becomeFirstResponder];
     }
 }
@@ -180,12 +163,25 @@ static const NSUInteger BufferSize = 1024*1024;
     self.thumbnailPath = nil;
     self.filename = nil;
     self.isOriginal = NO;
-    self.headerNib = nil;
     self.postHeaderCell = nil;
     self.viewOverlay = nil;
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (void) loadPhotoAlbum {
+- (void)willEnterForegroundCallback:(NSNotification *)notification {
+    if ([ALAssetsLibrary authorizationStatus] == ALAuthorizationStatusAuthorized) {
+        [self loadPhotoAlbum];
+    }
+}
+
+- (void)handleAssetChangedNotification:(NSNotification *)notification {
+    if (self.reloadAssets) {
+        self.reloadAssets = NO;
+        [self loadPhotoAlbum];
+    }
+}
+
+- (void)loadPhotoAlbum {
     // Load photo library
     _assets = [@[] mutableCopy];
     __block NSMutableArray *tmpAssets = [@[] mutableCopy];
@@ -194,31 +190,38 @@ static const NSUInteger BufferSize = 1024*1024;
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
 
     dispatch_async(queue, ^{
-        
-    
         // 2
         [assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
-            [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
-                if(result)
-                {
-                    // 3
-                    //debug NSLog(@" date is%@", [result valueForProperty:ALAssetPropertyDate]);
-                    NSString *videoURL = [[result defaultRepresentation] UTI];
-                    NSDictionary *photoInfo = @{@"asset" : result, @"date" : [result valueForProperty:ALAssetPropertyDate], @"uti" :videoURL};
-                    [tmpAssets addObject:photoInfo];
-                }
-            }];
-            // 4
-            NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:NO];
-            self.assets = [tmpAssets sortedArrayUsingDescriptors:@[sort]];
-            [[TDCurrentUser sharedInstance] didAskForPhotos:YES];
-            
-            // 5
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self.collectionView reloadData];
-            });
+            debug NSLog(@"Enumerate group: %@ asset count: %ld %@", [group valueForProperty:ALAssetsGroupPropertyName], (long)group.numberOfAssets, [group valueForProperty:ALAssetsGroupPropertyType]);
 
-         } failureBlock:^(NSError *error) {
+            if ((long)group.numberOfAssets > 0) {
+                [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+                    if(result) {
+                        // 3
+                        NSString *videoURL = [[result defaultRepresentation] UTI];
+                        NSDictionary *photoInfo = @{@"asset" : result, @"date" : [result valueForProperty:ALAssetPropertyDate], @"uti" :videoURL};
+                        [tmpAssets addObject:photoInfo];
+                    }
+                }];
+                // 4
+                NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:NO];
+                self.assets = [tmpAssets sortedArrayUsingDescriptors:@[sort]];
+                [[TDCurrentUser sharedInstance] didAskForPhotos:YES];
+
+                // 5
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.collectionView reloadData];
+                    if (self.filename != nil && self.thumbnailPath != nil) {
+                        // This little trick forces the first responder call to be executed after the collection view has reloaded it's data.
+                        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                            NSLog(@"become first responder");
+                            [self.postHeaderCell.commentTextView becomeFirstResponder];
+                        });
+                    }
+                });
+                debug NSLog(@"done reloading collection view");
+            }
+        } failureBlock:^(NSError *error) {
             NSLog(@"Error loading images %@", error);
             NSString *errorMessage = nil;
             switch ([error code]) {
@@ -230,9 +233,9 @@ static const NSUInteger BufferSize = 1024*1024;
                     errorMessage = @"Reason unknown.";
                     break;
             }
-             [error localizedDescription];
-         }];
-          });
+            [error localizedDescription];
+        }];
+    });
 }
 
 - (void)cancelUpload {
@@ -245,7 +248,8 @@ static const NSUInteger BufferSize = 1024*1024;
 #pragma mark - segue / vc to vc interface
 
 - (void)addMedia:(NSString *)filename thumbnail:(NSString *)thumbnailPath isOriginal:(BOOL)original {
-    if( self.postHeaderCell != nil) {
+    [self cancelUpload];
+    if (self.postHeaderCell != nil) {
         self.filename = filename;
         self.thumbnailPath = thumbnailPath;
         self.isOriginal = original;
@@ -265,7 +269,8 @@ static const NSUInteger BufferSize = 1024*1024;
 }
 
 - (IBAction)unwindToShareView:(UIStoryboardSegue *)sender {
-    // Empty on purpose
+    // Tells to reload photos after possible photo was taken
+    self.reloadAssets = YES;
 }
 
 - (IBAction)unwindToCreatePostView:(UIStoryboardSegue *)sender {
@@ -273,7 +278,6 @@ static const NSUInteger BufferSize = 1024*1024;
 }
 
 - (UIStoryboardSegue *)segueForUnwindingToViewController:(UIViewController *)toViewController fromViewController:(UIViewController *)fromViewController identifier:(NSString *)identifier {
-
     if ([@"MediaCloseSegue" isEqualToString:identifier]) {
         return [[TDSlideUpSegue alloc] initWithIdentifier:identifier source:fromViewController destination:toViewController];
     } else if ([@"ReturnToComposeView" isEqualToString:identifier]) {
@@ -317,9 +321,7 @@ static const NSUInteger BufferSize = 1024*1024;
 #pragma mark - UICollectionViewDelegate
 
 - (UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath {
-    if ([kind isEqualToString:UICollectionElementKindSectionHeader]) {
-        return nil;
-    } else if ([kind isEqualToString:CSStickyHeaderParallaxHeader]) {
+    if ([kind isEqualToString:CSStickyHeaderParallaxHeader]) {
         UICollectionReusableView *cell = [collectionView dequeueReusableSupplementaryViewOfKind:kind
                                                                             withReuseIdentifier:CELL_IDENTIFIER_CREATE_POSTHEADER
                                                                                    forIndexPath:indexPath];
@@ -345,25 +347,24 @@ static const NSUInteger BufferSize = 1024*1024;
 
 - (void)minimizeButtonPressed {
     // Go back to showing the comment text view.
-    [self.collectionView setContentOffset:self.origContentOffset animated:NO];
+    [self.collectionView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:YES];
+}
+
+- (void)resetCollectionViewOffset {
+    [self.collectionView setContentOffset:CGPointZero animated:NO];
 }
 
 #pragma mark TDCreatePostHeaderCellDelegate Methods
+
 - (void)mediaButtonPressed {
-    ALAuthorizationStatus status = [ALAssetsLibrary authorizationStatus];
-    
-    if (status != ALAuthorizationStatusAuthorized && [[TDCurrentUser sharedInstance] didAskForPhotos] ) {
+    if ([ALAssetsLibrary authorizationStatus] != ALAuthorizationStatusAuthorized && [[TDCurrentUser sharedInstance] didAskForPhotos] ) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Permission Requested" message:@"To access your photo library, please go to iPhone Settings > Privacy > Photos, and switch Throwdown to ON" delegate:nil cancelButtonTitle:@"Close" otherButtonTitles:nil, nil];
         [alert show];
-    } else {
-        if (!self.assets.count) {
-            [self loadPhotoAlbum];
-        }
-        [self.collectionView reloadData];
-        self.origContentOffset = [self.collectionView contentOffset];
-        self.collectionView.scrollEnabled = YES;
+    } else if ([self.assets count] == 0) {
+        [self loadPhotoAlbum];
     }
- }
+    self.collectionView.scrollEnabled = YES;
+}
 
 - (void)locationButtonPressed {
     [self openLocationViewController];
@@ -380,7 +381,7 @@ static const NSUInteger BufferSize = 1024*1024;
 - (void)openLocationViewController {
     TDLocationViewController *vc = [[TDLocationViewController alloc] initWithNibName:@"TDLocationViewController" bundle:nil ];
     vc.delegate = self;
-    
+
     // - Created a new navigation controller because pushing view controller onto existing navigation cannot
     // - do a bottom to top transition.
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
@@ -391,14 +392,10 @@ static const NSUInteger BufferSize = 1024*1024;
 }
 
 -(void)commentTextViewBeginResponder:(BOOL)yes {
-    if(yes) {
-        [self minimizeButtonPressed];
+    if (yes) {
+        [self resetCollectionViewOffset];
         self.collectionView.scrollEnabled = NO;
         [self moveCollectionView];
-        
-        if (self.filename == nil) {
-            self.postHeaderCell.mediaButton.enabled = YES;
-        }
     }
 }
 
@@ -406,17 +403,18 @@ static const NSUInteger BufferSize = 1024*1024;
     [self moveCollectionView];
 }
 
-- (void) moveCollectionView {
+- (void)moveCollectionView {
     CSStickyHeaderFlowLayout *layout =  (id)self.collectionView.collectionViewLayout;
     if ([layout isKindOfClass:[CSStickyHeaderFlowLayout class]]) {
         [self.collectionView.collectionViewLayout invalidateLayout];
-        layout.parallaxHeaderReferenceSize =
-        CGSizeMake(SCREEN_WIDTH, self.postHeaderCell.commentTextView.frame.size.height + self.postHeaderCell.optionsView.frame.size.height + 15); // 15 is kTextViewMargin from postheadercell
+        // 15 is kTextViewMargin from postheadercell
+        layout.parallaxHeaderReferenceSize = CGSizeMake(SCREEN_WIDTH, self.postHeaderCell.commentTextView.frame.size.height + self.postHeaderCell.optionsView.frame.size.height + 15);
     }
 }
 
 #pragma mark action sheet methods
-- (void) showLocationActionSheet:location {
+
+- (void)showLocationActionSheet:(NSString *)location {
     NSString *newPlaceStr = @"Select Another Place";
     NSString *removeStr = @"Remove Location";
     if ([[[UIDevice currentDevice] systemVersion] floatValue] < 8.0){
@@ -468,18 +466,14 @@ static const NSUInteger BufferSize = 1024*1024;
     if ([@"EditVideoSegue" isEqualToString:segue.identifier]) {
         TDEditVideoViewController *vc = [segue destinationViewController];
         if (self.assetURL) {
-                [vc editVideoAt:[self.assetURL path] original:NO];
-                self.assetURL = nil;
+            [vc editVideoAt:[self.assetURL path] original:NO];
+            self.assetURL = nil;
         } else if (self.croppedURL) {
             [vc editVideoAt:[self.croppedURL path] original:YES];
             self.croppedURL = nil;
         } else if (self.assetImage) {
             [vc editImage:self.assetImage];
             self.assetImage = nil;
-        } else {
-            NSString *filename = [NSHomeDirectory() stringByAppendingPathComponent:kPhotoFilePath];
-//            [vc editPhotoAt:filename metadata:self.currentCaptureMetadata];
-//            self.currentCaptureMetadata = nil;
         }
     } else if ([@"OpenShareWithViewSegue" isEqualToString:segue.identifier]) {
         NSString *comment = [self.postHeaderCell.commentTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
@@ -488,32 +482,18 @@ static const NSUInteger BufferSize = 1024*1024;
     }
 }
 
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
-{
+- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
     return CGSizeMake(self.cellLength, self.cellLength);
 }
 
 #pragma mark UICollectionViewDelegate
+
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     [self.collectionView deselectItemAtIndexPath:indexPath animated:NO];
-    
-    if (indexPath.section == 0 && indexPath.row == 0) {
-        if (self.filename) {
-            if (self.isOriginal) {
-                UIAlertView *confirm = [[UIAlertView alloc] initWithTitle:@"Delete?" message:nil delegate:self cancelButtonTitle:@"Keep" otherButtonTitles:@"Delete", nil];
-                [confirm showWithCompletionBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
-                    if (alertView.cancelButtonIndex != buttonIndex) {
-                        [self.postHeaderCell removeButtonPressed:self];
-                    }
-                }];
-            } else {
-                [self.postHeaderCell removeButtonPressed:self];
 
-            }
-        } else {
-            [self.collectionView setContentOffset:self.origContentOffset animated:NO];
-            [self performSegueWithIdentifier:@"OpenRecordViewSegue" sender:self];
-        }
+    if (indexPath.section == 0 && indexPath.row == 0) {
+        [self resetCollectionViewOffset];
+        [self performSegueWithIdentifier:@"OpenRecordViewSegue" sender:self];
     } else {
         TDPhotoCellCollectionViewCell * cell = (TDPhotoCellCollectionViewCell*)[self.collectionView cellForItemAtIndexPath:indexPath];
         self.postButton.enabled = YES;
@@ -521,7 +501,7 @@ static const NSUInteger BufferSize = 1024*1024;
         if ([[cell.asset valueForProperty:ALAssetPropertyType] isEqualToString:ALAssetTypeVideo]) {
             self.assetURL = [defaultRepresentation url];
             NSError *error;
-            if(![self exportDataToURL:defaultRepresentation error:&error]) {
+            if (![self exportDataToURL:defaultRepresentation error:&error]) {
                 debug NSLog(@"Error:%@", [error localizedDescription]);
             }
         } else if([[cell.asset valueForProperty:ALAssetPropertyType] isEqualToString:ALAssetTypePhoto]) {
@@ -534,7 +514,7 @@ static const NSUInteger BufferSize = 1024*1024;
 }
 
 - (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
-    return UIEdgeInsetsMake(0, 0, 0, 0);
+    return UIEdgeInsetsZero;
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
@@ -550,9 +530,8 @@ static const NSUInteger BufferSize = 1024*1024;
     if ((yOffset > (self.postHeaderCell.commentTextView.frame.size.height + self.postHeaderCell.optionsView.frame.size.height))
         && !self.minimizeIconIsShowing) {
         self.minimizeIconIsShowing = YES;
-        [[UIApplication sharedApplication] setStatusBarHidden:YES withAnimation:UIStatusBarAnimationFade];
         [self.navigationBarItem.leftBarButtonItem setImage:[UIImage imageNamed:@"minimize"]];
-        
+
         UIImage *image = [UIImage imageNamed:@"minimize"];
         CGRect buttonFrame = CGRectMake(0, 0, image.size.width, image.size.height);
         
@@ -564,7 +543,6 @@ static const NSUInteger BufferSize = 1024*1024;
 
     } else {
         if (self.minimizeIconIsShowing && yOffset < self.postHeaderCell.commentTextView.frame.size.height) {
-            [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationFade];
             UIButton *button = [TDViewControllerHelper navCloseButton];
             [button addTarget:self action:@selector(closeButtonPressed) forControlEvents:UIControlEventTouchUpInside];
             self.navigationBarItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:button];
@@ -592,7 +570,7 @@ static const NSUInteger BufferSize = 1024*1024;
     } else {
         [self removeOverlay];
         // Remove the location
-        if(self.postHeaderCell) {
+        if (self.postHeaderCell) {
             self.location = NO;
             [self.postHeaderCell changeLocationButton:@"Location" locationSet:self.location];
         }
