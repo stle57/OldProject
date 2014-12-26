@@ -48,21 +48,24 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
                                                                  options:0
                                                                    error:&error];
 
-    self.topLabel.font = [UIFont fontWithName:@"ProximaNova-Light" size:20.0];
-    self.friendsLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:17.0];
+    self.topLabel.font = [TDConstants fontSemiBoldSized:18];
+    self.topLabel.textColor = [TDConstants headerTextColor];
+    
+    self.friendsLabel.font = [TDConstants fontRegularSized:14];
+    self.friendsLabel.textColor = [TDConstants headerTextColor];
 
     // Textfields
-    [self.phoneNumberTextField setUpWithIconImageNamed:@"reg_ico_phone"
+    [self.phoneNumberTextField setUpWithIconImageNamed:@"icon_phone"
                                            placeHolder:@"Phone Number"
                                           keyboardType:UIKeyboardTypePhonePad
                                                   type:kTDTextFieldType_Phone
                                               delegate:self];
-    [self.emailTextField setUpWithIconImageNamed:@"reg_ico_email"
+    [self.emailTextField setUpWithIconImageNamed:@"icon_email"
                                      placeHolder:@"Email Address"
                                     keyboardType:UIKeyboardTypeEmailAddress
                                             type:kTDTextFieldType_Email
                                         delegate:self];
-    [self.firstLastNameTextField setUpWithIconImageNamed:@"reg_ico_name"
+    [self.firstLastNameTextField setUpWithIconImageNamed:@"icon_name"
                                              placeHolder:@"First and Last Name"
                                             keyboardType:UIKeyboardTypeNamePhonePad
                                                     type:kTDTextFieldType_FirstLast

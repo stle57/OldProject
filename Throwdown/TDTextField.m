@@ -43,10 +43,12 @@
         bottomLineFrame.size.height = 0.5;
         bottomLineFrame.origin.y += 0.5;
         self.bottomLine.frame = bottomLineFrame;
-
+        self.bottomLine.backgroundColor = [UIColor blackColor];
+        
         [self.textfield addTarget:self
                            action:@selector(textFieldDidChange:)
                  forControlEvents:UIControlEventEditingChanged];
+        
     }
     return self;
 }
@@ -58,11 +60,12 @@
     type = aType;
     self.spinner.hidden = YES;
     
-    self.placeholderLabel.font = [TDConstants fontRegularSized:19];
+    self.placeholderLabel.font = [TDConstants fontRegularSized:16];
     self.placeholderLabel.text = placeHolder;
+    self.placeholderLabel.textColor = [TDConstants commentTimeTextColor];
     self.placeholderLabel.alpha = 0.8;
 
-    self.textfield.font = [TDConstants fontRegularSized:19];
+    self.textfield.font = [TDConstants fontRegularSized:16];
     self.textfield.keyboardType = keyboardType;
     if (keyboardType == UIKeyboardTypeEmailAddress || keyboardType == UIKeyboardTypeTwitter) {
         self.textfield.autocapitalizationType = UITextAutocapitalizationTypeNone;

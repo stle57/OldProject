@@ -27,14 +27,52 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.topLabel.font = [TDConstants fontRegularSized:20];
+    self.topLabel.font = [TDConstants fontSemiBoldSized:18];
+    self.topLabel.textColor = [TDConstants headerTextColor];
 
+    self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    
+    //UINavigationBar *navigationBar = self.navigationController.navigationBar;
+    //    [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
+    //    [navigationBar setBarStyle:UIBarStyleBlack];
+//    navigationBar.translucent = NO;
+//    
+//    UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];     // 'X'
+//    self.navigationItem.leftBarButtonItem = leftBarButton;
+    
+    self.backButton.frame = CGRectMake(20, [UIApplication sharedApplication].statusBarFrame.size.height, [UIImage imageNamed:@"btn_x"].size.width, [UIImage imageNamed:@"btn_x"].size.height);
+    
+    self.topLabel.text = @"Reset Password";
+    self.topLabel.font = [TDConstants fontSemiBoldSized:18];
+    self.topLabel.textColor = [TDConstants
+                               headerTextColor];
+    [self.topLabel sizeToFit];
+    CGRect topLabelFrame = self.topLabel.frame;
+    topLabelFrame.origin.x = SCREEN_WIDTH/2 - self.topLabel.frame.size.width/2;
+    topLabelFrame.origin.y = [UIApplication sharedApplication].statusBarFrame.size.height;
+    self.topLabel.frame = topLabelFrame;
+    
+    [self.backgroundImageView setBackgroundImage];
+    [self.backgroundImageView applyBlurOnImage];
+    debug NSLog(@"self.backgroundImageView.frame = %@", NSStringFromCGRect(self.backgroundImageView.frame));
     // Textfields
-    [self.userNameTextField setUpWithIconImageNamed:@"reg_ico_email"
+    
+    self.alphaView.frame = self.view.frame;
+    self.alphaView.backgroundColor = [UIColor whiteColor];
+    [self.alphaView setAlpha:.92];
+    
+    [self.userNameTextField setUpWithIconImageNamed:@"icon_email"
                                         placeHolder:@"Email Address"//@"Email or Phone Number"
                                        keyboardType:UIKeyboardTypeEmailAddress
                                                type:kTDTextFieldType_UsernameOrPhoneNumber
                                            delegate:self];
+    self.userNameTextField.frame = CGRectMake(20, 50 + [UIApplication sharedApplication].statusBarFrame.size.height, SCREEN_WIDTH-40, 44);
+
+    self.userNameTextField.textfield.font = [TDConstants fontRegularSized:16];
+    self.userNameTextField.textfield.textColor = [TDConstants headerTextColor];
+    
+    self.resetButton.frame = CGRectMake(SCREEN_WIDTH/2 - [UIImage imageNamed:@"btn_reset_password" ].size.width/2, self.userNameTextField.frame.origin.y + self.userNameTextField.frame.size.height + 40, [UIImage imageNamed:@"btn_reset_password"].size.width, [UIImage imageNamed:@"btn_reset_password"].size.height);
+    
 
 }
 

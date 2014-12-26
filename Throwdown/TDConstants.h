@@ -35,6 +35,13 @@ enum {
 };
 typedef NSInteger kInviteType;
 
+enum {
+    kView1_Loading,
+    kView2_Loading,
+    kView3_Loading
+};
+typedef NSInteger kLoadingViewType;
+
 // for TDNotificationUpdatePost notifications, set user data's "change" field to a NSNumber version of these:
 const typedef NS_ENUM(NSUInteger, kUpdatePostType) {
     kUpdatePostTypeLike,

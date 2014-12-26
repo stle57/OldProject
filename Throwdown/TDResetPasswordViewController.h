@@ -8,15 +8,16 @@
 
 #import <UIKit/UIKit.h>
 #import "TDTextField.h"
+#import "TDAppCoverBackgroundView.h"
 
 @interface TDResetPasswordViewController : UIViewController <TDTextFieldDelegate, UITextFieldDelegate>
 {
 
 }
 
-@property (weak, nonatomic) IBOutlet UIImageView *backgroundImageView;
+@property (weak, nonatomic) IBOutlet TDAppCoverBackgroundView *backgroundImageView;
 @property (weak, nonatomic) IBOutlet UILabel *topLabel;
 @property (weak, nonatomic) IBOutlet TDTextField *userNameTextField;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *progress;
-
+@property (weak, nonatomic) IBOutlet UIView *alphaView;
 @end

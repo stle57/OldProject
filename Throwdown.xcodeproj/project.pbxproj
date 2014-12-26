@@ -98,6 +98,21 @@
 		4D8BEBE21A16772500C5D80A /* TDRateAppView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D8BEBE11A16772500C5D80A /* TDRateAppView.xib */; };
 		4DC2C9981968F69C00A210CF /* TDTextViewControllerHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC2C9971968F69C00A210CF /* TDTextViewControllerHelper.m */; };
 		4DC2C9A31969F72600A210CF /* TDUserListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC2C9A11969F72600A210CF /* TDUserListView.m */; };
+		4DC735EE1A4243D6000A8CA9 /* TDGetStartedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC735EC1A4243D6000A8CA9 /* TDGetStartedViewController.m */; };
+		4DC735EF1A4243D6000A8CA9 /* TDGetStartedViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DC735ED1A4243D6000A8CA9 /* TDGetStartedViewController.xib */; };
+		4DC735F31A425C0C000A8CA9 /* TDGoalsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC735F11A425C0C000A8CA9 /* TDGoalsViewController.m */; };
+		4DC735F41A425C0C000A8CA9 /* TDGoalsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DC735F21A425C0C000A8CA9 /* TDGoalsViewController.xib */; };
+		4DC735F81A434C5C000A8CA9 /* TDGoalsCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC735F61A434C5C000A8CA9 /* TDGoalsCell.m */; };
+		4DC735F91A434C5C000A8CA9 /* TDGoalsCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DC735F71A434C5C000A8CA9 /* TDGoalsCell.xib */; };
+		4DC735FD1A438640000A8CA9 /* TDInterestsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC735FB1A438640000A8CA9 /* TDInterestsViewController.m */; };
+		4DC735FE1A438640000A8CA9 /* TDInterestsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DC735FC1A438640000A8CA9 /* TDInterestsViewController.xib */; };
+		4DC736021A45CE77000A8CA9 /* TDLoadingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC736001A45CE77000A8CA9 /* TDLoadingViewController.m */; };
+		4DC736031A45CE77000A8CA9 /* TDLoadingViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DC736011A45CE77000A8CA9 /* TDLoadingViewController.xib */; };
+		4DC736061A45D018000A8CA9 /* TDLoadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC736051A45D018000A8CA9 /* TDLoadingView.m */; };
+		4DC7360B1A47710E000A8CA9 /* TDRefreshImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC7360A1A47710E000A8CA9 /* TDRefreshImageView.m */; };
+		4DC7360D1A49EDEB000A8CA9 /* TDLoginViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DC7360C1A49EDEB000A8CA9 /* TDLoginViewController.xib */; };
+		4DC7360F1A49F237000A8CA9 /* TDResetPasswordViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DC7360E1A49F237000A8CA9 /* TDResetPasswordViewController.xib */; };
+		4DC736121A4A3A9F000A8CA9 /* TDAppCoverBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC736111A4A3A9F000A8CA9 /* TDAppCoverBackgroundView.m */; };
 		4DD0837019AC585C00149968 /* TDToastViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DD0836F19AC585C00149968 /* TDToastViewController.m */; };
 		4DD170DB19EF15D600979EC8 /* TDFindPeopleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DD170D919EF15D600979EC8 /* TDFindPeopleViewController.m */; };
 		4DD170DC19EF15D600979EC8 /* TDFindPeopleViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DD170DA19EF15D600979EC8 /* TDFindPeopleViewController.xib */; };
@@ -365,6 +380,29 @@
 		4DC2C9971968F69C00A210CF /* TDTextViewControllerHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTextViewControllerHelper.m; sourceTree = "<group>"; };
 		4DC2C9A01969F72600A210CF /* TDUserListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserListView.h; sourceTree = "<group>"; };
 		4DC2C9A11969F72600A210CF /* TDUserListView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUserListView.m; sourceTree = "<group>"; };
+		4DC735EB1A4243D6000A8CA9 /* TDGetStartedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDGetStartedViewController.h; sourceTree = "<group>"; };
+		4DC735EC1A4243D6000A8CA9 /* TDGetStartedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDGetStartedViewController.m; sourceTree = "<group>"; };
+		4DC735ED1A4243D6000A8CA9 /* TDGetStartedViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDGetStartedViewController.xib; sourceTree = "<group>"; };
+		4DC735F01A425C0C000A8CA9 /* TDGoalsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDGoalsViewController.h; sourceTree = "<group>"; };
+		4DC735F11A425C0C000A8CA9 /* TDGoalsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDGoalsViewController.m; sourceTree = "<group>"; };
+		4DC735F21A425C0C000A8CA9 /* TDGoalsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDGoalsViewController.xib; sourceTree = "<group>"; };
+		4DC735F51A434C5C000A8CA9 /* TDGoalsCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDGoalsCell.h; sourceTree = "<group>"; };
+		4DC735F61A434C5C000A8CA9 /* TDGoalsCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDGoalsCell.m; sourceTree = "<group>"; };
+		4DC735F71A434C5C000A8CA9 /* TDGoalsCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDGoalsCell.xib; sourceTree = "<group>"; };
+		4DC735FA1A438640000A8CA9 /* TDInterestsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDInterestsViewController.h; sourceTree = "<group>"; };
+		4DC735FB1A438640000A8CA9 /* TDInterestsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDInterestsViewController.m; sourceTree = "<group>"; };
+		4DC735FC1A438640000A8CA9 /* TDInterestsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDInterestsViewController.xib; sourceTree = "<group>"; };
+		4DC735FF1A45CE77000A8CA9 /* TDLoadingViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDLoadingViewController.h; sourceTree = "<group>"; };
+		4DC736001A45CE77000A8CA9 /* TDLoadingViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDLoadingViewController.m; sourceTree = "<group>"; };
+		4DC736011A45CE77000A8CA9 /* TDLoadingViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDLoadingViewController.xib; sourceTree = "<group>"; };
+		4DC736041A45D018000A8CA9 /* TDLoadingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDLoadingView.h; sourceTree = "<group>"; };
+		4DC736051A45D018000A8CA9 /* TDLoadingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDLoadingView.m; sourceTree = "<group>"; };
+		4DC736091A47710E000A8CA9 /* TDRefreshImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDRefreshImageView.h; sourceTree = "<group>"; };
+		4DC7360A1A47710E000A8CA9 /* TDRefreshImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDRefreshImageView.m; sourceTree = "<group>"; };
+		4DC7360C1A49EDEB000A8CA9 /* TDLoginViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDLoginViewController.xib; sourceTree = "<group>"; };
+		4DC7360E1A49F237000A8CA9 /* TDResetPasswordViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDResetPasswordViewController.xib; sourceTree = "<group>"; };
+		4DC736101A4A3A9F000A8CA9 /* TDAppCoverBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDAppCoverBackgroundView.h; sourceTree = "<group>"; };
+		4DC736111A4A3A9F000A8CA9 /* TDAppCoverBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDAppCoverBackgroundView.m; sourceTree = "<group>"; };
 		4DD0836E19AC585C00149968 /* TDToastViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDToastViewController.h; sourceTree = "<group>"; };
 		4DD0836F19AC585C00149968 /* TDToastViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDToastViewController.m; sourceTree = "<group>"; };
 		4DD170D819EF15D600979EC8 /* TDFindPeopleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDFindPeopleViewController.h; sourceTree = "<group>"; };
@@ -919,7 +957,21 @@
 				A1432CE518A99DB30073E492 /* TDLoginViewController.h */,
 				A1432CE618A99DB30073E492 /* TDLoginViewController.m */,
 				2DA41154191006450099617B /* TDResetPasswordViewController.h */,
+				4DC7360E1A49F237000A8CA9 /* TDResetPasswordViewController.xib */,
 				2DA41155191006450099617B /* TDResetPasswordViewController.m */,
+				4DC735EB1A4243D6000A8CA9 /* TDGetStartedViewController.h */,
+				4DC735F01A425C0C000A8CA9 /* TDGoalsViewController.h */,
+				4DC735F11A425C0C000A8CA9 /* TDGoalsViewController.m */,
+				4DC735F21A425C0C000A8CA9 /* TDGoalsViewController.xib */,
+				4DC735EC1A4243D6000A8CA9 /* TDGetStartedViewController.m */,
+				4DC735ED1A4243D6000A8CA9 /* TDGetStartedViewController.xib */,
+				4DC735FA1A438640000A8CA9 /* TDInterestsViewController.h */,
+				4DC735FB1A438640000A8CA9 /* TDInterestsViewController.m */,
+				4DC735FC1A438640000A8CA9 /* TDInterestsViewController.xib */,
+				4DC735FF1A45CE77000A8CA9 /* TDLoadingViewController.h */,
+				4DC736001A45CE77000A8CA9 /* TDLoadingViewController.m */,
+				4DC736011A45CE77000A8CA9 /* TDLoadingViewController.xib */,
+				4DC7360C1A49EDEB000A8CA9 /* TDLoginViewController.xib */,
 			);
 			name = Onboarding;
 			sourceTree = "<group>";
@@ -941,6 +993,10 @@
 				A1D7073019E0C3E800ECB221 /* TDKeyboardObserver.m */,
 				4D38426C1A398FD3001F64B4 /* TDLocationManager.h */,
 				4D38426D1A398FD3001F64B4 /* TDLocationManager.m */,
+				4DC736091A47710E000A8CA9 /* TDRefreshImageView.h */,
+				4DC7360A1A47710E000A8CA9 /* TDRefreshImageView.m */,
+				4DC736101A4A3A9F000A8CA9 /* TDAppCoverBackgroundView.h */,
+				4DC736111A4A3A9F000A8CA9 /* TDAppCoverBackgroundView.m */,
 			);
 			name = Helpers;
 			sourceTree = "<group>";
@@ -1203,6 +1259,11 @@
 				2DBA430018DA455500366737 /* TDTextField.xib */,
 				2DBA42FE18DA455500366737 /* TDTextField.h */,
 				2DBA42FF18DA455500366737 /* TDTextField.m */,
+				4DC735F51A434C5C000A8CA9 /* TDGoalsCell.h */,
+				4DC735F61A434C5C000A8CA9 /* TDGoalsCell.m */,
+				4DC735F71A434C5C000A8CA9 /* TDGoalsCell.xib */,
+				4DC736041A45D018000A8CA9 /* TDLoadingView.h */,
+				4DC736051A45D018000A8CA9 /* TDLoadingView.m */,
 			);
 			name = Onboarding;
 			sourceTree = "<group>";
@@ -1334,6 +1395,8 @@
 				4D2843D919C649D600E4A56C /* TDNoFollowProfileCell.xib in Resources */,
 				A1F3B3681907821800CDA9F5 /* Dring.caf in Resources */,
 				4D6FCC2519CAA34D00902719 /* TDContactsViewController.xib in Resources */,
+				4DC735F91A434C5C000A8CA9 /* TDGoalsCell.xib in Resources */,
+				4DC7360D1A49EDEB000A8CA9 /* TDLoginViewController.xib in Resources */,
 				2DA39FD718E0B2570004A9C7 /* TDMoreComments.xib in Resources */,
 				A10F9C241909B01600D2CAB0 /* NewMessage.caf in Resources */,
 				A1ECEDBE19F70E7B0088BE70 /* cf_thrusters-2@2x.jpg in Resources */,
@@ -1353,11 +1416,15 @@
 				2D63FA881909D22200FEBA3C /* TDActivityIndicator.xib in Resources */,
 				2D83200A1911740A00A91282 /* TDPushEditCell.xib in Resources */,
 				2DC7B6AB18FF3D8500261BF7 /* TDToastView.xib in Resources */,
+				4DC735F41A425C0C000A8CA9 /* TDGoalsViewController.xib in Resources */,
 				4DD170DC19EF15D600979EC8 /* TDFindPeopleViewController.xib in Resources */,
 				2DA5F05D18D37C70003D2F99 /* BebasNeue Regular.otf in Resources */,
 				A11E04F41888CB79002F981A /* Images.xcassets in Resources */,
+				4DC7360F1A49F237000A8CA9 /* TDResetPasswordViewController.xib in Resources */,
 				2DA5F05E18D37C70003D2F99 /* BebasNeue Thin.otf in Resources */,
+				4DC735EF1A4243D6000A8CA9 /* TDGetStartedViewController.xib in Resources */,
 				2DA73D7918BFCCD000D87370 /* TDFeedLikeCommentCell.xib in Resources */,
+				4DC735FE1A438640000A8CA9 /* TDInterestsViewController.xib in Resources */,
 				A1B3EF3C193E8D240014B619 /* TDNoticeViewCell.xib in Resources */,
 				2DA41A5718C7D89C00B21C74 /* TDDetailViewController.xib in Resources */,
 				2DE4653318F605DC0042D81C /* TDUserProfileEditViewController.xib in Resources */,
@@ -1389,6 +1456,7 @@
 				2DA5F05C18D37C70003D2F99 /* BebasNeue Light.otf in Resources */,
 				A11E04EF1888CB79002F981A /* Main.storyboard in Resources */,
 				2DA5F05A18D37C70003D2F99 /* BebasNeue Bold.otf in Resources */,
+				4DC736031A45CE77000A8CA9 /* TDLoadingViewController.xib in Resources */,
 				4D3EA8F41A379C330014F2A6 /* TDCreatePostHeaderCell.xib in Resources */,
 				2DA5F05118D36745003D2F99 /* ProximaNova-Bold.otf in Resources */,
 			);
@@ -1463,6 +1531,7 @@
 				A1DD182A1A3839CB00B12BDC /* TDLocationFeedViewController.m in Sources */,
 				A1F02FD418C92277002FEB2F /* TDPostUpload.m in Sources */,
 				A151958B18BAE8FD0050A45B /* TDUser.m in Sources */,
+				4DC736121A4A3A9F000A8CA9 /* TDAppCoverBackgroundView.m in Sources */,
 				2DA39FD618E0B2570004A9C7 /* TDMoreComments.m in Sources */,
 				A14E38EF1992E71B001B46AF /* TDSocialNetworkCell.m in Sources */,
 				2D5714CC18BD9AB300AF0B4D /* VideoButtonSegue.m in Sources */,
@@ -1474,6 +1543,7 @@
 				A11999DD18DC0D4200C39ABF /* TDFileSystemHelper.m in Sources */,
 				4D3EA8EE1A379C190014F2A6 /* TDLocationCell.m in Sources */,
 				4D8BEBAA1A156BDE00C5D80A /* TDFeedbackViewController.m in Sources */,
+				4DC735EE1A4243D6000A8CA9 /* TDGetStartedViewController.m in Sources */,
 				A1BB463318F7767200BD9527 /* TDActivityViewController.m in Sources */,
 				2D2E832E18CA579B00846B2E /* TDComment.m in Sources */,
 				A19FF60D18970BBB001A0AD0 /* RSCDNContainer.m in Sources */,
@@ -1482,6 +1552,7 @@
 				A1BC0B3F18BE825200F507B3 /* TDSlideLeftSegue.m in Sources */,
 				A14B2B7F18B5308000980A31 /* TDAPIClient.m in Sources */,
 				4D3DDDE219DDB2790057A8B2 /* TDAddressBookAPI.m in Sources */,
+				4DC735F81A434C5C000A8CA9 /* TDGoalsCell.m in Sources */,
 				A182D839188F2C2D00F794A5 /* TDHomeViewController.m in Sources */,
 				2DBA430118DA455500366737 /* TDTextField.m in Sources */,
 				A14483BF19A8026000B3BC8D /* OAuth+Additions.m in Sources */,
@@ -1491,6 +1562,7 @@
 				A180D4E518C33D26003B9378 /* TDUnwindSlideLeftSegue.m in Sources */,
 				A1432D2018AA02990073E492 /* TDViewControllerHelper.m in Sources */,
 				A11999D618D90D5200C39ABF /* TDCreatePostViewController.m in Sources */,
+				4DC735FD1A438640000A8CA9 /* TDInterestsViewController.m in Sources */,
 				A125493F1999742B001C5CD1 /* TDSocialConnectCell.m in Sources */,
 				2DE2C70419087AA900E51156 /* TDNoMorePostsCell.m in Sources */,
 				4D3EA8E91A379C080014F2A6 /* TDLocationViewController.m in Sources */,
@@ -1511,6 +1583,7 @@
 				A11E04F21888CB79002F981A /* TDRecordVideoViewController.m in Sources */,
 				A1B3EF3B193E8D240014B619 /* TDNoticeViewCell.m in Sources */,
 				A11E04EC1888CB79002F981A /* TDAppDelegate.m in Sources */,
+				4DC736061A45D018000A8CA9 /* TDLoadingView.m in Sources */,
 				4D3EA8E41A379BEE0014F2A6 /* TDPhotoCellCollectionViewCell.m in Sources */,
 				2DA8639318F49D190089B048 /* TDUserProfileCell.m in Sources */,
 				2D1AEE7018C937560055C315 /* TDDetailsLikesCell.m in Sources */,
@@ -1518,6 +1591,7 @@
 				4DD170DB19EF15D600979EC8 /* TDFindPeopleViewController.m in Sources */,
 				A1F13C6719AD5D7E000DD890 /* TDRadioButtonRowCell.m in Sources */,
 				A19FF60E18970BBB001A0AD0 /* RSClient.m in Sources */,
+				4DC7360B1A47710E000A8CA9 /* TDRefreshImageView.m in Sources */,
 				A1DD18371A39034F00B12BDC /* TDLocation.m in Sources */,
 				4DD0837019AC585C00149968 /* TDToastViewController.m in Sources */,
 				A182D833188B60CD00F794A5 /* SAVideoRangeSlider.m in Sources */,
@@ -1545,6 +1619,7 @@
 				A1FBA27D1981C57D00C65E04 /* TDPRSegue.m in Sources */,
 				2DC7B6AA18FF3D8500261BF7 /* TDToastView.m in Sources */,
 				A182D831188B60CD00F794A5 /* SASliderLeft.m in Sources */,
+				4DC735F31A425C0C000A8CA9 /* TDGoalsViewController.m in Sources */,
 				2DA5354818F36EF800031128 /* TDPostsViewController.m in Sources */,
 				2D83200419116D9000A91282 /* TDUserPushNotificationsEditViewController.m in Sources */,
 				A1B9002E18CC316800012A1F /* TDHomeHeaderView.m in Sources */,
@@ -1560,6 +1635,7 @@
 				4D3352D419A29CD8007B3E06 /* iRate.m in Sources */,
 				A1432CE118A99D750073E492 /* TDWelcomeViewController.m in Sources */,
 				A14483C019A8026000B3BC8D /* OAuthCore.m in Sources */,
+				4DC736021A45CE77000A8CA9 /* TDLoadingViewController.m in Sources */,
 				A1D6BB0D196BBAE9007983F8 /* TDSlideDownSegue.m in Sources */,
 				A1A053FE19D6272300E7556A /* UIActionSheet+Blocks.m in Sources */,
 				2DA420DC18E63E1A006F4D9C /* TDActivityCell.m in Sources */,
@@ -1743,8 +1819,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_DISPLAY_NAME_SUFFIX = "";
 				BUNDLE_ID_SUFFIX = "";
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				EXCLUDED_SOURCE_FILE_NAMES = "FLEX*";
 				FACEBOOK_APP_ID = 1419119258326947;
@@ -1857,8 +1933,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_DISPLAY_NAME_SUFFIX = "-ß";
 				BUNDLE_ID_SUFFIX = .staging;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				EXCLUDED_SOURCE_FILE_NAMES = "";
 				FACEBOOK_APP_ID = 1470514189854120;
