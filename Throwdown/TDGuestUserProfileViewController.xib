@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TDGuestUserProfileViewController">
+            <connections>
+                <outlet property="addButton" destination="FUW-5q-ASc" id="O9e-4T-P7S"/>
+                <outlet property="tableView" destination="SAp-dG-QQI" id="Uo8-AP-V6d"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="SAp-dG-QQI">
+                    <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="dpp-mY-2ZM"/>
+                        <outlet property="delegate" destination="-1" id="ETd-5s-2j2"/>
+                    </connections>
+                </tableView>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FUW-5q-ASc">
+                    <rect key="frame" x="270" y="521" width="61" height="61"/>
+                    <state key="normal" image="plus_button_122x122">
+                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                    </state>
+                    <state key="selected" image="plus_button_122x122_hit"/>
+                    <state key="highlighted" image="plus_button_122x122_hit"/>
+                    <connections>
+                        <action selector="addButtonPressed:" destination="-1" eventType="touchUpInside" id="NAw-Ll-6Hr"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="FUW-5q-ASc" firstAttribute="bottom" secondItem="i5M-Pr-FkT" secondAttribute="bottomMargin" constant="-10" id="1f3-cq-hvD"/>
+                <constraint firstItem="FUW-5q-ASc" firstAttribute="centerX" secondItem="SAp-dG-QQI" secondAttribute="centerX" id="8s8-5m-XUX"/>
+                <constraint firstAttribute="trailing" secondItem="SAp-dG-QQI" secondAttribute="trailing" id="DzW-bh-P7Q"/>
+                <constraint firstAttribute="bottom" secondItem="SAp-dG-QQI" secondAttribute="bottom" id="JMl-r2-hxT"/>
+                <constraint firstItem="SAp-dG-QQI" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" id="aac-ru-oHU"/>
+                <constraint firstItem="SAp-dG-QQI" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="tJn-Xj-MLv"/>
+            </constraints>
+        </view>
+    </objects>
+    <resources>
+        <image name="plus_button_122x122" width="61" height="61"/>
+        <image name="plus_button_122x122_hit" width="61" height="61"/>
+    </resources>
+</document>

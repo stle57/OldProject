@@ -17,6 +17,7 @@
 
 + (void)showAlertMessage:(NSString *)message withTitle:(NSString *)title;
 + (void)navigateToHomeFrom:(UIViewController *)fromController;
++ (void)navigateToGuestFrom:(UIViewController *)fromController;
 + (BOOL)validateEmail:(NSString *)email;
 + (NSString*)validatePhone:(NSString *)phone;
 + (NSDate *)dateForRFC3339DateTimeString:(NSString *)rfc3339DateTimeString;
@@ -29,6 +30,7 @@
 + (NSAttributedString *)makeParagraphedTextWithString:(NSString *)text font:(UIFont*)font color:(UIColor*)color lineHeight:(CGFloat)lineHeight lineHeightMultipler:(CGFloat)lineHeightMultiplier;
 + (NSAttributedString *)makeParagraphedTextWithString:(NSString *)text font:(UIFont*)font color:(UIColor*)color lineHeight:(CGFloat)lineHeight;
 + (NSAttributedString *)makeParagraphedTextForTruncatedBio:(NSString *)text font:(UIFont*)font color:(UIColor*)color lineHeight:(CGFloat)lineHeight;
++ (NSAttributedString *)makeLeftAlignedTextWithString:(NSString *)text font:(UIFont*)font color:(UIColor*)color lineHeight:(CGFloat)lineHeight lineHeightMultipler:(CGFloat)lineHeightMultiplier;
 + (void)linkUsernamesInLabel:(TTTAttributedLabel *)label users:(NSArray *)users;
 + (void)linkUsernamesInLabel:(TTTAttributedLabel *)label users:(NSArray *)users pattern:(NSString *)pattern;
 + (CGFloat)heightForComment:(NSString *)text withMentions:(NSArray *)mentions;

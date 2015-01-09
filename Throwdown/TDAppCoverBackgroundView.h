@@ -12,4 +12,5 @@
 
 - (void)setBackgroundImage;
 - (void)applyBlurOnImage;
+- (void)unBlurImage;
 @end

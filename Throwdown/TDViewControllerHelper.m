@@ -57,6 +57,12 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     [root performSelector:@selector(showHomeController)];
 }
 
++ (void)navigateToGuestFrom:(UIViewController *)fromController {
+    UINavigationController *nav = (UINavigationController*) fromController.view.window.rootViewController;
+    TDWelcomeViewController *root = (TDWelcomeViewController *)[nav.viewControllers objectAtIndex:0];
+    [root performSelector:@selector(showGuestController)];
+}
+
 + (BOOL)validateEmail:(NSString *)email {
     NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", EMAIL_REGEX];
     return [emailTest evaluateWithObject:email];
@@ -195,6 +201,19 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     [paragraphStyle setMinimumLineHeight:lineHeight];
     [paragraphStyle setMaximumLineHeight:lineHeight];
     paragraphStyle.alignment = NSTextAlignmentCenter;
+    [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, text.length)];
+    [attributedString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, text.length)];
+    [attributedString addAttribute:NSForegroundColorAttributeName value:color range:NSMakeRange(0, text.length)];
+    return attributedString;
+}
+
++ (NSAttributedString *)makeLeftAlignedTextWithString:(NSString *)text font:(UIFont*)font color:(UIColor*)color lineHeight:(CGFloat)lineHeight lineHeightMultipler:(CGFloat)lineHeightMultiplier{
+    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:text];
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    [paragraphStyle setLineHeightMultiple:lineHeightMultiplier];
+    [paragraphStyle setMinimumLineHeight:lineHeight];
+    [paragraphStyle setMaximumLineHeight:lineHeight];
+    paragraphStyle.alignment = NSTextAlignmentLeft;
     [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, text.length)];
     [attributedString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, text.length)];
     [attributedString addAttribute:NSForegroundColorAttributeName value:color range:NSMakeRange(0, text.length)];

@@ -17,10 +17,15 @@
 #import "TDInviteViewController.h"
 #import "TDNoFollowingCell.h"
 #import "TDLocationFeedViewController.h"
+#import "TDGuestInfoCell.h"
+#import "TDWelcomeViewController.h"
+#import "TDGuestUserJoinView.h"
+#import "TDViewControllerHelper.h"
 
 static CGFloat const kWhiteBottomPadding = 6;
 static CGFloat const kPostMargin = 22;
 static CGFloat const kHeightOfStatusBar = 64.0;
+//static CGFloat const kGuestCell = 130;
 
 @interface TDPostsViewController ()
 
@@ -70,7 +75,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-
+    
     // Background color
 
     // Add refresh control
@@ -175,6 +180,16 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     return NO;
 }
 
+// Override this to return guest feed.
+- (BOOL)onGuestFeed {
+    return NO;
+}
+
+- (BOOL)newUser {
+    return NO;
+}
+- (void)openGuestUserJoin:(kLabelType)type {
+}
 // Override to return user object if we're on profile view
 - (TDUser *)getUser {
     return nil;
@@ -228,13 +243,28 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     NSArray *posts = [self postsForThisScreen];
-
+    BOOL hasAskedForGoals = [[TDCurrentUser sharedInstance] didAskForGoals ];
+    if (hasAskedForGoals) {
+        debug NSLog(@"not adding a row, already asked for goals");
+    } else {
+        debug NSLog(@"adding a row, haven't asked for goals");
+    }
+    if ([[TDCurrentUser sharedInstance] isNewUser]) {
+        debug NSLog(@"we are a new user");
+    } else {
+        debug NSLog(@"not a new user");
+    }
+    debug NSLog(@"number of posts = %lu", (unsigned long)[posts count]);
     if ([posts count] == 0) {
         return 1 + (self.profileType != kFeedProfileTypeNone ? 1 : 0);
     }
-
-    // 1 section per post, +1 if we need the Profile Header cell
-    return [posts count] + [self noticeCount] + (showBottomSpinner ? 1 : 0) + ([self hasMorePosts] ? 0 : 1) + (self.profileType != kFeedProfileTypeNone ? 1 : 0);
+    if ([self onGuestFeed]) {
+        debug NSLog(@"on guest feed, number of sections = %lu", [posts count] + [self noticeCount] + (showBottomSpinner ? 1 : 0) + ([self hasMorePosts] ? 0 : 1) + (self.profileType != kFeedProfileTypeNone ? 1 : 0) + ([self onGuestFeed] ? 5 : 0) + (hasAskedForGoals ? 0 : 1));
+    } else {
+        debug NSLog(@"return number of sections=%lu", [posts count] + [self noticeCount] + (showBottomSpinner ? 1 : 0) + ([self hasMorePosts] ? 0 : 1) + (self.profileType != kFeedProfileTypeNone ? 1 : 0) + ([self onGuestFeed] ? 5 : 0) + (hasAskedForGoals ? 0 : 1));
+    }
+    // 1 section per post, +1 if we need the Profile Header cell or +1 if we need the new user welcome cell
+    return [posts count] + [self noticeCount] + (showBottomSpinner ? 1 : 0) + ([self hasMorePosts] ? 0 : 1) + (self.profileType != kFeedProfileTypeNone ? 1 : 0) + ([self onGuestFeed] ? 5 : 0 + ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) + (hasAskedForGoals ? 0 : 1));
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -244,11 +274,25 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         return 1;
     }
 
+    // 1st row for New User Header
+    if ([[TDCurrentUser sharedInstance] isNewUser] && section == 0) {
+        return 1;
+    }
+    
+    if ((![[TDCurrentUser sharedInstance] didAskForGoals]) && section == 0 && [[TDCurrentUser sharedInstance] isLoggedIn]) {
+        return 1;
+    }
+    
     // 'No Posts'
     if ([[self postsForThisScreen] count] == 0) {
         return 1;
     }
 
+    if ([self onGuestFeed] && (section == 0 || section == 1 || section == 11)) {
+        debug NSLog(@"returning number of rows for seciton 0 or 11");
+        return 1;
+    }
+    
     // One row per notice (each in it's own section)
     if ([self noticeCount] > 0 && section < [self noticeCount]) {
         return 1;
@@ -261,11 +305,17 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         return 1;
     }
 
+    if ([self onGuestFeed] &&  ((section == row+1)|| (section == row))) {
+        debug NSLog(@"second to last OR last row for guest feed");
+        return 1;
+    }
+    
     // Last row with no more posts
     if (![self hasMorePosts] && section == row) {
         return 1;
     }
 
+    
     TDPost *post = [self postForRow:section];
     if (post) {
         // 1 for profile header and media/text
@@ -280,7 +330,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSInteger realRow = [[self postsForThisScreen] count] + [self noticeCount] + (self.profileType != kFeedProfileTypeNone ? 1 : 0);
-
+    
     // 1st row for Profile Header
     if (self.profileType != kFeedProfileTypeNone && indexPath.section == 0) {
         TDUserProfileCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_PROFILE];
@@ -304,6 +354,108 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         return cell;
     }
 
+    if ([[TDCurrentUser sharedInstance] isNewUser] && indexPath.section == 0) {
+        debug NSLog(@"new user cell");
+        TDGuestInfoCell *cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
+        if (!cell) {
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGuestInfoCell" owner:self options:nil];
+            cell = [topLevelObjects objectAtIndex:0];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.delegate = self;
+        }
+        cell.label4.hidden = YES;
+        cell.label1.hidden = NO;
+        cell.label2.hidden = NO;
+        cell.label3.hidden = NO;
+        cell.button.hidden = NO;
+        [cell setNewUserCell];
+        
+        CGRect cellFrame = cell.frame;
+        cellFrame.size.height = [TDGuestInfoCell heightForNewUserCell];
+        cell.frame = cellFrame;
+        
+        cell.bottomLine.hidden = NO;
+        cell.topLine.hidden = NO;
+
+        cell.topLine.frame = CGRectMake(0, 15, cell.topLine.frame.size.width, .5);
+        cell.topLine.backgroundColor = [TDConstants darkBorderColor];
+        
+        return cell;
+    }
+    
+    if ((![[TDCurrentUser sharedInstance] didAskForGoals]) && indexPath.section == 0 && [[TDCurrentUser sharedInstance] isLoggedIn]) {
+        debug NSLog(@"creating section 0, row 0");
+        debug NSLog(@"existing user cell");
+        TDGuestInfoCell *cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
+        if (!cell) {
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGuestInfoCell" owner:self options:nil];
+            cell = [topLevelObjects objectAtIndex:0];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.delegate = self;
+        }
+        cell.label4.hidden = NO;
+        cell.label1.hidden = NO;
+        cell.label2.hidden = NO;
+        cell.label3.hidden = NO;
+        cell.button.hidden = NO;
+        [cell setExistingUserCell];
+        
+        cell.bottomLine.hidden = NO;
+        cell.topLine.hidden = NO;
+        return cell;
+    }
+    
+    if ([self onGuestFeed] && indexPath.section == 0) {
+        debug NSLog(@"creating section 0, row 0");
+        debug NSLog(@"new user cell");
+        TDGuestInfoCell *cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
+        if (!cell) {
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGuestInfoCell" owner:self options:nil];
+            cell = [topLevelObjects objectAtIndex:0];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.delegate = self;
+        }
+        
+        cell.label4.hidden = YES;
+        cell.label1.hidden = NO;
+        cell.label2.hidden = NO;
+        cell.label3.hidden = NO;
+        cell.button.hidden = NO;
+        [cell setGuestUserCell];
+        
+        cell.bottomLine.hidden = NO;
+        cell.topLine.hidden = NO;
+        cell.topLine.frame = CGRectMake(0, 15, cell.topLine.frame.size.width, .5);
+        cell.topLine.backgroundColor = [TDConstants darkBorderColor];
+        
+        return cell;
+    }
+    
+    if ([self onGuestFeed] && indexPath.section == 1) {
+        debug NSLog(@"creating section 0, row 1");
+        TDGuestInfoCell *cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
+        if (!cell) {
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGuestInfoCell" owner:self options:nil];
+            cell = [topLevelObjects objectAtIndex:0];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.delegate = self;
+        }
+        cell.label1.hidden = NO;
+        cell.label2.hidden = YES;
+        cell.label3.hidden = YES;
+        cell.label4.hidden = YES;
+        cell.button.hidden = YES;
+        [cell setEditGoalsCell];
+        
+        cell.bottomLine.hidden = YES;
+        cell.topLine.hidden = YES;
+        
+        debug NSLog(@"edit goals cell-%@", NSStringFromCGRect(cell.frame));
+        debug NSLog(@"label1 frame = %@", NSStringFromCGRect(cell.label1.frame));
+        
+        return cell;
+    }
+    
     // 'Loading' or 'No Posts' cell
     if ([[self postsForThisScreen] count] == 0) {
         TDNoPostsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoPostsCell"];
@@ -342,6 +494,28 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         return cell;
     }
 
+    if ([self onGuestFeed] && indexPath.section == 11) {
+        // Create a info cell
+        TDGuestInfoCell *cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
+        if (!cell) {
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGuestInfoCell" owner:self options:nil];
+            cell = [topLevelObjects objectAtIndex:0];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        }
+        cell.label4.hidden = NO;
+        cell.label1.hidden = NO;
+        cell.label2.hidden = NO;
+        cell.label3.hidden = NO;
+        [cell setInfoCell];
+        
+        CGRect frame = cell.frame;
+        frame.size.height = [TDGuestInfoCell heightForInfoCell];
+        cell.frame = frame;
+        debug NSLog(@"row 10, frame-%@", NSStringFromCGRect(cell.frame));
+
+        return cell;
+    }
+    
     // Notices on Home Screen
     if ([self noticeCount] > 0 && indexPath.section < [self noticeCount]) {
         TDNotice *notice = [self getNoticeAt:indexPath.section];
@@ -369,19 +543,81 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         return cell;
     }
 
-    // Last row if no more
-    if (![self hasMorePosts] && indexPath.section == realRow) {
-        TDNoMorePostsCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_NO_MORE_POSTS];
+    if (![self hasMorePosts] && [self onGuestFeed] && indexPath.section == realRow) {
+        debug NSLog(@"last row on guest feed");
+        TDGuestInfoCell *cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
         if (!cell) {
-            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_NO_MORE_POSTS owner:self options:nil];
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGuestInfoCell" owner:self options:nil];
             cell = [topLevelObjects objectAtIndex:0];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.delegate = self;
         }
+        cell.label4.hidden = YES;
+        cell.label1.hidden = YES;
+        cell.label2.hidden = NO;
+        cell.label3.hidden = YES;
+        cell.button.hidden = NO;
+        
+        [cell setLastCell];
+        
+        CGRect cellFrame = cell.frame;
+        cellFrame.size.height = [TDGuestInfoCell heightForLastCell];
+        cell.frame = cellFrame;
+        cell.bottomLine.hidden = NO;
+        cell.topLine.hidden = NO;
+        
+        UIView *line = [[UIView alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 1 / [[UIScreen mainScreen] scale])];
+        line.backgroundColor = [TDConstants darkBorderColor];
+        [cell addSubview:line];
+        cell.topLine.frame = CGRectMake(0, 0, cell.topLine.frame.size.width, .5);
+        cell.bottomLine.frame = CGRectMake(0, cell.frame.size.height - .5, cell.bottomLine.frame.size.width, .5);
+        cell.bottomLine.backgroundColor = [TDConstants darkBorderColor];
+        cell.topLine.backgroundColor = [TDConstants darkBorderColor];
+        
+        return cell;
+
+    }
+    
+    if ([self onGuestFeed] && ![self hasMorePosts] && indexPath.section == realRow+1) {
+        TDGuestInfoCell*cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
+        if (!cell) {
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGuestInfoCell" owner:self options:nil];
+            cell = [topLevelObjects objectAtIndex:0];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.delegate = self;
+        }
+        cell.label4.hidden = YES;
+        cell.label1.hidden = YES;
+        cell.label2.hidden = NO;
+        cell.label3.hidden = YES;
+        cell.button.hidden = NO;
+        
+        cell.backgroundColor = [TDConstants darkBackgroundColor];
+        
+        CGRect cellFrame = cell.frame;
+        cellFrame.size.height = SCREEN_HEIGHT/2;
+        cell.frame = cellFrame;
+        cell.bottomLine.hidden = YES;
+        cell.topLine.hidden = YES;
+        
         return cell;
     }
+    
+    // Last row if no more
+    if (![self hasMorePosts] && indexPath.section == realRow) {
 
+            TDNoMorePostsCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_NO_MORE_POSTS];
+            if (!cell) {
+                NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_NO_MORE_POSTS owner:self options:nil];
+                cell = [topLevelObjects objectAtIndex:0];
+                cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            }
+            return cell;
+    }
+    
     // The actual post row
     TDPost *post = [self postForRow:indexPath.section];
+    
     if (indexPath.row == 0) {
         TDPostView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_POST_VIEW];
         if (!cell) {
@@ -470,11 +706,30 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         return [TDUserProfileCell heightForUserProfile:[self getUser]];
     }
 
+    if ([[TDCurrentUser sharedInstance] isNewUser] && indexPath.section == 0) {
+        return [TDGuestInfoCell heightForNewUserCell];
+    }
+    
+    if ((![[TDCurrentUser sharedInstance] didAskForGoals]) && indexPath.section == 0 && [[TDCurrentUser sharedInstance] isLoggedIn]) {
+        return [TDGuestInfoCell heightForExistingUserCell];
+    }
+    if ([self onGuestFeed] && indexPath.section == 0) {
+        return [TDGuestInfoCell heightForGuestUserCell];
+    }
+    
+    if ([self onGuestFeed] && indexPath.section == 1) {
+        return [TDGuestInfoCell heightForEditGoalsCell];
+    }
+    
+    if ([self onGuestFeed] && indexPath.section == 11   ) {
+        return [TDGuestInfoCell heightForInfoCell];
+    }
+    
     // Just 'No Posts' cell
     if (postsCount == 0) {
         return [UIScreen mainScreen].bounds.size.height - kHeightOfStatusBar - self.tableView.contentInset.top - (self.profileType == kFeedProfileTypeNone ? 0 : [TDUserProfileCell heightForUserProfile:[self getUser]]);
     }
-
+    
     NSUInteger noticeCount = [self noticeCount];
     if (noticeCount > 0 && indexPath.section < noticeCount) {
         return [TDNoticeViewCell heightForNotice:[self getNoticeAt:indexPath.section]];
@@ -489,17 +744,39 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 
     // Last row with Load More
     if (![self hasMorePosts] && realSection == postsCount) {
-        return uploadMoreHeight;
+        if ([self onGuestFeed]) {
+            debug NSLog(@"returning height for last row in guest user, realSection-%ld", (long)realSection);
+            return [TDGuestInfoCell heightForLastCell];
+        } else {
+            return uploadMoreHeight;
+        }
     }
 
+    if ([self onGuestFeed] && ![self hasMorePosts] && realSection == postsCount+1) {
+        debug NSLog(@"height for last row on guest feed");
+        return SCREEN_HEIGHT/2;
+        //return [TDGuestInfoCell heightForLastCell];
+    }
+    
     NSInteger lastRow = [self tableView:nil numberOfRowsInSection:indexPath.section] - 1;
 
+//    if ([self onGuestFeed] && indexPath.section == [[self postsForThisScreen] count] + 2 ) {
+//        debug NSLog(@"height for last row on guest");
+//        return [TDGuestInfoCell heightForLastCell];
+//    }
+    
     // Last row in each post section is just background padding and bottom line
     if (indexPath.row == lastRow) {
+        //debug NSLog(@"height for last row bottom padding");
         return kPostMargin;
     }
 
+    
     TDPost *post = [self postForRow:indexPath.section];
+//    if ( [self onGuestFeed] && !post ) {
+//        return kGuestCell;
+//    }
+    
     if (!post) {
         return 0;
     }
@@ -549,11 +826,26 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         return;
     }
 
+    if ([self onGuestFeed] && indexPath.section == 0) {
+        return;
+    }
+    
+    if ([self onGuestFeed] && indexPath.section== 1) {
+        debug NSLog(@"clicked on editing goals and interests");
+        [self showGoalsAndInterestsController];
+        return;
+    }
+    
     if (self.profileType != kFeedProfileTypeNone && indexPath.section == 0) {
         return;
     }
 
     TDPost *post = [self postForRow:indexPath.section];
+    
+//    if ([self onGuestFeed] && !post) {
+//        return;
+//    }
+    
     if (post) {
         [self openDetailView:post.postId];
     }
@@ -630,14 +922,17 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 
 - (void)likeButtonPressedFromRow:(NSInteger)row {   // 'row' is actually the section
     debug NSLog(@"Home-likeButtonPressedFromRow:%ld", (long)row);
-
-    TDPost *post = [self postForRow:row];
-    if (post && post.postId) {
-        [post addLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
-        [self.tableView reloadData];
-        [[TDPostAPI sharedInstance] likePostWithId:post.postId];
-        if ([[iRate sharedInstance] shouldPromptForRating]) {
-            [[iRate sharedInstance] promptIfNetworkAvailable];
+    if ([self onGuestFeed]) {
+        [self openGuestUserJoin:kLike_LabelType];
+    } else {
+        TDPost *post = [self postForRow:row];
+        if (post && post.postId) {
+            [post addLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
+            [self.tableView reloadData];
+            [[TDPostAPI sharedInstance] likePostWithId:post.postId];
+            if ([[iRate sharedInstance] shouldPromptForRating]) {
+                [[iRate sharedInstance] promptIfNetworkAvailable];
+            }
         }
     }
 }
@@ -655,8 +950,12 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 
 - (void)commentButtonPressedFromRow:(NSInteger)row {
     debug NSLog(@"Home-commentButtonPressedFromRow:%ld", (long)row);
-    TDPost *post = [self postForRow:row];
-    [self openDetailView:post.postId];
+    if ([self onGuestFeed]) {
+        [self openGuestUserJoin:kComment_LabelType];
+    } else {
+        TDPost *post = [self postForRow:row];
+        [self openDetailView:post.postId];
+    }
 }
 
 - (void)miniLikeButtonPressedForLiker:(NSDictionary *)liker {
@@ -707,6 +1006,18 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     [self.navigationController popToRootViewControllerAnimated:NO];
 }
 
+- (void)showGoalsAndInterestsController {
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+
+    UINavigationController *navigationController = [storyboard instantiateViewControllerWithIdentifier:@"WelcomeViewController"];
+    TDWelcomeViewController *viewController = navigationController.viewControllers[0];
+    
+    // setup "inner" view controller
+    viewController.editViewOnly = YES;
+    
+    [self presentViewController:navigationController animated:YES completion:nil];
+
+}
 #pragma mark - Loading Spinner
 - (void)startSpinner:(NSNotification *)notification {
     [self startLoadingSpinner];
@@ -892,4 +1203,8 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     
 }
 
+- (void)dismissButtonPressed {
+    debug NSLog(@"dismiss button pressed for TDPostsViewController");
+    [self.tableView reloadData];
+}
 @end

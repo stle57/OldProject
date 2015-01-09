@@ -18,15 +18,18 @@
 
 static NSString *topHeaderText1 = @"What are your interests?";
 static NSString *topHeaderText2 = @"Select all that apply.";
+static const int doneBackgroundViewHeight = 80;
 
 @implementation TDInterestsViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withBackButton:(BOOL)yes
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         self.interestList = [NSMutableArray arrayWithObjects:@"Cycling", @"Yoga",
                          @"CrossFit", @"Bodybuilding", @"Marathons", @"Kickboxing", @"MMA", nil];
+        self.showBackButton = yes;
+
     }
     return self;
 }
@@ -34,12 +37,24 @@ static NSString *topHeaderText2 = @"Select all that apply.";
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+    self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH+20, SCREEN_HEIGHT);
+    self.view.backgroundColor = [UIColor clearColor];
+    
+    self.alphaView.frame = self.view.frame;
+    self.alphaView.backgroundColor = [UIColor whiteColor];
+    [self.alphaView setAlpha:.92];
+    [self.view addSubview:self.alphaView];
+    
+    if (self.showBackButton) {
+        self.backButton.frame = CGRectMake(15, 15, [UIImage imageNamed:@"btn_back"].size.width, [UIImage imageNamed:@"btn_back"].size.height);
+        [self.alphaView addSubview:self.backButton];
+    }
+    
     [self createHeaderLabel];
     
     self.tableView.frame = CGRectMake(0, 100, SCREEN_WIDTH, SCREEN_HEIGHT - 80 - 100);
     self.tableView.backgroundColor = [UIColor clearColor];
-    [self.view addSubview:self.tableView];
+    [self.alphaView addSubview:self.tableView];
     
     CGRect bottomLineRect = self.bottomMargin.frame;
     bottomLineRect.origin.x = 0;
@@ -48,18 +63,26 @@ static NSString *topHeaderText2 = @"Select all that apply.";
     bottomLineRect.size.width = SCREEN_WIDTH;
     self.bottomMargin.frame = bottomLineRect;
     self.bottomMargin.backgroundColor = [TDConstants commentTimeTextColor];
-    [self.view addSubview:self.bottomMargin];
+    [self.alphaView addSubview:self.bottomMargin];
     
-    self.doneButton.frame = CGRectMake(SCREEN_WIDTH/2 - [UIImage imageNamed:@"btn_okdone"].size.width/2, SCREEN_HEIGHT - 70, [UIImage imageNamed:@"btn_okdone"].size.width, [UIImage imageNamed:@"btn_okdone"].size.height);
+    self.doneBackgroundView.frame = CGRectMake(0, self.bottomMargin.frame.origin.y + self.bottomMargin.frame.size.height, SCREEN_WIDTH, doneBackgroundViewHeight);
+    self.doneBackgroundView.backgroundColor = [UIColor colorWithRed:(251.0/255.0) green:(250.0/255.0) blue:(249.0/255.0) alpha:1.0];
+    [self.alphaView addSubview:self.doneBackgroundView];
+
     
-    [self.view addSubview:self.doneButton];
+    self.doneButton.frame = CGRectMake(self.doneBackgroundView.frame.size.width/2 - [UIImage imageNamed:@"btn_okdone"].size.width/2, doneBackgroundViewHeight - 10- [UIImage imageNamed:@"ovals_right"].size.height - 10-[UIImage imageNamed:@"btn_okdone"].size.height, [UIImage imageNamed:@"btn_okdone"].size.width, [UIImage imageNamed:@"btn_okdone"].size.height);
+    
+    [self.doneBackgroundView addSubview:self.doneButton];
+    
+    self.pageIndicator.frame = CGRectMake(self.doneBackgroundView.frame.size.width/2 - [UIImage imageNamed:@"ovals_right"].size.width/2, self.doneButton.frame.origin.y + self.doneButton.frame.size.height + 10, [UIImage imageNamed:@"ovals_right"].size.width, [UIImage imageNamed:@"ovals_right"].size.height);
+    
+    self.pageIndicator.hidden = NO;
+    [self.doneBackgroundView addSubview:self.pageIndicator];
     
     self.keyboardObserver = [[TDKeyboardObserver alloc] initWithDelegate:self];
     [self.keyboardObserver startListening];
     
     self.tableView.backgroundColor = [UIColor clearColor];
-    self.view.layer.borderWidth = 2.;
-    self.view.layer.borderColor = [[UIColor greenColor] CGColor];
     debug NSLog(@"interest view frame=%@", NSStringFromCGRect(self.view.frame));
 }
 
@@ -102,34 +125,14 @@ static NSString *topHeaderText2 = @"Select all that apply.";
         cell.editableTextField.delegate = self;
     }
     
-    cell.bottomLine.hidden = NO;
     cell.row = indexPath.row;
-    cell.goalLabel.hidden = NO;
-    cell.addButton.hidden = YES;
-    cell.selectionButton.hidden = NO;
-    cell.editableTextField.hidden = YES;
-    
     if (indexPath.row == self.interestList.count) {
-        cell.goalLabel.hidden = YES;
-        cell.addButton.hidden = NO;
-        cell.selectionButton.hidden = YES;
-        CGRect buttonFrame = cell.addButton.frame;
-        buttonFrame.origin.x = cell.frame.size.width/2 - cell.addButton.frame.size.width/2;
-        buttonFrame.origin.y = cell.frame.size.height/2 - cell.addButton.frame.size.height/2;
-        cell.addButton.frame = buttonFrame;
-        cell.bottomLine.hidden = YES;
+        [cell createCell:YES text:nil];
         
     } else {
-        NSAttributedString *attString = [self makeTextWithString:self.interestList[indexPath.row] font:[TDConstants fontRegularSized:16.] color:[TDConstants headerTextColor] lineHeight:16. lineHeightMultipler:16./16.];
-        cell.goalLabel.attributedText = attString;
-        [cell.goalLabel sizeToFit];
+        [cell createCell:NO text:self.interestList[indexPath.row]];
     }
     
-    CGRect goalFrame = cell.goalLabel.frame;
-    goalFrame.origin.y = cell.frame.size.height/2 - cell.goalLabel.frame.size.height/2;
-    cell.goalLabel.frame = goalFrame;
-    
-    cell.editableTextField.frame = goalFrame;
     return cell;
 
 }
@@ -140,15 +143,8 @@ static NSString *topHeaderText2 = @"Select all that apply.";
     if (indexPath.row == self.interestList.count) {
         TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:indexPath];
         if (cell) {
-            cell.goalLabel.hidden = YES;
-            cell.addButton.hidden = YES;
-            cell.editableTextField.hidden = NO;
-            [cell.editableTextField becomeFirstResponder];
-            debug NSLog(@"cell.editableTextField.frame = %@",NSStringFromCGRect( cell.editableTextField.frame));
-            [cell.editableTextField setEnablesReturnKeyAutomatically:YES];
+            [cell makeCellFirstResponder];
             self.selectedIndexPath = indexPath;
-            cell.bottomLine.hidden = NO;
-            debug NSLog(@"cell.bottomLine.frame = %@", NSStringFromCGRect(cell.bottomLine.frame));
         }
     } else {
         [self selectionButtonPressedFromRow:indexPath.row];
@@ -161,18 +157,7 @@ static NSString *topHeaderText2 = @"Select all that apply.";
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
     TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:indexPath];
     if (cell) {
-        if (cell.selectionButton.tag == 0) {
-            [cell.selectionButton setImage:[UIImage imageNamed:@"checkbox_checked"] forState:UIControlStateNormal] ;
-            NSAttributedString *str =
-            [self makeTextWithString:cell.goalLabel.attributedText.string font:[TDConstants fontRegularSized:16] color:[TDConstants brandingRedColor] lineHeight:16. lineHeightMultipler:16/16];
-            cell.goalLabel.attributedText = str;
-            cell.selectionButton.tag = 1;
-        } else {
-            [cell.selectionButton setImage:[UIImage imageNamed:@"checkbox_empty"] forState:UIControlStateNormal];
-            cell.selectionButton.tag = 0;
-            NSAttributedString *attString = [self makeTextWithString:cell.goalLabel.attributedText.string font:[TDConstants fontRegularSized:16.] color:[TDConstants headerTextColor] lineHeight:16. lineHeightMultipler:16./16.];
-            cell.goalLabel.attributedText = attString;
-        }
+        [cell setSelectionButton];
     }
 }
 
@@ -181,19 +166,9 @@ static NSString *topHeaderText2 = @"Select all that apply.";
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
     TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:indexPath];
     if (cell) {
-        cell.accessoryView = nil;
-        cell.accessoryType = UITableViewCellAccessoryNone;
-        cell.selectionButton.hidden = NO;
-        [cell.selectionButton setImage:[UIImage imageNamed:@"checkbox_checked"] forState:UIControlStateNormal];
-        cell.selectionButton.tag = 1;
-        cell.selectionButton.userInteractionEnabled = YES;
-        [cell.selectionButton addTarget:self action:@selector(selectionButtonPressedFromRow:) forControlEvents:UIControlEventTouchUpInside];
-        [cell.editableTextField resignFirstResponder];
-        cell.goalLabel.attributedText = [self makeTextWithString:cell.editableTextField.text font:[TDConstants fontRegularSized:16] color:[TDConstants headerTextColor] lineHeight:16 lineHeightMultipler:16/16];
-        cell.editableTextField.hidden = YES;
-        cell.goalLabel.hidden = NO;
-        cell.bottomLine.hidden = NO;
+        [cell changeCellToAddGoals];
     }
+    
     NSIndexPath *path1 = [NSIndexPath indexPathForRow:self.interestList.count inSection:0]; //ALSO TRIED WITH indexPathRow:0
     NSArray *indexArray = [NSArray arrayWithObjects:path1,nil];
     [self.tableView beginUpdates];
@@ -208,26 +183,13 @@ static NSString *topHeaderText2 = @"Select all that apply.";
 }
 
 #pragma mark helper methods
-- (NSAttributedString *)makeTextWithString:(NSString *)text font:(UIFont*)font color:(UIColor*)color lineHeight:(CGFloat)lineHeight lineHeightMultipler:(CGFloat)lineHeightMultiplier{
-    NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:text];
-    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-    [paragraphStyle setLineHeightMultiple:lineHeightMultiplier];
-    [paragraphStyle setMinimumLineHeight:lineHeight];
-    [paragraphStyle setMaximumLineHeight:lineHeight];
-    [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, text.length)];
-    [attributedString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, text.length)];
-    [attributedString addAttribute:NSForegroundColorAttributeName value:color range:NSMakeRange(0, text.length)];
-    return attributedString;
-}
 
 - (void)createHeaderLabel {
     self.headerLabel1.frame = CGRectMake(0,
                                          35,
                                          SCREEN_WIDTH,
                                          50);
-    NSAttributedString *attString1 = [self makeTextWithString:topHeaderText1 font:[TDConstants fontSemiBoldSized:18.] color:[TDConstants headerTextColor] lineHeight:18. lineHeightMultipler:18/18];
-    [self.headerLabel1 setTextAlignment:NSTextAlignmentLeft];
-    [self.headerLabel1 setLineBreakMode:NSLineBreakByWordWrapping];
+    NSAttributedString *attString1 = [TDViewControllerHelper makeLeftAlignedTextWithString:topHeaderText1 font:[TDConstants fontSemiBoldSized:18.] color:[TDConstants headerTextColor] lineHeight:18. lineHeightMultipler:18/18];
     [self.headerLabel1 setAttributedText:attString1];
     [self.headerLabel1 setNumberOfLines:0];
     [self.headerLabel1 sizeToFit];
@@ -235,16 +197,14 @@ static NSString *topHeaderText2 = @"Select all that apply.";
     CGRect frame1 = self.headerLabel1.frame;
     frame1.origin.x = SCREEN_WIDTH/2 - self.headerLabel1.frame.size.width/2;
     self.headerLabel1.frame = frame1;
-    [self.view addSubview:self.headerLabel1];
+    [self.alphaView addSubview:self.headerLabel1];
     
     UIFont *font2 = [TDConstants fontRegularSized:14.0];
     self.headerLabel2.frame = CGRectMake(0,
                                          self.headerLabel1.frame.origin.y + self.headerLabel1.frame.size.height + 9,
                                          SCREEN_WIDTH,
                                          50);
-    NSAttributedString *attString2 = [self makeTextWithString:topHeaderText2 font:font2 color:[TDConstants headerTextColor] lineHeight:14.0 lineHeightMultipler:(14./14.0)];
-    [self.headerLabel2 setTextAlignment:NSTextAlignmentLeft];
-    [self.headerLabel2 setLineBreakMode:NSLineBreakByWordWrapping];
+    NSAttributedString *attString2 = [TDViewControllerHelper makeLeftAlignedTextWithString:topHeaderText2 font:font2 color:[TDConstants headerTextColor] lineHeight:14.0 lineHeightMultipler:(14./14.0)];
     [self.headerLabel2 setAttributedText:attString2];
     [self.headerLabel2 setNumberOfLines:0];
     [self.headerLabel2 sizeToFit];
@@ -254,7 +214,7 @@ static NSString *topHeaderText2 = @"Select all that apply.";
     frame2.origin.y = self.headerLabel1.frame.origin.y + self.headerLabel1.frame.size.height+ 9;
     self.headerLabel2.frame = frame2;
 
-    [self.view addSubview:self.headerLabel2];
+    [self.alphaView addSubview:self.headerLabel2];
 }
 
 #pragma mark - Keyboard / Textfield
@@ -308,6 +268,10 @@ static NSString *topHeaderText2 = @"Select all that apply.";
     return YES;
 }
 
-
+- (IBAction)backButtonPressed:(id)sender {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(backButtonPressed)]) {
+        [self.delegate backButtonPressed];
+    }
+}
 
 @end

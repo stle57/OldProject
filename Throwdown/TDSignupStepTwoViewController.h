@@ -8,10 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "TDTextField.h"
+#import "TDAppCoverBackgroundView.h"
 
 @interface TDSignupStepTwoViewController : UIViewController <TDTextFieldDelegate>
-
-@property (weak, nonatomic) IBOutlet UIImageView *backgroundImageView;
+@property (weak, nonatomic) IBOutlet UIView *alphaView;
+@property (weak, nonatomic) IBOutlet TDAppCoverBackgroundView *backgroundImageView;
 @property (weak, nonatomic) IBOutlet UILabel *topLabel;
 @property (weak, nonatomic) IBOutlet UILabel *privacyLabel1;
 @property (weak, nonatomic) IBOutlet UIButton *privacyButton;

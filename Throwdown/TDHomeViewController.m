@@ -29,7 +29,7 @@
 
 #define CELL_IDENTIFIER @"TDPostView"
 
-@interface TDHomeViewController () <UIScrollViewDelegate>
+@interface TDHomeViewController () <UIScrollViewDelegate, TDGuestUserInfoCellDelegate>
 @property (weak, nonatomic) IBOutlet UISegmentedControl *feedSelectionControl;
 @property (weak, nonatomic) IBOutlet UIButton *searchTDUsersButton;
 @property (weak, nonatomic) IBOutlet UILabel *badgeCountLabel;
@@ -830,4 +830,28 @@
     [self addOverlay];
     [self.disableViewOverlay addSubview:self.feedbackVC.view];
 }
+
+#pragma mark TDGuestInfoCellDelegate
+-(void)createPostButtonPressed {
+    debug NSLog(@"open the TDCreatePostViewController");
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *createPostViewController = [storyboard instantiateViewControllerWithIdentifier:@"CreatePostViewController"];
+    createPostViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:createPostViewController];
+    navController.navigationBar.barStyle = UIBarStyleDefault;
+    navController.navigationBar.translucent = YES;
+    [self.navigationController presentViewController:navController animated:YES completion:nil];
+
+}
+
+-(void)dismissForExistingUser {
+    debug NSLog(@"dismissForExistingUser");
+    [[TDCurrentUser sharedInstance] didAskForGoals:YES];
+    [self.tableView reloadData];
+}
+
+- (void)goalsButtonPressed {
+    [self showGoalsAndInterestsController];
+}
+
 @end

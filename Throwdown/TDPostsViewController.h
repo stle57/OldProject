@@ -24,8 +24,9 @@
 #import "TDNoPostsCell.h"
 #import "TDNoMorePostsCell.h"
 #import "TDNoticeViewCell.h"
+#import "TDGuestInfoCell.h"
 
-@interface TDPostsViewController : UIViewController <TDFeedLikeCommentDelegate, TDPostViewDelegate, TDDetailsCommentsCellDelegate, UIActionSheetDelegate, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate, TDUserProfileCellDelegate>
+@interface TDPostsViewController : UIViewController <TDFeedLikeCommentDelegate, TDPostViewDelegate, TDDetailsCommentsCellDelegate, UIActionSheetDelegate, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate, TDUserProfileCellDelegate, TDGuestUserInfoCellDelegate>
 {
     BOOL goneDownstream;
     CGFloat likeHeight;
@@ -70,9 +71,8 @@
 - (void)startLoadingSpinner;
 - (void)openDetailView:(NSNumber *)postId;
 - (void)openProfile:(NSNumber *)userId;
-
+- (void)showGoalsAndInterestsController;
 - (NSUInteger)noticeCount;
 - (TDNotice *)getNoticeAt:(NSUInteger)index;
 - (BOOL)removeNoticeAt:(NSUInteger)index;
-
 @end

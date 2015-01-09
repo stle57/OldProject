@@ -84,7 +84,7 @@
 //}
 
 - (void)applyBlurOnImage{
-    debug NSLog(@"about to blue image");
+    debug NSLog(@"about to blur image");
     CGFloat blurRadius = 10.f;
     if ((blurRadius < 0.0f) || (blurRadius > 1.0f)) {
         blurRadius = 0.5f;
@@ -116,5 +116,9 @@
     [self setImage:[UIImage imageWithCGImage:imageRef]];
     debug NSLog(@"done blurring image");
     //clean up CGContextRelease(ctx); CGColorSpaceRelease(colorSpace); free(pixelBuffer); CFRelease(inBitmapData); CGImageRelease(imageRef); return returnImage;
+}
+
+- (void)unBlurImage {
+    [self setBackgroundImage];
 }
 @end

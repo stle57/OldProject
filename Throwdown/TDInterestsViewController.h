@@ -12,17 +12,25 @@
 @protocol TDInterestsViewControllerDelegate <NSObject>
 @optional
 - (void)doneButtonPressed;
+- (void)backButtonPressed;
 @end
 @interface TDInterestsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, TDGoalsCellDelegate,TDKeyboardObserverDelegate, UITextFieldDelegate>
 
 @property (nonatomic, weak) id <TDInterestsViewControllerDelegate> delegate;
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withBackButton:(BOOL)yes;
 
+@property (weak, nonatomic) IBOutlet UIView *alphaView;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UILabel *headerLabel1;
 @property (weak, nonatomic) IBOutlet UILabel *headerLabel2;
 @property (weak, nonatomic) IBOutlet UIView *bottomMargin;
 @property (weak, nonatomic) IBOutlet UIButton *doneButton;
+@property (weak, nonatomic) IBOutlet UIImageView *pageIndicator;
+@property (weak, nonatomic) IBOutlet UIButton *backButton;
+@property (weak, nonatomic) IBOutlet UIView *doneBackgroundView;
 
 @property (nonatomic) TDKeyboardObserver *keyboardObserver;
+@property (nonatomic) BOOL showBackButton;
 - (IBAction)doneButtonPressed:(id)sender;
+- (IBAction)backButtonPressed:(id)sender;
 @end

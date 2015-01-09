@@ -38,12 +38,14 @@
 @property (nonatomic, copy, readonly) NSString *twitterSecret;
 @property (nonatomic, copy, readonly) NSString *twitterIdentifier;
 
+@property (nonatomic) BOOL newUser;
 + (TDCurrentUser *)sharedInstance;
 - (void)updateFromDictionary:(NSDictionary *)dictionary;
 - (BOOL)isRegisteredForPush;
 - (BOOL)didAskForPush;
 - (void)resetAskedForPush;
 - (BOOL)isLoggedIn;
+- (BOOL)isNewUser;
 - (void)logout;
 - (void)checkPushNotificationToken;
 - (BOOL)registerForPushNotifications:(NSString *)message;
@@ -68,5 +70,7 @@
 - (void)didAskForContacts:(BOOL)yes;
 - (void)didAskForPhotos:(BOOL)yes;
 - (BOOL)didAskForPhotos;
-
+- (BOOL)didAskForGoals;
+- (void)didAskForGoals:(BOOL)yes;
+- (void)resetAskedForGoals;
 @end

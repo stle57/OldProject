@@ -9,11 +9,13 @@
 #import "TDLoadingViewController.h"
 #import "TDConstants.h"
 #import "TDLoadingView.h"
+#import "TDViewControllerHelper.h"
+#import "TDCurrentUser.h"
 
 @interface TDLoadingViewController ()
-@property (nonatomic) TDLoadingView *loadingView1;
-@property (nonatomic) TDLoadingView *loadingView2;
-@property (nonatomic) TDLoadingView *loadingView3;
+@property (nonatomic, retain) TDLoadingView *loadingView1;
+@property (nonatomic, retain) TDLoadingView *loadingView2;
+@property (nonatomic, retain) TDLoadingView *loadingView3;
 @end
 
 @implementation TDLoadingViewController
@@ -28,27 +30,32 @@
     debug NSLog(@"inside TDLoadingViewController:viewDidLoad");
     [super viewDidLoad];
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-
+    self.view.backgroundColor = [UIColor clearColor];
     //self.loadingInfoView.frame = CGRectMake(SCREEN_WIDTH/2 - 270/2, SCREEN_HEIGHT/2 - 318/2, 270, 318);
     
-    self.loadingView1 = [TDLoadingView loadingView];
+    self.alphaView.frame = self.view.frame;
+    self.alphaView.backgroundColor = [UIColor whiteColor];
+    [self.alphaView setAlpha:.92];
+    [self.view addSubview:self.alphaView];
+    
+    self.loadingView1 = [TDLoadingView loadingView:kView1_Loading];
     self.loadingView1.frame = CGRectMake(SCREEN_WIDTH/2 - 270/2, SCREEN_HEIGHT/2 - 318/2, 270, 318);
     [self.loadingView1 setViewType:kView1_Loading];
-    [self.view addSubview:self.loadingView1];
+    [self.alphaView addSubview:self.loadingView1];
     self.loadingView1.alpha = 0;
    // self.loadingView1.hidden = YES;
     
-    self.loadingView2 = [TDLoadingView loadingView];
+    self.loadingView2 = [TDLoadingView loadingView:kView2_Loading];
     self.loadingView2.frame = CGRectMake(SCREEN_WIDTH/2 - 270/2, SCREEN_HEIGHT/2 - 318/2, 270, 318);
     [self.loadingView2 setViewType:kView2_Loading];
-    [self.view addSubview:self.loadingView2];
+    [self.alphaView addSubview:self.loadingView2];
     self.loadingView2.alpha = 0;
     //self.loadingView2.hidden = YES;
     
-    self.loadingView3 = [TDLoadingView loadingView];
+    self.loadingView3 = [TDLoadingView loadingView:kView3_Loading];
     self.loadingView3.frame = CGRectMake(SCREEN_WIDTH/2 - 270/2, SCREEN_HEIGHT/2 - 318/2, 270, 318);
     [self.loadingView3 setViewType:kView3_Loading];
-    [self.view addSubview:self.loadingView3];
+    [self.alphaView addSubview:self.loadingView3];
     self.loadingView3.alpha = 0;
     //self.loadingView3.hidden = YES;
 }
@@ -78,12 +85,13 @@
 
 - (void)showData {
     debug NSLog(@"===========>showData");
+    [[TDCurrentUser sharedInstance] didAskForGoals:YES];
+    
     [UIView animateWithDuration:0.2
                           delay:0
                         options:UIViewAnimationOptionCurveEaseIn
                             animations:^{
                                 self.loadingView1.alpha = 1.0;
-                                [self.loadingView1 startAnimating];
                         }
                      completion:^(BOOL finished){
                          // code to run when animation completes
@@ -105,28 +113,29 @@
                                                                }
                                                                completion:^(BOOL finished){
                                                                    
+                                                                   [UIView animateWithDuration:0.2
+                                                                                         delay:2
+                                                                                       options:UIViewAnimationOptionCurveEaseIn
+                                                                                    animations:^{
+                                                                                        debug NSLog(@"inside completion of animation load3");
+                                                                                        self.loadingView3.alpha = 1;
+                                                                                    }
+                                                                                    completion:^(BOOL finished){
+                                                                                        
+                                                                                        debug NSLog(@"inside completion of animation load3");
+                                                                                        if ([[TDCurrentUser sharedInstance] didAskForGoals] && [[TDCurrentUser sharedInstance] isLoggedIn] && self.delegate && [self.delegate respondsToSelector:@selector(loadHomeView)]){
+                                                                                            [self.delegate loadHomeView];
+                                                                                        } else {
+                                                                                            // This is for guest user only;
+                                                                                            if (self.delegate && [self.delegate respondsToSelector:@selector(loadGuestView)]) {
+                                                                                                [self.delegate loadGuestView];
+                                                                                            }
+                                                                                        }
+                                                                                        
+                                                                                    }];
+                                                                   
                                                                }];
                                           }];
                      }];
-    
-//    [UIView animateWithDuration:.2 delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
-//       // self.loadingView1.hidden = NO;
-//    }completion:^(BOOL finished) {
-//        debug NSLog(@"show view2");
-//        [UIView animateWithDuration:.2 delay:0 options:UIViewAnimationOptionCurveEaseIn animations:^{
-//            self.loadingView1.hidden = NO;
-//            //self.loadingView2.hidden = NO;
-//        } completion:^(BOOL finished) {
-//            self.loadingView1.hidden = YES;
-//            self.loadingView2.hidden = NO;
-//            //debug NSLog(@"show view3");
-////            [UIView animateWithDuration:2 animations:^{
-////                [self.loadingView setViewType:kView3_Loading];
-////                
-////            } completion:^(BOOL finished) {
-////                debug NSLog(@"done show home view");
-////            }];
-//        }];
-//    }];
 }
 @end

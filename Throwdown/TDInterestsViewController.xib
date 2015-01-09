@@ -7,10 +7,14 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TDInterestsViewController">
             <connections>
+                <outlet property="alphaView" destination="sgU-xe-skM" id="cjw-Qk-9Hf"/>
+                <outlet property="backButton" destination="p1K-6b-DpM" id="ZYo-iY-e6X"/>
                 <outlet property="bottomMargin" destination="GMO-Bb-ACC" id="NVp-Pk-zhl"/>
+                <outlet property="doneBackgroundView" destination="cuQ-Cb-cr7" id="L6a-gO-2O8"/>
                 <outlet property="doneButton" destination="XY3-SJ-clS" id="lof-Vd-Yvs"/>
                 <outlet property="headerLabel1" destination="ge0-Dn-FjZ" id="cVa-01-Z3z"/>
                 <outlet property="headerLabel2" destination="pkf-Sh-Jac" id="uev-Ed-EOH"/>
+                <outlet property="pageIndicator" destination="e4j-0T-K5R" id="bhg-zP-bxR"/>
                 <outlet property="tableView" destination="7JI-Y4-Ej6" id="DlS-Ny-s6l"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
@@ -48,7 +52,7 @@
                 <action selector="doneButtonPressed:" destination="-1" eventType="touchUpInside" id="shP-sK-0r1"/>
             </connections>
         </button>
-        <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="7JI-Y4-Ej6">
+        <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="none" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="7JI-Y4-Ej6">
             <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -63,9 +67,38 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
         </view>
+        <view contentMode="scaleToFill" id="sgU-xe-skM">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+        </view>
+        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ovals_right" id="e4j-0T-K5R">
+            <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+        </imageView>
+        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="p1K-6b-DpM">
+            <rect key="frame" x="0.0" y="0.0" width="12" height="22"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <state key="normal" image="btn_back">
+                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+            </state>
+            <state key="selected" image="btn_back"/>
+            <state key="highlighted" image="btn_back"/>
+            <connections>
+                <action selector="backButtonPressed:" destination="-1" eventType="touchUpInside" id="Ib1-xO-a7y"/>
+            </connections>
+            <point key="canvasLocation" x="-3" y="3"/>
+        </button>
+        <view contentMode="scaleToFill" id="cuQ-Cb-cr7">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+        </view>
     </objects>
     <resources>
+        <image name="btn_back" width="12" height="20"/>
         <image name="btn_okdone" width="240" height="44"/>
         <image name="btn_okdone_hit" width="240" height="44"/>
+        <image name="ovals_right" width="19" height="6"/>
     </resources>
 </document>

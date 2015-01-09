@@ -18,8 +18,6 @@
 
 @property (nonatomic) kLoadingViewType kLoadingViewType;
 
-+ (id)loadingView;
++ (id)loadingView:(kLoadingViewType)type;
 - (void)setViewType:(kLoadingViewType)type;
-- (void)startAnimating;
-- (void)stopAnimating;
 @end

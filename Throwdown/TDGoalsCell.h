@@ -22,6 +22,7 @@
 @property (weak, nonatomic) IBOutlet UIView *bottomLine;
 @property (weak, nonatomic) IBOutlet UIButton *addButton;
 @property (weak, nonatomic) IBOutlet UITextField *editableTextField;
+@property (nonatomic) UIButton *addGoalButton;
 @property (nonatomic, assign) NSInteger row;
 @property (nonatomic) BOOL addedButton;
 
@@ -29,5 +30,10 @@
 
 - (IBAction)selectionButtonPressed:(id)sender;
 - (IBAction)addNewGoalPressed;
+- (void)addGoalsData:(id)sender;
 - (void)textFieldEdited;
+- (void)changeCellToAddGoals;
+- (void)createCell:(BOOL)createAddButton text:(NSString*)text;
+- (void)makeCellFirstResponder;
+- (void)setSelectionButton;
 @end

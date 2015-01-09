@@ -37,10 +37,10 @@
     //    [navigationBar setBarStyle:UIBarStyleBlack];
 //    navigationBar.translucent = NO;
 //    
-//    UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];     // 'X'
+//    UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];     // '<'
 //    self.navigationItem.leftBarButtonItem = leftBarButton;
-    
-    self.backButton.frame = CGRectMake(20, [UIApplication sharedApplication].statusBarFrame.size.height, [UIImage imageNamed:@"btn_x"].size.width, [UIImage imageNamed:@"btn_x"].size.height);
+    NSInteger yPosition = 25 + ([UIApplication sharedApplication].statusBarFrame.size.height/2);
+    self.backButton.frame = CGRectMake(20, yPosition, [UIImage imageNamed:@"btn_back"].size.width, [UIImage imageNamed:@"btn_back"].size.height);
     
     self.topLabel.text = @"Reset Password";
     self.topLabel.font = [TDConstants fontSemiBoldSized:18];
@@ -49,7 +49,7 @@
     [self.topLabel sizeToFit];
     CGRect topLabelFrame = self.topLabel.frame;
     topLabelFrame.origin.x = SCREEN_WIDTH/2 - self.topLabel.frame.size.width/2;
-    topLabelFrame.origin.y = [UIApplication sharedApplication].statusBarFrame.size.height;
+    topLabelFrame.origin.y = yPosition;
     self.topLabel.frame = topLabelFrame;
     
     [self.backgroundImageView setBackgroundImage];
@@ -66,14 +66,20 @@
                                        keyboardType:UIKeyboardTypeEmailAddress
                                                type:kTDTextFieldType_UsernameOrPhoneNumber
                                            delegate:self];
-    self.userNameTextField.frame = CGRectMake(20, 50 + [UIApplication sharedApplication].statusBarFrame.size.height, SCREEN_WIDTH-40, 44);
+    self.userNameTextField.frame =
+    CGRectMake(20,
+               50 + [UIApplication sharedApplication].statusBarFrame.size.height,
+               SCREEN_WIDTH-40,
+               44);
 
     self.userNameTextField.textfield.font = [TDConstants fontRegularSized:16];
     self.userNameTextField.textfield.textColor = [TDConstants headerTextColor];
     
-    self.resetButton.frame = CGRectMake(SCREEN_WIDTH/2 - [UIImage imageNamed:@"btn_reset_password" ].size.width/2, self.userNameTextField.frame.origin.y + self.userNameTextField.frame.size.height + 40, [UIImage imageNamed:@"btn_reset_password"].size.width, [UIImage imageNamed:@"btn_reset_password"].size.height);
+    self.resetButton.frame = CGRectMake(SCREEN_WIDTH/2 - [UIImage imageNamed:@"btn_reset_password"].size.width/2,
+                                        self.userNameTextField.frame.origin.y + self.userNameTextField.frame.size.height + 40,
+                                        [UIImage imageNamed:@"btn_reset_password"].size.width,
+                                        [UIImage imageNamed:@"btn_reset_password"].size.height);
     
-
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -132,7 +138,15 @@
 
 - (IBAction)backButtonPressed:(UIButton *)sender
 {
-    [self.navigationController popViewControllerAnimated:YES];
+    CATransition *transition = [CATransition animation];
+    transition.duration = 0.3;
+    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    transition.type = kCATransitionPush;
+    transition.subtype = kCATransitionFromLeft;
+    [self.view.window.layer addAnimation:transition forKey:nil];
+    
+    [self dismissViewControllerAnimated:NO completion:nil];
+    //[self.navigationController popViewControllerAnimated:YES];
 }
 
 - (IBAction)resetButtonPressed:(id)sender {

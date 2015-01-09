@@ -18,8 +18,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-//    self.view.layer.borderColor = [[UIColor blueColor] CGColor];
-//    self.view.layer.borderWidth = 2.0;
     // Do any additional setup after loading the view from its nib.
     self.imageView.frame = CGRectMake(SCREEN_WIDTH/2 - [UIImage imageNamed:@"td_logo_app_cover"].size.width/2,
                                       48,
@@ -43,7 +41,7 @@
                            [TDConstants fontRegularSized:14.], NSFontAttributeName,
                            [UIColor whiteColor], NSForegroundColorAttributeName, nil];
     NSDictionary *subAttrs = [NSDictionary dictionaryWithObjectsAndKeys:
-                              [TDConstants fontBoldSized:14.], NSFontAttributeName, nil];
+                              [TDConstants fontSemiBoldSized:14.], NSFontAttributeName, nil];
     const NSRange range = NSMakeRange(text.length - 5,5); // range of " Login ". Ideally this should not be hardcoded
     
     // Create the attributed string (text + attributes)
@@ -52,7 +50,19 @@
                                            attributes:attrs];
     [attributedText setAttributes:subAttrs range:range];
 
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
+    [paragraphStyle setAlignment:NSTextAlignmentCenter];
+
+    [attributedText addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, text.length)];
     self.loginButton.titleLabel.attributedText = attributedText;
+    [self.loginButton.titleLabel setNumberOfLines:1];
+    [self.loginButton sizeToFit];
+
+    CGRect loginFrame = self.loginButton.frame;
+    loginFrame.origin.x = SCREEN_WIDTH/2 - self.loginButton.frame.size.width/2;
+    loginFrame.origin.y = SCREEN_HEIGHT - 30 - self.loginButton.frame.size.height;
+    self.loginButton.frame = loginFrame;
+    
     self.getStartedButton.frame = CGRectMake(
                                     SCREEN_WIDTH/2 - [UIImage imageNamed:@"btn_get_started"].size.width/2,
                                     SCREEN_HEIGHT - 30 - self.loginButton.frame.size.height - 14 - [UIImage imageNamed:@"btn_get_started"].size.height,

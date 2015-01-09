@@ -194,6 +194,10 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
     return self.authToken != nil;
 }
 
+- (BOOL)isNewUser {
+   return self.newUser;
+}
+
 - (void)logout {
     [[TDAnalytics sharedInstance] logEvent:@"logged_out"];
     _userId = nil;
@@ -542,4 +546,25 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
     return [defaults boolForKey:@"hasAskedForPhotos"];
 }
 
+- (BOOL)didAskForGoals {
+    NSString *key = [TDConstants getHasAskedForGoalsKey:[TDCurrentUser sharedInstance].userId];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    return [defaults boolForKey:key];
+}
+
+- (void)didAskForGoals:(BOOL)yes {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *key = [TDConstants getHasAskedForGoalsKey:[TDCurrentUser sharedInstance].userId];
+    [defaults setBool:yes forKey:key];
+    [defaults synchronize];
+}
+
+- (void)resetAskedForGoals {
+    NSString *key = [TDConstants getHasAskedForGoalsKey:[TDCurrentUser sharedInstance].userId];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+    [defaults removeObjectForKey:key];
+    [defaults synchronize];
+
+}
 @end

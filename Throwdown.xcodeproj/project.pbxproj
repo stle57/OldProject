@@ -116,6 +116,15 @@
 		4DD0837019AC585C00149968 /* TDToastViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DD0836F19AC585C00149968 /* TDToastViewController.m */; };
 		4DD170DB19EF15D600979EC8 /* TDFindPeopleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DD170D919EF15D600979EC8 /* TDFindPeopleViewController.m */; };
 		4DD170DC19EF15D600979EC8 /* TDFindPeopleViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DD170DA19EF15D600979EC8 /* TDFindPeopleViewController.xib */; };
+		4DD84DD61A4DE589000AF63B /* TDGuestUserProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DD84DD51A4DE589000AF63B /* TDGuestUserProfileViewController.m */; };
+		4DD84DD81A4DE5AF000AF63B /* TDGuestUserProfileViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DD84DD71A4DE5AF000AF63B /* TDGuestUserProfileViewController.xib */; };
+		4DD84DDC1A4DFEF0000AF63B /* TDGuestInfoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DD84DDA1A4DFEF0000AF63B /* TDGuestInfoCell.m */; };
+		4DD84DDD1A4DFEF0000AF63B /* TDGuestInfoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DD84DDB1A4DFEF0000AF63B /* TDGuestInfoCell.xib */; };
+		4DD84DE21A51E808000AF63B /* TDSignupStepOneViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DD84DE11A51E808000AF63B /* TDSignupStepOneViewController.xib */; };
+		4DD84DE41A51E860000AF63B /* TDSignupStepTwoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DD84DE31A51E860000AF63B /* TDSignupStepTwoViewController.xib */; };
+		4DD84DEA1A548D13000AF63B /* TDGoalsInterests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DD84DE91A548D13000AF63B /* TDGoalsInterests.m */; };
+		4DD84DED1A571864000AF63B /* TDGuestUserJoinView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DD84DEC1A571864000AF63B /* TDGuestUserJoinView.m */; };
+		4DD84DEF1A5EFDDF000AF63B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4DD84DEE1A5EFDDF000AF63B /* Images.xcassets */; };
 		579149E08F7B4EE789901248 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E657ABE418B84EA68554F855 /* libPods.a */; };
 		A102FEA118ECF43C00139606 /* libFlurry_4.4.0.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A102FEA018ECF43C00139606 /* libFlurry_4.4.0.a */; };
 		A109FF351909C76000506F88 /* TDAnalytics.m in Sources */ = {isa = PBXBuildFile; fileRef = A109FF341909C76000506F88 /* TDAnalytics.m */; };
@@ -132,7 +141,6 @@
 		A11E04EC1888CB79002F981A /* TDAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = A11E04EB1888CB79002F981A /* TDAppDelegate.m */; };
 		A11E04EF1888CB79002F981A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A11E04ED1888CB79002F981A /* Main.storyboard */; };
 		A11E04F21888CB79002F981A /* TDRecordVideoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A11E04F11888CB79002F981A /* TDRecordVideoViewController.m */; };
-		A11E04F41888CB79002F981A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A11E04F31888CB79002F981A /* Images.xcassets */; };
 		A11E04FB1888CB79002F981A /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11E04FA1888CB79002F981A /* XCTest.framework */; };
 		A11E04FC1888CB79002F981A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11E04DB1888CB79002F981A /* Foundation.framework */; };
 		A11E04FD1888CB79002F981A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A11E04DF1888CB79002F981A /* UIKit.framework */; };
@@ -408,6 +416,19 @@
 		4DD170D819EF15D600979EC8 /* TDFindPeopleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDFindPeopleViewController.h; sourceTree = "<group>"; };
 		4DD170D919EF15D600979EC8 /* TDFindPeopleViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDFindPeopleViewController.m; sourceTree = "<group>"; };
 		4DD170DA19EF15D600979EC8 /* TDFindPeopleViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDFindPeopleViewController.xib; sourceTree = "<group>"; };
+		4DD84DD41A4DE589000AF63B /* TDGuestUserProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDGuestUserProfileViewController.h; sourceTree = "<group>"; };
+		4DD84DD51A4DE589000AF63B /* TDGuestUserProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDGuestUserProfileViewController.m; sourceTree = "<group>"; };
+		4DD84DD71A4DE5AF000AF63B /* TDGuestUserProfileViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDGuestUserProfileViewController.xib; sourceTree = "<group>"; };
+		4DD84DD91A4DFEF0000AF63B /* TDGuestInfoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDGuestInfoCell.h; sourceTree = "<group>"; };
+		4DD84DDA1A4DFEF0000AF63B /* TDGuestInfoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDGuestInfoCell.m; sourceTree = "<group>"; };
+		4DD84DDB1A4DFEF0000AF63B /* TDGuestInfoCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDGuestInfoCell.xib; sourceTree = "<group>"; };
+		4DD84DE11A51E808000AF63B /* TDSignupStepOneViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDSignupStepOneViewController.xib; sourceTree = "<group>"; };
+		4DD84DE31A51E860000AF63B /* TDSignupStepTwoViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDSignupStepTwoViewController.xib; sourceTree = "<group>"; };
+		4DD84DE81A548D13000AF63B /* TDGoalsInterests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDGoalsInterests.h; sourceTree = "<group>"; };
+		4DD84DE91A548D13000AF63B /* TDGoalsInterests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDGoalsInterests.m; sourceTree = "<group>"; };
+		4DD84DEB1A571864000AF63B /* TDGuestUserJoinView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDGuestUserJoinView.h; sourceTree = "<group>"; };
+		4DD84DEC1A571864000AF63B /* TDGuestUserJoinView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDGuestUserJoinView.m; sourceTree = "<group>"; };
+		4DD84DEE1A5EFDDF000AF63B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Images.xcassets; sourceTree = "<group>"; };
 		A102FE9F18ECF43C00139606 /* Flurry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flurry.h; sourceTree = "<group>"; };
 		A102FEA018ECF43C00139606 /* libFlurry_4.4.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry_4.4.0.a; sourceTree = "<group>"; };
 		A109FF331909C76000506F88 /* TDAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDAnalytics.h; sourceTree = "<group>"; };
@@ -433,7 +454,6 @@
 		A11E04EE1888CB79002F981A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A11E04F01888CB79002F981A /* TDRecordVideoViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TDRecordVideoViewController.h; sourceTree = "<group>"; };
 		A11E04F11888CB79002F981A /* TDRecordVideoViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TDRecordVideoViewController.m; sourceTree = "<group>"; };
-		A11E04F31888CB79002F981A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		A11E04F91888CB79002F981A /* ThrowdownTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ThrowdownTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A11E04FA1888CB79002F981A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		A11E05021888CB79002F981A /* ThrowdownTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ThrowdownTests-Info.plist"; sourceTree = "<group>"; };
@@ -458,7 +478,7 @@
 		A129BAFA197F231700F6FC2B /* TDUserListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserListCell.h; sourceTree = "<group>"; };
 		A129BAFB197F231700F6FC2B /* TDUserListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUserListCell.m; sourceTree = "<group>"; };
 		A1432CDF18A99D750073E492 /* TDWelcomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDWelcomeViewController.h; sourceTree = "<group>"; };
-		A1432CE018A99D750073E492 /* TDWelcomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDWelcomeViewController.m; sourceTree = "<group>"; wrapsLines = 1; };
+		A1432CE018A99D750073E492 /* TDWelcomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDWelcomeViewController.m; sourceTree = "<group>"; tabWidth = 2; wrapsLines = 1; };
 		A1432CE218A99DA40073E492 /* TDSignupStepOneViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSignupStepOneViewController.h; sourceTree = "<group>"; };
 		A1432CE318A99DA40073E492 /* TDSignupStepOneViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDSignupStepOneViewController.m; sourceTree = "<group>"; };
 		A1432CE518A99DB30073E492 /* TDLoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDLoginViewController.h; sourceTree = "<group>"; };
@@ -800,6 +820,8 @@
 				4D8BEBA81A156BDE00C5D80A /* TDFeedbackViewController.m */,
 				4D8BEBA91A156BDE00C5D80A /* TDFeedbackViewController.xib */,
 				4D8BEBE11A16772500C5D80A /* TDRateAppView.xib */,
+				4DD84DEB1A571864000AF63B /* TDGuestUserJoinView.h */,
+				4DD84DEC1A571864000AF63B /* TDGuestUserJoinView.m */,
 			);
 			name = Components;
 			sourceTree = "<group>";
@@ -867,7 +889,7 @@
 				A11E04EA1888CB79002F981A /* TDAppDelegate.h */,
 				A11E04EB1888CB79002F981A /* TDAppDelegate.m */,
 				A11E04ED1888CB79002F981A /* Main.storyboard */,
-				A11E04F31888CB79002F981A /* Images.xcassets */,
+				4DD84DEE1A5EFDDF000AF63B /* Images.xcassets */,
 				2DA5F04C18D36736003D2F99 /* Fonts */,
 				A10F9C211909AFF600D2CAB0 /* Sounds */,
 				A11E04E21888CB79002F981A /* Supporting Files */,
@@ -953,6 +975,7 @@
 				A1432CE218A99DA40073E492 /* TDSignupStepOneViewController.h */,
 				A1432CE318A99DA40073E492 /* TDSignupStepOneViewController.m */,
 				A1E90CDB18B445FC0046D281 /* TDSignupStepTwoViewController.h */,
+				4DD84DE31A51E860000AF63B /* TDSignupStepTwoViewController.xib */,
 				A1E90CDC18B445FC0046D281 /* TDSignupStepTwoViewController.m */,
 				A1432CE518A99DB30073E492 /* TDLoginViewController.h */,
 				A1432CE618A99DB30073E492 /* TDLoginViewController.m */,
@@ -972,6 +995,7 @@
 				4DC736001A45CE77000A8CA9 /* TDLoadingViewController.m */,
 				4DC736011A45CE77000A8CA9 /* TDLoadingViewController.xib */,
 				4DC7360C1A49EDEB000A8CA9 /* TDLoginViewController.xib */,
+				4DD84DE11A51E808000AF63B /* TDSignupStepOneViewController.xib */,
 			);
 			name = Onboarding;
 			sourceTree = "<group>";
@@ -1077,6 +1101,9 @@
 				A1BB463218F7767200BD9527 /* TDActivityViewController.m */,
 				A18D9A5D19D9F551006A0658 /* Launch Screen.xib */,
 				A1DD18271A3839CB00B12BDC /* TDLocationFeedViewController.h */,
+				4DD84DD41A4DE589000AF63B /* TDGuestUserProfileViewController.h */,
+				4DD84DD71A4DE5AF000AF63B /* TDGuestUserProfileViewController.xib */,
+				4DD84DD51A4DE589000AF63B /* TDGuestUserProfileViewController.m */,
 				A1DD18281A3839CB00B12BDC /* TDLocationFeedViewController.m */,
 				A1DD18291A3839CB00B12BDC /* TDLocationFeedViewController.xib */,
 			);
@@ -1106,6 +1133,8 @@
 				4D4714B719CBF14F003AA69F /* TDContactInfo.m */,
 				A1DD18351A39034F00B12BDC /* TDLocation.h */,
 				A1DD18361A39034F00B12BDC /* TDLocation.m */,
+				4DD84DE81A548D13000AF63B /* TDGoalsInterests.h */,
+				4DD84DE91A548D13000AF63B /* TDGoalsInterests.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -1192,6 +1221,9 @@
 				4D5D43E819EB8A2D00046772 /* TDNoFollowingCell.h */,
 				4D5D43E919EB8A2D00046772 /* TDNoFollowingCell.m */,
 				4D5D43EA19EB8A2D00046772 /* TDNoFollowingCell.xib */,
+				4DD84DD91A4DFEF0000AF63B /* TDGuestInfoCell.h */,
+				4DD84DDA1A4DFEF0000AF63B /* TDGuestInfoCell.m */,
+				4DD84DDB1A4DFEF0000AF63B /* TDGuestInfoCell.xib */,
 			);
 			name = Feed;
 			sourceTree = "<group>";
@@ -1390,12 +1422,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				A12549401999742B001C5CD1 /* TDSocialConnectCell.xib in Resources */,
+				4DD84DD81A4DE5AF000AF63B /* TDGuestUserProfileViewController.xib in Resources */,
 				4D3EA8E51A379BEE0014F2A6 /* TDPhotoCellCollectionViewCell.xib in Resources */,
 				4D36F51A19CCE66700A279A5 /* TDSendInviteController.xib in Resources */,
 				4D2843D919C649D600E4A56C /* TDNoFollowProfileCell.xib in Resources */,
 				A1F3B3681907821800CDA9F5 /* Dring.caf in Resources */,
 				4D6FCC2519CAA34D00902719 /* TDContactsViewController.xib in Resources */,
+				4DD84DEF1A5EFDDF000AF63B /* Images.xcassets in Resources */,
 				4DC735F91A434C5C000A8CA9 /* TDGoalsCell.xib in Resources */,
+				4DD84DDD1A4DFEF0000AF63B /* TDGuestInfoCell.xib in Resources */,
 				4DC7360D1A49EDEB000A8CA9 /* TDLoginViewController.xib in Resources */,
 				2DA39FD718E0B2570004A9C7 /* TDMoreComments.xib in Resources */,
 				A10F9C241909B01600D2CAB0 /* NewMessage.caf in Resources */,
@@ -1419,7 +1454,6 @@
 				4DC735F41A425C0C000A8CA9 /* TDGoalsViewController.xib in Resources */,
 				4DD170DC19EF15D600979EC8 /* TDFindPeopleViewController.xib in Resources */,
 				2DA5F05D18D37C70003D2F99 /* BebasNeue Regular.otf in Resources */,
-				A11E04F41888CB79002F981A /* Images.xcassets in Resources */,
 				4DC7360F1A49F237000A8CA9 /* TDResetPasswordViewController.xib in Resources */,
 				2DA5F05E18D37C70003D2F99 /* BebasNeue Thin.otf in Resources */,
 				4DC735EF1A4243D6000A8CA9 /* TDGetStartedViewController.xib in Resources */,
@@ -1434,6 +1468,7 @@
 				2DE2C6A61908657F00E51156 /* TDUserPasswordEditViewController.xib in Resources */,
 				2DA5F05418D36745003D2F99 /* ProximaNova-Semibold.otf in Resources */,
 				4D3EA8EA1A379C080014F2A6 /* TDLocationViewController.xib in Resources */,
+				4DD84DE21A51E808000AF63B /* TDSignupStepOneViewController.xib in Resources */,
 				4D8BEBE21A16772500C5D80A /* TDRateAppView.xib in Resources */,
 				A1E3A16D18FCC8630038A8A4 /* TDActivitiesCell.xib in Resources */,
 				A11E04E61888CB79002F981A /* InfoPlist.strings in Resources */,
@@ -1457,6 +1492,7 @@
 				A11E04EF1888CB79002F981A /* Main.storyboard in Resources */,
 				2DA5F05A18D37C70003D2F99 /* BebasNeue Bold.otf in Resources */,
 				4DC736031A45CE77000A8CA9 /* TDLoadingViewController.xib in Resources */,
+				4DD84DE41A51E860000AF63B /* TDSignupStepTwoViewController.xib in Resources */,
 				4D3EA8F41A379C330014F2A6 /* TDCreatePostHeaderCell.xib in Resources */,
 				2DA5F05118D36745003D2F99 /* ProximaNova-Bold.otf in Resources */,
 			);
@@ -1548,11 +1584,13 @@
 				2D2E832E18CA579B00846B2E /* TDComment.m in Sources */,
 				A19FF60D18970BBB001A0AD0 /* RSCDNContainer.m in Sources */,
 				2DE4653218F605DC0042D81C /* TDUserProfileEditViewController.m in Sources */,
+				4DD84DEA1A548D13000AF63B /* TDGoalsInterests.m in Sources */,
 				2DA5354418F35E4300031128 /* TDUserProfileViewController.m in Sources */,
 				A1BC0B3F18BE825200F507B3 /* TDSlideLeftSegue.m in Sources */,
 				A14B2B7F18B5308000980A31 /* TDAPIClient.m in Sources */,
 				4D3DDDE219DDB2790057A8B2 /* TDAddressBookAPI.m in Sources */,
 				4DC735F81A434C5C000A8CA9 /* TDGoalsCell.m in Sources */,
+				4DD84DDC1A4DFEF0000AF63B /* TDGuestInfoCell.m in Sources */,
 				A182D839188F2C2D00F794A5 /* TDHomeViewController.m in Sources */,
 				2DBA430118DA455500366737 /* TDTextField.m in Sources */,
 				A14483BF19A8026000B3BC8D /* OAuth+Additions.m in Sources */,
@@ -1577,7 +1615,9 @@
 				A11999DA18D929E200C39ABF /* UIPlaceHolderTextView.m in Sources */,
 				A1B3EF42193F9B5D0014B619 /* TDNotice.m in Sources */,
 				2D63FA871909D22200FEBA3C /* TDActivityIndicator.m in Sources */,
+				4DD84DD61A4DE589000AF63B /* TDGuestUserProfileViewController.m in Sources */,
 				2DA73D7718BFCC2E00D87370 /* TDFeedLikeCommentCell.m in Sources */,
+				4DD84DED1A571864000AF63B /* TDGuestUserJoinView.m in Sources */,
 				A14E38E81992B5ED001B46AF /* TDSocialNetworksViewController.m in Sources */,
 				A14483C719A807C900B3BC8D /* TWTSignedRequest.m in Sources */,
 				A11E04F21888CB79002F981A /* TDRecordVideoViewController.m in Sources */,

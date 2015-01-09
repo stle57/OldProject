@@ -8,6 +8,7 @@
 
 #import "TDGoalsCell.h"
 #import "TDConstants.h"
+#import "TDViewControllerHelper.h"
 
 @implementation TDGoalsCell
 @synthesize addedButton;
@@ -32,9 +33,10 @@
     bottomLineRect.size.width = SCREEN_WIDTH - 40;
     bottomLineRect.size.height = 1;
     bottomLineRect.origin.x = 20;
-    bottomLineRect.origin.y = 43;
+    bottomLineRect.origin.y = 43.5;
     self.bottomLine.frame = bottomLineRect;
-    self.bottomLine.backgroundColor = [TDConstants commentTimeTextColor];
+    self.bottomLine.backgroundColor = [TDConstants disabledTextColor];
+    
     CGRect selectionFrame = self.selectionButton.frame;
     selectionFrame.origin.x = SCREEN_WIDTH - self.selectionButton.frame.size.width - 20;
     selectionFrame.origin.y = self.frame.size.height/2 - self.selectionButton.frame.size.height/2;
@@ -58,6 +60,22 @@
     
     self.backgroundColor = [UIColor clearColor];
     //self.addedButton = NO;
+    
+    self.addGoalButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    CGRect frame = CGRectMake(self.frame.size.width - 20 - 44, 0, 44, 44);
+    self.addGoalButton.frame = frame;
+    
+    [self.addGoalButton.titleLabel setFont:[TDConstants fontRegularSized:16]];
+    [self.addGoalButton setTitle:@"Add" forState:UIControlStateNormal];
+    [self.addGoalButton setTitleColor:[TDConstants brandingRedColor] forState:UIControlStateNormal];
+    [self.addGoalButton addTarget:self action:@selector(addGoalsData:)  forControlEvents:UIControlEventTouchUpInside];
+    self.addGoalButton.backgroundColor = [UIColor clearColor];
+    [self.addGoalButton sizeToFit];
+    
+    CGRect addFrame = self.addGoalButton.frame;
+    addFrame.origin.x = SCREEN_WIDTH - 20 - self.addGoalButton.frame.size.width;
+    addFrame.origin.y = self.frame.size.height/2 - self.addGoalButton.frame.size.height/2;
+    self.addGoalButton.frame = addFrame;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -96,36 +114,104 @@
 - (void)textFieldEdited{
     debug NSLog(@"textFieldEdited");
     if (!self.addedButton) {
-        [self setAccessoryType:UITableViewCellAccessoryDetailDisclosureButton];
-        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-        CGRect frame = CGRectMake(self.accessoryView.frame.origin.x, self.accessoryView.frame.origin.y, self.accessoryView.frame.size.width, self.accessoryView.frame.size.height);
-        button.frame = frame;
-        [button.titleLabel setFont:[TDConstants fontRegularSized:16]];
-        [button setTitle:@"Add" forState:UIControlStateNormal];
-        [button setTitleColor:[TDConstants brandingRedColor] forState:UIControlStateNormal];
-        [button addTarget:self action:@selector(addInviteData:event:)  forControlEvents:UIControlEventTouchUpInside];
-        button.backgroundColor = [UIColor clearColor];
-        [button sizeToFit];
-        debug NSLog(@"button frame = %@", NSStringFromCGRect(button.frame));
-        self.accessoryView = button;
-        debug NSLog(@"accessory vie wframe = %@", NSStringFromCGRect(self.accessoryView.frame));
-        self.accessoryView.layer.borderColor = [[UIColor magentaColor] CGColor];
-        self.accessoryView.layer.borderWidth = 2.;
-//        self.layer.borderColor = [[UIColor blueColor] CGColor];
-//        self.layer.borderWidth = 2.;
+        [self setAccessoryType:UITableViewCellAccessoryNone];
+        CGRect bottomLine = self.bottomLine.frame;
+        bottomLine.origin.y = 44;
+        self.bottomLine.frame = bottomLine;
+        
+        [self addSubview:self.addGoalButton];
+        
+        debug NSLog(@"button frame = %@", NSStringFromCGRect(self.addGoalButton.frame));
+        debug NSLog(@"bottom line frame=%@", NSStringFromCGRect(self.bottomLine.frame));
+        debug NSLog(@"cell frame = %@", NSStringFromCGRect(self.frame));
+        debug NSLog(@"accessory view frame = %@", NSStringFromCGRect(self.accessoryView.frame));
+
+        
         self.addedButton = YES;
-        self.bottomLine.layer.borderColor = [[UIColor greenColor] CGColor];
-        self.bottomLine.layer.borderWidth = 1.;
     } else {
-        self.accessoryView = nil;
-        self.accessoryType = UITableViewCellAccessoryNone;
-        self.addedButton = NO;
+        debug NSLog(@"....");
+//        self.accessoryView = nil;
+//        self.accessoryType = UITableViewCellAccessoryNone;
+//        self.addedButton = NO;
     }
 }
 
-- (void)addInviteData:(id)sender event:(id)event {
+- (void)addGoalsData:(id)sender{
     if(self.delegate && [self.delegate respondsToSelector:@selector(addGoals:row:)]) {
         [self.delegate addGoals:self.editableTextField.text row:self.row];
     }
+}
+
+- (void)createCell:(BOOL)createAddButton text:(NSString*)text {
+    self.bottomLine.hidden = NO;
+    self.goalLabel.hidden = NO;
+    self.addButton.hidden = YES;
+    self.selectionButton.hidden = NO;
+    self.editableTextField.hidden = YES;
+    
+    if (createAddButton) {
+        self.goalLabel.hidden = YES;
+        self.addButton.hidden = NO;
+        self.selectionButton.hidden = YES;
+        CGRect buttonFrame = self.addButton.frame;
+        buttonFrame.origin.x = self.frame.size.width/2 - self.addButton.frame.size.width/2;
+        buttonFrame.origin.y = self.frame.size.height/2 - self.addButton.frame.size.height/2;
+        self.addButton.frame = buttonFrame;
+        self.bottomLine.hidden = YES;
+        
+    } else {
+        NSAttributedString *attString = [TDViewControllerHelper makeLeftAlignedTextWithString:text font:[TDConstants fontRegularSized:16.] color:[TDConstants headerTextColor] lineHeight:16. lineHeightMultipler:16./16.];
+        self.goalLabel.attributedText = attString;
+        [self.goalLabel sizeToFit];
+    }
+    
+    CGRect goalFrame = self.goalLabel.frame;
+    goalFrame.origin.y = self.frame.size.height/2 - self.goalLabel.frame.size.height/2;
+    self.goalLabel.frame = goalFrame;
+
+    self.editableTextField.frame = goalFrame;
+
+}
+
+- (void)changeCellToAddGoals {
+    [self.addGoalButton removeFromSuperview];
+    self.selectionButton.hidden = NO;
+    [self.selectionButton setImage:[UIImage imageNamed:@"checkbox_checked"] forState:UIControlStateNormal];
+    self.selectionButton.tag = 1;
+    self.selectionButton.userInteractionEnabled = YES;
+    [self.editableTextField resignFirstResponder];
+    self.goalLabel.attributedText = [TDViewControllerHelper makeLeftAlignedTextWithString:self.editableTextField.text font:[TDConstants fontRegularSized:16] color:[TDConstants brandingRedColor] lineHeight:16 lineHeightMultipler:16/16];
+    
+    self.editableTextField.hidden = YES;
+    self.goalLabel.hidden = NO;
+    self.bottomLine.hidden = NO;
+
+}
+
+- (void)makeCellFirstResponder {
+    self.goalLabel.hidden = YES;
+    self.addButton.hidden = YES;
+    self.editableTextField.hidden = NO;
+    [self.editableTextField becomeFirstResponder];
+    debug NSLog(@"cell.editableTextField.frame = %@",NSStringFromCGRect( self.editableTextField.frame));
+    [self.editableTextField setEnablesReturnKeyAutomatically:YES];
+    self.bottomLine.hidden = NO;
+    debug NSLog(@"cell.bottomLine.frame = %@", NSStringFromCGRect(self.bottomLine.frame));
+}
+
+- (void)setSelectionButton {
+    if (self.selectionButton.tag == 0) {
+        [self.selectionButton setImage:[UIImage imageNamed:@"checkbox_checked"] forState:UIControlStateNormal] ;
+        NSAttributedString *str =
+        [TDViewControllerHelper makeLeftAlignedTextWithString:self.goalLabel.attributedText.string font:[TDConstants fontRegularSized:16] color:[TDConstants brandingRedColor] lineHeight:16. lineHeightMultipler:16/16];
+        self.goalLabel.attributedText = str;
+        self.selectionButton.tag = 1;
+    } else {
+        [self.selectionButton setImage:[UIImage imageNamed:@"checkbox_empty"] forState:UIControlStateNormal];
+        self.selectionButton.tag = 0;
+        NSAttributedString *attString = [TDViewControllerHelper makeLeftAlignedTextWithString:self.goalLabel.attributedText.string font:[TDConstants fontRegularSized:16.] color:[TDConstants headerTextColor] lineHeight:16. lineHeightMultipler:16./16.];
+        self.goalLabel.attributedText = attString;
+    }
+
 }
 @end

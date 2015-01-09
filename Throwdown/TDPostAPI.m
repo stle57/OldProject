@@ -146,6 +146,8 @@
 - (void)fetchPostsForUser:(NSString *)userIdentifier start:(NSNumber *)start success:(void(^)(NSDictionary *response))successHandler error:(void (^)(void))errorHandler {
     NSMutableString *url = [NSMutableString stringWithFormat:@"/api/v1/users/%@.json?user_token=%@", userIdentifier, [TDCurrentUser sharedInstance].authToken];
 
+    //NSMutableString *url = [NSMutableString stringWithFormat:@"/api/v1/users/%@.json?user_token=%@", userIdentifier,  @"3pASPvtsSS1szvPmr-FK"];
+
     if (start) {
         [url appendString:[NSString stringWithFormat:@"&start=%@", start]];
     }
@@ -161,10 +163,41 @@
     [self fetchPostsPath:url parameters:nil success:successHandler error:errorHandler];
 }
 
+#pragma mark - Posts for Guest 
+- (void)fetchPostsForGuestUser:(NSDictionary*)data start:(NSNumber *)start success:(void(^)(NSDictionary *response))successHandler error:(void (^)(void))errorHandler {
+//    NSMutableString *url = [NSMutableString stringWithFormat:@"/api/v1/locations/%@.json?user_token=%@", locationId, [TDCurrentUser sharedInstance].authToken];
+//    if (start) {
+//        [url appendString:[NSString stringWithFormat:@"&start=%@", start]];
+//    }
+//    [self fetchPostsPath:url parameters:nil success:successHandler error:errorHandler];
+}
+
+//-This method is just for testing purposes until we get the real method
+- (void)fetchPostsForGU:(NSString *)userIdentifier start:(NSNumber *)start success:(void(^)(NSDictionary *response))successHandler error:(void (^)(void))errorHandler {
+    NSString *stagingUserToken = @"fThYSMDTEYCrySVz4nB3";
+    NSString *devUserToken = @"3pASPvtsSS1szvPmr-FK";
+    NSString *tempToken = nil;
+    NSString *idName = nil;
+    if ([TDConstants environment] == TDEnvDevelopment) {
+        tempToken = devUserToken;
+        idName = userIdentifier;
+    } else if ([TDConstants environment] == TDEnvStaging){
+        tempToken = stagingUserToken;
+        idName = @"HoonTest13";
+    }
+    
+    NSMutableString *url = [NSMutableString stringWithFormat:@"/api/v1/users/%@.json?user_token=%@", idName, tempToken];
+    
+    if (start) {
+        [url appendString:[NSString stringWithFormat:@"&start=%@", start]];
+    }
+    [self fetchPostsPath:url parameters:nil success:successHandler error:errorHandler];
+}
+
 #pragma mark - Posts for location
 
 - (void)fetchPostsForLocationId:(NSNumber *)locationId start:(NSNumber *)start success:(void(^)(NSDictionary *response))successHandler error:(void (^)(void))errorHandler {
-    NSMutableString *url = [NSMutableString stringWithFormat:@"/api/v1/locations/%@.json?user_token=%@", locationId, [TDCurrentUser sharedInstance].authToken];
+    NSMutableString *url = [NSMutableString stringWithFormat:@"/api/v1/locations/%@.json?user_token=%@",[ NSNumber numberWithInt:(7)], @"3pASPvtsSS1szvPmr-FK"];
     if (start) {
         [url appendString:[NSString stringWithFormat:@"&start=%@", start]];
     }
@@ -174,10 +207,14 @@
 #pragma mark Posts fetcher
 
 - (void)fetchPostsPath:(NSString *)path parameters:(NSDictionary *)params success:(void(^)(NSDictionary *response))successHandler error:(void (^)(void))errorHandler {
-    if (![[TDCurrentUser sharedInstance] isLoggedIn]) {
-        return;
+    
+    //TODO: TAKE THIS OUT BEFORE RELEASING 2.3
+    if ([TDConstants environment] == TDEnvProduction){
+        if (![[TDCurrentUser sharedInstance] isLoggedIn]) {
+            return;
+        }
     }
-
+    
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager.requestSerializer setValue:TDDeviceInfo.bundleVersion forHTTPHeaderField:kHTTPHeaderBundleVersion];
     [manager GET:[[TDConstants getBaseURL] stringByAppendingString:path] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
