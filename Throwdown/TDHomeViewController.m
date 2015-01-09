@@ -112,6 +112,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     if (self.scrollToTop) {
         [self scrollTableToTop];
         self.scrollToTop = NO;

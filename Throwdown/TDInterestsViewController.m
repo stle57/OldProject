@@ -106,7 +106,6 @@ static const int doneBackgroundViewHeight = 80;
 #pragma mark UITableViewDataSource delegates
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    debug NSLog(@"number of rows");
     return self.interestList.count + 1;
 }
 

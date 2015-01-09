@@ -64,6 +64,12 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
                                         [UIImage imageNamed:@"btn_x"].size.width,
                                         [UIImage imageNamed:@"btn_x"].size.height);
     
+    //- Adjust the size of the button to have a larger tap area
+    self.closeButton.frame = CGRectMake(self.closeButton.frame.origin.x -10,
+                                        self.closeButton.frame.origin.y -10,
+                                        self.closeButton.frame.size.width + 20,
+                                        self.closeButton.frame.size.height + 20);
+    
     NSError *error = nil;
     self.namePattern = [NSRegularExpression regularExpressionWithPattern:@"\\w+"
                                                                  options:0
@@ -125,6 +131,7 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
 }
 
 - (void)viewDidAppear:(BOOL)animated {

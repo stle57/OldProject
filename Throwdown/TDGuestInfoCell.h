@@ -32,15 +32,6 @@
 @property (weak, nonatomic) IBOutlet UIView *bottomMarginPadding;
 @property (weak, nonatomic) IBOutlet UIView *topMarginPadding;
 
-enum {
-    kInfo_GuestInfoCellType,
-    kLast_GuestInfoCellType,
-    kNewUser_GuestInfoCellType,
-    kGuestUser_GuestInfoCellType,
-    kExistingUser_GuestInfoCellType
-};
-typedef NSInteger kGuestInfoCellType;
-
 - (void)setInfoCell;
 - (void)setLastCell;
 - (void)setNewUserCell;
@@ -53,7 +44,6 @@ typedef NSInteger kGuestInfoCellType;
 + (NSInteger) heightForGuestUserCell;
 + (NSInteger)heightForExistingUserCell;
 + (NSInteger)heightForEditGoalsCell;
-+ (TDGuestInfoCell*)createCell:(kGuestInfoCellType)type;
 - (IBAction)signupButtonPressed:(id)sender;
 - (IBAction)dismissButtonPressed:(id)sender;
 @end

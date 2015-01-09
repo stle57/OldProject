@@ -81,6 +81,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     [self.tableView reloadData];
 }
 
@@ -98,22 +99,16 @@
     NSInteger realRow = 0;
     if (row < 12) {
         realRow = row - 2; // 1 is for the header section, 1 is for edit goals section
-    } else {
+    } else if (row > 12) {
         realRow = row -3;
     }
     
-    debug NSLog(@"REAL ROW = %ld", (long)realRow);
+    //debug NSLog(@"REAL ROW = %ld", (long)realRow);
     if (realRow < self.posts.count) {
         return [self.posts objectAtIndex:realRow];
     } else {
         return nil;
     }
-
-//    if (row < self.posts.count) {
-//        return [self.posts objectAtIndex:row];
-//    } else {
-//        return nil;
-//    }
 }
 
 - (void)refreshControlUsed {

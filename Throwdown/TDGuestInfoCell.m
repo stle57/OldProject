@@ -47,30 +47,6 @@ static const int bottomMarginPaddingHeight = 15;
     // Configure the view for the selected state
 }
 
-+ (TDGuestInfoCell*)createCell:(kGuestInfoCellType)type {
-    TDGuestInfoCell *cell = [[TDGuestInfoCell alloc] init];
-    switch(type) {
-        case kInfo_GuestInfoCellType:
-            [cell setInfoCell];
-            break;
-        case kGuestUser_GuestInfoCellType:
-            [cell setGuestUserCell];
-            break;
-        case kLast_GuestInfoCellType:
-            [cell setLastCell];
-            break;
-        case kNewUser_GuestInfoCellType:
-            [cell setNewUserCell];
-            break;
-        case kExistingUser_GuestInfoCellType:
-            [cell setExistingUserCell];
-            break;
-        default:
-            break;
-    }
-    return cell;
-}
-
 - (void)setInfoCell {
     // Initialization code
     self.frame = CGRectMake(0, 0, SCREEN_WIDTH, 130);
@@ -453,7 +429,7 @@ static const int bottomMarginPaddingHeight = 15;
     self.label1.frame = CGRectMake(0, 0, SCREEN_WIDTH, 44);
     self.label1.backgroundColor = [TDConstants lightBackgroundColor];
     [self.label1 sizeToFit];
-    
+
     CGRect label1Frame = self.label1.frame;
     label1Frame.origin.x = self.topMarginPadding.frame.size.width/2 - self.label1.frame.size.width/2;
     label1Frame.origin.y = self.topMarginPadding.frame.size.height/2 - self.label1.frame.size.height/2;
@@ -550,7 +526,7 @@ static const int bottomMarginPaddingHeight = 15;
     NSDictionary *attrs = [NSDictionary dictionaryWithObjectsAndKeys:
                            boldFont, NSFontAttributeName,
                            foregroundColor, NSForegroundColorAttributeName, nil];
-    const NSRange range = NSMakeRange(0,15); // range of " 2012/10/14 ". Ideally this should not be hardcoded
+    const NSRange range = NSMakeRange(0,16); // range of " 2012/10/14 ". Ideally this should not be hardcoded
     
     [attributedString setAttributes:attrs range:range];
     label4.attributedText = attributedString;

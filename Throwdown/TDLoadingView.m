@@ -193,7 +193,7 @@ static NSString *loadingText = @"Loading. . .";
     NSDictionary *attrs = [NSDictionary dictionaryWithObjectsAndKeys:
                            boldFont, NSFontAttributeName,
                            foregroundColor, NSForegroundColorAttributeName, nil];
-    const NSRange range = NSMakeRange(0,14); // range of " 2012/10/14 ". Ideally this should not be hardcoded
+    const NSRange range = NSMakeRange(0,16); // range of " 2012/10/14 ". Ideally this should not be hardcoded
     
     [attributedString setAttributes:attrs range:range];
     self.infoLabel3.attributedText = attributedString;

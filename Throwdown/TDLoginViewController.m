@@ -52,6 +52,11 @@ static NSString *buttonBackStr = @"btn_back";
                                        [UIApplication sharedApplication].statusBarFrame.size.height + yPosition,
                                        [UIImage imageNamed:buttonBackStr].size.width,
                                        [UIImage imageNamed:buttonBackStr].size.height);
+    //- Adjust the size of the button to have a larger tap area
+    self.backButton.frame = CGRectMake(self.backButton.frame.origin.x -10,
+                                       self.backButton.frame.origin.y -10,
+                                       self.backButton.frame.size.width + 20,
+                                       self.backButton.frame.size.height + 20);
     
     [[TDAnalytics sharedInstance] logEvent:@"login_opened"];
     self.topLabel.text = @"Log In";
@@ -107,14 +112,19 @@ static NSString *buttonBackStr = @"btn_back";
                    self.passwordTextField.frame.origin.y +self.passwordTextField.frame.size.height+ 40 + [UIImage imageNamed:buttonLoginStr].size.height + 15,
                    self.resetPasswordButton.frame.size.width,
                    self.resetPasswordButton.frame.size.height);
+    
+    CGRect progressFrame = self.progress.frame;
+    progressFrame.origin.x = SCREEN_WIDTH/2 - self.progress.frame.size.width/2;
+    progressFrame.origin.y = SCREEN_HEIGHT/2 - self.progress.frame.size.height/2;
+    self.progress.frame = progressFrame;
+    
     debug NSLog(@"self.resetPasswordButton=%@", NSStringFromCGRect(self.resetPasswordButton.frame));
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [[UIApplication sharedApplication] setStatusBarHidden:NO withAnimation:UIStatusBarAnimationNone];
+    [[UIApplication sharedApplication] setStatusBarHidden:NO];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
-
 }
 
 - (void)viewDidAppear:(BOOL)animated {

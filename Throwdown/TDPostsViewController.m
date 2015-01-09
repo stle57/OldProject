@@ -212,7 +212,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 }
 
 - (void)endRefreshControl {
-    debug NSLog(@"endRefreshControl");
     [self.customRefreshControl endRefreshing];
 }
 
@@ -221,8 +220,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     if (updatingAtBottom || ![self hasMorePosts]) {
         return;
     }
-    debug NSLog(@"updatePostsAtBottom");
-
     updatingAtBottom = YES;
     [self startLoadingSpinner];
 
@@ -264,11 +261,10 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         debug NSLog(@"return number of sections=%lu", [posts count] + [self noticeCount] + (showBottomSpinner ? 1 : 0) + ([self hasMorePosts] ? 0 : 1) + (self.profileType != kFeedProfileTypeNone ? 1 : 0) + ([self onGuestFeed] ? 5 : 0) + (hasAskedForGoals ? 0 : 1));
     }
     // 1 section per post, +1 if we need the Profile Header cell or +1 if we need the new user welcome cell
-    return [posts count] + [self noticeCount] + (showBottomSpinner ? 1 : 0) + ([self hasMorePosts] ? 0 : 1) + (self.profileType != kFeedProfileTypeNone ? 1 : 0) + ([self onGuestFeed] ? 5 : 0 + ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) + (hasAskedForGoals ? 0 : 1));
+    return [posts count] + [self noticeCount] + (showBottomSpinner ? 1 : 0) + ([self hasMorePosts] ? 0 : 1) + (self.profileType != kFeedProfileTypeNone ? 1 : 0) + ([self onGuestFeed] ? 5 : 0) + ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) + (hasAskedForGoals ? 0 : 1);
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-
     // 1st row for Profile Header
     if (self.profileType != kFeedProfileTypeNone && section == 0) {
         return 1;
@@ -288,8 +284,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         return 1;
     }
 
-    if ([self onGuestFeed] && (section == 0 || section == 1 || section == 11)) {
-        debug NSLog(@"returning number of rows for seciton 0 or 11");
+    if ([self onGuestFeed] && (section == 0 || section == 1 || section == 12)) {
         return 1;
     }
     
@@ -299,19 +294,19 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     }
 
     NSInteger row = [[self postsForThisScreen] count] + [self noticeCount] + (self.profileType != kFeedProfileTypeNone ? 1 : 0);
-
     // Last row with Activity
     if (showBottomSpinner && section == row) {
         return 1;
     }
 
-    if ([self onGuestFeed] &&  ((section == row+1)|| (section == row))) {
-        debug NSLog(@"second to last OR last row for guest feed");
+    //When on guest feed, we've added 4 or 5 sections, to display the first 2 sections, 1 middle section, and 2 sections at the end
+    if ([self onGuestFeed] &&  ((section == row+4)|| (section == row+5))) {
+        // Returns number of rows for last two sections on guest feed.
         return 1;
     }
     
     // Last row with no more posts
-    if (![self hasMorePosts] && section == row) {
+    if (![self hasMorePosts] && section == row && ![self onGuestFeed]) {
         return 1;
     }
 
@@ -329,8 +324,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSInteger realRow = [[self postsForThisScreen] count] + [self noticeCount] + (self.profileType != kFeedProfileTypeNone ? 1 : 0);
-    
+    NSInteger realRow = [[self postsForThisScreen] count] + [self noticeCount] + (self.profileType != kFeedProfileTypeNone ? 1 : 0) + ([self onGuestFeed] ? 5 : 0 )+ ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) + ([[TDCurrentUser sharedInstance] didAskForGoals] ? 0 : 1);
     // 1st row for Profile Header
     if (self.profileType != kFeedProfileTypeNone && indexPath.section == 0) {
         TDUserProfileCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_PROFILE];
@@ -355,7 +349,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     }
 
     if ([[TDCurrentUser sharedInstance] isNewUser] && indexPath.section == 0) {
-        debug NSLog(@"new user cell");
+        debug NSLog(@"  new user cell");
         TDGuestInfoCell *cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGuestInfoCell" owner:self options:nil];
@@ -384,8 +378,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     }
     
     if ((![[TDCurrentUser sharedInstance] didAskForGoals]) && indexPath.section == 0 && [[TDCurrentUser sharedInstance] isLoggedIn]) {
-        debug NSLog(@"creating section 0, row 0");
-        debug NSLog(@"existing user cell");
         TDGuestInfoCell *cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGuestInfoCell" owner:self options:nil];
@@ -406,8 +398,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     }
     
     if ([self onGuestFeed] && indexPath.section == 0) {
-        debug NSLog(@"creating section 0, row 0");
-        debug NSLog(@"new user cell");
         TDGuestInfoCell *cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGuestInfoCell" owner:self options:nil];
@@ -432,7 +422,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     }
     
     if ([self onGuestFeed] && indexPath.section == 1) {
-        debug NSLog(@"creating section 0, row 1");
         TDGuestInfoCell *cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGuestInfoCell" owner:self options:nil];
@@ -449,9 +438,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         
         cell.bottomLine.hidden = YES;
         cell.topLine.hidden = YES;
-        
-        debug NSLog(@"edit goals cell-%@", NSStringFromCGRect(cell.frame));
-        debug NSLog(@"label1 frame = %@", NSStringFromCGRect(cell.label1.frame));
         
         return cell;
     }
@@ -494,7 +480,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         return cell;
     }
 
-    if ([self onGuestFeed] && indexPath.section == 11) {
+    if ([self onGuestFeed] && indexPath.section == 12) {
         // Create a info cell
         TDGuestInfoCell *cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
         if (!cell) {
@@ -511,8 +497,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         CGRect frame = cell.frame;
         frame.size.height = [TDGuestInfoCell heightForInfoCell];
         cell.frame = frame;
-        debug NSLog(@"row 10, frame-%@", NSStringFromCGRect(cell.frame));
-
         return cell;
     }
     
@@ -543,8 +527,8 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         return cell;
     }
 
-    if (![self hasMorePosts] && [self onGuestFeed] && indexPath.section == realRow) {
-        debug NSLog(@"last row on guest feed");
+    // Creating second to last row on guest feed. 'realRow' represents the total number of sections in the feed
+    if (![self hasMorePosts] && [self onGuestFeed] && indexPath.section == realRow-1) {
         TDGuestInfoCell *cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGuestInfoCell" owner:self options:nil];
@@ -577,8 +561,8 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         return cell;
 
     }
-    
-    if ([self onGuestFeed] && ![self hasMorePosts] && indexPath.section == realRow+1) {
+    // Creating LAST row on guest feed. 'realRow' represents the total number of sections in the feed
+    if ([self onGuestFeed] && ![self hasMorePosts] && indexPath.section == realRow) {
         TDGuestInfoCell*cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGuestInfoCell" owner:self options:nil];
@@ -604,20 +588,18 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     }
     
     // Last row if no more
-    if (![self hasMorePosts] && indexPath.section == realRow) {
-
-            TDNoMorePostsCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_NO_MORE_POSTS];
-            if (!cell) {
-                NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_NO_MORE_POSTS owner:self options:nil];
-                cell = [topLevelObjects objectAtIndex:0];
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-            }
-            return cell;
+    if (![self hasMorePosts] && indexPath.section == realRow && ![self onGuestFeed]) {
+        TDNoMorePostsCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_NO_MORE_POSTS];
+        if (!cell) {
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_NO_MORE_POSTS owner:self options:nil];
+            cell = [topLevelObjects objectAtIndex:0];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        }
+        return cell;
     }
     
     // The actual post row
     TDPost *post = [self postForRow:indexPath.section];
-    
     if (indexPath.row == 0) {
         TDPostView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_POST_VIEW];
         if (!cell) {
@@ -700,7 +682,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSUInteger postsCount = [[self postsForThisScreen] count];
-
+    
     // 1st row is Profile Header
     if (self.profileType != kFeedProfileTypeNone && indexPath.section == 0) {
         return [TDUserProfileCell heightForUserProfile:[self getUser]];
@@ -721,7 +703,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         return [TDGuestInfoCell heightForEditGoalsCell];
     }
     
-    if ([self onGuestFeed] && indexPath.section == 11   ) {
+    if ([self onGuestFeed] && indexPath.section == 12 ) {
         return [TDGuestInfoCell heightForInfoCell];
     }
     
@@ -735,47 +717,37 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         return [TDNoticeViewCell heightForNotice:[self getNoticeAt:indexPath.section]];
     }
 
-    NSInteger realSection = indexPath.section - [self noticeCount] - (self.profileType != kFeedProfileTypeNone ? 1 : 0);
+    NSInteger realSection = indexPath.section - [self noticeCount] - (self.profileType != kFeedProfileTypeNone ? 1 : 0)- ([self onGuestFeed] ? 5 : 0) - ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) - ([[TDCurrentUser sharedInstance] didAskForGoals] ? 0 : 1);
 
     // Last row with Activity
     if (showBottomSpinner && realSection == postsCount) {
         return activityRowHeight;
     }
 
-    // Last row with Load More
-    if (![self hasMorePosts] && realSection == postsCount) {
-        if ([self onGuestFeed]) {
-            debug NSLog(@"returning height for last row in guest user, realSection-%ld", (long)realSection);
-            return [TDGuestInfoCell heightForLastCell];
-        } else {
-            return uploadMoreHeight;
-        }
+    // Second to last row on guest feed.  +4 because the second to last row is the 4th extra section to the guest feed.
+    if ([self onGuestFeed] && ![self hasMorePosts] && (indexPath.section == postsCount+4)){
+        return [TDGuestInfoCell heightForLastCell];
     }
 
-    if ([self onGuestFeed] && ![self hasMorePosts] && realSection == postsCount+1) {
-        debug NSLog(@"height for last row on guest feed");
+    // Last row on guest feed.  +5 because the last row is the 5th EXTRA section to guest feed.
+    if ([self onGuestFeed] && ![self hasMorePosts] && (indexPath.section == postsCount+5)) {
         return SCREEN_HEIGHT/2;
-        //return [TDGuestInfoCell heightForLastCell];
+    }
+    
+    if (![self hasMorePosts] && realSection == postsCount && ![self onGuestFeed]) {
+        
+        return uploadMoreHeight;
     }
     
     NSInteger lastRow = [self tableView:nil numberOfRowsInSection:indexPath.section] - 1;
-
-//    if ([self onGuestFeed] && indexPath.section == [[self postsForThisScreen] count] + 2 ) {
-//        debug NSLog(@"height for last row on guest");
-//        return [TDGuestInfoCell heightForLastCell];
-//    }
     
     // Last row in each post section is just background padding and bottom line
     if (indexPath.row == lastRow) {
-        //debug NSLog(@"height for last row bottom padding");
         return kPostMargin;
     }
 
     
     TDPost *post = [self postForRow:indexPath.section];
-//    if ( [self onGuestFeed] && !post ) {
-//        return kGuestCell;
-//    }
     
     if (!post) {
         return 0;

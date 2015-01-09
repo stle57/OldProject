@@ -81,6 +81,13 @@ static int const width = 290;
     [self.closeButton setImage:[UIImage imageNamed:@"btn_x"] forState:UIControlStateNormal];
     [self.closeButton setImage:[UIImage imageNamed:@"btn_x"] forState:UIControlStateHighlighted];
     [self.closeButton setImage:[UIImage imageNamed:@"btn_x"] forState:UIControlStateSelected];
+    
+    //- Adjust the size of the button to have a larger tap area
+    self.closeButton.frame = CGRectMake(self.closeButton.frame.origin.x -10,
+                                       self.closeButton.frame.origin.y -10,
+                                       self.closeButton.frame.size.width + 20,
+                                       self.closeButton.frame.size.height + 20);
+
     [self addSubview:self.closeButton];
     
     self.joinButton = [[UIButton alloc] initWithFrame:CGRectMake(width/2 - [UIImage imageNamed:@"btn_join_throwdown"].size.width/2, self.label.frame.origin.y + self.label.frame.size.height + 25, [UIImage imageNamed:@"btn_join_throwdown"].size.width, [UIImage imageNamed:@"btn_join_throwdown"].size.height)];

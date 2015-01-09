@@ -16,7 +16,7 @@
 @property (nonatomic) NSIndexPath *selectedIndexPath;
 @end
 
-static NSString *topHeaderText1 =@"Let's personalize your expereince.";
+static NSString *topHeaderText1 = @"Let's personalize your experience.";
 static NSString *topHeaderText2 = @"What are your fitness goals?";
 static NSString *topHeaderText3 = @"Select all that apply.";
 static NSString *continueButtonStr = @"btn_continue";

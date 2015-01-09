@@ -54,6 +54,12 @@
                                         [UIImage imageNamed:@"btn_back"].size.width,
                                         [UIImage imageNamed:@"btn_back"].size.height);
     
+    //- Adjust the size of the button to have a larger tap area
+    self.backButton.frame = CGRectMake(self.backButton.frame.origin.x -10,
+                                       self.backButton.frame.origin.y -10,
+                                       self.backButton.frame.size.width + 20,
+                                       self.backButton.frame.size.height + 20);
+
     NSError *error = nil;
     self.usernamePattern = [NSRegularExpression regularExpressionWithPattern:@"[^\\w+\\d++_]"
                                                                      options:0
@@ -121,6 +127,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
 }
 
 - (void)viewDidAppear:(BOOL)animated {

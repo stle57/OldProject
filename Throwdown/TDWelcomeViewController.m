@@ -44,21 +44,27 @@
 
     // Move slides to the right
     CGRect frame = [[UIScreen mainScreen] bounds];
-    CGFloat height = frame.size.height;
+    CGFloat height = frame.size.height +  [UIApplication sharedApplication].statusBarFrame.size.height;
     CGFloat width = frame.size.width;
+    
+    CGRect frame1 = self.view.frame;
+    frame1.size.height = frame.size.height +  [UIApplication sharedApplication].statusBarFrame.size.height;
+    self.view.frame = frame1;
+    
     self.scrollView.frame = self.view.frame;
     
     self.pageWidth = width + 20;
     self.currentPage = 0;
 
     [self.backgroundImage setBackgroundImage];
+    self.backgroundImage.frame = self.view.frame;
+    
     CGFloat imageWidth = self.backgroundImageWidthConstraint.constant;
     CGFloat imageHeight = self.backgroundImageHeightConstraint.constant;
     CGFloat aspect = [UIScreen mainScreen].bounds.size.height / imageHeight;
 
     self.backgroundImageWidthConstraint.constant  = (imageWidth * aspect);
     self.backgroundImageHeightConstraint.constant = (imageHeight * aspect);
-
     CGFloat totalWidth = self.editViewOnly ? (self.pageWidth *3) + 40 : (self.pageWidth * 4) + 40;
     self.scrollView.contentSize = CGSizeMake(totalWidth, height);
     self.scrollView.delegate = self;
@@ -70,7 +76,7 @@
     self.backgroundImageHeightConstraint.constant = frame.size.height;
     self.backgroundImageWidthConstraint.constant = frame.size.width;
     
-    self.scrollView.delaysContentTouches = NO;
+    //self.scrollView.delaysContentTouches = NO;
 
     if (!self.editViewOnly) {
 
@@ -112,15 +118,11 @@
     if (self.editViewOnly) {
         [self.backgroundImage applyBlurOnImage];
     }
-    
-    debug NSLog(@"goals frame = %@", NSStringFromCGRect(self.goalsViewController.view.frame));
-    debug NSLog(@"interest frame = %@", NSStringFromCGRect(self.interestsViewController.view.frame));
-
-    debug NSLog(@"loading frame = %@", NSStringFromCGRect(self.loadingViewController.view.frame));
 }
 
 -(void)viewWillAppear:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:YES animated:YES];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
@@ -155,6 +157,7 @@
 
 - (void)showHomeController {
     [self dismissViewControllerAnimated:NO completion:nil];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *homeViewController = [storyboard instantiateViewControllerWithIdentifier:@"HomeViewController"];
@@ -191,14 +194,10 @@
 }
 
 - (void)getStartedButtonPressed {
-    debug NSLog(@"inside getStartedButtonPressed");
     [self.backgroundImage applyBlurOnImage];
-    debug NSLog(@"  frame before = %@", NSStringFromCGRect(self.goalsViewController.view.frame));
+
     CGRect frame2 = self.goalsViewController.view.frame;
     [self.scrollView scrollRectToVisible:frame2 animated:YES];
-    debug NSLog(@"goals view controller scroll to frame-%@", NSStringFromCGRect(frame2));
-    debug NSLog(@"content offset=%@", NSStringFromCGPoint(self.scrollView.contentOffset));
-    debug NSLog(@"content size=%@", NSStringFromCGSize(self.scrollView.contentSize));
 }
 
 #pragma mark - GoalsViewControllerDelegate 
@@ -208,7 +207,6 @@
 }
 
 - (void)closeButtonPressed {
-    debug NSLog(@"inside close button pressed");
     CATransition *transition = [CATransition animation];
     transition.duration = .5;
     transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
@@ -221,7 +219,6 @@
 
 #pragma mark - InterestsViewControllerDelgate
 - (void)doneButtonPressed {
-    debug NSLog(@"done button pressed, load data");
     CGRect frame = self.loadingViewController.view.frame;
     frame.origin.x +=20;
     [self.scrollView scrollRectToVisible:frame animated:YES];
@@ -230,14 +227,12 @@
 
 - (void)backButtonPressed {
     int offset = (int)self.scrollView.contentOffset.x;
-    debug NSLog(@"offset = %d", offset);
     CGRect frame = self.interestsViewController.view.frame;
     frame.origin.x = offset - self.pageWidth;
     [self.scrollView scrollRectToVisible:frame animated:YES];
 }
 
 - (void)loadGuestView {
-    debug NSLog(@"inside loadGuestView");
     CATransition *transition = [CATransition animation];
     transition.duration = .5;
     transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
@@ -251,7 +246,6 @@
 }
 
 - (void)loadHomeView {
-    debug NSLog(@"inside loadGuestView");
     CATransition *transition = [CATransition animation];
     transition.duration = .5;
     transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
