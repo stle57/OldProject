@@ -99,7 +99,7 @@
     
     CGRect placeHolderFrame = self.placeholderLabel.frame;
     placeHolderFrame.origin.x = self.iconImageView.frame.size.width + 10;
-    placeHolderFrame.origin.y = self.frame.size.height - self.placeholderLabel.frame.size.height -8;
+    placeHolderFrame.origin.y = self.frame.size.height/2 - self.iconImageView.frame.size.height/2 +2;
     self.placeholderLabel.frame = placeHolderFrame;
     self.textfield.frame = placeHolderFrame;
     
@@ -109,6 +109,7 @@
     
     self.xmarkImageView.frame = checkFrame;
     
+    self.spinner.frame = checkFrame;
 }
 
 -(void)secure

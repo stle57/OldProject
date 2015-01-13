@@ -423,7 +423,7 @@ static const int bottomMarginPaddingHeight = 15;
     self.topMarginPadding.backgroundColor = [TDConstants lightBackgroundColor];
     [self addSubview:self.topMarginPadding];
     
-    NSString *text = @"Tap here to edit your goal and interests";
+    NSString *text = @"Tap here to edit your goals and interests";
     NSAttributedString *str = [TDViewControllerHelper makeParagraphedTextWithString:text font:[TDConstants fontRegularSized:15] color:[TDConstants headerTextColor] lineHeight:15 lineHeightMultipler:15/15];
     self.label1.attributedText = str;
     self.label1.frame = CGRectMake(0, 0, SCREEN_WIDTH, 44);
@@ -432,7 +432,7 @@ static const int bottomMarginPaddingHeight = 15;
 
     CGRect label1Frame = self.label1.frame;
     label1Frame.origin.x = self.topMarginPadding.frame.size.width/2 - self.label1.frame.size.width/2;
-    label1Frame.origin.y = self.topMarginPadding.frame.size.height/2 - self.label1.frame.size.height/2;
+    label1Frame.origin.y = self.topMarginPadding.frame.size.height/2 - self.label1.frame.size.height/2 + 4;
     self.label1.frame = label1Frame;
     [self.topMarginPadding addSubview:self.label1];
     

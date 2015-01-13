@@ -27,11 +27,9 @@
 }
 
 - (void)viewDidLoad {
-    debug NSLog(@"inside TDLoadingViewController:viewDidLoad");
     [super viewDidLoad];
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     self.view.backgroundColor = [UIColor clearColor];
-    //self.loadingInfoView.frame = CGRectMake(SCREEN_WIDTH/2 - 270/2, SCREEN_HEIGHT/2 - 318/2, 270, 318);
     
     self.alphaView.frame = self.view.frame;
     self.alphaView.backgroundColor = [UIColor whiteColor];
@@ -43,29 +41,22 @@
     [self.loadingView1 setViewType:kView1_Loading];
     [self.alphaView addSubview:self.loadingView1];
     self.loadingView1.alpha = 0;
-   // self.loadingView1.hidden = YES;
     
     self.loadingView2 = [TDLoadingView loadingView:kView2_Loading];
     self.loadingView2.frame = CGRectMake(SCREEN_WIDTH/2 - 270/2, SCREEN_HEIGHT/2 - 318/2, 270, 318);
     [self.loadingView2 setViewType:kView2_Loading];
     [self.alphaView addSubview:self.loadingView2];
     self.loadingView2.alpha = 0;
-    //self.loadingView2.hidden = YES;
     
     self.loadingView3 = [TDLoadingView loadingView:kView3_Loading];
     self.loadingView3.frame = CGRectMake(SCREEN_WIDTH/2 - 270/2, SCREEN_HEIGHT/2 - 318/2, 270, 318);
     [self.loadingView3 setViewType:kView3_Loading];
     [self.alphaView addSubview:self.loadingView3];
     self.loadingView3.alpha = 0;
-    //self.loadingView3.hidden = YES;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
-    debug NSLog(@"inside TDLoadingViewController:viewAppearLoad");
-
     [super viewDidAppear:animated];
-    
-
 }
 
 - (void)didReceiveMemoryWarning {
@@ -84,7 +75,6 @@
 */
 
 - (void)showData {
-    debug NSLog(@"===========>showData");
     [[TDCurrentUser sharedInstance] didAskForGoals:YES];
     
     [UIView animateWithDuration:0.2
@@ -96,46 +86,36 @@
                      completion:^(BOOL finished){
                          // code to run when animation completes
                          // (in this case, another animation:)
-                         [UIView animateWithDuration:0.2
-                                               delay:2
+                         [UIView animateWithDuration:.5
+                                               delay:2.5
                                              options:UIViewAnimationOptionCurveEaseIn
                                           animations:^{
                                               self.loadingView1.alpha = 0;
                                               self.loadingView2.alpha = 1;
                                           }
                                           completion:^(BOOL finished){  
-                                              [UIView animateWithDuration:0.2
-                                                                    delay:2
+                                              [UIView animateWithDuration:.5
+                                                                    delay:2.5
                                                                   options:UIViewAnimationOptionCurveEaseIn
                                                                animations:^{
                                                                    self.loadingView2.alpha = 0;
                                                                    self.loadingView3.alpha = 1;
                                                                }
                                                                completion:^(BOOL finished){
-                                                                   
-                                                                   [UIView animateWithDuration:0.2
-                                                                                         delay:2
-                                                                                       options:UIViewAnimationOptionCurveEaseIn
-                                                                                    animations:^{
-                                                                                        debug NSLog(@"inside completion of animation load3");
-                                                                                        self.loadingView3.alpha = 1;
-                                                                                    }
-                                                                                    completion:^(BOOL finished){
-                                                                                        
-                                                                                        debug NSLog(@"inside completion of animation load3");
-                                                                                        if ([[TDCurrentUser sharedInstance] didAskForGoals] && [[TDCurrentUser sharedInstance] isLoggedIn] && self.delegate && [self.delegate respondsToSelector:@selector(loadHomeView)]){
-                                                                                            [self.delegate loadHomeView];
-                                                                                        } else {
-                                                                                            // This is for guest user only;
-                                                                                            if (self.delegate && [self.delegate respondsToSelector:@selector(loadGuestView)]) {
-                                                                                                [self.delegate loadGuestView];
-                                                                                            }
-                                                                                        }
-                                                                                        
-                                                                                    }];
-                                                                   
+                                                                    [self performSelector:@selector(loadCorrectView) withObject:nil afterDelay:1.0];
                                                                }];
                                           }];
                      }];
+}
+
+- (void)loadCorrectView {
+    if ([[TDCurrentUser sharedInstance] didAskForGoals] && [[TDCurrentUser sharedInstance] isLoggedIn] && self.delegate && [self.delegate respondsToSelector:@selector(loadHomeView)]){
+        [self.delegate loadHomeView];
+    } else {
+        // This is for guest user only;
+        if (self.delegate && [self.delegate respondsToSelector:@selector(loadGuestView)]) {
+            [self.delegate loadGuestView];
+        }
+    }
 }
 @end

@@ -42,7 +42,7 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     [[TDAnalytics sharedInstance] logEvent:@"signup_step_one"];
 
-    [self.backgroundImageView setBackgroundImage];
+    [self.backgroundImageView setBackgroundImage:NO];
     [self.backgroundImageView applyBlurOnImage];
     
     self.alphaView.frame = self.view.frame;
@@ -123,7 +123,7 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
     
     self.continueButton.frame = CGRectMake(
                                            SCREEN_WIDTH/2 - [UIImage imageNamed:@"btn_continue"].size.width/2,
-                                           SCREEN_HEIGHT/2 - [UIImage imageNamed:@"btn_continue"].size.height/2,
+                                           self.emailTextField.frame.origin.y + self.emailTextField.frame.size.height + 20,
                                            [UIImage imageNamed:@"btn_continue"].size.width,
                                            [UIImage imageNamed:@"btn_continue"].size.height);
     
@@ -131,7 +131,7 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -229,11 +229,11 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
     CATransition *transition = [CATransition animation];
     transition.duration = .5;
     transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    transition.type = kCATransitionReveal;
+    //transition.type = kCATransitionReveal;
     transition.subtype = kCATransitionFromBottom;
     [self.view.window.layer addAnimation:transition forKey:nil];
     
-    [self dismissViewControllerAnimated:NO completion:nil];
+    [self dismissViewControllerAnimated:YES completion:nil];
 
 }
 

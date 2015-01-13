@@ -11,7 +11,8 @@ enum {
     kFollow_LabelType,
     kLike_LabelType,
     kComment_LabelType,
-    kPost_LabelType
+    kPost_LabelType,
+    kUserProfile_LabelType
 };
 typedef NSInteger kLabelType;
 

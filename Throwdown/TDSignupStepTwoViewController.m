@@ -32,7 +32,7 @@
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     [[TDAnalytics sharedInstance] logEvent:@"signup_step_two"];
     
-    [self.backgroundImageView setBackgroundImage];
+    [self.backgroundImageView setBackgroundImage:NO];
     [self.backgroundImageView applyBlurOnImage];
     
     self.alphaView.frame = self.view.frame;
@@ -80,8 +80,7 @@
     self.privacyLabel1.frame = privacyFrame;
     
     NSString *text2 = @"Terms of Service & Privacy Policy";
-    NSAttributedString *attStr2 = [TDViewControllerHelper makeParagraphedTextWithString:text2 font:[TDConstants fontSemiBoldSized:12.] color:[TDConstants headerTextColor] lineHeight:12. lineHeightMultipler:12./12.];
-    self.privacyButton.titleLabel.text = @"Terms of Service & Privacy Policy";
+    NSAttributedString *attStr2 = [TDViewControllerHelper makeParagraphedTextWithString:text2 font:[TDConstants fontSemiBoldSized:12.] color:[TDConstants headerTextColor] lineHeight:15. lineHeightMultipler:15./12.];
     [self.privacyButton setAttributedTitle:attStr2 forState:UIControlStateNormal];
     [self.privacyButton addTarget:self action:@selector(privacyButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.privacyButton sizeToFit];
@@ -127,7 +126,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 }
 
 - (void)viewDidAppear:(BOOL)animated {

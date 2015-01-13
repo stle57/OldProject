@@ -54,6 +54,9 @@ static int const width = 290;
         case kComment_LabelType:
             prefixString = @"To comment";
             break;
+        case kUserProfile_LabelType:
+            prefixString = @"To see";
+            break;
         default:
             break;
     }
@@ -163,38 +166,12 @@ static int const width = 290;
 
 - (void)animateHide
 {
-    CAKeyframeAnimation *animation = [CAKeyframeAnimation
-                                      animationWithKeyPath:@"transform"];
-    
-    CATransform3D scale1 = CATransform3DMakeScale(1.0, 1.0, 1);
-    CATransform3D scale2 = CATransform3DMakeScale(0.5, 0.5, 1);
-    CATransform3D scale3 = CATransform3DMakeScale(0.0, 0.0, 1);
-    
-    NSArray *frameValues = [NSArray arrayWithObjects:
-                            [NSValue valueWithCATransform3D:scale1],
-                            [NSValue valueWithCATransform3D:scale2],
-                            [NSValue valueWithCATransform3D:scale3],
-                            nil];
-    [animation setValues:frameValues];
-    
-    NSArray *frameTimes = [NSArray arrayWithObjects:
-                           [NSNumber numberWithFloat:0.0],
-                           [NSNumber numberWithFloat:0.5],
-                           [NSNumber numberWithFloat:0.9],
-                           nil];
-    [animation setKeyTimes:frameTimes];
-    
-    animation.fillMode = kCAFillModeForwards;
-    animation.removedOnCompletion = NO;
-    animation.duration = 0.1;
-    
-    [AlertView.layer addAnimation:animation forKey:@"hide"];
-    
-    [self performSelector:@selector(removeFromSuperview) withObject:self afterDelay:0.105];
     
     [[NSNotificationCenter defaultCenter] postNotificationName:TDRemoveGuestViewControllerOverlay
                                                         object:self
                                                       userInfo:nil];
+    
+    [self removeFromSuperview];
 }
 
 

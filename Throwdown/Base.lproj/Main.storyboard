@@ -602,6 +602,13 @@
                                     <constraint firstAttribute="width" constant="810" id="hDt-hf-gBu"/>
                                 </constraints>
                             </imageView>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="SCK-8A-0YY" userLabel="Background Image View" customClass="TDAppCoverBackgroundView">
+                                <rect key="frame" x="0.0" y="-20" width="810" height="540"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="540" id="PLe-x6-Kue"/>
+                                    <constraint firstAttribute="width" constant="810" id="Yki-xg-PH8"/>
+                                </constraints>
+                            </imageView>
                             <scrollView autoresizesSubviews="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" directionalLockEnabled="YES" bounces="NO" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nX9-L6-K52">
                                 <rect key="frame" x="0.0" y="-20" width="620" height="620"/>
                             </scrollView>
@@ -610,10 +617,12 @@
                         <constraints>
                             <constraint firstItem="cbM-Aj-zSp" firstAttribute="top" secondItem="t6G-ri-uvI" secondAttribute="bottom" constant="-20" id="2Qf-FF-cMl"/>
                             <constraint firstItem="HM9-YK-iJ0" firstAttribute="top" secondItem="nX9-L6-K52" secondAttribute="bottom" id="QhK-gT-9t9"/>
+                            <constraint firstItem="SCK-8A-0YY" firstAttribute="leading" secondItem="cbM-Aj-zSp" secondAttribute="leading" id="WL8-tZ-fXj"/>
                             <constraint firstItem="cbM-Aj-zSp" firstAttribute="leading" secondItem="ngx-kp-s4L" secondAttribute="leading" id="gIK-ha-1Yn"/>
                             <constraint firstItem="nX9-L6-K52" firstAttribute="leading" secondItem="ngx-kp-s4L" secondAttribute="leading" id="hKm-9k-4qY"/>
                             <constraint firstItem="nX9-L6-K52" firstAttribute="top" secondItem="t6G-ri-uvI" secondAttribute="bottom" constant="-20" id="oJg-KL-kgM"/>
                             <constraint firstAttribute="trailing" secondItem="nX9-L6-K52" secondAttribute="trailing" constant="-20" id="u0M-rH-yOj"/>
+                            <constraint firstItem="SCK-8A-0YY" firstAttribute="top" secondItem="t6G-ri-uvI" secondAttribute="bottom" constant="-20" id="ziB-Ee-CWK"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="jXa-pa-bGh"/>
@@ -623,6 +632,9 @@
                         <outlet property="backgroundImage" destination="cbM-Aj-zSp" id="7Ib-PB-HLP"/>
                         <outlet property="backgroundImageHeightConstraint" destination="fWv-Hm-bO4" id="4Zl-m7-L63"/>
                         <outlet property="backgroundImageWidthConstraint" destination="hDt-hf-gBu" id="gYQ-e0-mQo"/>
+                        <outlet property="blurredBackgroundImage" destination="SCK-8A-0YY" id="Tsf-py-bOV"/>
+                        <outlet property="blurredImageHeightConstraint" destination="PLe-x6-Kue" id="q6k-0y-3eY"/>
+                        <outlet property="blurredImageWidthConstraint" destination="Yki-xg-PH8" id="Aez-e0-GlY"/>
                         <outlet property="scrollView" destination="nX9-L6-K52" id="UMQ-Z1-M6m"/>
                     </connections>
                 </viewController>

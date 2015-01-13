@@ -7,7 +7,6 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TDInterestsViewController">
             <connections>
-                <outlet property="alphaView" destination="sgU-xe-skM" id="cjw-Qk-9Hf"/>
                 <outlet property="backButton" destination="p1K-6b-DpM" id="ZYo-iY-e6X"/>
                 <outlet property="bottomMargin" destination="GMO-Bb-ACC" id="NVp-Pk-zhl"/>
                 <outlet property="doneBackgroundView" destination="cuQ-Cb-cr7" id="L6a-gO-2O8"/>

@@ -20,7 +20,7 @@
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withCloseButton:(BOOL)yes;
 
-@property (weak, nonatomic) IBOutlet UIView *alphaView;
+//@property (weak, nonatomic) IBOutlet UIView *alphaView;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UILabel *headerLabel1;
 @property (weak, nonatomic) IBOutlet UILabel *headerLabel2;

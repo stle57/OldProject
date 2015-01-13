@@ -50,23 +50,26 @@ static const int closeBackgroundViewHeight = 80;
     // Do any additional setup after loading the view from its nib.
     
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH+20, SCREEN_HEIGHT); // +20 is to extend the frame for the scrollview offset(inside autolayout)
-    self.view.backgroundColor = [UIColor clearColor];
-    
-    self.alphaView.frame = self.view.frame;
-    self.alphaView.backgroundColor = [UIColor whiteColor];
-    [self.alphaView setAlpha:.92];
-    [self.view addSubview:self.alphaView];
+   // self.view.backgroundColor = [UIColor clearColor];
+    self.view.backgroundColor = [UIColor whiteColor];
+    [self.view setAlpha:.7];
+//    
+    //self.alphaView.hidden = YES;
+//    self.alphaView.frame = self.view.frame;
+//    self.alphaView.backgroundColor = [UIColor whiteColor];
+//    [self.alphaView setAlpha:.92];
+    //[self.view addSubview:self.alphaView];
     
     if (self.showCloseButton) {
         self.closeButton.frame = CGRectMake(15, 15, [UIImage imageNamed:@"btn_x"].size.width, [UIImage imageNamed:@"btn_x"].size.height);
-        [self.alphaView addSubview:self.closeButton];
+        [self.view addSubview:self.closeButton];
     }
     
     [self createHeaderLabel];
     
     self.tableView.frame = CGRectMake(0, 125, SCREEN_WIDTH, SCREEN_HEIGHT - closeBackgroundViewHeight - 125);
     self.tableView.backgroundColor = [UIColor clearColor];
-    [self.alphaView addSubview:self.tableView];
+    [self.view addSubview:self.tableView];
     
     CGRect bottomLineRect = self.bottomMargin.frame;
     bottomLineRect.origin.x = 0;
@@ -75,11 +78,11 @@ static const int closeBackgroundViewHeight = 80;
     bottomLineRect.size.width = SCREEN_WIDTH;
     self.bottomMargin.frame = bottomLineRect;
     self.bottomMargin.backgroundColor = [TDConstants commentTimeTextColor];
-    [self.alphaView addSubview:self.bottomMargin];
+    [self.view addSubview:self.bottomMargin];
     
     self.closeButtonBackgroundView.frame = CGRectMake(0, self.bottomMargin.frame.origin.y + self.bottomMargin.frame.size.height, SCREEN_WIDTH, closeBackgroundViewHeight);
     self.closeButtonBackgroundView.backgroundColor = [UIColor colorWithRed:(251.0/255.0) green:(250.0/255.0) blue:(249.0/255.0) alpha:1.0];
-    [self.alphaView addSubview:self.closeButtonBackgroundView];
+    [self.view addSubview:self.closeButtonBackgroundView];
     
     self.continueButton.frame = CGRectMake(self.closeButtonBackgroundView.frame.size.width/2 - [UIImage imageNamed:continueButtonStr].size.width/2, self.closeButtonBackgroundView.frame.size.height - 10 - [UIImage imageNamed:ovalsLeftButtonStr].size.height - 10 - [UIImage imageNamed:continueButtonStr].size.height, [UIImage imageNamed:continueButtonStr].size.width, [UIImage imageNamed:continueButtonStr].size.height);
     
@@ -92,6 +95,8 @@ static const int closeBackgroundViewHeight = 80;
     
     self.keyboardObserver = [[TDKeyboardObserver alloc] initWithDelegate:self];
     [self.keyboardObserver startListening];
+    
+    //self.closeButtonBackgroundView.hidden = YES;
     
 }
 
@@ -127,7 +132,11 @@ static const int closeBackgroundViewHeight = 80;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 44;
+    if (self.goalList.count == indexPath.row) {
+        return 59;
+    } else {
+        return 44;
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -188,6 +197,11 @@ static const int closeBackgroundViewHeight = 80;
     [self.tableView beginUpdates];
     [self.tableView insertRowsAtIndexPaths:indexArray withRowAnimation:UITableViewRowAnimationRight];
     [self.tableView endUpdates];
+    
+    //Create indexPath for row below, so we can scroll to it
+    NSIndexPath *addMoreRowIndexPath = [NSIndexPath indexPathForRow:row+1 inSection:0];
+    [self.tableView scrollToRowAtIndexPath:addMoreRowIndexPath atScrollPosition:UITableViewScrollPositionNone animated:YES];
+
 }
 
 - (void)addNewGoalPressed:(NSInteger)row {
@@ -210,7 +224,7 @@ static const int closeBackgroundViewHeight = 80;
     frame.origin.x = SCREEN_WIDTH/2 - self.headerLabel1.frame.size.width/2;
     //frame.size.width = SCREEN_WIDTH;
     self.headerLabel1.frame = frame;
-    [self.alphaView addSubview:self.headerLabel1];
+    [self.view addSubview:self.headerLabel1];
     
     self.headerLabel2.frame = CGRectMake(0,
                                          self.headerLabel1.frame.origin.y + self.headerLabel1.frame.size.height + 9,
@@ -224,7 +238,7 @@ static const int closeBackgroundViewHeight = 80;
     CGRect frame2 = self.headerLabel2.frame;
     frame2.origin.x = SCREEN_WIDTH/2 - self.headerLabel2.frame.size.width/2;
     self.headerLabel2.frame = frame2;
-    [self.alphaView addSubview:self.headerLabel2];
+    [self.view addSubview:self.headerLabel2];
     
     UIFont *font3 = [TDConstants fontRegularSized:14.0];
     self.headerLabel3.frame = CGRectMake(0,
@@ -241,7 +255,7 @@ static const int closeBackgroundViewHeight = 80;
     frame3.origin.y = self.headerLabel2.frame.origin.y + self.headerLabel2.frame.size.height+ 9;
     self.headerLabel3.frame = frame3;
 
-    [self.alphaView addSubview:self.headerLabel3];
+    [self.view addSubview:self.headerLabel3];
 }
 
 #pragma mark - Keyboard / Textfield

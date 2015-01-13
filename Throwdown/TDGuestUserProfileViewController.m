@@ -31,7 +31,6 @@
 }
 
 - (void)viewDidLoad {
-    debug NSLog(@"inside TDGuestUserProfileViewController - viewDidLoad");
     [super viewDidLoad];
     self.view.backgroundColor = [TDConstants lightBackgroundColor];
     self.view.frame = CGRectMake(0, [UIApplication sharedApplication].statusBarFrame.size.height+ self.navigationController.navigationBar.frame.size.height, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -57,8 +56,6 @@
     self.navigationItem.leftBarButtonItem = barButton;
     self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
     
-    debug NSLog(@"navigation height=%f", self.navigationController.navigationBar.frame.size.height);
-
     self.tableView.dataSource = self;
     self.tableView.delegate = self;
     self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
@@ -71,7 +68,6 @@
 }
 
 - (void)findButtonHit:(id)sender {
-    debug NSLog(@"find button hit");
     [self openGuestUserJoin:kFollow_LabelType];
 }
 
@@ -81,8 +77,18 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+    
     [self.tableView reloadData];
+    
+    if (!self.posts || goneDownstream) {
+        [self refreshPostsList];
+        [self fetchPosts];
+    }
+    goneDownstream = NO;
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
 }
 
 #pragma mark - Posts
@@ -116,8 +122,6 @@
 }
 
 - (void)fetchPosts {
-    debug NSLog(@"inside fetchPosts");
-    
     [[TDPostAPI sharedInstance] fetchPostsForGU:@"male" start:nil success:^(NSDictionary *response) {
         self.user = [[TDUser alloc] initWithDictionary:[response valueForKeyPath:@"user"]];
         //self.titleLabel.text = self.user.username;
@@ -130,7 +134,6 @@
         self.errorLoading = YES;
         [self.tableView reloadData];
     }];
- 
 }
 
 - (void)handleNextStart:(NSNumber *)start {
@@ -206,8 +209,6 @@
 }
 
 - (void)signupButtonPressed {
-    debug NSLog(@"inside guest user profile signup button pressed");
-    debug NSLog(@"inside loginButtonPressed");
     TDSignupStepOneViewController *signupVC = [[TDSignupStepOneViewController alloc] init];
     
     UIViewController *srcViewController = (UIViewController *) self;
@@ -225,8 +226,6 @@
 }
 
 - (IBAction)addButtonPressed:(id)sender {
-    debug NSLog(@"add button pressed");
-    debug NSLog(@"find button hit");
     [self openGuestUserJoin:kPost_LabelType];
 
 }
@@ -249,7 +248,6 @@
     [self addOverlay];
     
     TDGuestUserJoinView * joinView = [TDGuestUserJoinView guestUserJoinView:type];
-    debug NSLog(@"joinView frame= %@", NSStringFromCGRect(joinView.frame));
     [self.view addSubview:joinView];
 }
 
@@ -257,7 +255,7 @@
     [self.tableView reloadData];
 }
 
-- (void)showGuestController {
-    // stub to stop crash bug from segue: navigateToHomeFrom
-}
+//- (void)showGuestController {
+//    // stub to stop crash bug from segue: navigateToHomeFrom
+//}
 @end

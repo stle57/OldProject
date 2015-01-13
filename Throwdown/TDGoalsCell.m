@@ -150,6 +150,9 @@
     self.editableTextField.hidden = YES;
     
     if (createAddButton) {
+        CGRect frame = self.frame;
+        frame.size.height = 59;
+        self.frame = frame;
         self.goalLabel.hidden = YES;
         self.addButton.hidden = NO;
         self.selectionButton.hidden = YES;
@@ -159,6 +162,7 @@
         self.addButton.frame = buttonFrame;
         self.bottomLine.hidden = YES;
         
+
     } else {
         NSAttributedString *attString = [TDViewControllerHelper makeLeftAlignedTextWithString:text font:[TDConstants fontRegularSized:16.] color:[TDConstants headerTextColor] lineHeight:16. lineHeightMultipler:16./16.];
         self.goalLabel.attributedText = attString;
@@ -175,6 +179,14 @@
 
 - (void)changeCellToAddGoals {
     [self.addGoalButton removeFromSuperview];
+    CGRect frame = self.frame;
+    frame.size.height = 44;
+    self.frame = frame;
+    
+    CGRect goalLabelFrame = self.goalLabel.frame;
+    goalLabelFrame.origin.y = self.frame.size.height/2 - self.goalLabel.frame.size.height/2;
+    self.goalLabel.frame = goalLabelFrame;
+
     self.selectionButton.hidden = NO;
     [self.selectionButton setImage:[UIImage imageNamed:@"checkbox_checked"] forState:UIControlStateNormal];
     self.selectionButton.tag = 1;
@@ -189,9 +201,17 @@
 }
 
 - (void)makeCellFirstResponder {
+    CGRect frame = self.frame;
+    frame.size.height = 44;
+    self.frame = frame;
+    
     self.goalLabel.hidden = YES;
     self.addButton.hidden = YES;
     self.editableTextField.hidden = NO;
+    CGRect editableTextFieldFrame = self.editableTextField.frame;
+    editableTextFieldFrame.origin.y = self.frame.size.height/2 - self.editableTextField.frame.size.height/2;
+    self.editableTextField.frame = editableTextFieldFrame;
+    
     [self.editableTextField becomeFirstResponder];
     debug NSLog(@"cell.editableTextField.frame = %@",NSStringFromCGRect( self.editableTextField.frame));
     [self.editableTextField setEnablesReturnKeyAutomatically:YES];

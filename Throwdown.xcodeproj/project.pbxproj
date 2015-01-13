@@ -96,6 +96,9 @@
 		4D8BEBAA1A156BDE00C5D80A /* TDFeedbackViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4D8BEBA81A156BDE00C5D80A /* TDFeedbackViewController.m */; };
 		4D8BEBAB1A156BDE00C5D80A /* TDFeedbackViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D8BEBA91A156BDE00C5D80A /* TDFeedbackViewController.xib */; };
 		4D8BEBE21A16772500C5D80A /* TDRateAppView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4D8BEBE11A16772500C5D80A /* TDRateAppView.xib */; };
+		4DB2CB2C1A607BCC0037A114 /* UIImage+BlurredFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB2CB2B1A607BCC0037A114 /* UIImage+BlurredFrame.m */; };
+		4DB2CB2F1A607BE30037A114 /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB2CB2E1A607BE30037A114 /* UIImage+ImageEffects.m */; };
+		4DB2CB321A6088CB0037A114 /* UIImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DB2CB311A6088CB0037A114 /* UIImageEffects.m */; };
 		4DC2C9981968F69C00A210CF /* TDTextViewControllerHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC2C9971968F69C00A210CF /* TDTextViewControllerHelper.m */; };
 		4DC2C9A31969F72600A210CF /* TDUserListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC2C9A11969F72600A210CF /* TDUserListView.m */; };
 		4DC735EE1A4243D6000A8CA9 /* TDGetStartedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC735EC1A4243D6000A8CA9 /* TDGetStartedViewController.m */; };
@@ -384,6 +387,12 @@
 		4D8BEBA81A156BDE00C5D80A /* TDFeedbackViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDFeedbackViewController.m; sourceTree = "<group>"; };
 		4D8BEBA91A156BDE00C5D80A /* TDFeedbackViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDFeedbackViewController.xib; sourceTree = "<group>"; };
 		4D8BEBE11A16772500C5D80A /* TDRateAppView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDRateAppView.xib; sourceTree = "<group>"; };
+		4DB2CB2A1A607BC30037A114 /* UIImage+BlurredFrame.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UIImage+BlurredFrame.h"; path = "../../../../../Downloads/UIImage-BlurredFrame-master/UIImage+BlurredFrame.h"; sourceTree = "<group>"; };
+		4DB2CB2B1A607BCC0037A114 /* UIImage+BlurredFrame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+BlurredFrame.m"; path = "../../../../../Downloads/UIImage-BlurredFrame-master/UIImage+BlurredFrame.m"; sourceTree = "<group>"; };
+		4DB2CB2D1A607BDD0037A114 /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "UIImage+ImageEffects.h"; path = "../../../../../Downloads/UIImage-BlurredFrame-master/UIImage+ImageEffects.h"; sourceTree = "<group>"; };
+		4DB2CB2E1A607BE30037A114 /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+ImageEffects.m"; path = "../../../../../Downloads/UIImage-BlurredFrame-master/UIImage+ImageEffects.m"; sourceTree = "<group>"; };
+		4DB2CB301A6088C50037A114 /* UIImageEffects.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = UIImageEffects.h; path = ../../../../../Downloads/FadeBlurSample/FadeBlurSample/UIImageEffects.h; sourceTree = "<group>"; };
+		4DB2CB311A6088CB0037A114 /* UIImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UIImageEffects.m; path = ../../../../../Downloads/FadeBlurSample/FadeBlurSample/UIImageEffects.m; sourceTree = "<group>"; };
 		4DC2C9961968F69C00A210CF /* TDTextViewControllerHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTextViewControllerHelper.h; sourceTree = "<group>"; };
 		4DC2C9971968F69C00A210CF /* TDTextViewControllerHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTextViewControllerHelper.m; sourceTree = "<group>"; };
 		4DC2C9A01969F72600A210CF /* TDUserListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserListView.h; sourceTree = "<group>"; };
@@ -428,7 +437,7 @@
 		4DD84DE91A548D13000AF63B /* TDGoalsInterests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDGoalsInterests.m; sourceTree = "<group>"; };
 		4DD84DEB1A571864000AF63B /* TDGuestUserJoinView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDGuestUserJoinView.h; sourceTree = "<group>"; };
 		4DD84DEC1A571864000AF63B /* TDGuestUserJoinView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDGuestUserJoinView.m; sourceTree = "<group>"; };
-		4DD84DEE1A5EFDDF000AF63B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Images.xcassets; sourceTree = "<group>"; };
+		4DD84DEE1A5EFDDF000AF63B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		A102FE9F18ECF43C00139606 /* Flurry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flurry.h; sourceTree = "<group>"; };
 		A102FEA018ECF43C00139606 /* libFlurry_4.4.0.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry_4.4.0.a; sourceTree = "<group>"; };
 		A109FF331909C76000506F88 /* TDAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDAnalytics.h; sourceTree = "<group>"; };
@@ -904,6 +913,12 @@
 				A1DD18311A38FC2200B12BDC /* sweden.gpx */,
 				A1A053FC19D6272300E7556A /* UIActionSheet+Blocks.m */,
 				A1A053FD19D6272300E7556A /* UIActionSheet+Blocks.h */,
+				4DB2CB2B1A607BCC0037A114 /* UIImage+BlurredFrame.m */,
+				4DB2CB301A6088C50037A114 /* UIImageEffects.h */,
+				4DB2CB2D1A607BDD0037A114 /* UIImage+ImageEffects.h */,
+				4DB2CB2E1A607BE30037A114 /* UIImage+ImageEffects.m */,
+				4DB2CB311A6088CB0037A114 /* UIImageEffects.m */,
+				4DB2CB2A1A607BC30037A114 /* UIImage+BlurredFrame.h */,
 				4D3352D519A29CEC007B3E06 /* iRate.bundle */,
 				4D3352D319A29CD8007B3E06 /* iRate.m */,
 				4D3352D219A29CC4007B3E06 /* iRate.h */,
@@ -1616,6 +1631,7 @@
 				A1B3EF42193F9B5D0014B619 /* TDNotice.m in Sources */,
 				2D63FA871909D22200FEBA3C /* TDActivityIndicator.m in Sources */,
 				4DD84DD61A4DE589000AF63B /* TDGuestUserProfileViewController.m in Sources */,
+				4DB2CB2C1A607BCC0037A114 /* UIImage+BlurredFrame.m in Sources */,
 				2DA73D7718BFCC2E00D87370 /* TDFeedLikeCommentCell.m in Sources */,
 				4DD84DED1A571864000AF63B /* TDGuestUserJoinView.m in Sources */,
 				A14E38E81992B5ED001B46AF /* TDSocialNetworksViewController.m in Sources */,
@@ -1660,6 +1676,7 @@
 				2DC7B6AA18FF3D8500261BF7 /* TDToastView.m in Sources */,
 				A182D831188B60CD00F794A5 /* SASliderLeft.m in Sources */,
 				4DC735F31A425C0C000A8CA9 /* TDGoalsViewController.m in Sources */,
+				4DB2CB2F1A607BE30037A114 /* UIImage+ImageEffects.m in Sources */,
 				2DA5354818F36EF800031128 /* TDPostsViewController.m in Sources */,
 				2D83200419116D9000A91282 /* TDUserPushNotificationsEditViewController.m in Sources */,
 				A1B9002E18CC316800012A1F /* TDHomeHeaderView.m in Sources */,
@@ -1670,6 +1687,7 @@
 				2D5714CD18BD9AB300AF0B4D /* VideoCloseSegue.m in Sources */,
 				4D3EA8F31A379C330014F2A6 /* TDCreatePostHeaderCell.m in Sources */,
 				4D3EA8E21A379BEE0014F2A6 /* TDNoResultsCell.m in Sources */,
+				4DB2CB321A6088CB0037A114 /* UIImageEffects.m in Sources */,
 				A1E90CDD18B445FC0046D281 /* TDSignupStepTwoViewController.m in Sources */,
 				A1432CE718A99DB30073E492 /* TDLoginViewController.m in Sources */,
 				4D3352D419A29CD8007B3E06 /* iRate.m in Sources */,

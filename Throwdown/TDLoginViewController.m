@@ -37,7 +37,7 @@ static NSString *buttonBackStr = @"btn_back";
     [super viewDidLoad];
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    [self.backgroundImageView setBackgroundImage];
+    [self.backgroundImageView setBackgroundImage:NO];
     [self.backgroundImageView applyBlurOnImage];
     debug NSLog(@"self.backgroundImageView.frame = %@", NSStringFromCGRect(self.backgroundImageView.frame));
     
@@ -124,7 +124,7 @@ static NSString *buttonBackStr = @"btn_back";
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [[UIApplication sharedApplication] setStatusBarHidden:NO];
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -196,16 +196,7 @@ static NSString *buttonBackStr = @"btn_back";
 }
 
 - (IBAction)backButtonPressed:(UIButton *)sender {
-    CATransition *transition = [CATransition animation];
-    transition.duration = 0.3;
-    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    transition.type = kCATransitionPush;
-    transition.subtype = kCATransitionFromLeft;
-    [self.view.window.layer addAnimation:transition forKey:nil];
-    
-    [self dismissViewControllerAnimated:NO completion:nil];
-  //  [self.navigationController popViewControllerAnimated:YES];
-   
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (IBAction)loginButtonPressed:(id)sender {
@@ -258,20 +249,7 @@ static NSString *buttonBackStr = @"btn_back";
 }
 
 - (IBAction)resetButtonPressed:(id)sender {
-    TDResetPasswordViewController *resetController = [[TDResetPasswordViewController alloc] init];
-    
-    UIViewController *srcViewController = (UIViewController *) self;
-    UIViewController *destViewController = (UIViewController *) resetController;
-    
-    CATransition *transition = [CATransition animation];
-    transition.duration = 0.3;
-    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    transition.type = kCATransitionPush;
-    transition.subtype = kCATransitionFromRight;
-    [srcViewController.view.window.layer addAnimation:transition forKey:nil];
-    
-    [srcViewController presentViewController:destViewController animated:NO completion:nil];
-//    TDResetPasswordViewController *vc = [[TDResetPasswordViewController alloc] init];
-//    [self.navigationController pushViewController:vc animated:YES];
+    TDResetPasswordViewController *vc = [[TDResetPasswordViewController alloc] init];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 @end

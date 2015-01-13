@@ -21,6 +21,7 @@
 #import "TDGuestUserProfileViewController.h"
 #import "TDViewControllerHelper.h"
 #import "TDHomeViewController.h"
+#import "UIImage+BlurredFrame.h"
 
 @interface TDWelcomeViewController () <UIScrollViewDelegate, TDGetStartedViewControllerDelegate, TDGoalsViewControllerDelegate, TDInterestsViewControllerDelegate, TDLoadingViewControllerDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
@@ -32,9 +33,12 @@
 @property (nonatomic, retain) TDGoalsViewController *goalsViewController;
 @property (nonatomic, retain) TDInterestsViewController *interestsViewController;
 @property (nonatomic, retain) TDLoadingViewController *loadingViewController;
-
+@property (weak, nonatomic) IBOutlet TDAppCoverBackgroundView *blurredBackgroundImage;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *blurredImageWidthConstraint;
+@property (weak, nonatomic) IBOutlet NSLayoutConstraint *blurredImageHeightConstraint;
 @property (nonatomic) int pageWidth;
 @property (nonatomic) int currentPage;
+@property (nonatomic) CGFloat oldXOffset;
 @end
 
 @implementation TDWelcomeViewController
@@ -44,7 +48,6 @@
 
     // Move slides to the right
     CGRect frame = [[UIScreen mainScreen] bounds];
-    CGFloat height = frame.size.height +  [UIApplication sharedApplication].statusBarFrame.size.height;
     CGFloat width = frame.size.width;
     
     CGRect frame1 = self.view.frame;
@@ -56,8 +59,17 @@
     self.pageWidth = width + 20;
     self.currentPage = 0;
 
-    [self.backgroundImage setBackgroundImage];
+    [self.backgroundImage setBackgroundImage:NO];
+    [self.blurredBackgroundImage setBackgroundImage:YES];
+    
+    self.blurredBackgroundImage.layer.borderWidth = 3.0;
+    self.blurredBackgroundImage.layer.borderColor = [[UIColor blueColor] CGColor];
+    
+    self.backgroundImage.layer.borderColor = [[UIColor magentaColor] CGColor];
+    self.backgroundImage.layer.borderWidth = 1.;
+    
     self.backgroundImage.frame = self.view.frame;
+    self.blurredBackgroundImage.frame = self.view.frame;
     
     CGFloat imageWidth = self.backgroundImageWidthConstraint.constant;
     CGFloat imageHeight = self.backgroundImageHeightConstraint.constant;
@@ -65,9 +77,13 @@
 
     self.backgroundImageWidthConstraint.constant  = (imageWidth * aspect);
     self.backgroundImageHeightConstraint.constant = (imageHeight * aspect);
+    self.blurredImageWidthConstraint.constant = (imageWidth * aspect);
+    self.blurredImageHeightConstraint.constant = (imageHeight * aspect);
+    
     CGFloat totalWidth = self.editViewOnly ? (self.pageWidth *3) + 40 : (self.pageWidth * 4) + 40;
-    self.scrollView.contentSize = CGSizeMake(totalWidth, height);
+    self.scrollView.contentSize = CGSizeMake(totalWidth, 1);
     self.scrollView.delegate = self;
+    
     
     // Intro slide
     self.titleLabel.font = [UIFont fontWithName:@"BebasNeueRegular" size:68.0];
@@ -75,8 +91,9 @@
 
     self.backgroundImageHeightConstraint.constant = frame.size.height;
     self.backgroundImageWidthConstraint.constant = frame.size.width;
-    
-    //self.scrollView.delaysContentTouches = NO;
+    self.blurredImageHeightConstraint.constant = frame.size.height;
+    self.blurredImageWidthConstraint.constant = frame.size.width;
+    self.blurredBackgroundImage.alpha = 0;
 
     if (!self.editViewOnly) {
 
@@ -118,11 +135,14 @@
     if (self.editViewOnly) {
         [self.backgroundImage applyBlurOnImage];
     }
+    
+    self.oldXOffset = 1;
 }
 
 -(void)viewWillAppear:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:YES animated:YES];
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
+
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
@@ -132,6 +152,7 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     int offset = (int)scrollView.contentOffset.x;
+    debug NSLog(@"offset = %d", offset);
     int page = offset / (self.pageWidth - 20);
 
     if (offset > self.interestsViewController.view.frame.origin.x) {
@@ -139,17 +160,49 @@
     } else {
         self.scrollView.scrollEnabled = YES;
     }
+//    
+//    if (self.oldXOffset > offset) {
+//        CGFloat blurredAlpha = (offset/395.);
+//        CGFloat backgroundAlpha = 1.- (offset/395.);
+//        debug NSLog(@"setting alpha for background image = %f", backgroundAlpha);
+//        debug NSLog(@"setting alpha for blurred image = %f", blurredAlpha);
+//
+//        self.blurredBackgroundImage.alpha = blurredAlpha;
+//        self.backgroundImage.alpha = backgroundAlpha;
+//
+//    }
+//    if (page == 0) {
+//        CGRect frame = CGRectMake((self.pageWidth - 20) - scrollView.contentOffset.x , 0, (self.pageWidth - 20) - scrollView.contentOffset.x , self.backgroundImage.frame.size.height);
+//        debug NSLog(@"blur the frame=%@", NSStringFromCGRect(frame));
+//        [self.backgroundImage applyBlurOnImage1:frame];
+//    } else {
+//        
+//    }
+    
+    if(scrollView.contentOffset.x >= 0 && scrollView.contentOffset.x <= 375.0) {
+        //self.backgroundImage.alpha = 0;
+//        [self.blurredBackgroundImage blurImage:scrollView.contentOffset.x];
+        float percent = (scrollView.contentOffset.x / 395.0);
+        debug NSLog(@"alpa for blurred image = %f", percent);
+        self.blurredBackgroundImage.alpha = percent;
+        
+    } else if (scrollView.contentOffset.x > 375.0){
+        self.blurredBackgroundImage.alpha = 1;
+    } else if (scrollView.contentOffset.x < 0) {
+        self.blurredBackgroundImage.alpha = 0;
+    }
     
     if (page > 0 && self.currentPage != page) {
         // Blur the image only once, when we are transitioning from page 0 to 1
         if (self.currentPage == 0) {
-            [self.backgroundImage applyBlurOnImage];
+   
         }
         self.currentPage = page;
     } else if (page == 0 && !self.editViewOnly){
         self.currentPage = 0;
-        [self.backgroundImage setBackgroundImage];
     }
+    
+    self.oldXOffset = offset;
 }
 
 
@@ -157,7 +210,6 @@
 
 - (void)showHomeController {
     [self dismissViewControllerAnimated:NO completion:nil];
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *homeViewController = [storyboard instantiateViewControllerWithIdentifier:@"HomeViewController"];
@@ -169,27 +221,37 @@
 
 #pragma mark - TDGuestViewController {
 - (void)showGuestController {
+    debug NSLog(@"inside show guest controller");
     [self dismissViewControllerAnimated:YES completion:nil];
-    
-    UIViewController *guestViewController = [[TDGuestUserProfileViewController alloc] initWithNibName:@"TDGuestUserProfileViewController" bundle:nil];
+    debug NSLog(@"dismissing the welcomeview controller?");
+    if (self.navigationController.viewControllers.count ==2) {
+        TDGuestUserProfileViewController *viewController = self.navigationController.viewControllers[1];
+        [self.navigationController popToViewController:viewController animated:NO];
+    } else {
+        UIViewController *guestViewController = [[TDGuestUserProfileViewController alloc] initWithNibName:@"TDGuestUserProfileViewController" bundle:nil];
+        debug NSLog(@"going to show guestViewController with address = [%p]", &guestViewController);
+        debug NSLog(@"before navigation controllers = %lu", (unsigned long)self.navigationController.viewControllers.count);
+        [self.navigationController pushViewController:guestViewController animated:YES];
+        debug NSLog(@"done launching new guest view controller");
+        debug NSLog(@"after navigation controllers = %lu", (unsigned long)self.navigationController.viewControllers.count);
+    }
 
-    [self.navigationController pushViewController:guestViewController animated:YES];
 }
 
 #pragma mark - GetStartedViewControllerDelegate
 - (void) loginButtonPressed {
     TDLoginViewController *loginController = [[TDLoginViewController alloc] init];
-    UIViewController *srcViewController = (UIViewController *) self;
-    UIViewController *destViewController = (UIViewController *) loginController;
-    
     CATransition *transition = [CATransition animation];
-    transition.duration = 0.3;
-    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    transition.type = kCATransitionPush;
+    transition.duration = 0.45;
+    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
+    transition.type = kCATransitionFromRight;
+    [transition setType:kCATransitionPush];
     transition.subtype = kCATransitionFromRight;
-    [srcViewController.view.window.layer addAnimation:transition forKey:nil];
+    transition.delegate = self;
+    [self.navigationController.view.layer addAnimation:transition forKey:nil];
     
-    [srcViewController presentViewController:destViewController animated:NO completion:nil];
+    self.navigationController.navigationBarHidden = YES;
+    [self.navigationController pushViewController:loginController animated:NO];
     
 }
 
@@ -207,14 +269,7 @@
 }
 
 - (void)closeButtonPressed {
-    CATransition *transition = [CATransition animation];
-    transition.duration = .5;
-    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    transition.type = kCATransitionReveal;
-    transition.subtype = kCATransitionFromBottom;
-    [self.view.window.layer addAnimation:transition forKey:nil];
-    
-    [self dismissViewControllerAnimated:NO completion:nil];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma mark - InterestsViewControllerDelgate
@@ -233,27 +288,13 @@
 }
 
 - (void)loadGuestView {
-    CATransition *transition = [CATransition animation];
-    transition.duration = .5;
-    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    transition.type = kCATransitionReveal;
-    transition.subtype = kCATransitionFromBottom;
-    [self.view.window.layer addAnimation:transition forKey:nil];
-    
-    [self dismissViewControllerAnimated:NO completion:nil];
-    
+    [self dismissViewControllerAnimated:YES completion:nil];
+
     [TDViewControllerHelper navigateToGuestFrom:self];
 }
 
 - (void)loadHomeView {
-    CATransition *transition = [CATransition animation];
-    transition.duration = .5;
-    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    transition.type = kCATransitionReveal;
-    transition.subtype = kCATransitionFromBottom;
-    [self.view.window.layer addAnimation:transition forKey:nil];
-    
-    [self dismissViewControllerAnimated:NO completion:nil];
+    [self dismissViewControllerAnimated:YES completion:nil];
     
     [TDViewControllerHelper navigateToHomeFrom:self];
 }

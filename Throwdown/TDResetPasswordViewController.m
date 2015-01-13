@@ -32,13 +32,6 @@
 
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     
-    //UINavigationBar *navigationBar = self.navigationController.navigationBar;
-    //    [navigationBar setBackgroundImage:[UIImage imageNamed:@"background-gradient"] forBarMetrics:UIBarMetricsDefault];
-    //    [navigationBar setBarStyle:UIBarStyleBlack];
-//    navigationBar.translucent = NO;
-//    
-//    UIBarButtonItem *leftBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];     // '<'
-//    self.navigationItem.leftBarButtonItem = leftBarButton;
     NSInteger yPosition = 25 + ([UIApplication sharedApplication].statusBarFrame.size.height/2);
     self.backButton.frame = CGRectMake(20, yPosition, [UIImage imageNamed:@"btn_back"].size.width, [UIImage imageNamed:@"btn_back"].size.height);
     
@@ -52,7 +45,7 @@
     topLabelFrame.origin.y = yPosition;
     self.topLabel.frame = topLabelFrame;
     
-    [self.backgroundImageView setBackgroundImage];
+    [self.backgroundImageView setBackgroundImage:NO];
     [self.backgroundImageView applyBlurOnImage];
     debug NSLog(@"self.backgroundImageView.frame = %@", NSStringFromCGRect(self.backgroundImageView.frame));
     // Textfields
@@ -84,7 +77,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -139,15 +132,7 @@
 
 - (IBAction)backButtonPressed:(UIButton *)sender
 {
-    CATransition *transition = [CATransition animation];
-    transition.duration = 0.3;
-    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    transition.type = kCATransitionPush;
-    transition.subtype = kCATransitionFromLeft;
-    [self.view.window.layer addAnimation:transition forKey:nil];
-    
-    [self dismissViewControllerAnimated:NO completion:nil];
-    //[self.navigationController popViewControllerAnimated:YES];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (IBAction)resetButtonPressed:(id)sender {

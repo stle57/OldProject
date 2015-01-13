@@ -36,6 +36,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 @implementation TDPostsViewController
 
 - (void)viewDidLoad {
+    debug NSLog(@"inside TDPostsViewController - viewDidLoad");
     [super viewDidLoad];
 
     // Cell heights
@@ -79,10 +80,11 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     // Background color
 
     // Add refresh control
-    self.customRefreshControl = [[TDCustomRefreshControl alloc] init];
-    [self.customRefreshControl addTarget:self action:@selector(refreshControlUsed) forControlEvents:UIControlEventValueChanged];
-    [self.tableView addSubview:self.customRefreshControl];
-
+    if (![self onGuestFeed]) {
+        self.customRefreshControl = [[TDCustomRefreshControl alloc] init];
+        [self.customRefreshControl addTarget:self action:@selector(refreshControlUsed) forControlEvents:UIControlEventValueChanged];
+        [self.tableView addSubview:self.customRefreshControl];
+    }
     // Remember here so we don't lose this during statusBar animations
     statusBarFrame = [self.view convertRect:[UIApplication sharedApplication].statusBarFrame fromView: nil];
 
@@ -204,6 +206,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     // If from refresh control
     [self endRefreshControl];
     [self.tableView reloadData];
+    debug NSLog(@"reloading Data inside refreshPostsList");
 }
 
 #pragma mark - refresh control
@@ -578,9 +581,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         
         cell.backgroundColor = [TDConstants darkBackgroundColor];
         
-        CGRect cellFrame = cell.frame;
-        cellFrame.size.height = SCREEN_HEIGHT/2;
-        cell.frame = cellFrame;
         cell.bottomLine.hidden = YES;
         cell.topLine.hidden = YES;
         
@@ -731,7 +731,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 
     // Last row on guest feed.  +5 because the last row is the 5th EXTRA section to guest feed.
     if ([self onGuestFeed] && ![self hasMorePosts] && (indexPath.section == postsCount+5)) {
-        return SCREEN_HEIGHT/2;
+        return SCREEN_HEIGHT/3;
     }
     
     if (![self hasMorePosts] && realSection == postsCount && ![self onGuestFeed]) {
@@ -812,11 +812,10 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         return;
     }
 
+    if ([self onGuestFeed]) {
+        return;
+    }
     TDPost *post = [self postForRow:indexPath.section];
-    
-//    if ([self onGuestFeed] && !post) {
-//        return;
-//    }
     
     if (post) {
         [self openDetailView:post.postId];
@@ -869,10 +868,14 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 #pragma mark - TDPostViewDelegate and TDDetailsCommentsCellDelegate
 
 - (void)userProfilePressedWithId:(NSNumber *)userId {
-    TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
-    vc.userId = userId;
-    vc.profileType = kFeedProfileTypeOther;
-    [self.navigationController pushViewController:vc animated:YES];
+    if ([self onGuestFeed]) {
+        [self openGuestUserJoin:kUserProfile_LabelType];
+    } else {
+        TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
+        vc.userId = userId;
+        vc.profileType = kFeedProfileTypeOther;
+        [self.navigationController pushViewController:vc animated:YES];
+    }
 }
 
 - (void)locationButtonPressedFromRow:(NSInteger)row {
@@ -979,14 +982,14 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 }
 
 - (void)showGoalsAndInterestsController {
+    [self dismissViewControllerAnimated:NO completion:nil];
+    
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
 
     UINavigationController *navigationController = [storyboard instantiateViewControllerWithIdentifier:@"WelcomeViewController"];
     TDWelcomeViewController *viewController = navigationController.viewControllers[0];
-    
     // setup "inner" view controller
     viewController.editViewOnly = YES;
-    
     [self presentViewController:navigationController animated:YES completion:nil];
 
 }

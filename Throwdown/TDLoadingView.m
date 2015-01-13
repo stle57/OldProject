@@ -19,6 +19,7 @@
 @property (nonatomic) UILabel *infoLabel2;
 @property (nonatomic) UILabel *infoLabel3;
 @property (nonatomic) CGRect loadingAnimationFrame;
+@property (nonatomic) UIView *subViewType3;
 @end
 @implementation TDLoadingView : UIView
 //@synthesize loadingAnimation;
@@ -29,8 +30,8 @@
 @synthesize infoLabel3;
 
 static NSString *personalizeText = @"Please wait while we\npersonalize Throwdown";
-static NSString *infoText = @"Thanks for telling us about your\nfitness and goals and interests!";
-static NSString *loadingText = @"Loading. . .";
+static NSString *infoText = @"Thanks for telling us about your\nfitness goals and interests!";
+static NSString *loadingText = @"Loading...";
 
 + (id)loadingView:(kLoadingViewType)type {
     TDLoadingView *loadingView = [[TDLoadingView alloc] init];
@@ -50,19 +51,16 @@ static NSString *loadingText = @"Loading. . .";
     self.infoLabel = nil;
     self.infoLabel2 = nil;
     self.infoLabel3 = nil;
+    self.subViewType3 = nil;
 }
 - (void)setup:(kLoadingViewType)type {
-    debug NSLog(@"inside setup for TDLoadingView");
     self.kLoadingViewType = type;
     self.frame = CGRectMake(0, 0, 270, 318);
     if (self.kLoadingViewType != kView3_Loading) {
         TDRefreshImageView  *loadingAnimation = [[TDRefreshImageView alloc] initWithFrame:CGRectMake(self.frame.size.width/2 - [UIImage imageNamed:@"ptr-0000"].size.width/2, 0, [UIImage imageNamed:@"ptr-0000"].size.width, [UIImage imageNamed:@"ptr-0000"].size.height)];
         loadingAnimation.animationDuration = 2;
         loadingAnimation.userInteractionEnabled = YES;
-//        loadingAnimation.layer.borderWidth = 2.0;
-//        loadingAnimation.layer.borderColor = [[UIColor redColor] CGColor];
         self.loadingAnimationFrame = loadingAnimation.frame;
-        debug NSLog(@"loading animation frame = %@", NSStringFromCGRect(self.loadingAnimationFrame));
         [self addSubview:loadingAnimation];
 
         [loadingAnimation startAnimating];
@@ -112,7 +110,6 @@ static NSString *loadingText = @"Loading. . .";
 }
 
 - (void)setupView1Labels {
-    debug NSLog(@"inside setupView1Labels");
     NSAttributedString *attStr = [TDViewControllerHelper makeParagraphedTextWithString:personalizeText font:[TDConstants fontRegularSized:15] color:[TDConstants headerTextColor] lineHeight:18 lineHeightMultipler:18/15];
     self.personalizeLabel.attributedText = attStr;
     [self.personalizeLabel sizeToFit];
@@ -121,7 +118,6 @@ static NSString *loadingText = @"Loading. . .";
     frame.origin.x = self.frame.size.width/2 - self.personalizeLabel.frame.size.width/2;
     frame.origin.y = self.loadingAnimationFrame.origin.y + self.loadingAnimationFrame.size.height + 10;
     self.personalizeLabel.frame = frame;
-    debug NSLog(@"personalizedLabel.frame = %@", NSStringFromCGRect(self.personalizeLabel.frame));
     NSAttributedString *loadingStr = [TDViewControllerHelper makeParagraphedTextWithString:loadingText font:[TDConstants fontSemiBoldSized:22] color:[TDConstants brandingRedColor] lineHeight:22 lineHeightMultipler:22/22];
     self.loadingLabel.attributedText = loadingStr;
     [self.loadingLabel sizeToFit];
@@ -143,7 +139,6 @@ static NSString *loadingText = @"Loading. . .";
 }
 
 - (void)setupView2Labels {
-    debug NSLog(@"inside setupView2Labels");
     NSAttributedString *attString = [TDViewControllerHelper makeParagraphedTextWithString:personalizeText font:[TDConstants fontRegularSized:15] color:[TDConstants headerTextColor] lineHeight:18 lineHeightMultipler:18/15];
     self.personalizeLabel.attributedText = attString;
     [self.personalizeLabel sizeToFit];
@@ -152,7 +147,6 @@ static NSString *loadingText = @"Loading. . .";
     frame.origin.x = self.frame.size.width/2 - self.personalizeLabel.frame.size.width/2;
     frame.origin.y = self.loadingAnimationFrame.origin.y + self.loadingAnimationFrame.size.height + 10;
     self.personalizeLabel.frame = frame;
-    debug NSLog(@"personalizedLabel.frame = %@", NSStringFromCGRect(self.personalizeLabel.frame));
     
     NSAttributedString *attStr = [TDViewControllerHelper makeParagraphedTextWithString:TDCommunityValuesStr font:[TDConstants fontSemiBoldSized:22.] color:[TDConstants brandingRedColor] lineHeight:22. lineHeightMultipler:22/22];
     self.loadingLabel.attributedText = attStr;
@@ -164,7 +158,6 @@ static NSString *loadingText = @"Loading. . .";
     loadingFrame.origin.y = self.personalizeLabel.frame.origin.y + self.personalizeLabel.frame.size.height + 35;
     self.loadingLabel.frame = loadingFrame;
     
-    debug NSLog(@"self.loadingLabel.frame = %@", NSStringFromCGRect(self.loadingLabel.frame));
     NSString *infoText= TDValueStr1;
     NSAttributedString *infoStr = [TDViewControllerHelper makeParagraphedTextWithString:infoText font:[TDConstants fontRegularSized:15] color:[TDConstants headerTextColor] lineHeight:19];
     self.infoLabel.attributedText = infoStr;
@@ -203,7 +196,7 @@ static NSString *loadingText = @"Loading. . .";
     
     CGRect infoFrame = self.infoLabel.frame;
     infoFrame.origin.x = 5;
-    infoFrame.origin.y = self.loadingLabel.frame.origin.y + self.loadingLabel.frame.size.height + 4;
+    infoFrame.origin.y = self.loadingLabel.frame.origin.y + self.loadingLabel.frame.size.height + 12;
     self.infoLabel.frame = infoFrame;
     
     CGRect infoFrame2 = self.infoLabel2.frame;
@@ -223,29 +216,41 @@ static NSString *loadingText = @"Loading. . .";
 }
 
 - (void)setupView3Labels {
-    debug NSLog(@"inside setupView3Labels");
     self.personalizeLabel.hidden = YES;
+    self.subViewType3 = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 200, 150)];
     
     NSAttributedString *attStr = [TDViewControllerHelper makeParagraphedTextWithString:@"All Set!" font:[TDConstants fontSemiBoldSized:22.] color:[TDConstants brandingRedColor] lineHeight:22. lineHeightMultipler:22/22];
     self.loadingLabel.attributedText = attStr;
     [self.loadingLabel sizeToFit];
-    
-    CGRect loadingFrame = self.loadingLabel.frame;
-    loadingFrame.origin.x = self.frame.size.width/2 - self.loadingLabel.frame.size.width/2;
-    loadingFrame.origin.y = self.frame.size.height/2 - self.loadingLabel.frame.size.height/2;
-    self.loadingLabel.frame = loadingFrame;
-    
+ 
+    [self.subViewType3 addSubview:self.loadingLabel];
     
     NSString *infoText= @"We hope you enjoy.\n\n- The Throwdown Team";
     NSAttributedString *infoStr = [TDViewControllerHelper makeParagraphedTextWithString:infoText font:[TDConstants fontRegularSized:15] color:[TDConstants headerTextColor] lineHeight:19 lineHeightMultipler:19/15];
     self.infoLabel.attributedText = infoStr;
     [self.infoLabel sizeToFit];
+    [self.infoLabel setNumberOfLines:0];
+    
+    [self.subViewType3 addSubview:self.infoLabel];
+    
+    [self.subViewType3 sizeToFit];
+    
+    CGRect subViewFrame = self.subViewType3.frame;
+    subViewFrame.origin.x = self.frame.size.width/2 - self.subViewType3.frame.size.width/2;
+    subViewFrame.origin.y = self.frame.size.height/2 - self.subViewType3.frame.size.height/2;
+    self.subViewType3.frame = subViewFrame;
+    
+    [self addSubview:self.subViewType3];
+    
+    CGRect loadingFrame = self.loadingLabel.frame;
+    loadingFrame.origin.x = self.subViewType3.frame.size.width/2 - self.loadingLabel.frame.size.width/2;
+    loadingFrame.origin.y = 0;
+    self.loadingLabel.frame = loadingFrame;
     
     CGRect infoFrame = self.infoLabel.frame;
-    infoFrame.origin.x = self.frame.size.width/2 - self.infoLabel.frame.size.width/2;
+    infoFrame.origin.x = self.subViewType3.frame.size.width/2 - self.infoLabel.frame.size.width/2;
     infoFrame.origin.y = self.loadingLabel.frame.origin.y + self.loadingLabel.frame.size.height + 10;
     self.infoLabel.frame = infoFrame;
-    [self.infoLabel setNumberOfLines:0];
 
 }
 @end

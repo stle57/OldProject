@@ -38,23 +38,23 @@ static const int doneBackgroundViewHeight = 80;
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH+20, SCREEN_HEIGHT);
-    self.view.backgroundColor = [UIColor clearColor];
-    
-    self.alphaView.frame = self.view.frame;
-    self.alphaView.backgroundColor = [UIColor whiteColor];
-    [self.alphaView setAlpha:.92];
-    [self.view addSubview:self.alphaView];
+    self.view.backgroundColor = [UIColor whiteColor];
+    [self.view setAlpha:.92];
+//    self.alphaView.frame = self.view.frame;
+//    self.alphaView.backgroundColor = [UIColor whiteColor];
+//    [self.alphaView setAlpha:.92];
+//    [self.view addSubview:self.alphaView];
     
     if (self.showBackButton) {
         self.backButton.frame = CGRectMake(15, 15, [UIImage imageNamed:@"btn_back"].size.width, [UIImage imageNamed:@"btn_back"].size.height);
-        [self.alphaView addSubview:self.backButton];
+        [self.view addSubview:self.backButton];
     }
     
     [self createHeaderLabel];
     
     self.tableView.frame = CGRectMake(0, 100, SCREEN_WIDTH, SCREEN_HEIGHT - 80 - 100);
     self.tableView.backgroundColor = [UIColor clearColor];
-    [self.alphaView addSubview:self.tableView];
+    [self.view addSubview:self.tableView];
     
     CGRect bottomLineRect = self.bottomMargin.frame;
     bottomLineRect.origin.x = 0;
@@ -63,11 +63,11 @@ static const int doneBackgroundViewHeight = 80;
     bottomLineRect.size.width = SCREEN_WIDTH;
     self.bottomMargin.frame = bottomLineRect;
     self.bottomMargin.backgroundColor = [TDConstants commentTimeTextColor];
-    [self.alphaView addSubview:self.bottomMargin];
+    [self.view addSubview:self.bottomMargin];
     
     self.doneBackgroundView.frame = CGRectMake(0, self.bottomMargin.frame.origin.y + self.bottomMargin.frame.size.height, SCREEN_WIDTH, doneBackgroundViewHeight);
     self.doneBackgroundView.backgroundColor = [UIColor colorWithRed:(251.0/255.0) green:(250.0/255.0) blue:(249.0/255.0) alpha:1.0];
-    [self.alphaView addSubview:self.doneBackgroundView];
+    [self.view addSubview:self.doneBackgroundView];
 
     
     self.doneButton.frame = CGRectMake(self.doneBackgroundView.frame.size.width/2 - [UIImage imageNamed:@"btn_okdone"].size.width/2, doneBackgroundViewHeight - 10- [UIImage imageNamed:@"ovals_right"].size.height - 10-[UIImage imageNamed:@"btn_okdone"].size.height, [UIImage imageNamed:@"btn_okdone"].size.width, [UIImage imageNamed:@"btn_okdone"].size.height);
@@ -111,7 +111,11 @@ static const int doneBackgroundViewHeight = 80;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 44;
+    if (indexPath.row == self.interestList.count) {
+        return 59;
+    } else {
+        return 44;
+    }
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -165,6 +169,7 @@ static const int doneBackgroundViewHeight = 80;
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
     TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:indexPath];
     if (cell) {
+        debug NSLog(@"======>FRAME OF CELL BEFORE CHANGING = %@", NSStringFromCGRect(cell.frame));
         [cell changeCellToAddGoals];
     }
     
@@ -173,6 +178,11 @@ static const int doneBackgroundViewHeight = 80;
     [self.tableView beginUpdates];
     [self.tableView insertRowsAtIndexPaths:indexArray withRowAnimation:UITableViewRowAnimationRight];
     [self.tableView endUpdates];
+
+    //Create indexPath for row below, so we can scroll to it
+    NSIndexPath *addMoreRowIndexPath = [NSIndexPath indexPathForRow:row+1 inSection:0];
+    [self.tableView scrollToRowAtIndexPath:addMoreRowIndexPath atScrollPosition:UITableViewScrollPositionNone animated:YES];
+
 }
 
 - (void)addNewGoalPressed:(NSInteger)row {
@@ -196,7 +206,7 @@ static const int doneBackgroundViewHeight = 80;
     CGRect frame1 = self.headerLabel1.frame;
     frame1.origin.x = SCREEN_WIDTH/2 - self.headerLabel1.frame.size.width/2;
     self.headerLabel1.frame = frame1;
-    [self.alphaView addSubview:self.headerLabel1];
+    [self.view addSubview:self.headerLabel1];
     
     UIFont *font2 = [TDConstants fontRegularSized:14.0];
     self.headerLabel2.frame = CGRectMake(0,
@@ -213,7 +223,7 @@ static const int doneBackgroundViewHeight = 80;
     frame2.origin.y = self.headerLabel1.frame.origin.y + self.headerLabel1.frame.size.height+ 9;
     self.headerLabel2.frame = frame2;
 
-    [self.alphaView addSubview:self.headerLabel2];
+    [self.view addSubview:self.headerLabel2];
 }
 
 #pragma mark - Keyboard / Textfield
