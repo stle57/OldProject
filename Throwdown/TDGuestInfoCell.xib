@@ -18,6 +18,7 @@
                 <outlet property="bottomLine" destination="mSs-lk-Qdq" id="rDo-0p-BZL"/>
                 <outlet property="bottomMarginPadding" destination="9jO-Hy-JfW" id="jJu-uD-mFS"/>
                 <outlet property="button" destination="mG4-Ua-aXf" id="kgD-Fl-XBq"/>
+                <outlet property="closeButton" destination="X4c-kx-RgC" id="hOM-al-ybV"/>
                 <outlet property="dismissButton" destination="7Lb-Hd-1c3" id="pxM-s4-kRT"/>
                 <outlet property="label1" destination="XWo-6a-AVg" id="zv3-gs-6Qh"/>
                 <outlet property="label2" destination="72u-hX-ozJ" id="r28-aB-Y7n"/>
@@ -105,10 +106,23 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
         </view>
+        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="X4c-kx-RgC">
+            <rect key="frame" x="15" y="4" width="16" height="22"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <state key="normal" image="btn_x">
+                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+            </state>
+            <state key="selected" image="btn_x"/>
+            <state key="highlighted" image="btn_x"/>
+            <connections>
+                <action selector="closeButtonPressed:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="ypP-yw-q82"/>
+            </connections>
+        </button>
     </objects>
     <resources>
         <image name="btn_join_throwdown" width="240" height="44"/>
         <image name="btn_join_throwdown_hit" width="240" height="44"/>
+        <image name="btn_x" width="16" height="16"/>
         <image name="td_icon" width="42" height="42"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

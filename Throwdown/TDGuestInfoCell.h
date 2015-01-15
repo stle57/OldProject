@@ -15,6 +15,7 @@
 -(void)dismissButtonPressed;
 -(void)goalsButtonPressed;
 -(void)dismissForExistingUser;
+-(void)reloadTableView;
 @end
 
 @interface TDGuestInfoCell : UITableViewCell
@@ -31,13 +32,14 @@
 @property (weak, nonatomic) IBOutlet UIButton *dismissButton;
 @property (weak, nonatomic) IBOutlet UIView *bottomMarginPadding;
 @property (weak, nonatomic) IBOutlet UIView *topMarginPadding;
+@property (weak, nonatomic) IBOutlet UIButton *closeButton;
 
 - (void)setInfoCell;
 - (void)setLastCell;
 - (void)setNewUserCell;
 - (void)setGuestUserCell;
 - (void)setExistingUserCell;
-- (void)setEditGoalsCell;
+- (void)setEditGoalsCell:(BOOL)showCloseButton;
 + (NSInteger)heightForLastCell;
 + (NSInteger)heightForInfoCell;
 + (NSInteger) heightForNewUserCell;
@@ -46,4 +48,5 @@
 + (NSInteger)heightForEditGoalsCell;
 - (IBAction)signupButtonPressed:(id)sender;
 - (IBAction)dismissButtonPressed:(id)sender;
+- (IBAction)closeButtonPressed:(id)sender;
 @end

@@ -546,24 +546,40 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
     return [defaults boolForKey:@"hasAskedForPhotos"];
 }
 
-- (BOOL)didAskForGoals {
-    NSString *key = [TDConstants getHasAskedForGoalsKey:[TDCurrentUser sharedInstance].userId];
+- (BOOL)didAskForGoalsInitially {
+    NSString *key = [TDConstants getHasAskedForGoalsKey:[TDCurrentUser sharedInstance].userId initial:YES];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     return [defaults boolForKey:key];
 }
 
-- (void)didAskForGoals:(BOOL)yes {
+- (void)didAskForGoalsInitially:(BOOL)yes {
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *key = [TDConstants getHasAskedForGoalsKey:[TDCurrentUser sharedInstance].userId];
+    NSString *key = [TDConstants getHasAskedForGoalsKey:[TDCurrentUser sharedInstance].userId initial:YES];
+    [defaults setBool:yes forKey:key];
+    [defaults synchronize];
+}
+
+- (BOOL)didAskForGoalsFinal {
+    NSString *key = [TDConstants getHasAskedForGoalsKey:[TDCurrentUser sharedInstance].userId initial:NO];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    return [defaults boolForKey:key];
+}
+
+- (void)didAskForGoalsFinal:(BOOL)yes {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *key = [TDConstants getHasAskedForGoalsKey:[TDCurrentUser sharedInstance].userId initial:NO];
     [defaults setBool:yes forKey:key];
     [defaults synchronize];
 }
 
 - (void)resetAskedForGoals {
-    NSString *key = [TDConstants getHasAskedForGoalsKey:[TDCurrentUser sharedInstance].userId];
+    NSString *key = [TDConstants getHasAskedForGoalsKey:[TDCurrentUser sharedInstance].userId initial:YES];
+    NSString *key2 = [TDConstants getHasAskedForGoalsKey:[TDCurrentUser sharedInstance].userId initial:NO];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
     [defaults removeObjectForKey:key];
+    [defaults removeObjectForKey:key2];
+    
     [defaults synchronize];
 
 }

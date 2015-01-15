@@ -73,8 +73,10 @@
 - (void)showData:(NSMutableArray *)goalsList interestList:(NSMutableArray*)interestList {
     debug NSLog(@"inside showData, goalsList = %@, interestList= %@", goalsList, interestList);
     
-    [[TDCurrentUser sharedInstance] didAskForGoals:YES];
+    [[TDCurrentUser sharedInstance] didAskForGoalsInitially:YES];
+    [[TDCurrentUser sharedInstance] didAskForGoalsFinal:YES];
     [self sendDataToServer];
+    debug NSLog(@" sent data to server...now animate");
     [UIView animateWithDuration:0.2
                           delay:0
                         options:UIViewAnimationOptionCurveEaseIn
@@ -118,7 +120,7 @@
     });
 }
 - (void)loadCorrectView {
-    if ([[TDCurrentUser sharedInstance] didAskForGoals] && [[TDCurrentUser sharedInstance] isLoggedIn] && self.delegate && [self.delegate respondsToSelector:@selector(loadHomeView)]){
+    if ([[TDCurrentUser sharedInstance] didAskForGoalsInitially] && [[TDCurrentUser sharedInstance] isLoggedIn] && self.delegate && [self.delegate respondsToSelector:@selector(loadHomeView)]){
         [self.delegate loadHomeView];
     } else {
         // This is for guest user only;

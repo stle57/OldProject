@@ -214,7 +214,7 @@ static NSInteger const kFollowingButtonTag = 20003;
 + (UIFont *)fontRegularSized:(NSUInteger)size;
 + (UIFont *)fontSemiBoldSized:(NSUInteger)size;
 + (UIFont *)fontBoldSized:(NSUInteger)size;
-+ (NSString *)getHasAskedForGoalsKey:(NSNumber*)userId;
++ (NSString *)getHasAskedForGoalsKey:(NSNumber*)userId initial:(BOOL)initial;
 + (NSDictionary *)defaultVideoCompressionSettings;
 
 @end

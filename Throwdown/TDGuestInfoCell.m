@@ -37,7 +37,6 @@ static const int bottomMarginPaddingHeight = 15;
     self.bottomLine.frame = CGRectMake(0, 174, SCREEN_WIDTH, .5);
     self.topLine.backgroundColor = [TDConstants darkBorderColor];
     self.bottomLine.backgroundColor = [TDConstants darkBorderColor];
-
 }
 
 
@@ -416,7 +415,7 @@ static const int bottomMarginPaddingHeight = 15;
 
 }
 
-- (void)setEditGoalsCell {
+- (void)setEditGoalsCell:(BOOL)showCloseButton {
     self.frame = CGRectMake(0, 0, SCREEN_WIDTH, [TDGuestInfoCell heightForEditGoalsCell]);
 
     self.topMarginPadding.frame = CGRectMake(0, 0, SCREEN_WIDTH, 44);
@@ -436,6 +435,20 @@ static const int bottomMarginPaddingHeight = 15;
     self.label1.frame = label1Frame;
     [self.topMarginPadding addSubview:self.label1];
     
+    if (showCloseButton) {
+        CGRect closeButtonFrame = self.closeButton.frame;
+        closeButtonFrame.origin.x = SCREEN_WIDTH - 10 - [UIImage imageNamed:@"btn_x"].size.width;
+        closeButtonFrame.origin.y = self.topMarginPadding.frame.size.height/2 - [UIImage imageNamed:@"btn_x"].size.height/2;
+        self.closeButton.frame = closeButtonFrame;
+        [self addSubview:self.closeButton];
+
+        //- Adjust the size of the button to have a larger tap area
+        self.closeButton.frame = CGRectMake(self.closeButton.frame.origin.x -10,
+                                           self.closeButton.frame.origin.y -10,
+                                           self.closeButton.frame.size.width + 20,
+                                           self.closeButton.frame.size.height + 20);
+        
+    }
     self.bottomMarginPadding.frame = CGRectMake(0, self.topMarginPadding.frame.origin.y + self.topMarginPadding.frame.size.height, [UIScreen mainScreen].bounds.size.width, bottomMarginPaddingHeight);
     self.bottomMarginPadding.backgroundColor = [TDConstants darkBackgroundColor];
     [self addSubview:self.bottomMarginPadding];
@@ -443,14 +456,12 @@ static const int bottomMarginPaddingHeight = 15;
 }
 
 - (IBAction)signupButtonPressed:(id)sender {
-    debug NSLog(@"sign upbutton pressed");
     if (self.delegate && [self.delegate respondsToSelector:@selector(signupButtonPressed)]) {
         [self.delegate signupButtonPressed];
     }
 }
 
 - (IBAction)dismissButtonPressed:(id)sender {
-    debug NSLog(@"dismiss button pressed, reload table");
     [TDCurrentUser sharedInstance].newUser = NO;
     if (self.delegate && [self.delegate respondsToSelector:@selector(dismissButtonPressed)]) {
         [self.delegate dismissButtonPressed];
@@ -474,6 +485,13 @@ static const int bottomMarginPaddingHeight = 15;
         [self.delegate dismissForExistingUser];
     }
 }
+
+- (IBAction)closeButtonPressed:(id)sender {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(reloadTableView)]) {
+        [self.delegate reloadTableView];
+    }
+}
+
 + (NSInteger) heightForLastCell {
     UILabel *label1 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
     NSAttributedString *infoStr = [TDViewControllerHelper makeParagraphedTextWithString:@"To see more posts, please join us\nby creating an account.\n\nWe'd love to have you!" font:[TDConstants fontRegularSized:16] color:[TDConstants headerTextColor] lineHeight:20 lineHeightMultipler:20/16];
@@ -683,4 +701,5 @@ static const int bottomMarginPaddingHeight = 15;
     debug NSLog(@"cell height = %ld", (long)height);
     return height;
 }
+
 @end

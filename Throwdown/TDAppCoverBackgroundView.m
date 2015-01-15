@@ -14,15 +14,6 @@
 #import "UIImageEffects.h"
 @implementation TDAppCoverBackgroundView
 
-- (id)init {
-    self = [super init];
-    if (self) {
-
-    }
-    
-    return self;
-}
-
 - (void)setBackgroundImage:(BOOL)blurEffect editingViewOnly:(BOOL)editViewingOnly{
     if ([UIScreen mainScreen].bounds.size.height == 480) {
         [self setImage:[UIImage imageNamed:@"AppCover_iPhone4s"]];

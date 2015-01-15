@@ -847,7 +847,7 @@
 
 -(void)dismissForExistingUser {
     debug NSLog(@"dismissForExistingUser");
-    [[TDCurrentUser sharedInstance] didAskForGoals:YES];
+    [[TDCurrentUser sharedInstance] didAskForGoalsInitially:YES];
     [self.tableView reloadData];
 }
 
@@ -855,4 +855,8 @@
     [self showGoalsAndInterestsController];
 }
 
+- (void)reloadTableView {
+    [[TDCurrentUser sharedInstance] didAskForGoalsFinal:YES];
+    [self.tableView reloadData];
+}
 @end

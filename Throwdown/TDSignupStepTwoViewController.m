@@ -203,7 +203,8 @@
                                  if (success) {
                                      self.progress.hidden = YES;
                                      [[TDAnalytics sharedInstance] logEvent:@"signup_completed"];
-                                     [[TDCurrentUser sharedInstance] didAskForGoals:YES];
+                                     [[TDCurrentUser sharedInstance] didAskForGoalsInitially:YES];
+                                     [[TDCurrentUser sharedInstance] didAskForGoalsFinal:YES];
                                      [TDViewControllerHelper navigateToHomeFrom:self];
                                  } else {
                                      [TDViewControllerHelper showAlertMessage:@"There was an error, please try again." withTitle:@"Error"];

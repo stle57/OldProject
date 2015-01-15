@@ -196,8 +196,8 @@ static NSString *const kCDNStreamingServer = @"http://139bc8fb83b0918931ad-a6f56
     return settings;
 }
 
-+ (NSString *)getHasAskedForGoalsKey:(NSNumber*)userId {
-    NSString *key = [NSString stringWithFormat:@"%@%@%@", @"dismissed_", userId, @"_hasAskedForGoals" ];
++ (NSString *)getHasAskedForGoalsKey:(NSNumber*)userId initial:(BOOL)initial{
+    NSString *key = [NSString stringWithFormat:@"%@%@%@_%@", @"dismissed_", userId, @"_hasAskedForGoals", initial ? @"0" : @"1" ];
     return key;
 }
 @end

@@ -70,7 +70,9 @@
 - (void)didAskForContacts:(BOOL)yes;
 - (void)didAskForPhotos:(BOOL)yes;
 - (BOOL)didAskForPhotos;
-- (BOOL)didAskForGoals;
-- (void)didAskForGoals:(BOOL)yes;
+- (BOOL)didAskForGoalsInitially;
+- (void)didAskForGoalsInitially:(BOOL)yes; //ask first time, showing the existing user header cell.
+- (BOOL)didAskForGoalsFinal;
+- (void)didAskForGoalsFinal:(BOOL)yes;  // ask a second time, and never ask again
 - (void)resetAskedForGoals;
 @end
