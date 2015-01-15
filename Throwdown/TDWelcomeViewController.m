@@ -66,9 +66,7 @@
     
     self.backgroundImage.frame = self.view.frame;
     self.blurredBackgroundImage.frame = self.view.frame;
-    self.blurredBackgroundImage.layer.borderWidth = 1.;
-    self.blurredBackgroundImage.layer.borderColor = [[UIColor magentaColor] CGColor];
-    
+
     CGFloat imageWidth = self.backgroundImageWidthConstraint.constant;
     CGFloat imageHeight = self.backgroundImageHeightConstraint.constant;
     CGFloat aspect = [UIScreen mainScreen].bounds.size.height / imageHeight;
