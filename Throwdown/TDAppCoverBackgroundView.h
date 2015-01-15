@@ -10,9 +10,5 @@
 
 @interface TDAppCoverBackgroundView : UIImageView
 
-- (void)setBackgroundImage:(BOOL)blurEffect;
-- (void)applyBlurOnImage;
-- (void)unBlurImage;
-- (void)applyBlurOnImage1:(CGRect)frame;
-- (void)blurImage:(CGFloat)xPosition;
+- (void)setBackgroundImage:(BOOL)blurEffect editingViewOnly:(BOOL)editingViewOnly;
 @end

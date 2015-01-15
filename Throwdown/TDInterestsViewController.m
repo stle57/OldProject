@@ -13,6 +13,7 @@
 
 @interface TDInterestsViewController ()
 @property (nonatomic) NSMutableArray *interestList;
+@property (nonatomic) NSMutableArray *selectedInterestList;
 @property (nonatomic) NSIndexPath *selectedIndexPath;
 @end
 
@@ -38,15 +39,14 @@ static const int doneBackgroundViewHeight = 80;
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH+20, SCREEN_HEIGHT);
-    self.view.backgroundColor = [UIColor whiteColor];
-    [self.view setAlpha:.92];
-//    self.alphaView.frame = self.view.frame;
-//    self.alphaView.backgroundColor = [UIColor whiteColor];
-//    [self.alphaView setAlpha:.92];
-//    [self.view addSubview:self.alphaView];
-    
+    self.view.backgroundColor = [UIColor clearColor];
     if (self.showBackButton) {
-        self.backButton.frame = CGRectMake(15, 15, [UIImage imageNamed:@"btn_back"].size.width, [UIImage imageNamed:@"btn_back"].size.height);
+        self.backButton.frame = CGRectMake(15, [UIApplication sharedApplication].statusBarFrame.size.height, [UIImage imageNamed:@"btn_back"].size.width, [UIImage imageNamed:@"btn_back"].size.height);
+        //- Adjust the size of the button to have a larger tap area
+        self.backButton.frame = CGRectMake(self.backButton.frame.origin.x -10,
+                                            self.backButton.frame.origin.y -10,
+                                            self.backButton.frame.size.width + 20,
+                                            self.backButton.frame.size.height + 20);
         [self.view addSubview:self.backButton];
     }
     
@@ -83,6 +83,9 @@ static const int doneBackgroundViewHeight = 80;
     [self.keyboardObserver startListening];
     
     self.tableView.backgroundColor = [UIColor clearColor];
+    
+    self.selectedInterestList = [[NSMutableArray alloc] init];
+    
     debug NSLog(@"interest view frame=%@", NSStringFromCGRect(self.view.frame));
 }
 
@@ -98,8 +101,8 @@ static const int doneBackgroundViewHeight = 80;
 
 - (IBAction)doneButtonPressed:(id)sender {
     debug NSLog(@"done button pressed");
-    if (self.delegate && [self.delegate respondsToSelector:@selector(doneButtonPressed)]) {
-        [self.delegate doneButtonPressed];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(doneButtonPressed:)]) {
+        [self.delegate doneButtonPressed:self.selectedInterestList];
     }
 }
 
@@ -161,6 +164,16 @@ static const int doneBackgroundViewHeight = 80;
     TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:indexPath];
     if (cell) {
         [cell setSelectionButton];
+        if (cell.selectionButton.tag == 0) {
+            // take out of the list
+            if ([self.selectedInterestList containsObject:cell.goalLabel.text]) {
+                [self.selectedInterestList removeObject:cell.goalLabel.text];
+            }
+        } else {
+            // add to the list
+            [self.selectedInterestList addObject:cell.goalLabel.text];
+        }
+
     }
 }
 

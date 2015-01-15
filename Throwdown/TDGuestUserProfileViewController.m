@@ -32,6 +32,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     self.view.backgroundColor = [TDConstants lightBackgroundColor];
     self.view.frame = CGRectMake(0, [UIApplication sharedApplication].statusBarFrame.size.height+ self.navigationController.navigationBar.frame.size.height, SCREEN_WIDTH, SCREEN_HEIGHT);
     // Background
@@ -103,13 +104,13 @@
 
 - (TDPost *)postForRow:(NSInteger)row {
     NSInteger realRow = 0;
-    if (row < 12) {
+    if (row < 7) {
         realRow = row - 2; // 1 is for the header section, 1 is for edit goals section
-    } else if (row > 12) {
+    } else if (row > 7) {
         realRow = row -3;
     }
     
-    //debug NSLog(@"REAL ROW = %ld", (long)realRow);
+    debug NSLog(@"REAL ROW = %ld", (long)realRow);
     if (realRow < self.posts.count) {
         return [self.posts objectAtIndex:realRow];
     } else {
@@ -155,7 +156,7 @@
     
     NSMutableArray *newPosts;
     if (self.posts) {
-        newPosts = [[self.posts subarrayWithRange:NSMakeRange(0, 20)] mutableCopy];
+        newPosts = [[self.posts subarrayWithRange:NSMakeRange(0, 10)] mutableCopy];
         
 
         //newPosts = [[NSMutableArray alloc] initWithArray:self.posts];
@@ -163,14 +164,16 @@
         newPosts = [[NSMutableArray alloc] init];
     }
     
+    NSDictionary *object = [response valueForKeyPath:@"posts"];
+    debug NSLog(@"NUMBER OF POSTS=%lu", object.count);
     int count = 0;
     for (NSDictionary *postObject in [response valueForKeyPath:@"posts"]){
-        if (count < 20) {
+        if (count < 10) {
             TDPost *post = [[TDPost alloc] initWithDictionary:postObject];
             [newPosts addObject:post];
             count++;
         } else {
-            debug NSLog(@"****breaking after 20 posts");
+            debug NSLog(@"****breaking after 10 posts");
             break;
         }
         

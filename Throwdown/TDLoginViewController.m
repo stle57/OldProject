@@ -37,19 +37,18 @@ static NSString *buttonBackStr = @"btn_back";
     [super viewDidLoad];
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    [self.backgroundImageView setBackgroundImage:NO];
-    [self.backgroundImageView applyBlurOnImage];
+    [self.backgroundImageView setBackgroundImage:YES editingViewOnly:YES];
     debug NSLog(@"self.backgroundImageView.frame = %@", NSStringFromCGRect(self.backgroundImageView.frame));
     
     self.alphaView.frame = self.view.frame;
-    self.alphaView.backgroundColor = [UIColor whiteColor];
-    [self.alphaView setAlpha:.92];
+    self.alphaView.backgroundColor = [UIColor clearColor];
     debug NSLog(@"alphaView.frame = %@", NSStringFromCGRect(self.alphaView.frame));
 
-    NSInteger yPosition = 25-([UIImage imageNamed:buttonBackStr].size.height/2);
-    
+    //NSInteger yPosition = 25-([UIImage imageNamed:buttonBackStr].size.height/2);
+    NSInteger yPosition = 25 - [UIApplication sharedApplication].statusBarFrame.size.height;
+    debug NSLog(@"yPosition-%ld", (long)yPosition);
     self.backButton.frame = CGRectMake(20,
-                                       [UIApplication sharedApplication].statusBarFrame.size.height + yPosition,
+                                       ([UIApplication sharedApplication].statusBarFrame.size.height +50)/2 - [UIImage imageNamed:buttonBackStr].size.height/2,
                                        [UIImage imageNamed:buttonBackStr].size.width,
                                        [UIImage imageNamed:buttonBackStr].size.height);
     //- Adjust the size of the button to have a larger tap area
@@ -57,7 +56,7 @@ static NSString *buttonBackStr = @"btn_back";
                                        self.backButton.frame.origin.y -10,
                                        self.backButton.frame.size.width + 20,
                                        self.backButton.frame.size.height + 20);
-    
+    debug NSLog(@"backButton frame = %@", NSStringFromCGRect(self.backButton.frame));
     [[TDAnalytics sharedInstance] logEvent:@"login_opened"];
     self.topLabel.text = @"Log In";
     self.topLabel.font = [TDConstants fontSemiBoldSized:18];
@@ -66,10 +65,10 @@ static NSString *buttonBackStr = @"btn_back";
     [self.topLabel sizeToFit];
     CGRect topLabelFrame = self.topLabel.frame;
     topLabelFrame.origin.x = SCREEN_WIDTH/2 - self.topLabel.frame.size.width/2;
-    topLabelFrame.origin.y =
-        [UIApplication sharedApplication].statusBarFrame.size.height + yPosition;
+    topLabelFrame.origin.y = ([UIApplication sharedApplication].statusBarFrame.size.height +50)/2 - self.topLabel.frame.size.height/2;
     self.topLabel.frame = topLabelFrame;
 
+    debug NSLog(@"self.topLabel.frame = %@", NSStringFromCGRect(self.topLabel.frame));
     [self.resetPasswordButton.titleLabel setFont:[TDConstants fontRegularSized:14]];
     [self.resetPasswordButton setTitleColor:[TDConstants headerTextColor] forState:(UIControlStateNormal)];
     [self.resetPasswordButton sizeToFit];

@@ -14,6 +14,7 @@
 @interface TDGoalsViewController ()
 @property (nonatomic) NSMutableArray *goalList;
 @property (nonatomic) NSIndexPath *selectedIndexPath;
+@property (nonatomic) NSMutableArray *selectedGoalsList;
 @end
 
 static NSString *topHeaderText1 = @"Let's personalize your experience.";
@@ -29,8 +30,8 @@ static const int closeBackgroundViewHeight = 80;
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        self.goalList = [NSMutableArray arrayWithObjects:@"Lose Weight", @"Get back into shape",
-                         @"Get stronger", @"Tone up", @"Build endurance", @"Improve Mobility", @"Become more functionally fit", @"Develop more self confidence", nil];
+        self.goalList = [NSMutableArray arrayWithObjects:@"Lose weight", @"Get back into shape",
+                         @"Get stronger", @"Tone up", @"Build endurance", @"Improve mobility", @"Become more functionally fit", @"Develop more self confidence", nil];
     }
     return self;
 }
@@ -38,8 +39,8 @@ static const int closeBackgroundViewHeight = 80;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withCloseButton:(BOOL)yes {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        self.goalList = [NSMutableArray arrayWithObjects:@"Lose Weight", @"Get back into shape",
-                         @"Get stronger", @"Tone up", @"Build endurance", @"Improve Mobility", @"Become more functionally fit", @"Develop more self confidence", nil];
+        self.goalList = [NSMutableArray arrayWithObjects:@"Lose weight", @"Get back into shape",
+                         @"Get stronger", @"Tone up", @"Build endurance", @"Improve mobility", @"Become more functionally fit", @"Develop more self confidence", nil];
         self.showCloseButton = yes;
     }
     return self;
@@ -50,9 +51,9 @@ static const int closeBackgroundViewHeight = 80;
     // Do any additional setup after loading the view from its nib.
     
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH+20, SCREEN_HEIGHT); // +20 is to extend the frame for the scrollview offset(inside autolayout)
-   // self.view.backgroundColor = [UIColor clearColor];
-    self.view.backgroundColor = [UIColor whiteColor];
-    [self.view setAlpha:.7];
+    self.view.backgroundColor = [UIColor clearColor];
+   // self.view.backgroundColor = [UIColor whiteColor];
+   // [self.view setAlpha:.92];
 //    
     //self.alphaView.hidden = YES;
 //    self.alphaView.frame = self.view.frame;
@@ -61,8 +62,15 @@ static const int closeBackgroundViewHeight = 80;
     //[self.view addSubview:self.alphaView];
     
     if (self.showCloseButton) {
-        self.closeButton.frame = CGRectMake(15, 15, [UIImage imageNamed:@"btn_x"].size.width, [UIImage imageNamed:@"btn_x"].size.height);
+        self.closeButton.frame = CGRectMake(15, [UIApplication sharedApplication].statusBarFrame.size.height, [UIImage imageNamed:@"btn_x"].size.width, [UIImage imageNamed:@"btn_x"].size.height);
         [self.view addSubview:self.closeButton];
+
+        
+        //- Adjust the size of the button to have a larger tap area
+        self.closeButton.frame = CGRectMake(self.closeButton.frame.origin.x -10,
+                                            self.closeButton.frame.origin.y -10,
+                                            self.closeButton.frame.size.width + 20,
+                                            self.closeButton.frame.size.height + 20);
     }
     
     [self createHeaderLabel];
@@ -80,15 +88,28 @@ static const int closeBackgroundViewHeight = 80;
     self.bottomMargin.backgroundColor = [TDConstants commentTimeTextColor];
     [self.view addSubview:self.bottomMargin];
     
-    self.closeButtonBackgroundView.frame = CGRectMake(0, self.bottomMargin.frame.origin.y + self.bottomMargin.frame.size.height, SCREEN_WIDTH, closeBackgroundViewHeight);
-    self.closeButtonBackgroundView.backgroundColor = [UIColor colorWithRed:(251.0/255.0) green:(250.0/255.0) blue:(249.0/255.0) alpha:1.0];
+    self.closeButtonBackgroundView.frame = CGRectMake(0,
+                                                      self.bottomMargin.frame.origin.y + self.bottomMargin.frame.size.height,
+                                                      SCREEN_WIDTH+20,
+                                                      closeBackgroundViewHeight);
+    UIColor *color = [[UIColor alloc] initWithRed:(251./255.) green:(250./255.) blue:(249./255.) alpha:1];
+    [self.closeButtonBackgroundView setBackgroundColor:[UIColor whiteColor]];
+    [self.closeButtonBackgroundView setTintColor:color];
     [self.view addSubview:self.closeButtonBackgroundView];
     
-    self.continueButton.frame = CGRectMake(self.closeButtonBackgroundView.frame.size.width/2 - [UIImage imageNamed:continueButtonStr].size.width/2, self.closeButtonBackgroundView.frame.size.height - 10 - [UIImage imageNamed:ovalsLeftButtonStr].size.height - 10 - [UIImage imageNamed:continueButtonStr].size.height, [UIImage imageNamed:continueButtonStr].size.width, [UIImage imageNamed:continueButtonStr].size.height);
+    self.continueButton.frame = CGRectMake(
+                                           (self.closeButtonBackgroundView.frame.size.width-20)/2 - [UIImage imageNamed:continueButtonStr].size.width/2,//-20 on the width because we extended the view to cover the extra space in the scroll view
+                                           self.closeButtonBackgroundView.frame.size.height - 10 - [UIImage imageNamed:ovalsLeftButtonStr].size.height - 10 - [UIImage imageNamed:continueButtonStr].size.height,
+                                           [UIImage imageNamed:continueButtonStr].size.width,
+                                           [UIImage imageNamed:continueButtonStr].size.height);
     
     [self.closeButtonBackgroundView addSubview:self.continueButton];
     
-    self.pageIndicator.frame = CGRectMake(self.closeButtonBackgroundView.frame.size.width/2 - [UIImage imageNamed:ovalsLeftButtonStr].size.width/2, self.continueButton.frame.origin.y + self.continueButton.frame.size.height + 10, [UIImage imageNamed:ovalsLeftButtonStr].size.width, [UIImage imageNamed:ovalsLeftButtonStr].size.height);
+    self.pageIndicator.frame = CGRectMake(
+                                          (self.closeButtonBackgroundView.frame.size.width-20)/2 - [UIImage imageNamed:ovalsLeftButtonStr].size.width/2, //-20 on the width because we extended the view to cover the extra space in the scroll view
+                                          self.continueButton.frame.origin.y + self.continueButton.frame.size.height + 10,
+                                          [UIImage imageNamed:ovalsLeftButtonStr].size.width,
+                                          [UIImage imageNamed:ovalsLeftButtonStr].size.height);
     
     self.pageIndicator.hidden = NO;
     [self.closeButtonBackgroundView addSubview:self.pageIndicator];
@@ -96,8 +117,7 @@ static const int closeBackgroundViewHeight = 80;
     self.keyboardObserver = [[TDKeyboardObserver alloc] initWithDelegate:self];
     [self.keyboardObserver startListening];
     
-    //self.closeButtonBackgroundView.hidden = YES;
-    
+    self.selectedGoalsList = [[NSMutableArray alloc] init];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -111,9 +131,9 @@ static const int closeBackgroundViewHeight = 80;
 }
 
 - (IBAction)continueButtonPressed:(id)sender {
-    debug NSLog(@"continue button pressed");
-    if (self.delegate && [self.delegate respondsToSelector:@selector(continueButtonPressed)]) {
-        [self.delegate continueButtonPressed];
+    debug NSLog(@"continue button pressed, with number of selected goals = %lu", self.selectedGoalsList.count);
+    if (self.delegate && [self.delegate respondsToSelector:@selector(continueButtonPressed:)]) {
+        [self.delegate continueButtonPressed:self.selectedGoalsList];
     }
 }
 
@@ -156,6 +176,7 @@ static const int closeBackgroundViewHeight = 80;
         [cell createCell:NO text:self.goalList[indexPath.row]];
     }
 
+    debug NSLog(@"cell.frame = %@", NSStringFromCGRect(cell.frame));
     return cell;
 }
 
@@ -180,6 +201,15 @@ static const int closeBackgroundViewHeight = 80;
     TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:indexPath];
     if (cell) {
         [cell setSelectionButton];
+        if (cell.selectionButton.tag == 0) {
+            // take out of the list
+            if ([self.selectedGoalsList containsObject:cell.goalLabel.text]) {
+                [self.selectedGoalsList removeObject:cell.goalLabel.text];
+            }
+        } else {
+            // add to the list
+            [self.selectedGoalsList addObject:cell.goalLabel.text];
+        }
     }
     debug NSLog(@"leaving TDGoalsDelegate selectionButtonPressedFromRow");
 }

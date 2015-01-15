@@ -11,6 +11,7 @@
 #import "TDLoadingView.h"
 #import "TDViewControllerHelper.h"
 #import "TDCurrentUser.h"
+#import "TDPostAPI.h"
 
 @interface TDLoadingViewController ()
 @property (nonatomic, retain) TDLoadingView *loadingView1;
@@ -31,27 +32,22 @@
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     self.view.backgroundColor = [UIColor clearColor];
     
-    self.alphaView.frame = self.view.frame;
-    self.alphaView.backgroundColor = [UIColor whiteColor];
-    [self.alphaView setAlpha:.92];
-    [self.view addSubview:self.alphaView];
-    
     self.loadingView1 = [TDLoadingView loadingView:kView1_Loading];
     self.loadingView1.frame = CGRectMake(SCREEN_WIDTH/2 - 270/2, SCREEN_HEIGHT/2 - 318/2, 270, 318);
     [self.loadingView1 setViewType:kView1_Loading];
-    [self.alphaView addSubview:self.loadingView1];
+    [self.view addSubview:self.loadingView1];
     self.loadingView1.alpha = 0;
     
     self.loadingView2 = [TDLoadingView loadingView:kView2_Loading];
     self.loadingView2.frame = CGRectMake(SCREEN_WIDTH/2 - 270/2, SCREEN_HEIGHT/2 - 318/2, 270, 318);
     [self.loadingView2 setViewType:kView2_Loading];
-    [self.alphaView addSubview:self.loadingView2];
+    [self.view addSubview:self.loadingView2];
     self.loadingView2.alpha = 0;
     
     self.loadingView3 = [TDLoadingView loadingView:kView3_Loading];
     self.loadingView3.frame = CGRectMake(SCREEN_WIDTH/2 - 270/2, SCREEN_HEIGHT/2 - 318/2, 270, 318);
     [self.loadingView3 setViewType:kView3_Loading];
-    [self.alphaView addSubview:self.loadingView3];
+    [self.view addSubview:self.loadingView3];
     self.loadingView3.alpha = 0;
 }
 
@@ -74,9 +70,11 @@
 }
 */
 
-- (void)showData {
-    [[TDCurrentUser sharedInstance] didAskForGoals:YES];
+- (void)showData:(NSMutableArray *)goalsList interestList:(NSMutableArray*)interestList {
+    debug NSLog(@"inside showData, goalsList = %@, interestList= %@", goalsList, interestList);
     
+    [[TDCurrentUser sharedInstance] didAskForGoals:YES];
+    [self sendDataToServer];
     [UIView animateWithDuration:0.2
                           delay:0
                         options:UIViewAnimationOptionCurveEaseIn
@@ -108,6 +106,17 @@
                      }];
 }
 
+- (void)sendDataToServer {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [[TDPostAPI sharedInstance] fetchPostsForGU:@"male" start:nil success:^(NSDictionary *response) {
+            debug NSLog(@"got data, now reload");
+            TDUser *user = [[TDUser alloc] initWithDictionary:[response valueForKeyPath:@"user"]];
+            debug NSLog(@" user = %@", user.name);
+        } error:^{
+            debug NSLog(@"couldn't get data");
+        }];
+    });
+}
 - (void)loadCorrectView {
     if ([[TDCurrentUser sharedInstance] didAskForGoals] && [[TDCurrentUser sharedInstance] isLoggedIn] && self.delegate && [self.delegate respondsToSelector:@selector(loadHomeView)]){
         [self.delegate loadHomeView];

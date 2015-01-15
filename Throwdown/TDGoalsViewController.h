@@ -11,7 +11,7 @@
 #import "TDKeyboardObserver.h"
 @protocol TDGoalsViewControllerDelegate <NSObject>
 @optional
-- (void)continueButtonPressed;
+- (void)continueButtonPressed:(NSMutableArray*)goalsList;
 - (void)closeButtonPressed;
 @end
 

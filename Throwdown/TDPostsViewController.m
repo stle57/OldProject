@@ -287,7 +287,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         return 1;
     }
 
-    if ([self onGuestFeed] && (section == 0 || section == 1 || section == 12)) {
+    if ([self onGuestFeed] && (section == 0 || section == 1 || section == 7)) {
         return 1;
     }
     
@@ -483,7 +483,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         return cell;
     }
 
-    if ([self onGuestFeed] && indexPath.section == 12) {
+    if ([self onGuestFeed] && indexPath.section == 7) {
         // Create a info cell
         TDGuestInfoCell *cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
         if (!cell) {
@@ -703,7 +703,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         return [TDGuestInfoCell heightForEditGoalsCell];
     }
     
-    if ([self onGuestFeed] && indexPath.section == 12 ) {
+    if ([self onGuestFeed] && indexPath.section == 7 ) {
         return [TDGuestInfoCell heightForInfoCell];
     }
     

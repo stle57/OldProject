@@ -613,7 +613,6 @@
                                 <rect key="frame" x="0.0" y="-20" width="620" height="620"/>
                             </scrollView>
                         </subviews>
-                        <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="cbM-Aj-zSp" firstAttribute="top" secondItem="t6G-ri-uvI" secondAttribute="bottom" constant="-20" id="2Qf-FF-cMl"/>
                             <constraint firstItem="HM9-YK-iJ0" firstAttribute="top" secondItem="nX9-L6-K52" secondAttribute="bottom" id="QhK-gT-9t9"/>

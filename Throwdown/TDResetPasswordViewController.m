@@ -32,8 +32,18 @@
 
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     
-    NSInteger yPosition = 25 + ([UIApplication sharedApplication].statusBarFrame.size.height/2);
-    self.backButton.frame = CGRectMake(20, yPosition, [UIImage imageNamed:@"btn_back"].size.width, [UIImage imageNamed:@"btn_back"].size.height);
+    //NSInteger yPosition = 25 + ([UIApplication sharedApplication].statusBarFrame.size.height/2);
+    //NSInteger yPosition = 25 - [UIApplication sharedApplication].statusBarFrame.size.height;
+
+    self.backButton.frame = CGRectMake(20,
+                                       ([UIApplication sharedApplication].statusBarFrame.size.height +50)/2 - [UIImage imageNamed:@"btn_back"].size.height/2,
+                                       [UIImage imageNamed:@"btn_back"].size.width,
+                                       [UIImage imageNamed:@"btn_back"].size.height);
+    //- Adjust the size of the button to have a larger tap area
+    self.backButton.frame = CGRectMake(self.backButton.frame.origin.x -10,
+                                       self.backButton.frame.origin.y -10,
+                                       self.backButton.frame.size.width + 20,
+                                       self.backButton.frame.size.height + 20);
     
     self.topLabel.text = @"Reset Password";
     self.topLabel.font = [TDConstants fontSemiBoldSized:18];
@@ -42,17 +52,15 @@
     [self.topLabel sizeToFit];
     CGRect topLabelFrame = self.topLabel.frame;
     topLabelFrame.origin.x = SCREEN_WIDTH/2 - self.topLabel.frame.size.width/2;
-    topLabelFrame.origin.y = yPosition;
+    topLabelFrame.origin.y = ([UIApplication sharedApplication].statusBarFrame.size.height +50)/2 - self.topLabel.frame.size.height/2;
     self.topLabel.frame = topLabelFrame;
     
-    [self.backgroundImageView setBackgroundImage:NO];
-    [self.backgroundImageView applyBlurOnImage];
+    [self.backgroundImageView setBackgroundImage:YES editingViewOnly:YES];
     debug NSLog(@"self.backgroundImageView.frame = %@", NSStringFromCGRect(self.backgroundImageView.frame));
     // Textfields
     
     self.alphaView.frame = self.view.frame;
-    self.alphaView.backgroundColor = [UIColor whiteColor];
-    [self.alphaView setAlpha:.92];
+    self.alphaView.backgroundColor = [UIColor clearColor];
     
     [self.userNameTextField setUpWithIconImageNamed:@"icon_email"
                                         placeHolder:@"Email Address"//@"Email or Phone Number"

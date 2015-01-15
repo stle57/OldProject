@@ -38,7 +38,8 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *blurredImageHeightConstraint;
 @property (nonatomic) int pageWidth;
 @property (nonatomic) int currentPage;
-@property (nonatomic) CGFloat oldXOffset;
+@property (nonatomic) NSMutableArray *goalsList;
+@property (nonatomic) NSMutableArray *interestList;
 @end
 
 @implementation TDWelcomeViewController
@@ -46,6 +47,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
+    self.view.backgroundColor = [UIColor clearColor];
+    
     // Move slides to the right
     CGRect frame = [[UIScreen mainScreen] bounds];
     CGFloat width = frame.size.width;
@@ -58,18 +61,13 @@
     
     self.pageWidth = width + 20;
     self.currentPage = 0;
-
-    [self.backgroundImage setBackgroundImage:NO];
-    [self.blurredBackgroundImage setBackgroundImage:YES];
-    
-    self.blurredBackgroundImage.layer.borderWidth = 3.0;
-    self.blurredBackgroundImage.layer.borderColor = [[UIColor blueColor] CGColor];
-    
-    self.backgroundImage.layer.borderColor = [[UIColor magentaColor] CGColor];
-    self.backgroundImage.layer.borderWidth = 1.;
+    [self.backgroundImage setBackgroundImage:NO editingViewOnly:self.editViewOnly];
+    [self.blurredBackgroundImage setBackgroundImage:YES editingViewOnly:self.editViewOnly];
     
     self.backgroundImage.frame = self.view.frame;
     self.blurredBackgroundImage.frame = self.view.frame;
+    self.blurredBackgroundImage.layer.borderWidth = 1.;
+    self.blurredBackgroundImage.layer.borderColor = [[UIColor magentaColor] CGColor];
     
     CGFloat imageWidth = self.backgroundImageWidthConstraint.constant;
     CGFloat imageHeight = self.backgroundImageHeightConstraint.constant;
@@ -93,8 +91,7 @@
     self.backgroundImageWidthConstraint.constant = frame.size.width;
     self.blurredImageHeightConstraint.constant = frame.size.height;
     self.blurredImageWidthConstraint.constant = frame.size.width;
-    self.blurredBackgroundImage.alpha = 0;
-
+    
     if (!self.editViewOnly) {
 
         self.getStartedViewController = [[TDGetStartedViewController alloc] initWithNibName:@"TDGetStartedViewController" bundle:nil ];
@@ -131,18 +128,13 @@
     CGRect loadingFrame = self.loadingViewController.view.frame;
     loadingFrame.origin.x = self.editViewOnly ? (2*self.pageWidth) : self.pageWidth * 3;
     self.loadingViewController.view.frame = loadingFrame;
-
-    if (self.editViewOnly) {
-        [self.backgroundImage applyBlurOnImage];
-    }
     
-    self.oldXOffset = 1;
+    self.backgroundImage.alpha = 1.f;
 }
 
 -(void)viewWillAppear:(BOOL)animated {
     [self.navigationController setNavigationBarHidden:YES animated:YES];
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
-
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
@@ -160,49 +152,38 @@
     } else {
         self.scrollView.scrollEnabled = YES;
     }
-//    
-//    if (self.oldXOffset > offset) {
-//        CGFloat blurredAlpha = (offset/395.);
-//        CGFloat backgroundAlpha = 1.- (offset/395.);
-//        debug NSLog(@"setting alpha for background image = %f", backgroundAlpha);
-//        debug NSLog(@"setting alpha for blurred image = %f", blurredAlpha);
-//
-//        self.blurredBackgroundImage.alpha = blurredAlpha;
-//        self.backgroundImage.alpha = backgroundAlpha;
-//
-//    }
-//    if (page == 0) {
-//        CGRect frame = CGRectMake((self.pageWidth - 20) - scrollView.contentOffset.x , 0, (self.pageWidth - 20) - scrollView.contentOffset.x , self.backgroundImage.frame.size.height);
-//        debug NSLog(@"blur the frame=%@", NSStringFromCGRect(frame));
-//        [self.backgroundImage applyBlurOnImage1:frame];
-//    } else {
-//        
-//    }
     
-    if(scrollView.contentOffset.x >= 0 && scrollView.contentOffset.x <= 375.0) {
-        //self.backgroundImage.alpha = 0;
-//        [self.blurredBackgroundImage blurImage:scrollView.contentOffset.x];
-        float percent = (scrollView.contentOffset.x / 395.0);
-        debug NSLog(@"alpa for blurred image = %f", percent);
-        self.blurredBackgroundImage.alpha = percent;
+    if (!self.editViewOnly) {
+        CGFloat value = (self.scrollView.contentOffset.x - (self.pageWidth/2))/(self.pageWidth/2);
         
-    } else if (scrollView.contentOffset.x > 375.0){
-        self.blurredBackgroundImage.alpha = 1;
-    } else if (scrollView.contentOffset.x < 0) {
-        self.blurredBackgroundImage.alpha = 0;
+        debug NSLog(@"value =%f", value);
+        if (value > 0 || value <= 1) {
+            [self setBlurLevel: value];
+        }
     }
     
     if (page > 0 && self.currentPage != page) {
         // Blur the image only once, when we are transitioning from page 0 to 1
         if (self.currentPage == 0) {
-   
+//            self.backgroundImage.alpha = 1;
+//            self.blurredBackgroundImage.alpha = 0;
         }
         self.currentPage = page;
     } else if (page == 0 && !self.editViewOnly){
         self.currentPage = 0;
     }
+}
+
+- (void)setBlurLevel:(float)blurLevel {
+    NSLog(@"inside setBlurLevel, blurLevel = %f", blurLevel);
+    self.blurredBackgroundImage.alpha = blurLevel;
     
-    self.oldXOffset = offset;
+    self.goalsViewController.view.alpha = blurLevel;
+    
+    self.goalsViewController.closeButtonBackgroundView.alpha = blurLevel;
+    
+    //self.backgroundImage.alpha = 1-blurLevel;
+    debug NSLog(@"background image alpha = %f", self.backgroundImage.alpha);
 }
 
 
@@ -221,9 +202,7 @@
 
 #pragma mark - TDGuestViewController {
 - (void)showGuestController {
-    debug NSLog(@"inside show guest controller");
     [self dismissViewControllerAnimated:YES completion:nil];
-    debug NSLog(@"dismissing the welcomeview controller?");
     if (self.navigationController.viewControllers.count ==2) {
         TDGuestUserProfileViewController *viewController = self.navigationController.viewControllers[1];
         [self.navigationController popToViewController:viewController animated:NO];
@@ -256,14 +235,13 @@
 }
 
 - (void)getStartedButtonPressed {
-    [self.backgroundImage applyBlurOnImage];
-
     CGRect frame2 = self.goalsViewController.view.frame;
     [self.scrollView scrollRectToVisible:frame2 animated:YES];
 }
 
 #pragma mark - GoalsViewControllerDelegate 
-- (void)continueButtonPressed {
+- (void)continueButtonPressed:(NSMutableArray *)goalsList {
+    self.goalsList = [goalsList copy];
     CGRect frame2 = self.interestsViewController.view.frame;
     [self.scrollView scrollRectToVisible:frame2 animated:YES];
 }
@@ -273,11 +251,12 @@
 }
 
 #pragma mark - InterestsViewControllerDelgate
-- (void)doneButtonPressed {
+- (void)doneButtonPressed:(NSMutableArray *)interestList {
+    self.interestList = [interestList copy];
     CGRect frame = self.loadingViewController.view.frame;
     frame.origin.x +=20;
     [self.scrollView scrollRectToVisible:frame animated:YES];
-    [self.loadingViewController showData];
+    [self.loadingViewController showData:self.goalsList interestList:self.interestList];
 }
 
 - (void)backButtonPressed {

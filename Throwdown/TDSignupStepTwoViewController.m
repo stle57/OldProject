@@ -32,13 +32,10 @@
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     [[TDAnalytics sharedInstance] logEvent:@"signup_step_two"];
     
-    [self.backgroundImageView setBackgroundImage:NO];
-    [self.backgroundImageView applyBlurOnImage];
+    [self.backgroundImageView setBackgroundImage:YES editingViewOnly:YES];
     
     self.alphaView.frame = self.view.frame;
-    self.alphaView.backgroundColor = [UIColor whiteColor];
-    [self.alphaView setAlpha:.92];
-
+    self.alphaView.backgroundColor = [UIColor clearColor];
     
     self.topLabel.text = @"Choose a username";
     self.topLabel.font = [TDConstants fontSemiBoldSized:18];
@@ -71,9 +68,10 @@
     self.topLabel.font = [TDConstants fontSemiBoldSized:18];
     
     NSString *text = @"By creating an account, you agree to the";
-    NSAttributedString *attStr = [TDViewControllerHelper makeParagraphedTextWithString:text font:[TDConstants fontRegularSized:12] color:[TDConstants headerTextColor] lineHeight:15 lineHeightMultipler:(15/12)];
+    NSAttributedString *attStr = [TDViewControllerHelper makeParagraphedTextWithString:text font:[TDConstants fontRegularSized:12.] color:[TDConstants headerTextColor] lineHeight:15. lineHeightMultipler:(15./12.)];
     self.privacyLabel1.attributedText = attStr;
     [self.privacyLabel1 sizeToFit];
+    
     CGRect privacyFrame = self.privacyLabel1.frame;
     privacyFrame.origin.x = SCREEN_WIDTH/2 - self.privacyLabel1.frame.size.width/2;
     privacyFrame.origin.y = self.passwordTextField.frame.origin.y + self.passwordTextField.frame.size.height + 30;
@@ -121,6 +119,12 @@
                                          self.privacyButton.frame.origin.y + self.privacyButton.frame.size.height + 20,
                                          [UIImage imageNamed:@"btn_finish"].size.width,
                                          [UIImage imageNamed:@"btn_finish"].size.height);
+    
+    self.progress.center = [TDViewControllerHelper centerPosition];
+    
+    CGPoint centerFrame = self.progress.center;
+    centerFrame.y = self.progress.center.y - self.progress.frame.size.height/2;
+    self.progress.center = centerFrame;
 
 }
 

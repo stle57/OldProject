@@ -42,12 +42,10 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     [[TDAnalytics sharedInstance] logEvent:@"signup_step_one"];
 
-    [self.backgroundImageView setBackgroundImage:NO];
-    [self.backgroundImageView applyBlurOnImage];
+    [self.backgroundImageView setBackgroundImage:YES editingViewOnly:YES];
     
     self.alphaView.frame = self.view.frame;
-    self.alphaView.backgroundColor = [UIColor whiteColor];
-    [self.alphaView setAlpha:.92];
+    self.alphaView.backgroundColor = [UIColor clearColor];
     
     self.topLabel.text = @"Sign Up";
     self.topLabel.font = [TDConstants fontSemiBoldSized:18];

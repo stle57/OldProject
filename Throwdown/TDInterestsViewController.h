@@ -11,7 +11,7 @@
 #import "TDKeyboardObserver.h"
 @protocol TDInterestsViewControllerDelegate <NSObject>
 @optional
-- (void)doneButtonPressed;
+- (void)doneButtonPressed:(NSMutableArray *)interestList;
 - (void)backButtonPressed;
 @end
 @interface TDInterestsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, TDGoalsCellDelegate,TDKeyboardObserverDelegate, UITextFieldDelegate>
