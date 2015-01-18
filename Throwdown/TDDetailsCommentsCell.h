@@ -14,7 +14,7 @@
 @protocol TDDetailsCommentsCellDelegate <NSObject>
 @optional
 - (void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber;
-- (void)userProfilePressedWithId:(NSNumber *)userId;
+- (void)userTappedURL:(NSURL *)url;
 @end
 
 @interface TDDetailsCommentsCell : UITableViewCell <TTTAttributedLabelDelegate>

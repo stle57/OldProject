@@ -271,7 +271,7 @@ static NSString *const kTracksKey = @"tracks";
 
     if (post.comment) {
         [self.commentLabel setText:post.comment afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
-        [TDViewControllerHelper linkUsernamesInLabel:self.commentLabel users:post.mentions];
+        [TDViewControllerHelper linkUsernamesInLabel:self.commentLabel users:post.mentions withHashtags:YES];
         self.commentLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:self.commentLabel.attributedText];
 
         CGFloat commentHeight = [TDViewControllerHelper heightForText:post.comment withMentions:post.mentions withFont:POST_COMMENT_FONT inWidth:width - (kMargin * 2)];
@@ -845,8 +845,8 @@ static NSString *const kTracksKey = @"tracks";
 #pragma mark - TTTAttributedLabelDelegate
 
 - (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithURL:(NSURL *)url {
-    if ([TDViewControllerHelper isThrowdownURL:url] && self.delegate && [self.delegate respondsToSelector:@selector(userProfilePressedWithId:)]) {
-        [self.delegate userProfilePressedWithId:[NSNumber numberWithInteger:[[[url path] lastPathComponent] integerValue]]];
+    if ([TDViewControllerHelper isThrowdownURL:url] && self.delegate && [self.delegate respondsToSelector:@selector(userTappedURL:)]) {
+        [self.delegate userTappedURL:url];
     } else {
         [TDViewControllerHelper askUserToOpenInSafari:url];
     }

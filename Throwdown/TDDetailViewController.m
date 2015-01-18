@@ -21,6 +21,7 @@
 #import "TDActivityIndicator.h"
 #import "TDKeyboardObserver.h"
 #import "TDLocationFeedViewController.h"
+#import "TDTagFeedViewController.h"
 
 static float const kInputLineSpacing = 3;
 static float const kMinInputHeight = 33.;
@@ -456,8 +457,14 @@ static int const kToolbarHeight = 64;
 
 #pragma mark - TDPostViewDelegate and TDDetailsCommentsCellDelegate
 
-- (void)userProfilePressedWithId:(NSNumber *)userId {
-    [self showUserProfile:userId];
+- (void)userTappedURL:(NSURL *)url {
+    if ([[url host] isEqualToString:@"user"]) {
+        [self showUserProfile:[NSNumber numberWithInteger:[[[url path] lastPathComponent] integerValue]]];
+    } else if ([[url host] isEqualToString:@"tag"]) {
+        TDTagFeedViewController *vc = [[TDTagFeedViewController alloc] initWithNibName:@"TDTagFeedViewController" bundle:nil ];
+        vc.tagName = [[url path] lastPathComponent];
+        [self.navigationController pushViewController:vc animated:YES];
+    }
 }
 
 #pragma mark - TDDetailsCommentsCellDelegate

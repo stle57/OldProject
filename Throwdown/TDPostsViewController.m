@@ -17,6 +17,7 @@
 #import "TDInviteViewController.h"
 #import "TDNoFollowingCell.h"
 #import "TDLocationFeedViewController.h"
+#import "TDTagFeedViewController.h"
 
 static CGFloat const kWhiteBottomPadding = 6;
 static CGFloat const kPostMargin = 22;
@@ -604,11 +605,18 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 
 #pragma mark - TDPostViewDelegate and TDDetailsCommentsCellDelegate
 
-- (void)userProfilePressedWithId:(NSNumber *)userId {
-    TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
-    vc.userId = userId;
-    vc.profileType = kFeedProfileTypeOther;
-    [self.navigationController pushViewController:vc animated:YES];
+// When an @-mention or #hashtag is pressed in a text only.
+- (void)userTappedURL:(NSURL *)url {
+    if ([[url host] isEqualToString:@"user"]) {
+        TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
+        vc.userId = [NSNumber numberWithInteger:[[[url path] lastPathComponent] integerValue]];
+        vc.profileType = kFeedProfileTypeOther;
+        [self.navigationController pushViewController:vc animated:YES];
+    } else if ([[url host] isEqualToString:@"tag"]) {
+        TDTagFeedViewController *vc = [[TDTagFeedViewController alloc] initWithNibName:@"TDTagFeedViewController" bundle:nil ];
+        vc.tagName = [[url path] lastPathComponent];
+        [self.navigationController pushViewController:vc animated:YES];
+    }
 }
 
 - (void)locationButtonPressedFromRow:(NSInteger)row {

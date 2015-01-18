@@ -201,22 +201,23 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     return attributedString;
 }
 
-+ (void)linkUsernamesInLabel:(TTTAttributedLabel *)label users:(NSArray *)users {
++ (void)linkUsernamesInLabel:(TTTAttributedLabel *)label users:(NSArray *)users withHashtags:(BOOL)linkHashtags {
     // Standard pattern with @-sign prefixed username
-    [self linkUsernamesInLabel:label users:users pattern:@"\\B(@[a-zA-Z0-9_]+)\\b"];
+    [self linkUsernamesInLabel:label users:users pattern:@"\\B(@[a-zA-Z0-9_]+)\\b" withHashtags:linkHashtags];
 }
 
-+ (void)linkUsernamesInLabel:(TTTAttributedLabel *)label users:(NSArray *)users pattern:(NSString *)pattern {
++ (void)linkUsernamesInLabel:(TTTAttributedLabel *)label users:(NSArray *)users pattern:(NSString *)pattern withHashtags:(BOOL)linkHashtags {
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
 
-    NSMutableDictionary *mutableLinkAttributes = [[NSMutableDictionary alloc] init];
-    [mutableLinkAttributes setObject:[TDConstants brandingRedColor] forKey:(NSString *)kCTForegroundColorAttributeName];
-    [mutableLinkAttributes setObject:paragraphStyle forKey:(NSString *)kCTParagraphStyleAttributeName];
+    NSMutableDictionary *userMentionLinkAttributes = [[NSMutableDictionary alloc] init];
+    [userMentionLinkAttributes setObject:label.font forKey:(NSString *)NSFontAttributeName];
+    [userMentionLinkAttributes setObject:[TDConstants brandingRedColor] forKey:(NSString *)kCTForegroundColorAttributeName];
+    [userMentionLinkAttributes setObject:paragraphStyle forKey:(NSString *)kCTParagraphStyleAttributeName];
 
-    label.linkAttributes = [NSDictionary dictionaryWithDictionary:mutableLinkAttributes];
-    label.activeLinkAttributes = [NSDictionary dictionaryWithDictionary:mutableLinkAttributes];
-    label.inactiveLinkAttributes = [NSDictionary dictionaryWithDictionary:mutableLinkAttributes];
+    label.linkAttributes = nil;
+    label.activeLinkAttributes = nil;
+    label.inactiveLinkAttributes = nil;
 
     NSMutableAttributedString *mutableAttributedString = [label.attributedText mutableCopy];
     NSRange range = NSMakeRange(0, [mutableAttributedString string].length);
@@ -230,10 +231,45 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
         for (NSDictionary *user in users) {
             if ([username isEqualToString:[user objectForKey:@"username"]]) {
                 NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@://user/%@", [TDConstants appScheme], [user objectForKey:@"id"]]];
-                [label addLinkToURL:url withRange:usernameRange];
+                NSTextCheckingResult *link = [NSTextCheckingResult linkCheckingResultWithRange:usernameRange URL:url];
+                [label addLinkWithTextCheckingResult:link attributes:userMentionLinkAttributes];
             }
         }
     }];
+
+    // This runs through any automatically detected links/url/numbers/email etc and sets the red red color
+    if (label.enabledTextCheckingTypes) {
+        mutableAttributedString = [label.attributedText mutableCopy];
+        NSDataDetector *dataDetector = [NSDataDetector dataDetectorWithTypes:label.enabledTextCheckingTypes error:nil]; ;
+        if (dataDetector && [dataDetector respondsToSelector:@selector(matchesInString:options:range:)]) {
+            NSArray *results = [dataDetector matchesInString:[(NSAttributedString *)mutableAttributedString string] options:0 range:NSMakeRange(0, [(NSAttributedString *)mutableAttributedString length])];
+            for (NSTextCheckingResult *match in results) {
+                [mutableAttributedString setAttributes:userMentionLinkAttributes range:match.range];
+            }
+        }
+        label.attributedText = mutableAttributedString;
+    }
+
+
+    if (linkHashtags) {
+        NSMutableDictionary *hashtagLinkAttributes = [[NSMutableDictionary alloc] init];
+        [hashtagLinkAttributes setObject:[TDConstants hashtagColor] forKey:(NSString *)kCTForegroundColorAttributeName];
+        [hashtagLinkAttributes setObject:paragraphStyle forKey:(NSString *)kCTParagraphStyleAttributeName];
+        NSRegularExpression *hashtagRegex = [NSRegularExpression regularExpressionWithPattern:@"(#[a-zA-Z0-9_]+)\\b" options:kNilOptions error:nil];
+
+        NSArray *matches = [hashtagRegex matchesInString:[mutableAttributedString string] options:kNilOptions range:range];
+
+        for (NSTextCheckingResult *match in matches) {
+            NSRange matchRange = [match rangeAtIndex:1];
+            NSString *tag = [[mutableAttributedString string] substringWithRange:matchRange];
+            if ([@"#" isEqualToString:[tag substringToIndex:1]]) {
+                tag = [tag substringFromIndex:1];
+            }
+            NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@://tag/%@", [TDConstants appScheme], tag]];
+            NSTextCheckingResult *link = [NSTextCheckingResult linkCheckingResultWithRange:matchRange URL:url];
+            [label addLinkWithTextCheckingResult:link attributes:hashtagLinkAttributes];
+        }
+    }
 }
 
 + (CGFloat)heightForComment:(NSString *)text withMentions:(NSArray *)mentions {
@@ -247,7 +283,7 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     label.font = font;
     label.verticalAlignment = TTTAttributedLabelVerticalAlignmentTop;
     [label setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
-    [TDViewControllerHelper linkUsernamesInLabel:label users:mentions];
+    [TDViewControllerHelper linkUsernamesInLabel:label users:mentions withHashtags:NO];
     label.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:label.attributedText];
     label.numberOfLines = 0;
 

@@ -134,6 +134,8 @@
 		A1280629198ADE6E0038AC2E /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1280628198ADE6E0038AC2E /* FacebookSDK.framework */; };
 		A129BAF9197B5BEE00F6FC2B /* TDCustomRefreshControl.m in Sources */ = {isa = PBXBuildFile; fileRef = A129BAF8197B5BEE00F6FC2B /* TDCustomRefreshControl.m */; };
 		A129BAFC197F231700F6FC2B /* TDUserListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A129BAFB197F231700F6FC2B /* TDUserListCell.m */; };
+		A13B77B41A6B66B300F444F7 /* TDTagFeedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A13B77B21A6B66B300F444F7 /* TDTagFeedViewController.m */; };
+		A13B77B51A6B66B300F444F7 /* TDTagFeedViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A13B77B31A6B66B300F444F7 /* TDTagFeedViewController.xib */; };
 		A1432CE118A99D750073E492 /* TDWelcomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1432CE018A99D750073E492 /* TDWelcomeViewController.m */; };
 		A1432CE418A99DA40073E492 /* TDSignupStepOneViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1432CE318A99DA40073E492 /* TDSignupStepOneViewController.m */; };
 		A1432CE718A99DB30073E492 /* TDLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1432CE618A99DB30073E492 /* TDLoginViewController.m */; };
@@ -419,6 +421,9 @@
 		A129BAF8197B5BEE00F6FC2B /* TDCustomRefreshControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDCustomRefreshControl.m; sourceTree = "<group>"; };
 		A129BAFA197F231700F6FC2B /* TDUserListCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserListCell.h; sourceTree = "<group>"; };
 		A129BAFB197F231700F6FC2B /* TDUserListCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUserListCell.m; sourceTree = "<group>"; };
+		A13B77B11A6B66B300F444F7 /* TDTagFeedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTagFeedViewController.h; sourceTree = "<group>"; };
+		A13B77B21A6B66B300F444F7 /* TDTagFeedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTagFeedViewController.m; sourceTree = "<group>"; };
+		A13B77B31A6B66B300F444F7 /* TDTagFeedViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDTagFeedViewController.xib; sourceTree = "<group>"; };
 		A1432CDF18A99D750073E492 /* TDWelcomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDWelcomeViewController.h; sourceTree = "<group>"; };
 		A1432CE018A99D750073E492 /* TDWelcomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDWelcomeViewController.m; sourceTree = "<group>"; wrapsLines = 1; };
 		A1432CE218A99DA40073E492 /* TDSignupStepOneViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSignupStepOneViewController.h; sourceTree = "<group>"; };
@@ -1023,6 +1028,9 @@
 				A1DD18271A3839CB00B12BDC /* TDLocationFeedViewController.h */,
 				A1DD18281A3839CB00B12BDC /* TDLocationFeedViewController.m */,
 				A1DD18291A3839CB00B12BDC /* TDLocationFeedViewController.xib */,
+				A13B77B11A6B66B300F444F7 /* TDTagFeedViewController.h */,
+				A13B77B21A6B66B300F444F7 /* TDTagFeedViewController.m */,
+				A13B77B31A6B66B300F444F7 /* TDTagFeedViewController.xib */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -1379,6 +1387,7 @@
 				2DA5F05218D36745003D2F99 /* ProximaNova-Light.otf in Resources */,
 				A18D9A5E19D9F551006A0658 /* Launch Screen.xib in Resources */,
 				A10F9C251909B01600D2CAB0 /* SingleBellDing.caf in Resources */,
+				A13B77B51A6B66B300F444F7 /* TDTagFeedViewController.xib in Resources */,
 				2D1AEE7118C937560055C315 /* TDDetailsLikesCell.xib in Resources */,
 				2D648A1718C9415D002FE0AD /* TDDetailsCommentsCell.xib in Resources */,
 				4D3352D619A29CEC007B3E06 /* iRate.bundle in Resources */,
@@ -1548,6 +1557,7 @@
 				2DA5354818F36EF800031128 /* TDPostsViewController.m in Sources */,
 				2D83200419116D9000A91282 /* TDUserPushNotificationsEditViewController.m in Sources */,
 				A1B9002E18CC316800012A1F /* TDHomeHeaderView.m in Sources */,
+				A13B77B41A6B66B300F444F7 /* TDTagFeedViewController.m in Sources */,
 				4D4714B819CBF14F003AA69F /* TDContactInfo.m in Sources */,
 				A1D6BB10196BC1FD007983F8 /* TDStoryboardSegue.m in Sources */,
 				A15596D819E9E96000C7C0B8 /* TDRequestSerializer.m in Sources */,

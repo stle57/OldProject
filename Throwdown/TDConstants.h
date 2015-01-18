@@ -186,6 +186,7 @@ static NSInteger const kFollowingButtonTag = 20003;
 + (UIColor *)darkTextColor;
 + (UIColor *)disabledTextColor;
 + (UIColor *)headerTextColor;
++ (UIColor *)hashtagColor;
 + (UIColor *)commentTextColor;
 + (UIColor *)commentTimeTextColor;
 + (UIColor *)lightBorderColor;

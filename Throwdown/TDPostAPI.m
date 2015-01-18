@@ -171,6 +171,16 @@
     [self fetchPostsPath:url parameters:nil success:successHandler error:errorHandler];
 }
 
+#pragma mark - Posts for tag
+
+- (void)fetchPostsForTagName:(NSString *)tagName start:(NSNumber *)start success:(void(^)(NSDictionary *response))successHandler error:(void (^)(void))errorHandler {
+    NSMutableString *url = [NSMutableString stringWithFormat:@"/api/v1/tags/%@.json?user_token=%@", tagName, [TDCurrentUser sharedInstance].authToken];
+    if (start) {
+        [url appendString:[NSString stringWithFormat:@"&start=%@", start]];
+    }
+    [self fetchPostsPath:url parameters:nil success:successHandler error:errorHandler];
+}
+
 #pragma mark Posts fetcher
 
 - (void)fetchPostsPath:(NSString *)path parameters:(NSDictionary *)params success:(void(^)(NSDictionary *response))successHandler error:(void (^)(void))errorHandler {

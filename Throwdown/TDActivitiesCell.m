@@ -96,12 +96,12 @@ static CGFloat const kCommentWidthNoPreview = 306.;
     if (text) {
         [self.activityLabel setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
         if (users) {
-            [TDViewControllerHelper linkUsernamesInLabel:self.activityLabel users:users];
+            [TDViewControllerHelper linkUsernamesInLabel:self.activityLabel users:users withHashtags:NO];
         }
 
         // Link and bold the initial username
         NSMutableAttributedString *mutableAttributedString = [self.activityLabel.attributedText mutableCopy];
-        [TDViewControllerHelper linkUsernamesInLabel:self.activityLabel users:@[user] pattern:@"(^\\w+\\b)"];
+        [TDViewControllerHelper linkUsernamesInLabel:self.activityLabel users:@[user] pattern:@"(^\\w+\\b)" withHashtags:NO];
         NSDictionary *userAttributes = @{ NSForegroundColorAttributeName:[TDConstants brandingRedColor], NSFontAttributeName: [TDConstants fontBoldSized:COMMENT_MESSAGE_FONT_SIZE] };
         [mutableAttributedString addAttributes:userAttributes range:NSMakeRange(0, [username length])];
         self.activityLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:mutableAttributedString withMultiple:1.f];

@@ -624,10 +624,11 @@
 
 #pragma mark - TDPostViewDelegate and TDDetailsCommentsCellDelegate
 
-// When an @-mention is pressed, not a post-header's username label
-- (void)userProfilePressedWithId:(NSNumber *)userId {
+// Just override to call showNavBar then send to TDPostsViewController
+
+- (void)userTappedURL:(NSURL *)url {
     [self showNavBar];
-    [super userProfilePressedWithId:userId];
+    [super userTappedURL:url];
 }
 
 - (void)locationButtonPressedFromRow:(NSInteger)row {

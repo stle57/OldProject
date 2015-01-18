@@ -603,7 +603,7 @@
     [self.activityIndicator stopSpinner];
 }
 
-#pragma mark - TDNoFollowCellProfileDelegate
+#pragma mark - TDFollowProfileCellDelegate
 - (void)inviteButtonPressed {
     TDInviteViewController *vc = [[TDInviteViewController alloc] initWithNibName:@"TDInviteViewController" bundle:nil ];
     

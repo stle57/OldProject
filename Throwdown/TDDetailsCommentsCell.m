@@ -56,7 +56,7 @@ static CGFloat const kMaxUsernameWidth = 230;
     self.messageLabel.enabledTextCheckingTypes = NSTextCheckingTypeLink;
 
     [self.messageLabel setText:comment.body afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
-    [TDViewControllerHelper linkUsernamesInLabel:self.messageLabel users:comment.mentions];
+    [TDViewControllerHelper linkUsernamesInLabel:self.messageLabel users:comment.mentions withHashtags:YES];
     self.messageLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:self.messageLabel.attributedText];
 
     self.commentIcon.hidden = !showIcon;
@@ -71,8 +71,8 @@ static CGFloat const kMaxUsernameWidth = 230;
 #pragma mark - TTTAttributedLabelDelegate
 
 - (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithURL:(NSURL *)url {
-    if ([TDViewControllerHelper isThrowdownURL:url] && self.delegate && [self.delegate respondsToSelector:@selector(userProfilePressedWithId:)]) {
-        [self.delegate userProfilePressedWithId:[NSNumber numberWithInteger:[[[url path] lastPathComponent] integerValue]]];
+    if ([TDViewControllerHelper isThrowdownURL:url] && self.delegate && [self.delegate respondsToSelector:@selector(userTappedURL:)]) {
+        [self.delegate userTappedURL:url];
     } else {
         [TDViewControllerHelper askUserToOpenInSafari:url];
     }

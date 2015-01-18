@@ -29,8 +29,8 @@
 + (NSAttributedString *)makeParagraphedTextWithString:(NSString *)text font:(UIFont*)font color:(UIColor*)color lineHeight:(CGFloat)lineHeight lineHeightMultipler:(CGFloat)lineHeightMultiplier;
 + (NSAttributedString *)makeParagraphedTextWithString:(NSString *)text font:(UIFont*)font color:(UIColor*)color lineHeight:(CGFloat)lineHeight;
 + (NSAttributedString *)makeParagraphedTextForTruncatedBio:(NSString *)text font:(UIFont*)font color:(UIColor*)color lineHeight:(CGFloat)lineHeight;
-+ (void)linkUsernamesInLabel:(TTTAttributedLabel *)label users:(NSArray *)users;
-+ (void)linkUsernamesInLabel:(TTTAttributedLabel *)label users:(NSArray *)users pattern:(NSString *)pattern;
++ (void)linkUsernamesInLabel:(TTTAttributedLabel *)label users:(NSArray *)users withHashtags:(BOOL)linkHashtags;
++ (void)linkUsernamesInLabel:(TTTAttributedLabel *)label users:(NSArray *)users pattern:(NSString *)pattern withHashtags:(BOOL)linkHashtags;
 + (CGFloat)heightForComment:(NSString *)text withMentions:(NSArray *)mentions;
 + (CGFloat)heightForText:(NSString *)text withMentions:(NSArray *)mentions withFont:(UIFont *)font inWidth:(CGFloat)width;
 + (BOOL)isThrowdownURL:(NSURL *)url;

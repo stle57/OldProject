@@ -40,4 +40,5 @@ const typedef NS_ENUM(NSUInteger, kFetchPostsForFeed) {
 - (void)fetchPostsForUser:(NSString *)userIdentifier start:(NSNumber *)start success:(void(^)(NSDictionary *response))successHandler error:(void (^)(void))errorHandler;
 - (void)fetchPRPostsForUser:(NSString *)userIdentifier success:(void(^)(NSDictionary *response))successHandler error:(void (^)(void))errorHandler;
 - (void)fetchPostsForLocationId:(NSNumber *)locationId start:(NSNumber *)start success:(void(^)(NSDictionary *response))successHandler error:(void (^)(void))errorHandler;
+- (void)fetchPostsForTagName:(NSString *)tagName start:(NSNumber *)start success:(void(^)(NSDictionary *response))successHandler error:(void (^)(void))errorHandler;
 @end

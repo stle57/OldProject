@@ -86,7 +86,7 @@ static CGFloat const kWidthNeededForOtherViews = 100; // this is view width - la
     // Add likers label
     NSString *text = [[self.likers valueForKeyPath:@"username"] componentsJoinedByString:@", "];
     [self.likersNamesLabel setText:text afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
-    [TDViewControllerHelper linkUsernamesInLabel:self.likersNamesLabel users:self.likers pattern:@"(\\b\\w+\\b)"];
+    [TDViewControllerHelper linkUsernamesInLabel:self.likersNamesLabel users:self.likers pattern:@"(\\b\\w+\\b)" withHashtags:NO];
     self.likersNamesLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:self.likersNamesLabel.attributedText withMultiple:kLikersLineMultiple];
 }
 

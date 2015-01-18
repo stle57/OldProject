@@ -17,7 +17,7 @@
 - (void)postTouchedFromRow:(NSInteger)row;
 - (void)locationButtonPressedFromRow:(NSInteger)row;
 - (void)userButtonPressedFromRow:(NSInteger)row;
-- (void)userProfilePressedWithId:(NSNumber *)userId;
+- (void)userTappedURL:(NSURL *)url;
 - (void)horizontalScrollingStarted;
 - (void)horizontalScrollingEnded;
 @end
