@@ -70,7 +70,7 @@
 - (UIColor *)color {
     // Litmus test (no need to check for all r/g/b)
     if (!self.col || ![self.col objectForKey:@"r"]) {
-        return [TDConstants backgroundColor];
+        return [TDConstants lightBackgroundColor];
     }
     return [UIColor colorWithRed:[[self.col objectForKey:@"r"] floatValue]/255
                            green:[[self.col objectForKey:@"g"] floatValue]/255
@@ -94,6 +94,9 @@
         if ([[UIApplication sharedApplication] canOpenURL:fullUrl]) {
             [[UIApplication sharedApplication] openURL:fullUrl];
         }
+    } else {
+        debug NSLog(@"do something else with notices");
+
     }
 }
 
