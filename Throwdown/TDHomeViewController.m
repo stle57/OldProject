@@ -156,7 +156,7 @@
 - (NSUInteger)noticeCount {
     if (self.notices) {
         return [self.notices count];
-    }
+    } 
     return 0;
 }
 
@@ -239,18 +239,30 @@
 - (void)handlePostsResponse:(NSDictionary *)response fromStart:(BOOL)start {
     self.loaded = YES;
     self.errorLoading = NO;
+    NSMutableArray *tmp = [[NSMutableArray alloc] init];
 
     if (start) {
         // Set notices (shows in both all and following on home feed)
         if ([response objectForKey:@"notices"]) {
-            NSMutableArray *tmp = [[NSMutableArray alloc] init];
             for (NSDictionary *dict in [response objectForKey:@"notices"]) {
                 [tmp addObject:[[TDNotice alloc] initWithDictionary:dict]];
             }
             self.notices = [NSArray arrayWithArray:tmp];
         } else {
             self.notices = nil;
+
         }
+        //THIS IS TEMPORARY UNTIL BACKEND IS FINALIZED
+        NSMutableArray *temp = [[NSMutableArray alloc] init];
+        [temp addObject:[[TDNotice alloc] initWithDictionary:@{@"message":@"Strengthlete 28-Day Challenge!"}]];
+        if (self.notices.count && tmp.count) {
+            [tmp addObjectsFromArray:temp];
+            self.notices = [NSArray arrayWithArray:tmp];
+        } else {
+            self.notices = [NSArray arrayWithArray:temp];
+        }
+
+        debug NSLog(@"=======>self.notices count=%lu", self.notices.count);
 
         // Update notification count from feed
         // TODO: There's an inconsistency if user opens activity feed, this still gets set even though user has seen the notifications.

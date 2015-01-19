@@ -272,6 +272,28 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     }
 }
 
++ (void)boldHashtagsInLabel:(UILabel *)label {
+    NSMutableAttributedString * string = [[NSMutableAttributedString alloc]initWithString:label.attributedText.string];
+
+    NSString *str = label.attributedText.string;
+    NSError *error = nil;
+
+    //I Use regex to detect the pattern I want to change color
+    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"#(\\w+)" options:0 error:&error];
+
+
+
+    NSArray *matches = [regex matchesInString:label.text options:0 range:NSMakeRange(0, string.length)];
+
+    for (NSTextCheckingResult *match in matches) {
+        NSRange wordRange = [match rangeAtIndex:0];
+        [string addAttribute:NSForegroundColorAttributeName value:[TDConstants headerTextColor] range:wordRange];
+        [string addAttribute:NSFontAttributeName value:[TDConstants fontSemiBoldSized:15] range:wordRange];
+    }
+    
+    [label setAttributedText:string];
+}
+
 + (CGFloat)heightForComment:(NSString *)text withMentions:(NSArray *)mentions {
     CGFloat width = [UIScreen mainScreen].bounds.size.width - 20;  // 20 is standard margin
     return [self heightForText:text withMentions:mentions withFont:COMMENT_MESSAGE_FONT inWidth:width];
