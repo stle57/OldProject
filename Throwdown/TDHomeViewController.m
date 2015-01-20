@@ -28,6 +28,7 @@
 #import "iRate.h"
 #import "TDTagFeedViewController.h"
 #import "NSString+URLEncode.h"
+#import "TDInviteViewController.h"
 
 #define CELL_IDENTIFIER @"TDPostView"
 
@@ -36,6 +37,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *searchTDUsersButton;
 @property (weak, nonatomic) IBOutlet UILabel *badgeCountLabel;
 @property (nonatomic) NSNumber *badgeCount;
+@property (weak, nonatomic) IBOutlet UIButton *inviteButton;
 
 @property (nonatomic) BOOL didUpload;
 @property (nonatomic) BOOL scrollToTop;
@@ -105,6 +107,9 @@
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.translucent = NO;
+
+    self.inviteButton.titleLabel.font = [TDConstants fontRegularSized:18];
+
 
     self.headerView = [[TDHomeHeaderView alloc] initWithTableView:self.tableView];
     self.previousScrollViewYOffset = 0;
@@ -730,6 +735,19 @@
 
     [self showNavBar];
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (IBAction)inviteButtonPressed:(id)sender {
+    [self showNavBar];
+
+    TDInviteViewController *vc = [[TDInviteViewController alloc] initWithNibName:@"TDInviteViewController" bundle:nil ];
+
+    vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
+    navController.navigationBar.barStyle = UIBarStyleDefault;
+    navController.navigationBar.translucent = YES;
+    [self.navigationController presentViewController:navController animated:YES completion:nil];
+
 }
 
 - (void)addOverlay {
