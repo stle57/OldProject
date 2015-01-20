@@ -250,7 +250,7 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
         }
     }];
 
-    // This runs through any automatically detected links/url/numbers/email etc and sets the red red color
+    // This runs through any automatically detected links/url/numbers/email etc and sets the red color
     if (label.enabledTextCheckingTypes) {
         mutableAttributedString = [label.attributedText mutableCopy];
         NSDataDetector *dataDetector = [NSDataDetector dataDetectorWithTypes:label.enabledTextCheckingTypes error:nil]; ;

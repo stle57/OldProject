@@ -15,8 +15,9 @@
 #import <SDWebImageManager.h>
 #import <UIImage+Resizing.h>
 
-static CGFloat const kCommentWidthWithPreview = 248.;
-static CGFloat const kCommentWidthNoPreview = 306.;
+// Image is 55, padding is 14 (both sides incl), some weird reason - 60 is needed.
+#define kCommentWidthWithPreview SCREEN_WIDTH - 55 - 14 - 60
+#define kCommentWidthNoPreview SCREEN_WIDTH - 60
 
 @interface TDActivitiesCell () <TTTAttributedLabelDelegate>
 
@@ -38,7 +39,6 @@ static CGFloat const kCommentWidthNoPreview = 306.;
     self.activityLabel.numberOfLines = 2;
 
     self.timeLabel.font = TIME_FONT;
-
 }
 
 - (void)setActivity:(NSDictionary *)activity {
@@ -102,7 +102,7 @@ static CGFloat const kCommentWidthNoPreview = 306.;
         // Link and bold the initial username
         NSMutableAttributedString *mutableAttributedString = [self.activityLabel.attributedText mutableCopy];
         [TDViewControllerHelper linkUsernamesInLabel:self.activityLabel users:@[user] pattern:@"(^\\w+\\b)" withHashtags:NO];
-        NSDictionary *userAttributes = @{ NSForegroundColorAttributeName:[TDConstants brandingRedColor], NSFontAttributeName: [TDConstants fontBoldSized:COMMENT_MESSAGE_FONT_SIZE] };
+        NSDictionary *userAttributes = @{ (NSString *)kCTForegroundColorAttributeName:[TDConstants brandingRedColor], NSFontAttributeName: [TDConstants fontBoldSized:COMMENT_MESSAGE_FONT_SIZE] };
         [mutableAttributedString addAttributes:userAttributes range:NSMakeRange(0, [username length])];
         self.activityLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:mutableAttributedString withMultiple:1.f];
     }
@@ -112,8 +112,7 @@ static CGFloat const kCommentWidthNoPreview = 306.;
     labelSize.height = labelSize.height + 7;
 
     int y = (self.contentView.frame.size.height - (labelSize.height + timeSize.height)) / 2;
-    CGRect labelFrame = CGRectMake(7, y, labelSize.width, labelSize.height);
-    self.activityLabel.frame = labelFrame;
+    self.activityLabel.frame = CGRectMake(7, y, labelSize.width, labelSize.height);
 
     y = y + labelSize.height;
     if (labelSize.height <= 43) {
