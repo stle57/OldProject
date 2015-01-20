@@ -9,12 +9,15 @@
 #import "TDDetailInfoViewController.h"
 #import "TDConstants.h"
 #import "TDViewControllerHelper.h"
+#import <SDWebImageManager.h>
+#import <UIImage+Resizing.h>
 
 @interface TDDetailInfoViewController ()
 @property (nonatomic) NSDictionary *data;
 @end
 
 @implementation TDDetailInfoViewController
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil title:(NSString*)title campaignData:(NSDictionary *)campaignData
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -54,13 +57,15 @@
     [self.navLabel sizeToFit];
     [self.navigationItem setTitleView:self.navLabel];
 
-    self.logoImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"Strengthlete_Logo_BIG"]];
-    self.logoImageView.frame = CGRectMake(SCREEN_WIDTH/2 - [UIImage imageNamed:@"Strengthlete_Logo_BIG"].size.width/2, 15, [UIImage imageNamed:@"Strengthlete_Logo_BIG"].size.width, [UIImage imageNamed:@"Strengthlete_Logo_BIG"].size.height);
+    self.logoImageView = [[UIImageView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/2 - kBigImageWidth/2, 15, kBigImageWidth, kBigImageHeight)];
+    self.logoImageView.contentMode = UIViewContentModeScaleAspectFit;
+
     [self.scrollView addSubview:self.logoImageView];
 
-    self.label = [[UILabel alloc] initWithFrame:CGRectMake(0, self.logoImageView.frame.origin.y + [UIImage imageNamed:@"Strengthlete_Logo_BIG"].size.height + 10, SCREEN_WIDTH, 100)];
+    [self downloadPreview:[self.data objectForKey:@"image"]];
 
-   // NSString *titleStr = @"Strengthlete 28-Day\nChallenge!";
+    self.label = [[UILabel alloc] initWithFrame:CGRectMake(0, self.logoImageView.frame.origin.y + kBigImageHeight + 10, SCREEN_WIDTH, 100)];
+
     NSString *titleStr = [self.data objectForKey:@"title"];
     NSAttributedString *titleAttrStr = [TDViewControllerHelper makeParagraphedTextWithString:titleStr font:[TDConstants fontSemiBoldSized:19] color:[TDConstants headerTextColor] lineHeight:23 lineHeightMultipler:(23./19.)];
     self.label.attributedText = titleAttrStr;
@@ -69,13 +74,11 @@
 
     CGRect labelFrame = self.label.frame;
     labelFrame.origin.x = SCREEN_WIDTH/2 - self.label.frame.size.width/2;
-    labelFrame.origin.y = self.logoImageView.frame.origin.y + self.label.frame.size.height + 10;
     self.label.frame = labelFrame;
     [self.scrollView addSubview:self.label];
 
     self.detailDescription = [[UILabel alloc] initWithFrame:CGRectMake(0, self.label.frame.origin.y + self.label.frame.size.height + 15, SCREEN_WIDTH-60, 200)];
     NSString *detailStr = [self.data objectForKey:@"description"];
-    debug NSLog(@"detailStr = %@", detailStr);
 
     NSMutableAttributedString *detailAttrStr = [[NSMutableAttributedString alloc] initWithString:detailStr];
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
@@ -111,5 +114,26 @@
 
 - (IBAction)closeButtonPressed:(id)sender {
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (void)downloadPreview:(NSString*)stringURL {
+    NSURL *downloadURL = [NSURL URLWithString:stringURL];
+
+    downloadURL = [NSURL URLWithString:stringURL];
+    SDWebImageManager *manager = [SDWebImageManager sharedManager];
+    [manager downloadImageWithURL:downloadURL options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+        // no progress bar here
+    } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *finalURL) {
+        if (![finalURL isEqual:downloadURL]) {
+            return;
+        }
+        if (!error && image) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (self.logoImageView) {
+                    self.logoImageView.image = image;
+                }
+            });
+        }
+    }];
 }
 @end

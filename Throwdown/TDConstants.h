@@ -83,7 +83,10 @@ static CLLocationDistance const kMapDefaultDistance = 9000;
 
 // Campaign Information
 static NSString *const TDCampaginStr = @"campaign";
-
+static NSInteger const kBigImageWidth = 75;
+static NSInteger const kBigImageHeight = 50;
+static NSInteger const kSmallImageWidth = 45;
+static NSInteger const kSmallImageHeight = 45;
 // NSNotification types
 static NSString *const TDNotificationReloadHome = @"TDNotificationReloadHome";
 static NSString *const TDPostUploadStarted = @"TDPostUploadStarted";

@@ -258,6 +258,6 @@
     debug NSLog(@"Load challengers feed");
     TDUsersViewController *vc = [[TDUsersViewController alloc] initWithNibName:@"TDUsersViewController" bundle:nil title:@"Challengers" campaignData:self.campaignData];
     vc.tagName = self.tagName;
-    [self.navigationController pushViewController:vc animated:NO];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 @end

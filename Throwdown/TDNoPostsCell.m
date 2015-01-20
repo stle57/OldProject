@@ -14,10 +14,11 @@
 #import <UIImage+Resizing.h>
 
 @interface TDNoPostsCell ()
-
+@property (nonatomic) UIImageView *imageView;
 @end
 
 @implementation TDNoPostsCell
+@synthesize imageView;
 
 - (void)awakeFromNib {
     self.noPostsLabel.font = [TDConstants fontSemiBoldSized:17.0];
@@ -25,13 +26,14 @@
 }
 
 - (void)dealloc {
-
+    self.imageView = nil;
 }
 
 - (void)createInfoCell:(NSString*)iconURL {
     self.backgroundColor = [UIColor whiteColor];
-    UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/2 - 75/2, 15, 75, 15)];
-    [self addSubview:imageView];
+    self.imageView = [[UIImageView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/2 - kBigImageWidth/2, 15, kBigImageWidth, kBigImageHeight)];
+    [self addSubview:self.imageView];
+    [self downloadPreview:iconURL];
 
     NSString *title = @"Be the first Challenger!";
     NSAttributedString *titleAttr = [TDViewControllerHelper makeParagraphedTextWithString:title font:[TDConstants fontSemiBoldSized:19] color:[TDConstants headerTextColor] lineHeight:23 lineHeightMultipler:(23/19)];
@@ -41,28 +43,56 @@
     [label sizeToFit];
     CGRect labelFrame = label.frame;
     labelFrame.origin.x = SCREEN_WIDTH/2 - label.frame.size.width/2;
-    labelFrame.origin.y = self.imageView.frame.origin.y + 10;
+    labelFrame.origin.y = self.imageView.frame.origin.y + kBigImageHeight + 10;
     label.frame = labelFrame;
     [self addSubview:label];
 
-    self.noPostsLabel.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT - 64);
+    UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(0, label.frame.origin.y + label.frame.size.height + 15, self.view.frame.size.width - 60, 200)];
     NSString *descriptionTxt = @"Be the first challenger to kick things off!\nSimply tag #strengthlete in your post to\nautomatically enter.";
 
-    NSAttributedString *descriptionString = [TDViewControllerHelper makeLeftAlignmentTextWithString:descriptionTxt font:[TDConstants fontRegularSized:15] color:[TDConstants headerTextColor] lineHeight:18 lineHeightMultipler:(18/15.)];
+    NSMutableAttributedString *detailAttrStr = [[NSMutableAttributedString alloc] initWithString:descriptionTxt];
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    [paragraphStyle setLineHeightMultiple:18/15.];
+    [paragraphStyle setMinimumLineHeight:18];
+    [paragraphStyle setMaximumLineHeight:18];
+    paragraphStyle.alignment = NSTextAlignmentLeft;
+    [detailAttrStr addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, descriptionTxt.length)];
+    [detailAttrStr addAttribute:NSFontAttributeName value:[TDConstants fontRegularSized:15] range:NSMakeRange(0, descriptionTxt.length)];
+    [detailAttrStr addAttribute:NSForegroundColorAttributeName value:[TDConstants headerTextColor] range:NSMakeRange(0, descriptionTxt.length)];
+    label2.attributedText = detailAttrStr;
+    [label2 setNumberOfLines:0];
+    [label2 sizeToFit];
 
-    self.noPostsLabel.attributedText = descriptionString;
-    [self.noPostsLabel setNumberOfLines:0];
-    [self.noPostsLabel sizeToFit];
+    [label2 setNumberOfLines:0];
+    [label2 sizeToFit];
+    CGRect label2Frame = label2.frame;
+    label2Frame.size.width = self.view.frame.size.width - 60;
+    label2Frame.origin.x = 30;
+    label2Frame.origin.y = label.frame.origin.y + label.frame.size.height + 15;
+    label2.frame = label2Frame;
+    [self addSubview:label2];
 
-    CGRect noPostFrame = self.noPostsLabel.frame;
-    noPostFrame.size.width = SCREEN_WIDTH - 60;
-    noPostFrame.origin.x = 30;
-    noPostFrame.origin.y = label.frame.origin.y + label.frame.size.height + 15;
-    self.noPostsLabel.frame = noPostFrame;
+    self.noPostsLabel.hidden = YES;
+}
 
-    debug NSLog(@"cell.frame = %@", NSStringFromCGRect(self.frame));
-    debug NSLog(@"no posts lbael str = %@", NSStringFromCGRect(self.noPostsLabel.frame));
-    self.layer.borderColor = [[UIColor blueColor] CGColor];
-    self.layer.borderWidth = 1.;
+- (void)downloadPreview:(NSString*)stringURL {
+    NSURL *downloadURL = [NSURL URLWithString:stringURL];
+
+    downloadURL = [NSURL URLWithString:stringURL];
+    SDWebImageManager *manager = [SDWebImageManager sharedManager];
+    [manager downloadImageWithURL:downloadURL options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+        // no progress bar here
+    } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *finalURL) {
+        if (![finalURL isEqual:downloadURL]) {
+            return;
+        }
+        if (!error && image) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (self.imageView) {
+                    self.imageView.image = image;
+                }
+            });
+        }
+    }];
 }
 @end

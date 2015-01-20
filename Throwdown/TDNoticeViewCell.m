@@ -11,6 +11,7 @@
 #import "TDAppDelegate.h"
 #import <SDWebImageManager.h>
 #import <UIImage+Resizing.h>
+#import "TDViewControllerHelper.h"
 
 static NSInteger const kMinViewHeight = 50;
 static NSInteger const kMinLabelHeight = 25;
@@ -41,7 +42,7 @@ static NSInteger const kBottomMarginPadding = 15;
     topLineRect.size.height = 1 / [[UIScreen mainScreen] scale];
     self.topLine.frame = topLineRect;
 
-    self.imageView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 65/2 - 45/2, 45, 45)];
+    self.imageView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 65/2 - kSmallImageHeight/2, kSmallImageWidth, kSmallImageHeight)];
     self.bottomMarginPadding = [[UIView alloc] initWithFrame:CGRectMake(0, 65, SCREEN_WIDTH, kBottomMarginPadding)];
 
     self.rightArrow = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"right-arrow-gray"]];
@@ -56,31 +57,25 @@ static NSInteger const kBottomMarginPadding = 15;
         return;
     }
     if ([notice.type isEqualToString:TDCampaginStr]) {
+        self.imageView.contentMode = UIViewContentModeScaleAspectFit;
+
         [self addSubview:self.imageView];
 
         [self downloadPreview:notice.image];
         self.ctaLabel.hidden = YES;
 
-        self.messageLabel.textColor = [TDConstants headerTextColor];
-        self.messageLabel.font = [TDConstants fontSemiBoldSized:16];
-        self.messageLabel.text = @"Strengthlete 28-Day Challenge!";
+        NSAttributedString *string = [TDViewControllerHelper makeLeftAlignmentTextWithString:notice.message font:[TDConstants fontSemiBoldSized:16] color:[TDConstants headerTextColor] lineHeight:16 lineHeightMultipler:(16/16)];
+
+        self.messageLabel.attributedText = string;
         [self.messageLabel sizeToFit];
 
         CGRect messageLabelFrame = self.messageLabel.frame;
-        messageLabelFrame.origin.x = 10+self.imageView.frame.size.width + 10;
+        messageLabelFrame.origin.x = self.imageView.frame.origin.x + self.imageView.frame.size.width + 10;
         messageLabelFrame.origin.y = 65/2 - self.messageLabel.frame.size.height/2;
         self.messageLabel.frame = messageLabelFrame;
 
-        // Download the image here!
-//        [self.imageView setImage:[UIImage imageNamed:@"Strengthlete_Logo_Small"]];
-//        self.imageView.frame = CGRectMake(10,
-//                                          65/2 - [UIImage imageNamed:@"Strengthlete_Logo_Small"].size.height/2,
-//                                          [UIImage imageNamed:@"Strengthlete_Logo_Small"].size.width,
-//                                          [UIImage imageNamed:@"Strengthlete_Logo_Small"].size.height);
-
         [self setAccessoryType:UITableViewCellAccessoryNone];
         self.selectionStyle = UITableViewCellSelectionStyleGray;
-        //self.accessoryView = self.rightArrow;
 
         CGRect rightArrowFrame = self.rightArrow.frame;
         rightArrowFrame.origin.x = SCREEN_WIDTH - 10 -[UIImage imageNamed:@"right-arrow-gray"].size.width;
@@ -97,6 +92,8 @@ static NSInteger const kBottomMarginPadding = 15;
         self.bottomMarginPadding.frame = bottomMarginFrame;
 
         [self addSubview:self.bottomMarginPadding];
+
+        debug NSLog(@"imageView.frame = %@", NSStringFromCGRect(self.imageView.frame));
 
     } else {
         if (notice.darkTextColor) {
@@ -150,49 +147,24 @@ static NSInteger const kBottomMarginPadding = 15;
 
 - (void)downloadPreview:(NSString*)stringURL {
     self.previewLoadError = NO;
-   // NSURL *downloadURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@%@", RSHost, stringURL, FTImage]];
     NSURL *downloadURL = [NSURL URLWithString:stringURL];
+
+    downloadURL = [NSURL URLWithString:stringURL];
     SDWebImageManager *manager = [SDWebImageManager sharedManager];
     [manager downloadImageWithURL:downloadURL options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+        // no progress bar here
     } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *finalURL) {
-        CGFloat width = self.imageView.frame.size.width * [UIScreen mainScreen].scale;
-        image = [image scaleToSize:CGSizeMake(width, width)];
         if (![finalURL isEqual:downloadURL]) {
             return;
         }
-        dispatch_async(dispatch_get_main_queue(), ^{
-            // avoid doing anything on a row that's been reused b/c the download took too long and user scrolled away
-            // self.imageURL will have changed and previewImage will be remove if it's a text post
-            // we have to do this on the main thread for thread safety
-            if (![finalURL isEqual:downloadURL] || !self.imageView) {
-                return;
-            }
-            if (error || !image) {
-                self.previewLoadError = YES;
-            } else if (image) {
-                self.imageView.image = image;
-            }
-        });
+        if (!error && image) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if (self.imageView) {
+                    self.imageView.image = image;
+                }
+            });
+        }
     }];
-
-//    self.userImageURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@", RSHost, profileImage]];
-//    SDWebImageManager *manager = [SDWebImageManager sharedManager];
-//    [manager downloadImageWithURL:self.userImageURL options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
-//        // no progress bar here
-//    } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *finalURL) {
-//        CGFloat width = self.userImageView.frame.size.width * [UIScreen mainScreen].scale;
-//        image = [image scaleToSize:CGSizeMake(width, width)];
-//        if (![finalURL isEqual:self.userImageURL]) {
-//            return;
-//        }
-//        if (!error && image) {
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                if (self.userImageView) {
-//                    self.userImageView.image = image;
-//                }
-//            });
-//        }
-//    }];
 }
 
 @end

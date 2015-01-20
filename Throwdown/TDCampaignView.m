@@ -20,12 +20,11 @@
 @property (nonatomic) UIView *bottomMarginPadding;
 @property (nonatomic) UIImageView *rightArrow;
 @property (nonatomic) UIButton *button;
+@property (nonatomic) UIButton *iconButton; // Created another button which holds the image only, but the imageView inside self.button would not scale.  Workaround
 @end
 
 @implementation TDCampaignView
 static const int bottomMarginPaddingHeight = 15;
-static const int imageWidth = 75;
-static const int imageHeight = 50;
 - (id)initWithFrame:(CGRect)frame campaignData:(NSDictionary*)campaignData {
     self = [super initWithFrame:(CGRect)frame];
     if (self) {
@@ -39,18 +38,23 @@ static const int imageHeight = 50;
     [self setUserInteractionEnabled:YES];
     self.frame = CGRectMake(0, 0, SCREEN_WIDTH, [TDCampaignView heightForCampaignHeader:campaignData]);
 
-    self.icon = [[UIImageView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/2 - imageWidth/2,
+    self.icon = [[UIImageView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/2 - kBigImageWidth/2,
                                  15,
-                                 imageWidth,
-                                 imageHeight )];
+                                 kBigImageWidth,
+                                 kBigImageHeight )];
+    self.icon.contentMode = UIViewContentModeScaleAspectFit;
+
     self.button = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 65)];
+
+    self.iconButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 65/2 - kSmallImageHeight/2, kSmallImageWidth, kSmallImageHeight)];
+    self.iconButton.imageView.contentMode = UIViewContentModeScaleAspectFit;
+
     [self addSubview:self.icon];
 
-    [self downloadUserImage:[campaignData objectForKey:@"image"]];
+    [self downloadPreview:[campaignData objectForKey:@"image"]];
     
     NSString *titleStr = [campaignData objectForKey:@"blurb_title"];
     self.title = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
-    debug NSLog(@"titleSTr = %@", titleStr);
     NSAttributedString *titleAttrStr = [TDViewControllerHelper makeParagraphedTextWithString:titleStr font:[TDConstants fontSemiBoldSized:19] color:[TDConstants headerTextColor] lineHeight:23 lineHeightMultipler:(23./19.)];
     self.title.attributedText = titleAttrStr;
     [self.title setNumberOfLines:0];
@@ -123,18 +127,11 @@ static const int imageHeight = 50;
 
 }
 
--(void)learnMoreButtonPressed {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(loadDetailView)]) {
-        [self.delegate loadDetailView];
-    }
-}
-
 - (void)createChallengersRow {
     UIView *topLine = [[UIView alloc] initWithFrame:CGRectMake(0, self.bottomMarginPadding.frame.origin.y + self.bottomMarginPadding.frame.size.height, SCREEN_WIDTH, .5)];
     topLine.backgroundColor = [TDConstants commentTimeTextColor];
     [self addSubview:topLine];
 
-//    self.button = [[UIButton alloc] initWithFrame:CGRectMake(0, topLine.frame.origin.y + topLine.frame.size.height, SCREEN_WIDTH, 65)];
     CGRect buttonFrame = self.button.frame;
     buttonFrame.origin.y = topLine.frame.origin.y + topLine.frame.size.height;
     self.button.frame = buttonFrame;
@@ -144,12 +141,15 @@ static const int imageHeight = 50;
     [self.button setTitle:text forState:UIControlStateNormal];
     [self.button setTitleColor:[TDConstants headerTextColor] forState:UIControlStateNormal];
     [self.button.titleLabel setFont:[TDConstants fontSemiBoldSized:16]];
-    //[self.button setImage:[UIImage imageNamed:@"Strengthlete_Logo_Small"] forState:UIControlStateNormal];
-    [self.button setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
-    [self.button setContentEdgeInsets:UIEdgeInsetsMake(0, 10, 0, 10)];
-    [self.button setTitleEdgeInsets:UIEdgeInsetsMake(0, 10, 0, 0)];
+    self.button.titleEdgeInsets = UIEdgeInsetsMake(0, self.iconButton.frame.size.width + 20, 0, 0);
+    self.button.contentHorizontalAlignment = UIControlContentHorizontalAlignmentLeft;
+
+
     [self.button addTarget:self action:@selector(challengersButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+    [self.iconButton addTarget:self action:@selector(challengersButtonPressed) forControlEvents:UIControlEventTouchUpInside ];
+
     [self addSubview:self.button];
+    [self.button addSubview:self.iconButton];
 
     self.rightArrow = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, [UIImage imageNamed:@"right-arrow-gray"].size.width, [UIImage imageNamed:@"right-arrow-gray"].size.height)];
     [self.rightArrow setImage:[UIImage imageNamed:@"right-arrow-gray"]];
@@ -194,9 +194,9 @@ static const int imageHeight = 50;
         [learnButton setAttributedTitle:learnAttrStr forState:UIControlStateNormal];
         [learnButton sizeToFit];
     }
-    debug NSLog(@"height = %f", 15 + [UIImage imageNamed:@"Strengthlete_Logo_BIG"].size.height + 10 + label1.frame.size.height + 15 + label2.frame.size.height + 15 + learnButton.frame.size.height + 15 + bottomMarginPaddingHeight);
+    debug NSLog(@"height = %f", 15 + kBigImageHeight + 10 + label1.frame.size.height + 15 + label2.frame.size.height + 15 + learnButton.frame.size.height + 15 + bottomMarginPaddingHeight);
 
-    return 15 + [UIImage imageNamed:@"Strengthlete_Logo_BIG"].size.height + 10 + label1.frame.size.height + 15 + label2.frame.size.height + 15 + learnButton.frame.size.height + 15 + bottomMarginPaddingHeight + 65 + bottomMarginPaddingHeight;
+    return 15 + kBigImageHeight + 10 + label1.frame.size.height + 15 + label2.frame.size.height + 15 + learnButton.frame.size.height + 15 + bottomMarginPaddingHeight + 65 + bottomMarginPaddingHeight;
 }
 
 - (void)challengersButtonPressed {
@@ -205,14 +205,18 @@ static const int imageHeight = 50;
     }
 }
 
-- (void)downloadUserImage:(NSString *)urlString {
+-(void)learnMoreButtonPressed {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(loadDetailView)]) {
+        [self.delegate loadDetailView];
+    }
+}
+
+- (void)downloadPreview:(NSString *)urlString {
     NSURL *url = [NSURL URLWithString:urlString];
     SDWebImageManager *manager = [SDWebImageManager sharedManager];
     [manager downloadImageWithURL:url options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
         // no progress bar here
     } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *finalURL) {
-        //CGFloat width = self.icon.frame.size.width * [UIScreen mainScreen].scale;
-        image = [image scaleToSize:CGSizeMake(imageWidth, imageHeight)];
         if (![finalURL isEqual:url]) {
             return;
         }
@@ -221,8 +225,9 @@ static const int imageHeight = 50;
                 if (self.icon) {
                     self.icon.image = image;
                 }
-                if (self.button) {
-                    [self.button setImage:image forState:UIControlStateNormal];
+                if (self.iconButton) {
+                     [self.iconButton setImage:image forState:UIControlStateNormal];
+                    [self.iconButton setImage:image forState:UIControlStateHighlighted];
                 }
             });
         }
