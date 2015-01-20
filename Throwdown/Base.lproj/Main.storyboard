@@ -1397,7 +1397,7 @@ The Throwdown Community</string>
                             </button>
                         </barButtonItem>
                         <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="Vwl-FS-yeJ" userLabel="Feed Selection">
-                            <rect key="frame" x="228" y="8" width="145" height="29"/>
+                            <rect key="frame" x="227.5" y="7.5" width="145" height="29"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <segments>
                                 <segment title="Explore"/>
@@ -1408,12 +1408,26 @@ The Throwdown Community</string>
                                 <action selector="feedSelectionControlChanged:" destination="y50-ZI-obS" eventType="valueChanged" id="zP2-rx-TQx"/>
                             </connections>
                         </segmentedControl>
+                        <barButtonItem key="rightBarButtonItem" style="plain" id="FfG-30-UXp">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="aNY-wk-FTH">
+                                <rect key="frame" x="544" y="7" width="50" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Invite">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="inviteButtonPressed:" destination="y50-ZI-obS" eventType="touchUpInside" id="7SM-zy-2id"/>
+                                </connections>
+                            </button>
+                        </barButtonItem>
                     </navigationItem>
                     <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="lightContent"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" translucent="NO" prompted="NO"/>
                     <connections>
                         <outlet property="badgeCountLabel" destination="QKD-7D-Qb5" id="Tgq-mk-GhX"/>
                         <outlet property="feedSelectionControl" destination="Vwl-FS-yeJ" id="v9i-pd-3S3"/>
+                        <outlet property="inviteButton" destination="aNY-wk-FTH" id="6xs-eh-VEQ"/>
                         <outlet property="notificationButton" destination="Tdo-gQ-7zF" id="6A5-ER-Qrc"/>
                         <outlet property="profileButton" destination="Uso-in-hkr" id="Q4Y-XF-DPw"/>
                         <outlet property="recordButton" destination="0Pj-wg-KUs" id="FuF-mB-bbc"/>

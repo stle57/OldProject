@@ -69,4 +69,8 @@
 - (void)didAskForPhotos:(BOOL)yes;
 - (BOOL)didAskForPhotos;
 
+- (BOOL)didDismiss:(NSString *)dismissal;
+- (void)setDismissed:(NSString *)dismissal;
+
+
 @end

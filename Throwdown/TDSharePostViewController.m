@@ -26,6 +26,7 @@ typedef NS_ENUM(NSUInteger, TDPostPrivacy) {
 
 static NSString *const kFacebookShareKey = @"TDLastShareToFacebook";
 static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
+static NSString *const kInstagramShareKey = @"TDLastShareToInstagram";
 
 @interface TDSharePostViewController () <UITableViewDataSource, UITableViewDelegate, UIActionSheetDelegate>
 
@@ -36,6 +37,7 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
 
 @property (nonatomic) BOOL shareToFacebook;
 @property (nonatomic) BOOL shareToTwitter;
+@property (nonatomic) BOOL shareToInstagram;
 @property (nonatomic) NSString *filename;
 @property (nonatomic) NSString *comment;
 @property (nonatomic) BOOL isPR;
@@ -76,6 +78,7 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
     self.tableView.delegate = self;
     self.shareToFacebook = ([[TDCurrentUser sharedInstance] canPostToFacebook] && [[[NSUserDefaults standardUserDefaults] objectForKey:kFacebookShareKey] boolValue]);
     self.shareToTwitter = ([[TDCurrentUser sharedInstance] canPostToTwitter] && [[[NSUserDefaults standardUserDefaults] objectForKey:kTwitterShareKey] boolValue]);
+    self.shareToInstagram = ([self canPostToInstagram] && [[[NSUserDefaults standardUserDefaults] objectForKey:kInstagramShareKey] boolValue]);
     self.privacy = TDPostPrivacyPublic;
     
     self.activityIndicator = [[TDActivityIndicator alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
@@ -118,7 +121,13 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
     } else if ([[TDCurrentUser sharedInstance] canPostToTwitter]) {
         [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:NO] forKey:kTwitterShareKey];
     }
-    
+    if (self.shareToInstagram) {
+        [shareOptions addObject:@"instagram"];
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:YES] forKey:kInstagramShareKey];
+    } else if ([self canPostToInstagram]) {
+        [[NSUserDefaults standardUserDefaults] setObject:[NSNumber numberWithBool:NO] forKey:kInstagramShareKey];
+    }
+
     if (self.locationData) {
         NSDictionary *locationDict = [self.locationData objectForKey:@"location"];
         NSString *latLon = [NSString stringWithFormat:@"%@,%@", [[self.locationData objectForKey:@"location"] objectForKey:@"lat"], [[self.locationData objectForKey:@"location"] objectForKey:@"lng"]];
@@ -198,7 +207,7 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 2;
+    return section == 0 ? 2 : 3;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -249,6 +258,11 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
                 cell.titleLabel.text  = [TDCurrentUser sharedInstance].fbIdentifier ? [TDCurrentUser sharedInstance].fbIdentifier : @"Facebook";
                 cell.iconView.image   = [UIImage imageNamed:([TDCurrentUser sharedInstance].fbIdentifier ? @"fb_active_48x48" : @"fb_inactive_48x48")];
                 cell.buttonView.image = [UIImage imageNamed:(self.shareToFacebook ? @"checkbox_on" : @"checkbox")];
+                break;
+            case 2:
+                cell.titleLabel.text  = @"Instagram";
+                cell.iconView.image   = [UIImage imageNamed:([self canPostToInstagram] ? @"instagram_active" : @"instagram_inactive")];
+                cell.buttonView.image = [UIImage imageNamed:(self.shareToInstagram ? @"checkbox_on" : @"checkbox")];
                 break;
         }
         finalCell = cell;
@@ -310,9 +324,38 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
                     }
                 }
                 break;
+            case 2:
+                if (self.shareToInstagram) {
+                    self.shareToInstagram = NO;
+                    [self.tableView reloadData];
+                } else if ([self canPostToInstagram]) {
+                    if (![[TDCurrentUser sharedInstance] didDismiss:@"instagramShareInfo"]) {
+                        [[TDCurrentUser sharedInstance] setDismissed:@"instagramShareInfo"];
+                        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
+                                                                        message:@"After your post is uploaded, Instagram will open for you to share."
+                                                                       delegate:nil
+                                                              cancelButtonTitle:nil
+                                                              otherButtonTitles:@"OK", nil];
+                        [alert show];
+
+                    }
+                    self.shareToInstagram = YES;
+                    [self.tableView reloadData];
+                } else {
+                    NSString *text = (self.filename ? @"You need Instagram installed to share." : @"You have to have a photo or video to post to Instagram.");
+                    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
+                                                                    message:text
+                                                                   delegate:nil
+                                                          cancelButtonTitle:nil
+                                                          otherButtonTitles:@"OK", nil];
+                    [alert show];
+                }
+                break;
         }
     }
 }
+
+#pragma mark - Facebook connection
 
 - (void)checkFacebookPermissions {
     [self.activityIndicator startSpinnerWithMessage:@"Checking permissions"];
@@ -511,6 +554,12 @@ static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
     [alert show];
 }
 
+
+#pragma mark - Instagram connection
+
+- (BOOL)canPostToInstagram {
+    return [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"instagram://"]] && self.filename;
+}
 
 #pragma mark - UIActionSheetDelegate
 

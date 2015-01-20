@@ -27,14 +27,17 @@
 #include "TDFeedbackViewController.h"
 #import "iRate.h"
 #import "TDTagFeedViewController.h"
+#import "NSString+URLEncode.h"
+#import "TDInviteViewController.h"
 
 #define CELL_IDENTIFIER @"TDPostView"
 
-@interface TDHomeViewController () <UIScrollViewDelegate>
+@interface TDHomeViewController () <UIScrollViewDelegate, UIDocumentInteractionControllerDelegate>
 @property (weak, nonatomic) IBOutlet UISegmentedControl *feedSelectionControl;
 @property (weak, nonatomic) IBOutlet UIButton *searchTDUsersButton;
 @property (weak, nonatomic) IBOutlet UILabel *badgeCountLabel;
 @property (nonatomic) NSNumber *badgeCount;
+@property (weak, nonatomic) IBOutlet UIButton *inviteButton;
 
 @property (nonatomic) BOOL didUpload;
 @property (nonatomic) BOOL scrollToTop;
@@ -50,6 +53,9 @@
 @property (nonatomic) CGPoint scrollOffsetFollowing;
 @property (retain) UIView *disableViewOverlay;
 @property (nonatomic) TDFeedbackViewController *feedbackVC;
+@property (nonatomic, retain) UIDocumentInteractionController *documentController;
+@property (nonatomic) NSString *instagramFileLocation;
+
 @end
 
 @implementation TDHomeViewController
@@ -90,6 +96,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(willEnterForegroundCallback:) name:UIApplicationWillEnterForegroundNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeOverlay) name:TDRemoveHomeViewControllerOverlay object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showFeedbackViewController) name:TDShowFeedbackViewController object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postToInstagram:) name:TDNotificationPostToInstagram object:nil];
+
     [self.badgeCountLabel setFont:[TDConstants fontSemiBoldSized:11]];
     [self.badgeCountLabel.layer setCornerRadius:9.0];
 
@@ -99,6 +107,9 @@
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     self.navigationController.navigationBar.barStyle = UIBarStyleBlack;
     self.navigationController.navigationBar.translucent = NO;
+
+    self.inviteButton.titleLabel.font = [TDConstants fontRegularSized:18];
+
 
     self.headerView = [[TDHomeHeaderView alloc] initWithTableView:self.tableView];
     self.previousScrollViewYOffset = 0;
@@ -726,6 +737,19 @@
     [self.navigationController pushViewController:vc animated:YES];
 }
 
+- (IBAction)inviteButtonPressed:(id)sender {
+    [self showNavBar];
+
+    TDInviteViewController *vc = [[TDInviteViewController alloc] initWithNibName:@"TDInviteViewController" bundle:nil ];
+
+    vc.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:vc];
+    navController.navigationBar.barStyle = UIBarStyleDefault;
+    navController.navigationBar.translucent = YES;
+    [self.navigationController presentViewController:navController animated:YES completion:nil];
+
+}
+
 - (void)addOverlay {
     self.disableViewOverlay.backgroundColor = [UIColor colorWithWhite:0 alpha:0.8];
     [[TDAppDelegate appDelegate].window addSubview:self.disableViewOverlay];
@@ -847,4 +871,33 @@
     [self addOverlay];
     [self.disableViewOverlay addSubview:self.feedbackVC.view];
 }
+
+#pragma mark - Instagram sharing
+
+- (void)postToInstagram:(NSNotification *)n {
+    NSString *caption  = [[n.userInfo objectForKey:@"caption"] stringByAppendingString:@" via @ThrowdownUs"];
+    NSString *location = [n.userInfo objectForKey:@"location"];
+    if ([[n.userInfo objectForKey:@"isVideo"] boolValue]) {
+        NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat:@"instagram://library?AssetPath=%@&InstagramCaption=%@", [location urlencodedString], [caption urlencodedString]]];
+
+        if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
+            [[UIApplication sharedApplication] openURL:instagramURL];
+        }
+    } else {
+        self.instagramFileLocation = location;
+        NSURL *fileURL = [NSURL fileURLWithPath:location];
+        self.documentController = [UIDocumentInteractionController interactionControllerWithURL:fileURL];
+        self.documentController.delegate = self;
+        [self.documentController setUTI:@"com.instagram.exclusivegram"];
+        [self.documentController setAnnotation:@{ @"InstagramCaption" : caption }];
+        [self.documentController presentOpenInMenuFromRect:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT) inView:self.view animated:YES];
+    }
+}
+
+- (void)documentInteractionController:(UIDocumentInteractionController *)controller didEndSendingToApplication:(NSString *)application {
+    if (self.instagramFileLocation) {
+        [TDFileSystemHelper removeFileAt:self.instagramFileLocation];
+    }
+}
+
 @end
