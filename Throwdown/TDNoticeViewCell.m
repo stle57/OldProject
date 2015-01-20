@@ -64,9 +64,12 @@ static NSInteger const kBottomMarginPadding = 15;
         [self downloadPreview:notice.image];
         self.ctaLabel.hidden = YES;
 
-        NSAttributedString *string = [TDViewControllerHelper makeLeftAlignmentTextWithString:notice.message font:[TDConstants fontSemiBoldSized:16] color:[TDConstants headerTextColor] lineHeight:16 lineHeightMultipler:(16/16)];
+        self.messageLabel.textColor = [TDConstants headerTextColor];
+        self.messageLabel.font = [TDConstants fontSemiBoldSized:16];
+        self.messageLabel.verticalAlignment = TTTAttributedLabelVerticalAlignmentCenter;
+        self.messageLabel.textAlignment = NSTextAlignmentLeft;
+        self.messageLabel.text = notice.message;
 
-        self.messageLabel.attributedText = string;
         [self.messageLabel sizeToFit];
 
         CGRect messageLabelFrame = self.messageLabel.frame;
@@ -75,8 +78,8 @@ static NSInteger const kBottomMarginPadding = 15;
         self.messageLabel.frame = messageLabelFrame;
 
         [self setAccessoryType:UITableViewCellAccessoryNone];
-        self.selectionStyle = UITableViewCellSelectionStyleGray;
-
+        self.selectionStyle = UITableViewCellSelectionStyleNone;
+        
         CGRect rightArrowFrame = self.rightArrow.frame;
         rightArrowFrame.origin.x = SCREEN_WIDTH - 10 -[UIImage imageNamed:@"right-arrow-gray"].size.width;
         rightArrowFrame.origin.y = 65/2 -[UIImage imageNamed:@"right-arrow-gray"].size.height/2;
@@ -84,7 +87,6 @@ static NSInteger const kBottomMarginPadding = 15;
         [self addSubview:self.rightArrow];
 
         [self addSubview:self.bottomLine];
-        debug NSLog(@"frame of bottomLine = %@", NSStringFromCGRect(self.bottomLine.frame));
         self.bottomMarginPadding.backgroundColor = [TDConstants darkBackgroundColor];
         CGRect bottomMarginFrame = self.bottomMarginPadding.frame;
         bottomMarginFrame.origin.x = 0;
@@ -92,9 +94,6 @@ static NSInteger const kBottomMarginPadding = 15;
         self.bottomMarginPadding.frame = bottomMarginFrame;
 
         [self addSubview:self.bottomMarginPadding];
-
-        debug NSLog(@"imageView.frame = %@", NSStringFromCGRect(self.imageView.frame));
-
     } else {
         if (notice.darkTextColor) {
             self.messageLabel.textColor = [TDConstants darkTextColor];

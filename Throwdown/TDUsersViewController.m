@@ -243,15 +243,13 @@
                       textString:newTextString];
     [activeDaysLabel sizeToFit];
     CGRect activeDaysFrame = activeDaysLabel.frame;
-    activeDaysFrame.size.width = 25;
     activeDaysFrame.origin.x =     SCREEN_WIDTH - 10 - rightArrow.frame.size.width - 10 - activeDaysFrame.size.width;
     activeDaysFrame.origin.y = cell.frame.size.height/2 - cell.descriptionLabel.frame.size.height/2;
     activeDaysLabel.frame = activeDaysFrame;
     [cell addSubview:activeDaysLabel];
 
      CGRect descripFrame = cell.descriptionLabel.frame;
-    descripFrame.size.width = 25;
-    descripFrame.origin.x = SCREEN_WIDTH - 10 - rightArrow.frame.size.width - 10 - activeDaysLabel.frame.size.width - 5 - descripFrame.size.width;
+    descripFrame.origin.x = SCREEN_WIDTH - 10 - rightArrow.frame.size.width - 10 - activeDaysLabel.frame.size.width - 10 - descripFrame.size.width;
     descripFrame.origin.y = cell.frame.size.height/2 - cell.descriptionLabel.frame.size.height/2;
     cell.descriptionLabel.frame = descripFrame;
 
@@ -295,8 +293,8 @@
 }
 
 -(void)modifyPostsLabelString:(UILabel*)label statCount:(NSNumber*)statCount textString:(NSString*)textString{
-    UIFont *font = [TDConstants fontRegularSized:16.0];
-    UIFont *font2= [TDConstants fontRegularSized:10];
+    UIFont *font = [TDConstants fontRegularSized:17.0];
+    UIFont *font2= [TDConstants fontRegularSized:11.];
 //    NSString *newTextString;
 //    if (statCount) {
 //        newTextString = statCount.intValue > 1 ? @"\nposts" : textString;

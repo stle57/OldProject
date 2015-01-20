@@ -306,20 +306,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
             }
 
             return cell;
-        } else {
-            debug NSLog(@"NO USER...show HASHTAG PROFILE");
-            if (self.profileType == kFeedProfileTypeOther) {
-                // We have a hashtag header instead
-                TDGuestInfoCell *cell1 = [tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
-                if (!cell1) {
-                    NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGuestInfoCell" owner:self options:nil];
-                    cell1 = [topLevelObjects objectAtIndex:0];
-                    cell1.selectionStyle = UITableViewCellSelectionStyleNone;
-                    cell1.delegate = self;
-                }
-                [cell1 setHashTagInfoCell];
-                return cell1;
-            }
         }
     }
 
@@ -488,8 +474,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     if (self.profileType != kFeedProfileTypeNone && indexPath.section == 0) {
         if ([self getUser]){
             return [TDUserProfileCell heightForUserProfile:[self getUser]];
-        } else {
-            return [TDGuestInfoCell heightForHashTagInfoCell];
         }
     }
 
