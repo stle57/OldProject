@@ -181,6 +181,15 @@
     [self fetchPostsPath:url parameters:nil success:successHandler error:errorHandler];
 }
 
+- (void)fetchUsersPostsTagged:(NSNumber *)userId tag:(NSString *)tagName start:(NSNumber *)start success:(void(^)(NSDictionary *response))successHandler error:(void (^)(void))errorHandler {
+    NSMutableString *url = [NSMutableString stringWithFormat:@"/api/v1/users/%@/tag/%@.json?user_token=%@", [userId stringValue], tagName, [TDCurrentUser sharedInstance].authToken];
+    if (start) {
+        [url appendString:[NSString stringWithFormat:@"&start=%@", start]];
+    }
+    NSLog(@"URL: %@", url);
+    [self fetchPostsPath:url parameters:nil success:successHandler error:errorHandler];
+}
+
 #pragma mark Posts fetcher
 
 - (void)fetchPostsPath:(NSString *)path parameters:(NSDictionary *)params success:(void(^)(NSDictionary *response))successHandler error:(void (^)(void))errorHandler {

@@ -136,6 +136,8 @@
 		A129BAFC197F231700F6FC2B /* TDUserListCell.m in Sources */ = {isa = PBXBuildFile; fileRef = A129BAFB197F231700F6FC2B /* TDUserListCell.m */; };
 		A13B77B41A6B66B300F444F7 /* TDTagFeedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A13B77B21A6B66B300F444F7 /* TDTagFeedViewController.m */; };
 		A13B77B51A6B66B300F444F7 /* TDTagFeedViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A13B77B31A6B66B300F444F7 /* TDTagFeedViewController.xib */; };
+		A13B77B91A6DBD2400F444F7 /* TDTagUserFeedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A13B77B71A6DBD2400F444F7 /* TDTagUserFeedViewController.m */; };
+		A13B77BA1A6DBD2400F444F7 /* TDTagUserFeedViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A13B77B81A6DBD2400F444F7 /* TDTagUserFeedViewController.xib */; };
 		A1432CE118A99D750073E492 /* TDWelcomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1432CE018A99D750073E492 /* TDWelcomeViewController.m */; };
 		A1432CE418A99DA40073E492 /* TDSignupStepOneViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1432CE318A99DA40073E492 /* TDSignupStepOneViewController.m */; };
 		A1432CE718A99DB30073E492 /* TDLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1432CE618A99DB30073E492 /* TDLoginViewController.m */; };
@@ -424,6 +426,9 @@
 		A13B77B11A6B66B300F444F7 /* TDTagFeedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTagFeedViewController.h; sourceTree = "<group>"; };
 		A13B77B21A6B66B300F444F7 /* TDTagFeedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTagFeedViewController.m; sourceTree = "<group>"; };
 		A13B77B31A6B66B300F444F7 /* TDTagFeedViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDTagFeedViewController.xib; sourceTree = "<group>"; };
+		A13B77B61A6DBD2400F444F7 /* TDTagUserFeedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTagUserFeedViewController.h; sourceTree = "<group>"; };
+		A13B77B71A6DBD2400F444F7 /* TDTagUserFeedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTagUserFeedViewController.m; sourceTree = "<group>"; };
+		A13B77B81A6DBD2400F444F7 /* TDTagUserFeedViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDTagUserFeedViewController.xib; sourceTree = "<group>"; };
 		A1432CDF18A99D750073E492 /* TDWelcomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDWelcomeViewController.h; sourceTree = "<group>"; };
 		A1432CE018A99D750073E492 /* TDWelcomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDWelcomeViewController.m; sourceTree = "<group>"; wrapsLines = 1; };
 		A1432CE218A99DA40073E492 /* TDSignupStepOneViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSignupStepOneViewController.h; sourceTree = "<group>"; };
@@ -1031,6 +1036,9 @@
 				A13B77B11A6B66B300F444F7 /* TDTagFeedViewController.h */,
 				A13B77B21A6B66B300F444F7 /* TDTagFeedViewController.m */,
 				A13B77B31A6B66B300F444F7 /* TDTagFeedViewController.xib */,
+				A13B77B61A6DBD2400F444F7 /* TDTagUserFeedViewController.h */,
+				A13B77B71A6DBD2400F444F7 /* TDTagUserFeedViewController.m */,
+				A13B77B81A6DBD2400F444F7 /* TDTagUserFeedViewController.xib */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -1384,6 +1392,7 @@
 				2D01951D1901DAF4000CBF74 /* TDNoPostsCell.xib in Resources */,
 				2DE2C70519087AA900E51156 /* TDNoMorePostsCell.xib in Resources */,
 				2DBA430218DA455500366737 /* TDTextField.xib in Resources */,
+				A13B77BA1A6DBD2400F444F7 /* TDTagUserFeedViewController.xib in Resources */,
 				2DA5F05218D36745003D2F99 /* ProximaNova-Light.otf in Resources */,
 				A18D9A5E19D9F551006A0658 /* Launch Screen.xib in Resources */,
 				A10F9C251909B01600D2CAB0 /* SingleBellDing.caf in Resources */,
@@ -1472,6 +1481,7 @@
 				A1DD182A1A3839CB00B12BDC /* TDLocationFeedViewController.m in Sources */,
 				A1F02FD418C92277002FEB2F /* TDPostUpload.m in Sources */,
 				A151958B18BAE8FD0050A45B /* TDUser.m in Sources */,
+				A13B77B91A6DBD2400F444F7 /* TDTagUserFeedViewController.m in Sources */,
 				2DA39FD618E0B2570004A9C7 /* TDMoreComments.m in Sources */,
 				A14E38EF1992E71B001B46AF /* TDSocialNetworkCell.m in Sources */,
 				2D5714CC18BD9AB300AF0B4D /* VideoButtonSegue.m in Sources */,
