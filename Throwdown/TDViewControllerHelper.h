@@ -31,7 +31,6 @@
 + (NSAttributedString *)makeParagraphedTextForTruncatedBio:(NSString *)text font:(UIFont*)font color:(UIColor*)color lineHeight:(CGFloat)lineHeight;
 + (void)linkUsernamesInLabel:(TTTAttributedLabel *)label users:(NSArray *)users withHashtags:(BOOL)linkHashtags;
 + (void)linkUsernamesInLabel:(TTTAttributedLabel *)label users:(NSArray *)users pattern:(NSString *)pattern withHashtags:(BOOL)linkHashtags;
-+ (void)boldHashtagsInLabel:(UILabel*)label;
 + (CGFloat)heightForComment:(NSString *)text withMentions:(NSArray *)mentions;
 + (CGFloat)heightForText:(NSString *)text withMentions:(NSArray *)mentions withFont:(UIFont *)font inWidth:(CGFloat)width;
 + (BOOL)isThrowdownURL:(NSURL *)url;
@@ -41,4 +40,11 @@
 + (CGPoint)centerPosition;
 + (NSString*)getAddressFormat:(NSDictionary*)data;
 + (NSAttributedString *)makeLeftAlignmentTextWithString:(NSString *)text font:(UIFont*)font color:(UIColor*)color lineHeight:(CGFloat)lineHeight lineHeightMultipler:(CGFloat)lineHeightMultiplier;
+
+// Hashtags:
++ (NSMutableAttributedString *)boldHashtagsInText:(NSMutableAttributedString *)text fontSize:(CGFloat)fontSize;
++ (NSMutableDictionary *)hashTagStyle;
++ (NSArray *)hashtagMatchesForString:(NSString *)string;
++ (NSRegularExpression *)hashtagRegex;
+
 @end

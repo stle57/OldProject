@@ -59,6 +59,7 @@
     [detailAttrStr addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, descriptionTxt.length)];
     [detailAttrStr addAttribute:NSFontAttributeName value:[TDConstants fontRegularSized:15] range:NSMakeRange(0, descriptionTxt.length)];
     [detailAttrStr addAttribute:NSForegroundColorAttributeName value:[TDConstants headerTextColor] range:NSMakeRange(0, descriptionTxt.length)];
+    detailAttrStr = [TDViewControllerHelper boldHashtagsInText:detailAttrStr fontSize:label2.font.pointSize];
     label2.attributedText = detailAttrStr;
     [label2 setNumberOfLines:0];
     [label2 sizeToFit];
