@@ -165,7 +165,7 @@
         }
 
         NSString *photoURL = [self.campaignData valueForKey:@"image"];
-        [cell createInfoCell:photoURL];
+        [cell createInfoCell:photoURL tagName:self.tagName];
  
         return cell;
     }

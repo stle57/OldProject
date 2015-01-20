@@ -79,7 +79,7 @@ static NSInteger const kBottomMarginPadding = 15;
 
         [self setAccessoryType:UITableViewCellAccessoryNone];
         self.selectionStyle = UITableViewCellSelectionStyleNone;
-        
+
         CGRect rightArrowFrame = self.rightArrow.frame;
         rightArrowFrame.origin.x = SCREEN_WIDTH - 10 -[UIImage imageNamed:@"right-arrow-gray"].size.width;
         rightArrowFrame.origin.y = 65/2 -[UIImage imageNamed:@"right-arrow-gray"].size.height/2;

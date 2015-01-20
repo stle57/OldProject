@@ -29,7 +29,7 @@
     self.imageView = nil;
 }
 
-- (void)createInfoCell:(NSString*)iconURL {
+- (void)createInfoCell:(NSString*)iconURL tagName:(NSString*)tagName{
     self.backgroundColor = [UIColor whiteColor];
     self.imageView = [[UIImageView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH/2 - kBigImageWidth/2, 15, kBigImageWidth, kBigImageHeight)];
     [self addSubview:self.imageView];
@@ -48,7 +48,7 @@
     [self addSubview:label];
 
     UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(0, label.frame.origin.y + label.frame.size.height + 15, self.view.frame.size.width - 60, 200)];
-    NSString *descriptionTxt = @"Be the first challenger to kick things off!\nSimply tag #strengthlete in your post to\nautomatically enter.";
+    NSString *descriptionTxt = [NSString stringWithFormat:@"%@%@%@", @"Be the first challenger to kick things off!\nSimply tag #", tagName, @" in your post to\nautomatically enter." ];
 
     NSMutableAttributedString *detailAttrStr = [[NSMutableAttributedString alloc] initWithString:descriptionTxt];
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];

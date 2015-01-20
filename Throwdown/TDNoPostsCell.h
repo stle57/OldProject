@@ -18,5 +18,5 @@
 @property (weak, nonatomic) IBOutlet UILabel *noPostsLabel;
 @property (weak, nonatomic) IBOutlet UIView *view;
 
-- (void)createInfoCell:(NSString*)iconURL;
+- (void)createInfoCell:(NSString*)iconURL tagName:(NSString*)tagName;
 @end
