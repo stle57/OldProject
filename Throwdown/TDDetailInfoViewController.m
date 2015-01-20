@@ -38,7 +38,7 @@
     self.view.backgroundColor = [UIColor whiteColor];
     debug NSLog(@"self.view = %@", NSStringFromCGRect(self.view.frame));
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    self.scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    self.scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width,  SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height)];
 
     if (self.scrollView.scrollEnabled) {
         debug NSLog(@"scrolling is enabled");
@@ -101,7 +101,7 @@
     [self.scrollView addSubview:self.detailDescription];
 
     CGSize scrollableSize =  CGSizeMake(SCREEN_WIDTH,
-                                        15 + self.logoImageView.frame.size.height + 10 + self.label.frame.size.height + 15 + self.detailDescription.frame.size.height + 20);
+                                        15 + kBigImageHeight + 10 + self.label.frame.size.height + 15 + self.detailDescription.frame.size.height + 20 + 20);
     [self.scrollView setContentSize:scrollableSize];
 
     [self.view addSubview:self.scrollView];
