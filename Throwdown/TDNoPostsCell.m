@@ -47,8 +47,9 @@
     label.frame = labelFrame;
     [self addSubview:label];
 
-    UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(0, label.frame.origin.y + label.frame.size.height + 15, self.view.frame.size.width - 60, 200)];
-    NSString *descriptionTxt = [NSString stringWithFormat:@"%@%@%@", @"Be the first challenger to kick things off!\nSimply tag #", tagName, @" in your post to\nautomatically enter." ];
+    UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(30, label.frame.origin.y + label.frame.size.height + 15, SCREEN_WIDTH - 60, 200)];
+    [label2 setNumberOfLines:0];
+    NSString *descriptionTxt = [NSString stringWithFormat:@"%@%@%@", @"Be the first challenger to kick things off!\nSimply tag #", tagName, @" in your post to automatically enter." ];
 
     NSMutableAttributedString *detailAttrStr = [[NSMutableAttributedString alloc] initWithString:descriptionTxt];
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
@@ -59,18 +60,12 @@
     [detailAttrStr addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, descriptionTxt.length)];
     [detailAttrStr addAttribute:NSFontAttributeName value:[TDConstants fontRegularSized:15] range:NSMakeRange(0, descriptionTxt.length)];
     [detailAttrStr addAttribute:NSForegroundColorAttributeName value:[TDConstants headerTextColor] range:NSMakeRange(0, descriptionTxt.length)];
-    detailAttrStr = [TDViewControllerHelper boldHashtagsInText:detailAttrStr fontSize:label2.font.pointSize];
+    detailAttrStr = [TDViewControllerHelper boldHashtagsInText:detailAttrStr fontSize:15];
     label2.attributedText = detailAttrStr;
-    [label2 setNumberOfLines:0];
-    [label2 sizeToFit];
-
-    [label2 setNumberOfLines:0];
-    [label2 sizeToFit];
-    CGRect label2Frame = label2.frame;
-    label2Frame.size.width = self.view.frame.size.width - 60;
-    label2Frame.origin.x = 30;
-    label2Frame.origin.y = label.frame.origin.y + label.frame.size.height + 15;
-    label2.frame = label2Frame;
+    CGSize size = [label2 sizeThatFits:CGSizeMake(SCREEN_WIDTH - 60, MAXFLOAT)];
+    CGRect frame = label2.frame;
+    frame.size.height = size.height;
+    label2.frame = frame;
     [self addSubview:label2];
 
     self.noPostsLabel.hidden = YES;
