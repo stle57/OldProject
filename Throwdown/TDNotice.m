@@ -16,7 +16,6 @@
 @property (nonatomic, readonly) NSString *action;
 @property (nonatomic, readonly) NSString *url;
 @property (nonatomic, readonly) NSDictionary *col;
-
 @end
 
 @implementation TDNotice
@@ -25,6 +24,21 @@
     self = [super init];
     if (self) {
         _message = [dict objectForKey:@"message"];
+
+        if (![self isNull:@"type" in:dict]) {
+            _type = [dict objectForKey:@"type"];
+        }
+        if (![self isNull:@"image" in:dict]) {
+            _image = [dict objectForKey:@"image"];
+
+            NSString *myString = _image;
+            NSArray *myWords = [myString componentsSeparatedByCharactersInSet:
+                                [NSCharacterSet characterSetWithCharactersInString:@"/"]
+                                ];
+            if (myWords.count) {
+                _imageFileName = myWords[myWords.count-1];
+            }
+        }
         if (![self isNull:@"cta" in:dict]) {
             _cta = [dict objectForKey:@"cta"];
         }
@@ -94,9 +108,6 @@
         if ([[UIApplication sharedApplication] canOpenURL:fullUrl]) {
             [[UIApplication sharedApplication] openURL:fullUrl];
         }
-    } else {
-        debug NSLog(@"do something else with notices");
-
     }
 }
 

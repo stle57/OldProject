@@ -7,8 +7,9 @@
 //
 
 #import "TDPostsViewController.h"
-
-@interface TDTagFeedViewController : TDPostsViewController
+#import "TDGuestInfoCell.h"
+#import "TDCampaignView.h"
+@interface TDTagFeedViewController : TDPostsViewController<TDCampaignViewDelegate>
 
 @property (nonatomic) NSString *tagName;
 

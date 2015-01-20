@@ -28,5 +28,5 @@
 - (void)followUser:(NSNumber *)userID callback:(void (^)(BOOL success))callback;
 - (void)unFollowUser:(NSNumber *)userID callback:(void (^)(BOOL success))callback;
 - (void)getSuggestedUserList:(void (^)(BOOL success, NSArray *suggestedList))callback;
-
+- (void)getChallengersList:(NSString*)tagName callback:(void (^)(BOOL success, NSArray *challengerList))callback;
 @end

@@ -26,6 +26,7 @@
 #include "TDFindPeopleViewController.h"
 #include "TDFeedbackViewController.h"
 #import "iRate.h"
+#import "TDTagFeedViewController.h"
 
 #define CELL_IDENTIFIER @"TDPostView"
 
@@ -250,19 +251,18 @@
             self.notices = [NSArray arrayWithArray:tmp];
         } else {
             self.notices = nil;
-
         }
-        //THIS IS TEMPORARY UNTIL BACKEND IS FINALIZED
-        NSMutableArray *temp = [[NSMutableArray alloc] init];
-        [temp addObject:[[TDNotice alloc] initWithDictionary:@{@"message":@"Strengthlete 28-Day Challenge!"}]];
-        if (self.notices.count && tmp.count) {
-            [tmp addObjectsFromArray:temp];
-            self.notices = [NSArray arrayWithArray:tmp];
-        } else {
-            self.notices = [NSArray arrayWithArray:temp];
-        }
+//        //THIS IS TEMPORARY UNTIL BACKEND IS FINALIZED
+//        NSMutableArray *temp = [[NSMutableArray alloc] init];
+//        [temp addObject:[[TDNotice alloc] initWithDictionary:@{@"message":@"Strengthlete 28-Day Challenge!"}]];
+//        if (self.notices.count && tmp.count) {
+//            [tmp addObjectsFromArray:temp];
+//            self.notices = [NSArray arrayWithArray:tmp];
+//        } else {
+//            self.notices = [NSArray arrayWithArray:temp];
+//        }
 
-        debug NSLog(@"=======>self.notices count=%lu", self.notices.count);
+//        debug NSLog(@"=======>self.notices count=%lu", (unsigned long)self.notices.count);
 
         // Update notification count from feed
         // TODO: There's an inconsistency if user opens activity feed, this still gets set even though user has seen the notifications.
@@ -630,6 +630,10 @@
 
         }
         return YES;
+    } else if ([model isEqualToString:@"tag"]) {
+        TDTagFeedViewController *vc = [[TDTagFeedViewController alloc] initWithNibName:@"TDTagFeedViewController" bundle:nil ];
+        vc.tagName = [[url path] lastPathComponent];
+        [self.navigationController pushViewController:vc animated:YES];
     }
     return NO;
 }

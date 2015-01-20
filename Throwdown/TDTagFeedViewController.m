@@ -9,6 +9,8 @@
 #import "TDTagFeedViewController.h"
 #import "TDViewControllerHelper.h"
 #import "TDPostAPI.h"
+#import "TDDetailInfoViewController.h"
+#import "TDUsersViewController.h"
 
 @interface TDTagFeedViewController ()
 
@@ -16,7 +18,9 @@
 @property (nonatomic) UIButton *backButton;
 @property (nonatomic) NSArray *posts;
 @property (nonatomic) NSNumber *nextStart;
-
+@property (nonatomic) TDCampaignView *campaignView;
+@property (nonatomic) UIView *headerView;
+@property (nonatomic) NSDictionary *campaignData;
 @end
 
 @implementation TDTagFeedViewController
@@ -143,6 +147,12 @@
         return;
     }
     [[TDPostAPI sharedInstance] fetchPostsForTagName:self.tagName start:nil success:^(NSDictionary *response) {
+        debug NSLog(@"got data");
+        if ([response valueForKey:TDCampaginStr]) {
+            debug NSLog(@"creating campaign view with data = %@", [response valueForKey:TDCampaginStr]);
+            self.campaignData = [response valueForKey:TDCampaginStr];
+            [self loadCampaignView:[response valueForKey:TDCampaginStr] ];
+        }
         [self handleNextStart:[response objectForKey:@"next_start"]];
         [self handlePostsResponse:response fromStart:YES];
     } error:^{
@@ -199,6 +209,20 @@
     return YES;
 }
 
+- (void)loadCampaignView:(NSDictionary*)campaignData {
+    if (self.headerView) {
+        return;
+    }
+
+    CGFloat width = [UIScreen mainScreen].bounds.size.width;
+    self.headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, width, [TDCampaignView heightForCampaignHeader:campaignData])];
+    self.campaignView =
+        [[TDCampaignView alloc] initWithFrame:(CGRectMake(0, 0, width, [TDCampaignView heightForCampaignHeader:campaignData])) campaignData:campaignData];
+    self.campaignView.delegate = self;
+    [self.headerView addSubview:self.campaignView];
+    [self.tableView setTableHeaderView:self.headerView];
+}
+
 #pragma mark - View delegate and event overrides
 
 - (void)userTappedURL:(NSURL *)url {
@@ -212,4 +236,21 @@
     [super userTappedURL:url];
 }
 
+#pragma mark - TDGuestInfoCellDelegate 
+- (void)loadDetailView {
+    debug NSLog(@"LOAD LEARN MORE from TDTagFeedViewController");
+    TDDetailInfoViewController *viewController = [[TDDetailInfoViewController alloc] initWithNibName:@"TDDetailInfoViewController" bundle:nil title:@"Learn More" campaignData:self.campaignData];
+    viewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:viewController];
+    navController.navigationBar.barStyle = UIBarStyleDefault;
+    navController.navigationBar.translucent = YES;
+    [self.navigationController presentViewController:navController animated:YES completion:nil];
+}
+
+-(void)loadChallengersView {
+    debug NSLog(@"Load challengers feed");
+    TDUsersViewController *vc = [[TDUsersViewController alloc] initWithNibName:@"TDUsersViewController" bundle:nil title:@"Challengers"];
+    vc.tagName = self.tagName;
+    [self.navigationController pushViewController:vc animated:NO];
+}
 @end

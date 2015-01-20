@@ -9,6 +9,7 @@
 #import "TDNoticeViewCell.h"
 #import "TDConstants.h"
 #import "TDAppDelegate.h"
+#import <SDWebImageManager.h>
 
 static NSInteger const kMinViewHeight = 50;
 static NSInteger const kMinLabelHeight = 25;
@@ -23,6 +24,8 @@ static NSInteger const kBottomMarginPadding = 15;
 @property (nonatomic) UIImageView *rightArrow;
 @property (nonatomic) UIView *bottomMarginPadding;
 @property (nonatomic) UIView *bottomLine;
+@property (nonatomic) BOOL previewLoadError;
+
 @end
 
 @implementation TDNoticeViewCell
@@ -51,12 +54,21 @@ static NSInteger const kBottomMarginPadding = 15;
     if (!notice) {
         return;
     }
-    if ([notice.message isEqualToString:@"Strengthlete 28-Day Challenge!"]) {
+    if ([notice.type isEqualToString:TDCampaginStr]) {
+        self.imageView.frame = CGRectMake(10,
+                                    65/2 - [UIImage imageNamed:notice.imageFileName].size.height/2,
+                                    [UIImage imageNamed:notice.imageFileName].size.width,
+                                    [UIImage imageNamed:notice.imageFileName].size.height);
+        debug NSLog(@"width of image = %f",[UIImage imageNamed:notice.imageFileName].size.width );
+        debug NSLog(@"height of image = %f", [UIImage imageNamed:notice.imageFileName].size.height);
+        [self addSubview:self.imageView];
+
+        [self downloadPreview:notice.image];
         self.ctaLabel.hidden = YES;
 
         self.messageLabel.textColor = [TDConstants headerTextColor];
         self.messageLabel.font = [TDConstants fontSemiBoldSized:16];
-        self.messageLabel.text = notice.message;
+        self.messageLabel.text = @"Strengthlete 28-Day Challenge!";
         [self.messageLabel sizeToFit];
 
         CGRect messageLabelFrame = self.messageLabel.frame;
@@ -64,12 +76,12 @@ static NSInteger const kBottomMarginPadding = 15;
         messageLabelFrame.origin.y = 65/2 - self.messageLabel.frame.size.height/2;
         self.messageLabel.frame = messageLabelFrame;
 
-        [self.imageView setImage:[UIImage imageNamed:@"Strengthlete_Logo_Small"]];
-        self.imageView.frame = CGRectMake(10,
-                                          65/2 - [UIImage imageNamed:@"Strengthlete_Logo_Small"].size.height/2,
-                                          [UIImage imageNamed:@"Strengthlete_Logo_Small"].size.width,
-                                          [UIImage imageNamed:@"Strengthlete_Logo_Small"].size.height);
-        [self addSubview:self.imageView];
+        // Download the image here!
+//        [self.imageView setImage:[UIImage imageNamed:@"Strengthlete_Logo_Small"]];
+//        self.imageView.frame = CGRectMake(10,
+//                                          65/2 - [UIImage imageNamed:@"Strengthlete_Logo_Small"].size.height/2,
+//                                          [UIImage imageNamed:@"Strengthlete_Logo_Small"].size.width,
+//                                          [UIImage imageNamed:@"Strengthlete_Logo_Small"].size.height);
 
         [self setAccessoryType:UITableViewCellAccessoryNone];
         self.selectionStyle = UITableViewCellSelectionStyleGray;
@@ -127,7 +139,7 @@ static NSInteger const kBottomMarginPadding = 15;
         return 0;
     }
 
-    if ([notice.message isEqualToString:@"Strengthlete 28-Day Challenge!"]) {
+    if ([notice.type isEqualToString:TDCampaginStr]) {
         return 65+kBottomMarginPadding;
     }
 
@@ -139,6 +151,29 @@ static NSInteger const kBottomMarginPadding = 15;
 
     CGFloat height = kLabelTopMargin + kCTALabelHeight + (size.height > kMinLabelHeight ? size.height : kMinLabelHeight);
     return height < kMinViewHeight ? kMinViewHeight : height;
+}
+
+- (void)downloadPreview:(NSString*)stringURL {
+    self.previewLoadError = NO;
+   // NSURL *downloadURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/%@%@", RSHost, stringURL, FTImage]];
+    NSURL *downloadURL = [NSURL URLWithString:stringURL];
+    SDWebImageManager *manager = [SDWebImageManager sharedManager];
+    [manager downloadImageWithURL:downloadURL options:0 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+    } completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *finalURL) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            // avoid doing anything on a row that's been reused b/c the download took too long and user scrolled away
+            // self.imageURL will have changed and previewImage will be remove if it's a text post
+            // we have to do this on the main thread for thread safety
+            if (![finalURL isEqual:downloadURL] || !self.imageView) {
+                return;
+            }
+            if (error || !image) {
+                self.previewLoadError = YES;
+            } else if (image) {
+                self.imageView.image = image;
+            }
+        });
+    }];
 }
 
 @end

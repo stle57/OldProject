@@ -14,7 +14,6 @@
 #import <UIImage+Resizing.h>
 
 @interface TDUsersViewController ()
-
 @end
 
 @implementation TDUsersViewController
@@ -53,6 +52,10 @@
     [self.navLabel sizeToFit];
     [self.navigationItem setTitleView:self.navLabel];
 
+    CGRect activityFrame = self.activityIndicator.frame;
+    activityFrame.origin.x = SCREEN_WIDTH/2 - self.activityIndicator.frame.size.width/2;
+    activityFrame.origin.y = SCREEN_HEIGHT/2 - self.activityIndicator.frame.size.height/2;
+    self.activityIndicator.frame = activityFrame;
     [self loadData];
 }
 
@@ -76,22 +79,13 @@
     self.activityIndicator.text.text = @"Loading";
     [self showActivity];
     // Load data from server
-    [[TDUserAPI sharedInstance] getSuggestedUserList:^(BOOL success, NSArray *suggestedList) {
+    [[TDUserAPI sharedInstance] getChallengersList:self.tagName callback:^(BOOL success, NSArray *suggestedList) {
         if (success && suggestedList && suggestedList.count > 0) {
             self.userList = [suggestedList copy];
-            debug NSLog(@"got suggested user list");
-            [[TDUserAPI sharedInstance] getCommunityUserList:^(BOOL success, NSArray *returnList) {
-                if (success && returnList && returnList.count > 0) {
-                    debug NSLog(@"got community user list");
-                    self.userList = [returnList copy];
-                    self.gotFromServer = YES;
-                    [self.tableView reloadData];
-                    [self hideActivity];
-                } else {
-                    self.gotFromServer = NO;
-                    [self hideActivity];
-                }
-            }];
+            debug NSLog(@"challenger list, %@", self.userList);
+            self.gotFromServer = YES;
+            [self.tableView reloadData];
+            [self hideActivity];
         } else {
             self.gotFromServer = NO;
             [self hideActivity];
@@ -199,15 +193,39 @@
     nameFrame.origin.y = cell.frame.size.height/2 - cell.nameLabel.frame.size.height/2;
     cell.nameLabel.frame = nameFrame;
 
+    NSInteger postNumber = [[userInfo valueForKey:@"tag_posts_count"] intValue];
+    NSString *newTextString;
+    if (postNumber) {
+        newTextString = postNumber > 1 ? @"\nposts" : @"\npost";
+    } else {
+        newTextString = @"";
+    }
+    NSInteger activeDaysNumber = [[userInfo valueForKey:@"tag_days_count"] intValue];
+
+    [self modifyPostsLabelString:cell.descriptionLabel statCount:[NSNumber numberWithInteger:postNumber] textString:newTextString];
     cell.descriptionLabel.hidden = NO; // Used for number of posts
-    cell.descriptionLabel.textColor = [TDConstants commentTimeTextColor];
-    cell.descriptionLabel.font = [TDConstants fontRegularSized:15];
-    NSAttributedString *numPostStr = [TDViewControllerHelper makeParagraphedTextWithString:@"100 posts" font:[TDConstants fontRegularSized:15.] color:[TDConstants commentTimeTextColor] lineHeight:15. lineHeightMultipler:(15./15.)];
-    cell.descriptionLabel.attributedText = numPostStr;
+    cell.descriptionLabel.frame = CGRectMake(0, 0, 100, cell.frame.size.height);
     [cell.descriptionLabel sizeToFit];
 
+
+    UILabel *activeDaysLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 100, cell.frame.size.height)];
+    if (activeDaysNumber) {
+        newTextString = activeDaysNumber > 1 ? @"\ndays" : @"\nday";
+    } else {
+        newTextString = @"";
+    }
+    [self modifyPostsLabelString:activeDaysLabel statCount:[NSNumber numberWithInteger:activeDaysNumber]
+                      textString:newTextString];
+    [activeDaysLabel sizeToFit];
+    CGRect activeDaysFrame = activeDaysLabel.frame;
+    activeDaysFrame.origin.x =     SCREEN_WIDTH - 44 - 10 - activeDaysLabel.frame.size.width;
+    activeDaysFrame.origin.y = cell.frame.size.height/2 - cell.descriptionLabel.frame.size.height/2;
+    activeDaysLabel.frame = activeDaysFrame;
+    [cell addSubview:activeDaysLabel];
+
+
     CGRect descripFrame = cell.descriptionLabel.frame;
-    descripFrame.origin.x = SCREEN_WIDTH - 44 - 10 - cell.descriptionLabel.frame.size.width;
+    descripFrame.origin.x = SCREEN_WIDTH - 44 - 10 - activeDaysLabel.frame.size.width - 10 - cell.descriptionLabel.frame.size.width;
     descripFrame.origin.y = cell.frame.size.height/2 - cell.descriptionLabel.frame.size.height/2;
     cell.descriptionLabel.frame = descripFrame;
 
@@ -252,4 +270,30 @@
         }
     }];
 }
+
+-(void)modifyPostsLabelString:(UILabel*)label statCount:(NSNumber*)statCount textString:(NSString*)textString{
+    UIFont *font = [TDConstants fontSemiBoldSized:18.0];
+    UIFont *font2= [TDConstants fontRegularSized:14];
+//    NSString *newTextString;
+//    if (statCount) {
+//        newTextString = statCount.intValue > 1 ? @"\nposts" : textString;
+//    } else {
+//        newTextString = @"";
+//    }
+    NSString *postString = [NSString stringWithFormat:@"%@%@", statCount, textString];
+
+    NSMutableAttributedString *attString = [[NSMutableAttributedString alloc] initWithString:postString];
+    [attString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, postString.length)];
+    [attString addAttribute:NSForegroundColorAttributeName value:[TDConstants brandingRedColor] range:NSMakeRange(0, postString.length)];
+    [attString addAttribute:NSFontAttributeName value:font2 range:NSMakeRange(postString.length - textString.length, textString.length)];
+    [attString addAttribute:NSForegroundColorAttributeName value:[UIColor blackColor] range:NSMakeRange(postString.length - textString.length, textString.length)];
+
+    label.lineBreakMode = NSLineBreakByWordWrapping;
+    [label setNumberOfLines:0];
+    label.textAlignment = NSTextAlignmentCenter;
+
+    [label setAttributedText:attString];
+}
+
+
 @end

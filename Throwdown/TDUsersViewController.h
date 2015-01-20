@@ -18,6 +18,8 @@
 @property (nonatomic) NSArray *userList;
 @property (nonatomic) NSString *navTitle;
 @property (nonatomic) BOOL gotFromServer;
+@property (nonatomic) NSString *tagName;
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil title:(NSString*)title;
 - (IBAction)backButtonHit:(id)sender;
 @end

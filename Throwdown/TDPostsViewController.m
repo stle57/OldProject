@@ -284,25 +284,43 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 
     // 1st row for Profile Header
     if (self.profileType != kFeedProfileTypeNone && indexPath.section == 0) {
-        TDUserProfileCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_PROFILE];
-        if (!cell) {
-            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_PROFILE owner:self options:nil];
-            cell = [topLevelObjects objectAtIndex:0];
-            cell.selectionStyle = UITableViewCellSelectionStyleNone;
-            cell.delegate = self;
-        }
+        if ([self getUser]) {
+            TDUserProfileCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_PROFILE];
+            if (!cell) {
+                NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_PROFILE owner:self options:nil];
+                cell = [topLevelObjects objectAtIndex:0];
+                cell.selectionStyle = UITableViewCellSelectionStyleNone;
+                cell.delegate = self;
+            }
 
-        TDUser *user = [self getUser];
-        if (!user || self.profileType == kFeedProfileTypeNone) {
-            [cell setUser:user withButton:UserProfileButtonTypeUnknown];
-        } else if ([[TDCurrentUser sharedInstance].userId isEqualToNumber:user.userId]) {
-            [cell setUser:user withButton:UserProfileButtonTypeInvite];
-        } else if (self.profileType == kFeedProfileTypeOther) {
-            [cell setUser:user withButton:(user.following ? UserProfileButtonTypeFollowing : UserProfileButtonTypeFollow)];
+            TDUser *user = [self getUser];
+            if (!user || self.profileType == kFeedProfileTypeNone) {
+                [cell setUser:user withButton:UserProfileButtonTypeUnknown];
+            } else if ([[TDCurrentUser sharedInstance].userId isEqualToNumber:user.userId]) {
+                [cell setUser:user withButton:UserProfileButtonTypeInvite];
+            } else if (self.profileType == kFeedProfileTypeOther) {
+                    [cell setUser:user withButton:(user.following ? UserProfileButtonTypeFollowing : UserProfileButtonTypeFollow)];
+
+            } else {
+                [cell setUser:user withButton:UserProfileButtonTypeInvite];
+            }
+
+            return cell;
         } else {
-            [cell setUser:user withButton:UserProfileButtonTypeInvite];
+            debug NSLog(@"NO USER...show HASHTAG PROFILE");
+            if (self.profileType == kFeedProfileTypeOther) {
+                // We have a hashtag header instead
+                TDGuestInfoCell *cell1 = [tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
+                if (!cell1) {
+                    NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGuestInfoCell" owner:self options:nil];
+                    cell1 = [topLevelObjects objectAtIndex:0];
+                    cell1.selectionStyle = UITableViewCellSelectionStyleNone;
+                    cell1.delegate = self;
+                }
+                [cell1 setHashTagInfoCell];
+                return cell1;
+            }
         }
-        return cell;
     }
 
     // 'Loading' or 'No Posts' cell
@@ -468,7 +486,11 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 
     // 1st row is Profile Header
     if (self.profileType != kFeedProfileTypeNone && indexPath.section == 0) {
-        return [TDUserProfileCell heightForUserProfile:[self getUser]];
+        if ([self getUser]){
+            return [TDUserProfileCell heightForUserProfile:[self getUser]];
+        } else {
+            return [TDGuestInfoCell heightForHashTagInfoCell];
+        }
     }
 
     // Just 'No Posts' cell
@@ -756,6 +778,12 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     } else {
         vc.profileType = kFeedProfileTypeOther;
     }
+    [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void)openTagFeedController:(NSURL*)url {
+    TDTagFeedViewController *vc = [[TDTagFeedViewController alloc] initWithNibName:@"TDTagFeedViewController" bundle:nil ];
+    vc.tagName = [[url path] lastPathComponent];
     [self.navigationController pushViewController:vc animated:YES];
 }
 

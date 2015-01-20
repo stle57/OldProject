@@ -12,6 +12,7 @@
 #import "RSClient.h"
 #import "TDConstants.h"
 #import "AFNetworking.h"
+#import "TDDeviceInfo.h"
 #import <Crashlytics/Crashlytics.h>
 
 @implementation TDUserAPI
@@ -226,6 +227,29 @@
     
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/users/featured.json?user_token=%@", currentUser.authToken]];
     
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *response = (NSDictionary*)responseObject;
+            callback(YES, [response objectForKey:@"users"]);
+        } else {
+            debug NSLog(@"did not get userlist");
+            callback(NO, @[]);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"Get community list Error: %@", error);
+        callback(NO, @[]);
+    }];
+}
+
+- (void)getChallengersList:(NSString*)tagName callback:(void (^)(BOOL success, NSArray *challengerList))callback {
+    NSAssert(callback != nil, @"getChallengersLists callback required");
+
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    TDCurrentUser *currentUser = [TDCurrentUser sharedInstance];
+
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/tags/%@/users.json?user_token=%@&bundle_version=%@", tagName, currentUser.authToken,  [TDDeviceInfo bundleVersion] ? [TDDeviceInfo bundleVersion] : @""]];
+    debug NSLog(@"url to load challengers=%@", url);
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {

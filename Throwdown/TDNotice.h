@@ -16,7 +16,9 @@
 @property (nonatomic, readonly) BOOL dismissOnCall;
 @property (nonatomic, readonly) BOOL darkTextColor;
 @property (nonatomic, readonly) BOOL darkCTAColor;
-
+@property (nonatomic, readonly) NSString *type;
+@property (nonatomic, readonly) NSString *image;
+@property (nonatomic, readonly) NSString *imageFileName;
 - (instancetype)initWithDictionary:(NSDictionary *)dict;
 - (UIColor *)color;
 - (void)callAction;

@@ -102,6 +102,7 @@
 		4DAE93781A6C89D00035BBD6 /* TDUsersViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DAE93761A6C89D00035BBD6 /* TDUsersViewController.xib */; };
 		4DAE937F1A6C95E20035BBD6 /* TDDetailInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DAE937D1A6C95E20035BBD6 /* TDDetailInfoViewController.m */; };
 		4DAE93801A6C95E20035BBD6 /* TDDetailInfoViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DAE937E1A6C95E20035BBD6 /* TDDetailInfoViewController.xib */; };
+		4DAE93831A6DB0260035BBD6 /* TDCampaignView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DAE93821A6DB0260035BBD6 /* TDCampaignView.m */; };
 		4DC2C9981968F69C00A210CF /* TDTextViewControllerHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC2C9971968F69C00A210CF /* TDTextViewControllerHelper.m */; };
 		4DC2C9A31969F72600A210CF /* TDUserListView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC2C9A11969F72600A210CF /* TDUserListView.m */; };
 		4DD0837019AC585C00149968 /* TDToastViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DD0836F19AC585C00149968 /* TDToastViewController.m */; };
@@ -378,6 +379,8 @@
 		4DAE937C1A6C95E20035BBD6 /* TDDetailInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDDetailInfoViewController.h; sourceTree = "<group>"; };
 		4DAE937D1A6C95E20035BBD6 /* TDDetailInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDDetailInfoViewController.m; sourceTree = "<group>"; };
 		4DAE937E1A6C95E20035BBD6 /* TDDetailInfoViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDDetailInfoViewController.xib; sourceTree = "<group>"; };
+		4DAE93811A6DB0260035BBD6 /* TDCampaignView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDCampaignView.h; sourceTree = "<group>"; };
+		4DAE93821A6DB0260035BBD6 /* TDCampaignView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDCampaignView.m; sourceTree = "<group>"; };
 		4DC2C9961968F69C00A210CF /* TDTextViewControllerHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTextViewControllerHelper.h; sourceTree = "<group>"; };
 		4DC2C9971968F69C00A210CF /* TDTextViewControllerHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTextViewControllerHelper.m; sourceTree = "<group>"; };
 		4DC2C9A01969F72600A210CF /* TDUserListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDUserListView.h; sourceTree = "<group>"; };
@@ -1138,6 +1141,8 @@
 				4DC2C9A11969F72600A210CF /* TDUserListView.m */,
 				A129BAFA197F231700F6FC2B /* TDUserListCell.h */,
 				A129BAFB197F231700F6FC2B /* TDUserListCell.m */,
+				4DAE93811A6DB0260035BBD6 /* TDCampaignView.h */,
+				4DAE93821A6DB0260035BBD6 /* TDCampaignView.m */,
 			);
 			name = "Detail View";
 			sourceTree = "<group>";
@@ -1582,6 +1587,7 @@
 				4D2843EC19C9F42200E4A56C /* TDInviteCell.m in Sources */,
 				A1FBA27D1981C57D00C65E04 /* TDPRSegue.m in Sources */,
 				2DC7B6AA18FF3D8500261BF7 /* TDToastView.m in Sources */,
+				4DAE93831A6DB0260035BBD6 /* TDCampaignView.m in Sources */,
 				A182D831188B60CD00F794A5 /* SASliderLeft.m in Sources */,
 				2DA5354818F36EF800031128 /* TDPostsViewController.m in Sources */,
 				2D83200419116D9000A91282 /* TDUserPushNotificationsEditViewController.m in Sources */,
