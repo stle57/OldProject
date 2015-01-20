@@ -542,4 +542,17 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
     return [defaults boolForKey:@"hasAskedForPhotos"];
 }
 
+- (BOOL)didDismiss:(NSString *)dismissal  {
+    NSString *key = [NSString stringWithFormat:@"dismissed_%@_%@", [self.userId stringValue], dismissal];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    return [defaults boolForKey:key];
+}
+
+- (void)setDismissed:(NSString *)dismissal {
+    NSString *key = [NSString stringWithFormat:@"dismissed_%@_%@", [self.userId stringValue], dismissal];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:YES forKey:key];
+    [defaults synchronize];
+}
+
 @end

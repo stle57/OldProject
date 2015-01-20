@@ -145,6 +145,7 @@
 		A13B77B51A6B66B300F444F7 /* TDTagFeedViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A13B77B31A6B66B300F444F7 /* TDTagFeedViewController.xib */; };
 		A13B77B91A6DBD2400F444F7 /* TDTagUserFeedViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A13B77B71A6DBD2400F444F7 /* TDTagUserFeedViewController.m */; };
 		A13B77BA1A6DBD2400F444F7 /* TDTagUserFeedViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = A13B77B81A6DBD2400F444F7 /* TDTagUserFeedViewController.xib */; };
+		A13B77BD1A6ED5D200F444F7 /* NSString+URLEncode.m in Sources */ = {isa = PBXBuildFile; fileRef = A13B77BC1A6ED5D200F444F7 /* NSString+URLEncode.m */; };
 		A1432CE118A99D750073E492 /* TDWelcomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1432CE018A99D750073E492 /* TDWelcomeViewController.m */; };
 		A1432CE418A99DA40073E492 /* TDSignupStepOneViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1432CE318A99DA40073E492 /* TDSignupStepOneViewController.m */; };
 		A1432CE718A99DB30073E492 /* TDLoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A1432CE618A99DB30073E492 /* TDLoginViewController.m */; };
@@ -447,6 +448,8 @@
 		A13B77B61A6DBD2400F444F7 /* TDTagUserFeedViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDTagUserFeedViewController.h; sourceTree = "<group>"; };
 		A13B77B71A6DBD2400F444F7 /* TDTagUserFeedViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDTagUserFeedViewController.m; sourceTree = "<group>"; };
 		A13B77B81A6DBD2400F444F7 /* TDTagUserFeedViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDTagUserFeedViewController.xib; sourceTree = "<group>"; };
+		A13B77BB1A6ED5D200F444F7 /* NSString+URLEncode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+URLEncode.h"; sourceTree = "<group>"; };
+		A13B77BC1A6ED5D200F444F7 /* NSString+URLEncode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+URLEncode.m"; sourceTree = "<group>"; };
 		A1432CDF18A99D750073E492 /* TDWelcomeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDWelcomeViewController.h; sourceTree = "<group>"; };
 		A1432CE018A99D750073E492 /* TDWelcomeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDWelcomeViewController.m; sourceTree = "<group>"; wrapsLines = 1; };
 		A1432CE218A99DA40073E492 /* TDSignupStepOneViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSignupStepOneViewController.h; sourceTree = "<group>"; };
@@ -892,6 +895,8 @@
 				A180D4DE18C14EA7003B9378 /* TDNavigationController.m */,
 				A1C2481218C7D4B000F187D9 /* URLConnection.h */,
 				A1C2481318C7D4B000F187D9 /* URLConnection.m */,
+				A13B77BB1A6ED5D200F444F7 /* NSString+URLEncode.h */,
+				A13B77BC1A6ED5D200F444F7 /* NSString+URLEncode.m */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -1605,6 +1610,7 @@
 				A13B77B41A6B66B300F444F7 /* TDTagFeedViewController.m in Sources */,
 				4D4714B819CBF14F003AA69F /* TDContactInfo.m in Sources */,
 				A1D6BB10196BC1FD007983F8 /* TDStoryboardSegue.m in Sources */,
+				A13B77BD1A6ED5D200F444F7 /* NSString+URLEncode.m in Sources */,
 				A15596D819E9E96000C7C0B8 /* TDRequestSerializer.m in Sources */,
 				4D2843D319C4082300E4A56C /* TDFollowProfileCell.m in Sources */,
 				2D5714CD18BD9AB300AF0B4D /* VideoCloseSegue.m in Sources */,

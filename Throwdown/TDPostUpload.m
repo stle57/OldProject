@@ -13,6 +13,7 @@
 #import "TDProgressIndicator.h"
 #import "TDFileSystemHelper.h"
 #include <math.h>
+#import "AssetsLibrary/ALAssetsLibrary.h"
 
 typedef enum {
     UploadTypeVideo,
@@ -28,7 +29,7 @@ typedef enum {
 } UploadStatus;
 
 
-@interface TDPostUpload ()
+@interface TDPostUpload () <UIDocumentInteractionControllerDelegate>
 
 @property (nonatomic) NSString *filename;
 @property (nonatomic) NSString *photoPath;
@@ -52,6 +53,8 @@ typedef enum {
 @property (nonatomic) RSContainer *container;
 @property (nonatomic) NSArray *shareOptions;
 @property (nonatomic) NSDictionary *locationData;
+@property (nonatomic) BOOL saveToInstagram;
+@property (nonatomic) NSString *instagramLibraryLocation;
 
 @end
 
@@ -201,27 +204,57 @@ typedef enum {
         self.postStatus  != UploadCompleted &&
         self.photoStatus == UploadCompleted &&
         (!self.videoUpload || self.videoStatus == UploadCompleted)) {
-
         debug NSLog(@"FINALIZING %@", self.filename);
-        self.postStatus = UploadStarted;
-        [[TDPostAPI sharedInstance] addPost:self.filename
-                                    comment:self.comment
-                                       isPR:self.isPR
-                                       kind:(self.videoUpload ? @"video" : @"photo")
-                              userGenerated:self.userGenerated
-                                  sharingTo:self.shareOptions
-                                  isPrivate:self.isPrivate
-                                   location:self.locationData
-                                    success:^(NSDictionary *response) {
-                                        self.postStatus = UploadCompleted;
-                                        [self uploadComplete];
-                                    } failure:^{
-                                        self.postStatus = UploadFailed;
-                                        [self uploadFailed];
-                                    }];
+
+        for (NSString *option in self.shareOptions) {
+            if ([option isEqualToString:@"instagram"]) {
+                self.saveToInstagram = YES;
+            }
+        }
+        // Because we could technically be here many times if upload fails, we only want to save it to assets once.
+        if (self.videoUpload && self.instagramLibraryLocation == nil && self.saveToInstagram) {
+            ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+            [library writeVideoAtPathToSavedPhotosAlbum:[NSURL URLWithString:self.persistedVideoPath] completionBlock:^(NSURL *assetURL, NSError *error) {
+                self.instagramLibraryLocation = [assetURL absoluteString];
+                [self savePost];
+            }];
+        } else {
+            [self savePost];
+        }
     } else if (self.postStatus == UploadCompleted) {
         [self uploadComplete];
     }
+}
+
+- (void)savePost {
+    self.postStatus = UploadStarted;
+    [[TDPostAPI sharedInstance] addPost:self.filename
+                                comment:self.comment
+                                   isPR:self.isPR
+                                   kind:(self.videoUpload ? @"video" : @"photo")
+                          userGenerated:self.userGenerated
+                              sharingTo:self.shareOptions
+                              isPrivate:self.isPrivate
+                               location:self.locationData
+                                success:^(NSDictionary *response) {
+                                    self.postStatus = UploadCompleted;
+                                    if (self.saveToInstagram) {
+                                        NSString *instagramLocation;
+                                        if (self.videoUpload) {
+                                            instagramLocation = self.instagramLibraryLocation;
+                                        } else {
+                                            instagramLocation = [NSHomeDirectory() stringByAppendingFormat:@"/Documents/%@.igo", self.finalPhotoName];
+                                            [TDFileSystemHelper copyFileFrom:self.persistedPhotoPath to:instagramLocation];
+                                        }
+
+                                        NSDictionary *info = @{@"caption":  (self.comment ? self.comment : @""), @"location": instagramLocation, @"isVideo": [NSNumber numberWithBool:self.videoUpload]};
+                                        [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationPostToInstagram object:nil userInfo:info];
+                                    }
+                                    [self uploadComplete];
+                                } failure:^{
+                                    self.postStatus = UploadFailed;
+                                    [self uploadFailed];
+                                }];
 }
 
 - (void)uploadComplete {
