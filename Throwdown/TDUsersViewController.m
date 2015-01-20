@@ -12,6 +12,7 @@
 #import "TDUserAPI.h"
 #import <SDWebImageManager.h>
 #import <UIImage+Resizing.h>
+#import "TDTagUserFeedViewController.h"
 
 @interface TDUsersViewController ()
 @end
@@ -157,6 +158,9 @@
     //Open another view.
     TDFollowProfileCell *cell = (TDFollowProfileCell*)[tableView cellForRowAtIndexPath:indexPath];
     debug NSLog(@"open user view with hashtag=%@", cell.userId);
+    TDTagUserFeedViewController *vc = [[TDTagUserFeedViewController alloc] initWithNibName:@"TDTagUserFeedViewController" bundle:nil];
+    [vc setUserId:cell.userId tagName:self.tagName];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (TDFollowProfileCell*) createCell:(UITableView*)tableView indexPath:(NSIndexPath *)indexPath userInfo:(NSArray*)userInfo{
@@ -177,7 +181,6 @@
     cell.topLine.hidden = cell.row != 0;
     cell.userId = [userInfo valueForKey:@"id"];
 
-    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
     cell.nameLabel.textColor = [TDConstants headerTextColor];
@@ -208,7 +211,7 @@
     [cell.descriptionLabel sizeToFit];
 
 
-    UILabel *activeDaysLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 100, cell.frame.size.height)];
+    UILabel *activeDaysLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 25, cell.frame.size.height)];
     if (activeDaysNumber) {
         newTextString = activeDaysNumber > 1 ? @"\ndays" : @"\nday";
     } else {
@@ -225,7 +228,7 @@
 
 
     CGRect descripFrame = cell.descriptionLabel.frame;
-    descripFrame.origin.x = SCREEN_WIDTH - 44 - 10 - activeDaysLabel.frame.size.width - 10 - cell.descriptionLabel.frame.size.width;
+    descripFrame.origin.x = SCREEN_WIDTH - 44 - 10 - activeDaysLabel.frame.size.width - 5 - cell.descriptionLabel.frame.size.width;
     descripFrame.origin.y = cell.frame.size.height/2 - cell.descriptionLabel.frame.size.height/2;
     cell.descriptionLabel.frame = descripFrame;
 
@@ -246,8 +249,9 @@
 }
 
 -(void)actionButtonPressedFromRow:(NSInteger)row tag:(NSInteger)tag userId:(NSNumber*)userId{
-    //NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0] ;
-    return;
+    TDTagUserFeedViewController *vc = [[TDTagUserFeedViewController alloc] initWithNibName:@"TDTagUserFeedViewController" bundle:nil];
+    [vc setUserId:[TDCurrentUser sharedInstance].userId tagName:self.tagName];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)downloadUserImage:(NSString *)profileImage cell:(TDFollowProfileCell *)cell {
@@ -272,8 +276,8 @@
 }
 
 -(void)modifyPostsLabelString:(UILabel*)label statCount:(NSNumber*)statCount textString:(NSString*)textString{
-    UIFont *font = [TDConstants fontSemiBoldSized:18.0];
-    UIFont *font2= [TDConstants fontRegularSized:14];
+    UIFont *font = [TDConstants fontRegularSized:16.0];
+    UIFont *font2= [TDConstants fontRegularSized:10];
 //    NSString *newTextString;
 //    if (statCount) {
 //        newTextString = statCount.intValue > 1 ? @"\nposts" : textString;
@@ -284,9 +288,9 @@
 
     NSMutableAttributedString *attString = [[NSMutableAttributedString alloc] initWithString:postString];
     [attString addAttribute:NSFontAttributeName value:font range:NSMakeRange(0, postString.length)];
-    [attString addAttribute:NSForegroundColorAttributeName value:[TDConstants brandingRedColor] range:NSMakeRange(0, postString.length)];
+    [attString addAttribute:NSForegroundColorAttributeName value:[TDConstants headerTextColor] range:NSMakeRange(0, postString.length)];
     [attString addAttribute:NSFontAttributeName value:font2 range:NSMakeRange(postString.length - textString.length, textString.length)];
-    [attString addAttribute:NSForegroundColorAttributeName value:[UIColor blackColor] range:NSMakeRange(postString.length - textString.length, textString.length)];
+    [attString addAttribute:NSForegroundColorAttributeName value:[TDConstants commentTimeTextColor] range:NSMakeRange(postString.length - textString.length, textString.length)];
 
     label.lineBreakMode = NSLineBreakByWordWrapping;
     [label setNumberOfLines:0];

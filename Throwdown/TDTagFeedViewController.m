@@ -42,12 +42,6 @@
     self.titleLabel.text = @"";
     [self.navigationItem setTitleView:self.titleLabel];
 
-    UIButton *userButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 100, 40)];
-    [userButton setTitle:@"User" forState:UIControlStateNormal];
-    [userButton addTarget:self action:@selector(userButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    UIBarButtonItem *userBarButton = [[UIBarButtonItem alloc] initWithCustomView:userButton];
-    self.navigationItem.rightBarButtonItem = userBarButton;
-
     self.backButton = [TDViewControllerHelper navBackButton];
     [self.backButton addTarget:self action:@selector(backButtonHit:) forControlEvents:UIControlEventTouchUpInside];
     UIBarButtonItem *barButton = [[UIBarButtonItem alloc] initWithCustomView:self.backButton];
