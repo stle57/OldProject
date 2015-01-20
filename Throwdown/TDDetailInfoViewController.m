@@ -73,9 +73,10 @@
     self.label.frame = labelFrame;
     [self.scrollView addSubview:self.label];
 
-    self.detailDescription = [[UILabel alloc] initWithFrame:CGRectMake(0, self.label.frame.origin.y + self.label.frame.size.height + 15, SCREEN_WIDTH, 300)];//SCREEN_HEIGHT- self.navigationController.navigationBar.frame.size.height - self.logoImageView.frame.size.height - self.label.frame.size.height)];
-//    NSString *detailStr = @"Strengthlete challenges you to eat clean and exercise for all of February!\n\nEveryday, make a post of your workout and what you ate.\n\nTag #strengthlete in your post to be included in the Challenge.\n\nAt the end of 28 days, prizes will be awared to:\n\n -Protein\n-1-HR session with Catalyst Team\n-Ticket to the CrossFit Games";
+    self.detailDescription = [[UILabel alloc] initWithFrame:CGRectMake(0, self.label.frame.origin.y + self.label.frame.size.height + 15, SCREEN_WIDTH-60, 200)];
     NSString *detailStr = [self.data objectForKey:@"description"];
+    debug NSLog(@"detailStr = %@", detailStr);
+
     NSMutableAttributedString *detailAttrStr = [[NSMutableAttributedString alloc] initWithString:detailStr];
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     [paragraphStyle setLineHeightMultiple:18/15.];
@@ -89,7 +90,6 @@
     [self.detailDescription setNumberOfLines:0];
     [self.detailDescription sizeToFit];
 
-    //[TDViewControllerHelper boldHashtagsInLabel:self.detailDescription];
     CGRect detailFrame = self.detailDescription.frame;
     detailFrame.size.width = SCREEN_WIDTH - 60;
     detailFrame.origin.x = 30;
@@ -97,15 +97,9 @@
     self.detailDescription.frame = detailFrame;
     [self.scrollView addSubview:self.detailDescription];
 
-    self.detailDescription.layer.borderColor = [[UIColor magentaColor] CGColor];
-    self.detailDescription.layer.borderWidth = 1.;
-
     CGSize scrollableSize =  CGSizeMake(SCREEN_WIDTH,
                                         15 + self.logoImageView.frame.size.height + 10 + self.label.frame.size.height + 15 + self.detailDescription.frame.size.height + 20);
     [self.scrollView setContentSize:scrollableSize];
-
-    self.scrollView.layer.borderColor = [[UIColor redColor] CGColor];
-    self.scrollView.layer.borderWidth = 2.;
 
     [self.view addSubview:self.scrollView];
 }
@@ -114,16 +108,6 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 - (IBAction)closeButtonPressed:(id)sender {
     [self.navigationController dismissViewControllerAnimated:YES completion:nil];

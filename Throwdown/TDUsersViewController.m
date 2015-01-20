@@ -168,8 +168,11 @@
     if (!cell) {
         NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_FOLLOWPROFILE owner:self options:nil];
         cell = [topLevelObjects objectAtIndex:0];
+        cell.selectionStyle = UITableViewCellEditingStyleNone;
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         cell.delegate = self;
     }
+    cell.actionButton.hidden = YES;
 
     //TODO: Setting height to 1 for ios7 bug, but need to fix this
     if ([[[UIDevice currentDevice] systemVersion] floatValue] == 7.0){
@@ -180,8 +183,6 @@
     cell.row = indexPath.row;
     cell.topLine.hidden = cell.row != 0;
     cell.userId = [userInfo valueForKey:@"id"];
-
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 
     cell.nameLabel.textColor = [TDConstants headerTextColor];
     cell.nameLabel.font = [TDConstants fontSemiBoldSized:16];
@@ -196,6 +197,9 @@
     nameFrame.origin.y = cell.frame.size.height/2 - cell.nameLabel.frame.size.height/2;
     cell.nameLabel.frame = nameFrame;
 
+    UIImageView *rightArrow = [[UIImageView alloc] initWithFrame:CGRectMake(SCREEN_WIDTH - 10 - [UIImage imageNamed:@"right-arrow-gray"].size.width, cell.frame.size.height/2 - [UIImage imageNamed:@"right-arrow-gray"].size.height/2, [UIImage imageNamed:@"right-arrow-gray"].size.width, [UIImage imageNamed:@"right-arrow-gray"].size.height)];
+    [rightArrow setImage:[UIImage imageNamed:@"right-arrow-gray"]];
+    [cell addSubview:rightArrow];
     NSInteger postNumber = [[userInfo valueForKey:@"tag_posts_count"] intValue];
     NSString *newTextString;
     if (postNumber) {
@@ -210,7 +214,6 @@
     cell.descriptionLabel.frame = CGRectMake(0, 0, 100, cell.frame.size.height);
     [cell.descriptionLabel sizeToFit];
 
-
     UILabel *activeDaysLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 25, cell.frame.size.height)];
     if (activeDaysNumber) {
         newTextString = activeDaysNumber > 1 ? @"\ndays" : @"\nday";
@@ -221,18 +224,17 @@
                       textString:newTextString];
     [activeDaysLabel sizeToFit];
     CGRect activeDaysFrame = activeDaysLabel.frame;
-    activeDaysFrame.origin.x =     SCREEN_WIDTH - 44 - 10 - activeDaysLabel.frame.size.width;
+    activeDaysFrame.size.width = 25;
+    activeDaysFrame.origin.x =     SCREEN_WIDTH - 10 - rightArrow.frame.size.width - 10 - activeDaysFrame.size.width;
     activeDaysFrame.origin.y = cell.frame.size.height/2 - cell.descriptionLabel.frame.size.height/2;
     activeDaysLabel.frame = activeDaysFrame;
     [cell addSubview:activeDaysLabel];
 
-
-    CGRect descripFrame = cell.descriptionLabel.frame;
-    descripFrame.origin.x = SCREEN_WIDTH - 44 - 10 - activeDaysLabel.frame.size.width - 5 - cell.descriptionLabel.frame.size.width;
+     CGRect descripFrame = cell.descriptionLabel.frame;
+    descripFrame.size.width = 25;
+    descripFrame.origin.x = SCREEN_WIDTH - 10 - rightArrow.frame.size.width - 10 - activeDaysLabel.frame.size.width - 5 - descripFrame.size.width;
     descripFrame.origin.y = cell.frame.size.height/2 - cell.descriptionLabel.frame.size.height/2;
     cell.descriptionLabel.frame = descripFrame;
-
-    cell.actionButton.hidden = YES;
 
     cell.userImageView.hidden = NO;
     cell.userImageView.image = nil;
@@ -249,9 +251,7 @@
 }
 
 -(void)actionButtonPressedFromRow:(NSInteger)row tag:(NSInteger)tag userId:(NSNumber*)userId{
-    TDTagUserFeedViewController *vc = [[TDTagUserFeedViewController alloc] initWithNibName:@"TDTagUserFeedViewController" bundle:nil];
-    [vc setUserId:[TDCurrentUser sharedInstance].userId tagName:self.tagName];
-    [self.navigationController pushViewController:vc animated:YES];
+    return;
 }
 
 - (void)downloadUserImage:(NSString *)profileImage cell:(TDFollowProfileCell *)cell {

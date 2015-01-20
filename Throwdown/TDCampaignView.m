@@ -17,17 +17,10 @@
 @property (nonatomic) UIView *bottomMarginPadding;
 @property (nonatomic) UIImageView *rightArrow;
 @property (nonatomic) UIButton *button;
-
 @end
+
 @implementation TDCampaignView
 static const int bottomMarginPaddingHeight = 15;
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
 
 - (id)initWithFrame:(CGRect)frame campaignData:(NSDictionary*)campaignData {
     self = [super initWithFrame:(CGRect)frame];
@@ -39,8 +32,6 @@ static const int bottomMarginPaddingHeight = 15;
 
 - (void)setup:(NSDictionary*)campaignData {
     self.backgroundColor = [UIColor whiteColor];
-    self.layer.borderColor = [[UIColor magentaColor] CGColor];
-    self.layer.borderWidth = 2.;
     [self setUserInteractionEnabled:YES];
     self.frame = CGRectMake(0, 0, SCREEN_WIDTH, [TDCampaignView heightForCampaignHeader:campaignData]);
 
@@ -50,8 +41,6 @@ static const int bottomMarginPaddingHeight = 15;
                                  [UIImage imageNamed:@"Strengthlete_Logo_BIG"].size.height )];
     self.icon.image = [UIImage imageNamed:@"Strengthlete_Logo_BIG"];
     [self addSubview:self.icon];
-    self.icon.layer.borderWidth = 2.;
-    self.icon.layer.borderColor = [[UIColor blackColor] CGColor];
     
     NSString *titleStr = [campaignData objectForKey:@"blurb_title"];
     self.title = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
@@ -67,7 +56,6 @@ static const int bottomMarginPaddingHeight = 15;
     self.title.frame = label1Frame;
     [self addSubview:self.title];
 
-//    NSString *detailStr = @"Strengthlete challenges you to eat clean and exercise for all of February!\n\nPrizes to those who fully participate during this month, and for biggest accomplishments!\n\nSee posts from fellow Challenger";
     self.blurbTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
 
     NSString *detailStr = [campaignData objectForKey:@"blurb"];
@@ -104,50 +92,24 @@ static const int bottomMarginPaddingHeight = 15;
         learnFrame.origin.y = self.blurbTitle.frame.origin.y + self.blurbTitle.frame.size.height + 15;
         self.learnMoreButton.frame = learnFrame;
         [self addSubview:self.learnMoreButton];
-
-        self.learnMoreButton.layer.borderWidth = 2.;
-        self.learnMoreButton.layer.borderColor =[[UIColor magentaColor] CGColor];
     }
 
     self.bottomLine = [[UIView alloc] initWithFrame:CGRectMake(0, self.learnMoreButton.frame.origin.y + self.learnMoreButton.frame.size.height + 15, SCREEN_WIDTH, .5)];
     [self addSubview:self.bottomLine];
-    self.bottomLine.backgroundColor = [UIColor redColor];
+    self.bottomLine.backgroundColor = [TDConstants commentTimeTextColor];
 
     self.bottomMarginPadding = [[UIView alloc] initWithFrame: CGRectMake(0, self.bottomLine.frame.origin.y + self.bottomLine.frame.size.height, [UIScreen mainScreen].bounds.size.width, bottomMarginPaddingHeight)];
     self.bottomMarginPadding.backgroundColor = [TDConstants darkBackgroundColor];
     [self addSubview:self.bottomMarginPadding];
-    self.bottomMarginPadding.layer.borderWidth = 1.;
-    self.bottomMarginPadding.layer.borderColor = [[UIColor blueColor] CGColor];
 
     if ([campaignData objectForKey:@"show_challengers"]) {
         [self createChallengersRow];
-//            self.button = [[UIButton alloc] initWithFrame:CGRectMake(0, self.bottomMarginPadding.frame.origin.y + self.bottomMarginPadding.frame.size.height, SCREEN_WIDTH, 65)];
-//            [self.button setUserInteractionEnabled:YES];
-//            NSString *text = @"See All Challengers";
-//            [self.button setTitle:text forState:UIControlStateNormal];
-//            [self.button setTitleColor:[TDConstants headerTextColor] forState:UIControlStateNormal];
-//            [self.button.titleLabel setFont:[TDConstants fontSemiBoldSized:16]];
-//            [self.button setImage:[UIImage imageNamed:@"Strengthlete_Logo_Small"] forState:UIControlStateNormal];
-//            [self.button setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
-//            [self.button setContentEdgeInsets:UIEdgeInsetsMake(0, 10, 0, 10)];
-//            [self.button setTitleEdgeInsets:UIEdgeInsetsMake(0, 10, 0, 0)];
-//            [self.button addTarget:self action:@selector(challengersButtonPressed) forControlEvents:UIControlEventTouchUpInside];
-//            [self addSubview:self.button];
-//
-//            self.rightArrow = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, [UIImage imageNamed:@"right-arrow-gray"].size.width, [UIImage imageNamed:@"right-arrow-gray"].size.height)];
-//            [self.rightArrow setImage:[UIImage imageNamed:@"right-arrow-gray"]];
-//            CGRect rightArrowFrame = self.rightArrow.frame;
-//            rightArrowFrame.origin.x = SCREEN_WIDTH - 10 -[UIImage imageNamed:@"right-arrow-gray"].size.width;
-//            rightArrowFrame.origin.y = 65/2 -[UIImage imageNamed:@"right-arrow-gray"].size.height/2;
-//            self.rightArrow.frame = rightArrowFrame;
-//            
-//            [self.button addSubview:self.rightArrow];
 
         UIView *bottomMargin = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, bottomMarginPaddingHeight)];
         bottomMargin.backgroundColor = [TDConstants darkBackgroundColor];
 
         CGRect bottomFrame = bottomMargin.frame;
-        bottomFrame.origin.y = self.button.frame.origin.y + self.button.frame.size.height;
+        bottomFrame.origin.y = self.button.frame.origin.y + self.button.frame.size.height + .5;
         bottomMargin.frame = bottomFrame;
 
         [self addSubview:bottomMargin];
@@ -156,14 +118,17 @@ static const int bottomMarginPaddingHeight = 15;
 }
 
 -(void)learnMoreButtonPressed {
-debug NSLog(@"learnButtonPressed");
     if (self.delegate && [self.delegate respondsToSelector:@selector(loadDetailView)]) {
         [self.delegate loadDetailView];
     }
 }
 
 - (void)createChallengersRow {
-    self.button = [[UIButton alloc] initWithFrame:CGRectMake(0, self.bottomMarginPadding.frame.origin.y + self.bottomMarginPadding.frame.size.height, SCREEN_WIDTH, 65)];
+    UIView *topLine = [[UIView alloc] initWithFrame:CGRectMake(0, self.bottomMarginPadding.frame.origin.y + self.bottomMarginPadding.frame.size.height, SCREEN_WIDTH, .5)];
+    topLine.backgroundColor = [TDConstants commentTimeTextColor];
+    [self addSubview:topLine];
+
+    self.button = [[UIButton alloc] initWithFrame:CGRectMake(0, topLine.frame.origin.y + topLine.frame.size.height, SCREEN_WIDTH, 65)];
     [self.button setUserInteractionEnabled:YES];
     NSString *text = @"See All Challengers";
     [self.button setTitle:text forState:UIControlStateNormal];
@@ -184,6 +149,9 @@ debug NSLog(@"learnButtonPressed");
     self.rightArrow.frame = rightArrowFrame;
 
    [self.button addSubview:self.rightArrow];
+    UIView *bottomLine =[[UIView alloc] initWithFrame:CGRectMake(0, self.button.frame.origin.y + self.button.frame.size.height, SCREEN_WIDTH, .5)];
+    bottomLine.backgroundColor = [TDConstants commentTimeTextColor];
+    [self addSubview:bottomLine];
 }
 
 + (NSInteger)heightForCampaignHeader:(NSDictionary*)campaignData {
@@ -222,7 +190,6 @@ debug NSLog(@"learnButtonPressed");
 }
 
 - (void)challengersButtonPressed {
-    debug NSLog(@"challengersButtonPressed");
     if (self.delegate && [self.delegate respondsToSelector:@selector(loadChallengersView)]) {
         [self.delegate loadChallengersView];
     }
