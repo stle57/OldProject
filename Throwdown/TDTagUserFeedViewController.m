@@ -1,30 +1,30 @@
 //
-//  TDTagFeedViewController.m
+//  TDTagUserFeedViewController.m
 //  Throwdown
 //
-//  Created by Andrew C on 1/17/15.
+//  Created by Andrew C on 1/19/15.
 //  Copyright (c) 2015 Throwdown. All rights reserved.
 //
 
-#import "TDTagFeedViewController.h"
+#import "TDTagUserFeedViewController.h"
 #import "TDViewControllerHelper.h"
 #import "TDPostAPI.h"
-#import "TDDetailInfoViewController.h"
-#import "TDUsersViewController.h"
-#import "TDTagUserFeedViewController.h"
+#import "TDUser.h"
 
-@interface TDTagFeedViewController ()
+@interface TDTagUserFeedViewController ()
 
+@property (nonatomic) TDUser *user;
+
+@property (nonatomic) NSNumber *userId;
+@property (nonatomic) NSString *tagName;
 @property (nonatomic) UILabel *titleLabel;
 @property (nonatomic) UIButton *backButton;
 @property (nonatomic) NSArray *posts;
 @property (nonatomic) NSNumber *nextStart;
-@property (nonatomic) TDCampaignView *campaignView;
-@property (nonatomic) UIView *headerView;
-@property (nonatomic) NSDictionary *campaignData;
+
 @end
 
-@implementation TDTagFeedViewController
+@implementation TDTagUserFeedViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -41,12 +41,6 @@
     self.titleLabel.font = [TDConstants fontSemiBoldSized:18];
     self.titleLabel.text = @"";
     [self.navigationItem setTitleView:self.titleLabel];
-
-    UIButton *userButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 100, 40)];
-    [userButton setTitle:@"User" forState:UIControlStateNormal];
-    [userButton addTarget:self action:@selector(userButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    UIBarButtonItem *userBarButton = [[UIBarButtonItem alloc] initWithCustomView:userButton];
-    self.navigationItem.rightBarButtonItem = userBarButton;
 
     self.backButton = [TDViewControllerHelper navBackButton];
     [self.backButton addTarget:self action:@selector(backButtonHit:) forControlEvents:UIControlEventTouchUpInside];
@@ -69,9 +63,6 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    if (self.tagName) {
-        self.titleLabel.text = [@"#" stringByAppendingString:self.tagName];
-    }
     [self.tableView reloadData];
 }
 
@@ -79,10 +70,10 @@
     [self.navigationController popViewControllerAnimated:YES];
 }
 
-- (void)userButtonPressed:(id)sender {
-    TDTagUserFeedViewController *vc = [[TDTagUserFeedViewController alloc] initWithNibName:@"TDTagUserFeedViewController" bundle:nil];
-    [vc setUserId:[TDCurrentUser sharedInstance].userId tagName:self.tagName];
-    [self.navigationController pushViewController:vc animated:YES];
+
+- (void)setUserId:(NSNumber *)userId tagName:(NSString *)tagName {
+    self.userId = userId;
+    self.tagName = tagName;
 }
 
 #pragma mark - Posts
@@ -159,12 +150,10 @@
     if (!self.tagName) {
         return;
     }
-    [[TDPostAPI sharedInstance] fetchPostsForTagName:self.tagName start:nil success:^(NSDictionary *response) {
-        debug NSLog(@"got data");
-        if ([response valueForKey:TDCampaginStr]) {
-            debug NSLog(@"creating campaign view with data = %@", [response valueForKey:TDCampaginStr]);
-            self.campaignData = [response valueForKey:TDCampaginStr];
-            [self loadCampaignView:[response valueForKey:TDCampaginStr] ];
+    [[TDPostAPI sharedInstance] fetchUsersPostsTagged:self.userId tag:self.tagName start:self.nextStart success:^(NSDictionary *response) {
+        if ([response objectForKey:@"user"]) {
+            self.user = [[TDUser alloc] initWithDictionary:[response objectForKey:@"user"]];
+            self.titleLabel.text = [NSString stringWithFormat:@"%@ #%@", self.user.username, self.tagName];
         }
         [self handleNextStart:[response objectForKey:@"next_start"]];
         [self handlePostsResponse:response fromStart:YES];
@@ -213,27 +202,13 @@
     if (![self hasMorePosts] || !self.tagName) {
         return NO;
     }
-    [[TDPostAPI sharedInstance] fetchPostsForTagName:self.tagName start:self.nextStart success:^(NSDictionary *response) {
+    [[TDPostAPI sharedInstance] fetchUsersPostsTagged:self.userId tag:self.tagName start:self.nextStart success:^(NSDictionary *response) {
         [self handleNextStart:[response objectForKey:@"next_start"]];
         [self handlePostsResponse:response fromStart:NO];
     } error:^{
         self.errorLoading = YES;
     }];
     return YES;
-}
-
-- (void)loadCampaignView:(NSDictionary*)campaignData {
-    if (self.headerView) {
-        return;
-    }
-
-    CGFloat width = [UIScreen mainScreen].bounds.size.width;
-    self.headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, width, [TDCampaignView heightForCampaignHeader:campaignData])];
-    self.campaignView =
-        [[TDCampaignView alloc] initWithFrame:(CGRectMake(0, 0, width, [TDCampaignView heightForCampaignHeader:campaignData])) campaignData:campaignData];
-    self.campaignView.delegate = self;
-    [self.headerView addSubview:self.campaignView];
-    [self.tableView setTableHeaderView:self.headerView];
 }
 
 #pragma mark - View delegate and event overrides
@@ -249,21 +224,4 @@
     [super userTappedURL:url];
 }
 
-#pragma mark - TDGuestInfoCellDelegate 
-- (void)loadDetailView {
-    debug NSLog(@"LOAD LEARN MORE from TDTagFeedViewController");
-    TDDetailInfoViewController *viewController = [[TDDetailInfoViewController alloc] initWithNibName:@"TDDetailInfoViewController" bundle:nil title:@"Learn More" campaignData:self.campaignData];
-    viewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:viewController];
-    navController.navigationBar.barStyle = UIBarStyleDefault;
-    navController.navigationBar.translucent = YES;
-    [self.navigationController presentViewController:navController animated:YES completion:nil];
-}
-
--(void)loadChallengersView {
-    debug NSLog(@"Load challengers feed");
-    TDUsersViewController *vc = [[TDUsersViewController alloc] initWithNibName:@"TDUsersViewController" bundle:nil title:@"Challengers"];
-    vc.tagName = self.tagName;
-    [self.navigationController pushViewController:vc animated:NO];
-}
 @end
