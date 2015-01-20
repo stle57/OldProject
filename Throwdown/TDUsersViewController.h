@@ -20,6 +20,6 @@
 @property (nonatomic) BOOL gotFromServer;
 @property (nonatomic) NSString *tagName;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil title:(NSString*)title;
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil title:(NSString*)title campaignData:(NSDictionary*)campaignData;
 - (IBAction)backButtonHit:(id)sender;
 @end

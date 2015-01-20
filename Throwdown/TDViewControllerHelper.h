@@ -40,4 +40,5 @@
 + (CGFloat)heightForText:(NSString*)bodyText font:(UIFont*)font;
 + (CGPoint)centerPosition;
 + (NSString*)getAddressFormat:(NSDictionary*)data;
++ (NSAttributedString *)makeLeftAlignmentTextWithString:(NSString *)text font:(UIFont*)font color:(UIColor*)color lineHeight:(CGFloat)lineHeight lineHeightMultipler:(CGFloat)lineHeightMultiplier;
 @end

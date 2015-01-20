@@ -13,17 +13,19 @@
 #import <SDWebImageManager.h>
 #import <UIImage+Resizing.h>
 #import "TDTagUserFeedViewController.h"
-
+#import "TDNoPostsCell.h"
 @interface TDUsersViewController ()
+@property (nonatomic) NSDictionary *campaignData;
 @end
 
 @implementation TDUsersViewController
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil title:(NSString*)title
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil title:(NSString*)title campaignData:(NSDictionary*)campaignData
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         self.userList = [[NSMutableArray alloc] init];
         self.navTitle = title;
+        self.campaignData = campaignData;
     }
     return self;
 }
@@ -126,14 +128,17 @@
 }
 
 - (CGFloat)tableView:(UITableView*)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return 65.;
+    if (self.userList.count) {
+        return 65.;
+    }
+    return SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView*)tableView {
     if (self.gotFromServer) {
         return 1;
     } else {
-        return 0;
+        return 1;
     }
 }
 
@@ -142,14 +147,28 @@
     if (self.gotFromServer) {
         return self.userList.count;
     }
-    return 0;
+    return 1;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSArray *object = [self.userList objectAtIndex:indexPath.row];
-    TDFollowProfileCell *cell = [self createCell:tableView indexPath:indexPath userInfo:object];
-    return cell;
+    if (self.userList.count) {
+        NSArray *object = [self.userList objectAtIndex:indexPath.row];
+        TDFollowProfileCell *cell = [self createCell:tableView indexPath:indexPath userInfo:object];
+        return cell;
+    } else {
+        TDNoPostsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoPostsCell"];
+        if (!cell) {
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoPostsCell" owner:self options:nil];
+            cell = [topLevelObjects objectAtIndex:0];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        }
+
+        NSString *photoURL = [self.campaignData valueForKey:@"image"];
+        [cell createInfoCell:photoURL];
+ 
+        return cell;
+    }
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
