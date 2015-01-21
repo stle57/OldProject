@@ -21,7 +21,6 @@
 
 static CGFloat const kWhiteBottomPadding = 6;
 static CGFloat const kPostMargin = 22;
-static CGFloat const kHeightOfStatusBar = 64.0;
 
 @interface TDPostsViewController ()
 

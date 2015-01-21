@@ -12,6 +12,7 @@
 #import "TDDetailInfoViewController.h"
 #import "TDUsersViewController.h"
 #import "TDTagUserFeedViewController.h"
+#import "TDCampaignView.h"
 
 @interface TDTagFeedViewController ()
 
@@ -223,12 +224,40 @@
 
     CGFloat width = [UIScreen mainScreen].bounds.size.width;
     self.headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, width, [TDCampaignView heightForCampaignHeader:campaignData])];
-    self.campaignView =
-        [[TDCampaignView alloc] initWithFrame:(CGRectMake(0, 0, width, [TDCampaignView heightForCampaignHeader:campaignData])) campaignData:campaignData];
+    self.campaignView = [[TDCampaignView alloc] initWithFrame:(CGRectMake(0, 0, width, [TDCampaignView heightForCampaignHeader:campaignData])) campaignData:campaignData];
     self.campaignView.delegate = self;
     [self.headerView addSubview:self.campaignView];
     [self.tableView setTableHeaderView:self.headerView];
 }
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    CGFloat height = [super tableView:tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath];
+
+    if ([[self posts] count] == 0 && self.loaded) {
+        height = [UIScreen mainScreen].bounds.size.height - kHeightOfStatusBar - self.tableView.contentInset.top - [TDCampaignView heightForCampaignHeader:self.campaignData];
+        if (height < 100) {
+            height = 100;
+        }
+    }
+
+    return height;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [super tableView:tableView cellForRowAtIndexPath:indexPath];
+
+    if (self.loaded && [cell isKindOfClass:[TDNoPostsCell class]]) {
+        TDNoPostsCell *noPostsCell = (TDNoPostsCell*)cell;
+        CGFloat height = [UIScreen mainScreen].bounds.size.height - kHeightOfStatusBar - self.tableView.contentInset.top - [TDCampaignView heightForCampaignHeader:self.campaignData];
+        if (height < 100) {
+            height = 100;
+        }
+        noPostsCell.noPostsLabel.center = CGPointMake(noPostsCell.view.center.x, height / 2);
+        return cell;
+    }
+    return cell;
+}
+
 
 #pragma mark - View delegate and event overrides
 

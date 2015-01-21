@@ -130,6 +130,8 @@ static NSInteger const kCommentMaxCharacters = 500; // MAX number of characters 
 // 1.27 is the lowest we can go without cutting off the emoji
 static CGFloat const kTextLineHeight = 1.27;
 
+static CGFloat const kHeightOfStatusBar = 64.0;
+
 static NSString *const kSpinningAnimation = @"rotationAnimation";
 
 static NSInteger const kInviteButtonTag = 10001;

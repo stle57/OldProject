@@ -49,6 +49,8 @@
 
     UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(30, label.frame.origin.y + label.frame.size.height + 15, SCREEN_WIDTH - 60, 200)];
     [label2 setNumberOfLines:0];
+    label2.font = [TDConstants fontRegularSized:15];
+    label2.textColor = [TDConstants headerTextColor];
     NSString *descriptionTxt = [NSString stringWithFormat:@"%@%@%@", @"Be the first challenger to kick things off!\nSimply tag #", tagName, @" in your post to automatically enter." ];
 
     NSMutableAttributedString *detailAttrStr = [[NSMutableAttributedString alloc] initWithString:descriptionTxt];
@@ -58,8 +60,6 @@
     [paragraphStyle setMaximumLineHeight:18];
     paragraphStyle.alignment = NSTextAlignmentLeft;
     [detailAttrStr addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, descriptionTxt.length)];
-    [detailAttrStr addAttribute:NSFontAttributeName value:[TDConstants fontRegularSized:15] range:NSMakeRange(0, descriptionTxt.length)];
-    [detailAttrStr addAttribute:NSForegroundColorAttributeName value:[TDConstants headerTextColor] range:NSMakeRange(0, descriptionTxt.length)];
     detailAttrStr = [TDViewControllerHelper boldHashtagsInText:detailAttrStr fontSize:15];
     label2.attributedText = detailAttrStr;
     CGSize size = [label2 sizeThatFits:CGSizeMake(SCREEN_WIDTH - 60, MAXFLOAT)];
