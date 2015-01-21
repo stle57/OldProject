@@ -35,7 +35,7 @@
     [self addSubview:self.imageView];
     [self downloadPreview:iconURL];
 
-    NSString *title = @"Be the first Challenger!";
+    NSString *title = @"Be the first Participant!";
     NSAttributedString *titleAttr = [TDViewControllerHelper makeParagraphedTextWithString:title font:[TDConstants fontSemiBoldSized:19] color:[TDConstants headerTextColor] lineHeight:23 lineHeightMultipler:(23/19)];
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
     label.attributedText = titleAttr;
@@ -51,7 +51,7 @@
     [label2 setNumberOfLines:0];
     label2.font = [TDConstants fontRegularSized:15];
     label2.textColor = [TDConstants headerTextColor];
-    NSString *descriptionTxt = [NSString stringWithFormat:@"%@%@%@", @"Be the first challenger to kick things off!  Simply tag #", tagName, @" in your post to automatically enter." ];
+    NSString *descriptionTxt = [NSString stringWithFormat:@"%@%@%@", @"Be the first participant to kick things off!  Simply tag #", tagName, @" in your post to automatically enter." ];
 
     NSMutableAttributedString *detailAttrStr = [[NSMutableAttributedString alloc] initWithString:descriptionTxt];
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];

@@ -147,7 +147,7 @@ static const int bottomMarginPaddingHeight = 15;
     self.button.frame = buttonFrame;
 
     [self.button setUserInteractionEnabled:YES];
-    NSString *text = @"See All Challengers";
+    NSString *text = @"See All Participants";
     [self.button setTitle:text forState:UIControlStateNormal];
     [self.button setTitleColor:[TDConstants headerTextColor] forState:UIControlStateNormal];
     [self.button.titleLabel setFont:[TDConstants fontSemiBoldSized:16]];

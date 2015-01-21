@@ -246,7 +246,7 @@
     cell.descriptionLabel.frame = CGRectMake(0, 0, 100, cell.frame.size.height);
     [cell.descriptionLabel sizeToFit];
 
-    UILabel *activeDaysLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 25, cell.frame.size.height)];
+    UILabel *activeDaysLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 50, cell.frame.size.height)];
     if (activeDaysNumber) {
         newTextString = activeDaysNumber > 1 ? @"\ndays" : @"\nday";
     } else {
@@ -255,13 +255,16 @@
     [self modifyPostsLabelString:activeDaysLabel statCount:[NSNumber numberWithInteger:activeDaysNumber]
                       textString:newTextString];
     [activeDaysLabel sizeToFit];
+
     CGRect activeDaysFrame = activeDaysLabel.frame;
+    activeDaysFrame.size.width = activeDaysLabel.frame.size.width < 25 ? 25 : activeDaysLabel.frame.size.width;
     activeDaysFrame.origin.x =     SCREEN_WIDTH - 10 - rightArrow.frame.size.width - 10 - activeDaysFrame.size.width;
     activeDaysFrame.origin.y = cell.frame.size.height/2 - cell.descriptionLabel.frame.size.height/2;
     activeDaysLabel.frame = activeDaysFrame;
     [cell addSubview:activeDaysLabel];
 
      CGRect descripFrame = cell.descriptionLabel.frame;
+    descripFrame.size.width = cell.descriptionLabel.frame.size.width < 25 ? 25 : cell.descriptionLabel.frame.size.width;
     descripFrame.origin.x = SCREEN_WIDTH - 10 - rightArrow.frame.size.width - 10 - activeDaysLabel.frame.size.width - 10 - descripFrame.size.width;
     descripFrame.origin.y = cell.frame.size.height/2 - cell.descriptionLabel.frame.size.height/2;
     cell.descriptionLabel.frame = descripFrame;

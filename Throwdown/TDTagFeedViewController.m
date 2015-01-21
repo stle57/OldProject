@@ -285,7 +285,7 @@
 
 -(void)loadChallengersView {
     debug NSLog(@"Load challengers feed");
-    TDUsersViewController *vc = [[TDUsersViewController alloc] initWithNibName:@"TDUsersViewController" bundle:nil title:@"Challengers" campaignData:self.campaignData];
+    TDUsersViewController *vc = [[TDUsersViewController alloc] initWithNibName:@"TDUsersViewController" bundle:nil title:@"Participants" campaignData:self.campaignData];
     vc.tagName = self.tagName;
     [self.navigationController pushViewController:vc animated:YES];
 }
