@@ -89,6 +89,10 @@
             self.gotFromServer = YES;
             [self.tableView reloadData];
             [self hideActivity];
+        } else if (success){
+            self.gotFromServer = YES;
+            [self.tableView reloadData];
+            [self hideActivity];
         } else {
             self.gotFromServer = NO;
             [self hideActivity];
@@ -113,6 +117,8 @@
     [self.view bringSubviewToFront:self.activityIndicator];
     [self.activityIndicator startSpinner];
     self.activityIndicator.hidden = NO;
+
+    debug NSLog(@"self.activityIndicator.frame = %@", NSStringFromCGRect(self.activityIndicator.frame));
 }
 
 - (void)hideActivity {
@@ -128,47 +134,58 @@
 }
 
 - (CGFloat)tableView:(UITableView*)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    if (self.userList.count) {
-        return 65.;
+    if (self.gotFromServer) {
+        if (self.userList.count) {
+            return 65.;
+        } else {
+            return SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height;
+        }
     }
-    return SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height;
+    return 0;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView*)tableView {
     if (self.gotFromServer) {
         return 1;
     } else {
-        return 1;
+        return 0;
     }
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     if (self.gotFromServer) {
-        return self.userList.count;
+        if (self.userList.count) {
+            return self.userList.count;
+        } else {
+            return 1;
+        }
     }
-    return 1;
+    return 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (self.userList.count) {
-        NSArray *object = [self.userList objectAtIndex:indexPath.row];
-        TDFollowProfileCell *cell = [self createCell:tableView indexPath:indexPath userInfo:object];
-        return cell;
-    } else {
-        TDNoPostsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoPostsCell"];
-        if (!cell) {
-            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoPostsCell" owner:self options:nil];
-            cell = [topLevelObjects objectAtIndex:0];
-            cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        }
+    if (self.gotFromServer) {
+        if (self.userList.count) {
+            NSArray *object = [self.userList objectAtIndex:indexPath.row];
+            TDFollowProfileCell *cell = [self createCell:tableView indexPath:indexPath userInfo:object];
+            return cell;
+        } else {
+            TDNoPostsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoPostsCell"];
+            if (!cell) {
+                NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDNoPostsCell" owner:self options:nil];
+                cell = [topLevelObjects objectAtIndex:0];
+                cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            }
 
-        NSString *photoURL = [self.campaignData valueForKey:@"image"];
-        [cell createInfoCell:photoURL tagName:self.tagName];
- 
-        return cell;
+            NSString *photoURL = [self.campaignData valueForKey:@"image"];
+            [cell createInfoCell:photoURL tagName:self.tagName];
+     
+            return cell;
+        }
     }
+    return nil;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
