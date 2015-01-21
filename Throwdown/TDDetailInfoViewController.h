@@ -7,12 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <TTTAttributedLabel/TTTAttributedLabel.h>
 
 @interface TDDetailInfoViewController : UIViewController
 @property (nonatomic) UIScrollView *scrollView;
 @property (nonatomic) UIImageView *logoImageView;
 @property (nonatomic) UILabel *label;
-@property (nonatomic) UILabel *detailDescription;
+@property (nonatomic) TTTAttributedLabel *detailDescription;
 @property (nonatomic) NSString *navTitle;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil title:(NSString*)title campaignData:(NSDictionary*)campaignData;

@@ -11,9 +11,9 @@
 #import <SDWebImageManager.h>
 #import <UIImage+Resizing.h>
 
-@interface TDCampaignView ()
+@interface TDCampaignView () <TTTAttributedLabelDelegate>
 @property (nonatomic) UILabel *title;
-@property (nonatomic) UILabel *blurbTitle;
+@property (nonatomic) TTTAttributedLabel *blurbTitle;
 @property (nonatomic) UIImageView *icon;
 @property (nonatomic) UIButton *learnMoreButton;
 @property (nonatomic) UIView *bottomLine;
@@ -66,10 +66,19 @@ static const int bottomMarginPaddingHeight = 15;
     self.title.frame = label1Frame;
     [self addSubview:self.title];
 
-    self.blurbTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
+    self.blurbTitle = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
+    self.blurbTitle.delegate = self;
+    self.blurbTitle.linkAttributes = nil;
+    self.blurbTitle.activeLinkAttributes = nil;
+    self.blurbTitle.inactiveLinkAttributes = nil;
+    self.blurbTitle.enabledTextCheckingTypes = NSTextCheckingTypeLink;
+    self.blurbTitle.font = [TDConstants fontRegularSized:15];
+    [self.blurbTitle setNumberOfLines:0];
 
     NSString *detailStr = [campaignData objectForKey:@"blurb"];
-    NSMutableAttributedString *detailAttrStr = [[NSMutableAttributedString alloc] initWithString:detailStr];
+    [self.blurbTitle setText:detailStr];
+
+    NSMutableAttributedString *detailAttrStr = [self.blurbTitle.attributedText mutableCopy];
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     [paragraphStyle setLineHeightMultiple:18/15.];
     [paragraphStyle setMinimumLineHeight:18];
@@ -79,11 +88,13 @@ static const int bottomMarginPaddingHeight = 15;
     [detailAttrStr addAttribute:NSFontAttributeName value:[TDConstants fontRegularSized:15] range:NSMakeRange(0, detailStr.length)];
     [detailAttrStr addAttribute:NSForegroundColorAttributeName value:[TDConstants headerTextColor] range:NSMakeRange(0, detailStr.length)];
     self.blurbTitle.attributedText = detailAttrStr;
-    [self.blurbTitle setNumberOfLines:0];
-    [self.blurbTitle sizeToFit];
+    [TDViewControllerHelper colorLinksInLabel:self.blurbTitle];
+
+    CGSize size = [self.blurbTitle sizeThatFits:CGSizeMake(SCREEN_WIDTH - 60, MAXFLOAT)];
     [self addSubview:self.blurbTitle];
 
     CGRect label2Frame = self.blurbTitle.frame;
+    label2Frame.size.height = size.height;
     label2Frame.size.width = SCREEN_WIDTH - 60;
     label2Frame.origin.x = 30;
     label2Frame.origin.y = self.title.frame.origin.y + self.title.frame.size.height + 15;
@@ -184,9 +195,9 @@ static const int bottomMarginPaddingHeight = 15;
     [detailAttrStr addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, detailStr.length)];
     [detailAttrStr addAttribute:NSFontAttributeName value:[TDConstants fontRegularSized:15] range:NSMakeRange(0, detailStr.length)];
     [detailAttrStr addAttribute:NSForegroundColorAttributeName value:[TDConstants headerTextColor] range:NSMakeRange(0, detailStr.length)];
-    label2.attributedText = detailAttrStr;
     [label2 setNumberOfLines:0];
-    [label2 sizeToFit];
+    label2.attributedText = detailAttrStr;
+    CGSize label2size = [label2 sizeThatFits:CGSizeMake(SCREEN_WIDTH - 60, MAXFLOAT)];
 
     UIButton *learnButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
     if ([campaignData objectForKey:@"more_cta"]) {
@@ -194,9 +205,9 @@ static const int bottomMarginPaddingHeight = 15;
         [learnButton setAttributedTitle:learnAttrStr forState:UIControlStateNormal];
         [learnButton sizeToFit];
     }
-    debug NSLog(@"height = %f", 15 + kBigImageHeight + 10 + label1.frame.size.height + 15 + label2.frame.size.height + 15 + learnButton.frame.size.height + 15 + bottomMarginPaddingHeight);
+    debug NSLog(@"height = %f", 15 + kBigImageHeight + 10 + label1.frame.size.height + 15 + label2size.height + 15 + learnButton.frame.size.height + 15 + bottomMarginPaddingHeight);
 
-    return 15 + kBigImageHeight + 10 + label1.frame.size.height + 15 + label2.frame.size.height + 15 + learnButton.frame.size.height + 15 + bottomMarginPaddingHeight + 65 + bottomMarginPaddingHeight;
+    return 15 + kBigImageHeight + 10 + label1.frame.size.height + 15 + label2size.height + 15 + learnButton.frame.size.height + 15 + bottomMarginPaddingHeight + 65 + bottomMarginPaddingHeight;
 }
 
 - (void)challengersButtonPressed {
@@ -233,4 +244,11 @@ static const int bottomMarginPaddingHeight = 15;
         }
     }];
 }
+
+- (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithURL:(NSURL *)url {
+    if (![TDViewControllerHelper isThrowdownURL:url]) {
+        [TDViewControllerHelper askUserToOpenInSafari:url];
+    }
+}
+
 @end

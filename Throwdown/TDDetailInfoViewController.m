@@ -12,7 +12,7 @@
 #import <SDWebImageManager.h>
 #import <UIImage+Resizing.h>
 
-@interface TDDetailInfoViewController ()
+@interface TDDetailInfoViewController () <TTTAttributedLabelDelegate>
 @property (nonatomic) NSDictionary *data;
 @end
 
@@ -77,10 +77,18 @@
     self.label.frame = labelFrame;
     [self.scrollView addSubview:self.label];
 
-    self.detailDescription = [[UILabel alloc] initWithFrame:CGRectMake(0, self.label.frame.origin.y + self.label.frame.size.height + 15, SCREEN_WIDTH-60, 200)];
+    self.detailDescription = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(0, self.label.frame.origin.y + self.label.frame.size.height + 15, SCREEN_WIDTH-60, 200)];
+    self.detailDescription.enabledTextCheckingTypes = NSTextCheckingTypeLink;
+    self.detailDescription.delegate = self;
+    self.detailDescription.linkAttributes = nil;
+    self.detailDescription.activeLinkAttributes = nil;
+    self.detailDescription.inactiveLinkAttributes = nil;
+    self.detailDescription.font = [TDConstants fontRegularSized:15];
+    [self.detailDescription setNumberOfLines:0];
     NSString *detailStr = [self.data objectForKey:@"description"];
+    [self.detailDescription setText:detailStr];
 
-    NSMutableAttributedString *detailAttrStr = [[NSMutableAttributedString alloc] initWithString:detailStr];
+    NSMutableAttributedString *detailAttrStr = [self.detailDescription.attributedText mutableCopy];
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     [paragraphStyle setLineHeightMultiple:18/15.];
     [paragraphStyle setMinimumLineHeight:18];
@@ -91,7 +99,7 @@
     [detailAttrStr addAttribute:NSForegroundColorAttributeName value:[TDConstants headerTextColor] range:NSMakeRange(0, detailStr.length)];
     detailAttrStr = [TDViewControllerHelper boldHashtagsInText:detailAttrStr fontSize:15];
     self.detailDescription.attributedText = detailAttrStr;
-    [self.detailDescription setNumberOfLines:0];
+    [TDViewControllerHelper colorLinksInLabel:self.detailDescription];
     [self.detailDescription sizeToFit];
 
     CGRect detailFrame = self.detailDescription.frame;
@@ -137,4 +145,11 @@
         }
     }];
 }
+
+- (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithURL:(NSURL *)url {
+    if (![TDViewControllerHelper isThrowdownURL:url]) {
+        [TDViewControllerHelper askUserToOpenInSafari:url];
+    }
+}
+
 @end

@@ -41,6 +41,8 @@
 + (NSString*)getAddressFormat:(NSDictionary*)data;
 + (NSAttributedString *)makeLeftAlignmentTextWithString:(NSString *)text font:(UIFont*)font color:(UIColor*)color lineHeight:(CGFloat)lineHeight lineHeightMultipler:(CGFloat)lineHeightMultiplier;
 
++ (void)colorLinksInLabel:(TTTAttributedLabel *)label;
+
 // Hashtags:
 + (NSMutableAttributedString *)boldHashtagsInText:(NSMutableAttributedString *)text fontSize:(CGFloat)fontSize;
 + (NSMutableDictionary *)hashTagStyle;
