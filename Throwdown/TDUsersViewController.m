@@ -233,7 +233,6 @@
     [cell addSubview:rightArrow];
 
     NSInteger postNumber = [[userInfo valueForKey:@"tag_posts_count"] intValue];
-    debug NSLog(@"post number=%@, for %@", [userInfo valueForKey:@"tag_posts_count"], [userInfo valueForKey:@"username"]);
     NSString *newTextString;
     if (postNumber) {
         newTextString = postNumber > 1 ? @"\nposts" : @"\npost";
