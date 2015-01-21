@@ -875,7 +875,7 @@
 #pragma mark - Instagram sharing
 
 - (void)postToInstagram:(NSNotification *)n {
-    NSString *caption  = [[n.userInfo objectForKey:@"caption"] stringByAppendingString:@" via @ThrowdownUs"];
+    NSString *caption  = [[n.userInfo objectForKey:@"caption"] stringByAppendingString:@"\nvia @ThrowdownUs"];
     NSString *location = [n.userInfo objectForKey:@"location"];
     if ([[n.userInfo objectForKey:@"isVideo"] boolValue]) {
         NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat:@"instagram://library?AssetPath=%@&InstagramCaption=%@", [location urlencodedString], [caption urlencodedString]]];
