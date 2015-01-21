@@ -233,7 +233,7 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     CGFloat height = [super tableView:tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath];
 
-    if ([[self posts] count] == 0 && self.loaded) {
+    if (self.loaded && self.campaignData && [self.posts count] == 0) {
         height = [UIScreen mainScreen].bounds.size.height - kHeightOfStatusBar - self.tableView.contentInset.top - [TDCampaignView heightForCampaignHeader:self.campaignData];
         if (height < 100) {
             height = 100;
@@ -246,7 +246,7 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [super tableView:tableView cellForRowAtIndexPath:indexPath];
 
-    if (self.loaded && [cell isKindOfClass:[TDNoPostsCell class]]) {
+    if (self.loaded  && self.campaignData && [cell isKindOfClass:[TDNoPostsCell class]]) {
         TDNoPostsCell *noPostsCell = (TDNoPostsCell*)cell;
         CGFloat height = [UIScreen mainScreen].bounds.size.height - kHeightOfStatusBar - self.tableView.contentInset.top - [TDCampaignView heightForCampaignHeader:self.campaignData];
         if (height < 100) {
@@ -257,7 +257,6 @@
     }
     return cell;
 }
-
 
 #pragma mark - View delegate and event overrides
 
