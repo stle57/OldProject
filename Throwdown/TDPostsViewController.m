@@ -283,29 +283,27 @@ static CGFloat const kPostMargin = 22;
 
     // 1st row for Profile Header
     if (self.profileType != kFeedProfileTypeNone && indexPath.section == 0) {
-        if ([self getUser]) {
-            TDUserProfileCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_PROFILE];
-            if (!cell) {
-                NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_PROFILE owner:self options:nil];
-                cell = [topLevelObjects objectAtIndex:0];
-                cell.selectionStyle = UITableViewCellSelectionStyleNone;
-                cell.delegate = self;
-            }
-
-            TDUser *user = [self getUser];
-            if (!user || self.profileType == kFeedProfileTypeNone) {
-                [cell setUser:user withButton:UserProfileButtonTypeUnknown];
-            } else if ([[TDCurrentUser sharedInstance].userId isEqualToNumber:user.userId]) {
-                [cell setUser:user withButton:UserProfileButtonTypeInvite];
-            } else if (self.profileType == kFeedProfileTypeOther) {
-                    [cell setUser:user withButton:(user.following ? UserProfileButtonTypeFollowing : UserProfileButtonTypeFollow)];
-
-            } else {
-                [cell setUser:user withButton:UserProfileButtonTypeInvite];
-            }
-
-            return cell;
+        TDUserProfileCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_PROFILE];
+        if (!cell) {
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_PROFILE owner:self options:nil];
+            cell = [topLevelObjects objectAtIndex:0];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.delegate = self;
         }
+
+        TDUser *user = [self getUser];
+        if (!user || self.profileType == kFeedProfileTypeNone) {
+            [cell setUser:user withButton:UserProfileButtonTypeUnknown];
+        } else if ([[TDCurrentUser sharedInstance].userId isEqualToNumber:user.userId]) {
+            [cell setUser:user withButton:UserProfileButtonTypeInvite];
+        } else if (self.profileType == kFeedProfileTypeOther) {
+                [cell setUser:user withButton:(user.following ? UserProfileButtonTypeFollowing : UserProfileButtonTypeFollow)];
+
+        } else {
+            [cell setUser:user withButton:UserProfileButtonTypeInvite];
+        }
+
+        return cell;
     }
 
     // 'Loading' or 'No Posts' cell
@@ -471,9 +469,7 @@ static CGFloat const kPostMargin = 22;
 
     // 1st row is Profile Header
     if (self.profileType != kFeedProfileTypeNone && indexPath.section == 0) {
-        if ([self getUser]){
-            return [TDUserProfileCell heightForUserProfile:[self getUser]];
-        }
+        return [TDUserProfileCell heightForUserProfile:[self getUser]];
     }
 
     // Just 'No Posts' cell
