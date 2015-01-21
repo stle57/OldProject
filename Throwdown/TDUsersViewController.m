@@ -55,10 +55,6 @@
     [self.navLabel sizeToFit];
     [self.navigationItem setTitleView:self.navLabel];
 
-    CGRect activityFrame = self.activityIndicator.frame;
-    activityFrame.origin.x = SCREEN_WIDTH/2 - self.activityIndicator.frame.size.width/2;
-    activityFrame.origin.y = SCREEN_HEIGHT/2 - self.activityIndicator.frame.size.height/2;
-    self.activityIndicator.frame = activityFrame;
     [self loadData];
 }
 
