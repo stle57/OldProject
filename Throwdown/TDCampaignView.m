@@ -135,18 +135,6 @@ static const int bottomMarginPaddingHeight = 15;
 
         [self addSubview:bottomMargin];
     }
-
-    debug NSLog(@"self.icon = %f", self.icon.frame.size.height);
-    debug NSLog(@"title height = %f", self.title.frame.size.height);
-    debug NSLog(@"blurbTitle = %f", self.blurbTitle.frame.size.height);
-    debug NSLog(@"  size=%f", size.height);
-    debug NSLog(@"self.learnMoreButton = %f", self.learnMoreButton.frame.size.height);;
-    debug NSLog(@"bottomLine = %f", self.bottomLine.frame.size.height);
-    debug NSLog(@"bottomMarginPadding = %f", self.bottomMarginPadding.frame.size.height);
-    debug NSLog(@"self.button = %f", self.button.frame.size.height);;
-    debug NSLog(@"bottomMargin Padding = %f", self.bottomMarginPadding.frame.size.height);
-
-    debug NSLog(@"done rendering");
 }
 
 - (void)createChallengersRow {
@@ -196,18 +184,28 @@ static const int bottomMarginPaddingHeight = 15;
     [label1 sizeToFit];
 
     TTTAttributedLabel *label2 = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
-    NSString *detailStr =[campaignData objectForKey:@"blurb"];
-    NSMutableAttributedString *detailAttrStr = [[NSMutableAttributedString alloc] initWithString:detailStr];
+    label2.linkAttributes = nil;
+    label2.activeLinkAttributes = nil;
+    label2.inactiveLinkAttributes = nil;
+    label2.enabledTextCheckingTypes = NSTextCheckingTypeLink;
+    label2.font = [TDConstants fontRegularSized:15];
+    label2.textColor = [TDConstants headerTextColor];
+    [label2 setNumberOfLines:0];
+
+    NSString *detailStr = [campaignData objectForKey:@"blurb"];
+    [label2 setText:detailStr];
+
+    NSMutableAttributedString *detailAttrStr = [label2.attributedText mutableCopy];
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     [paragraphStyle setLineHeightMultiple:18/15.];
     [paragraphStyle setMinimumLineHeight:18];
     [paragraphStyle setMaximumLineHeight:18];
     paragraphStyle.alignment = NSTextAlignmentLeft;
     [detailAttrStr addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, detailStr.length)];
-    [detailAttrStr addAttribute:NSFontAttributeName value:[TDConstants fontRegularSized:15] range:NSMakeRange(0, detailStr.length)];
-    [detailAttrStr addAttribute:NSForegroundColorAttributeName value:[TDConstants headerTextColor] range:NSMakeRange(0, detailStr.length)];
-    [label2 setNumberOfLines:0];
+    detailAttrStr = [TDViewControllerHelper boldHashtagsInText:detailAttrStr fontSize:15];
     label2.attributedText = detailAttrStr;
+    [TDViewControllerHelper colorLinksInLabel:label2];
+
     CGSize label2size = [label2 sizeThatFits:CGSizeMake(SCREEN_WIDTH - 60, MAXFLOAT)];
 
     UIButton *learnButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
@@ -216,18 +214,9 @@ static const int bottomMarginPaddingHeight = 15;
         [learnButton setAttributedTitle:learnAttrStr forState:UIControlStateNormal];
         [learnButton sizeToFit];
     }
+    debug NSLog(@"height = %f", 15 + kBigImageHeight + 15 + label1.frame.size.height + 15 + label2size.height + 15 + learnButton.frame.size.height + 15 + .5 +bottomMarginPaddingHeight + .5 + 65 + bottomMarginPaddingHeight + .5);
 
-
-    debug NSLog(@"icon height = %ld", (long)kBigImageHeight);
-    debug NSLog(@"label1 height = %f", label1.frame.size.height);
-    debug NSLog(@"label2 h eight = %f", label2.frame.size.height);
-    debug NSLog(@"label2size=%f", label2size.height);
-    debug NSLog(@"learn button =%f", learnButton.frame.size.height);
-    debug NSLog(@"bottom margin padding = %d", bottomMarginPaddingHeight);
-
-    debug NSLog(@"height = %f", 15 + kBigImageHeight + 15 + label1.frame.size.height + 15 + label2size.height + 15 + learnButton.frame.size.height + 15 + bottomMarginPaddingHeight + 65 + bottomMarginPaddingHeight);
-
-    return 15 + kBigImageHeight + 15 + label1.frame.size.height + 15 + label2size.height + 15 + learnButton.frame.size.height + 15 + bottomMarginPaddingHeight + 65 + bottomMarginPaddingHeight ;
+    return 15 + kBigImageHeight + 15 + label1.frame.size.height + 15 + label2size.height + 15 + learnButton.frame.size.height + 15 + .5 +bottomMarginPaddingHeight + .5 + 65 + bottomMarginPaddingHeight + .5;
 }
 
 - (void)challengersButtonPressed {
@@ -270,5 +259,4 @@ static const int bottomMarginPaddingHeight = 15;
         [TDViewControllerHelper askUserToOpenInSafari:url];
     }
 }
-
 @end
