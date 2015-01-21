@@ -7,7 +7,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TDUsersViewController">
             <connections>
-                <outlet property="activityIndicator" destination="ERH-dt-Dgf" id="01v-r8-clC"/>
+                <outlet property="activityIndicator" destination="ERH-dt-Dgf" id="3IL-zo-fOG"/>
                 <outlet property="backButton" destination="fib-Qg-gcg" id="5fP-RD-rvT"/>
                 <outlet property="navLabel" destination="dbk-uG-aaG" id="J1B-Qv-1bc"/>
                 <outlet property="tableView" destination="YNM-RG-H7D" id="GC3-zl-N8b"/>
@@ -28,8 +28,8 @@
                         <outlet property="delegate" destination="-1" id="GgG-Kf-f6U"/>
                     </connections>
                 </tableView>
-                <view contentMode="scaleToFill" id="ERH-dt-Dgf" customClass="TDActivityIndicator">
-                    <rect key="frame" x="150" y="150" width="300" height="300"/>
+                <view hidden="YES" contentMode="scaleToFill" id="ERH-dt-Dgf" customClass="TDActivityIndicator">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="504"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                 </view>
