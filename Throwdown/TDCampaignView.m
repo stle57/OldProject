@@ -62,7 +62,7 @@ static const int bottomMarginPaddingHeight = 15;
 
     CGRect label1Frame = self.title.frame;
     label1Frame.origin.x =  self.frame.size.width/2 - self.title.frame.size.width/2;
-    label1Frame.origin.y = self.icon.frame.origin.y + self.icon.frame.size.height + 10;
+    label1Frame.origin.y = self.icon.frame.origin.y + self.icon.frame.size.height + 15;
     self.title.frame = label1Frame;
     [self addSubview:self.title];
 
@@ -136,6 +136,17 @@ static const int bottomMarginPaddingHeight = 15;
         [self addSubview:bottomMargin];
     }
 
+    debug NSLog(@"self.icon = %f", self.icon.frame.size.height);
+    debug NSLog(@"title height = %f", self.title.frame.size.height);
+    debug NSLog(@"blurbTitle = %f", self.blurbTitle.frame.size.height);
+    debug NSLog(@"  size=%f", size.height);
+    debug NSLog(@"self.learnMoreButton = %f", self.learnMoreButton.frame.size.height);;
+    debug NSLog(@"bottomLine = %f", self.bottomLine.frame.size.height);
+    debug NSLog(@"bottomMarginPadding = %f", self.bottomMarginPadding.frame.size.height);
+    debug NSLog(@"self.button = %f", self.button.frame.size.height);;
+    debug NSLog(@"bottomMargin Padding = %f", self.bottomMarginPadding.frame.size.height);
+
+    debug NSLog(@"done rendering");
 }
 
 - (void)createChallengersRow {
@@ -184,7 +195,7 @@ static const int bottomMarginPaddingHeight = 15;
     [label1 setNumberOfLines:0];
     [label1 sizeToFit];
 
-    UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
+    TTTAttributedLabel *label2 = [[TTTAttributedLabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
     NSString *detailStr =[campaignData objectForKey:@"blurb"];
     NSMutableAttributedString *detailAttrStr = [[NSMutableAttributedString alloc] initWithString:detailStr];
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
@@ -205,9 +216,18 @@ static const int bottomMarginPaddingHeight = 15;
         [learnButton setAttributedTitle:learnAttrStr forState:UIControlStateNormal];
         [learnButton sizeToFit];
     }
-    debug NSLog(@"height = %f", 15 + kBigImageHeight + 10 + label1.frame.size.height + 15 + label2size.height + 15 + learnButton.frame.size.height + 15 + bottomMarginPaddingHeight);
 
-    return 15 + kBigImageHeight + 10 + label1.frame.size.height + 15 + label2size.height + 15 + learnButton.frame.size.height + 15 + bottomMarginPaddingHeight + 65 + bottomMarginPaddingHeight;
+
+    debug NSLog(@"icon height = %ld", (long)kBigImageHeight);
+    debug NSLog(@"label1 height = %f", label1.frame.size.height);
+    debug NSLog(@"label2 h eight = %f", label2.frame.size.height);
+    debug NSLog(@"label2size=%f", label2size.height);
+    debug NSLog(@"learn button =%f", learnButton.frame.size.height);
+    debug NSLog(@"bottom margin padding = %d", bottomMarginPaddingHeight);
+
+    debug NSLog(@"height = %f", 15 + kBigImageHeight + 15 + label1.frame.size.height + 15 + label2size.height + 15 + learnButton.frame.size.height + 15 + bottomMarginPaddingHeight + 65 + bottomMarginPaddingHeight);
+
+    return 15 + kBigImageHeight + 15 + label1.frame.size.height + 15 + label2size.height + 15 + learnButton.frame.size.height + 15 + bottomMarginPaddingHeight + 65 + bottomMarginPaddingHeight ;
 }
 
 - (void)challengersButtonPressed {

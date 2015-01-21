@@ -47,7 +47,7 @@
     label.frame = labelFrame;
     [self addSubview:label];
 
-    UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(30, label.frame.origin.y + label.frame.size.height + 20, SCREEN_WIDTH - 60, 200)];
+    UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(30, label.frame.origin.y + label.frame.size.height + 15, SCREEN_WIDTH - 60, 200)];
     [label2 setNumberOfLines:0];
     NSString *descriptionTxt = [NSString stringWithFormat:@"%@%@%@", @"Be the first challenger to kick things off!\nSimply tag #", tagName, @" in your post to automatically enter." ];
 

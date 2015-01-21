@@ -64,7 +64,7 @@
 
     [self downloadPreview:[self.data objectForKey:@"image"]];
 
-    self.label = [[UILabel alloc] initWithFrame:CGRectMake(0, self.logoImageView.frame.origin.y + kBigImageHeight + 10, SCREEN_WIDTH, 100)];
+    self.label = [[UILabel alloc] initWithFrame:CGRectMake(0, self.logoImageView.frame.origin.y + kBigImageHeight + 15, SCREEN_WIDTH, 100)];
 
     NSString *titleStr = [self.data objectForKey:@"title"];
     NSAttributedString *titleAttrStr = [TDViewControllerHelper makeParagraphedTextWithString:titleStr font:[TDConstants fontSemiBoldSized:19] color:[TDConstants headerTextColor] lineHeight:23 lineHeightMultipler:(23./19.)];
@@ -110,7 +110,7 @@
     [self.scrollView addSubview:self.detailDescription];
 
     CGSize scrollableSize =  CGSizeMake(SCREEN_WIDTH,
-                                        15 + kBigImageHeight + 10 + self.label.frame.size.height + 15 + self.detailDescription.frame.size.height + 20 + 20);
+                                        15 + kBigImageHeight + 15 + self.label.frame.size.height + 15 + self.detailDescription.frame.size.height + 20 + 20);
     [self.scrollView setContentSize:scrollableSize];
 
     [self.view addSubview:self.scrollView];
