@@ -53,7 +53,8 @@
     [self modifyFrames];
     
     descriptionLabelOrigWidth = self.descriptionLabel.frame.size.width;
-    
+
+    self.activeDaysLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 100, self.frame.size.height)];
 }
 
 - (IBAction)actionButtonPressed:(UIButton*)sender{
@@ -102,4 +103,6 @@
         [self.delegate userProfilePressedWithId:self.userId];
     }
 }
+
+
 @end

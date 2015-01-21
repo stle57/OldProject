@@ -34,6 +34,6 @@
 @property (nonatomic, assign) CGFloat bottomLineOrigY;
 @property (nonatomic, assign) CGFloat descriptionLabelOrigWidth;
 @property (nonatomic) NSURL *userImageURL;
-
+@property (nonatomic) UILabel *activeDaysLabel;
 - (IBAction)actionButtonPressed:(UIButton*)sender;
 @end
