@@ -51,7 +51,7 @@
     [label2 setNumberOfLines:0];
     label2.font = [TDConstants fontRegularSized:15];
     label2.textColor = [TDConstants headerTextColor];
-    NSString *descriptionTxt = [NSString stringWithFormat:@"%@%@%@", @"Be the first challenger to kick things off!\nSimply tag #", tagName, @" in your post to automatically enter." ];
+    NSString *descriptionTxt = [NSString stringWithFormat:@"%@%@%@", @"Be the first challenger to kick things off!  Simply tag #", tagName, @" in your post to automatically enter." ];
 
     NSMutableAttributedString *detailAttrStr = [[NSMutableAttributedString alloc] initWithString:descriptionTxt];
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
