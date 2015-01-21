@@ -41,6 +41,7 @@ static NSInteger const kBottomMarginPadding = 15;
     CGRect topLineRect = self.topLine.frame;
     topLineRect.size.height = 1 / [[UIScreen mainScreen] scale];
     self.topLine.frame = topLineRect;
+    self.topLine.backgroundColor = [TDConstants darkBorderColor];
 
     self.imageView = [[UIImageView alloc] initWithFrame:CGRectMake(10, 65/2 - kSmallImageHeight/2, kSmallImageWidth, kSmallImageHeight)];
     self.bottomMarginPadding = [[UIView alloc] initWithFrame:CGRectMake(0, 65, SCREEN_WIDTH, kBottomMarginPadding)];
@@ -58,6 +59,7 @@ static NSInteger const kBottomMarginPadding = 15;
     }
     if ([notice.type isEqualToString:TDCampaginStr]) {
         self.imageView.contentMode = UIViewContentModeScaleAspectFit;
+        [self addSubview:self.topLine];
 
         [self addSubview:self.imageView];
 
