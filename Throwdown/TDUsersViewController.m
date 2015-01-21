@@ -166,6 +166,7 @@
         if (self.userList.count) {
             NSArray *object = [self.userList objectAtIndex:indexPath.row];
             TDFollowProfileCell *cell = [self createCell:tableView indexPath:indexPath userInfo:object];
+            cell.delegate = self;
             return cell;
         } else {
             TDNoPostsCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TDNoPostsCell"];
@@ -189,10 +190,7 @@
 
     //Open another view.
     TDFollowProfileCell *cell = (TDFollowProfileCell*)[tableView cellForRowAtIndexPath:indexPath];
-    debug NSLog(@"open user view with hashtag=%@", cell.userId);
-    TDTagUserFeedViewController *vc = [[TDTagUserFeedViewController alloc] initWithNibName:@"TDTagUserFeedViewController" bundle:nil];
-    [vc setUserId:cell.userId tagName:self.tagName];
-    [self.navigationController pushViewController:vc animated:YES];
+    [self openTagUserFeed:cell.userId];
 }
 
 - (TDFollowProfileCell*) createCell:(UITableView*)tableView indexPath:(NSIndexPath *)indexPath userInfo:(NSArray*)userInfo{
@@ -332,5 +330,13 @@
     [label setAttributedText:attString];
 }
 
+- (void)userProfilePressedWithId:(NSNumber *)userId{
+    [self openTagUserFeed:userId];
+}
 
+- (void)openTagUserFeed:(NSNumber*)userId {
+    TDTagUserFeedViewController *vc = [[TDTagUserFeedViewController alloc] initWithNibName:@"TDTagUserFeedViewController" bundle:nil];
+    [vc setUserId:userId  tagName:self.tagName];
+    [self.navigationController pushViewController:vc animated:YES];
+}
 @end
