@@ -86,7 +86,7 @@ static const int bottomMarginPaddingHeight = 15;
     CGRect label2Frame = self.blurbTitle.frame;
     label2Frame.size.width = SCREEN_WIDTH - 60;
     label2Frame.origin.x = 30;
-    label2Frame.origin.y = self.blurbTitle.frame.origin.y + self.blurbTitle.frame.size.height + 15;
+    label2Frame.origin.y = self.title.frame.origin.y + self.title.frame.size.height + 15;
     self.blurbTitle.frame = label2Frame;
 
     self.learnMoreButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
