@@ -187,10 +187,11 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
-
-    //Open another view.
-    TDFollowProfileCell *cell = (TDFollowProfileCell*)[tableView cellForRowAtIndexPath:indexPath];
-    [self openTagUserFeed:cell.userId];
+    if (self.userList.count) {
+        //Open another view.
+        TDFollowProfileCell *cell = (TDFollowProfileCell*)[tableView cellForRowAtIndexPath:indexPath];
+        [self openTagUserFeed:cell.userId];
+    }
 }
 
 - (TDFollowProfileCell*) createCell:(UITableView*)tableView indexPath:(NSIndexPath *)indexPath userInfo:(NSArray*)userInfo{
