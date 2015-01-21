@@ -110,7 +110,7 @@ static NSString *const kCDNStreamingServer = @"http://139bc8fb83b0918931ad-a6f56
 }
 
 + (UIColor *)hashtagColor {
-    return [self helpTextColor];
+    return [UIColor colorWithRed:(119.0/255.0) green:(119.0/255.0) blue:(119.0/255.0) alpha:1.0]; // 777777
 }
 
 + (UIColor *)commentTextColor {

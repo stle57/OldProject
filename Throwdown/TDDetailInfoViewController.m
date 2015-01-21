@@ -84,6 +84,7 @@
     self.detailDescription.activeLinkAttributes = nil;
     self.detailDescription.inactiveLinkAttributes = nil;
     self.detailDescription.font = [TDConstants fontRegularSized:15];
+    self.detailDescription.textColor = [TDConstants headerTextColor];
     [self.detailDescription setNumberOfLines:0];
     NSString *detailStr = [self.data objectForKey:@"description"];
     [self.detailDescription setText:detailStr];
@@ -95,8 +96,6 @@
     [paragraphStyle setMaximumLineHeight:18];
     paragraphStyle.alignment = NSTextAlignmentLeft;
     [detailAttrStr addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, detailStr.length)];
-    [detailAttrStr addAttribute:NSFontAttributeName value:[TDConstants fontRegularSized:15] range:NSMakeRange(0, detailStr.length)];
-    [detailAttrStr addAttribute:NSForegroundColorAttributeName value:[TDConstants headerTextColor] range:NSMakeRange(0, detailStr.length)];
     detailAttrStr = [TDViewControllerHelper boldHashtagsInText:detailAttrStr fontSize:15];
     self.detailDescription.attributedText = detailAttrStr;
     [TDViewControllerHelper colorLinksInLabel:self.detailDescription];

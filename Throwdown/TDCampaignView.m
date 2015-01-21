@@ -73,6 +73,7 @@ static const int bottomMarginPaddingHeight = 15;
     self.blurbTitle.inactiveLinkAttributes = nil;
     self.blurbTitle.enabledTextCheckingTypes = NSTextCheckingTypeLink;
     self.blurbTitle.font = [TDConstants fontRegularSized:15];
+    self.blurbTitle.textColor = [TDConstants headerTextColor];
     [self.blurbTitle setNumberOfLines:0];
 
     NSString *detailStr = [campaignData objectForKey:@"blurb"];
@@ -85,8 +86,6 @@ static const int bottomMarginPaddingHeight = 15;
     [paragraphStyle setMaximumLineHeight:18];
     paragraphStyle.alignment = NSTextAlignmentLeft;
     [detailAttrStr addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, detailStr.length)];
-    [detailAttrStr addAttribute:NSFontAttributeName value:[TDConstants fontRegularSized:15] range:NSMakeRange(0, detailStr.length)];
-    [detailAttrStr addAttribute:NSForegroundColorAttributeName value:[TDConstants headerTextColor] range:NSMakeRange(0, detailStr.length)];
     detailAttrStr = [TDViewControllerHelper boldHashtagsInText:detailAttrStr fontSize:15];
     self.blurbTitle.attributedText = detailAttrStr;
     [TDViewControllerHelper colorLinksInLabel:self.blurbTitle];
