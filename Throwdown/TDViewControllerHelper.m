@@ -250,7 +250,7 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
         }
     }];
 
-    // This runs through any automatically detected links/url/numbers/email etc and sets the red red color
+    // This runs through any automatically detected links/url/numbers/email etc and sets the red color
     if (label.enabledTextCheckingTypes) {
         mutableAttributedString = [label.attributedText mutableCopy];
         NSDataDetector *dataDetector = [NSDataDetector dataDetectorWithTypes:label.enabledTextCheckingTypes error:nil]; ;
@@ -265,13 +265,8 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
 
 
     if (linkHashtags) {
-        NSMutableDictionary *hashtagLinkAttributes = [[NSMutableDictionary alloc] init];
-        [hashtagLinkAttributes setObject:[TDConstants hashtagColor] forKey:(NSString *)kCTForegroundColorAttributeName];
-        [hashtagLinkAttributes setObject:paragraphStyle forKey:(NSString *)kCTParagraphStyleAttributeName];
-        NSRegularExpression *hashtagRegex = [NSRegularExpression regularExpressionWithPattern:@"(#[a-zA-Z0-9_]+)\\b" options:kNilOptions error:nil];
-
-        NSArray *matches = [hashtagRegex matchesInString:[mutableAttributedString string] options:kNilOptions range:range];
-
+        NSMutableDictionary *hashtagStyle = [TDViewControllerHelper hashTagStyle];
+        NSArray *matches = [TDViewControllerHelper hashtagMatchesForString:[mutableAttributedString string]];
         for (NSTextCheckingResult *match in matches) {
             NSRange matchRange = [match rangeAtIndex:1];
             NSString *tag = [[mutableAttributedString string] substringWithRange:matchRange];
@@ -280,31 +275,39 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
             }
             NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@://tag/%@", [TDConstants appScheme], tag]];
             NSTextCheckingResult *link = [NSTextCheckingResult linkCheckingResultWithRange:matchRange URL:url];
-            [label addLinkWithTextCheckingResult:link attributes:hashtagLinkAttributes];
+            [label addLinkWithTextCheckingResult:link attributes:hashtagStyle];
         }
     }
 }
 
-+ (void)boldHashtagsInLabel:(UILabel *)label {
-    NSMutableAttributedString * string = [[NSMutableAttributedString alloc]initWithString:label.attributedText.string];
-
-    NSString *str = label.attributedText.string;
-    NSError *error = nil;
-
-    //I Use regex to detect the pattern I want to change color
-    NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"#(\\w+)" options:0 error:&error];
-
-
-
-    NSArray *matches = [regex matchesInString:label.text options:0 range:NSMakeRange(0, string.length)];
-
++ (NSMutableAttributedString *)boldHashtagsInText:(NSMutableAttributedString *)text fontSize:(CGFloat)fontSize {
+    NSMutableDictionary *hashtagStyle = [TDViewControllerHelper hashTagStyle];
+    [hashtagStyle setObject:[TDConstants fontSemiBoldSized:fontSize] forKey:(NSString *)NSFontAttributeName];
+    [hashtagStyle setObject:[TDConstants headerTextColor] forKey:(NSString *)kCTForegroundColorAttributeName];
+    NSArray *matches = [TDViewControllerHelper hashtagMatchesForString:[text string]];
     for (NSTextCheckingResult *match in matches) {
-        NSRange wordRange = [match rangeAtIndex:0];
-        [string addAttribute:NSForegroundColorAttributeName value:[TDConstants headerTextColor] range:wordRange];
-        [string addAttribute:NSFontAttributeName value:[TDConstants fontSemiBoldSized:15] range:wordRange];
+        NSRange matchRange = [match rangeAtIndex:1];
+        [text setAttributes:hashtagStyle range:matchRange];
     }
-    
-    [label setAttributedText:string];
+    return text;
+}
+
++ (NSMutableDictionary *)hashTagStyle {
+    NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+    paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
+
+    NSMutableDictionary *hashtagLinkAttributes = [[NSMutableDictionary alloc] init];
+    [hashtagLinkAttributes setObject:[TDConstants hashtagColor] forKey:(NSString *)kCTForegroundColorAttributeName];
+    [hashtagLinkAttributes setObject:paragraphStyle forKey:(NSString *)kCTParagraphStyleAttributeName];
+    return hashtagLinkAttributes;
+}
+
++ (NSRegularExpression *)hashtagRegex {
+    return [NSRegularExpression regularExpressionWithPattern:@"(#[a-zA-Z0-9_]+)\\b" options:kNilOptions error:nil];
+}
+
++ (NSArray *)hashtagMatchesForString:(NSString *)string {
+    return [[TDViewControllerHelper hashtagRegex] matchesInString:string options:kNilOptions range:NSMakeRange(0, string.length)];
 }
 
 + (CGFloat)heightForComment:(NSString *)text withMentions:(NSArray *)mentions {
