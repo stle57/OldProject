@@ -33,7 +33,7 @@
 - (void)addGoalsData:(id)sender;
 - (void)textFieldEdited;
 - (void)changeCellToAddGoals;
-- (void)createCell:(BOOL)createAddButton text:(NSString*)text;
+- (void)createCell:(BOOL)createAddButton text:(NSString*)text selected:(BOOL)selected;
 - (void)makeCellFirstResponder;
-- (void)setSelectionButton;
+- (void)goalSelected:(BOOL)yes;
 @end

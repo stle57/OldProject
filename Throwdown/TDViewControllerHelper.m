@@ -57,12 +57,11 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     [root performSelector:@selector(showHomeController)];
 }
 
-+ (void)navigateToGuestFrom:(UIViewController *)fromController {
++ (void)navigateToGuestFrom:(UIViewController *)fromController guestPosts:(NSDictionary*)guestPosts {
     UINavigationController *nav = (UINavigationController*) fromController.view.window.rootViewController;
     TDWelcomeViewController *root = (TDWelcomeViewController *)[nav.viewControllers objectAtIndex:0];
-    [root performSelector:@selector(showGuestController)];
+    [root showGuestController:guestPosts];
 }
-
 + (BOOL)validateEmail:(NSString *)email {
     NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", EMAIL_REGEX];
     return [emailTest evaluateWithObject:email];

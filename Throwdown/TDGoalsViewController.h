@@ -18,7 +18,7 @@
 @interface TDGoalsViewController : UIViewController<UITableViewDataSource, UITableViewDataSource, TDGoalsCellDelegate, TDKeyboardObserverDelegate, UITextFieldDelegate>
 @property (nonatomic, weak) id <TDGoalsViewControllerDelegate> delegate;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withCloseButton:(BOOL)yes;
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withCloseButton:(BOOL)yes goalsList:(NSArray*)goalsList;
 
 //@property (weak, nonatomic) IBOutlet UIView *alphaView;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -34,6 +34,7 @@
 
 @property (nonatomic) BOOL showCloseButton;
 @property (nonatomic) TDKeyboardObserver *keyboardObserver;
+@property (nonatomic) NSMutableArray *goalList;
 
 - (IBAction)continueButtonPressed:(id)sender;
 - (IBAction)closeButtonPressed:(id)sender;

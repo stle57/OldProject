@@ -19,20 +19,39 @@
 @property (nonatomic) UIView *headerView;
 @property (nonatomic) UIView *viewOverlay;
 @property (nonatomic) UIView *disableViewOverlay;
-
+@property (nonatomic) NSMutableArray *goalsList;
+@property (nonatomic) NSMutableArray *interestsList;
 @property (nonatomic) TDUser *user;
+@property (nonatomic) BOOL initialLoadDone;
+@property (nonatomic) NSDictionary *initialPosts;
 @end
 
 
 @implementation TDGuestUserProfileViewController
 
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil goalsList:(NSMutableArray*)goalsList interestsLists:(NSMutableArray*)interestsList guestPosts:(NSDictionary*)guestPosts {
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        self.goalsList = [goalsList copy];
+        self.interestsList = [interestsList copy];
+        self.initialPosts = guestPosts;
+        [self handleNextStart:[self.initialPosts objectForKey:@"next_start"]];
+        [self handlePostsResponse:self.initialPosts fromStart:YES];
+    }
+    self.initialLoadDone = YES;
+
+    return self;
+}
+
 - (void)dealloc {
     self.headerView = nil;
+    self.interestsList = nil;
+    self.goalsList = nil;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    debug NSLog(@"TDGuestUserProfileViewController - viewDidLoad");
     self.view.backgroundColor = [TDConstants lightBackgroundColor];
     self.view.frame = CGRectMake(0, [UIApplication sharedApplication].statusBarFrame.size.height+ self.navigationController.navigationBar.frame.size.height, SCREEN_WIDTH, SCREEN_HEIGHT);
     // Background
@@ -63,7 +82,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeOverlay) name:TDRemoveGuestViewControllerOverlay object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(signupButtonPressed) name:TDGuestViewControllerSignUp object:nil];
-    
+ 
     self.disableViewOverlay = [[UIView alloc]
                                initWithFrame:CGRectMake(0.0f,0,SCREEN_WIDTH,SCREEN_HEIGHT)];
 }
@@ -78,7 +97,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
+
     [self.tableView reloadData];
     
     if (!self.posts || goneDownstream) {
@@ -110,7 +129,7 @@
         realRow = row -3;
     }
     
-    debug NSLog(@"REAL ROW = %ld", (long)realRow);
+    //debug NSLog(@"REAL ROW = %ld", (long)realRow);
     if (realRow < self.posts.count) {
         return [self.posts objectAtIndex:realRow];
     } else {
@@ -122,23 +141,31 @@
     [self fetchPosts];
 }
 
+- (void)endRefreshControl {
+    debug NSLog(@"!!!!!!!!!!!!!TDGuestUserProfileViewController: endRefreshControl");
+    debug NSLog(@"do something to load the view");
+}
 - (void)fetchPosts {
-    [[TDPostAPI sharedInstance] fetchPostsForGU:@"male" start:nil success:^(NSDictionary *response) {
-        self.user = [[TDUser alloc] initWithDictionary:[response valueForKeyPath:@"user"]];
-        //self.titleLabel.text = self.user.username;
-        [self handleNextStart:[response objectForKey:@"next_start"]];
-        [self handlePostsResponse:response fromStart:YES];
-    } error:^{
-        [self endRefreshControl];
-        [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastType_Warning payload:@{} delegate:nil];
-        self.loaded = YES;
-        self.errorLoading = YES;
-        [self.tableView reloadData];
+    if (self.initialLoadDone) {
+        debug NSLog(@"not retrieving posts");
+        return;
+    }
+
+    [[TDUserAPI sharedInstance] saveGoalsAndInterestsForGuest:self.goalsList interestsList:self.interestsList callback:^(BOOL success, NSDictionary *response) {
+        if (response) {
+            [self handleNextStart:[response objectForKey:@"next_start"]];
+            [self handlePostsResponse:response fromStart:YES];
+        } else {
+            [self endRefreshControl];
+            [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastType_Warning payload:@{} delegate:nil];
+            self.loaded = YES;
+            self.errorLoading = YES;
+            [self.tableView reloadData];
+        }
     }];
 }
 
 - (void)handleNextStart:(NSNumber *)start {
-    // start can be [NSNull null] here
     if (start && [[start class] isSubclassOfClass:[NSNumber class]]) {
         self.nextStart = start;
     } else {
@@ -156,27 +183,15 @@
     
     NSMutableArray *newPosts;
     if (self.posts) {
-        newPosts = [[self.posts subarrayWithRange:NSMakeRange(0, 10)] mutableCopy];
-        
 
-        //newPosts = [[NSMutableArray alloc] initWithArray:self.posts];
+        newPosts = [[NSMutableArray alloc] initWithArray:self.posts];
     } else {
         newPosts = [[NSMutableArray alloc] init];
     }
     
-    NSDictionary *object = [response valueForKeyPath:@"posts"];
-    debug NSLog(@"NUMBER OF POSTS=%lu", object.count);
-    int count = 0;
     for (NSDictionary *postObject in [response valueForKeyPath:@"posts"]){
-        if (count < 10) {
-            TDPost *post = [[TDPost alloc] initWithDictionary:postObject];
-            [newPosts addObject:post];
-            count++;
-        } else {
-            debug NSLog(@"****breaking after 10 posts");
-            break;
-        }
-        
+        TDPost *post = [[TDPost alloc] initWithDictionary:postObject];
+        [newPosts addObject:post];
     }
     
     self.posts = newPosts;
@@ -184,25 +199,21 @@
 }
 
 - (BOOL)fetchMorePostsAtBottom {
-//    if (![self hasMorePosts] || !self.locationId) {
-//        return NO;
-//    }
-//    [[TDPostAPI sharedInstance] fetchPostsForGuestUser:self.guestGoalsAndInterests start:self.nextStart success:^(NSDictionary *response) {
-//        [self handleNextStart:[response objectForKey:@"next_start"]];
-//        [self handlePostsResponse:response fromStart:NO];
-//    } error:^{
-//        self.errorLoading = YES;
-//    }];
     
     if (![self hasMorePosts]) {
         return NO;
     }
-    [[TDPostAPI sharedInstance] fetchPostsForGU:@"male" start:self.nextStart success:^(NSDictionary *response) {
-        [self handleNextStart:[response objectForKey:@"next_start"]];
-        [self handlePostsResponse:response fromStart:NO];
-    } error:^{
-        self.loaded = YES;
-        self.errorLoading = YES;
+    [[TDUserAPI sharedInstance] saveGoalsAndInterestsForGuest:self.goalsList interestsList:self.interestsList callback:^(BOOL success, NSDictionary *response) {
+        if (response) {
+            [self handleNextStart:[response objectForKey:@"next_start"]];
+            [self handlePostsResponse:response fromStart:YES];
+        } else {
+            [self endRefreshControl];
+            [[TDAppDelegate appDelegate] showToastWithText:@"Network Connection Error" type:kToastType_Warning payload:@{} delegate:nil];
+            self.loaded = YES;
+            self.errorLoading = YES;
+            [self.tableView reloadData];
+        }
     }];
     return YES;
 }
@@ -258,7 +269,7 @@
     [self.tableView reloadData];
 }
 
-//- (void)showGuestController {
-//    // stub to stop crash bug from segue: navigateToHomeFrom
-//}
+- (void)showGuestController:(TDGuestUserProfileViewController*)guestViewController {
+    // stub to stop crash bug from segue: navigateToHomeFrom
+}
 @end

@@ -52,5 +52,7 @@
 - (void)sendFeedbackEmail:(NSString*)body email:(NSString*)email callback:(void (^)(BOOL success))callback;
 - (void)loadNearbyLocations:(NSString*)latLon callback:(void (^)(BOOL success, NSArray *locations))callback;
 - (void)searchForLocation:(NSString*)latLon searchString:(NSString*)searchString callback:(void (^)(BOOL success, NSArray *locations))callback;
-
+- (void)getGoalsAndInterests:(void (^)(NSDictionary *goalsAndInterests))callback;
+- (void)saveGoalsAndInterestsForUser:(NSArray*)goalsList interestsList:(NSArray*)interestsList callback:(void (^) (BOOL success))callback;
+- (void)saveGoalsAndInterestsForGuest:(NSArray*)goalsList interestsList:(NSArray*)interestsList callback:(void (^) (BOOL success, NSDictionary *posts))callback;
 @end

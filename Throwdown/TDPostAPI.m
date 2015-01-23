@@ -127,10 +127,11 @@
     if ([TDCurrentUser sharedInstance].authToken) {
         [params setObject:[TDCurrentUser sharedInstance].authToken forKey:@"user_token"];
     }
-
+    debug NSLog(@" ====>calling posts api");
     [self fetchPostsPath:@"/api/v1/posts.json" parameters:params success:^(NSDictionary *response) {
         self.fetchingUpstream = NO;
         if (successHandler) {
+            debug NSLog(@"====>successHandler w/ response");
             successHandler(response);
         }
     } error:^{
@@ -164,12 +165,32 @@
 }
 
 #pragma mark - Posts for Guest 
-- (void)fetchPostsForGuestUser:(NSDictionary*)data start:(NSNumber *)start success:(void(^)(NSDictionary *response))successHandler error:(void (^)(void))errorHandler {
-//    NSMutableString *url = [NSMutableString stringWithFormat:@"/api/v1/locations/%@.json?user_token=%@", locationId, [TDCurrentUser sharedInstance].authToken];
-//    if (start) {
-//        [url appendString:[NSString stringWithFormat:@"&start=%@", start]];
-//    }
-//    [self fetchPostsPath:url parameters:nil success:successHandler error:errorHandler];
+- (void)fetchPostsForGuestUser:(NSArray*)goalsList interestsList:(NSArray*)interestsList start:(NSNumber *)start success:(void(^)(NSDictionary *response))successHandler error:(void (^)(void))errorHandler {
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    debug NSLog(@"deviceInfo.metrics=%@", TDDeviceInfo.metrics);
+    [params setObject:TDDeviceInfo.metrics forKey:@"guest"];
+
+    [params setObject:interestsList forKey:@"interests"];
+
+    [params setObject:goalsList forKey:@"goals"];
+
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/guests.json"];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager.requestSerializer setValue:TDDeviceInfo.bundleVersion forHTTPHeaderField:kHTTPHeaderBundleVersion];
+    [manager GET:[[TDConstants getBaseURL] stringByAppendingString:url] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            successHandler(responseObject);
+        } else if (errorHandler) {
+            errorHandler();
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"HTTP Post fetch Error: %@", error);
+
+        if (errorHandler) {
+            errorHandler();
+        }
+    }];
+
 }
 
 //-This method is just for testing purposes until we get the real method

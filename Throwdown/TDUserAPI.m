@@ -13,6 +13,7 @@
 #import "TDConstants.h"
 #import "AFNetworking.h"
 #import <Crashlytics/Crashlytics.h>
+#import "TDDeviceInfo.h"
 
 @implementation TDUserAPI
 
@@ -240,5 +241,58 @@
         debug NSLog(@"Get community list Error: %@", error);
         callback(NO, @[]);
     }];
+}
+
+- (void)getGoalsAndInterests:(void (^)(NSDictionary *dict))callback {
+
+    [[TDAPIClient sharedInstance] getGoalsAndInterests:^(NSDictionary *goalsAndInterests) {
+            callback(goalsAndInterests);
+    } ];
+}
+
+- (void)saveGoalsAndInterestsForUser:goalsList interestsList:(NSArray*)interestsList callback:(void (^)(BOOL success))callback{
+    NSArray *goalsArray = [[NSMutableArray alloc] init];
+    goalsArray = [self createArray:goalsList];
+
+    NSArray *interestsArray = [[NSMutableArray alloc] init];
+    interestsArray = [self createArray:interestsList];
+
+    [[TDAPIClient sharedInstance] saveGoalsAndInterestsForUser:goalsArray interestsList:interestsArray callback:^(BOOL success) {
+        if (success) {
+            debug NSLog(@"saved everything");
+            callback(success);
+        } else {
+            debug NSLog(@"could not save");
+            callback(NO);
+        }
+    }];
+}
+- (void)saveGoalsAndInterestsForGuest:(NSArray*)goalsList interestsList:(NSArray*)interestsList callback:(void (^)(BOOL success, NSDictionary *posts))callback {
+    NSArray *goalsArray = [[NSMutableArray alloc]init];
+    goalsArray = [self createArray:goalsList];
+
+    NSArray *interestsArray = [[NSMutableArray alloc] init];
+    interestsArray = [self createArray:interestsList];
+
+    debug NSLog(@"num goals sent to server=%lu, num interests sent to server = %lu", (unsigned long)goalsArray.count, (unsigned long)interestsArray.count);
+    [[TDAPIClient sharedInstance] saveGoalsAndInterestsForGuest:goalsArray interestsList:interestsArray callback:^(BOOL success, NSDictionary *posts) {
+        if (success) {
+            debug NSLog(@"saved everything");
+            callback(success, posts);
+        } else {
+            debug NSLog(@"could not save");
+            callback(NO, nil);
+        }
+    }];
+}
+
+- (NSArray*)createArray:(NSArray*)list {
+    NSMutableArray *array = [[NSMutableArray alloc]init];
+    for (NSDictionary *data in list) {
+        if([[data objectForKey:@"selected"] boolValue] == YES) {
+            [array addObject:[data objectForKey:@"name"]];
+        }
+    }
+    return array;
 }
 @end

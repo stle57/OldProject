@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TDGuestUserProfileViewController.h"
 
 @interface TDWelcomeViewController : UIViewController
 {
@@ -18,5 +19,5 @@
 @property (nonatomic, assign, readwrite) BOOL editViewOnly;
 
 - (void)showHomeController;
-- (void)showGuestController;
+- (void)showGuestController:(NSDictionary*)guestPosts;
 @end

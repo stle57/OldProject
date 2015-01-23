@@ -59,8 +59,7 @@
     [self.editableTextField addTarget:self action:@selector(textFieldEdited) forControlEvents:UIControlEventEditingDidBegin];
     
     self.backgroundColor = [UIColor clearColor];
-    //self.addedButton = NO;
-    
+
     self.addGoalButton = [UIButton buttonWithType:UIButtonTypeCustom];
     CGRect frame = CGRectMake(self.frame.size.width - 20 - 44, 0, 44, 44);
     self.addGoalButton.frame = frame;
@@ -99,7 +98,6 @@
 }
 
 - (IBAction)selectionButtonPressed:(id)sender {
-    debug NSLog(@"selection button pressed");
     if (self.delegate && [self.delegate respondsToSelector:@selector(selectionButtonPressedFromRow:)]) {
         [self.delegate selectionButtonPressedFromRow:self.row];
     }
@@ -112,7 +110,6 @@
 }
 
 - (void)textFieldEdited{
-    debug NSLog(@"textFieldEdited");
     if (!self.addedButton) {
         [self setAccessoryType:UITableViewCellAccessoryNone];
         CGRect bottomLine = self.bottomLine.frame;
@@ -121,18 +118,7 @@
         
         [self addSubview:self.addGoalButton];
         
-        debug NSLog(@"button frame = %@", NSStringFromCGRect(self.addGoalButton.frame));
-        debug NSLog(@"bottom line frame=%@", NSStringFromCGRect(self.bottomLine.frame));
-        debug NSLog(@"cell frame = %@", NSStringFromCGRect(self.frame));
-        debug NSLog(@"accessory view frame = %@", NSStringFromCGRect(self.accessoryView.frame));
-
-        
         self.addedButton = YES;
-    } else {
-        debug NSLog(@"....");
-//        self.accessoryView = nil;
-//        self.accessoryType = UITableViewCellAccessoryNone;
-//        self.addedButton = NO;
     }
 }
 
@@ -142,13 +128,13 @@
     }
 }
 
-- (void)createCell:(BOOL)createAddButton text:(NSString*)text {
+- (void)createCell:(BOOL)createAddButton text:(NSString*)text selected:(BOOL)selected{
     self.bottomLine.hidden = NO;
     self.goalLabel.hidden = NO;
     self.addButton.hidden = YES;
-    self.selectionButton.hidden = NO;
     self.editableTextField.hidden = YES;
-    
+    self.selectionButton.hidden= selected;
+
     if (createAddButton) {
         CGRect frame = self.frame;
         frame.size.height = 59;
@@ -161,12 +147,12 @@
         buttonFrame.origin.y = self.frame.size.height/2 - self.addButton.frame.size.height/2;
         self.addButton.frame = buttonFrame;
         self.bottomLine.hidden = YES;
-        
-
     } else {
         NSAttributedString *attString = [TDViewControllerHelper makeLeftAlignedTextWithString:text font:[TDConstants fontRegularSized:16.] color:[TDConstants headerTextColor] lineHeight:16. lineHeightMultipler:16./16.];
         self.goalLabel.attributedText = attString;
         [self.goalLabel sizeToFit];
+        self.selectionButton.hidden = NO;
+        [self goalSelected:selected];
     }
     
     CGRect goalFrame = self.goalLabel.frame;
@@ -213,14 +199,12 @@
     self.editableTextField.frame = editableTextFieldFrame;
     
     [self.editableTextField becomeFirstResponder];
-    debug NSLog(@"cell.editableTextField.frame = %@",NSStringFromCGRect( self.editableTextField.frame));
     [self.editableTextField setEnablesReturnKeyAutomatically:YES];
     self.bottomLine.hidden = NO;
-    debug NSLog(@"cell.bottomLine.frame = %@", NSStringFromCGRect(self.bottomLine.frame));
 }
 
-- (void)setSelectionButton {
-    if (self.selectionButton.tag == 0) {
+- (void)goalSelected:(BOOL)yes {
+    if (yes) {
         [self.selectionButton setImage:[UIImage imageNamed:@"checkbox_checked"] forState:UIControlStateNormal] ;
         NSAttributedString *str =
         [TDViewControllerHelper makeLeftAlignedTextWithString:self.goalLabel.attributedText.string font:[TDConstants fontRegularSized:16] color:[TDConstants brandingRedColor] lineHeight:16. lineHeightMultipler:16/16];

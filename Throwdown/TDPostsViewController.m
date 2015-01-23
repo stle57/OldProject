@@ -95,6 +95,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logOutUser:) name:LOG_OUT_NOTIFICATION object:nil];
 
     [self refreshPostsList];
+    debug NSLog(@"  about to call fetchPosts");
     [self fetchPosts];
 }
 
@@ -199,6 +200,8 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 
 /* Refreshes the tableview with current posts list */
 - (void)refreshPostsList {
+    debug NSLog(@"=====> reloading Data inside refreshPostsList");
+
     [self stopBottomLoadingSpinner];
 
     updatingAtBottom = NO;
@@ -206,7 +209,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     // If from refresh control
     [self endRefreshControl];
     [self.tableView reloadData];
-    debug NSLog(@"reloading Data inside refreshPostsList");
 }
 
 #pragma mark - refresh control
@@ -215,6 +217,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 }
 
 - (void)endRefreshControl {
+    debug NSLog(@"====calling endRefreshing from TDPostsViewController");
     [self.customRefreshControl endRefreshing];
 }
 
@@ -244,33 +247,16 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     NSArray *posts = [self postsForThisScreen];
     BOOL hasAskedForGoal = [[TDCurrentUser sharedInstance] didAskForGoalsInitially];
-    if (hasAskedForGoal) {
-        debug NSLog(@"not adding a row, already asked for goals");
-    } else {
-        debug NSLog(@"adding a row, haven't asked for goals");
-    }
-    if ([[TDCurrentUser sharedInstance] isNewUser]) {
-        debug NSLog(@"we are a new user");
-    } else {
-        debug NSLog(@"not a new user");
-    }
-    
+
     BOOL hasAskedForGoalsFinal = [[TDCurrentUser sharedInstance] didAskForGoalsFinal];
     if (!hasAskedForGoal && !hasAskedForGoalsFinal) {
         hasAskedForGoalsFinal = YES; // We don't want to add another section if both values are no.  So override the boolean
     }
 
-    debug NSLog(@"notice count = %lu", (unsigned long)[self noticeCount]);
-
-    debug NSLog(@"number of posts = %lu", (unsigned long)[posts count]);
     if ([posts count] == 0) {
         return 1 + (self.profileType != kFeedProfileTypeNone ? 1 : 0);
     }
-    if ([self onGuestFeed]) {
-        debug NSLog(@"on guest feed, number of sections = %lu", [posts count] + [self noticeCount] + (showBottomSpinner ? 1 : 0) + ([self hasMorePosts] ? 0 : 1) + (self.profileType != kFeedProfileTypeNone ? 1 : 0) + ([self onGuestFeed] ? 5 : 0) + (hasAskedForGoal ? 0 : 1) + (hasAskedForGoalsFinal ? 0 : 1));
-    } else {
-        debug NSLog(@"return number of sections=%lu", [posts count] + [self noticeCount] + (showBottomSpinner ? 1 : 0) + ([self hasMorePosts] ? 0 : 1) + (self.profileType != kFeedProfileTypeNone ? 1 : 0) + ([self onGuestFeed] ? 5 : 0) + (hasAskedForGoal ? 0 : 1) + (hasAskedForGoalsFinal ? 0 : 1));
-    }
+
     // 1 section per post, +1 if we need the Profile Header cell or +1 if we need the new user welcome cell
     return [posts count] + [self noticeCount] + (showBottomSpinner ? 1 : 0) + ([self hasMorePosts] ? 0 : 1) + (self.profileType != kFeedProfileTypeNone ? 1 : 0) + ([self onGuestFeed] ? 5 : 0) + ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) + (hasAskedForGoal ? 0 : 1) + (hasAskedForGoalsFinal ? 0 :1);
 }
@@ -846,7 +832,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
     }
     
     if ([self onGuestFeed] && indexPath.section== 1) {
-        debug NSLog(@"clicked on editing goals and interests");
         [self showGoalsAndInterestsController];
         return;
     }
@@ -939,7 +924,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 #pragma mark - TDLikeCommentViewDelegates
 
 - (void)likeButtonPressedFromRow:(NSInteger)row {   // 'row' is actually the section
-    debug NSLog(@"Home-likeButtonPressedFromRow:%ld", (long)row);
     if ([self onGuestFeed]) {
         [self openGuestUserJoin:kLike_LabelType];
     } else {
@@ -956,8 +940,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 }
 
 - (void)unLikeButtonPressedFromRow:(NSInteger)row {   // 'row' is actually the section
-    debug NSLog(@"Home-unLikeButtonPressedFromRow:%ld", (long)row);
-
     TDPost *post = [self postForRow:row];
     if (post && post.postId) {
         [post removeLikerUser:[[TDCurrentUser sharedInstance] currentUserObject]];
@@ -967,7 +949,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 }
 
 - (void)commentButtonPressedFromRow:(NSInteger)row {
-    debug NSLog(@"Home-commentButtonPressedFromRow:%ld", (long)row);
     if ([self onGuestFeed]) {
         [self openGuestUserJoin:kComment_LabelType];
     } else {
@@ -977,7 +958,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 }
 
 - (void)miniLikeButtonPressedForLiker:(NSDictionary *)liker {
-    debug NSLog(@"Home-miniLikeButtonPressedForLiker:%@", liker);
 }
 
 # pragma mark - navigation
@@ -1222,7 +1202,6 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 }
 
 - (void)dismissButtonPressed {
-    debug NSLog(@"dismiss button pressed for TDPostsViewController");
     [self.tableView reloadData];
 }
 @end

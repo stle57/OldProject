@@ -12,9 +12,7 @@
 #import "TDAppCoverBackgroundView.h"
 
 @interface TDGoalsViewController ()
-@property (nonatomic) NSMutableArray *goalList;
 @property (nonatomic) NSIndexPath *selectedIndexPath;
-@property (nonatomic) NSMutableArray *selectedGoalsList;
 @end
 
 static NSString *topHeaderText1 = @"Let's personalize your experience.";
@@ -26,21 +24,25 @@ static NSString *ovalsLeftButtonStr = @"ovals_left";
 static const int closeBackgroundViewHeight = 80;
 @implementation TDGoalsViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withCloseButton:(BOOL)yes goalsList:(NSArray *)goalsList{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        self.goalList = [NSMutableArray arrayWithObjects:@"Lose weight", @"Get back into shape",
-                         @"Get stronger", @"Tone up", @"Build endurance", @"Improve mobility", @"Become more functionally fit", @"Develop more self confidence", nil];
-    }
-    return self;
-}
+        if (goalsList == nil) {
+            debug NSLog(@"GOALS LIST IS NIL!, loading normal strings");
+            self.goalList =
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withCloseButton:(BOOL)yes {
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        self.goalList = [NSMutableArray arrayWithObjects:@"Lose weight", @"Get back into shape",
-                         @"Get stronger", @"Tone up", @"Build endurance", @"Improve mobility", @"Become more functionally fit", @"Develop more self confidence", nil];
+            [NSMutableArray arrayWithObjects:@{@"name":@"Lose weight",@"selected":@0, @"id":@0},
+                                                @{@"name":@"Get back into shape", @"selected":@0, @"id":@0},
+                                                @{@"name":@"Get stronger", @"selected":@0, @"id":@0},
+                                                @{@"name":@"Tone up", @"selected":@0, @"id":@0},
+                                                @{@"name":@"Build endurance", @"selected":@0, @"id":@0},
+                                                @{@"name":@"Improve mobility", @"selected":@0, @"id":@0},
+                                                @{@"name":@"Become more functionally fit", @"selected":@0, @"id":@0},
+                                                @{@"name":@"Develop more self confidence", @"selected":@0, @"id":@0}, nil];
+        } else {
+            self.goalList = [goalsList mutableCopy];
+        }
+
         self.showCloseButton = yes;
     }
     return self;
@@ -52,14 +54,6 @@ static const int closeBackgroundViewHeight = 80;
     
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH+20, SCREEN_HEIGHT); // +20 is to extend the frame for the scrollview offset(inside autolayout)
     self.view.backgroundColor = [UIColor clearColor];
-   // self.view.backgroundColor = [UIColor whiteColor];
-   // [self.view setAlpha:.92];
-//    
-    //self.alphaView.hidden = YES;
-//    self.alphaView.frame = self.view.frame;
-//    self.alphaView.backgroundColor = [UIColor whiteColor];
-//    [self.alphaView setAlpha:.92];
-    //[self.view addSubview:self.alphaView];
     
     if (self.showCloseButton) {
         self.closeButton.frame = CGRectMake(15, [UIApplication sharedApplication].statusBarFrame.size.height, [UIImage imageNamed:@"btn_x"].size.width, [UIImage imageNamed:@"btn_x"].size.height);
@@ -116,8 +110,6 @@ static const int closeBackgroundViewHeight = 80;
     
     self.keyboardObserver = [[TDKeyboardObserver alloc] initWithDelegate:self];
     [self.keyboardObserver startListening];
-    
-    self.selectedGoalsList = [[NSMutableArray alloc] init];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -131,9 +123,8 @@ static const int closeBackgroundViewHeight = 80;
 }
 
 - (IBAction)continueButtonPressed:(id)sender {
-    debug NSLog(@"continue button pressed, with number of selected goals = %lu", self.selectedGoalsList.count);
     if (self.delegate && [self.delegate respondsToSelector:@selector(continueButtonPressed:)]) {
-        [self.delegate continueButtonPressed:self.selectedGoalsList];
+        [self.delegate continueButtonPressed:self.goalList];
     }
 }
 
@@ -147,13 +138,15 @@ static const int closeBackgroundViewHeight = 80;
 #pragma mark UITableViewDataSource delegates
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    debug NSLog(@"goals list number of rows=%lu", self.goalList.count + 1);
     return self.goalList.count + 1;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (self.goalList.count == indexPath.row) {
-        return 59;
+    if (self.goalList.count+1 == indexPath.row) {
+        debug NSLog(@"index path = %ld", (long)indexPath.row);
+        return 59; // This is for the last row +(Add More)
     } else {
         return 44;
     }
@@ -169,19 +162,22 @@ static const int closeBackgroundViewHeight = 80;
         cell.editableTextField.delegate = self;
     }
     cell.row = indexPath.row;
-    
+    cell.selectionButton.tag = 0;
     if (indexPath.row == self.goalList.count) {
-        [cell createCell:YES text:nil];
+        [cell createCell:YES text:nil selected:NO];
+
     } else {
-        [cell createCell:NO text:self.goalList[indexPath.row]];
+        NSDictionary *dict = self.goalList[indexPath.row];
+        BOOL selected = [[dict objectForKey:@"selected"] boolValue] ;
+        NSString *goalName = [dict objectForKey:@"name"];
+
+        [cell createCell:NO text:goalName selected:selected];
     }
 
-    debug NSLog(@"cell.frame = %@", NSStringFromCGRect(cell.frame));
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    debug NSLog(@"row selected");
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
     if (indexPath.row == self.goalList.count) {
         TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:indexPath];
@@ -196,26 +192,26 @@ static const int closeBackgroundViewHeight = 80;
 
 #pragma mark TDGoalsCellDelegate
 - (void)selectionButtonPressedFromRow:(NSInteger)row {
-    debug NSLog(@"selection button pressed, change buttons");
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
     TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:indexPath];
     if (cell) {
-        [cell setSelectionButton];
-        if (cell.selectionButton.tag == 0) {
-            // take out of the list
-            if ([self.selectedGoalsList containsObject:cell.goalLabel.text]) {
-                [self.selectedGoalsList removeObject:cell.goalLabel.text];
-            }
+        [cell goalSelected:(cell.selectionButton.tag == 0) ? YES : NO];
+        // take out of the list
+        NSMutableDictionary *dict = [[self.goalList objectAtIndex:row] mutableCopy];
+        if ([[dict valueForKey:@"selected"] boolValue] == YES) {
+            [dict setValue:@0 forKey:@"selected"];
+            self.goalList[row] = dict;
         } else {
-            // add to the list
-            [self.selectedGoalsList addObject:cell.goalLabel.text];
+            [dict setValue:@1 forKey:@"selected"];
+            self.goalList[row] = dict;
         }
     }
-    debug NSLog(@"leaving TDGoalsDelegate selectionButtonPressedFromRow");
 }
 
 - (void)addGoals:(NSString*)text row:(NSInteger)row{
-    [self.goalList addObject:text];
+    NSDictionary *tempDict = @{@"name":text, @"selected":@0, @"id":[[NSNumber numberWithLong:(row+1)] stringValue]};
+    [self.goalList addObject:tempDict];
+
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
     TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:indexPath];
     if (cell) {
@@ -252,7 +248,6 @@ static const int closeBackgroundViewHeight = 80;
     
     CGRect frame = self.headerLabel1.frame;
     frame.origin.x = SCREEN_WIDTH/2 - self.headerLabel1.frame.size.width/2;
-    //frame.size.width = SCREEN_WIDTH;
     self.headerLabel1.frame = frame;
     [self.view addSubview:self.headerLabel1];
     
@@ -331,7 +326,6 @@ static const int closeBackgroundViewHeight = 80;
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    debug NSLog(@"return button hit");
     TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:self.selectedIndexPath];
     if (cell) {
         [self addGoals:cell.editableTextField.text row:cell.row];

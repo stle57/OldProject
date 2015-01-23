@@ -18,10 +18,10 @@
 #import "TDLoadingViewController.h"
 #import "TDLoginViewController.h"
 #import "TDAppCoverBackgroundView.h"
-#import "TDGuestUserProfileViewController.h"
 #import "TDViewControllerHelper.h"
 #import "TDHomeViewController.h"
 #import "UIImage+BlurredFrame.h"
+#import "TDGuestUser.h"
 
 @interface TDWelcomeViewController () <UIScrollViewDelegate, TDGetStartedViewControllerDelegate, TDGoalsViewControllerDelegate, TDInterestsViewControllerDelegate, TDLoadingViewControllerDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
@@ -44,8 +44,14 @@
 
 @implementation TDWelcomeViewController
 
+- (void)dealloc {
+    self.goalsList = nil;
+    self.interestList = nil;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
+    BOOL guestUserEdit = NO;
 
     self.view.backgroundColor = [UIColor clearColor];
     
@@ -89,28 +95,50 @@
     self.backgroundImageWidthConstraint.constant = frame.size.width;
     self.blurredImageHeightConstraint.constant = frame.size.height;
     self.blurredImageWidthConstraint.constant = frame.size.width;
-    
-    if (!self.editViewOnly) {
 
+    if ([[TDCurrentUser sharedInstance] isLoggedIn] && self.editViewOnly) {
+        // We are a logged in user and editing.
+        [[TDUserAPI sharedInstance] getGoalsAndInterests:^(NSDictionary *dict) {
+            if ([dict objectForKey:@"goals"]) {
+                self.goalsList = [dict objectForKey:@"goals"];
+                if (self.goalsViewController) {
+                    self.goalsViewController.goalList = [self.goalsList mutableCopy];
+                    debug NSLog(@"got goals list form db, count=%lu",(unsigned long)self.goalsViewController.goalList.count);
+                    [self.goalsViewController.tableView reloadData];
+                }
+            }
+            if([dict objectForKey:@"interests"]) {
+                self.interestList = [dict objectForKey:@"interests"];
+                if (self.interestsViewController) {
+                    self.interestsViewController.interestList = [self.interestList mutableCopy];
+                    [self.interestsViewController.tableView reloadData];
+                }
+            }
+        }];
+    } else if (self.editViewOnly) {
+        // We are guest user, but editing
+        guestUserEdit = YES;
+    }else {
+        // Start from initial view.
         self.getStartedViewController = [[TDGetStartedViewController alloc] initWithNibName:@"TDGetStartedViewController" bundle:nil ];
         self.getStartedViewController.delegate = self;
         [self addChildViewController:self.getStartedViewController];
         [self.scrollView addSubview:self.getStartedViewController.view];
-        
+
         CGRect getStartedFrame = self.getStartedViewController.view.frame;
         getStartedFrame.origin.x = 0;
         self.getStartedViewController.view.frame = getStartedFrame;
     }
 
-    self.goalsViewController = [[TDGoalsViewController alloc] initWithNibName:@"TDGoalsViewController" bundle:nil withCloseButton:self.editViewOnly];
+    self.goalsViewController = [[TDGoalsViewController alloc] initWithNibName:@"TDGoalsViewController" bundle:nil withCloseButton:self.editViewOnly goalsList:guestUserEdit ? [TDGuestUser sharedInstance].goalsList : self.goalsList];
     self.goalsViewController.delegate = self;
     [self addChildViewController:self.goalsViewController];
     [self.scrollView addSubview:self.goalsViewController.view];
     CGRect goalsFrame = self.goalsViewController.view.frame;
     goalsFrame.origin.x = self.editViewOnly ? 0 : self.pageWidth ;
     self.goalsViewController.view.frame = goalsFrame;
-    
-    self.interestsViewController =[[TDInterestsViewController alloc] initWithNibName:@"TDInterestsViewController" bundle:nil withBackButton:self.editViewOnly];
+
+    self.interestsViewController =[[TDInterestsViewController alloc] initWithNibName:@"TDInterestsViewController" bundle:nil withBackButton:self.editViewOnly interestsList:guestUserEdit ? [TDGuestUser sharedInstance].interestsList : self.interestList];
     self.interestsViewController.delegate = self;
     
     [self addChildViewController:self.interestsViewController];
@@ -142,7 +170,6 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     int offset = (int)scrollView.contentOffset.x;
-    debug NSLog(@"offset = %d", offset);
     int page = offset / (self.pageWidth - 20);
 
     if (offset > self.interestsViewController.view.frame.origin.x) {
@@ -173,15 +200,11 @@
 }
 
 - (void)setBlurLevel:(float)blurLevel {
-    NSLog(@"inside setBlurLevel, blurLevel = %f", blurLevel);
     self.blurredBackgroundImage.alpha = blurLevel;
     
     self.goalsViewController.view.alpha = blurLevel;
     
     self.goalsViewController.closeButtonBackgroundView.alpha = blurLevel;
-    
-    //self.backgroundImage.alpha = 1-blurLevel;
-    debug NSLog(@"background image alpha = %f", self.backgroundImage.alpha);
 }
 
 
@@ -199,18 +222,15 @@
 }
 
 #pragma mark - TDGuestViewController {
-- (void)showGuestController {
+- (void)showGuestController:(NSDictionary*)guestPosts {
     [self dismissViewControllerAnimated:YES completion:nil];
     if (self.navigationController.viewControllers.count ==2) {
         TDGuestUserProfileViewController *viewController = self.navigationController.viewControllers[1];
         [self.navigationController popToViewController:viewController animated:NO];
     } else {
-        UIViewController *guestViewController = [[TDGuestUserProfileViewController alloc] initWithNibName:@"TDGuestUserProfileViewController" bundle:nil];
-        debug NSLog(@"going to show guestViewController with address = [%p]", &guestViewController);
-        debug NSLog(@"before navigation controllers = %lu", (unsigned long)self.navigationController.viewControllers.count);
+        TDGuestUserProfileViewController *guestViewController = [[TDGuestUserProfileViewController alloc] initWithNibName:@"TDGuestUserProfileViewController" bundle:nil goalsList:self.goalsList interestsLists:self.interestList guestPosts:guestPosts];
+
         [self.navigationController pushViewController:guestViewController animated:YES];
-        debug NSLog(@"done launching new guest view controller");
-        debug NSLog(@"after navigation controllers = %lu", (unsigned long)self.navigationController.viewControllers.count);
     }
 
 }
@@ -254,7 +274,13 @@
     CGRect frame = self.loadingViewController.view.frame;
     frame.origin.x +=20;
     [self.scrollView scrollRectToVisible:frame animated:YES];
-    [self.loadingViewController showData:self.goalsList interestList:self.interestList];
+
+    if (self.editViewOnly && [[TDCurrentUser sharedInstance] isLoggedIn]) {
+        [self.loadingViewController showData:self.goalsList interestList:self.interestList];
+    } else {
+        [[TDGuestUser sharedInstance] updateGuestInfo:self.goalsList interestsList:self.interestList];
+        [self.loadingViewController showData:self.goalsList interestList:self.interestList];
+    }
 }
 
 - (void)backButtonPressed {
@@ -264,15 +290,18 @@
     [self.scrollView scrollRectToVisible:frame animated:YES];
 }
 
-- (void)loadGuestView {
+- (void)loadGuestView:(NSDictionary *)guestPosts {
     [self dismissViewControllerAnimated:YES completion:nil];
 
-    [TDViewControllerHelper navigateToGuestFrom:self];
+    [TDViewControllerHelper navigateToGuestFrom:self guestPosts:guestPosts];
 }
-
 - (void)loadHomeView {
     [self dismissViewControllerAnimated:YES completion:nil];
     
     [TDViewControllerHelper navigateToHomeFrom:self];
+}
+
+- (void)loadInterestsView {
+    [self backButtonPressed];
 }
 @end

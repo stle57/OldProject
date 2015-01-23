@@ -17,7 +17,7 @@
 @interface TDInterestsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, TDGoalsCellDelegate,TDKeyboardObserverDelegate, UITextFieldDelegate>
 
 @property (nonatomic, weak) id <TDInterestsViewControllerDelegate> delegate;
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withBackButton:(BOOL)yes;
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withBackButton:(BOOL)yes interestsList:(NSArray*)interestsList;
 
 //@property (weak, nonatomic) IBOutlet UIView *alphaView;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -31,6 +31,8 @@
 
 @property (nonatomic) TDKeyboardObserver *keyboardObserver;
 @property (nonatomic) BOOL showBackButton;
+@property (nonatomic) NSMutableArray *interestList;
+
 - (IBAction)doneButtonPressed:(id)sender;
 - (IBAction)backButtonPressed:(id)sender;
 @end

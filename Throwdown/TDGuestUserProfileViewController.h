@@ -11,7 +11,7 @@
 #import "TDGuestInfoCell.h"
 
 @interface TDGuestUserProfileViewController : TDPostsViewController<TDGuestUserInfoCellDelegate>
-
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil goalsList:(NSMutableArray*)goalsList interestsLists:(NSMutableArray*)interestsList guestPosts:(NSDictionary*)guestPosts;
 @property (nonatomic) NSDictionary *guestGoalsAndInterests;
 @property (weak, nonatomic) IBOutlet UIButton *addButton;
 
