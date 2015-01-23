@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TDGuestUserProfileViewController.h"
 
 @interface TDWelcomeViewController : UIViewController
 {
@@ -15,8 +16,8 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 @property (weak, nonatomic) IBOutlet UILabel *snippetLabel;
-
+@property (nonatomic, assign, readwrite) BOOL editViewOnly;
 
 - (void)showHomeController;
-
+- (void)showGuestController:(NSDictionary*)guestPosts;
 @end

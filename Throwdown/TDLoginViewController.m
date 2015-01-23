@@ -11,17 +11,17 @@
 #import "TDUserAPI.h"
 #import "TDConstants.h"
 #import "TDAnalytics.h"
+#import "TDResetPasswordViewController.h"
 
 @interface TDLoginViewController () <UITextFieldDelegate>
+@property (weak, nonatomic) IBOutlet TDAppCoverBackgroundView *backgroundImageView;
+@property (weak, nonatomic) IBOutlet UIView *alphaView;
 
 @property (weak, nonatomic) IBOutlet UIButton *loginButton;
 @property (weak, nonatomic) IBOutlet UIButton *resetPasswordButton;
 @property (weak, nonatomic) IBOutlet UIButton *backButton;
 @property (nonatomic, copy) NSString *userEmail;
 @property (nonatomic, copy) NSString *password;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *loginButtonOffset;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *textFieldSpacing;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *emailFieldOffset;
 
 - (IBAction)backButtonPressed:(UIButton *)sender;
 - (IBAction)loginButtonPressed:(id)sender;
@@ -29,37 +29,101 @@
 @end
 
 @implementation TDLoginViewController
+static NSString *buttonLoginStr = @"btn_login";
+static NSString *buttonLoginHitStr = @"btn_login_hit";
+static NSString *buttonBackStr = @"btn_back";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+    [self.backgroundImageView setBackgroundImage:YES editingViewOnly:YES];
+    debug NSLog(@"self.backgroundImageView.frame = %@", NSStringFromCGRect(self.backgroundImageView.frame));
+    
+    self.alphaView.frame = self.view.frame;
+    self.alphaView.backgroundColor = [UIColor clearColor];
+    debug NSLog(@"alphaView.frame = %@", NSStringFromCGRect(self.alphaView.frame));
+
+    //NSInteger yPosition = 25-([UIImage imageNamed:buttonBackStr].size.height/2);
+    NSInteger yPosition = 25 - [UIApplication sharedApplication].statusBarFrame.size.height;
+    debug NSLog(@"yPosition-%ld", (long)yPosition);
+    self.backButton.frame = CGRectMake(20,
+                                       ([UIApplication sharedApplication].statusBarFrame.size.height +50)/2 - [UIImage imageNamed:buttonBackStr].size.height/2,
+                                       [UIImage imageNamed:buttonBackStr].size.width,
+                                       [UIImage imageNamed:buttonBackStr].size.height);
+    //- Adjust the size of the button to have a larger tap area
+    self.backButton.frame = CGRectMake(self.backButton.frame.origin.x -10,
+                                       self.backButton.frame.origin.y -10,
+                                       self.backButton.frame.size.width + 20,
+                                       self.backButton.frame.size.height + 20);
+    debug NSLog(@"backButton frame = %@", NSStringFromCGRect(self.backButton.frame));
     [[TDAnalytics sharedInstance] logEvent:@"login_opened"];
+    self.topLabel.text = @"Log In";
+    self.topLabel.font = [TDConstants fontSemiBoldSized:18];
+    self.topLabel.textColor = [TDConstants
+                               headerTextColor];
+    [self.topLabel sizeToFit];
+    CGRect topLabelFrame = self.topLabel.frame;
+    topLabelFrame.origin.x = SCREEN_WIDTH/2 - self.topLabel.frame.size.width/2;
+    topLabelFrame.origin.y = ([UIApplication sharedApplication].statusBarFrame.size.height +50)/2 - self.topLabel.frame.size.height/2;
+    self.topLabel.frame = topLabelFrame;
 
-    self.resetPasswordButton.titleLabel.font = [TDConstants fontRegularSized:16];
-    self.topLabel.font = [TDConstants fontLightSized:20];
-
+    debug NSLog(@"self.topLabel.frame = %@", NSStringFromCGRect(self.topLabel.frame));
+    [self.resetPasswordButton.titleLabel setFont:[TDConstants fontRegularSized:14]];
+    [self.resetPasswordButton setTitleColor:[TDConstants headerTextColor] forState:(UIControlStateNormal)];
+    [self.resetPasswordButton sizeToFit];
+    
     // Textfields
-    [self.userNameTextField setUpWithIconImageNamed:@"reg_ico_name"
+    [self.userNameTextField setUpWithIconImageNamed:@"icon_name"
                                         placeHolder:@"Username or Email"
                                        keyboardType:UIKeyboardTypeEmailAddress
                                                type:kTDTextFieldType_Email
                                            delegate:self];
-    [self.passwordTextField setUpWithIconImageNamed:@"reg_ico_pass"
+    CGRect usernameFrame = self.userNameTextField.frame;
+    usernameFrame.origin.x = 20;
+    usernameFrame.origin.y = [UIApplication sharedApplication].statusBarFrame.size.height + 50;
+    usernameFrame.size.width = SCREEN_WIDTH - 40;
+    self.userNameTextField.frame = usernameFrame;
+    
+    debug NSLog(@"icon view=%@", NSStringFromCGRect( self.userNameTextField.iconImageView.frame));
+    debug NSLog(@"usernametextfield = %@", NSStringFromCGRect(self.userNameTextField.frame));
+    [self.passwordTextField setUpWithIconImageNamed:@"icon_password"
                                         placeHolder:@"Password"
                                        keyboardType:UIKeyboardTypeDefault
                                                type:kTDTextFieldType_Password
                                            delegate:self];
     [self.passwordTextField secure];
-
-    if ([UIScreen mainScreen].bounds.size.height == 480) {
-        // Moves the buttons up, forgot password depends on login button
-        self.emailFieldOffset.constant -= 10;
-        self.textFieldSpacing.constant -=  10;
-        self.loginButtonOffset.constant -= 45;
-    }
+    CGRect passwordFrame = self.passwordTextField.frame;
+    passwordFrame.origin.x = 20;
+    passwordFrame.origin.y =self.userNameTextField.frame.origin.y + self.userNameTextField.frame.size.height;
+    passwordFrame.size.width = SCREEN_WIDTH - 40;
+    self.passwordTextField.frame = passwordFrame;
+    
+    self.loginButton.frame =
+    CGRectMake(SCREEN_WIDTH/2 -[UIImage imageNamed:buttonLoginStr].size.width/2,
+               self.passwordTextField.frame.origin.y + self.passwordTextField.frame.size.height+ 40,
+               [UIImage imageNamed:buttonLoginStr].size.width,
+               [UIImage imageNamed:buttonLoginStr].size.height);
+    debug NSLog(@"button=%@", NSStringFromCGRect(self.loginButton.frame));
+    
+    self.resetPasswordButton.frame =
+        CGRectMake(SCREEN_WIDTH/2 - self.resetPasswordButton.frame.size.width/2,
+                   self.passwordTextField.frame.origin.y +self.passwordTextField.frame.size.height+ 40 + [UIImage imageNamed:buttonLoginStr].size.height + 15,
+                   self.resetPasswordButton.frame.size.width,
+                   self.resetPasswordButton.frame.size.height);
+    
+    CGRect progressFrame = self.progress.frame;
+    progressFrame.origin.x = SCREEN_WIDTH/2 - self.progress.frame.size.width/2;
+    progressFrame.origin.y = SCREEN_HEIGHT/2 - self.progress.frame.size.height/2;
+    self.progress.frame = progressFrame;
+    
+    debug NSLog(@"self.resetPasswordButton=%@", NSStringFromCGRect(self.resetPasswordButton.frame));
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [[UIApplication sharedApplication] setStatusBarHidden:NO];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -70,6 +134,7 @@
 - (void)dealloc {
     self.userEmail = nil;
     self.password = nil;
+   // self.backgroundImageView = nil;
 }
 
 - (BOOL)prefersStatusBarHidden {
@@ -182,5 +247,8 @@
                      }];
 }
 
-
+- (IBAction)resetButtonPressed:(id)sender {
+    TDResetPasswordViewController *vc = [[TDResetPasswordViewController alloc] init];
+    [self.navigationController pushViewController:vc animated:YES];
+}
 @end

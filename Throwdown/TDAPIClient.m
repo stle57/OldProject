@@ -782,4 +782,79 @@
     }];
 }
 
+- (void)getGoalsAndInterests:(void (^)(NSDictionary *goalsAndInterests))callback {
+    TDCurrentUser *currentUser = [TDCurrentUser sharedInstance];
+
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/goals_interests.json?user_token=%@", currentUser.authToken]];
+    debug NSLog(@"url=%@", url);
+
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [self.httpManager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSDictionary *response = (NSDictionary *)responseObject;
+        callback(response);
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"ERROR in retrieving goals and interests: %@", [error localizedDescription]);
+        callback(nil);
+    }];
+
+}
+
+- (void)saveGoalsAndInterestsForUser:(NSArray*)goalsList interestsList:(NSArray*)interestsList callback:(void (^) (BOOL success))callback{
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+
+    TDCurrentUser *currentUser = [TDCurrentUser sharedInstance];
+    NSString *url;
+    NSDictionary *params;
+    if ([currentUser isLoggedIn]) {
+        url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/goals_interests.json"]];
+        params = @{@"interests":interestsList, @"goals":goalsList, @"user_token": [TDCurrentUser sharedInstance].authToken};
+        debug NSLog(@"url=%@", url);
+        debug NSLog(@"params=%@", params);
+        [self.httpManager PUT:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+            if ([responseObject isKindOfClass:[NSDictionary class]]) {
+                NSDictionary *response = (NSDictionary *)responseObject;
+
+                NSNumber *success = [response objectForKey:@"success"];
+                if (success && [success boolValue]) {
+                    callback([success boolValue]);
+                } else {
+                    callback(NO);
+                }
+            } else {
+                debug NSLog(@"ERROR in save goals and interests response, got: %@", [responseObject class]);
+                callback(NO);
+            }
+        } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+            debug NSLog(@"ERROR in save goals and interests: %@", [error localizedDescription]);
+            callback(NO);
+        }];
+    }
+}
+
+- (void)saveGoalsAndInterestsForGuest:(NSArray*)goalsList interestsList:(NSArray*)interestsList callback:(void (^) (BOOL success, NSDictionary *posts))callback{
+    self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+
+    NSString * url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/guests.json"]];
+    NSDictionary *params = @{@"guest":TDDeviceInfo.metrics, @"interests":interestsList, @"goals":goalsList};
+    debug NSLog(@"url=%@", url);
+    debug NSLog(@"params=%@", params);
+    [self.httpManager POST:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *response = (NSDictionary *)responseObject;
+
+            NSNumber *success = [response objectForKey:@"success"];
+            if (success && [success boolValue]) {
+                callback([success boolValue], response);
+            } else {
+                callback(NO, @{});
+            }
+        } else {
+            debug NSLog(@"ERROR in retrieving data for guest user, got: %@", [responseObject class]);
+            callback(NO, nil);
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"ERROR in guest user call: %@", [error localizedDescription]);
+        callback(NO, nil);
+    }];
+}
 @end

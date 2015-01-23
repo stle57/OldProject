@@ -32,7 +32,7 @@
 
 #define CELL_IDENTIFIER @"TDPostView"
 
-@interface TDHomeViewController () <UIScrollViewDelegate, UIDocumentInteractionControllerDelegate>
+@interface TDHomeViewController () <UIScrollViewDelegate, UIDocumentInteractionControllerDelegate, TDGuestUserInfoCellDelegate>
 @property (weak, nonatomic) IBOutlet UISegmentedControl *feedSelectionControl;
 @property (weak, nonatomic) IBOutlet UIButton *searchTDUsersButton;
 @property (weak, nonatomic) IBOutlet UILabel *badgeCountLabel;
@@ -124,6 +124,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
     if (self.scrollToTop) {
         [self scrollTableToTop];
         self.scrollToTop = NO;
@@ -900,4 +901,38 @@
     }
 }
 
+#pragma mark TDGuestInfoCellDelegate
+-(void)createPostButtonPressed {
+    debug NSLog(@"open the TDCreatePostViewController");
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    UIViewController *createPostViewController = [storyboard instantiateViewControllerWithIdentifier:@"CreatePostViewController"];
+    createPostViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:createPostViewController];
+    navController.navigationBar.barStyle = UIBarStyleDefault;
+    navController.navigationBar.translucent = YES;
+    [self.navigationController presentViewController:navController animated:YES completion:nil];
+
+}
+
+-(void)dismissForExistingUser {
+    debug NSLog(@"dismissForExistingUser");
+    [[TDCurrentUser sharedInstance] didAskForGoalsInitially:YES];
+    [self.tableView reloadData];
+}
+
+- (void)goalsButtonPressed {
+    [self showGoalsAndInterestsController];
+}
+
+- (void)reloadTableView {
+    [[TDCurrentUser sharedInstance] didAskForGoalsFinal:YES];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+                                                    message:@"You may set your goals & interests any time through your Settings page."
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+    
+    [self.tableView reloadData];
+}
 @end

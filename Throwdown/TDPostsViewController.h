@@ -71,9 +71,8 @@
 - (void)startLoadingSpinner;
 - (void)openDetailView:(NSNumber *)postId;
 - (void)openProfile:(NSNumber *)userId;
-
+- (void)showGoalsAndInterestsController;
 - (NSUInteger)noticeCount;
 - (TDNotice *)getNoticeAt:(NSUInteger)index;
 - (BOOL)removeNoticeAt:(NSUInteger)index;
-
 @end

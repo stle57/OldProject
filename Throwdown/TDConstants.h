@@ -35,6 +35,13 @@ enum {
 };
 typedef NSInteger kInviteType;
 
+enum {
+    kView1_Loading,
+    kView2_Loading,
+    kView3_Loading
+};
+typedef NSInteger kLoadingViewType;
+
 // for TDNotificationUpdatePost notifications, set user data's "change" field to a NSNumber version of these:
 const typedef NS_ENUM(NSUInteger, kUpdatePostType) {
     kUpdatePostTypeLike,
@@ -117,7 +124,13 @@ static NSString *const TDShowFeedbackViewController = @"TDShowFeedbackViewContro
 static NSString *const TDPostNotificationDeclined = @"TDPostNotificationDeclined";
 static NSString *const TDActivityNavBar = @"TDActivityNavBar";
 static NSString *const TDUpdatePostCount = @"TDUpdatePostCount";
+static NSString *const TDRemoveGuestViewControllerOverlay = @"TDRemoveGuestViewControllerOverlay";
+static NSString *const TDGuestViewControllerSignUp = @"TDGuestViewControllerSignUp";
 
+static NSString *const TDCommunityValuesStr = @"Our Community Values";
+static NSString *const TDValueStr1 = @"\u2022 Always cheer each other on.";
+static NSString *const TDValueStr2 = @"\u2022 Constructive tips/feedback welcomed.";
+static NSString *const TDValueStr3 = @"\u2022 No negativity!  You will be removed.";
 static NSString *const TDFontProximaNovaRegular = @"ProximaNova-Regular";
 static NSString *const TDFontProximaNovaSemibold = @"ProximaNova-Semibold";
 static CGFloat const kCommentCellUserHeight = 18.0;
@@ -211,7 +224,7 @@ static NSInteger const kFollowingButtonTag = 20003;
 + (UIFont *)fontRegularSized:(NSUInteger)size;
 + (UIFont *)fontSemiBoldSized:(NSUInteger)size;
 + (UIFont *)fontBoldSized:(NSUInteger)size;
-
++ (NSString *)getHasAskedForGoalsKey:(NSNumber*)userId initial:(BOOL)initial;
 + (NSDictionary *)defaultVideoCompressionSettings;
 
 @end

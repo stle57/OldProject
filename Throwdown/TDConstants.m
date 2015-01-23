@@ -9,7 +9,7 @@
 #import "TDConstants.h"
 #import "AVFoundation/AVFoundation.h"
 
-static NSString *const kDevHost = @"http://amber.local:3000";
+static NSString *const kDevHost = @"http://slemac.local:3000";
 static NSString *const kStagingHost = @"http://staging.throwdown.us";
 static NSString *const kProductionHost = @"https://throwdown.us";
 static NSString *const kProductionSharingHost = @"http://tdwn.us";
@@ -200,4 +200,8 @@ static NSString *const kCDNStreamingServer = @"http://139bc8fb83b0918931ad-a6f56
     return settings;
 }
 
++ (NSString *)getHasAskedForGoalsKey:(NSNumber*)userId initial:(BOOL)initial{
+    NSString *key = [NSString stringWithFormat:@"%@%@%@_%@", @"dismissed_", userId, @"_hasAskedForGoals", initial ? @"0" : @"1" ];
+    return key;
+}
 @end

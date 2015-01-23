@@ -38,12 +38,14 @@
 @property (nonatomic, copy, readonly) NSString *twitterSecret;
 @property (nonatomic, copy, readonly) NSString *twitterIdentifier;
 
+@property (nonatomic) BOOL newUser;
 + (TDCurrentUser *)sharedInstance;
 - (void)updateFromDictionary:(NSDictionary *)dictionary;
 - (BOOL)isRegisteredForPush;
 - (BOOL)didAskForPush;
 - (void)resetAskedForPush;
 - (BOOL)isLoggedIn;
+- (BOOL)isNewUser;
 - (void)logout;
 - (void)checkPushNotificationToken;
 - (BOOL)registerForPushNotifications:(NSString *)message;
@@ -68,9 +70,11 @@
 - (void)didAskForContacts:(BOOL)yes;
 - (void)didAskForPhotos:(BOOL)yes;
 - (BOOL)didAskForPhotos;
-
 - (BOOL)didDismiss:(NSString *)dismissal;
 - (void)setDismissed:(NSString *)dismissal;
-
-
+- (BOOL)didAskForGoalsInitially;
+- (void)didAskForGoalsInitially:(BOOL)yes; //ask first time, showing the existing user header cell.
+- (BOOL)didAskForGoalsFinal;
+- (void)didAskForGoalsFinal:(BOOL)yes;  // ask a second time, and never ask again
+- (void)resetAskedForGoals;
 @end

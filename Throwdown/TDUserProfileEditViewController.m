@@ -22,6 +22,7 @@
 #import "TDUserPushNotificationsEditViewController.h"
 #import "TDSocialNetworksViewController.h"
 #import "TDAnalytics.h"
+#import "TDWelcomeViewController.h"
 #import <SDWebImageManager.h>
 #import <UIImage+Resizing.h>
 
@@ -498,7 +499,7 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-    return 5;
+    return 6;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -510,13 +511,16 @@
         case 1: // private
             return 2;
             break;
-        case 2: // push / social / password
+        case 2:
+            return 1;
+            break;
+        case 3: // push / social / password
             return 3;
             break;
-        case 3: // app rate / buy shirt
+        case 4: // app rate / buy shirt
             return 2;
             break;
-        case 4: // log out
+        case 5: // log out
             return 1;
             break;
         default:
@@ -680,7 +684,17 @@
             }
         break;
 
-        case 2: // Settings
+        case 2: // Fitness goals and interests
+            switch (indexPath.row) {
+                case 0:
+                    cell.longTitleLabel.hidden = NO;
+                    cell.longTitleLabel.text = @"Set My Fitness Goals & Interests";
+                    cell.rightArrow.hidden = YES;
+                    cell.topLine.hidden = NO;
+                    break;
+            }
+            break;
+        case 3: // Settings
             switch (indexPath.row) {
                 case 0:
                 {
@@ -707,7 +721,7 @@
                     break;
             }
             break;
-        case 3:
+        case 4:
             switch (indexPath.row) {
                 case 0:
                     cell.topLine.hidden = NO;
@@ -728,7 +742,7 @@
             }
             break;
 
-        case 4: // Log out
+        case 5: // Log out
             switch (indexPath.row) {
                 case 0:
                     cell.topLine.hidden = NO;
@@ -802,6 +816,15 @@
 
         case 2:
             switch (indexPath.row) {
+                case 0: // Fitness goals and interests
+                    [self showGoalsAndInterestsController];
+                    break;
+                default:
+                    break;
+            }
+            break;
+        case 3:
+            switch (indexPath.row) {
                 case 0: // Edit Push
                     [self gotoEditPushNotifications];
                     break;
@@ -812,7 +835,7 @@
                     [self showEditPassword];
             }
             break;
-        case 3:
+        case 4:
             switch (indexPath.row) {
                 case 0: {
                     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@/store", [TDConstants getBaseURL]]];
@@ -828,7 +851,7 @@
                     break;
             }
         break;
-        case 4:
+        case 5:
             [self hideKeyboard];
             switch (indexPath.row) {
                 case 0: {
@@ -1085,4 +1108,14 @@
     [self checkForSaveButton];
 }
 
+- (void)showGoalsAndInterestsController {
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    
+    UINavigationController *navigationController = [storyboard instantiateViewControllerWithIdentifier:@"WelcomeViewController"];
+    TDWelcomeViewController *viewController = navigationController.viewControllers[0];
+    // setup "inner" view controller
+    viewController.editViewOnly = YES;
+    [self presentViewController:navigationController animated:YES completion:nil];
+    
+}
 @end

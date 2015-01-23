@@ -33,6 +33,7 @@
         NSArray *nibContents = [[NSBundle mainBundle] loadNibNamed:@"TDTextField" owner:self options:nil];
         self.backgroundColor = [UIColor clearColor];
         UIView *view = (UIView *)[nibContents lastObject];
+        debug NSLog(@"view.frame = %@", NSStringFromCGRect(view.frame));
         CGRect frame = view.frame;
         frame.size.width = self.frame.size.width;
         view.frame = frame;
@@ -42,11 +43,14 @@
         CGRect bottomLineFrame = self.bottomLine.frame;
         bottomLineFrame.size.height = 0.5;
         bottomLineFrame.origin.y += 0.5;
+        bottomLineFrame.size.width = self.frame.size.width;
         self.bottomLine.frame = bottomLineFrame;
-
+        self.bottomLine.backgroundColor = [UIColor blackColor];
+        
         [self.textfield addTarget:self
                            action:@selector(textFieldDidChange:)
                  forControlEvents:UIControlEventEditingChanged];
+        
     }
     return self;
 }
@@ -58,11 +62,14 @@
     type = aType;
     self.spinner.hidden = YES;
     
-    self.placeholderLabel.font = [TDConstants fontRegularSized:19];
+    self.placeholderLabel.font = [TDConstants fontRegularSized:16];
     self.placeholderLabel.text = placeHolder;
-    self.placeholderLabel.alpha = 0.8;
+    self.placeholderLabel.textColor = [TDConstants commentTimeTextColor];
+    //self.placeholderLabel.alpha = 0.8;
 
-    self.textfield.font = [TDConstants fontRegularSized:19];
+    self.textfield.font = [TDConstants fontRegularSized:16];
+    self.textfield.textColor = [TDConstants headerTextColor];
+    
     self.textfield.keyboardType = keyboardType;
     if (keyboardType == UIKeyboardTypeEmailAddress || keyboardType == UIKeyboardTypeTwitter) {
         self.textfield.autocapitalizationType = UITextAutocapitalizationTypeNone;
@@ -84,6 +91,25 @@
     self.xmarkImageView.hidden = YES;
     self.checkmarkImageView.hidden = YES;
     self.textfield.delegate = self;
+    
+    CGRect frame = self.iconImageView.frame;
+    frame.origin.x = 0;
+    frame.origin.y = self.frame.size.height - 8 - self.iconImageView.frame.size.height;
+    self.iconImageView.frame = frame;
+    
+    CGRect placeHolderFrame = self.placeholderLabel.frame;
+    placeHolderFrame.origin.x = self.iconImageView.frame.size.width + 10;
+    placeHolderFrame.origin.y = self.frame.size.height/2 - self.iconImageView.frame.size.height/2 +2;
+    self.placeholderLabel.frame = placeHolderFrame;
+    self.textfield.frame = placeHolderFrame;
+    
+    CGRect checkFrame = self.checkmarkImageView.frame;
+    checkFrame.origin.y = self.frame.size.height - 8 - self.checkmarkImageView.frame.size.height;
+    self.checkmarkImageView.frame = checkFrame;
+    
+    self.xmarkImageView.frame = checkFrame;
+    
+    self.spinner.frame = checkFrame;
 }
 
 -(void)secure

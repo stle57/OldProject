@@ -17,13 +17,14 @@
             <connections>
                 <outlet property="bottomLine" destination="mSs-lk-Qdq" id="rDo-0p-BZL"/>
                 <outlet property="bottomMarginPadding" destination="9jO-Hy-JfW" id="jJu-uD-mFS"/>
+                <outlet property="button" destination="mG4-Ua-aXf" id="kgD-Fl-XBq"/>
+                <outlet property="closeButton" destination="X4c-kx-RgC" id="hOM-al-ybV"/>
                 <outlet property="dismissButton" destination="7Lb-Hd-1c3" id="pxM-s4-kRT"/>
-                <outlet property="icon" destination="gNi-ss-gTI" id="hrM-5A-9t9"/>
                 <outlet property="label1" destination="XWo-6a-AVg" id="zv3-gs-6Qh"/>
                 <outlet property="label2" destination="72u-hX-ozJ" id="r28-aB-Y7n"/>
                 <outlet property="label3" destination="Ks2-Tx-Ol2" id="22O-Py-gKd"/>
                 <outlet property="label4" destination="9PH-vb-TA8" id="YHW-MQ-VuP"/>
-                <outlet property="learnButton" destination="VF9-6l-evT" id="Sf4-Ao-bHP"/>
+                <outlet property="tdIcon" destination="gNi-ss-gTI" id="DGG-ap-jcI"/>
                 <outlet property="topLine" destination="LL9-DO-fuL" id="IDg-sp-qR5"/>
                 <outlet property="topMarginPadding" destination="OA3-0n-kd6" id="1IC-j3-iau"/>
             </connections>
@@ -58,6 +59,18 @@
             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
             <nil key="highlightedColor"/>
         </label>
+        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="mG4-Ua-aXf">
+            <rect key="frame" x="0.0" y="0.0" width="240" height="44"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <state key="normal" image="btn_join_throwdown">
+                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+            </state>
+            <state key="selected" image="btn_join_throwdown_hit"/>
+            <state key="highlighted" image="btn_join_throwdown_hit"/>
+            <connections>
+                <action selector="signupButtonPressed:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="Z4d-4j-uiL"/>
+            </connections>
+        </button>
         <view contentMode="scaleToFill" id="LL9-DO-fuL">
             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -70,7 +83,7 @@
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <point key="canvasLocation" x="321" y="-849"/>
         </view>
-        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Strengthlete_Logo_BIG" id="gNi-ss-gTI">
+        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="td_icon" id="gNi-ss-gTI">
             <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
         </imageView>
@@ -93,17 +106,24 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
         </view>
-        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="VF9-6l-evT">
-            <rect key="frame" x="0.0" y="0.0" width="46" height="30"/>
+        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="X4c-kx-RgC">
+            <rect key="frame" x="15" y="4" width="16" height="22"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-            <state key="normal">
+            <state key="normal" image="btn_x">
                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
             </state>
-            <point key="canvasLocation" x="106" y="395"/>
+            <state key="selected" image="btn_x"/>
+            <state key="highlighted" image="btn_x"/>
+            <connections>
+                <action selector="closeButtonPressed:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="ypP-yw-q82"/>
+            </connections>
         </button>
     </objects>
     <resources>
-        <image name="Strengthlete_Logo_BIG" width="75" height="50"/>
+        <image name="btn_join_throwdown" width="240" height="44"/>
+        <image name="btn_join_throwdown_hit" width="240" height="44"/>
+        <image name="btn_x" width="16" height="16"/>
+        <image name="td_icon" width="42" height="42"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

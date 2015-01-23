@@ -29,4 +29,7 @@
 - (void)unFollowUser:(NSNumber *)userID callback:(void (^)(BOOL success))callback;
 - (void)getSuggestedUserList:(void (^)(BOOL success, NSArray *suggestedList))callback;
 - (void)getChallengersList:(NSString*)tagName callback:(void (^)(BOOL success, NSArray *challengerList))callback;
+- (void)saveGoalsAndInterestsForUser:(NSArray*)goalsList interestsList:(NSArray*)interestsList callback:(void (^)(BOOL success))callback;
+- (void)saveGoalsAndInterestsForGuest:(NSArray*)goalsList interestsList:(NSArray*)interestsList callback:(void (^)(BOOL success, NSDictionary *posts))callback;
+- (void)getGoalsAndInterests:(void (^)(NSDictionary *dict))callback;
 @end

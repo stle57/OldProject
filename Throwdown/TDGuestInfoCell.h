@@ -37,6 +37,23 @@
 
 - (void)setHashTagInfoCell;
 + (NSInteger)heightForHashTagInfoCell;
+@property (weak, nonatomic) IBOutlet UIButton *button;
+@property (weak, nonatomic) IBOutlet UIImageView *tdIcon;
+
+@property (weak, nonatomic) IBOutlet UIButton *closeButton;
+
+- (void)setInfoCell;
+- (void)setLastCell;
+- (void)setNewUserCell;
+- (void)setGuestUserCell;
+- (void)setExistingUserCell;
+- (void)setEditGoalsCell:(BOOL)showCloseButton;
++ (NSInteger)heightForLastCell;
++ (NSInteger)heightForInfoCell;
++ (NSInteger) heightForNewUserCell;
++ (NSInteger) heightForGuestUserCell;
++ (NSInteger)heightForExistingUserCell;
++ (NSInteger)heightForEditGoalsCell;
 - (IBAction)signupButtonPressed:(id)sender;
 - (IBAction)dismissButtonPressed:(id)sender;
 - (IBAction)closeButtonPressed:(id)sender;

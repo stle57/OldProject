@@ -194,6 +194,10 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
     return self.authToken != nil;
 }
 
+- (BOOL)isNewUser {
+   return self.newUser;
+}
+
 - (void)logout {
     [[TDAnalytics sharedInstance] logEvent:@"logged_out"];
     _userId = nil;
@@ -544,6 +548,9 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
 
 - (BOOL)didDismiss:(NSString *)dismissal  {
     NSString *key = [NSString stringWithFormat:@"dismissed_%@_%@", [self.userId stringValue], dismissal];
+}
+- (BOOL)didAskForGoalsInitially {
+    NSString *key = [TDConstants getHasAskedForGoalsKey:[TDCurrentUser sharedInstance].userId initial:YES];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     return [defaults boolForKey:key];
 }
@@ -555,4 +562,35 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
     [defaults synchronize];
 }
 
+- (void)didAskForGoalsInitially:(BOOL)yes {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *key = [TDConstants getHasAskedForGoalsKey:[TDCurrentUser sharedInstance].userId initial:YES];
+    [defaults setBool:yes forKey:key];
+    [defaults synchronize];
+}
+
+- (BOOL)didAskForGoalsFinal {
+    NSString *key = [TDConstants getHasAskedForGoalsKey:[TDCurrentUser sharedInstance].userId initial:NO];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    return [defaults boolForKey:key];
+}
+
+- (void)didAskForGoalsFinal:(BOOL)yes {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *key = [TDConstants getHasAskedForGoalsKey:[TDCurrentUser sharedInstance].userId initial:NO];
+    [defaults setBool:yes forKey:key];
+    [defaults synchronize];
+}
+
+- (void)resetAskedForGoals {
+    NSString *key = [TDConstants getHasAskedForGoalsKey:[TDCurrentUser sharedInstance].userId initial:YES];
+    NSString *key2 = [TDConstants getHasAskedForGoalsKey:[TDCurrentUser sharedInstance].userId initial:NO];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+    [defaults removeObjectForKey:key];
+    [defaults removeObjectForKey:key2];
+    
+    [defaults synchronize];
+
+}
 @end

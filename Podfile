@@ -12,6 +12,7 @@ pod 'FLEX'
 pod 'SDWebImage'
 pod 'SSKeychain'
 pod 'CSStickyHeaderFlowLayout'
+pod 'UIImage+BlurredFrame'
 
 # target "Throwdown" do
 # 

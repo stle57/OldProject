@@ -1,11 +1,11 @@
 PODS:
   - AFNetworking (2.1.0):
-    - AFNetworking/NSURLConnection
-    - AFNetworking/NSURLSession
-    - AFNetworking/Reachability
-    - AFNetworking/Security
-    - AFNetworking/Serialization
-    - AFNetworking/UIKit
+    - AFNetworking/NSURLConnection (= 2.1.0)
+    - AFNetworking/NSURLSession (= 2.1.0)
+    - AFNetworking/Reachability (= 2.1.0)
+    - AFNetworking/Security (= 2.1.0)
+    - AFNetworking/Serialization (= 2.1.0)
+    - AFNetworking/UIKit (= 2.1.0)
   - AFNetworking/NSURLConnection (2.1.0):
     - AFNetworking/Reachability
     - AFNetworking/Security
@@ -24,11 +24,12 @@ PODS:
   - NSDate+TimeAgo (1.0.2)
   - NYXImagesKit (2.3)
   - SDWebImage (3.7.1):
-    - SDWebImage/Core
+    - SDWebImage/Core (= 3.7.1)
   - SDWebImage/Core (3.7.1)
   - SSKeychain (1.2.2)
   - TestFlightSDK (3.0.0)
   - TTTAttributedLabel (1.9.5)
+  - UIImage+BlurredFrame (0.0.4)
 
 DEPENDENCIES:
   - AFNetworking
@@ -42,6 +43,7 @@ DEPENDENCIES:
   - SSKeychain
   - TestFlightSDK (= 3.0.0)
   - TTTAttributedLabel
+  - UIImage+BlurredFrame
 
 SPEC CHECKSUMS:
   AFNetworking: 7c33510b46f994bc75b75c6e63c1d83414ca40f2
@@ -55,5 +57,6 @@ SPEC CHECKSUMS:
   SSKeychain: cc48bd3ad24fcd9125adb9e0d23dd50b8bbd08b9
   TestFlightSDK: 36b8a207c5a119a3144aa2e6d24973eb9d5e0d0a
   TTTAttributedLabel: 9f727215d63a358f92317a24c83c94c72de78e80
+  UIImage+BlurredFrame: 0c38f5760d72125c47d16001a88faaac573bd35d
 
-COCOAPODS: 0.34.4
+COCOAPODS: 0.35.0

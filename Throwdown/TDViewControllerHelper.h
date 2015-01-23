@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <TTTAttributedLabel/TTTAttributedLabel.h>
+#import "TDGuestUserProfileViewController.h"
 
 @interface TDViewControllerHelper : NSObject
 
@@ -17,6 +18,7 @@
 
 + (void)showAlertMessage:(NSString *)message withTitle:(NSString *)title;
 + (void)navigateToHomeFrom:(UIViewController *)fromController;
++ (void)navigateToGuestFrom:(UIViewController *)fromController guestPosts:(NSDictionary*)guestPosts;
 + (BOOL)validateEmail:(NSString *)email;
 + (NSString*)validatePhone:(NSString *)phone;
 + (NSDate *)dateForRFC3339DateTimeString:(NSString *)rfc3339DateTimeString;

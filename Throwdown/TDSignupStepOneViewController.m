@@ -14,20 +14,19 @@
 #import "NBPhoneNumberUtil.h"
 #import <QuartzCore/QuartzCore.h>
 #import "TDAnalytics.h"
+#import "TDSignupStepTwoViewController.h"
 
 @interface TDSignupStepOneViewController ()<UITextFieldDelegate>
 
-@property (nonatomic, weak) IBOutlet UIButton *nextButton;
+@property (nonatomic, weak) IBOutlet UIButton *continueButton;
 @property (nonatomic, strong) NSRegularExpression *namePattern;
 @property (nonatomic, copy) NSString *phoneNumber;
 @property (nonatomic, copy) NSString *emailAddress;
 @property (nonatomic, copy) NSString *firstLastName;
 @property (nonatomic, copy) NSString *username;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *nextButtonOffset;
 
-- (IBAction)backButtonPressed:(UIButton *)sender;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *numberLabelOffset;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *nameOffset;
+- (IBAction)closeButtonPressed:(UIButton *)sender;
+- (IBAction)continueButtonPressed:(id)sender;
 @end
 
 @implementation TDSignupStepOneViewController
@@ -40,44 +39,97 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
+    self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     [[TDAnalytics sharedInstance] logEvent:@"signup_step_one"];
 
+    [self.backgroundImageView setBackgroundImage:YES editingViewOnly:YES];
+    
+    self.alphaView.frame = self.view.frame;
+    self.alphaView.backgroundColor = [UIColor clearColor];
+    
+    self.topLabel.text = @"Sign Up";
+    self.topLabel.font = [TDConstants fontSemiBoldSized:18];
+    self.topLabel.textColor = [TDConstants headerTextColor];
+    [self.topLabel sizeToFit];
+    
+    CGRect topLabelFrame = self.topLabel.frame;
+    topLabelFrame.origin.x = SCREEN_WIDTH/2 - self.topLabel.frame.size.width/2;
+    topLabelFrame.origin.y = ([UIApplication sharedApplication].statusBarFrame.size.height +50)/2 - self.topLabel.frame.size.height/2;
+    self.topLabel.frame = topLabelFrame;
+    
+    self.closeButton.frame = CGRectMake(20,
+                                        ([UIApplication sharedApplication].statusBarFrame.size.height +50)/2 - [UIImage imageNamed:@"btn_x"].size.height/2,
+                                        [UIImage imageNamed:@"btn_x"].size.width,
+                                        [UIImage imageNamed:@"btn_x"].size.height);
+    
+    //- Adjust the size of the button to have a larger tap area
+    self.closeButton.frame = CGRectMake(self.closeButton.frame.origin.x -10,
+                                        self.closeButton.frame.origin.y -10,
+                                        self.closeButton.frame.size.width + 20,
+                                        self.closeButton.frame.size.height + 20);
+    
     NSError *error = nil;
     self.namePattern = [NSRegularExpression regularExpressionWithPattern:@"\\w+"
                                                                  options:0
                                                                    error:&error];
 
-    self.topLabel.font = [UIFont fontWithName:@"ProximaNova-Light" size:20.0];
-    self.friendsLabel.font = [UIFont fontWithName:@"ProximaNova-Regular" size:17.0];
-
+    self.topLabel.font = [TDConstants fontSemiBoldSized:18];
+    self.topLabel.textColor = [TDConstants headerTextColor];
+    
+    self.friendsLabel.font = [TDConstants fontRegularSized:14];
+    self.friendsLabel.textColor = [TDConstants headerTextColor];
+    [self.friendsLabel sizeToFit];
+    CGRect friendsLabelFrame = self.friendsLabel.frame;
+    friendsLabelFrame.origin.x = SCREEN_WIDTH/2 - self.friendsLabel.frame.size.width/2;
+    friendsLabelFrame.origin.y = [UIApplication sharedApplication].statusBarFrame.size.height +50;
+    self.friendsLabel.frame = friendsLabelFrame;
+    
     // Textfields
-    [self.phoneNumberTextField setUpWithIconImageNamed:@"reg_ico_phone"
+    [self.phoneNumberTextField setUpWithIconImageNamed:@"icon_phone"
                                            placeHolder:@"Phone Number"
                                           keyboardType:UIKeyboardTypePhonePad
                                                   type:kTDTextFieldType_Phone
                                               delegate:self];
-    [self.emailTextField setUpWithIconImageNamed:@"reg_ico_email"
+    [self.emailTextField setUpWithIconImageNamed:@"icon_email"
                                      placeHolder:@"Email Address"
                                     keyboardType:UIKeyboardTypeEmailAddress
                                             type:kTDTextFieldType_Email
                                         delegate:self];
-    [self.firstLastNameTextField setUpWithIconImageNamed:@"reg_ico_name"
+    [self.firstLastNameTextField setUpWithIconImageNamed:@"icon_name"
                                              placeHolder:@"First and Last Name"
                                             keyboardType:UIKeyboardTypeNamePhonePad
                                                     type:kTDTextFieldType_FirstLast
                                                 delegate:self];
-
-    // Small fix if 3.5" screen
-    if ([UIScreen mainScreen].bounds.size.height == 480.0) {
-        self.nextButtonOffset.constant += 54;
-        self.numberLabelOffset.constant += 10;
-        self.nameOffset.constant -= 20;
-    }
+    
+    CGRect firstNameFrame = self.firstLastNameTextField.frame;
+    firstNameFrame.origin.x = 20;
+    firstNameFrame.origin.y = self.friendsLabel.frame.origin.y + self.friendsLabel.frame.size.height + 10;
+    firstNameFrame.size.width = SCREEN_WIDTH - 40;
+    self.firstLastNameTextField.frame = firstNameFrame;
+    
+    CGRect phoneFrame = self.phoneNumberTextField.frame;
+    phoneFrame.origin.x = 20;
+    phoneFrame.origin.y = self.firstLastNameTextField.frame.origin.y + self.firstLastNameTextField.frame.size.height;
+    phoneFrame.size.width = SCREEN_WIDTH - 40;
+    self.phoneNumberTextField.frame = phoneFrame;
+    
+    CGRect emailFrame = self.emailTextField.frame;
+    emailFrame.origin.x = 20;
+    emailFrame.origin.y = self.phoneNumberTextField.frame.origin.y + self.phoneNumberTextField.frame.size.height;
+    emailFrame.size.width = SCREEN_WIDTH - 40;
+    self.emailTextField.frame = emailFrame;
+    
+    self.continueButton.frame = CGRectMake(
+                                           SCREEN_WIDTH/2 - [UIImage imageNamed:@"btn_continue"].size.width/2,
+                                           self.emailTextField.frame.origin.y + self.emailTextField.frame.size.height + 20,
+                                           [UIImage imageNamed:@"btn_continue"].size.width,
+                                           [UIImage imageNamed:@"btn_continue"].size.height);
+    
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -171,11 +223,19 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 
 # pragma mark - delegates
 
-- (IBAction)backButtonPressed:(UIButton *)sender {
-    [self.navigationController popViewControllerAnimated:YES];
+- (IBAction)closeButtonPressed:(UIButton *)sender {
+    CATransition *transition = [CATransition animation];
+    transition.duration = .5;
+    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    //transition.type = kCATransitionReveal;
+    transition.subtype = kCATransitionFromBottom;
+    [self.view.window.layer addAnimation:transition forKey:nil];
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
+
 }
 
-- (IBAction)nextButtonPressed:(id)sender {
+- (IBAction)continueButtonPressed:(id)sender {
     if ([self validateAllFields]) {
         [self transitionToStepTwoController];
     }
@@ -184,7 +244,20 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 # pragma mark - navigation
 
 - (void)transitionToStepTwoController {
-    [self performSegueWithIdentifier:@"signupStepTwo" sender:nil];
+    TDSignupStepTwoViewController *controller = [[TDSignupStepTwoViewController alloc] init];
+    [controller userParameters:[self userParameters]] ;
+    
+    UIViewController *srcViewController = (UIViewController *) self;
+    UIViewController *destViewController = (UIViewController *) controller;
+    
+    CATransition *transition = [CATransition animation];
+    transition.duration = 0.3;
+    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    transition.type = kCATransitionPush;
+    transition.subtype = kCATransitionFromRight;
+    [srcViewController.view.window.layer addAnimation:transition forKey:nil];
+    
+    [srcViewController presentViewController:destViewController animated:NO completion:nil];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
@@ -198,7 +271,7 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 
 - (BOOL)validateAllFields {
     BOOL valid = self.phoneNumberTextField.valid && self.emailTextField.valid && self.firstLastNameTextField.valid;
-    self.nextButton.enabled = valid;
+    self.continueButton.enabled = valid;
     return valid;
 }
 
@@ -246,6 +319,7 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 }
 
 - (void)validateField:(kTDTextFieldType)field {
+    debug NSLog(@"parameters=%@", [self userParameters]);
     [[TDAPIClient sharedInstance] validateCredentials:[self userParameters] success:^(NSDictionary *response) {
 
         switch (field) {

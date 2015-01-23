@@ -1,4 +1,4 @@
-//
+    //
 //  TDSignupStepTwoViewController.m
 //  Throwdown
 //
@@ -21,18 +21,41 @@
 @property (strong, nonatomic) NSRegularExpression *usernamePattern;
 @property (nonatomic, copy) NSString *userName;
 @property (nonatomic, copy) NSString *password;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *accountLabelOffset;
 
 - (IBAction)backButtonPressed:(UIButton *)sender;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *buttonOffset;
 @end
 
 @implementation TDSignupStepTwoViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
+    self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     [[TDAnalytics sharedInstance] logEvent:@"signup_step_two"];
+    
+    [self.backgroundImageView setBackgroundImage:YES editingViewOnly:YES];
+    
+    self.alphaView.frame = self.view.frame;
+    self.alphaView.backgroundColor = [UIColor clearColor];
+    
+    self.topLabel.text = @"Choose a username";
+    self.topLabel.font = [TDConstants fontSemiBoldSized:18];
+    self.topLabel.textColor = [TDConstants headerTextColor];
+    [self.topLabel sizeToFit];
+    CGRect topLabelFrame = self.topLabel.frame;
+    topLabelFrame.origin.x = SCREEN_WIDTH/2 - self.topLabel.frame.size.width/2;
+    topLabelFrame.origin.y = ([UIApplication sharedApplication].statusBarFrame.size.height +50)/2 - self.topLabel.frame.size.height/2;
+    self.topLabel.frame = topLabelFrame;
+    
+    self.backButton.frame = CGRectMake(20,
+                                        ([UIApplication sharedApplication].statusBarFrame.size.height +50)/2 - [UIImage imageNamed:@"btn_back"].size.height/2,
+                                        [UIImage imageNamed:@"btn_back"].size.width,
+                                        [UIImage imageNamed:@"btn_back"].size.height);
+    
+    //- Adjust the size of the button to have a larger tap area
+    self.backButton.frame = CGRectMake(self.backButton.frame.origin.x -10,
+                                       self.backButton.frame.origin.y -10,
+                                       self.backButton.frame.size.width + 20,
+                                       self.backButton.frame.size.height + 20);
 
     NSError *error = nil;
     self.usernamePattern = [NSRegularExpression regularExpressionWithPattern:@"[^\\w+\\d++_]"
@@ -42,32 +65,72 @@
     [self.userNameTextField textfieldText:self.userName];
     [self validateUsernameField];
 
-    self.topLabel.font = [UIFont fontWithName:@"ProximaNova-Light" size:20.0];
-    self.privacyLabel1.font = [UIFont fontWithName:@"ProximaNova-Semibold" size:14.0];
-    self.privacyButton.titleLabel.font = [UIFont fontWithName:@"ProximaNova-Bold" size:14.0];
+    self.topLabel.font = [TDConstants fontSemiBoldSized:18];
+    
+    NSString *text = @"By creating an account, you agree to the";
+    NSAttributedString *attStr = [TDViewControllerHelper makeParagraphedTextWithString:text font:[TDConstants fontRegularSized:12.] color:[TDConstants headerTextColor] lineHeight:15. lineHeightMultipler:(15./12.)];
+    self.privacyLabel1.attributedText = attStr;
+    [self.privacyLabel1 sizeToFit];
+    
+    CGRect privacyFrame = self.privacyLabel1.frame;
+    privacyFrame.origin.x = SCREEN_WIDTH/2 - self.privacyLabel1.frame.size.width/2;
+    privacyFrame.origin.y = self.passwordTextField.frame.origin.y + self.passwordTextField.frame.size.height + 30;
+    self.privacyLabel1.frame = privacyFrame;
+    
+    NSString *text2 = @"Terms of Service & Privacy Policy";
+    NSAttributedString *attStr2 = [TDViewControllerHelper makeParagraphedTextWithString:text2 font:[TDConstants fontSemiBoldSized:12.] color:[TDConstants headerTextColor] lineHeight:15. lineHeightMultipler:15./12.];
+    [self.privacyButton setAttributedTitle:attStr2 forState:UIControlStateNormal];
+    [self.privacyButton addTarget:self action:@selector(privacyButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.privacyButton sizeToFit];
+    CGRect privateButton = self.privacyButton.frame;
+    privateButton.origin.x = SCREEN_WIDTH/2 - self.privacyButton.frame.size.width/2;
+    privateButton.origin.y = self.privacyLabel1.frame.origin.y + self.privacyLabel1.frame.size.height;
+    self.privacyButton.frame = privateButton;
+    
 
     // Textfields
-    [self.userNameTextField setUpWithIconImageNamed:@"reg_ico_username"
+    [self.userNameTextField setUpWithIconImageNamed:@"icon_name"
                                         placeHolder:@"User Name"
                                        keyboardType:UIKeyboardTypeTwitter
                                                type:kTDTextFieldType_UserName
                                            delegate:self];
-    [self.passwordTextField setUpWithIconImageNamed:@"reg_ico_pass"
+    [self.passwordTextField setUpWithIconImageNamed:@"icon_password"
                                         placeHolder:@"Password"
                                        keyboardType:UIKeyboardTypeDefault
                                                type:kTDTextFieldType_Password
                                            delegate:self];
     [self.passwordTextField secure];
+    
+    CGRect nameFrame = self.userNameTextField.frame;
+    nameFrame.origin.x = 20;
+    nameFrame.origin.y = [UIApplication sharedApplication].statusBarFrame.size.height +50;
+    nameFrame.size.width = SCREEN_WIDTH - 40;
+    nameFrame.size.height = 44;
+    self.userNameTextField.frame = nameFrame;
+    
+    CGRect passwordFrame = self.passwordTextField.frame;
+    passwordFrame.origin.x = 20;
+    passwordFrame.origin.y = self.userNameTextField.frame.origin.y + self.userNameTextField.frame.size.height;
+    passwordFrame.size.width = SCREEN_WIDTH - 40;
+    passwordFrame.size.height = 44;
+    self.passwordTextField.frame = passwordFrame;
 
-    // Small fix if 3.5" screen
-    if ([UIScreen mainScreen].bounds.size.height == 480.0) {
-        self.accountLabelOffset.constant -= 40;
-        self.buttonOffset.constant -= 15;
-    }
+    self.signUpButton.frame = CGRectMake(SCREEN_WIDTH/2 - [UIImage imageNamed:@"btn_finish"].size.width/2,
+                                         self.privacyButton.frame.origin.y + self.privacyButton.frame.size.height + 20,
+                                         [UIImage imageNamed:@"btn_finish"].size.width,
+                                         [UIImage imageNamed:@"btn_finish"].size.height);
+    
+    self.progress.center = [TDViewControllerHelper centerPosition];
+    
+    CGPoint centerFrame = self.progress.center;
+    centerFrame.y = self.progress.center.y - self.progress.frame.size.height/2;
+    self.progress.center = centerFrame;
+
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -91,7 +154,15 @@
 }
 
 - (IBAction)backButtonPressed:(UIButton *)sender {
-    [self.navigationController popViewControllerAnimated:YES];
+    CATransition *transition = [CATransition animation];
+    transition.duration = 0.3;
+    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    transition.type = kCATransitionPush;
+    transition.subtype = kCATransitionFromLeft;
+    [self.view.window.layer addAnimation:transition forKey:nil];
+    
+    [self dismissViewControllerAnimated:NO completion:nil];
+    //[self.navigationController popViewControllerAnimated:YES];
 }
 
 - (IBAction)signupButtonPressed:(id)sender {
@@ -132,6 +203,8 @@
                                  if (success) {
                                      self.progress.hidden = YES;
                                      [[TDAnalytics sharedInstance] logEvent:@"signup_completed"];
+                                     [[TDCurrentUser sharedInstance] didAskForGoalsInitially:YES];
+                                     [[TDCurrentUser sharedInstance] didAskForGoalsFinal:YES];
                                      [TDViewControllerHelper navigateToHomeFrom:self];
                                  } else {
                                      [TDViewControllerHelper showAlertMessage:@"There was an error, please try again." withTitle:@"Error"];

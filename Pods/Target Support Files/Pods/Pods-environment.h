@@ -108,6 +108,12 @@
 #define COCOAPODS_VERSION_MINOR_TestFlightSDK 0
 #define COCOAPODS_VERSION_PATCH_TestFlightSDK 0
 
+// UIImage+BlurredFrame
+#define COCOAPODS_POD_AVAILABLE_UIImage_BlurredFrame
+#define COCOAPODS_VERSION_MAJOR_UIImage_BlurredFrame 0
+#define COCOAPODS_VERSION_MINOR_UIImage_BlurredFrame 0
+#define COCOAPODS_VERSION_PATCH_UIImage_BlurredFrame 4
+
 // libPhoneNumber-iOS
 #define COCOAPODS_POD_AVAILABLE_libPhoneNumber_iOS
 #define COCOAPODS_VERSION_MAJOR_libPhoneNumber_iOS 0
