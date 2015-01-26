@@ -264,15 +264,6 @@
         } else {
             self.notices = nil;
         }
-//        //THIS IS TEMPORARY UNTIL BACKEND IS FINALIZED
-//        NSMutableArray *temp = [[NSMutableArray alloc] init];
-//        [temp addObject:[[TDNotice alloc] initWithDictionary:@{@"message":@"Strengthlete 28-Day Challenge!"}]];
-//        if (self.notices.count && tmp.count) {
-//            [tmp addObjectsFromArray:temp];
-//            self.notices = [NSArray arrayWithArray:tmp];
-//        } else {
-//            self.notices = [NSArray arrayWithArray:temp];
-//        }
 
 //        debug NSLog(@"=======>self.notices count=%lu", (unsigned long)self.notices.count);
 
