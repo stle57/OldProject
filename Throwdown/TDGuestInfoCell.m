@@ -210,8 +210,8 @@ static const int bottomMarginPaddingHeight = 15;
     self.topLine.frame = topLineFrame;
     [self addSubview:self.topLine];
     
-    self.tdIcon.frame = CGRectMake(SCREEN_WIDTH/2 - [UIImage imageNamed:@"td_icon"].size.width/2, self.topMarginPadding.frame.origin.y + self.topMarginPadding.frame.size.height + 15, [UIImage imageNamed:@"td_icon"].size.width, [UIImage imageNamed:@"td_icon"].size.height );
-    [self addSubview:self.tdIcon];
+    self.icon.frame = CGRectMake(SCREEN_WIDTH/2 - [UIImage imageNamed:@"td_icon"].size.width/2, self.topMarginPadding.frame.origin.y + self.topMarginPadding.frame.size.height + 15, [UIImage imageNamed:@"td_icon"].size.width, [UIImage imageNamed:@"td_icon"].size.height );
+    [self addSubview:self.icon];
     
     NSString *welcomeStr = [NSString stringWithFormat:@"%@%@%@", @"Welcome ", [TDCurrentUser sharedInstance].name, @"!\nLet's create your first post." ];
     NSAttributedString *str = [TDViewControllerHelper makeParagraphedTextWithString:welcomeStr font:[TDConstants fontSemiBoldSized:19] color:[TDConstants headerTextColor] lineHeight:23 lineHeightMultipler:23/19];
@@ -221,7 +221,7 @@ static const int bottomMarginPaddingHeight = 15;
     
     CGRect label1Frame = self.label1.frame;
     label1Frame.origin.x =  self.frame.size.width/2 - self.label1.frame.size.width/2;
-    label1Frame.origin.y = self.tdIcon.frame.origin.y + self.tdIcon.frame.size.height + 15;
+    label1Frame.origin.y = self.icon.frame.origin.y + self.icon.frame.size.height + 15;
     self.label1.frame = label1Frame;
     [self addSubview:self.label1];
     
@@ -298,8 +298,8 @@ static const int bottomMarginPaddingHeight = 15;
     self.topLine.frame = topLineFrame;
     [self addSubview:self.topLine];
     
-    self.tdIcon.frame = CGRectMake(SCREEN_WIDTH/2 - [UIImage imageNamed:@"td_icon"].size.width/2, self.topMarginPadding.frame.origin.y + self.topMarginPadding.frame.size.height + 15, [UIImage imageNamed:@"td_icon"].size.width, [UIImage imageNamed:@"td_icon"].size.height );
-    [self addSubview:self.tdIcon];
+    self.icon.frame = CGRectMake(SCREEN_WIDTH/2 - [UIImage imageNamed:@"td_icon"].size.width/2, self.topMarginPadding.frame.origin.y + self.topMarginPadding.frame.size.height + 15, [UIImage imageNamed:@"td_icon"].size.width, [UIImage imageNamed:@"td_icon"].size.height );
+    [self addSubview:self.icon];
     
     NSString *welcomeStr = @"Welcome to Throwdown!";
     NSAttributedString *str = [TDViewControllerHelper makeParagraphedTextWithString:welcomeStr font:[TDConstants fontSemiBoldSized:19] color:[TDConstants headerTextColor] lineHeight:23 lineHeightMultipler:23/19];
@@ -309,7 +309,7 @@ static const int bottomMarginPaddingHeight = 15;
     
     CGRect label1Frame = self.label1.frame;
     label1Frame.origin.x =  self.frame.size.width/2 - self.label1.frame.size.width/2;
-    label1Frame.origin.y = self.tdIcon.frame.origin.y + self.tdIcon.frame.size.height + 15;
+    label1Frame.origin.y = self.icon.frame.origin.y + self.icon.frame.size.height + 15;
     self.label1.frame = label1Frame;
     [self addSubview:self.label1];
     
@@ -361,8 +361,8 @@ static const int bottomMarginPaddingHeight = 15;
     self.topLine.frame = topLineFrame;
     [self addSubview:self.topLine];
     
-    self.tdIcon.frame = CGRectMake(SCREEN_WIDTH/2 - [UIImage imageNamed:@"td_icon"].size.width/2, self.topMarginPadding.frame.origin.y + self.topMarginPadding.frame.size.height + 15, [UIImage imageNamed:@"td_icon"].size.width, [UIImage imageNamed:@"td_icon"].size.height );
-    [self addSubview:self.tdIcon];
+    self.icon.frame = CGRectMake(SCREEN_WIDTH/2 - [UIImage imageNamed:@"td_icon"].size.width/2, self.topMarginPadding.frame.origin.y + self.topMarginPadding.frame.size.height + 15, [UIImage imageNamed:@"td_icon"].size.width, [UIImage imageNamed:@"td_icon"].size.height );
+    [self addSubview:self.icon];
     
     NSString *welcomeStr = [NSString stringWithFormat:@"%@%@%@", @"Welcome ", [TDCurrentUser sharedInstance].name, @"!\nTell us about yourself." ];
     NSAttributedString *str = [TDViewControllerHelper makeParagraphedTextWithString:welcomeStr font:[TDConstants fontSemiBoldSized:19] color:[TDConstants headerTextColor] lineHeight:23 lineHeightMultipler:23/19];
@@ -372,7 +372,7 @@ static const int bottomMarginPaddingHeight = 15;
     
     CGRect label1Frame = self.label1.frame;
     label1Frame.origin.x =  self.frame.size.width/2 - self.label1.frame.size.width/2;
-    label1Frame.origin.y = self.tdIcon.frame.origin.y + self.tdIcon.frame.size.height + 15;
+    label1Frame.origin.y = self.icon.frame.origin.y + self.icon.frame.size.height + 15;
     self.label1.frame = label1Frame;
     [self addSubview:self.label1];
     

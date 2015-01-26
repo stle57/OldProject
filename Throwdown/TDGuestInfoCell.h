@@ -26,7 +26,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *label2;
 @property (weak, nonatomic) IBOutlet UILabel *label3;
 @property (weak, nonatomic) IBOutlet UILabel *label4;
-//@property (weak, nonatomic) IBOutlet UIButton *button;
+@property (weak, nonatomic) IBOutlet UIButton *button;
 @property (weak, nonatomic) IBOutlet UIView *topLine;
 @property (weak, nonatomic) IBOutlet UIView *bottomLine;
 @property (weak, nonatomic) IBOutlet UIImageView *icon;
@@ -37,8 +37,6 @@
 
 - (void)setHashTagInfoCell;
 + (NSInteger)heightForHashTagInfoCell;
-@property (weak, nonatomic) IBOutlet UIButton *button;
-@property (weak, nonatomic) IBOutlet UIImageView *tdIcon;
 
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
 

@@ -88,7 +88,7 @@
 }
 
 - (void)findButtonHit:(id)sender {
-    [self openGuestUserJoin:kFollow_LabelType];
+    [self openGuestUserJoin:kFollow_LabelType username:nil];
 }
 
 - (void)editInterestButton {
@@ -240,7 +240,7 @@
 }
 
 - (IBAction)addButtonPressed:(id)sender {
-    [self openGuestUserJoin:kPost_LabelType];
+    [self openGuestUserJoin:kPost_LabelType username:nil];
 
 }
 
@@ -258,10 +258,10 @@
     [self.disableViewOverlay removeFromSuperview];
 }
 
-- (void)openGuestUserJoin:(kLabelType)type {
+- (void)openGuestUserJoin:(kLabelType)type username:(NSString*)username{
     [self addOverlay];
     
-    TDGuestUserJoinView * joinView = [TDGuestUserJoinView guestUserJoinView:type];
+    TDGuestUserJoinView * joinView = [TDGuestUserJoinView guestUserJoinView:type username:username];
     [self.view addSubview:joinView];
 }
 

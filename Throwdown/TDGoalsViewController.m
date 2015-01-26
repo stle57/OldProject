@@ -209,7 +209,7 @@ static const int closeBackgroundViewHeight = 80;
 }
 
 - (void)addGoals:(NSString*)text row:(NSInteger)row{
-    NSDictionary *tempDict = @{@"name":text, @"selected":@0, @"id":[[NSNumber numberWithLong:(row+1)] stringValue]};
+    NSDictionary *tempDict = @{@"name":text, @"selected":@1, @"id":[[NSNumber numberWithLong:(row+1)] stringValue]};
     [self.goalList addObject:tempDict];
 
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];

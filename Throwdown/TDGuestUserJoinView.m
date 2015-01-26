@@ -22,10 +22,10 @@ static int const width = 290;
 
 @implementation TDGuestUserJoinView
 
-+ (id)guestUserJoinView:(kLabelType)labelType {
++ (id)guestUserJoinView:(kLabelType)labelType username:(NSString *)username{
     TDGuestUserJoinView *view = [[TDGuestUserJoinView alloc] init];
     if ([view isKindOfClass:[TDGuestUserJoinView class]]) {
-        [view setup:labelType];
+        [view setup:labelType username:username];
         return view;
     } else {
         return nil;
@@ -37,7 +37,7 @@ static int const width = 290;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
--(void)setup:(kLabelType)labelType {
+-(void)setup:(kLabelType)labelType username:(NSString*)username{
     self.backgroundColor = [UIColor whiteColor];
     
     NSString *prefixString = [[NSString alloc] init];
@@ -55,7 +55,7 @@ static int const width = 290;
             prefixString = @"To comment";
             break;
         case kUserProfile_LabelType:
-            prefixString = @"To see";
+            prefixString = [NSString stringWithFormat:@"%@%@%@", @"To see ", username, @"'s profile"];
             break;
         default:
             break;

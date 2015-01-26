@@ -37,7 +37,7 @@ static const int doneBackgroundViewHeight = 80;
                 @{@"name":@"MMA",@"selected":@0, @"id":@0}, nil];
 
         } else {
-            self.interestList = [interestsList copy];
+            self.interestList = [interestsList mutableCopy];
         }
 
         self.showBackButton = yes;
@@ -187,7 +187,7 @@ static const int doneBackgroundViewHeight = 80;
 }
 
 - (void)addGoals:(NSString*)text row:(NSInteger)row{
-    NSDictionary *tempDict = @{@"name":text, @"selected":@0, @"id":[[NSNumber numberWithLong:(row+1)] stringValue]};
+    NSDictionary *tempDict = @{@"name":text, @"selected":@1, @"id":[[NSNumber numberWithLong:(row+1)] stringValue]};
     [self.interestList addObject:tempDict];
 
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
@@ -195,7 +195,7 @@ static const int doneBackgroundViewHeight = 80;
     if (cell) {
         [cell changeCellToAddGoals];
     }
-    
+
     NSIndexPath *path1 = [NSIndexPath indexPathForRow:self.interestList.count inSection:0]; //ALSO TRIED WITH indexPathRow:0
     NSArray *indexArray = [NSArray arrayWithObjects:path1,nil];
     [self.tableView beginUpdates];
@@ -205,7 +205,7 @@ static const int doneBackgroundViewHeight = 80;
     //Create indexPath for row below, so we can scroll to it
     NSIndexPath *addMoreRowIndexPath = [NSIndexPath indexPathForRow:row+1 inSection:0];
     [self.tableView scrollToRowAtIndexPath:addMoreRowIndexPath atScrollPosition:UITableViewScrollPositionNone animated:YES];
-
+    
 }
 
 - (void)addNewGoalPressed:(NSInteger)row {

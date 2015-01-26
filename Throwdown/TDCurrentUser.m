@@ -548,7 +548,9 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
 
 - (BOOL)didDismiss:(NSString *)dismissal  {
     NSString *key = [NSString stringWithFormat:@"dismissed_%@_%@", [self.userId stringValue], dismissal];
+    return  key;
 }
+
 - (BOOL)didAskForGoalsInitially {
     NSString *key = [TDConstants getHasAskedForGoalsKey:[TDCurrentUser sharedInstance].userId initial:YES];
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];

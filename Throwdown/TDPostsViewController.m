@@ -25,7 +25,6 @@
 
 static CGFloat const kWhiteBottomPadding = 6;
 static CGFloat const kPostMargin = 22;
-static CGFloat const kHeightOfStatusBar = 64.0;
 
 @interface TDPostsViewController ()
 
@@ -191,7 +190,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 - (BOOL)newUser {
     return NO;
 }
-- (void)openGuestUserJoin:(kLabelType)type {
+- (void)openGuestUserJoin:(kLabelType)type username:(NSString*)username{
 }
 // Override to return user object if we're on profile view
 - (TDUser *)getUser {
@@ -880,8 +879,13 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 }
 
 - (void)userButtonPressedFromRow:(NSInteger)row {
+
     TDPost *post = [self postForRow:row];
     if (post) {
+        if ([self onGuestFeed]) {
+            [self openGuestUserJoin:kUserProfile_LabelType username:post.user.name];
+            return;
+        }
         [self openProfile:post.user.userId];
     }
 }
@@ -908,15 +912,14 @@ static CGFloat const kHeightOfStatusBar = 64.0;
         TDTagFeedViewController *vc = [[TDTagFeedViewController alloc] initWithNibName:@"TDTagFeedViewController" bundle:nil ];
         vc.tagName = [[url path] lastPathComponent];
         [self.navigationController pushViewController:vc animated:YES];
-- (void)userProfilePressedWithId:(NSNumber *)userId {
-    if ([self onGuestFeed]) {
-        [self openGuestUserJoin:kUserProfile_LabelType];
-    } else {
-        TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
-        vc.userId = userId;
-        vc.profileType = kFeedProfileTypeOther;
-        [self.navigationController pushViewController:vc animated:YES];
     }
+}
+
+- (void)userProfilePressedWithId:(NSNumber *)userId {
+    TDUserProfileViewController *vc = [[TDUserProfileViewController alloc] initWithNibName:@"TDUserProfileViewController" bundle:nil ];
+    vc.userId = userId;
+    vc.profileType = kFeedProfileTypeOther;
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)locationButtonPressedFromRow:(NSInteger)row {
@@ -938,7 +941,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 
 - (void)likeButtonPressedFromRow:(NSInteger)row {   // 'row' is actually the section
     if ([self onGuestFeed]) {
-        [self openGuestUserJoin:kLike_LabelType];
+        [self openGuestUserJoin:kLike_LabelType username:nil];
     } else {
         TDPost *post = [self postForRow:row];
         if (post && post.postId) {
@@ -963,7 +966,7 @@ static CGFloat const kHeightOfStatusBar = 64.0;
 
 - (void)commentButtonPressedFromRow:(NSInteger)row {
     if ([self onGuestFeed]) {
-        [self openGuestUserJoin:kComment_LabelType];
+        [self openGuestUserJoin:kComment_LabelType username:nil];
     } else {
         TDPost *post = [self postForRow:row];
         [self openDetailView:post.postId];

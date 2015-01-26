@@ -22,6 +22,6 @@ typedef NSInteger kLabelType;
     UIView *AlertView;
 }
 
-+(id)guestUserJoinView:(kLabelType)labelType;
++(id)guestUserJoinView:(kLabelType)labelType username:(NSString*)username;
 -(void)showInView;
 @end
