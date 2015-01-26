@@ -400,7 +400,6 @@ static const int bottomMarginPaddingHeight = 15;
 
     self.bottomLine.frame = CGRectMake(0, self.learnButton.frame.origin.y + self.learnButton.frame.size.height + 15, SCREEN_WIDTH, .5);
     [self addSubview:self.bottomLine];
-    self.bottomLine.backgroundColor = [UIColor redColor];
 
     self.bottomMarginPadding.frame = CGRectMake(0, self.bottomLine.frame.origin.y + self.bottomLine.frame.size.height, [UIScreen mainScreen].bounds.size.width, bottomMarginPaddingHeight);
     [self.label2 sizeToFit];
