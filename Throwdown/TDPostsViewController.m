@@ -253,8 +253,11 @@ static CGFloat const kPostMargin = 22;
     }
 
     if ([posts count] == 0) {
+        debug NSLog(@"returning post count = %d, because post count == 0", 1 + (self.profileType != kFeedProfileTypeNone ? 1 : 0) );
         return 1 + (self.profileType != kFeedProfileTypeNone ? 1 : 0);
     }
+
+    debug NSLog(@"returning sectionc count = %lu", [posts count] + [self noticeCount] + (showBottomSpinner ? 1 : 0) + ([self hasMorePosts] ? 0 : 1) + (self.profileType != kFeedProfileTypeNone ? 1 : 0) + ([self onGuestFeed] ? 5 : 0) + ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) + (hasAskedForGoal ? 0 : 1) + (hasAskedForGoalsFinal ? 0 :1) );
 
     // 1 section per post, +1 if we need the Profile Header cell or +1 if we need the new user welcome cell
     return [posts count] + [self noticeCount] + (showBottomSpinner ? 1 : 0) + ([self hasMorePosts] ? 0 : 1) + (self.profileType != kFeedProfileTypeNone ? 1 : 0) + ([self onGuestFeed] ? 5 : 0) + ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) + (hasAskedForGoal ? 0 : 1) + (hasAskedForGoalsFinal ? 0 :1);
@@ -272,11 +275,11 @@ static CGFloat const kPostMargin = 22;
     }
     
     // 1st row for existing user - information row
-    if ((![[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && section == 0 && [[TDCurrentUser sharedInstance] isLoggedIn]) {
+    if ((![[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && section == 0 && [[TDCurrentUser sharedInstance] isLoggedIn] && [self isKindOfClass:[TDHomeViewController class]]) {
         return 1;
     }
     
-    if ((![[TDCurrentUser sharedInstance] didAskForGoalsFinal]) && ([[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && section == 0 && [[TDCurrentUser sharedInstance] isLoggedIn]) {
+    if ((![[TDCurrentUser sharedInstance] didAskForGoalsFinal]) && ([[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && section == 0 && [[TDCurrentUser sharedInstance] isLoggedIn] && [self isKindOfClass:[TDHomeViewController class]]) {
         return 1;
     }
     
@@ -380,7 +383,7 @@ static CGFloat const kPostMargin = 22;
         return cell;
     }
     
-    if ((![[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && indexPath.section == 0 && [[TDCurrentUser sharedInstance] isLoggedIn]) {
+    if ((![[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && indexPath.section == 0 && [[TDCurrentUser sharedInstance] isLoggedIn] && [self isKindOfClass:[TDHomeViewController class]]) {
         TDGuestInfoCell *cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGuestInfoCell" owner:self options:nil];
@@ -400,7 +403,7 @@ static CGFloat const kPostMargin = 22;
         return cell;
     }
     
-    if ((![[TDCurrentUser sharedInstance] didAskForGoalsFinal]) && ([[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && indexPath.section == 0 && [[TDCurrentUser sharedInstance] isLoggedIn]) {
+    if ((![[TDCurrentUser sharedInstance] didAskForGoalsFinal]) && ([[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && indexPath.section == 0 && [[TDCurrentUser sharedInstance] isLoggedIn] && [self isKindOfClass:[TDHomeViewController class]]) {
         TDGuestInfoCell *cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGuestInfoCell" owner:self options:nil];
@@ -483,14 +486,16 @@ static CGFloat const kPostMargin = 22;
             TDUser *user = [self getUser];
             if (user) {
                 // We are in the TDUserProfileViewController
-                if (![self onAllFeed] && ([user.followingCount intValue] == 0) && self.profileType == kFeedProfileTypeNone) {
+                if (![self onAllFeed] && ([user.followingCount intValue] == 0) && [self isKindOfClass:[TDHomeViewController class]]) {
+                    debug NSLog(@"profile type = %lu", self.profileType);
                     TDNoFollowingCell *noFollowingCell = [self createNoFollowingCell:tableView];
                     return noFollowingCell;
                 } else {
                     cell.noPostsLabel.text = @"No posts yet";
                 }
             } else {
-                if ( ![self onAllFeed] && ([[TDCurrentUser sharedInstance].currentUserObject.followingCount intValue] == 0) && self.profileType == kFeedProfileTypeNone) {
+                if ( ![self onAllFeed] && ([[TDCurrentUser sharedInstance].currentUserObject.followingCount intValue] == 0) && [self isKindOfClass:[TDHomeViewController class]]) {
+                    debug NSLog(@"profile type = %lu", self.profileType);
                     TDNoFollowingCell *noFollowingCell = [self createNoFollowingCell:tableView];
                     return noFollowingCell;
                 } else {
@@ -713,11 +718,11 @@ static CGFloat const kPostMargin = 22;
         return [TDGuestInfoCell heightForNewUserCell];
     }
     
-    if ((![[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && indexPath.section == 0 && [[TDCurrentUser sharedInstance] isLoggedIn]) {
+    if ((![[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && indexPath.section == 0 && [[TDCurrentUser sharedInstance] isLoggedIn] && [self isKindOfClass:[TDHomeViewController class]]) {
         return [TDGuestInfoCell heightForExistingUserCell];
     }
     
-    if ((![[TDCurrentUser sharedInstance] didAskForGoalsFinal]) && ([[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && indexPath.section == 0 && [[TDCurrentUser sharedInstance] isLoggedIn]) {
+    if ((![[TDCurrentUser sharedInstance] didAskForGoalsFinal]) && ([[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && indexPath.section == 0 && [[TDCurrentUser sharedInstance] isLoggedIn] && [self isKindOfClass:[TDHomeViewController class]]) {
         return [TDGuestInfoCell heightForEditGoalsCell];
     }
     
