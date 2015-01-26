@@ -53,8 +53,8 @@
                                 <action selector="resetButtonPressed:" destination="-1" eventType="touchUpInside" id="pBm-cC-XPp"/>
                             </connections>
                         </button>
-                        <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" id="aMN-b3-dfG">
-                            <rect key="frame" x="61" y="124" width="37" height="37"/>
+                        <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" id="aMN-b3-dfG">
+                            <rect key="frame" x="70" y="132" width="20" height="20"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         </activityIndicatorView>
                         <view contentMode="scaleToFill" id="QSu-wg-QJX" userLabel="Password Text Field" customClass="TDTextField">
