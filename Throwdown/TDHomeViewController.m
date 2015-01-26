@@ -195,7 +195,17 @@
 
 - (TDPost *)postForRow:(NSInteger)row {
     NSArray *posts = [self onAllFeed] ? self.posts : self.postsFollowing;
-    NSInteger realRow = row - [self noticeCount];
+    BOOL hasAskedForGoal = [[TDCurrentUser sharedInstance] didAskForGoalsInitially];
+
+    BOOL hasAskedForGoalsFinal = [[TDCurrentUser sharedInstance] didAskForGoalsFinal];
+    if (!hasAskedForGoal && !hasAskedForGoalsFinal) {
+        hasAskedForGoalsFinal = YES; // We don't want to add another section if both values are no.  So override the boolean
+    }
+
+
+    NSInteger realRow = row - ([self noticeCount] + ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) + (hasAskedForGoal ? 0 : 1) + (hasAskedForGoalsFinal ? 0 :1) );
+    debug NSLog(@"*****inside TDHomeViewController postForRow= realRow=%lu", realRow);
+
     if (realRow < [posts count]) {
         return [posts objectAtIndex:realRow];
     } else {
@@ -894,15 +904,7 @@
 
 #pragma mark TDGuestInfoCellDelegate
 -(void)createPostButtonPressed {
-    debug NSLog(@"open the TDCreatePostViewController");
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    UIViewController *createPostViewController = [storyboard instantiateViewControllerWithIdentifier:@"CreatePostViewController"];
-    createPostViewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:createPostViewController];
-    navController.navigationBar.barStyle = UIBarStyleDefault;
-    navController.navigationBar.translucent = YES;
-    [self.navigationController presentViewController:navController animated:YES completion:nil];
-
+    [self performSegueWithIdentifier:@"VideoButtonSegue" sender:self];
 }
 
 -(void)dismissForExistingUser {

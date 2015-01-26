@@ -47,7 +47,7 @@
     [[TDAPIClient sharedInstance] signupUser:userAttributes callback:^(BOOL success, NSDictionary *user) {
         if (success) {
             [self.currentUser updateFromDictionary:user];
-            self.currentUser.newUser = YES;
+            [[TDCurrentUser sharedInstance] isNewUser:YES];
             [self setCrashlyticsMeta];
         }
         callback(success);

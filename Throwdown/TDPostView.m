@@ -58,6 +58,7 @@ static NSString *const kTracksKey = @"tracks";
 @property (nonatomic) UIImageView *controlImage;
 @property (nonatomic) UIImageView *playerSpinner;
 @property (nonatomic) UIImageView *locationPinImage;
+@property (nonatomic) UIView *topLine;
 @property (nonatomic) TTTAttributedLabel *locationLabel;
 @property (nonatomic) AVURLAsset *videoAsset;
 @property (nonatomic) AVPlayer *player;
@@ -118,6 +119,10 @@ static NSString *const kTracksKey = @"tracks";
 
         CGFloat width = [UIScreen mainScreen].bounds.size.width;
         self.mediaSize = (width / kWidthOfMedia) * kWidthOfMedia;
+
+        self.topLine = [[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 1 / [[UIScreen mainScreen] scale])];
+        self.topLine.backgroundColor = [TDConstants darkBorderColor];
+        [self addSubview:self.topLine];
 
         // add pr star at lowest level
         self.prStar = [[UIImageView alloc] initWithFrame:CGRectMake(width - kUsernameLabelOffset, kMargin + 6, 32, 32)];
@@ -188,9 +193,6 @@ static NSString *const kTracksKey = @"tracks";
         self.privatePost.hidden = YES;
         [self addSubview:self.privatePost];
 
-        UIView *topLine = [[UIView alloc] initWithFrame:CGRectMake(0, 0, width, 1 / [[UIScreen mainScreen] scale])];
-        topLine.backgroundColor = [TDConstants darkBorderColor];
-        [self addSubview:topLine];
     }
     return self;
 }

@@ -194,10 +194,6 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
     return self.authToken != nil;
 }
 
-- (BOOL)isNewUser {
-   return self.newUser;
-}
-
 - (void)logout {
     [[TDAnalytics sharedInstance] logEvent:@"logged_out"];
     _userId = nil;
@@ -594,5 +590,16 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
     
     [defaults synchronize];
 
+}
+
+- (BOOL)isNewUser {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    return [defaults boolForKey:@"isNewUser"];
+}
+
+- (void)isNewUser:(BOOL)yes {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:yes forKey:@"isNewUser"];
+    [defaults synchronize];
 }
 @end

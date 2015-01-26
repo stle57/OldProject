@@ -251,6 +251,11 @@ typedef enum {
                                         [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationPostToInstagram object:nil userInfo:info];
                                     }
                                     [self uploadComplete];
+                                    if ([TDCurrentUser sharedInstance].isNewUser) {
+                                        debug NSLog(@"saved first post for new user");
+                                        [[TDCurrentUser sharedInstance] isNewUser:NO];
+
+                                    }
                                 } failure:^{
                                     self.postStatus = UploadFailed;
                                     [self uploadFailed];

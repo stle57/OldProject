@@ -42,15 +42,15 @@
 
 - (void)setInfoCell;
 - (void)setLastCell;
-- (void)setNewUserCell;
+- (void)setNewUserCell:(BOOL)addTopMargin;
 - (void)setGuestUserCell;
-- (void)setExistingUserCell;
+- (void)setExistingUserCell:(BOOL)addTopMargin;
 - (void)setEditGoalsCell:(BOOL)showCloseButton;
 + (NSInteger)heightForLastCell;
 + (NSInteger)heightForInfoCell;
-+ (NSInteger) heightForNewUserCell;
++ (NSInteger) heightForNewUserCell:(BOOL)addTopMargin;
 + (NSInteger) heightForGuestUserCell;
-+ (NSInteger)heightForExistingUserCell;
++ (NSInteger)heightForExistingUserCell:(BOOL)addTopMargin;
 + (NSInteger)heightForEditGoalsCell;
 - (IBAction)signupButtonPressed:(id)sender;
 - (IBAction)dismissButtonPressed:(id)sender;

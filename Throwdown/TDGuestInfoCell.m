@@ -47,7 +47,7 @@ static const int bottomMarginPaddingHeight = 15;
     // Configure the view for the selected state
 }
 - (void)setHashTagInfoCell {
-    self.frame = CGRectMake(0, 0 , SCREEN_WIDTH, 130);
+    self.frame = CGRectMake(0, 0 , SCREEN_WIDTH, [TDGuestInfoCell heightForHashTagInfoCell]);
 
     self.icon.hidden = NO;
     self.label1.hidden = NO;
@@ -89,7 +89,7 @@ static const int bottomMarginPaddingHeight = 15;
 
 - (void)setInfoCell {
     // Initialization code
-    self.frame = CGRectMake(0, 0, SCREEN_WIDTH, 130);
+    self.frame = CGRectMake(0, 0, SCREEN_WIDTH, [TDGuestInfoCell heightForInfoCell]);
     [self addSubview:self.topLine];
     
     self.label1.text = TDCommunityValuesStr;
@@ -166,7 +166,7 @@ static const int bottomMarginPaddingHeight = 15;
 }
 
 - (void)setLastCell {
-    self.frame = CGRectMake(0, 0, SCREEN_WIDTH, 130);
+    self.frame = CGRectMake(0, 0, SCREEN_WIDTH, [TDGuestInfoCell heightForLastCell]);
     [self addSubview:self.topLine];
     
     self.label2.hidden = NO;
@@ -197,22 +197,28 @@ static const int bottomMarginPaddingHeight = 15;
     
 }
 
-- (void)setNewUserCell {
-    // Initialization code
-    self.frame = CGRectMake(0, 0, SCREEN_WIDTH, 130);
-    self.topMarginPadding.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, topMarginPaddingHeight);
+- (void)setNewUserCell:(BOOL)addTopMargin {
+    self.frame = CGRectMake(0, 0, SCREEN_WIDTH, [TDGuestInfoCell heightForNewUserCell:addTopMargin]);
+    if (addTopMargin) {
+        self.topMarginPadding.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, topMarginPaddingHeight);
 
-    self.topMarginPadding.backgroundColor = [TDConstants darkBackgroundColor];
-    [self addSubview:self.topMarginPadding];
+        self.topMarginPadding.backgroundColor = [TDConstants darkBackgroundColor];
+        [self addSubview:self.topMarginPadding];
 
-    CGRect topLineFrame = self.topLine.frame;
-    topLineFrame.origin.y = 15;
-    self.topLine.frame = topLineFrame;
-    [self addSubview:self.topLine];
-    
-    self.icon.frame = CGRectMake(SCREEN_WIDTH/2 - [UIImage imageNamed:@"td_icon"].size.width/2, self.topMarginPadding.frame.origin.y + self.topMarginPadding.frame.size.height + 15, [UIImage imageNamed:@"td_icon"].size.width, [UIImage imageNamed:@"td_icon"].size.height );
+        CGRect topLineFrame = self.topLine.frame;
+        topLineFrame.origin.y = topMarginPaddingHeight;
+        self.topLine.frame = topLineFrame;
+        [self addSubview:self.topLine];
+    } else {
+        self.topLine.frame = CGRectMake(0, 0, SCREEN_WIDTH, .5);
+        [self addSubview:self.topLine];
+        [self.topLine setBackgroundColor:[TDConstants darkBorderColor]];
+
+    }
+
+    self.icon.frame = CGRectMake(SCREEN_WIDTH/2 - [UIImage imageNamed:@"td_icon"].size.width/2, (addTopMargin ? (self.topMarginPadding.frame.origin.y + self.topMarginPadding.frame.size.height) : .5) + 15, [UIImage imageNamed:@"td_icon"].size.width, [UIImage imageNamed:@"td_icon"].size.height );
     [self addSubview:self.icon];
-    
+
     NSString *welcomeStr = [NSString stringWithFormat:@"%@%@%@", @"Welcome ", [TDCurrentUser sharedInstance].name, @"!\nLet's create your first post." ];
     NSAttributedString *str = [TDViewControllerHelper makeParagraphedTextWithString:welcomeStr font:[TDConstants fontSemiBoldSized:19] color:[TDConstants headerTextColor] lineHeight:23 lineHeightMultipler:23/19];
     self.label1.attributedText = str;
@@ -224,7 +230,6 @@ static const int bottomMarginPaddingHeight = 15;
     label1Frame.origin.y = self.icon.frame.origin.y + self.icon.frame.size.height + 15;
     self.label1.frame = label1Frame;
     [self addSubview:self.label1];
-    
 
     NSAttributedString *infoStr = [TDViewControllerHelper makeLeftAlignedTextWithString:text1 font:[TDConstants fontRegularSized:15] color:[TDConstants commentTimeTextColor] lineHeight:18 lineHeightMultipler:18/15];
     self.label2.attributedText = infoStr;
@@ -245,7 +250,7 @@ static const int bottomMarginPaddingHeight = 15;
     label3Frame.origin.y = self.label2.frame.origin.y + self.label2.frame.size.height + 12;
     self.label3.frame = label3Frame;
     [self addSubview:self.label3];
-    
+
     [self.button setImage:[UIImage imageNamed:createPostStr] forState:UIControlStateNormal];
     [self.button setImage:[UIImage imageNamed:createPostHitStr] forState:UIControlStateSelected];
     [self.button setImage:[UIImage imageNamed:createPostHitStr] forState:UIControlStateHighlighted];
@@ -256,7 +261,7 @@ static const int bottomMarginPaddingHeight = 15;
                                         [UIImage imageNamed:createPostStr].size.height);
     [self.button addTarget:self action:@selector(createPostButtonPressed) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.button];
-    
+
     NSString *dismiss = @"Dismiss, I'll do it later.";
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:dismiss];
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
@@ -277,10 +282,10 @@ static const int bottomMarginPaddingHeight = 15;
     dismissFrame.origin.y = self.button.frame.origin.y + self.button.frame.size.height + 10;
     self.dismissButton.frame = dismissFrame;
     [self addSubview:self.dismissButton];
-    
+
     self.bottomLine.frame = CGRectMake(0, self.dismissButton.frame.origin.y + self.dismissButton.frame.size.height +15, SCREEN_WIDTH, .5);
     [self addSubview:self.bottomLine];
-    
+
     self.bottomMarginPadding.frame = CGRectMake(0, self.bottomLine.frame.origin.y + self.bottomLine.frame.size.height, [UIScreen mainScreen].bounds.size.width, bottomMarginPaddingHeight);
     self.bottomMarginPadding.backgroundColor = [TDConstants darkBackgroundColor];
     [self addSubview:self.bottomMarginPadding];
@@ -348,20 +353,27 @@ static const int bottomMarginPaddingHeight = 15;
     
 }
 
-- (void)setExistingUserCell{
+- (void)setExistingUserCell:(BOOL)addTopMargin{
     // Initialization code
-    self.frame = CGRectMake(0, 0, SCREEN_WIDTH, [TDGuestInfoCell heightForExistingUserCell]);
-    self.topMarginPadding.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, topMarginPaddingHeight);
+    self.frame = CGRectMake(0, 0, SCREEN_WIDTH, [TDGuestInfoCell heightForExistingUserCell:addTopMargin]);
+    if (addTopMargin) {
+        self.topMarginPadding.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, topMarginPaddingHeight);
 
-    self.topMarginPadding.backgroundColor = [TDConstants darkBackgroundColor];
-    [self addSubview:self.topMarginPadding];
-    
-    CGRect topLineFrame = self.topLine.frame;
-    topLineFrame.origin.y = topMarginPaddingHeight;
-    self.topLine.frame = topLineFrame;
-    [self addSubview:self.topLine];
-    
-    self.icon.frame = CGRectMake(SCREEN_WIDTH/2 - [UIImage imageNamed:@"td_icon"].size.width/2, self.topMarginPadding.frame.origin.y + self.topMarginPadding.frame.size.height + 15, [UIImage imageNamed:@"td_icon"].size.width, [UIImage imageNamed:@"td_icon"].size.height );
+        self.topMarginPadding.backgroundColor = [TDConstants darkBackgroundColor];
+        [self addSubview:self.topMarginPadding];
+        self.topMarginPadding.layer.borderColor = [[UIColor redColor] CGColor];
+        self.topMarginPadding.layer.borderWidth = 2.;
+
+        CGRect topLineFrame = self.topLine.frame;
+        topLineFrame.origin.y = topMarginPaddingHeight;
+        self.topLine.frame = topLineFrame;
+        [self addSubview:self.topLine];
+    } else {
+        self.topLine.frame = CGRectMake(0, 0, SCREEN_WIDTH, .5);
+        [self addSubview:self.topLine];
+    }
+
+    self.icon.frame = CGRectMake(SCREEN_WIDTH/2 - [UIImage imageNamed:@"td_icon"].size.width/2, (addTopMargin ? (self.topMarginPadding.frame.origin.y + self.topMarginPadding.frame.size.height) : .5) + 15, [UIImage imageNamed:@"td_icon"].size.width, [UIImage imageNamed:@"td_icon"].size.height );
     [self addSubview:self.icon];
     
     NSString *welcomeStr = [NSString stringWithFormat:@"%@%@%@", @"Welcome ", [TDCurrentUser sharedInstance].name, @"!\nTell us about yourself." ];
@@ -464,11 +476,9 @@ static const int bottomMarginPaddingHeight = 15;
     
     self.bottomLine.frame = CGRectMake(0, self.dismissButton.frame.origin.y + self.dismissButton.frame.size.height +15, SCREEN_WIDTH, .5);
     [self addSubview:self.bottomLine];
-    debug NSLog(@"!!!- BOTTOMLINE FRAME=%@", NSStringFromCGRect(self.bottomLine.frame));
     self.bottomMarginPadding.frame = CGRectMake(0, self.bottomLine.frame.origin.y + self.bottomLine.frame.size.height, [UIScreen mainScreen].bounds.size.width, bottomMarginPaddingHeight);
     self.bottomMarginPadding.backgroundColor = [TDConstants darkBackgroundColor];
     [self addSubview:self.bottomMarginPadding];
-    debug NSLog(@"!!!-BOTTOM PADDING FRAME = %@", NSStringFromCGRect(self.bottomMarginPadding.frame));
 
 }
 
@@ -519,7 +529,8 @@ static const int bottomMarginPaddingHeight = 15;
 }
 
 - (IBAction)dismissButtonPressed:(id)sender {
-    [TDCurrentUser sharedInstance].newUser = NO;
+    [[TDCurrentUser sharedInstance] isNewUser:NO];
+
     if (self.delegate && [self.delegate respondsToSelector:@selector(dismissButtonPressed)]) {
         [self.delegate dismissButtonPressed];
     }
@@ -652,28 +663,28 @@ static const int bottomMarginPaddingHeight = 15;
     return height;
 }
 
-+ (NSInteger) heightForNewUserCell {
++ (NSInteger) heightForNewUserCell:(BOOL)addTopMargin {
     UILabel *label1 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
-    UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
-    UIButton *tempButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
-    UILabel *label3 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
-
-    NSAttributedString *infoStr = [TDViewControllerHelper makeLeftAlignedTextWithString:text1 font:[TDConstants fontRegularSized:15] color:[TDConstants headerTextColor] lineHeight:18 lineHeightMultipler:18/15];
-    label1.attributedText = infoStr;
-    [label1 setNumberOfLines:0];
-    [label1 sizeToFit];
-    
-    infoStr = [TDViewControllerHelper makeLeftAlignedTextWithString:text2 font:[TDConstants fontRegularSized:15] color:[TDConstants headerTextColor] lineHeight:18 lineHeightMultipler:18/15];
-    label3.attributedText = infoStr;
-    [label3 setNumberOfLines:0];
-    [label3 sizeToFit];
-    
     NSString *welcomeStr = [NSString stringWithFormat:@"%@%@%@", @"Welcome ", [TDCurrentUser sharedInstance].name, @"!\nLet's create your first post." ];
     NSAttributedString *str = [TDViewControllerHelper makeParagraphedTextWithString:welcomeStr font:[TDConstants fontSemiBoldSized:19] color:[TDConstants headerTextColor] lineHeight:23 lineHeightMultipler:23/19];
-    label2.attributedText = str;
+    label1.attributedText = str;
+    [label1 setNumberOfLines:0];
+    [label1 sizeToFit];
+
+    UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
+    NSAttributedString *infoStr = [TDViewControllerHelper makeLeftAlignedTextWithString:text1 font:[TDConstants fontRegularSized:15] color:[TDConstants commentTimeTextColor] lineHeight:18 lineHeightMultipler:18/15];
+    label2.attributedText = infoStr;
     [label2 setNumberOfLines:0];
     [label2 sizeToFit];
-    
+
+    UILabel *label3 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
+    NSAttributedString *infoStr2 = [TDViewControllerHelper makeLeftAlignedTextWithString:text2 font:[TDConstants fontRegularSized:15] color:[TDConstants commentTimeTextColor] lineHeight:18 lineHeightMultipler:18/15];
+    label3.attributedText = infoStr2;
+    [label3 setNumberOfLines:0];
+    [label3 sizeToFit];
+
+    UIButton *tmpButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
+
     NSString *dismiss = @"Dismiss, I'll do it later.";
     NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc] initWithString:dismiss];
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
@@ -684,13 +695,12 @@ static const int bottomMarginPaddingHeight = 15;
     [attributedString addAttribute:NSFontAttributeName value:[TDConstants fontRegularSized:14] range:NSMakeRange(0, dismiss.length)];
     [attributedString addAttribute:NSForegroundColorAttributeName value:[TDConstants headerTextColor] range:NSMakeRange(0, dismiss.length)];
     [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, dismiss.length)];
-    [tempButton.titleLabel setAttributedText:attributedString];
-    [tempButton sizeToFit];
-    
-    debug NSLog(@"tempButton height = %f", tempButton.frame.size.height);
-    NSInteger height = topMarginPaddingHeight + 15 + [UIImage imageNamed:@"td_icon"].size.height + 10 + label2.frame.size.height + 15 + label1.frame.size.height + 12 + label3.frame.size.height + 25 + [UIImage imageNamed:createPostStr].size.height + 10 + tempButton.frame.size.height + 15 + bottomMarginPaddingHeight;
-    debug NSLog(@"cell height = %ld", (long)height);
-    return height;
+    [tmpButton setAttributedTitle:attributedString forState:UIControlStateNormal];
+    [tmpButton sizeToFit];
+
+    NSInteger height = (addTopMargin ? 15 : .5) + 15 + [UIImage imageNamed:@"td_icon"].size.height + 15 + label1.frame.size.height + 15 + label2.frame.size.height + 12 + label3.frame.size.height + 25 + [UIImage imageNamed:createPostStr].size.height + 10 + tmpButton.frame.size.height + 15 + .5 + bottomMarginPaddingHeight;
+
+   return height;
 }
 
 + (NSInteger)heightForGuestUserCell {
@@ -723,7 +733,12 @@ static const int bottomMarginPaddingHeight = 15;
     
 }
 
-+ (NSInteger)heightForExistingUserCell {
++ (NSInteger)heightForExistingUserCell:(BOOL)addTopMargin {
+    if (addTopMargin) {
+        debug NSLog(@"adding top margin height to existing user because this is the top cell with no notices");
+    } else {
+        debug NSLog(@"not adding top margin height to cell because we have notices above");
+    }
     UILabel *label1 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
     UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
     UIButton *tempButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
@@ -777,7 +792,7 @@ static const int bottomMarginPaddingHeight = 15;
     [tempButton sizeToFit];
     
     debug NSLog(@"tempButton height = %f", tempButton.frame.size.height);
-    NSInteger height = topMarginPaddingHeight + 15 + [UIImage imageNamed:@"td_icon"].size.height + 10 + label1.frame.size.height +15+ label2.frame.size.height + 12 + label3.frame.size.height + label4.frame.size.height + 25 + [UIImage imageNamed:setGoalsStr].size.height + 10 + tempButton.frame.size.height + 15 + bottomMarginPaddingHeight;
+    NSInteger height = (addTopMargin ? 15 : .5) + 15 + [UIImage imageNamed:@"td_icon"].size.height + 10 + label1.frame.size.height +15+ label2.frame.size.height + 12 + label3.frame.size.height + label4.frame.size.height + 25 + [UIImage imageNamed:setGoalsStr].size.height + 10 + tempButton.frame.size.height + 15 + bottomMarginPaddingHeight;
 
     debug NSLog(@"cell height = %ld", (long)height);
     return height;
