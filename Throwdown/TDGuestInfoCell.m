@@ -34,9 +34,9 @@ static const int bottomMarginPaddingHeight = 15;
     self.label3.hidden = YES;
     self.label4.hidden = YES;
     self.button.hidden = YES;
-    self.topLine.frame = CGRectMake(0, 0, SCREEN_WIDTH, .5);
-    self.bottomLine.frame = CGRectMake(0, 174, SCREEN_WIDTH, .5);
+    self.topLine.frame = CGRectMake(0, .5, SCREEN_WIDTH, .5);
     self.topLine.backgroundColor = [TDConstants darkBorderColor];
+    self.bottomLine.frame = CGRectMake(0, 174, SCREEN_WIDTH, .5);
     self.bottomLine.backgroundColor = [TDConstants darkBorderColor];
 }
 
@@ -53,10 +53,10 @@ static const int bottomMarginPaddingHeight = 15;
     self.label1.hidden = NO;
     self.label2.hidden = NO;
 
-    self.icon.frame = CGRectMake(SCREEN_WIDTH/2 - [UIImage imageNamed:@"Strengthlete_Logo_BIG"].size.width/2,
+    self.icon.frame = CGRectMake(SCREEN_WIDTH/2 - kBigImageWidth/2,
                                  15,
-                                 [UIImage imageNamed:@"Strengthlete_Logo_BIG"].size.width,
-                                 [UIImage imageNamed:@"Strengthlete_Logo_BIG"].size.height );
+                                 kBigImageWidth,
+                                 kBigImageHeight );
     [self addSubview:self.icon];
 
     NSString *titleStr = @"Announcing the Strengthlete\n28-Day Challenge!";
@@ -210,10 +210,9 @@ static const int bottomMarginPaddingHeight = 15;
         self.topLine.frame = topLineFrame;
         [self addSubview:self.topLine];
     } else {
-        self.topLine.frame = CGRectMake(0, 0, SCREEN_WIDTH, .5);
+        self.topLine.frame = CGRectMake(0, .5, SCREEN_WIDTH, .5);
         [self addSubview:self.topLine];
         [self.topLine setBackgroundColor:[TDConstants darkBorderColor]];
-
     }
 
     self.icon.frame = CGRectMake(SCREEN_WIDTH/2 - [UIImage imageNamed:@"td_icon"].size.width/2, (addTopMargin ? (self.topMarginPadding.frame.origin.y + self.topMarginPadding.frame.size.height) : .5) + 15, [UIImage imageNamed:@"td_icon"].size.width, [UIImage imageNamed:@"td_icon"].size.height );
@@ -369,7 +368,7 @@ static const int bottomMarginPaddingHeight = 15;
         self.topLine.frame = topLineFrame;
         [self addSubview:self.topLine];
     } else {
-        self.topLine.frame = CGRectMake(0, 0, SCREEN_WIDTH, .5);
+        self.topLine.frame = CGRectMake(0, .5, SCREEN_WIDTH, .5);
         [self addSubview:self.topLine];
     }
 
@@ -595,9 +594,7 @@ static const int bottomMarginPaddingHeight = 15;
     [learnButton setAttributedTitle:learnAttrStr forState:UIControlStateNormal];
     [learnButton sizeToFit];
 
-    debug NSLog(@"height = %f", 15 + [UIImage imageNamed:@"Strengthlete_Logo_BIG"].size.height + 10 + label1.frame.size.height + 15 + label2.frame.size.height + 15 + learnButton.frame.size.height + 15 + bottomMarginPaddingHeight);
-
-    return 15 + [UIImage imageNamed:@"Strengthlete_Logo_BIG"].size.height + 10 + label1.frame.size.height + 15 + label2.frame.size.height + 15 + learnButton.frame.size.height + 15 + bottomMarginPaddingHeight;
+    return 15 + kBigImageHeight + 10 + label1.frame.size.height + 15 + label2.frame.size.height + 15 + learnButton.frame.size.height + 15 + bottomMarginPaddingHeight;
 }
 
 + (NSInteger) heightForLastCell {

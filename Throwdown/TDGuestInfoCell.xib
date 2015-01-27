@@ -120,7 +120,6 @@
         </button>
     </objects>
     <resources>
-        <image name="Strengthlete_Logo_BIG" width="75" height="50"/>
         <image name="btn_join_throwdown" width="240" height="44"/>
         <image name="btn_join_throwdown_hit" width="240" height="44"/>
         <image name="btn_x" width="16" height="16"/>
