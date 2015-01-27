@@ -33,9 +33,10 @@ static const int closeBackgroundViewHeight = 80;
 
             [NSMutableArray arrayWithObjects:@{@"name":@"Lose weight",@"selected":@0, @"id":@0},
                                                 @{@"name":@"Get back into shape", @"selected":@0, @"id":@0},
-                                                @{@"name":@"Get stronger", @"selected":@0, @"id":@0},
                                                 @{@"name":@"Tone up", @"selected":@0, @"id":@0},
-                                                @{@"name":@"Build endurance", @"selected":@0, @"id":@0},
+                                                @{@"name":@"Get stronger", @"selected":@0, @"id":@0},
+                                                @{@"name":@"Gain more muscle", @"selected":@0, @"id":@0},
+                                                @{@"name":@"Increase endurance", @"selected":@0, @"id":@0},
                                                 @{@"name":@"Improve mobility", @"selected":@0, @"id":@0},
                                                 @{@"name":@"Become more functionally fit", @"selected":@0, @"id":@0},
                                                 @{@"name":@"Develop more self confidence", @"selected":@0, @"id":@0}, nil];
