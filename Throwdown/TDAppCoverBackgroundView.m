@@ -9,8 +9,6 @@
 #import "TDAppCoverBackgroundView.h"
 #import "GPUImage.h"
 #import <Accelerate/Accelerate.h>
-#import "UIImage+BlurredFrame.h"
-#import "UIImage+ImageEffects.h"
 #import "UIImageEffects.h"
 @implementation TDAppCoverBackgroundView
 
