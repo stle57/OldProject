@@ -12,6 +12,12 @@
 
 @implementation TDGoalsCell
 @synthesize addedButton;
+- (void)dealloc
+{
+    [self.editableTextField removeTarget:self
+                          action:@selector(textFieldEdited)
+                forControlEvents:UIControlEventEditingChanged];
+}
 
 - (void)awakeFromNib {
     // Initialization code
@@ -71,12 +77,12 @@
 
 
     self.goalLabel.frame = CGRectMake(20,
-                                      self.frame.size.height/2 - self.goalLabel.frame.size.height/2,
+                                      0,
                                       SCREEN_WIDTH - 40 - self.addGoalButton.frame.size.width,
                                       self.frame.size.height);
 
     self.editableTextField.frame = CGRectMake(20,
-                                              self.frame.size.height,
+                                              0,
                                               SCREEN_WIDTH- 40 - self.addGoalButton.frame.size.width,
                                               self.frame.size.height);
     self.editableTextField.textColor = [TDConstants headerTextColor];
@@ -171,8 +177,9 @@
     CGRect frame = self.frame;
     frame.size.height = 44;
     self.frame = frame;
-    
+
     CGRect goalLabelFrame = self.goalLabel.frame;
+    goalLabelFrame.size.width = SCREEN_WIDTH - 40 - self.addGoalButton.frame.size.width;
     goalLabelFrame.origin.y = self.frame.size.height/2 - self.goalLabel.frame.size.height/2;
     self.goalLabel.frame = goalLabelFrame;
 
@@ -186,7 +193,6 @@
     self.editableTextField.hidden = YES;
     self.goalLabel.hidden = NO;
     self.bottomLine.hidden = NO;
-
 }
 
 - (void)makeCellFirstResponder {
@@ -200,7 +206,7 @@
     CGRect editableTextFieldFrame = self.editableTextField.frame;
     editableTextFieldFrame.origin.y = self.frame.size.height/2 - self.editableTextField.frame.size.height/2;
     self.editableTextField.frame = editableTextFieldFrame;
-    
+
     [self.editableTextField becomeFirstResponder];
     [self.editableTextField setEnablesReturnKeyAutomatically:YES];
     self.bottomLine.hidden = NO;
