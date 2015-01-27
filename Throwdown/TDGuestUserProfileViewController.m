@@ -145,12 +145,9 @@
 }
 
 - (void)endRefreshControl {
-    debug NSLog(@"!!!!!!!!!!!!!TDGuestUserProfileViewController: endRefreshControl");
-    debug NSLog(@"do something to load the view");
 }
 - (void)fetchPosts {
     if (self.initialLoadDone) {
-        debug NSLog(@"not retrieving posts");
         return;
     }
 

@@ -29,7 +29,6 @@ static const int closeBackgroundViewHeight = 80;
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         if (goalsList == nil) {
-            debug NSLog(@"GOALS LIST IS NIL!, loading normal strings");
             self.goalList =
 
             [NSMutableArray arrayWithObjects:@{@"name":@"Lose weight",@"selected":@0, @"id":@0},

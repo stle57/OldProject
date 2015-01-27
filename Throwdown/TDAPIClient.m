@@ -786,7 +786,6 @@
     TDCurrentUser *currentUser = [TDCurrentUser sharedInstance];
 
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/goals_interests.json?user_token=%@", currentUser.authToken]];
-    debug NSLog(@"url=%@", url);
 
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
     [self.httpManager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -815,8 +814,6 @@
     if ([currentUser isLoggedIn]) {
         url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/goals_interests.json"]];
         params = @{@"interests":interestsArray, @"goals":goalsArray, @"user_token": [TDCurrentUser sharedInstance].authToken};
-        debug NSLog(@"url=%@", url);
-        debug NSLog(@"params=%@", params);
         [self.httpManager PUT:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
             if ([responseObject isKindOfClass:[NSDictionary class]]) {
                 NSDictionary *response = (NSDictionary *)responseObject;
@@ -848,8 +845,6 @@
     
     NSString * url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/guests.json"]];
     NSDictionary *params = @{@"guest":TDDeviceInfo.metrics, @"interests":interestsArray, @"goals":goalsArray};
-    debug NSLog(@"url=%@", url);
-    debug NSLog(@"params=%@", params);
     [self.httpManager POST:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
             NSDictionary *response = (NSDictionary *)responseObject;

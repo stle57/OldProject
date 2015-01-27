@@ -129,8 +129,6 @@ static const int doneBackgroundViewHeight = 80;
     [self.keyboardObserver startListening];
     
     self.tableView.backgroundColor = [UIColor clearColor];
-
-    debug NSLog(@"interest view frame=%@", NSStringFromCGRect(self.view.frame));
 }
 
 - (void)didReceiveMemoryWarning {

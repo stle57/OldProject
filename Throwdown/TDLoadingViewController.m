@@ -202,15 +202,15 @@
                              }];
 
         }
-    } else {
-        debug NSLog(@"   one of the conditions haven't been met, need to reload, waiting for..");
-        if (!self.minAnimationReached) {
-            debug NSLog(@"  min animationreached");
-        }
-
-        if (!self.loadedData) {
-            debug NSLog(@"  load data ");
-        }
     }
+//    } else {
+//        if (!self.minAnimationReached) {
+//            debug NSLog(@"  min animationreached");
+//        }
+//
+//        if (!self.loadedData) {
+//            debug NSLog(@"  load data ");
+//        }
+//    }
 }
 @end
