@@ -11,7 +11,7 @@
 #import "TDLoadingView.h"
 #import "TDViewControllerHelper.h"
 #import "TDCurrentUser.h"
-#import "TDPostAPI.h"
+#import "TDAPIClient.h"
 
 @interface TDLoadingViewController ()
 @property (nonatomic, retain) TDLoadingView *loadingView1;
@@ -109,7 +109,7 @@
 
 
 - (void)saveDataForUser:(NSArray*)goalsList interestsList:(NSArray*)interestsList {
-    [[TDUserAPI sharedInstance] saveGoalsAndInterestsForUser:goalsList interestsList:interestsList callback:^(BOOL success) {
+    [[TDAPIClient sharedInstance] saveGoalsAndInterestsForUser:goalsList interestsList:interestsList callback:^(BOOL success) {
         if (success) {
             [self endAnimation];
         } else {
@@ -121,7 +121,7 @@
 
 
 - (void)saveDataForGuest:(NSArray*)goalsList interestsList:(NSArray*)interestsList {
-    [[TDUserAPI sharedInstance] saveGoalsAndInterestsForGuest:goalsList interestsList:interestsList callback:^(BOOL success, NSDictionary *posts) {
+    [[TDAPIClient sharedInstance] saveGoalsAndInterestsForGuest:goalsList interestsList:interestsList callback:^(BOOL success, NSDictionary *posts) {
         if (success) {
             [self endAnimation];
             self.guestPosts = posts;

@@ -185,11 +185,9 @@ static CGFloat const kPostMargin = 22;
     return NO;
 }
 
-- (BOOL)newUser {
-    return NO;
-}
 - (void)openGuestUserJoin:(kLabelType)type username:(NSString*)username{
 }
+
 // Override to return user object if we're on profile view
 - (TDUser *)getUser {
     return nil;
@@ -240,11 +238,16 @@ static CGFloat const kPostMargin = 22;
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     NSArray *posts = [self postsForThisScreen];
-    BOOL hasAskedForGoal = [[TDCurrentUser sharedInstance] didAskForGoalsInitially];
 
-    BOOL hasAskedForGoalsFinal = [[TDCurrentUser sharedInstance] didAskForGoalsFinal];
-    if (!hasAskedForGoal && !hasAskedForGoalsFinal) {
-        hasAskedForGoalsFinal = YES; // We don't want to add another section if both values are no.  So override the boolean
+    BOOL hasAskedForGoal = YES;
+    bool hasAskedForGoalsFinal = YES;
+    if (![self onGuestFeed]) {
+        hasAskedForGoal = [[TDCurrentUser sharedInstance] didAskForGoalsInitially];
+
+        hasAskedForGoalsFinal = [[TDCurrentUser sharedInstance] didAskForGoalsFinal];
+        if (!hasAskedForGoal && !hasAskedForGoalsFinal) {
+            hasAskedForGoalsFinal = YES; // We don't want to add another section if both values are no.  So override the boolean
+        }
     }
 
     if ([posts count] == 0) {
@@ -282,19 +285,23 @@ static CGFloat const kPostMargin = 22;
     }
 
     // 1st row for existing user - information row
-    if ((![[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && section == [self noticeCount] && [[TDCurrentUser sharedInstance] isLoggedIn] && [self isKindOfClass:[TDHomeViewController class]]) {
+    if ((![self onGuestFeed]) && (![[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && section == [self noticeCount] && [[TDCurrentUser sharedInstance] isLoggedIn] && [self isKindOfClass:[TDHomeViewController class]]) {
         return 1;
     }
 
-    if ((![[TDCurrentUser sharedInstance] didAskForGoalsFinal]) && ([[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && (section == [self noticeCount]) && [[TDCurrentUser sharedInstance] isLoggedIn] && [self isKindOfClass:[TDHomeViewController class]]) {
+    if ((![self onGuestFeed]) && (![[TDCurrentUser sharedInstance] didAskForGoalsFinal]) && ([[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && (section == [self noticeCount]) && [[TDCurrentUser sharedInstance] isLoggedIn] && [self isKindOfClass:[TDHomeViewController class]]) {
         return 1;
     }
 
-    BOOL hasAskedForGoal = [[TDCurrentUser sharedInstance] didAskForGoalsInitially];
+    BOOL hasAskedForGoal = YES;
+    BOOL hasAskedForGoalsFinal = YES;
+    if (![self onGuestFeed]) {
+        hasAskedForGoal = [[TDCurrentUser sharedInstance] didAskForGoalsInitially];
 
-    BOOL hasAskedForGoalsFinal = [[TDCurrentUser sharedInstance] didAskForGoalsFinal];
-    if (!hasAskedForGoal && !hasAskedForGoalsFinal) {
-        hasAskedForGoalsFinal = YES; // We don't want to add another section if both values are no.  So override the boolean
+        hasAskedForGoalsFinal = [[TDCurrentUser sharedInstance] didAskForGoalsFinal];
+        if (!hasAskedForGoal && !hasAskedForGoalsFinal) {
+            hasAskedForGoalsFinal = YES; // We don't want to add another section if both values are no.  So override the boolean
+        }
     }
 
     NSInteger row = [[self postsForThisScreen] count] + [self noticeCount] + (self.profileType != kFeedProfileTypeNone ? 1 : 0) + ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) + (hasAskedForGoal ? 0 : 1) + (hasAskedForGoalsFinal ? 0 :1);
@@ -475,7 +482,7 @@ static CGFloat const kPostMargin = 22;
     }
 
 
-    if ([[TDCurrentUser sharedInstance] isNewUser] && indexPath.section == [self noticeCount]) {
+    if ((![self onGuestFeed]) && [[TDCurrentUser sharedInstance] isNewUser] && indexPath.section == [self noticeCount]) {
         TDGuestInfoCell *cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGuestInfoCell" owner:self options:nil];
@@ -499,7 +506,7 @@ static CGFloat const kPostMargin = 22;
         return cell;
     }
 
-    if ((![[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && (indexPath.section == [self noticeCount]) && [[TDCurrentUser sharedInstance] isLoggedIn] && [self isKindOfClass:[TDHomeViewController class]]) {
+    if ((![self onGuestFeed]) && (![[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && (indexPath.section == [self noticeCount]) && [[TDCurrentUser sharedInstance] isLoggedIn] && [self isKindOfClass:[TDHomeViewController class]]) {
         TDGuestInfoCell *cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGuestInfoCell" owner:self options:nil];
@@ -519,7 +526,7 @@ static CGFloat const kPostMargin = 22;
         return cell;
     }
 
-    if ((![[TDCurrentUser sharedInstance] didAskForGoalsFinal]) && ([[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && (indexPath.section == [self noticeCount]) && [[TDCurrentUser sharedInstance] isLoggedIn] && [self isKindOfClass:[TDHomeViewController class]]) {
+    if ((![self onGuestFeed]) &&(![[TDCurrentUser sharedInstance] didAskForGoalsFinal]) && ([[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && (indexPath.section == [self noticeCount]) && [[TDCurrentUser sharedInstance] isLoggedIn] && [self isKindOfClass:[TDHomeViewController class]]) {
         TDGuestInfoCell *cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGuestInfoCell" owner:self options:nil];
@@ -733,15 +740,15 @@ static CGFloat const kPostMargin = 22;
         return [TDNoticeViewCell heightForNotice:[self getNoticeAt:indexPath.section]];
     }
 
-    if ([[TDCurrentUser sharedInstance] isNewUser] && (indexPath.section == [self noticeCount])) {
+    if ((![self onGuestFeed]) && [[TDCurrentUser sharedInstance] isNewUser] && (indexPath.section == [self noticeCount])) {
         return [TDGuestInfoCell heightForNewUserCell:(![self noticeCount])];
     }
 
-    if ((![[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && (indexPath.section == [self noticeCount]) && [[TDCurrentUser sharedInstance] isLoggedIn] && [self isKindOfClass:[TDHomeViewController class]]) {
+    if ((![self onGuestFeed]) && (![[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && (indexPath.section == [self noticeCount]) && [[TDCurrentUser sharedInstance] isLoggedIn] && [self isKindOfClass:[TDHomeViewController class]]) {
         return [TDGuestInfoCell heightForExistingUserCell:(![self noticeCount])];
     }
 
-    if ((![[TDCurrentUser sharedInstance] didAskForGoalsFinal]) && ([[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && (indexPath.section == [self noticeCount]) && [[TDCurrentUser sharedInstance] isLoggedIn] && [self isKindOfClass:[TDHomeViewController class]]) {
+    if ((![self onGuestFeed]) && (![[TDCurrentUser sharedInstance] didAskForGoalsFinal]) && ([[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && (indexPath.section == [self noticeCount]) && [[TDCurrentUser sharedInstance] isLoggedIn] && [self isKindOfClass:[TDHomeViewController class]]) {
         return [TDGuestInfoCell heightForEditGoalsCell];
     }
 
@@ -926,7 +933,12 @@ static CGFloat const kPostMargin = 22;
 }
 
 - (void)locationButtonPressedFromRow:(NSInteger)row {
+
     TDPost *post = [self postForRow:row];
+    if ([self onGuestFeed]) {
+        return;
+    }
+
     if (post && post.locationId) {
         TDLocationFeedViewController *vc = [[TDLocationFeedViewController alloc] initWithNibName:@"TDLocationFeedViewController" bundle:nil];
         vc.locationId = post.locationId;
@@ -1229,4 +1241,5 @@ static CGFloat const kPostMargin = 22;
 - (void)dismissButtonPressed {
     [self.tableView reloadData];
 }
+
 @end

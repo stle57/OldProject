@@ -791,26 +791,16 @@ static const int bottomMarginPaddingHeight = 15;
     [tempButton setAttributedTitle:attributedString forState:UIControlStateNormal];
     [tempButton sizeToFit];
     
-    debug NSLog(@"tempButton height = %f", tempButton.frame.size.height);
     NSInteger height = (addTopMargin ? 15 : .5) + 15 + [UIImage imageNamed:@"td_icon"].size.height + 10 + label1.frame.size.height +15+ label2.frame.size.height + 12 + label3.frame.size.height + label4.frame.size.height + 25 + [UIImage imageNamed:setGoalsStr].size.height + 10 + tempButton.frame.size.height + 15 + bottomMarginPaddingHeight;
 
-    debug NSLog(@"cell height = %ld", (long)height);
     return height;
 }
 
 + (NSInteger)heightForEditGoalsCell {
     UIView *view = [[UIView alloc ] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 44)];
     view.backgroundColor = [TDConstants lightBackgroundColor];
-//    
-//    NSString *text = @"Tap here to edit your goal and interests";
-//    NSAttributedString *str = [TDViewControllerHelper makeParagraphedTextWithString:text font:[TDConstants fontRegularSized:15] color:[TDConstants headerTextColor] lineHeight:15 lineHeightMultipler:15/15];
-//    label.attributedText = str;
-//    label.backgroundColor = [TDConstants lightBackgroundColor];
-//    label.verticalAlignment = TTTAttributedLabelVerticalAlignmentBottom;
 
-    
     NSInteger height = view.frame.size.height + bottomMarginPaddingHeight;
-    debug NSLog(@"cell height = %ld", (long)height);
     return height;
 }
 

@@ -130,7 +130,6 @@ static const int closeBackgroundViewHeight = 80;
 }
 
 - (IBAction)closeButtonPressed:(id)sender {
-    debug NSLog(@"close button pressed, slide down");
     if (self.delegate && [self.delegate respondsToSelector:@selector(closeButtonPressed)]) {
         [self.delegate closeButtonPressed];
     }
@@ -139,14 +138,12 @@ static const int closeBackgroundViewHeight = 80;
 #pragma mark UITableViewDataSource delegates
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    debug NSLog(@"goals list number of rows=%lu", self.goalList.count + 1);
     return self.goalList.count + 1;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (self.goalList.count+1 == indexPath.row) {
-        debug NSLog(@"index path = %ld", (long)indexPath.row);
         return 59; // This is for the last row +(Add More)
     } else {
         return 44;

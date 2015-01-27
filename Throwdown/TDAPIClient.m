@@ -805,9 +805,16 @@
     TDCurrentUser *currentUser = [TDCurrentUser sharedInstance];
     NSString *url;
     NSDictionary *params;
+    NSArray *goalsArray = [[NSMutableArray alloc] init];
+    goalsArray = [self createArray:goalsList];
+
+    NSArray *interestsArray = [[NSMutableArray alloc] init];
+    interestsArray = [self createArray:interestsList];
+
+
     if ([currentUser isLoggedIn]) {
         url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/goals_interests.json"]];
-        params = @{@"interests":interestsList, @"goals":goalsList, @"user_token": [TDCurrentUser sharedInstance].authToken};
+        params = @{@"interests":interestsArray, @"goals":goalsArray, @"user_token": [TDCurrentUser sharedInstance].authToken};
         debug NSLog(@"url=%@", url);
         debug NSLog(@"params=%@", params);
         [self.httpManager PUT:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -833,9 +840,14 @@
 
 - (void)saveGoalsAndInterestsForGuest:(NSArray*)goalsList interestsList:(NSArray*)interestsList callback:(void (^) (BOOL success, NSDictionary *posts))callback{
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    NSArray *goalsArray = [[NSMutableArray alloc]init];
+    goalsArray = [self createArray:goalsList];
 
+    NSArray *interestsArray = [[NSMutableArray alloc] init];
+    interestsArray = [self createArray:interestsList];
+    
     NSString * url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/guests.json"]];
-    NSDictionary *params = @{@"guest":TDDeviceInfo.metrics, @"interests":interestsList, @"goals":goalsList};
+    NSDictionary *params = @{@"guest":TDDeviceInfo.metrics, @"interests":interestsArray, @"goals":goalsArray};
     debug NSLog(@"url=%@", url);
     debug NSLog(@"params=%@", params);
     [self.httpManager POST:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -856,5 +868,15 @@
         debug NSLog(@"ERROR in guest user call: %@", [error localizedDescription]);
         callback(NO, nil);
     }];
+}
+
+- (NSArray*)createArray:(NSArray*)list {
+    NSMutableArray *array = [[NSMutableArray alloc]init];
+    for (NSDictionary *data in list) {
+        if([[data objectForKey:@"selected"] boolValue] == YES) {
+            [array addObject:[data objectForKey:@"name"]];
+        }
+    }
+    return array;
 }
 @end

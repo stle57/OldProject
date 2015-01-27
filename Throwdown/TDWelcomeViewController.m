@@ -284,14 +284,14 @@
 }
 
 - (void)loadGuestView:(NSDictionary *)guestPosts {
-    CATransition *transition = [CATransition animation];
-    transition.duration = .5;
-    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    transition.type = kCATransitionReveal;
-    transition.subtype = kCATransitionFromBottom;
-    [self.view.window.layer addAnimation:transition forKey:nil];
+//    CATransition *transition = [CATransition animation];
+//    transition.duration = .5;
+//    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+//    transition.type = kCATransitionReveal;
+//    transition.subtype = kCATransitionFromBottom;
+//    [self.view.window.layer addAnimation:transition forKey:nil];
 
-    [self dismissViewControllerAnimated:YES completion:nil];
+    [self dismissViewControllerAnimated:NO completion:nil];
 
     [TDViewControllerHelper navigateToGuestFrom:self guestPosts:guestPosts];
 }

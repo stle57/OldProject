@@ -11,7 +11,6 @@
 #import "TDToastView.h"
 
 @interface TDHomeViewController : TDPostsViewController<TDToastViewDelegate>
-@property (nonatomic) BOOL newUser;
 - (void)openPushNotification:(NSDictionary *)notification;
 - (BOOL)openURL:(NSURL *)url;
 - (void)fetchPostsWithCompletion:(void (^)(void))completion;

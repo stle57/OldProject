@@ -10,6 +10,7 @@
 #import "TDLocation.h"
 #import "TDSignupStepOneViewController.h"
 #import "TDGuestUserJoinView.h"
+#import "TDAPIClient.h"
 
 @interface TDGuestUserProfileViewController ()
 @property (nonatomic) UILabel *titleLabel;
@@ -151,7 +152,7 @@
         return;
     }
 
-    [[TDUserAPI sharedInstance] saveGoalsAndInterestsForGuest:self.goalsList interestsList:self.interestsList callback:^(BOOL success, NSDictionary *response) {
+    [[TDAPIClient sharedInstance] saveGoalsAndInterestsForGuest:self.goalsList interestsList:self.interestsList callback:^(BOOL success, NSDictionary *response) {
         if (response) {
             [self handleNextStart:[response objectForKey:@"next_start"]];
             [self handlePostsResponse:response fromStart:YES];
@@ -203,7 +204,7 @@
     if (![self hasMorePosts]) {
         return NO;
     }
-    [[TDUserAPI sharedInstance] saveGoalsAndInterestsForGuest:self.goalsList interestsList:self.interestsList callback:^(BOOL success, NSDictionary *response) {
+    [[TDAPIClient sharedInstance] saveGoalsAndInterestsForGuest:self.goalsList interestsList:self.interestsList callback:^(BOOL success, NSDictionary *response) {
         if (response) {
             [self handleNextStart:[response objectForKey:@"next_start"]];
             [self handlePostsResponse:response fromStart:YES];
