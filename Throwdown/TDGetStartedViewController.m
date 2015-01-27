@@ -8,6 +8,7 @@
 
 #import "TDGetStartedViewController.h"
 #import "TDConstants.h"
+#import "TDAnalytics.h"
 
 @interface TDGetStartedViewController ()
 
@@ -19,6 +20,8 @@ static NSString *getStartedButtonStr = @"btn_get_started";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [[TDAnalytics sharedInstance] logEvent:@"welcome_view"];
+
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     // Do any additional setup after loading the view from its nib.
     self.imageView.frame = CGRectMake(SCREEN_WIDTH/2 - [UIImage imageNamed:tdLogoAppStr].size.width/2,

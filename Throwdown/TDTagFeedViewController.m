@@ -155,9 +155,7 @@
         return;
     }
     [[TDPostAPI sharedInstance] fetchPostsForTagName:self.tagName start:nil success:^(NSDictionary *response) {
-        debug NSLog(@"got data");
         if ([response valueForKey:TDCampaginStr]) {
-            debug NSLog(@"creating campaign view with data = %@", [response valueForKey:TDCampaginStr]);
             self.campaignData = [response valueForKey:TDCampaginStr];
             [self loadCampaignView:[response valueForKey:TDCampaginStr] ];
         }
@@ -273,7 +271,6 @@
 
 #pragma mark - TDGuestInfoCellDelegate 
 - (void)loadDetailView {
-    debug NSLog(@"LOAD LEARN MORE from TDTagFeedViewController");
     TDDetailInfoViewController *viewController = [[TDDetailInfoViewController alloc] initWithNibName:@"TDDetailInfoViewController" bundle:nil title:@"Learn More" campaignData:self.campaignData];
     viewController.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:viewController];
@@ -283,7 +280,6 @@
 }
 
 -(void)loadChallengersView {
-    debug NSLog(@"Load challengers feed");
     TDUsersViewController *vc = [[TDUsersViewController alloc] initWithNibName:@"TDUsersViewController" bundle:nil title:@"Participants" campaignData:self.campaignData];
     vc.tagName = self.tagName;
     [self.navigationController pushViewController:vc animated:YES];

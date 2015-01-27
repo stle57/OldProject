@@ -10,6 +10,7 @@
 #import "TDConstants.h"
 #import "TDViewControllerHelper.h"
 #import "TDGoalsCell.h"
+#import "TDAnalytics.h"
 
 @interface TDInterestsViewController ()
 @property (nonatomic) NSIndexPath *selectedIndexPath;
@@ -80,6 +81,8 @@ static const int doneBackgroundViewHeight = 80;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    [[TDAnalytics sharedInstance] logEvent:@"interests_view"];
+
     // Do any additional setup after loading the view from its nib.
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH+20, SCREEN_HEIGHT);
     self.view.backgroundColor = [UIColor clearColor];

@@ -10,6 +10,7 @@
 #import "TDConstants.h"
 #import "TDViewControllerHelper.h"
 #import "TDAppCoverBackgroundView.h"
+#import "TDAnalytics.h"
 
 @interface TDGoalsViewController ()
 @property (nonatomic) NSIndexPath *selectedIndexPath;
@@ -52,7 +53,8 @@ static const int closeBackgroundViewHeight = 80;
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    
+    [[TDAnalytics sharedInstance] logEvent:@"goals_view"];
+
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH+20, SCREEN_HEIGHT); // +20 is to extend the frame for the scrollview offset(inside autolayout)
     self.view.backgroundColor = [UIColor clearColor];
     

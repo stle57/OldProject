@@ -11,6 +11,7 @@
 #import "TDSignupStepOneViewController.h"
 #import "TDGuestUserJoinView.h"
 #import "TDAPIClient.h"
+#import "TDAnalytics.h"
 
 @interface TDGuestUserProfileViewController ()
 @property (nonatomic) UILabel *titleLabel;
@@ -52,7 +53,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    debug NSLog(@"TDGuestUserProfileViewController - viewDidLoad");
+    [[TDAnalytics sharedInstance] logEvent:@"guest_user_view"];
+
     self.view.backgroundColor = [TDConstants lightBackgroundColor];
     self.view.frame = CGRectMake(0, [UIApplication sharedApplication].statusBarFrame.size.height+ self.navigationController.navigationBar.frame.size.height, SCREEN_WIDTH, SCREEN_HEIGHT);
     // Background

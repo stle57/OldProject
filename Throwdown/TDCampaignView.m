@@ -214,8 +214,6 @@ static const int bottomMarginPaddingHeight = 15;
         [learnButton setAttributedTitle:learnAttrStr forState:UIControlStateNormal];
         [learnButton sizeToFit];
     }
-    debug NSLog(@"height = %f", 15 + kBigImageHeight + 15 + label1.frame.size.height + 15 + label2size.height + 15 + learnButton.frame.size.height + 15 + .5 +bottomMarginPaddingHeight + .5 + 65 + bottomMarginPaddingHeight + .5);
-
     return 15 + kBigImageHeight + 15 + label1.frame.size.height + 15 + label2size.height + 15 + learnButton.frame.size.height + 15 + .5 +bottomMarginPaddingHeight + .5 + 65 + bottomMarginPaddingHeight + .5;
 }
 
