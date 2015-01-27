@@ -127,11 +127,9 @@
     if ([TDCurrentUser sharedInstance].authToken) {
         [params setObject:[TDCurrentUser sharedInstance].authToken forKey:@"user_token"];
     }
-    debug NSLog(@" ====>calling posts api");
     [self fetchPostsPath:@"/api/v1/posts.json" parameters:params success:^(NSDictionary *response) {
         self.fetchingUpstream = NO;
         if (successHandler) {
-            debug NSLog(@"====>successHandler w/ response");
             successHandler(response);
         }
     } error:^{

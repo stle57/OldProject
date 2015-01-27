@@ -14,8 +14,6 @@
 
 }
 
-@property (weak, nonatomic) IBOutlet UILabel *titleLabel;
-@property (weak, nonatomic) IBOutlet UILabel *snippetLabel;
 @property (nonatomic, assign, readwrite) BOOL editViewOnly;
 
 - (void)showHomeController;

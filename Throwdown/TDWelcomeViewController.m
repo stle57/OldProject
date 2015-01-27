@@ -25,7 +25,6 @@
 
 @interface TDWelcomeViewController () <UIScrollViewDelegate, TDGetStartedViewControllerDelegate, TDGoalsViewControllerDelegate, TDInterestsViewControllerDelegate, TDLoadingViewControllerDelegate>
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
-@property (weak, nonatomic) IBOutlet UIView *indicatorView;
 @property (weak, nonatomic) IBOutlet TDAppCoverBackgroundView *backgroundImage;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *backgroundImageWidthConstraint;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *backgroundImageHeightConstraint;
@@ -85,11 +84,6 @@
     CGFloat totalWidth = self.editViewOnly ? (self.pageWidth *3) + 40 : (self.pageWidth * 4) + 40;
     self.scrollView.contentSize = CGSizeMake(totalWidth, 1);
     self.scrollView.delegate = self;
-    
-    
-    // Intro slide
-    self.titleLabel.font = [UIFont fontWithName:@"BebasNeueRegular" size:68.0];
-    self.snippetLabel.font = [TDConstants fontSemiBoldSized:20];
 
     self.backgroundImageHeightConstraint.constant = frame.size.height;
     self.backgroundImageWidthConstraint.constant = frame.size.width;

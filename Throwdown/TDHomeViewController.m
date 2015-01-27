@@ -204,7 +204,6 @@
 
 
     NSInteger realRow = row - ([self noticeCount] + ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) + (hasAskedForGoal ? 0 : 1) + (hasAskedForGoalsFinal ? 0 :1) );
-    debug NSLog(@"*****inside TDHomeViewController postForRow= realRow=%lu", realRow);
 
     if (realRow < [posts count]) {
         return [posts objectAtIndex:realRow];

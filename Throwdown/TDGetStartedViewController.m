@@ -14,15 +14,17 @@
 @end
 
 @implementation TDGetStartedViewController
+static NSString *tdLogoAppStr = @"td_logo_app_cover";
+static NSString *getStartedButtonStr = @"btn_get_started";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     // Do any additional setup after loading the view from its nib.
-    self.imageView.frame = CGRectMake(SCREEN_WIDTH/2 - [UIImage imageNamed:@"td_logo_app_cover"].size.width/2,
+    self.imageView.frame = CGRectMake(SCREEN_WIDTH/2 - [UIImage imageNamed:tdLogoAppStr].size.width/2,
                                       48,
-                                      [UIImage imageNamed:@"td_logo_app_cover"].size.width,
-                                      [UIImage imageNamed:@"td_logo_app_cover"].size.height);
+                                      [UIImage imageNamed:tdLogoAppStr].size.width,
+                                      [UIImage imageNamed:tdLogoAppStr].size.height);
     
     self.label.frame = CGRectMake(SCREEN_WIDTH/2 - self.label.frame.size.width/2,
                                   self.imageView.frame.origin.y + self.imageView.frame.size.height + 10,
@@ -37,12 +39,13 @@
                                         self.loginButton.frame.size.height);
     // Create the attributes
     NSString *text = @"Already have an account? Login";
+    NSString *loginStr=@"login";
     NSDictionary *attrs = [NSDictionary dictionaryWithObjectsAndKeys:
                            [TDConstants fontRegularSized:14.], NSFontAttributeName,
                            [UIColor whiteColor], NSForegroundColorAttributeName, nil];
     NSDictionary *subAttrs = [NSDictionary dictionaryWithObjectsAndKeys:
                               [TDConstants fontSemiBoldSized:14.], NSFontAttributeName, nil];
-    const NSRange range = NSMakeRange(text.length - 5,5); // range of " Login ". Ideally this should not be hardcoded
+    const NSRange range = NSMakeRange(text.length - loginStr.length, loginStr.length); // range of " Login ". Ideally this should not be hardcoded
     
     // Create the attributed string (text + attributes)
     NSMutableAttributedString *attributedText =
@@ -64,10 +67,10 @@
     self.loginButton.frame = loginFrame;
     
     self.getStartedButton.frame = CGRectMake(
-                                    SCREEN_WIDTH/2 - [UIImage imageNamed:@"btn_get_started"].size.width/2,
-                                    SCREEN_HEIGHT - 30 - self.loginButton.frame.size.height - 14 - [UIImage imageNamed:@"btn_get_started"].size.height,
-                                    [UIImage imageNamed:@"btn_get_started"].size.width,
-                                    [UIImage imageNamed:@"btn_get_started"].size.height);
+                                    SCREEN_WIDTH/2 - [UIImage imageNamed:getStartedButtonStr].size.width/2,
+                                    SCREEN_HEIGHT - 30 - self.loginButton.frame.size.height - 14 - [UIImage imageNamed:getStartedButtonStr].size.height,
+                                    [UIImage imageNamed:getStartedButtonStr].size.width,
+                                    [UIImage imageNamed:getStartedButtonStr].size.height);
 }
 
 - (void)didReceiveMemoryWarning {
@@ -82,7 +85,6 @@
 }
 
 - (IBAction)getStartedButtonPressed {
-    debug NSLog(@"get started button pressed");
     if (self.delegate && [self.delegate respondsToSelector:@selector(getStartedButtonPressed)]) {
         [self.delegate getStartedButtonPressed];
     }

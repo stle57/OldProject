@@ -258,11 +258,11 @@
             NSDictionary *response = (NSDictionary*)responseObject;
             callback(YES, [response objectForKey:@"users"]);
         } else {
-            debug NSLog(@"did not get userlist");
+            debug NSLog(@"did not get challengers list");
             callback(NO, @[]);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        debug NSLog(@"Get community list Error: %@", error);
+        debug NSLog(@"Get challengers list Error: %@", error);
         callback(NO, @[]);
     }];
 }
