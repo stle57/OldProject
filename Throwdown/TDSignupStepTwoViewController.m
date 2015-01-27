@@ -66,27 +66,32 @@
     [self validateUsernameField];
 
     self.topLabel.font = [TDConstants fontSemiBoldSized:18];
-    
+
+    self.privacyLabel1.frame = CGRectMake(0, 0, SCREEN_WIDTH, 100);
+    self.privacyButton.frame = CGRectMake(0, 0, SCREEN_WIDTH, 100);
+
     NSString *text = @"By creating an account, you agree to the";
-    NSAttributedString *attStr = [TDViewControllerHelper makeParagraphedTextWithString:text font:[TDConstants fontRegularSized:12.] color:[TDConstants headerTextColor] lineHeight:15. lineHeightMultipler:(15./12.)];
+    NSAttributedString *attStr = [TDViewControllerHelper makeParagraphedTextWithString:text font:[TDConstants fontRegularSized:14] color:[TDConstants headerTextColor] lineHeight:15. lineHeightMultipler:(15./12.)];
     self.privacyLabel1.attributedText = attStr;
+    [self.privacyLabel1 setNumberOfLines:0];
     [self.privacyLabel1 sizeToFit];
     
     CGRect privacyFrame = self.privacyLabel1.frame;
     privacyFrame.origin.x = SCREEN_WIDTH/2 - self.privacyLabel1.frame.size.width/2;
     privacyFrame.origin.y = self.passwordTextField.frame.origin.y + self.passwordTextField.frame.size.height + 30;
     self.privacyLabel1.frame = privacyFrame;
-    
+
     NSString *text2 = @"Terms of Service & Privacy Policy";
-    NSAttributedString *attStr2 = [TDViewControllerHelper makeParagraphedTextWithString:text2 font:[TDConstants fontSemiBoldSized:12.] color:[TDConstants headerTextColor] lineHeight:15. lineHeightMultipler:15./12.];
+    NSAttributedString *attStr2 = [TDViewControllerHelper makeParagraphedTextWithString:text2 font:[TDConstants fontSemiBoldSized:14] color:[TDConstants headerTextColor] lineHeight:15. lineHeightMultipler:15./12.];
     [self.privacyButton setAttributedTitle:attStr2 forState:UIControlStateNormal];
     [self.privacyButton addTarget:self action:@selector(privacyButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self.privacyButton.titleLabel setNumberOfLines:1];
     [self.privacyButton sizeToFit];
+
     CGRect privateButton = self.privacyButton.frame;
     privateButton.origin.x = SCREEN_WIDTH/2 - self.privacyButton.frame.size.width/2;
     privateButton.origin.y = self.privacyLabel1.frame.origin.y + self.privacyLabel1.frame.size.height;
     self.privacyButton.frame = privateButton;
-    
 
     // Textfields
     [self.userNameTextField setUpWithIconImageNamed:@"icon_name"
