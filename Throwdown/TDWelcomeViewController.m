@@ -174,8 +174,7 @@
     
     if (!self.editViewOnly) {
         CGFloat value = (self.scrollView.contentOffset.x - (self.pageWidth/2))/(self.pageWidth/2);
-        
-        debug NSLog(@"value =%f", value);
+
         if (value > 0 || value <= 1) {
             [self setBlurLevel: value];
         }
@@ -285,6 +284,13 @@
 }
 
 - (void)loadGuestView:(NSDictionary *)guestPosts {
+    CATransition *transition = [CATransition animation];
+    transition.duration = .5;
+    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    transition.type = kCATransitionReveal;
+    transition.subtype = kCATransitionFromBottom;
+    [self.view.window.layer addAnimation:transition forKey:nil];
+
     [self dismissViewControllerAnimated:YES completion:nil];
 
     [TDViewControllerHelper navigateToGuestFrom:self guestPosts:guestPosts];

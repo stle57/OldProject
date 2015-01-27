@@ -80,8 +80,10 @@
 
 - (void)showData:(NSArray *)goalsList interestList:(NSArray*)interestList{
 
-    [[TDCurrentUser sharedInstance] didAskForGoalsInitially:YES];
-    [[TDCurrentUser sharedInstance] didAskForGoalsFinal:YES];
+    if ([TDCurrentUser sharedInstance].userId != nil) {
+        [[TDCurrentUser sharedInstance] didAskForGoalsInitially:YES];
+        [[TDCurrentUser sharedInstance] didAskForGoalsFinal:YES];
+    }
     [self sendDataToServer:goalsList interestsList:interestList];
     [UIView animateWithDuration:0.2
                           delay:0

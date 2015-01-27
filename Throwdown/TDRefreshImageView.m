@@ -17,7 +17,6 @@
 //@synthesize cjImage;
 
 - (id)initWithFrame:(CGRect)frame {
-    debug NSLog(@"***TDRefreshImageView - inside initWithFrame");
     self = [super initWithFrame:frame];
     if (self) {
         self.frame = frame;
