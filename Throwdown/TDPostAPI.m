@@ -75,6 +75,7 @@
     [manager setRequestSerializer:[[TDRequestSerializer alloc] init]];
     [manager POST:url parameters:@{ @"post": post, @"share_to": sharing, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [[TDCurrentUser sharedInstance] updateCurrentUserInfo]; // updates post/or counts etc
+        [[TDCurrentUser sharedInstance] isNewUser:NO];
 
         // This isn't the prettiest thing. But all the current alternatives aren't great either.
         // We really need to refactor the way uploads are handled.
