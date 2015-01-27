@@ -1918,8 +1918,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_DISPLAY_NAME_SUFFIX = "";
 				BUNDLE_ID_SUFFIX = "";
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				EXCLUDED_SOURCE_FILE_NAMES = "FLEX*";
 				FACEBOOK_APP_ID = 1419119258326947;
@@ -2032,8 +2032,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_DISPLAY_NAME_SUFFIX = "-ß";
 				BUNDLE_ID_SUFFIX = .staging;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				EXCLUDED_SOURCE_FILE_NAMES = "";
 				FACEBOOK_APP_ID = 1470514189854120;
