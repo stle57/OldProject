@@ -22,13 +22,7 @@
     CGRect contentViewFrame = self.contentView.frame;
     contentViewFrame.size.width = SCREEN_WIDTH;
     self.contentView.frame = contentViewFrame;
-    
-    self.goalLabel.frame = CGRectMake(20, self.frame.size.height/2 - self.goalLabel.frame.size.height/2, SCREEN_WIDTH - 40, self.frame.size.height);
-    
-    self.editableTextField.frame = self.goalLabel.frame;
-    self.editableTextField.textColor = [TDConstants headerTextColor];
-    self.editableTextField.font = [TDConstants fontRegularSized:16.];
-    
+
     CGRect bottomLineRect = self.bottomLine.frame;
     bottomLineRect.size.width = SCREEN_WIDTH - 40;
     bottomLineRect.size.height = 1;
@@ -45,17 +39,16 @@
     self.selectionButton.imageView.image = [UIImage imageNamed:@"checkbox_empty"];
     self.selectionButton.tag = 0;
     
-    CGRect addButtonFrame = self.addButton.frame;
     NSString *text = @"Add your own";
     NSAttributedString *addStr = [self makeTextWithString:text font:[TDConstants fontRegularSized:16] color:[TDConstants brandingRedColor] lineHeight:16 lineHeightMultipler:16/16];
     [self.addButton setAttributedTitle:addStr forState:UIControlStateNormal];
-    
-    [self.addButton sizeToFit];
-    addButtonFrame.origin.x = self.frame.size.width/2 - self.addButton.frame.size.width/2;
+
+    CGRect addButtonFrame = self.addButton.frame;
+    addButtonFrame.origin.x = SCREEN_WIDTH/2 - self.addButton.frame.size.width/2;
     addButtonFrame.origin.y = self.frame.size.height/2 - self.addButton.frame.size.height/2;
     self.addButton.frame = addButtonFrame;
     self.addButton.hidden = YES;
-    
+
     [self.editableTextField addTarget:self action:@selector(textFieldEdited) forControlEvents:UIControlEventEditingDidBegin];
     
     self.backgroundColor = [UIColor clearColor];
@@ -75,6 +68,19 @@
     addFrame.origin.x = SCREEN_WIDTH - 20 - self.addGoalButton.frame.size.width;
     addFrame.origin.y = self.frame.size.height/2 - self.addGoalButton.frame.size.height/2;
     self.addGoalButton.frame = addFrame;
+
+
+    self.goalLabel.frame = CGRectMake(20,
+                                      self.frame.size.height/2 - self.goalLabel.frame.size.height/2,
+                                      SCREEN_WIDTH - 40 - self.addGoalButton.frame.size.width,
+                                      self.frame.size.height);
+
+    self.editableTextField.frame = CGRectMake(20,
+                                              self.frame.size.height,
+                                              SCREEN_WIDTH- 40 - self.addGoalButton.frame.size.width,
+                                              self.frame.size.height);
+    self.editableTextField.textColor = [TDConstants headerTextColor];
+    self.editableTextField.font = [TDConstants fontRegularSized:16.];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
@@ -158,9 +164,6 @@
     CGRect goalFrame = self.goalLabel.frame;
     goalFrame.origin.y = self.frame.size.height/2 - self.goalLabel.frame.size.height/2;
     self.goalLabel.frame = goalFrame;
-
-    self.editableTextField.frame = goalFrame;
-
 }
 
 - (void)changeCellToAddGoals {
