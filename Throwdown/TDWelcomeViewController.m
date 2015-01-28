@@ -97,7 +97,6 @@
                 self.goalsList = [dict objectForKey:@"goals"];
                 if (self.goalsViewController) {
                     self.goalsViewController.goalList = [self.goalsList mutableCopy];
-                    debug NSLog(@"got goals list form db, count=%lu",(unsigned long)self.goalsViewController.goalList.count);
                     [self.goalsViewController.tableView reloadData];
                 }
             }
@@ -219,6 +218,8 @@
     [self dismissViewControllerAnimated:YES completion:nil];
     if (self.navigationController.viewControllers.count ==2) {
         TDGuestUserProfileViewController *viewController = self.navigationController.viewControllers[1];
+        [viewController refreshPosts:guestPosts];
+
         [self.navigationController popToViewController:viewController animated:NO];
     } else {
         TDGuestUserProfileViewController *guestViewController = [[TDGuestUserProfileViewController alloc] initWithNibName:@"TDGuestUserProfileViewController" bundle:nil goalsList:self.goalsList interestsLists:self.interestList guestPosts:guestPosts];
@@ -284,15 +285,15 @@
 }
 
 - (void)loadGuestView:(NSDictionary *)guestPosts {
-//    CATransition *transition = [CATransition animation];
-//    transition.duration = .5;
-//    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-//    transition.type = kCATransitionReveal;
-//    transition.subtype = kCATransitionFromBottom;
-//    [self.view.window.layer addAnimation:transition forKey:nil];
 
-    [self dismissViewControllerAnimated:NO completion:nil];
+    CATransition *transition = [CATransition animation];
+    transition.duration = .5;
+    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    transition.type = kCATransition;
+    transition.subtype = kCATransitionFromBottom;
+    [self.view.window.layer addAnimation:transition forKey:nil];
 
+    [self dismissViewControllerAnimated:YES completion:nil];
     [TDViewControllerHelper navigateToGuestFrom:self guestPosts:guestPosts];
 }
 - (void)loadHomeView {

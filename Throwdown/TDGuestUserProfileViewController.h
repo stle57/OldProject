@@ -10,10 +10,11 @@
 #import "TDPostsViewController.h"
 #import "TDGuestInfoCell.h"
 
-@interface TDGuestUserProfileViewController : TDPostsViewController<TDGuestUserInfoCellDelegate>
+@interface TDGuestUserProfileViewController : TDPostsViewController<TDGuestUserInfoCellDelegate, UIScrollViewDelegate>
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil goalsList:(NSMutableArray*)goalsList interestsLists:(NSMutableArray*)interestsList guestPosts:(NSDictionary*)guestPosts;
 @property (nonatomic) NSDictionary *guestGoalsAndInterests;
 @property (weak, nonatomic) IBOutlet UIButton *addButton;
 
 - (IBAction)addButtonPressed:(id)sender;
+-(void)refreshPosts:(NSDictionary*)response;
 @end

@@ -111,12 +111,12 @@ static int const width = 290;
 
 - (void)joinButtonPressed {
     debug NSLog(@"join button pressed");
-    [self animateHide];
-    
+
     [[NSNotificationCenter defaultCenter] postNotificationName:TDGuestViewControllerSignUp
                                                         object:self
                                                       userInfo:nil];
-    
+    [self animateHide];
+
 }
 
 - (void)closeButtonPressed {

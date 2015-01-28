@@ -95,14 +95,14 @@
                          // code to run when animation completes
                          // (in this case, another animation:)
                          [UIView animateWithDuration:.5
-                                               delay:2.5
+                                               delay:3.5
                                              options:UIViewAnimationOptionCurveEaseIn
                                           animations:^{
                                               self.loadingView1.alpha = 0;
                                               self.loadingView2.alpha = 1;
                                           }
                                           completion:^(BOOL finished){
-                                              [self performSelector:@selector(setMinReached) withObject:nil afterDelay:2.0];
+                                              [self performSelector:@selector(setMinReached) withObject:nil afterDelay:3.0];
                                           }];
                      }];
 }
@@ -187,7 +187,7 @@
                              self.loadingView3.alpha = 1;
                          }
                          completion:^(BOOL finished){
-                             [self performSelector:@selector(loadCorrectView) withObject:nil afterDelay:1.0];
+                             [self performSelector:@selector(loadCorrectView) withObject:nil afterDelay:2.0];
                          }];
         } else {
             [UIView animateWithDuration:.5
@@ -203,14 +203,5 @@
 
         }
     }
-//    } else {
-//        if (!self.minAnimationReached) {
-//            debug NSLog(@"  min animationreached");
-//        }
-//
-//        if (!self.loadedData) {
-//            debug NSLog(@"  load data ");
-//        }
-//    }
 }
 @end

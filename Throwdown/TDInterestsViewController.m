@@ -81,7 +81,6 @@ static const int doneBackgroundViewHeight = 80;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [[TDAnalytics sharedInstance] logEvent:@"interests_view"];
 
     // Do any additional setup after loading the view from its nib.
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH+20, SCREEN_HEIGHT);
@@ -141,6 +140,11 @@ static const int doneBackgroundViewHeight = 80;
     self.keyboardObserver = nil;
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [[TDAnalytics sharedInstance] logEvent:@"interests_view"];
+
+}
 - (IBAction)doneButtonPressed:(id)sender {
     if (self.delegate && [self.delegate respondsToSelector:@selector(doneButtonPressed:)]) {
         [self.delegate doneButtonPressed:self.interestList];

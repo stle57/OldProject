@@ -240,7 +240,7 @@ static CGFloat const kPostMargin = 22;
     NSArray *posts = [self postsForThisScreen];
 
     BOOL hasAskedForGoal = YES;
-    bool hasAskedForGoalsFinal = YES;
+    BOOL hasAskedForGoalsFinal = YES;
     if (![self onGuestFeed]) {
         hasAskedForGoal = [[TDCurrentUser sharedInstance] didAskForGoalsInitially];
 
@@ -278,7 +278,6 @@ static CGFloat const kPostMargin = 22;
         return 1;
     }
 
-
     // 1st row for New User Header
     if ([[TDCurrentUser sharedInstance] isNewUser] && section == [self noticeCount]) {
         return 1;
@@ -305,7 +304,6 @@ static CGFloat const kPostMargin = 22;
     }
 
     NSInteger row = [[self postsForThisScreen] count] + [self noticeCount] + (self.profileType != kFeedProfileTypeNone ? 1 : 0) + ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) + (hasAskedForGoal ? 0 : 1) + (hasAskedForGoalsFinal ? 0 :1);
-
     // Last row with Activity
     if (showBottomSpinner && section == row) {
         return 1;
@@ -318,11 +316,10 @@ static CGFloat const kPostMargin = 22;
     }
     
     // Last row with no more posts
-    if (![self hasMorePosts] && section == row && ![self onGuestFeed]) {
+    if ( ![self onGuestFeed] && ![self hasMorePosts] && section == row) {
         return 1;
     }
 
-    
     TDPost *post = [self postForRow:section];
     if (post) {
         // 1 for profile header and media/text
@@ -594,6 +591,7 @@ static CGFloat const kPostMargin = 22;
         return cell;
 
     }
+
     // Creating LAST row on guest feed. 'realRow' represents the total number of sections in the feed
     if ([self onGuestFeed] && ![self hasMorePosts] && indexPath.section == realRow) {
         TDGuestInfoCell*cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
@@ -782,7 +780,6 @@ static CGFloat const kPostMargin = 22;
         return kPostMargin;
     }
 
-    
     TDPost *post = [self postForRow:indexPath.section];
     
     if (!post) {
@@ -854,6 +851,7 @@ static CGFloat const kPostMargin = 22;
     if ([self onGuestFeed]) {
         return;
     }
+
     TDPost *post = [self postForRow:indexPath.section];
     
     if (post) {
@@ -1036,7 +1034,7 @@ static CGFloat const kPostMargin = 22;
 }
 
 - (void)showGoalsAndInterestsController {
-    [self dismissViewControllerAnimated:NO completion:nil];
+    //[self dismissViewControllerAnimated:NO completion:nil];
     
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
 
