@@ -111,6 +111,12 @@ static const int closeBackgroundViewHeight = 80;
     
     self.keyboardObserver = [[TDKeyboardObserver alloc] initWithDelegate:self];
     [self.keyboardObserver startListening];
+
+    self.tapper = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
+    [self.tapper setCancelsTouchesInView:NO];
+    self.tapper.delegate = self;
+    [self.view addGestureRecognizer:self.tapper];
+    self.keyboardUp = NO;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -161,9 +167,10 @@ static const int closeBackgroundViewHeight = 80;
     if (!cell) {
         NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGoalsCell" owner:self options:nil];
         cell = [topLevelObjects objectAtIndex:0];
-        cell.delegate = self;
-        cell.editableTextField.delegate = self;
+
     }
+    cell.delegate = self;
+    cell.editableTextField.delegate = self;
     cell.row = indexPath.row;
     cell.selectionButton.tag = 0;
     if (indexPath.row == self.goalList.count) {
@@ -186,7 +193,9 @@ static const int closeBackgroundViewHeight = 80;
         TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:indexPath];
         if (cell) {
             [cell makeCellFirstResponder];
+            cell.editableTextField.delegate = self;
             self.selectedIndexPath = indexPath;
+            self.keyboardUp = YES;
         }
     } else {
         [self selectionButtonPressedFromRow:indexPath.row];
@@ -313,20 +322,6 @@ static const int closeBackgroundViewHeight = 80;
 }
 
 #pragma mark UITextFieldDelegate
-- (void)textFieldDidBeginEditing:(UITextField *)textField {
-    // Show the "Add" button
-    debug NSLog(@"going to start editing");
-
-}
-
-- (void)textFieldDidChange:(UITextField *)textField {
-    
-}
-
-- (void)textFieldDidEndEditing:(UITextField *)textField {
-    //Show the checkbox
-    debug NSLog(@"done editing");
-}
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:self.selectedIndexPath];
@@ -334,6 +329,33 @@ static const int closeBackgroundViewHeight = 80;
         [self addGoals:cell.editableTextField.text row:cell.row];
     }
     return YES;
+}
+
+- (void)handleSingleTap:(UITapGestureRecognizer *) sender {
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.goalList.count inSection:0];
+    TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:indexPath];
+    if (cell && [cell.editableTextField isFirstResponder]) {
+        [cell.editableTextField resignFirstResponder];
+
+        // Redraw the cell
+        [cell createCell:YES text:nil selected:NO];
+        self.keyboardUp = NO;
+    }
+}
+
+#pragma mark UIGestureRecognizerDelegate methods
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    // If the user hit the "add button", then we return NO, else return the keyboard value
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.goalList.count inSection:0];
+    TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:indexPath];
+
+    if (cell && [touch.view isKindOfClass:([cell.addGoalButton class])]) {
+        return NO;
+    } else {
+        return self.keyboardUp;
+    }
 }
 
 

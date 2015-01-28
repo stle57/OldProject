@@ -14,7 +14,7 @@
 - (void)doneButtonPressed:(NSMutableArray *)interestList;
 - (void)backButtonPressed;
 @end
-@interface TDInterestsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, TDGoalsCellDelegate,TDKeyboardObserverDelegate, UITextFieldDelegate>
+@interface TDInterestsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, TDGoalsCellDelegate,TDKeyboardObserverDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate>
 
 @property (nonatomic, weak) id <TDInterestsViewControllerDelegate> delegate;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withBackButton:(BOOL)yes interestsList:(NSArray*)interestsList;
@@ -32,6 +32,8 @@
 @property (nonatomic) TDKeyboardObserver *keyboardObserver;
 @property (nonatomic) BOOL showBackButton;
 @property (nonatomic) NSMutableArray *interestList;
+@property (nonatomic) UIGestureRecognizer *tapper;
+@property (nonatomic) BOOL keyboardUp;
 
 - (IBAction)doneButtonPressed:(id)sender;
 - (IBAction)backButtonPressed:(id)sender;

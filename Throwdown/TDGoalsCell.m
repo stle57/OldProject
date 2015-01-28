@@ -146,6 +146,7 @@
     self.addButton.hidden = YES;
     self.editableTextField.hidden = YES;
     self.selectionButton.hidden= selected;
+    self.addGoalButton.hidden = YES;
 
     if (createAddButton) {
         CGRect frame = self.frame;
@@ -210,6 +211,7 @@
     [self.editableTextField becomeFirstResponder];
     [self.editableTextField setEnablesReturnKeyAutomatically:YES];
     self.bottomLine.hidden = NO;
+    self.addGoalButton.hidden = NO;
 }
 
 - (void)goalSelected:(BOOL)yes {
@@ -227,4 +229,5 @@
     }
 
 }
+
 @end

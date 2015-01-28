@@ -128,6 +128,12 @@ static const int doneBackgroundViewHeight = 80;
     [self.keyboardObserver startListening];
     
     self.tableView.backgroundColor = [UIColor clearColor];
+
+    self.tapper = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
+    [self.tapper setCancelsTouchesInView:NO];
+    self.tapper.delegate = self;
+    [self.view addGestureRecognizer:self.tapper];
+    self.keyboardUp = NO;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -200,6 +206,7 @@ static const int doneBackgroundViewHeight = 80;
         if (cell) {
             [cell makeCellFirstResponder];
             self.selectedIndexPath = indexPath;
+            self.keyboardUp = YES;
         }
     } else {
         [self selectionButtonPressedFromRow:indexPath.row];
@@ -314,23 +321,7 @@ static const int doneBackgroundViewHeight = 80;
 }
 
 #pragma mark UITextFieldDelegate
-- (void)textFieldDidBeginEditing:(UITextField *)textField {
-    // Show the "Add" button
-    debug NSLog(@"going to start editing");
-    
-}
-
-- (void)textFieldDidChange:(UITextField *)textField {
-    
-}
-
-- (void)textFieldDidEndEditing:(UITextField *)textField {
-    //Show the checkbox
-    debug NSLog(@"done editing");
-}
-
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    debug NSLog(@"return button hit");
     TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:self.selectedIndexPath];
     if (cell) {
         [self addGoals:cell.editableTextField.text row:cell.row];
@@ -343,5 +334,34 @@ static const int doneBackgroundViewHeight = 80;
         [self.delegate backButtonPressed];
     }
 }
+
+- (void)handleSingleTap:(UITapGestureRecognizer *) sender {
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.interestList.count inSection:0];
+    TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:indexPath];
+    if (cell && [cell.editableTextField isFirstResponder]) {
+        [cell.editableTextField resignFirstResponder];
+
+        // Redraw the cell
+        [cell createCell:YES text:nil selected:NO];
+        self.keyboardUp = NO;
+    }
+}
+
+#pragma mark UIGestureRecognizerDelegate methods
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    // If the user hit the "add button", then we return NO, else return the keyboard value
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.interestList.count inSection:0];
+    TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:indexPath];
+
+    if (cell && [touch.view isKindOfClass:([cell.addGoalButton class])]) {
+        return NO;
+    } else {
+        return self.keyboardUp;
+    }
+}
+
+
 
 @end

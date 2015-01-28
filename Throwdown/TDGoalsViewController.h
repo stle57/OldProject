@@ -15,7 +15,7 @@
 - (void)closeButtonPressed;
 @end
 
-@interface TDGoalsViewController : UIViewController<UITableViewDataSource, UITableViewDataSource, TDGoalsCellDelegate, TDKeyboardObserverDelegate, UITextFieldDelegate>
+@interface TDGoalsViewController : UIViewController<UITableViewDataSource, UITableViewDataSource, TDGoalsCellDelegate, TDKeyboardObserverDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate>
 @property (nonatomic, weak) id <TDGoalsViewControllerDelegate> delegate;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withCloseButton:(BOOL)yes goalsList:(NSArray*)goalsList;
@@ -35,6 +35,8 @@
 @property (nonatomic) BOOL showCloseButton;
 @property (nonatomic) TDKeyboardObserver *keyboardObserver;
 @property (nonatomic) NSMutableArray *goalList;
+@property (nonatomic) UIGestureRecognizer *tapper;
+@property (nonatomic) BOOL keyboardUp;
 
 - (IBAction)continueButtonPressed:(id)sender;
 - (IBAction)closeButtonPressed:(id)sender;
