@@ -94,7 +94,7 @@
     self.privacyButton.frame = privateButton;
 
     // Textfields
-    [self.userNameTextField setUpWithIconImageNamed:@"icon_name"
+    [self.userNameTextField setUpWithIconImageNamed:@"icon_username"
                                         placeHolder:@"User Name"
                                        keyboardType:UIKeyboardTypeTwitter
                                                type:kTDTextFieldType_UserName
