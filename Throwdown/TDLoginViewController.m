@@ -111,11 +111,11 @@ static NSString *buttonBackStr = @"btn_back";
                    self.passwordTextField.frame.origin.y +self.passwordTextField.frame.size.height+ 40 + [UIImage imageNamed:buttonLoginStr].size.height + 15,
                    self.resetPasswordButton.frame.size.width,
                    self.resetPasswordButton.frame.size.height);
-    
-    CGRect progressFrame = self.progress.frame;
-    progressFrame.origin.x = SCREEN_WIDTH/2 - self.progress.frame.size.width/2;
-    progressFrame.origin.y = SCREEN_HEIGHT/2 - self.progress.frame.size.height/2;
-    self.progress.frame = progressFrame;
+
+    self.progress.center = [TDViewControllerHelper centerPosition];
+    CGPoint centerFrame = self.progress.center;
+    centerFrame.y = self.loginButton.frame.origin.y;
+    self.progress.center = centerFrame;
     
     debug NSLog(@"self.resetPasswordButton=%@", NSStringFromCGRect(self.resetPasswordButton.frame));
 }

@@ -80,7 +80,12 @@
                                         self.userNameTextField.frame.origin.y + self.userNameTextField.frame.size.height + 40,
                                         [UIImage imageNamed:@"btn_reset_password"].size.width,
                                         [UIImage imageNamed:@"btn_reset_password"].size.height);
-    
+
+    self.progress.center = [TDViewControllerHelper centerPosition];
+
+    CGPoint centerFrame = self.progress.center;
+    centerFrame.y = self.resetButton.frame.origin.y;
+    self.progress.center = centerFrame;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
