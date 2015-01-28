@@ -109,7 +109,7 @@
         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="X4c-kx-RgC">
             <rect key="frame" x="15" y="4" width="16" height="22"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-            <state key="normal" image="btn_x">
+            <state key="normal" image="btn_x_small">
                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
             </state>
             <state key="selected" image="btn_x"/>
@@ -123,6 +123,7 @@
         <image name="btn_join_throwdown" width="240" height="44"/>
         <image name="btn_join_throwdown_hit" width="240" height="44"/>
         <image name="btn_x" width="16" height="16"/>
+        <image name="btn_x_small" width="16" height="16"/>
         <image name="td_icon" width="42" height="42"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

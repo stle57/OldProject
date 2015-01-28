@@ -79,11 +79,11 @@ static int const width = 290;
         
     }
     
-    self.closeButton = [[UIButton alloc] initWithFrame:CGRectMake(width - 6 - [UIImage imageNamed:@"btn_x"].size.width, 6, [UIImage imageNamed:@"btn_x"].size.width, [UIImage imageNamed:@"btn_x"].size.height)];
+    self.closeButton = [[UIButton alloc] initWithFrame:CGRectMake(width - 6 - [UIImage imageNamed:@"btn_x_small"].size.width, 6, [UIImage imageNamed:@"btn_x_small"].size.width, [UIImage imageNamed:@"btn_x_small"].size.height)];
     [self.closeButton addTarget:self action:@selector(closeButtonPressed) forControlEvents:UIControlEventTouchUpInside];
-    [self.closeButton setImage:[UIImage imageNamed:@"btn_x"] forState:UIControlStateNormal];
-    [self.closeButton setImage:[UIImage imageNamed:@"btn_x"] forState:UIControlStateHighlighted];
-    [self.closeButton setImage:[UIImage imageNamed:@"btn_x"] forState:UIControlStateSelected];
+    [self.closeButton setImage:[UIImage imageNamed:@"btn_x_small"] forState:UIControlStateNormal];
+    [self.closeButton setImage:[UIImage imageNamed:@"btn_x_small"] forState:UIControlStateHighlighted];
+    [self.closeButton setImage:[UIImage imageNamed:@"btn_x_small"] forState:UIControlStateSelected];
     
     //- Adjust the size of the button to have a larger tap area
     self.closeButton.frame = CGRectMake(self.closeButton.frame.origin.x -10,

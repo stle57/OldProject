@@ -524,8 +524,8 @@ static const int bottomMarginPaddingHeight = 15;
         [self.topMarginPadding addSubview:self.label1];
 
         CGRect closeButtonFrame = self.closeButton.frame;
-        closeButtonFrame.origin.x = SCREEN_WIDTH - 10 - [UIImage imageNamed:@"btn_x"].size.width;
-        closeButtonFrame.origin.y = self.topMarginPadding.frame.size.height/2 - [UIImage imageNamed:@"btn_x"].size.height/2;
+        closeButtonFrame.origin.x = SCREEN_WIDTH - 10 - [UIImage imageNamed:@"btn_x_small"].size.width;
+        closeButtonFrame.origin.y = self.topMarginPadding.frame.size.height/2 - [UIImage imageNamed:@"btn_x_small"].size.height/2;
         self.closeButton.frame = closeButtonFrame;
         [self addSubview:self.closeButton];
 
