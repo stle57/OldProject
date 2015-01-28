@@ -918,7 +918,7 @@
 
 - (void)reloadTableView {
     [[TDCurrentUser sharedInstance] didAskForGoalsFinal:YES];
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Setting Goals & Interests"
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
                                                     message:@"You may set your goals & interests any time through your Settings page."
                                                    delegate:self
                                           cancelButtonTitle:@"OK"
