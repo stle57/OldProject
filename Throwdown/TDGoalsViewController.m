@@ -148,7 +148,7 @@ static const int closeBackgroundViewHeight = 80;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (self.goalList.count+1 == indexPath.row) {
+    if (self.goalList.count == indexPath.row) {
         return 59; // This is for the last row +(Add More)
     } else {
         return 44;

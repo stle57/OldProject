@@ -159,7 +159,7 @@ static const int doneBackgroundViewHeight = 80;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.row == self.interestList.count +1) {
+    if (indexPath.row == self.interestList.count) {
         return 59;
     } else {
         return 44;
