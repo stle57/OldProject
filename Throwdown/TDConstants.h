@@ -126,6 +126,7 @@ static NSString *const TDActivityNavBar = @"TDActivityNavBar";
 static NSString *const TDUpdatePostCount = @"TDUpdatePostCount";
 static NSString *const TDRemoveGuestViewControllerOverlay = @"TDRemoveGuestViewControllerOverlay";
 static NSString *const TDGuestViewControllerSignUp = @"TDGuestViewControllerSignUp";
+static NSString *const TDRemoveGuestJoinView = @"TDRemoveGuestJoinView";
 
 static NSString *const TDCommunityValuesStr = @"Our Community Values";
 static NSString *const TDValueStr1 = @"\u2022 Always cheer each other on.";

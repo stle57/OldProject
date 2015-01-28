@@ -107,6 +107,8 @@ static int const width = 290;
     self.layer.masksToBounds = YES;
     self.layer.shadowColor = [[UIColor whiteColor] CGColor];
     self.layer.shadowOpacity = .5;
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(animateHide) name:TDRemoveGuestJoinView object:nil];
 }
 
 - (void)joinButtonPressed {
@@ -173,6 +175,4 @@ static int const width = 290;
     
     [self removeFromSuperview];
 }
-
-
 @end

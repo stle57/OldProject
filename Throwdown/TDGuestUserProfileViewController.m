@@ -380,4 +380,14 @@
     [self showNavBar];
 }
 
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
+    UITouch *touch = [[event allTouches] anyObject];
+    if (touch.view == self.disableViewOverlay) {
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDRemoveGuestJoinView
+                                                        object:self
+
+                                                      userInfo:nil];
+    }
+}
 @end
