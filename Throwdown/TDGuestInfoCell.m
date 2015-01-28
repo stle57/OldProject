@@ -221,7 +221,9 @@ static const int bottomMarginPaddingHeight = 15;
                                  [UIImage imageNamed:@"td_icon"].size.height );
     [self addSubview:self.icon];
 
-    NSString *welcomeStr = [NSString stringWithFormat:@"%@%@%@", @"Welcome ", [TDCurrentUser sharedInstance].name, @"!\nLet's create your first post." ];
+    NSString *firstName = [self getFirstName:[TDCurrentUser sharedInstance].name];
+
+    NSString *welcomeStr = [NSString stringWithFormat:@"%@%@%@", @"Welcome ", firstName, @"!\nLet's create your first post." ];
     NSAttributedString *str = [TDViewControllerHelper makeParagraphedTextWithString:welcomeStr font:[TDConstants fontSemiBoldSized:19] color:[TDConstants headerTextColor] lineHeight:23 lineHeightMultipler:23/19];
     self.label1.attributedText = str;
     [self.label1 setNumberOfLines:0];
@@ -813,4 +815,9 @@ static const int bottomMarginPaddingHeight = 15;
     return height;
 }
 
+- (NSString*)getFirstName:(NSString*)name {
+    NSArray *arrayName = [name componentsSeparatedByString:@" "];
+    debug NSLog(@"returning name = %@", arrayName[0]);
+    return arrayName[0];
+}
 @end
