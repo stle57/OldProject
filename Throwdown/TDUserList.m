@@ -33,15 +33,8 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
 
         if (_sharedInstance == nil) {
             _sharedInstance = [[TDUserList alloc] init];
-        } else {
-            // The object already instantiated, retrieve the list
-            [_sharedInstance getCommunityUserList];
         }
     });
-
-    if (!_sharedInstance.userList || [_sharedInstance.userList count] == 0) {
-        [_sharedInstance getCommunityUserList];
-    }
 
     return _sharedInstance;
 }
@@ -63,7 +56,6 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
 - (id)init {
     self = [super init];
     if (self) {
-        [self getCommunityUserList];
         self.isWaitingForCallback = NO;
     }
     return self;
@@ -74,7 +66,6 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
     if (self) {
         self.userList = [dict objectForKey:@"userList"];
         if (!self.userList || [self.userList count] == 0) {
-            [self getCommunityUserList];
             self.isWaitingForCallback = NO;
         }
     }
@@ -106,10 +97,6 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
 }
 
 #pragma Requests to servers
-
-- (void)getCommunityUserList {
-    [self getCommunityUserListWithCallback:nil];
-}
 
 - (void)getCommunityUserListWithCallback:(void (^)(NSArray *list))callback {
     if (!self.isWaitingForCallback) {
