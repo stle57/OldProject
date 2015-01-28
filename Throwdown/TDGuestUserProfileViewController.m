@@ -19,7 +19,6 @@
 @property (nonatomic) NSArray *posts;
 @property (nonatomic) NSNumber *nextStart;
 @property (nonatomic) UIView *headerView;
-//@property (nonatomic) UIView *viewOverlay;
 @property (nonatomic) UIView *disableViewOverlay;
 @property (nonatomic) NSMutableArray *goalsList;
 @property (nonatomic) NSMutableArray *interestsList;
@@ -279,105 +278,6 @@
 
 - (void)showGuestController:(TDGuestUserProfileViewController*)guestViewController {
     // stub to stop crash bug from segue: navigateToHomeFrom
-}
-
-#pragma mark - ScrollViewDelegate (hiding nav bar when scrolling)
-
-- (void)scrollTableToTop {
-    [self.tableView scrollRectToVisible:CGRectMake(0, 0, 1, 1) animated:NO];
-}
-
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    [super scrollViewDidScroll:scrollView];
-
-    if (self.navigationController == nil) {
-        return;
-    }
-
-    CGRect frame = self.navigationController.navigationBar.frame;
-    // table view acts up if there isn't enough content in there so abort if content is smaller than the frame size
-    if (self.tableView.contentSize.height <= self.tableView.frame.size.height) {
-        return;
-    }
-
-    CGFloat size = frame.size.height - 21;
-    CGFloat scrollOffset = scrollView.contentOffset.y;
-    CGFloat scrollDiff = (scrollOffset - self.previousScrollViewYOffset) * 0.5;
-    CGFloat scrollHeight = scrollView.frame.size.height;
-    CGFloat scrollContentSizeHeight = scrollView.contentSize.height + scrollView.contentInset.bottom;
-
-    if (scrollOffset <= -scrollView.contentInset.top) {
-        frame.origin.y = 20;
-    } else if ((scrollOffset + scrollHeight) >= scrollContentSizeHeight) {
-        frame.origin.y = -size;
-    } else {
-        frame.origin.y = MIN(20, MAX(-size, frame.origin.y - scrollDiff));
-    }
-
-    [self setTableViewFrameBasedOn:frame];
-
-    self.navigationController.navigationBar.frame = frame;
-
-    CGFloat framePercentageHidden = ((20 - frame.origin.y) / (frame.size.height - 1));
-    [self updateNavigationBarButtons:(1.0 - framePercentageHidden)];
-    self.previousScrollViewYOffset = scrollOffset;
-}
-
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    [self stoppedScrolling];
-}
-
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    if (!decelerate) {
-        [self stoppedScrolling];
-    }
-}
-
-- (void)stoppedScrolling {
-    CGRect frame = self.navigationController.navigationBar.frame;
-    if (frame.origin.y < 20) {
-        CGFloat top = -(frame.size.height - 21);
-        [self animateNavBarTo:(top + 20 > frame.origin.y ? top : 20)];
-    }
-}
-
-- (void)showNavBar {
-    [self animateNavBarTo:20];
-}
-
-- (void)animateNavBarTo:(CGFloat)y {
-    [UIView animateWithDuration:0.2 animations:^{
-        CGRect frame = self.navigationController.navigationBar.frame;
-        CGFloat alpha = frame.origin.y >= y && y < 20 ? 0 : 1;
-        frame.origin.y = y;
-        self.navigationController.navigationBar.frame = frame;
-        [self updateNavigationBarButtons:alpha];
-        [self setTableViewFrameBasedOn:frame];
-    }];
-}
-
-- (void)setTableViewFrameBasedOn:(CGRect)frame {
-    CGRect scrollFrame = self.tableView.frame;
-    scrollFrame.origin.y = frame.origin.y - 20;
-    scrollFrame.size.height = [UIScreen mainScreen].bounds.size.height - 20;
-    if (!CGRectEqualToRect(scrollFrame, self.tableView.frame)) {
-        self.tableView.frame = scrollFrame;
-    }
-}
-
-- (void)updateNavigationBarButtons:(CGFloat)alpha {
-    for (UIView *navView in self.navigationController.navigationBar.subviews) {
-        NSString *desc = (NSString *)navView.description;
-        if ([desc rangeOfString:@"UINavigationBarBackground"].length == 0 && [desc rangeOfString:@"UINavigationBarBackIndicatorView"].length == 0) {
-            navView.alpha = alpha;
-        }
-    }
-    self.navigationController.navigationBar.titleTextAttributes = @{ NSForegroundColorAttributeName: [[UIColor whiteColor] colorWithAlphaComponent:alpha] };
-    self.navigationController.navigationBar.tintColor = [self.navigationController.navigationBar.tintColor colorWithAlphaComponent:alpha];
-}
-
-- (void)willEnterForegroundCallback:(NSNotification *)notification {
-    [self showNavBar];
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event{
