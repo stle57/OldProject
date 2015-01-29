@@ -51,7 +51,7 @@
 
     CGRect addButtonFrame = self.addButton.frame;
     addButtonFrame.origin.x = SCREEN_WIDTH/2 - self.addButton.frame.size.width/2;
-    addButtonFrame.origin.y = self.frame.size.height/2 - self.addButton.frame.size.height/2;
+    addButtonFrame.origin.y = self.frame.size.height/3 - self.addButton.frame.size.height/3;
     self.addButton.frame = addButtonFrame;
     self.addButton.hidden = YES;
 
@@ -157,7 +157,7 @@
         self.selectionButton.hidden = YES;
         CGRect buttonFrame = self.addButton.frame;
         buttonFrame.origin.x = self.frame.size.width/2 - self.addButton.frame.size.width/2;
-        buttonFrame.origin.y = self.frame.size.height/2 - self.addButton.frame.size.height/2;
+        buttonFrame.origin.y = self.frame.size.height/3 - self.addButton.frame.size.height/3;
         self.addButton.frame = buttonFrame;
         self.bottomLine.hidden = YES;
     } else {
