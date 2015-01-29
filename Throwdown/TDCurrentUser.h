@@ -77,4 +77,5 @@
 - (void)resetAskedForGoals;
 - (BOOL)isNewUser;
 - (void)isNewUser:(BOOL)yes;
+- (NSString*)parseFirstName;
 @end

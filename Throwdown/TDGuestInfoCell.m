@@ -24,7 +24,7 @@ static NSString *text2 = @"Please remember:\n-No inappropriate posts,\n-No direc
 static NSString *guestWelcomeStr = @"Based on your goals and interests, here's a sample of posts from the community we thought you'd enjoy.\n\nTo like, comment, or make your own post, please join us by creating an account.  We'd love to have you!";
 static NSString *existingUser1 = @"We'd like to personalize your Throwdown experience.";
 static NSString *existingUser2 = @"Please take a moment to tell us about your fitness goals and interests.";
-static NSString *existingUser3 = @"(You can always change them in settings.)";
+static NSString *existingUser3 = @"\n(You can always change them in settings.)";
 static const int topMarginPaddingHeight = 15;
 static const int bottomMarginPaddingHeight = 15;
 
@@ -221,9 +221,7 @@ static const int bottomMarginPaddingHeight = 15;
                                  [UIImage imageNamed:@"td_icon"].size.height );
     [self addSubview:self.icon];
 
-    NSString *firstName = [self getFirstName:[TDCurrentUser sharedInstance].name];
-
-    NSString *welcomeStr = [NSString stringWithFormat:@"%@%@%@", @"Welcome ", firstName, @"!\nLet's create your first post." ];
+    NSString *welcomeStr = [NSString stringWithFormat:@"%@%@%@", @"Welcome ", [TDCurrentUser sharedInstance].parseFirstName, @"!\nLet's create your first post." ];
     NSAttributedString *str = [TDViewControllerHelper makeParagraphedTextWithString:welcomeStr font:[TDConstants fontSemiBoldSized:19] color:[TDConstants headerTextColor] lineHeight:23 lineHeightMultipler:23/19];
     self.label1.attributedText = str;
     [self.label1 setNumberOfLines:0];
@@ -235,7 +233,7 @@ static const int bottomMarginPaddingHeight = 15;
     self.label1.frame = label1Frame;
     [self addSubview:self.label1];
 
-    NSAttributedString *infoStr = [TDViewControllerHelper makeLeftAlignedTextWithString:text1 font:[TDConstants fontRegularSized:15] color:[TDConstants commentTimeTextColor] lineHeight:18 lineHeightMultipler:18/15];
+    NSAttributedString *infoStr = [TDViewControllerHelper makeLeftAlignedTextWithString:text1 font:[TDConstants fontRegularSized:16] color:[TDConstants commentTimeTextColor] lineHeight:19 lineHeightMultipler:19/16];
     self.label2.attributedText = infoStr;
     [self.label2 setNumberOfLines:0];
     [self.label2 sizeToFit];
@@ -245,7 +243,7 @@ static const int bottomMarginPaddingHeight = 15;
     self.label2.frame = label2Frame;
     [self addSubview:self.label2];
 
-    NSAttributedString *infoStr2 = [TDViewControllerHelper makeLeftAlignedTextWithString:text2 font:[TDConstants fontRegularSized:15] color:[TDConstants commentTimeTextColor] lineHeight:18 lineHeightMultipler:18/15];
+    NSAttributedString *infoStr2 = [TDViewControllerHelper makeLeftAlignedTextWithString:text2 font:[TDConstants fontRegularSized:16] color:[TDConstants commentTimeTextColor] lineHeight:19 lineHeightMultipler:19/16];
     self.label3.attributedText = infoStr2;
     [self.label3 setNumberOfLines:0];
     [self.label3 sizeToFit];
@@ -326,7 +324,7 @@ static const int bottomMarginPaddingHeight = 15;
     [self addSubview:self.label1];
     
     
-    NSAttributedString *infoStr = [TDViewControllerHelper makeLeftAlignedTextWithString:guestWelcomeStr font:[TDConstants fontRegularSized:16] color:[TDConstants headerTextColor] lineHeight:18 lineHeightMultipler:18/16];
+    NSAttributedString *infoStr = [TDViewControllerHelper makeLeftAlignedTextWithString:guestWelcomeStr font:[TDConstants fontRegularSized:16] color:[TDConstants headerTextColor] lineHeight:19 lineHeightMultipler:19/16];
     self.label2.attributedText = infoStr;
     [self.label2 setNumberOfLines:0];
     [self.label2 sizeToFit];
@@ -385,7 +383,7 @@ static const int bottomMarginPaddingHeight = 15;
                                  [UIImage imageNamed:@"td_icon"].size.height );
     [self addSubview:self.icon];
     
-    NSString *welcomeStr = [NSString stringWithFormat:@"%@%@%@", @"Welcome ", [TDCurrentUser sharedInstance].name, @"!\nTell us about yourself." ];
+    NSString *welcomeStr = [NSString stringWithFormat:@"%@%@%@", @"Welcome ", [TDCurrentUser sharedInstance].parseFirstName, @"!\nTell us about yourself." ];
     NSAttributedString *str = [TDViewControllerHelper makeParagraphedTextWithString:welcomeStr font:[TDConstants fontSemiBoldSized:19] color:[TDConstants headerTextColor] lineHeight:23 lineHeightMultipler:23/19];
     self.label1.attributedText = str;
     [self.label1 setNumberOfLines:0];
@@ -398,7 +396,7 @@ static const int bottomMarginPaddingHeight = 15;
     [self addSubview:self.label1];
     
     
-    NSAttributedString *infoStr = [TDViewControllerHelper makeLeftAlignedTextWithString:existingUser1 font:[TDConstants fontRegularSized:15] color:[TDConstants headerTextColor] lineHeight:18 lineHeightMultipler:18/15];
+    NSAttributedString *infoStr = [TDViewControllerHelper makeLeftAlignedTextWithString:existingUser1 font:[TDConstants fontRegularSized:16] color:[TDConstants headerTextColor] lineHeight:19 lineHeightMultipler:19/16];
     self.label2.attributedText = infoStr;
     [self.label2 setNumberOfLines:0];
     [self.label2 sizeToFit];
@@ -426,19 +424,19 @@ static const int bottomMarginPaddingHeight = 15;
     [self.label2 sizeToFit];
     [self addSubview:self.label2];
     
-    NSAttributedString *infoStr2 = [TDViewControllerHelper makeLeftAlignedTextWithString:existingUser2 font:[TDConstants fontRegularSized:15] color:[TDConstants headerTextColor] lineHeight:18 lineHeightMultipler:18/15];
+    NSAttributedString *infoStr2 = [TDViewControllerHelper makeLeftAlignedTextWithString:existingUser2 font:[TDConstants fontRegularSized:16] color:[TDConstants headerTextColor] lineHeight:19 lineHeightMultipler:19/16];
     self.label3.attributedText = infoStr2;
     [self.label3 setNumberOfLines:0];
     [self.label3 sizeToFit];
     CGRect label3Frame = self.label3.frame;
     label3Frame.size.width = SCREEN_WIDTH - 60;
     label3Frame.origin.x = 30;
-    label3Frame.origin.y = self.label2.frame.origin.y + self.label2.frame.size.height + 12;
+    label3Frame.origin.y = self.label2.frame.origin.y + self.label2.frame.size.height + 15;
     self.label3.frame = label3Frame;
     [self.label3 sizeToFit];
     [self addSubview:self.label3];
     
-    NSAttributedString *info3 = [TDViewControllerHelper makeLeftAlignedTextWithString:existingUser3 font:[TDConstants fontRegularSized:14] color:[TDConstants commentTimeTextColor] lineHeight:17 lineHeightMultipler:17/14];
+    NSAttributedString *info3 = [TDViewControllerHelper makeLeftAlignedTextWithString:existingUser3 font:[TDConstants fontRegularSized:15] color:[TDConstants commentTimeTextColor] lineHeight:18 lineHeightMultipler:18/15];
     self.label4.attributedText = info3;
     [self.label4 setNumberOfLines:0];
     [self.label4 sizeToFit];
@@ -681,20 +679,20 @@ static const int bottomMarginPaddingHeight = 15;
 
 + (NSInteger) heightForNewUserCell:(BOOL)addTopMargin {
     UILabel *label1 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
-    NSString *welcomeStr = [NSString stringWithFormat:@"%@%@%@", @"Welcome ", [TDCurrentUser sharedInstance].name, @"!\nLet's create your first post." ];
+    NSString *welcomeStr = [NSString stringWithFormat:@"%@%@%@", @"Welcome ", [TDCurrentUser sharedInstance].parseFirstName, @"!\nLet's create your first post." ];
     NSAttributedString *str = [TDViewControllerHelper makeParagraphedTextWithString:welcomeStr font:[TDConstants fontSemiBoldSized:19] color:[TDConstants headerTextColor] lineHeight:23 lineHeightMultipler:23/19];
     label1.attributedText = str;
     [label1 setNumberOfLines:0];
     [label1 sizeToFit];
 
     UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
-    NSAttributedString *infoStr = [TDViewControllerHelper makeLeftAlignedTextWithString:text1 font:[TDConstants fontRegularSized:15] color:[TDConstants commentTimeTextColor] lineHeight:18 lineHeightMultipler:18/15];
+    NSAttributedString *infoStr = [TDViewControllerHelper makeLeftAlignedTextWithString:text1 font:[TDConstants fontRegularSized:16] color:[TDConstants commentTimeTextColor] lineHeight:19 lineHeightMultipler:19/16];
     label2.attributedText = infoStr;
     [label2 setNumberOfLines:0];
     [label2 sizeToFit];
 
     UILabel *label3 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
-    NSAttributedString *infoStr2 = [TDViewControllerHelper makeLeftAlignedTextWithString:text2 font:[TDConstants fontRegularSized:15] color:[TDConstants commentTimeTextColor] lineHeight:18 lineHeightMultipler:18/15];
+    NSAttributedString *infoStr2 = [TDViewControllerHelper makeLeftAlignedTextWithString:text2 font:[TDConstants fontRegularSized:16] color:[TDConstants commentTimeTextColor] lineHeight:19 lineHeightMultipler:19/16];
     label3.attributedText = infoStr2;
     [label3 setNumberOfLines:0];
     [label3 sizeToFit];
@@ -731,7 +729,7 @@ static const int bottomMarginPaddingHeight = 15;
     [label1 sizeToFit];
     
     
-    NSAttributedString *infoStr = [TDViewControllerHelper makeLeftAlignedTextWithString:guestWelcomeStr font:[TDConstants fontRegularSized:16] color:[TDConstants headerTextColor] lineHeight:18 lineHeightMultipler:18/16];
+    NSAttributedString *infoStr = [TDViewControllerHelper makeLeftAlignedTextWithString:guestWelcomeStr font:[TDConstants fontRegularSized:16] color:[TDConstants headerTextColor] lineHeight:19 lineHeightMultipler:19/16];
     label2.attributedText = infoStr;
     [label2 setNumberOfLines:0];
     [label2 sizeToFit];
@@ -756,13 +754,13 @@ static const int bottomMarginPaddingHeight = 15;
     UILabel *label3 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
     UILabel *label4 =[[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
     
-    NSString *welcomeStr = [NSString stringWithFormat:@"%@%@%@", @"Welcome ", [TDCurrentUser sharedInstance].name, @"!\nTell us about yourself." ];
+    NSString *welcomeStr = [NSString stringWithFormat:@"%@%@%@", @"Welcome ", [TDCurrentUser sharedInstance].parseFirstName, @"!\nTell us about yourself." ];
     NSAttributedString *str = [TDViewControllerHelper makeParagraphedTextWithString:welcomeStr font:[TDConstants fontSemiBoldSized:19] color:[TDConstants headerTextColor] lineHeight:23 lineHeightMultipler:23/19];
     label1.attributedText = str;
     [label1 setNumberOfLines:0];
     [label1 sizeToFit];
     
-    NSAttributedString *infoStr = [TDViewControllerHelper makeLeftAlignedTextWithString:existingUser1 font:[TDConstants fontRegularSized:15] color:[TDConstants headerTextColor] lineHeight:18 lineHeightMultipler:18/15];
+    NSAttributedString *infoStr = [TDViewControllerHelper makeLeftAlignedTextWithString:existingUser1 font:[TDConstants fontRegularSized:16] color:[TDConstants headerTextColor] lineHeight:19 lineHeightMultipler:19/15];
     label2.attributedText = infoStr;
     [label2 setNumberOfLines:0];
     [label2 sizeToFit];
@@ -771,7 +769,7 @@ static const int bottomMarginPaddingHeight = 15;
     label2.frame = label2Frame;
     [label2 sizeToFit];
     
-    NSAttributedString *infoStr2 = [TDViewControllerHelper makeLeftAlignedTextWithString:existingUser2 font:[TDConstants fontRegularSized:15] color:[TDConstants headerTextColor] lineHeight:18 lineHeightMultipler:18/15];
+    NSAttributedString *infoStr2 = [TDViewControllerHelper makeLeftAlignedTextWithString:existingUser2 font:[TDConstants fontRegularSized:16] color:[TDConstants headerTextColor] lineHeight:19 lineHeightMultipler:19/15];
     label3.attributedText = infoStr2;
     [label3 setNumberOfLines:0];
     [label3 sizeToFit];
@@ -780,7 +778,7 @@ static const int bottomMarginPaddingHeight = 15;
     label3.frame = label3Frame;
     [label3 sizeToFit];
     
-    NSAttributedString *info3 = [TDViewControllerHelper makeLeftAlignedTextWithString:existingUser3 font:[TDConstants fontRegularSized:14] color:[TDConstants commentTimeTextColor] lineHeight:17 lineHeightMultipler:17/14];
+    NSAttributedString *info3 = [TDViewControllerHelper makeLeftAlignedTextWithString:existingUser3 font:[TDConstants fontRegularSized:15] color:[TDConstants commentTimeTextColor] lineHeight:18 lineHeightMultipler:18/15];
     label4.attributedText = info3;
     [label4 setNumberOfLines:0];
     [label4 sizeToFit];
@@ -802,7 +800,7 @@ static const int bottomMarginPaddingHeight = 15;
     [tempButton setAttributedTitle:attributedString forState:UIControlStateNormal];
     [tempButton sizeToFit];
     
-    NSInteger height = (addTopMargin ? 15 : .5) + 15 + [UIImage imageNamed:@"td_icon"].size.height + 15 + label1.frame.size.height + 15 + label2.frame.size.height + 12 + label3.frame.size.height + label4.frame.size.height + 25 + [UIImage imageNamed:setGoalsStr].size.height + 10 + tempButton.frame.size.height + 15 + bottomMarginPaddingHeight;
+    NSInteger height = (addTopMargin ? 15 : .5) + 15 + [UIImage imageNamed:@"td_icon"].size.height + 15 + label1.frame.size.height + 15 + label2.frame.size.height + 15 + label3.frame.size.height + label4.frame.size.height + 25 + [UIImage imageNamed:setGoalsStr].size.height + 10 + tempButton.frame.size.height + 15 + bottomMarginPaddingHeight;
 
     return height;
 }
@@ -813,11 +811,5 @@ static const int bottomMarginPaddingHeight = 15;
 
     NSInteger height = view.frame.size.height + bottomMarginPaddingHeight;
     return height;
-}
-
-- (NSString*)getFirstName:(NSString*)name {
-    NSArray *arrayName = [name componentsSeparatedByString:@" "];
-    debug NSLog(@"returning name = %@", arrayName[0]);
-    return arrayName[0];
 }
 @end

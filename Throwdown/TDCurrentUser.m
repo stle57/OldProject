@@ -603,4 +603,10 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
     [defaults setBool:yes forKey:@"isNewUser"];
     [defaults synchronize];
 }
+
+- (NSString*)parseFirstName {
+    NSArray *arrayName = [self.name componentsSeparatedByString:@" "];
+    debug NSLog(@"returning name = %@", arrayName[0]);
+    return arrayName[0];
+}
 @end
