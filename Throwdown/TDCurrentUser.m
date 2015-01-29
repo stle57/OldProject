@@ -606,7 +606,6 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
 
 - (NSString*)parseFirstName {
     NSArray *arrayName = [self.name componentsSeparatedByString:@" "];
-    debug NSLog(@"returning name = %@", arrayName[0]);
     return arrayName[0];
 }
 @end

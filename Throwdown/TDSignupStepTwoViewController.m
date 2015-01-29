@@ -78,7 +78,7 @@
     
     CGRect privacyFrame = self.privacyLabel1.frame;
     privacyFrame.origin.x = SCREEN_WIDTH/2 - self.privacyLabel1.frame.size.width/2;
-    privacyFrame.origin.y = self.passwordTextField.frame.origin.y + self.passwordTextField.frame.size.height + 30;
+    privacyFrame.origin.y = self.passwordTextField.frame.origin.y + self.passwordTextField.frame.size.height + 20;
     self.privacyLabel1.frame = privacyFrame;
 
     NSString *text2 = @"Terms of Service & Privacy Policy";
