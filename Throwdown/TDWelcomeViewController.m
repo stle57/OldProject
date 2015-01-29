@@ -150,8 +150,6 @@
     
     self.backgroundImage.alpha = 1.f;
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loginButtonPressed) name:TDShowLoginViewController object:nil];
-
 }
 
 -(void)viewWillAppear:(BOOL)animated {
