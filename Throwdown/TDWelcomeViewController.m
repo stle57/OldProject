@@ -149,6 +149,9 @@
     self.loadingViewController.view.frame = loadingFrame;
     
     self.backgroundImage.alpha = 1.f;
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loginButtonPressed) name:TDShowLoginViewController object:nil];
+
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -231,7 +234,7 @@
 
 #pragma mark - GetStartedViewControllerDelegate
 - (void) loginButtonPressed {
-    TDLoginViewController *loginController = [[TDLoginViewController alloc] init];
+    TDLoginViewController *loginController = [[TDLoginViewController alloc] initWithNibName:@"TDLoginViewController" bundle:nil withCloseButton:NO];
     CATransition *transition = [CATransition animation];
     transition.duration = 0.45;
     transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];

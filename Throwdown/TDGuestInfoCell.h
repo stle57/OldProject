@@ -16,7 +16,8 @@
 -(void)goalsButtonPressed;
 -(void)dismissForExistingUser;
 -(void)reloadTableView;
-- (void)loadDetailView;
+-(void)loadDetailView;
+-(void)loginButtonPressed;
 @end
 
 @interface TDGuestInfoCell : UITableViewCell
@@ -34,7 +35,7 @@
 @property (weak, nonatomic) IBOutlet UIView *bottomMarginPadding;
 @property (weak, nonatomic) IBOutlet UIView *topMarginPadding;
 @property (weak, nonatomic) IBOutlet UIButton *learnButton;
-
+@property (weak, nonatomic) IBOutlet UIButton *loginButton;
 - (void)setHashTagInfoCell;
 + (NSInteger)heightForHashTagInfoCell;
 
@@ -55,4 +56,5 @@
 - (IBAction)signupButtonPressed:(id)sender;
 - (IBAction)dismissButtonPressed:(id)sender;
 - (IBAction)closeButtonPressed:(id)sender;
+- (IBAction)loginButtonPressed:(id)sender;
 @end

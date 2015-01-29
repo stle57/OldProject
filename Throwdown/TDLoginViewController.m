@@ -22,8 +22,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *backButton;
 @property (nonatomic, copy) NSString *userEmail;
 @property (nonatomic, copy) NSString *password;
+@property (nonatomic) BOOL useCloseButton;
 
-- (IBAction)backButtonPressed:(UIButton *)sender;
 - (IBAction)loginButtonPressed:(id)sender;
 
 @end
@@ -32,6 +32,16 @@
 static NSString *buttonLoginStr = @"btn_login";
 static NSString *buttonLoginHitStr = @"btn_login_hit";
 static NSString *buttonBackStr = @"btn_back";
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withCloseButton:(BOOL)yes {
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+
+    if (self) {
+        self.useCloseButton = yes;
+    }
+
+    return self;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -47,10 +57,31 @@ static NSString *buttonBackStr = @"btn_back";
     //NSInteger yPosition = 25-([UIImage imageNamed:buttonBackStr].size.height/2);
     NSInteger yPosition = 25 - [UIApplication sharedApplication].statusBarFrame.size.height;
     debug NSLog(@"yPosition-%ld", (long)yPosition);
-    self.backButton.frame = CGRectMake(20,
-                                       ([UIApplication sharedApplication].statusBarFrame.size.height +50)/2 - [UIImage imageNamed:buttonBackStr].size.height/2,
-                                       [UIImage imageNamed:buttonBackStr].size.width,
-                                       [UIImage imageNamed:buttonBackStr].size.height);
+    if (self.useCloseButton) {
+        [self.backButton setImage:[UIImage imageNamed:@"btn_x"] forState:UIControlStateNormal];
+        [self.backButton setImage:[UIImage imageNamed:@"btn_x"] forState:UIControlStateSelected];
+        [self.backButton setImage:[UIImage imageNamed:@"btn_x"] forState:UIControlStateHighlighted];
+
+        self.backButton.frame = CGRectMake(20,
+                                           ([UIApplication sharedApplication].statusBarFrame.size.height +50)/2 - [UIImage imageNamed:@"btn_x"].size.height/2,
+                                           [UIImage imageNamed:@"btn_x"].size.width,
+                                           [UIImage imageNamed:@"btn_x"].size.height);
+
+        [self.backButton addTarget:self action:@selector(closeThisView) forControlEvents:UIControlEventTouchUpInside];
+
+    } else {
+        [self.backButton setImage:[UIImage imageNamed:buttonBackStr] forState:UIControlStateNormal];
+        [self.backButton setImage:[UIImage imageNamed:buttonBackStr] forState:UIControlStateSelected];
+        [self.backButton setImage:[UIImage imageNamed:buttonBackStr] forState:UIControlStateHighlighted];
+
+        self.backButton.frame = CGRectMake(20,
+                                           ([UIApplication sharedApplication].statusBarFrame.size.height +50)/2 - [UIImage imageNamed:buttonBackStr].size.height/2,
+                                           [UIImage imageNamed:buttonBackStr].size.width,
+                                           [UIImage imageNamed:buttonBackStr].size.height);
+        [self.backButton addTarget:self action:@selector(backButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+
+    }
+
     //- Adjust the size of the button to have a larger tap area
     self.backButton.frame = CGRectMake(self.backButton.frame.origin.x -10,
                                        self.backButton.frame.origin.y -10,
@@ -194,8 +225,12 @@ static NSString *buttonBackStr = @"btn_back";
     return NO;
 }
 
-- (IBAction)backButtonPressed:(UIButton *)sender {
+- (void)backButtonPressed {
     [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)closeThisView {
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)loginButtonPressed:(id)sender {

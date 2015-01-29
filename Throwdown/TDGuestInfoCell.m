@@ -348,8 +348,29 @@ static const int bottomMarginPaddingHeight = 15;
     [self.button addTarget:self action:@selector(signupButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
     [self.button sizeToFit];
     [self addSubview:self.button];
-    
-    self.bottomLine.frame = CGRectMake(0, self.button.frame.origin.y + self.button.frame.size.height +15, SCREEN_WIDTH, .5);
+
+    self.loginButton.frame = CGRectMake(0, 0, SCREEN_WIDTH, 100);
+    // Create the attributes
+    NSString *text = @"Already have an account? Login";
+    NSString *loginStr=@"login";
+
+    NSMutableAttributedString *attString = [[NSMutableAttributedString alloc] initWithString:text];
+    [attString addAttribute:NSFontAttributeName value:[TDConstants fontRegularSized:14] range:NSMakeRange(0, text.length)];
+    [attString addAttribute:NSForegroundColorAttributeName value:[TDConstants headerTextColor] range:NSMakeRange(0, text.length)];
+    [attString addAttribute:NSFontAttributeName value:[TDConstants fontSemiBoldSized:14] range:NSMakeRange(text.length - loginStr.length, loginStr.length)];
+    [attString addAttribute:NSForegroundColorAttributeName value:[TDConstants headerTextColor] range:NSMakeRange(text.length - loginStr.length, loginStr.length)];
+    [self.loginButton.titleLabel setTextAlignment:NSTextAlignmentCenter];
+    [self.loginButton setAttributedTitle:attString forState:UIControlStateNormal];
+    [self.loginButton.titleLabel setNumberOfLines:1];
+    [self.loginButton sizeToFit];
+
+    CGRect loginFrame = self.loginButton.frame;
+    loginFrame.origin.x = SCREEN_WIDTH/2 - self.loginButton.frame.size.width/2;
+    loginFrame.origin.y = self.button.frame.origin.y + self.button.frame.size.height + 10;
+    self.loginButton.frame = loginFrame;
+    [self addSubview:self.loginButton];
+
+    self.bottomLine.frame = CGRectMake(0, self.loginButton.frame.origin.y + self.loginButton.frame.size.height +15, SCREEN_WIDTH, .5);
     [self addSubview:self.bottomLine];
     
     self.bottomMarginPadding.frame = CGRectMake(0, self.bottomLine.frame.origin.y + self.bottomLine.frame.size.height, [UIScreen mainScreen].bounds.size.width, bottomMarginPaddingHeight);
@@ -721,7 +742,8 @@ static const int bottomMarginPaddingHeight = 15;
     UILabel *label1 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
     UILabel *label2 = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
     UIButton *tempButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
-    
+    UIButton *loginButton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 100)];
+
     NSString *welcomeStr = @"Welcome to Throwdown!";
     NSAttributedString *str = [TDViewControllerHelper makeParagraphedTextWithString:welcomeStr font:[TDConstants fontSemiBoldSized:19] color:[TDConstants headerTextColor] lineHeight:23 lineHeightMultipler:23/19];
     label1.attributedText = str;
@@ -742,7 +764,22 @@ static const int bottomMarginPaddingHeight = 15;
     [tempButton setImage:[UIImage imageNamed:signupButtonStr] forState:UIControlStateNormal];
     [tempButton sizeToFit];
 
-    NSInteger height = topMarginPaddingHeight + .5 + 15 + [UIImage imageNamed:@"td_icon"].size.height + 15 + label1.frame.size.height + 15 + label2.frame.size.height + 25 + tempButton.frame.size.height + 15 + .5 + bottomMarginPaddingHeight;
+    // Create the attributes
+    NSString *text = @"Already have an account? Login";
+    NSString *loginStr=@"login";
+
+    NSMutableAttributedString *attString = [[NSMutableAttributedString alloc] initWithString:text];
+    [attString addAttribute:NSFontAttributeName value:[TDConstants fontRegularSized:14] range:NSMakeRange(0, text.length)];
+    [attString addAttribute:NSForegroundColorAttributeName value:[TDConstants headerTextColor] range:NSMakeRange(0, text.length)];
+    [attString addAttribute:NSFontAttributeName value:[TDConstants fontSemiBoldSized:14] range:NSMakeRange(text.length - loginStr.length, loginStr.length)];
+    [attString addAttribute:NSForegroundColorAttributeName value:[TDConstants headerTextColor] range:NSMakeRange(text.length - loginStr.length, loginStr.length)];
+    [loginButton.titleLabel setTextAlignment:NSTextAlignmentCenter];
+    [loginButton setAttributedTitle:attString forState:UIControlStateNormal];
+    [loginButton.titleLabel setNumberOfLines:1];
+    [loginButton sizeToFit];
+
+
+    NSInteger height = topMarginPaddingHeight + .5 + 15 + [UIImage imageNamed:@"td_icon"].size.height + 15 + label1.frame.size.height + 15 + label2.frame.size.height + 25 + tempButton.frame.size.height + 10 + loginButton.frame.size.height + 15 + .5 + bottomMarginPaddingHeight;
     return height;
     
 }
@@ -811,5 +848,11 @@ static const int bottomMarginPaddingHeight = 15;
 
     NSInteger height = view.frame.size.height + bottomMarginPaddingHeight;
     return height;
+}
+
+- (IBAction)loginButtonPressed:(id)sender {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(loginButtonPressed)]) {
+        [self.delegate loginButtonPressed];
+    }
 }
 @end

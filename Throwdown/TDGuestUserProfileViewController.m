@@ -12,6 +12,7 @@
 #import "TDGuestUserJoinView.h"
 #import "TDAPIClient.h"
 #import "TDAnalytics.h"
+#import "TDLoginViewController.h"
 
 @interface TDGuestUserProfileViewController ()
 @property (nonatomic) UILabel *titleLabel;
@@ -232,7 +233,7 @@
 - (void)signupButtonPressed {
     TDSignupStepOneViewController *signupVC = [[TDSignupStepOneViewController alloc] init];
     
-    UIViewController *srcViewController = (UIViewController *) self;
+    //UIViewController *srcViewController = (UIViewController *) self;
     UIViewController *destViewController = (UIViewController *) signupVC;
     
     CATransition *transition = [CATransition animation];
@@ -246,6 +247,21 @@
     //[srcViewController presentViewController:destViewController animated:NO completion:nil];
 }
 
+- (void)loginButtonPressed {
+    TDLoginViewController *loginViewController = [[TDLoginViewController alloc] initWithNibName:@"TDLoginViewController" bundle:nil withCloseButton:YES];
+
+    //UIViewController *srcViewController = (UIViewController *) self;
+    UIViewController *destViewController = (UIViewController *) loginViewController;
+
+    CATransition *transition = [CATransition animation];
+    transition.duration = .5;
+    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    transition.type = kCATransitionReveal;
+    transition.subtype = kCATransitionFromTop;
+    [destViewController.view.window.layer addAnimation:transition forKey:nil];
+
+    [self presentViewController:destViewController animated:YES completion:nil];
+}
 - (IBAction)addButtonPressed:(id)sender {
     [self openGuestUserJoin:kPost_LabelType username:nil];
 

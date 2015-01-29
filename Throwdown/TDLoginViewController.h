@@ -17,5 +17,7 @@
 @property (weak, nonatomic) IBOutlet TDTextField *passwordTextField;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *progress;
 
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withCloseButton:(BOOL)yes;
+
 - (IBAction)resetButtonPressed:(id)sender;
 @end

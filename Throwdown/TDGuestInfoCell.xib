@@ -25,6 +25,7 @@
                 <outlet property="label2" destination="72u-hX-ozJ" id="r28-aB-Y7n"/>
                 <outlet property="label3" destination="Ks2-Tx-Ol2" id="22O-Py-gKd"/>
                 <outlet property="label4" destination="9PH-vb-TA8" id="YHW-MQ-VuP"/>
+                <outlet property="loginButton" destination="IJn-eZ-x9O" id="HKw-Py-fQT"/>
                 <outlet property="topLine" destination="LL9-DO-fuL" id="IDg-sp-qR5"/>
                 <outlet property="topMarginPadding" destination="OA3-0n-kd6" id="1IC-j3-iau"/>
             </connections>
@@ -116,6 +117,16 @@
             <state key="highlighted" image="btn_x"/>
             <connections>
                 <action selector="closeButtonPressed:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="ypP-yw-q82"/>
+            </connections>
+        </button>
+        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="IJn-eZ-x9O">
+            <rect key="frame" x="0.0" y="0.0" width="46" height="30"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <state key="normal" title="Button">
+                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+            </state>
+            <connections>
+                <action selector="loginButtonPressed:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="0t3-RA-Gqv"/>
             </connections>
         </button>
     </objects>
