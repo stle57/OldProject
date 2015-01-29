@@ -239,11 +239,11 @@
     transition.duration = .5;
     transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
     transition.type = kCATransitionReveal;
-    transition.subtype = kCATransitionFromBottom;
-    [srcViewController.view.window.layer addAnimation:transition forKey:nil];
+    transition.subtype = kCATransitionFromTop;
+    [destViewController.view.window.layer addAnimation:transition forKey:nil];
 
-    [srcViewController presentViewController:destViewController animated:NO completion:nil];
-    
+    [self presentViewController:destViewController animated:YES completion:nil];
+    //[srcViewController presentViewController:destViewController animated:NO completion:nil];
 }
 
 - (IBAction)addButtonPressed:(id)sender {

@@ -141,6 +141,7 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
     self.phoneNumber = nil;
     self.emailAddress = nil;
     self.firstLastName = nil;
+
 }
 
 - (BOOL)prefersStatusBarHidden {
@@ -224,6 +225,7 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 # pragma mark - delegates
 
 - (IBAction)closeButtonPressed:(UIButton *)sender {
+
     CATransition *transition = [CATransition animation];
     transition.duration = .5;
     transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];

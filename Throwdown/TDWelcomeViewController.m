@@ -224,7 +224,7 @@
     } else {
         TDGuestUserProfileViewController *guestViewController = [[TDGuestUserProfileViewController alloc] initWithNibName:@"TDGuestUserProfileViewController" bundle:nil goalsList:self.goalsList interestsLists:self.interestList guestPosts:guestPosts];
 
-        [self.navigationController pushViewController:guestViewController animated:YES];
+        [self.navigationController pushViewController:guestViewController animated:NO];
     }
 
 }
@@ -285,15 +285,13 @@
 }
 
 - (void)loadGuestView:(NSDictionary *)guestPosts {
-
     CATransition *transition = [CATransition animation];
-    transition.duration = .5;
+    transition.duration = .35;
     transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    transition.type = kCATransition;
-    transition.subtype = kCATransitionFromBottom;
-    [self.view.window.layer addAnimation:transition forKey:nil];
-
+    transition.subtype = kCATransitionFromTop;
+    [self.view.layer addAnimation:transition forKey:nil];
     [self dismissViewControllerAnimated:YES completion:nil];
+
     [TDViewControllerHelper navigateToGuestFrom:self guestPosts:guestPosts];
 }
 - (void)loadHomeView {
