@@ -22,7 +22,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <view autoresizesSubviews="NO" contentMode="scaleToFill" id="bu0-uT-gsM">
-                        <rect key="frame" x="0.0" y="44" width="320" height="2"/>
+                        <rect key="frame" x="0.0" y="44" width="320" height="3"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
@@ -53,6 +53,9 @@
                         <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                         <textInputTraits key="textInputTraits"/>
+                        <connections>
+                            <action selector="textFieldDidChange:" destination="KGk-i7-Jjw" eventType="editingChanged" id="ieN-sg-1FZ"/>
+                        </connections>
                     </textField>
                 </subviews>
             </tableViewCellContentView>

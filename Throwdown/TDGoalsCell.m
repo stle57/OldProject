@@ -211,7 +211,8 @@
     [self.editableTextField becomeFirstResponder];
     [self.editableTextField setEnablesReturnKeyAutomatically:YES];
     self.bottomLine.hidden = NO;
-    self.addGoalButton.hidden = NO;
+    self.addGoalButton.hidden = !self.editableTextField.text.length;
+//    self.addGoalButton.hidden = YES;
 }
 
 - (void)goalSelected:(BOOL)yes {
@@ -230,4 +231,11 @@
 
 }
 
+- (IBAction)textFieldDidChange:(id)sender {
+    if (self.editableTextField.text.length > 0) {
+        self.addGoalButton.hidden = NO;
+    } else {
+        self.addGoalButton.hidden = YES;
+    }
+}
 @end

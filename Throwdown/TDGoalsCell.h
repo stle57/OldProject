@@ -36,4 +36,5 @@
 - (void)createCell:(BOOL)createAddButton text:(NSString*)text selected:(BOOL)selected;
 - (void)makeCellFirstResponder;
 - (void)goalSelected:(BOOL)yes;
+- (IBAction)textFieldDidChange:(id)sender;
 @end
