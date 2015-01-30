@@ -42,7 +42,11 @@ static NSString *const DATA_LOCATION = @"/Documents/guest_user.bin";
 }
 
 - (void)updateGuestInfo:goalsList interestsList:(NSArray*)interestsList {
-    _goalsList      =  goalsList;
-    _interestsList    = interestsList;
+    if (goalsList != nil) {
+        _goalsList      =  goalsList;
+    }
+    if (interestsList != nil) {
+        _interestsList    = interestsList;
+    }
 }
 @end

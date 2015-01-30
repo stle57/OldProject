@@ -130,10 +130,11 @@
         }
     }];
 }
-- (void)sendDataToServer:(NSArray*)goalsList interestsList:(NSArray*)interestList {
+- (void)sendDataToServer:(NSArray*)goalsList interestsList:(NSArray*)interestsList {
     if ([[TDCurrentUser sharedInstance] isLoggedIn]) {
+
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [self saveDataForUser:goalsList interestsList:interestList];
+            [self saveDataForUser:goalsList interestsList:interestsList];
             dispatch_async(dispatch_get_main_queue(), ^{
                 self.loadedData = NO;
             });
@@ -141,7 +142,7 @@
         });
     } else {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [self saveDataForGuest:goalsList interestsList:interestList];
+            [self saveDataForGuest:goalsList interestsList:interestsList];
             dispatch_async(dispatch_get_main_queue(), ^{
                 self.loadedData = NO;
             });

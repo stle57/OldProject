@@ -184,16 +184,36 @@
             [self setBlurLevel: value];
         }
     }
-    
-    if (page > 0 && self.currentPage != page) {
-        // Blur the image only once, when we are transitioning from page 0 to 1
-        if (self.currentPage == 0) {
-//            self.backgroundImage.alpha = 1;
-//            self.blurredBackgroundImage.alpha = 0;
+
+    // page 0 = TDGetStartedViewController;
+    // page 1 = TDGoalsViewController;
+    // page 2 = TDInterestsViewController;
+    if (self.editViewOnly) {
+        if(page>0 && self.currentPage != page) {
+            if (page == 1) {
+                self.goalsList = [self.goalsViewController.goalList copy];
+            } else {
+                self.interestList = [self.interestsViewController.interestList copy];
+            }
+            self.currentPage = page;
         }
-        self.currentPage = page;
-    } else if (page == 0 && !self.editViewOnly){
-        self.currentPage = 0;
+    } else {
+        if (page > 0 && self.currentPage != page) {
+            // Blur the image only once, when we are transitioning from page 0 to 1
+            if (self.currentPage == 0) {
+    //            self.backgroundImage.alpha = 1;
+    //            self.blurredBackgroundImage.alpha = 0;
+            }
+            if (self.currentPage == 1) {
+                self.goalsList = [self.goalsViewController.goalList copy];
+
+            } else if (self.currentPage == 2) {
+                self.interestList = [self.interestsViewController.interestList copy];
+            }
+            self.currentPage = page;
+        } else if (page == 0 && !self.editViewOnly){
+            self.currentPage = 0;
+        }
     }
 }
 
