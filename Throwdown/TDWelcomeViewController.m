@@ -46,6 +46,8 @@
 - (void)dealloc {
     self.goalsList = nil;
     self.interestList = nil;
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)viewDidLoad {
@@ -150,6 +152,9 @@
     
     self.backgroundImage.alpha = 1.f;
 
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -303,5 +308,15 @@
 
 - (void)loadInterestsView {
     [self backButtonPressed];
+}
+
+#pragma mark - Keyboard / Textfield
+
+- (void)keyboardWillHide:(NSNotification *)notification {
+    self.scrollView.scrollEnabled = YES;
+}
+
+- (void)keyboardWillShow:(NSNotification *)notification {
+    self.scrollView.scrollEnabled = NO;
 }
 @end
