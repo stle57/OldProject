@@ -212,7 +212,6 @@
     [self.editableTextField setEnablesReturnKeyAutomatically:YES];
     self.bottomLine.hidden = NO;
     self.addGoalButton.hidden = !self.editableTextField.text.length;
-//    self.addGoalButton.hidden = YES;
 }
 
 - (void)goalSelected:(BOOL)yes {

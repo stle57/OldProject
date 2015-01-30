@@ -297,8 +297,8 @@
 }
 - (void)loadHomeView {
     [self dismissViewControllerAnimated:YES completion:nil];
-    
-    [TDViewControllerHelper navigateToHomeFrom:self];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationReloadHome object:nil];
 }
 
 - (void)loadInterestsView {
