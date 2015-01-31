@@ -14,4 +14,5 @@
 
 + (TDGuestUser *)sharedInstance;
 - (void)updateGuestInfo:goalsList interestsList:(NSArray*)interestsList;
+- (void)resetList;
 @end

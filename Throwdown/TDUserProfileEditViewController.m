@@ -25,6 +25,7 @@
 #import "TDWelcomeViewController.h"
 #import <SDWebImageManager.h>
 #import <UIImage+Resizing.h>
+#import "TDGuestUser.h"
 
 @interface TDUserProfileEditViewController ()
 
@@ -860,6 +861,7 @@
                     [alert showWithCompletionBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
                         if (buttonIndex != alertView.cancelButtonIndex) {
                             [[TDUserAPI sharedInstance] logout];
+                            [[TDGuestUser sharedInstance] resetList];
                             [self showWelcomeController];
                         }
                     }];

@@ -273,6 +273,9 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
     _twitterUID = nil;
     _twitterIdentifier = nil;
     [TDFileSystemHelper removeFileAt:[NSHomeDirectory() stringByAppendingString:DATA_LOCATION]];
+
+    _goalsList = nil;
+    _interestsList = nil;
 }
 
 - (void)save {
