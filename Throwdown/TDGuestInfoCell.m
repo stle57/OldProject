@@ -513,7 +513,7 @@ static const int bottomMarginPaddingHeight = 15;
 - (void)setEditGoalsCell:(BOOL)showCloseButton {
     self.frame = CGRectMake(0, 0, SCREEN_WIDTH, [TDGuestInfoCell heightForEditGoalsCell]);
 
-    self.topMarginPadding.frame = CGRectMake(0, 0, SCREEN_WIDTH, 44);
+    self.topMarginPadding.frame = CGRectMake(0, 0, SCREEN_WIDTH, 54);
     self.topMarginPadding.backgroundColor = [TDConstants lightBackgroundColor];
     [self addSubview:self.topMarginPadding];
     
@@ -522,7 +522,7 @@ static const int bottomMarginPaddingHeight = 15;
     self.label1.textAlignment = NSTextAlignmentCenter;
     self.label1.font = [TDConstants fontRegularSized:15];
     self.label1.textColor = [TDConstants headerTextColor];
-    self.label1.frame = CGRectMake(0, 0, SCREEN_WIDTH, 44);
+    self.label1.frame = CGRectMake(0, 0, SCREEN_WIDTH, 54);
     self.label1.backgroundColor = [TDConstants lightBackgroundColor];
     [self.label1 sizeToFit];
 
@@ -552,7 +552,7 @@ static const int bottomMarginPaddingHeight = 15;
         self.closeButton.frame = CGRectMake(self.closeButton.frame.origin.x -10,
                                             0,
                                             self.closeButton.frame.size.width + 20,
-                                            44 );
+                                            54 );
     }
     self.bottomMarginPadding.frame = CGRectMake(0, self.topMarginPadding.frame.origin.y + self.topMarginPadding.frame.size.height, [UIScreen mainScreen].bounds.size.width, bottomMarginPaddingHeight);
     self.bottomMarginPadding.backgroundColor = [TDConstants darkBackgroundColor];
@@ -843,7 +843,7 @@ static const int bottomMarginPaddingHeight = 15;
 }
 
 + (NSInteger)heightForEditGoalsCell {
-    UIView *view = [[UIView alloc ] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 44)];
+    UIView *view = [[UIView alloc ] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 54)];
     view.backgroundColor = [TDConstants lightBackgroundColor];
 
     NSInteger height = view.frame.size.height + bottomMarginPaddingHeight;
