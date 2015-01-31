@@ -18,6 +18,7 @@
 #include <sys/types.h>
 #include <sys/sysctl.h>
 #import "TDDeviceInfo.h"
+#import "TDGuestUser.h"
 
 @interface TDAPIClient ()
 
@@ -783,9 +784,7 @@
 }
 
 - (void)getGoalsAndInterests:(void (^)(NSDictionary *goalsAndInterests))callback {
-    TDCurrentUser *currentUser = [TDCurrentUser sharedInstance];
-
-    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/goals_interests.json?user_token=%@", currentUser.authToken]];
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/goals_interests.json?user_token=%@", [TDCurrentUser sharedInstance].authToken]];
 
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
     [self.httpManager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -798,17 +797,17 @@
 
 }
 
-- (void)saveGoalsAndInterestsForUser:(NSArray*)goalsList interestsList:(NSArray*)interestsList callback:(void (^) (BOOL success))callback{
+- (void)saveGoalsAndInterestsForUser:(void (^) (BOOL success))callback{
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
 
     TDCurrentUser *currentUser = [TDCurrentUser sharedInstance];
     NSString *url;
     NSDictionary *params;
     NSArray *goalsArray = [[NSMutableArray alloc] init];
-    goalsArray = [self createArray:goalsList];
+    goalsArray = [self createArray:[TDCurrentUser sharedInstance].goalsList];
 
     NSArray *interestsArray = [[NSMutableArray alloc] init];
-    interestsArray = [self createArray:interestsList];
+    interestsArray = [self createArray:[TDCurrentUser sharedInstance].interestsList];
 
 
     if ([currentUser isLoggedIn]) {
@@ -835,14 +834,14 @@
     }
 }
 
-- (void)saveGoalsAndInterestsForGuest:(NSArray*)goalsList interestsList:(NSArray*)interestsList callback:(void (^) (BOOL success, NSDictionary *posts))callback{
+- (void)saveGoalsAndInterestsForGuest:(void (^) (BOOL success, NSDictionary *posts))callback{
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
     NSArray *goalsArray = [[NSMutableArray alloc]init];
-    goalsArray = [self createArray:goalsList];
+    goalsArray = [self createArray:[TDGuestUser sharedInstance].goalsList];
 
     NSArray *interestsArray = [[NSMutableArray alloc] init];
-    interestsArray = [self createArray:interestsList];
-    
+    interestsArray = [self createArray:[TDGuestUser sharedInstance].interestsList];
+
     NSString * url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/guests.json"]];
     NSDictionary *params = @{@"guest":TDDeviceInfo.metrics, @"interests":interestsArray, @"goals":goalsArray};
     [self.httpManager POST:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {

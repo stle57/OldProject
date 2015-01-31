@@ -11,6 +11,7 @@
 #import "TDViewControllerHelper.h"
 #import "TDGoalsCell.h"
 #import "TDAnalytics.h"
+#import "TDGuestUser.h"
 
 @interface TDInterestsViewController ()
 @property (nonatomic) NSIndexPath *selectedIndexPath;
@@ -22,58 +23,11 @@ static const int doneBackgroundViewHeight = 80;
 
 @implementation TDInterestsViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withBackButton:(BOOL)yes interestsList:(NSArray*)interestsList
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withBackButton:(BOOL)yes existingUser:(BOOL)existingUser
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        if (interestsList == nil) {
-            self.interestList =
-            [NSMutableArray arrayWithObjects:
-                @{@"name":@"Barre", @"selected":@0, @"id":@0},
-                @{@"name":@"Baseball", @"selected":@0, @"id":@0},
-                @{@"name":@"Basketball", @"selected":@0, @"id":@0},
-                @{@"name":@"Bodybuilding", @"selected":@0, @"id":@0},
-                @{@"name":@"Bootcamp",@"selected":@0, @"id":@0},
-                @{@"name":@"Boxing",@"selected":@0, @"id":@0},
-                @{@"name":@"Cricket",@"selected":@0, @"id":@0},
-                @{@"name":@"CrossFit",@"selected":@0, @"id":@0},
-                @{@"name":@"Cycling",@"selected":@0, @"id":@0},
-                @{@"name":@"Dancing",@"selected":@0, @"id":@0},
-                @{@"name":@"Eating Healthy",@"selected":@0, @"id":@0},
-                @{@"name":@"Fitness Motivation",@"selected":@0, @"id":@0},
-                @{@"name":@"Football (American)",@"selected":@0, @"id":@0},
-                @{@"name":@"Golf",@"selected":@0, @"id":@0},
-                @{@"name":@"Gymnastics",@"selected":@0, @"id":@0},
-                @{@"name":@"Hiking",@"selected":@0, @"id":@0},
-                @{@"name":@"Hockey",@"selected":@0, @"id":@0},
-                @{@"name":@"Insanity",@"selected":@0, @"id":@0},
-                @{@"name":@"Lacrosse",@"selected":@0, @"id":@0},
-                @{@"name":@"Martial Arts",@"selected":@0, @"id":@0},
-                @{@"name":@"Obstacle Course",@"selected":@0, @"id":@0},
-                @{@"name":@"P90X",@"selected":@0, @"id":@0},
-                @{@"name":@"Pilates",@"selected":@0, @"id":@0},
-                @{@"name":@"Powerlifting",@"selected":@0, @"id":@0},
-                @{@"name":@"Rowing",@"selected":@0, @"id":@0},
-                @{@"name":@"Rugby",@"selected":@0, @"id":@0},
-                @{@"name":@"Running",@"selected":@0, @"id":@0},
-                @{@"name":@"Skating",@"selected":@0, @"id":@0},
-                @{@"name":@"Skiing",@"selected":@0, @"id":@0},
-                @{@"name":@"Snowboarding",@"selected":@0, @"id":@0},
-                @{@"name":@"Soccer",@"selected":@0, @"id":@0},
-                @{@"name":@"Softball",@"selected":@0, @"id":@0},
-                @{@"name":@"Strongman",@"selected":@0, @"id":@0},
-                @{@"name":@"Swimming",@"selected":@0, @"id":@0},
-                @{@"name":@"Tennis",@"selected":@0, @"id":@0},
-                @{@"name":@"Track and Field",@"selected":@0, @"id":@0},
-                @{@"name":@"Volleyball",@"selected":@0, @"id":@0},
-                @{@"name":@"Weightlifting (Olympic)",@"selected":@0, @"id":@0},
-                @{@"name":@"Yoga",@"selected":@0, @"id":@0},
-                @{@"name":@"Zumba",@"selected":@0, @"id":@0}, nil];
-
-        } else {
-            self.interestList = [interestsList mutableCopy];
-        }
-
+        self.existingUser = existingUser;
         self.showBackButton = yes;
     }
     return self;
@@ -152,20 +106,21 @@ static const int doneBackgroundViewHeight = 80;
 
 }
 - (IBAction)doneButtonPressed:(id)sender {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(doneButtonPressed:)]) {
-        [self.delegate doneButtonPressed:self.interestList];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(doneButtonPressed)]) {
+        [self.delegate doneButtonPressed];
     }
 }
 
 #pragma mark UITableViewDataSource delegates
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.interestList.count + 1;
+    return self.existingUser ? [TDCurrentUser sharedInstance].interestsList.count + 1 : [TDGuestUser sharedInstance].interestsList.count + 1;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.row == self.interestList.count) {
+    NSInteger count = self.existingUser ? [TDCurrentUser sharedInstance].interestsList.count : [TDGuestUser sharedInstance].interestsList.count;
+    if (indexPath.row == count) {
         return 59;
     } else {
         return 44;
@@ -183,11 +138,15 @@ static const int doneBackgroundViewHeight = 80;
     }
     
     cell.row = indexPath.row;
-    if (indexPath.row == self.interestList.count) {
+    NSInteger row = self.existingUser ? [TDCurrentUser sharedInstance].interestsList.count : [TDGuestUser sharedInstance].interestsList.count;
+
+    if (indexPath.row == row) {
         [cell createCell:YES text:nil selected:NO];
         
     } else {
-        NSDictionary *dict = self.interestList[indexPath.row];
+        NSDictionary *dict = nil;
+        self.existingUser ?
+        (dict = [TDCurrentUser sharedInstance].interestsList[indexPath.row]) : (dict = [TDGuestUser sharedInstance].interestsList[indexPath.row]);
         BOOL selected = [[dict objectForKey:@"selected"] boolValue];
         NSString *interestName = [dict objectForKey:@"name"];
 
@@ -201,7 +160,8 @@ static const int doneBackgroundViewHeight = 80;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
-    if (indexPath.row == self.interestList.count) {
+       NSInteger row = self.existingUser ? [TDCurrentUser sharedInstance].interestsList.count : [TDGuestUser sharedInstance].interestsList.count;
+    if (indexPath.row == row) {
         TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:indexPath];
         if (cell) {
             [cell makeCellFirstResponder];
@@ -220,20 +180,22 @@ static const int doneBackgroundViewHeight = 80;
     if (cell) {
         [cell goalSelected:(cell.selectionButton.tag == 0) ? YES : NO];
         // take out of the list
-        NSMutableDictionary *dict = [[self.interestList objectAtIndex:row] mutableCopy];
+        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+        self.existingUser ? (dict = [[[TDCurrentUser sharedInstance].interestsList objectAtIndex:row] mutableCopy]) :( dict= [[[TDGuestUser sharedInstance].interestsList objectAtIndex:row] mutableCopy]);
+
         if ([[dict valueForKey:@"selected"] boolValue] == YES) {
             [dict setValue:@0 forKey:@"selected"];
-            self.interestList[row] = dict;
+            self.existingUser ? ([TDCurrentUser sharedInstance].interestsList[row] = [dict mutableCopy]) : ( [TDGuestUser sharedInstance].interestsList[row] = [dict mutableCopy]);
         } else {
             [dict setValue:@1 forKey:@"selected"];
-            self.interestList[row] = dict;
+            self.existingUser ? ([TDCurrentUser sharedInstance].interestsList[row] = [dict mutableCopy]) :([TDGuestUser sharedInstance].interestsList[row] = [dict mutableCopy]);
         }
     }
 }
 
 - (void)addGoals:(NSString*)text row:(NSInteger)row{
     NSDictionary *tempDict = @{@"name":text, @"selected":@1, @"id":[[NSNumber numberWithLong:(row+1)] stringValue]};
-    [self.interestList addObject:tempDict];
+    self.existingUser ?( [[TDCurrentUser sharedInstance].interestsList addObject:tempDict]) : ([[TDGuestUser sharedInstance].interestsList addObject:tempDict]);
 
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
     TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:indexPath];
@@ -241,7 +203,9 @@ static const int doneBackgroundViewHeight = 80;
         [cell changeCellToAddGoals];
     }
 
-    NSIndexPath *path1 = [NSIndexPath indexPathForRow:self.interestList.count inSection:0]; //ALSO TRIED WITH indexPathRow:0
+    NSIndexPath *path1 = nil;
+    self.existingUser ? ( path1 = [NSIndexPath indexPathForRow:[TDCurrentUser sharedInstance].interestsList.count inSection:0]) :
+    (path1 = [NSIndexPath indexPathForRow:[TDGuestUser sharedInstance].interestsList.count inSection:0]);
     NSArray *indexArray = [NSArray arrayWithObjects:path1,nil];
     [self.tableView beginUpdates];
     [self.tableView insertRowsAtIndexPaths:indexArray withRowAnimation:UITableViewRowAnimationRight];
@@ -336,7 +300,10 @@ static const int doneBackgroundViewHeight = 80;
 }
 
 - (void)handleSingleTap:(UITapGestureRecognizer *) sender {
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.interestList.count inSection:0];
+    NSIndexPath *indexPath = nil;
+    self.existingUser ? (indexPath =[NSIndexPath indexPathForRow:[TDCurrentUser sharedInstance].interestsList.count inSection:0]) :
+        (indexPath =
+         [NSIndexPath indexPathForRow:[TDGuestUser sharedInstance].interestsList.count inSection:0]);
     TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:indexPath];
     if (cell && [cell.editableTextField isFirstResponder]) {
         [cell.editableTextField resignFirstResponder];
@@ -351,8 +318,11 @@ static const int doneBackgroundViewHeight = 80;
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
+    NSIndexPath *indexPath = nil;
+    self.existingUser ? indexPath =[NSIndexPath indexPathForRow:[TDCurrentUser sharedInstance].interestsList.count inSection:0] : (indexPath =
+                                                                                                                              [NSIndexPath indexPathForRow:[TDGuestUser sharedInstance].interestsList.count inSection:0]);
     // If the user hit the "add button", then we return NO, else return the keyboard value
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.interestList.count inSection:0];
+//    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:[TDCurrentUser sharedInstance].interestsList.count inSection:0];
     TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:indexPath];
 
     if (cell && [touch.view isKindOfClass:([cell.addGoalButton class])]) {

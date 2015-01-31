@@ -266,10 +266,5 @@
         callback(NO, @[]);
     }];
 }
-- (void)getGoalsAndInterests:(void (^)(NSDictionary *dict))callback {
 
-    [[TDAPIClient sharedInstance] getGoalsAndInterests:^(NSDictionary *goalsAndInterests) {
-            callback(goalsAndInterests);
-    } ];
-}
 @end

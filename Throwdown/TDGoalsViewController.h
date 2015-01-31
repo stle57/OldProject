@@ -11,14 +11,14 @@
 #import "TDKeyboardObserver.h"
 @protocol TDGoalsViewControllerDelegate <NSObject>
 @optional
-- (void)continueButtonPressed:(NSMutableArray*)goalsList;
+- (void)continueButtonPressed;
 - (void)closeButtonPressed;
 @end
 
 @interface TDGoalsViewController : UIViewController<UITableViewDataSource, UITableViewDataSource, TDGoalsCellDelegate, TDKeyboardObserverDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate>
 @property (nonatomic, weak) id <TDGoalsViewControllerDelegate> delegate;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withCloseButton:(BOOL)yes goalsList:(NSArray*)goalsList;
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withCloseButton:(BOOL)yes existingUser:(BOOL)existingUser;
 
 //@property (weak, nonatomic) IBOutlet UIView *alphaView;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -34,8 +34,9 @@
 
 @property (nonatomic) BOOL showCloseButton;
 @property (nonatomic) TDKeyboardObserver *keyboardObserver;
-@property (nonatomic) NSMutableArray *goalList;
+//@property (nonatomic) NSMutableArray *goalList;
 @property (nonatomic) UIGestureRecognizer *tapper;
+@property (nonatomic) BOOL existingUser;
 @property (nonatomic) BOOL keyboardUp;
 
 - (IBAction)continueButtonPressed:(id)sender;

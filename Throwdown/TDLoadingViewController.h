@@ -19,6 +19,6 @@
 @property (nonatomic, weak) id <TDLoadingViewControllerDelegate> delegate;
 
 @property (weak, nonatomic) IBOutlet UIView *alphaView;
-- (void)showData:(NSArray *)goalsList interestList:(NSArray*)interestList;
+- (void)showData;
 - (void)animateToLastView;
 @end

@@ -38,6 +38,10 @@
 @property (nonatomic, copy, readonly) NSString *twitterSecret;
 @property (nonatomic, copy, readonly) NSString *twitterIdentifier;
 
+@property (retain, nonatomic) NSMutableArray *goalsList;
+@property (strong, nonatomic) NSMutableArray *interestsList;
+
+
 + (TDCurrentUser *)sharedInstance;
 - (void)updateFromDictionary:(NSDictionary *)dictionary;
 - (BOOL)isRegisteredForPush;

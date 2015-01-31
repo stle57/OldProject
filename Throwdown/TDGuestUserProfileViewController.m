@@ -13,6 +13,7 @@
 #import "TDAPIClient.h"
 #import "TDAnalytics.h"
 #import "TDLoginViewController.h"
+#import "TDGuestUser.h"
 
 @interface TDGuestUserProfileViewController ()
 @property (nonatomic) UILabel *titleLabel;
@@ -21,8 +22,6 @@
 @property (nonatomic) NSNumber *nextStart;
 @property (nonatomic) UIView *headerView;
 @property (nonatomic) UIView *disableViewOverlay;
-@property (nonatomic) NSMutableArray *goalsList;
-@property (nonatomic) NSMutableArray *interestsList;
 @property (nonatomic) TDUser *user;
 @property (nonatomic) BOOL initialLoadDone;
 @property (nonatomic) NSDictionary *initialPosts;
@@ -33,11 +32,9 @@
 
 @implementation TDGuestUserProfileViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil goalsList:(NSMutableArray*)goalsList interestsLists:(NSMutableArray*)interestsList guestPosts:(NSDictionary*)guestPosts {
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil guestPosts:(NSDictionary*)guestPosts {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        self.goalsList = [goalsList copy];
-        self.interestsList = [interestsList copy];
         self.initialPosts = guestPosts;
         [self handleNextStart:[self.initialPosts objectForKey:@"next_start"]];
         [self handlePostsResponse:self.initialPosts fromStart:YES];
@@ -49,8 +46,6 @@
 
 - (void)dealloc {
     self.headerView = nil;
-    self.interestsList = nil;
-    self.goalsList = nil;
 }
 
 - (void)viewDidLoad {
@@ -159,7 +154,7 @@
         return;
     }
 
-    [[TDAPIClient sharedInstance] saveGoalsAndInterestsForGuest:self.goalsList interestsList:self.interestsList callback:^(BOOL success, NSDictionary *response) {
+    [[TDAPIClient sharedInstance] saveGoalsAndInterestsForGuest:^(BOOL success, NSDictionary *response) {
         if (response) {
             [self handleNextStart:[response objectForKey:@"next_start"]];
             [self handlePostsResponse:response fromStart:YES];
@@ -211,7 +206,7 @@
     if (![self hasMorePosts]) {
         return NO;
     }
-    [[TDAPIClient sharedInstance] saveGoalsAndInterestsForGuest:self.goalsList interestsList:self.interestsList callback:^(BOOL success, NSDictionary *response) {
+    [[TDAPIClient sharedInstance] saveGoalsAndInterestsForGuest:^(BOOL success, NSDictionary *response) {
         if (response) {
             [self handleNextStart:[response objectForKey:@"next_start"]];
             [self handlePostsResponse:response fromStart:YES];

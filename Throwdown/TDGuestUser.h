@@ -9,8 +9,8 @@
 #import <Foundation/Foundation.h>
 
 @interface TDGuestUser : NSObject
-@property (nonatomic) NSArray *goalsList;
-@property (nonatomic) NSArray *interestsList;
+@property (nonatomic) NSMutableArray *goalsList;
+@property (nonatomic) NSMutableArray *interestsList;
 
 + (TDGuestUser *)sharedInstance;
 - (void)updateGuestInfo:goalsList interestsList:(NSArray*)interestsList;

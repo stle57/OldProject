@@ -11,13 +11,13 @@
 #import "TDKeyboardObserver.h"
 @protocol TDInterestsViewControllerDelegate <NSObject>
 @optional
-- (void)doneButtonPressed:(NSMutableArray *)interestList;
+- (void)doneButtonPressed;
 - (void)backButtonPressed;
 @end
 @interface TDInterestsViewController : UIViewController<UITableViewDataSource, UITableViewDelegate, TDGoalsCellDelegate,TDKeyboardObserverDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate>
 
 @property (nonatomic, weak) id <TDInterestsViewControllerDelegate> delegate;
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withBackButton:(BOOL)yes interestsList:(NSArray*)interestsList;
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withBackButton:(BOOL)yes existingUser:(BOOL)existingUser;
 
 //@property (weak, nonatomic) IBOutlet UIView *alphaView;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -31,8 +31,9 @@
 
 @property (nonatomic) TDKeyboardObserver *keyboardObserver;
 @property (nonatomic) BOOL showBackButton;
-@property (nonatomic) NSMutableArray *interestList;
+//@property (nonatomic) NSMutableArray *interestList;
 @property (nonatomic) UIGestureRecognizer *tapper;
+@property (nonatomic) BOOL existingUser;
 @property (nonatomic) BOOL keyboardUp;
 
 - (IBAction)doneButtonPressed:(id)sender;

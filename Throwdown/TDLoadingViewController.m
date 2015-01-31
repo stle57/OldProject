@@ -12,6 +12,7 @@
 #import "TDViewControllerHelper.h"
 #import "TDCurrentUser.h"
 #import "TDAPIClient.h"
+#import "TDGuestUser.h"
 
 @interface TDLoadingViewController ()
 @property (nonatomic, retain) TDLoadingView *loadingView1;
@@ -78,13 +79,12 @@
 }
 */
 
-- (void)showData:(NSArray *)goalsList interestList:(NSArray*)interestList{
-
+- (void)showData {
     if ([TDCurrentUser sharedInstance].userId != nil) {
         [[TDCurrentUser sharedInstance] didAskForGoalsInitially:YES];
         [[TDCurrentUser sharedInstance] didAskForGoalsFinal:YES];
     }
-    [self sendDataToServer:goalsList interestsList:interestList];
+    [self sendDataToServer];
     [UIView animateWithDuration:0.2
                           delay:0
                         options:UIViewAnimationOptionCurveEaseIn
@@ -108,8 +108,8 @@
 }
 
 
-- (void)saveDataForUser:(NSArray*)goalsList interestsList:(NSArray*)interestsList {
-    [[TDAPIClient sharedInstance] saveGoalsAndInterestsForUser:goalsList interestsList:interestsList callback:^(BOOL success) {
+- (void)saveDataForUser {
+    [[TDAPIClient sharedInstance] saveGoalsAndInterestsForUser:^(BOOL success) {
         if (success) {
             [self endAnimation];
         } else {
@@ -120,8 +120,8 @@
 }
 
 
-- (void)saveDataForGuest:(NSArray*)goalsList interestsList:(NSArray*)interestsList {
-    [[TDAPIClient sharedInstance] saveGoalsAndInterestsForGuest:goalsList interestsList:interestsList callback:^(BOOL success, NSDictionary *posts) {
+- (void)saveDataForGuest {
+    [[TDAPIClient sharedInstance] saveGoalsAndInterestsForGuest:^(BOOL success, NSDictionary *posts) {
         if (success) {
             [self endAnimation];
             self.guestPosts = posts;
@@ -130,11 +130,10 @@
         }
     }];
 }
-- (void)sendDataToServer:(NSArray*)goalsList interestsList:(NSArray*)interestsList {
+- (void)sendDataToServer{
     if ([[TDCurrentUser sharedInstance] isLoggedIn]) {
-
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [self saveDataForUser:goalsList interestsList:interestsList];
+            [self saveDataForUser];
             dispatch_async(dispatch_get_main_queue(), ^{
                 self.loadedData = NO;
             });
@@ -142,7 +141,7 @@
         });
     } else {
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            [self saveDataForGuest:goalsList interestsList:interestsList];
+            [self saveDataForGuest];
             dispatch_async(dispatch_get_main_queue(), ^{
                 self.loadedData = NO;
             });

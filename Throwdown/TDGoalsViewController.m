@@ -11,6 +11,7 @@
 #import "TDViewControllerHelper.h"
 #import "TDAppCoverBackgroundView.h"
 #import "TDAnalytics.h"
+#import "TDGuestUser.h"
 
 @interface TDGoalsViewController ()
 @property (nonatomic) NSIndexPath *selectedIndexPath;
@@ -25,26 +26,11 @@ static NSString *ovalsLeftButtonStr = @"ovals_left";
 static const int closeBackgroundViewHeight = 80;
 @implementation TDGoalsViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withCloseButton:(BOOL)yes goalsList:(NSArray *)goalsList{
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withCloseButton:(BOOL)yes existingUser:(BOOL)existingUser{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        if (goalsList == nil) {
-            self.goalList =
-
-            [NSMutableArray arrayWithObjects:@{@"name":@"Lose weight",@"selected":@0, @"id":@0},
-                                                @{@"name":@"Get back into shape", @"selected":@0, @"id":@0},
-                                                @{@"name":@"Tone up", @"selected":@0, @"id":@0},
-                                                @{@"name":@"Get stronger", @"selected":@0, @"id":@0},
-                                                @{@"name":@"Gain more muscle", @"selected":@0, @"id":@0},
-                                                @{@"name":@"Increase endurance", @"selected":@0, @"id":@0},
-                                                @{@"name":@"Improve mobility", @"selected":@0, @"id":@0},
-                                                @{@"name":@"Become more functionally fit", @"selected":@0, @"id":@0},
-                                                @{@"name":@"Develop more self confidence", @"selected":@0, @"id":@0}, nil];
-        } else {
-            self.goalList = [goalsList mutableCopy];
-        }
-
         self.showCloseButton = yes;
+        self.existingUser = existingUser;
     }
     return self;
 }
@@ -135,8 +121,8 @@ static const int closeBackgroundViewHeight = 80;
 }
 
 - (IBAction)continueButtonPressed:(id)sender {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(continueButtonPressed:)]) {
-        [self.delegate continueButtonPressed:self.goalList];
+    if (self.delegate && [self.delegate respondsToSelector:@selector(continueButtonPressed)]) {
+        [self.delegate continueButtonPressed];
     }
 }
 
@@ -149,13 +135,16 @@ static const int closeBackgroundViewHeight = 80;
 #pragma mark UITableViewDataSource delegates
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return self.goalList.count + 1;
+    return self.existingUser ? [TDCurrentUser sharedInstance].goalsList.count + 1 : [TDGuestUser sharedInstance].goalsList.count + 1;
+    //return self.goalList.count + 1;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (self.goalList.count == indexPath.row) {
-        return 59; // This is for the last row +(Add More)
+    NSInteger count = self.existingUser ? [TDCurrentUser sharedInstance].goalsList.count : [TDGuestUser sharedInstance].goalsList.count;
+
+    if (count == indexPath.row) {
+        return 59;
     } else {
         return 44;
     }
@@ -173,11 +162,17 @@ static const int closeBackgroundViewHeight = 80;
     cell.editableTextField.delegate = self;
     cell.row = indexPath.row;
     cell.selectionButton.tag = 0;
-    if (indexPath.row == self.goalList.count) {
+    NSInteger row = self.existingUser ? [TDCurrentUser sharedInstance].goalsList.count : [TDGuestUser sharedInstance].goalsList.count;
+    if (indexPath.row == row) {
         [cell createCell:YES text:nil selected:NO];
 
     } else {
-        NSDictionary *dict = self.goalList[indexPath.row];
+        NSDictionary *dict = nil;
+        if (self.existingUser) {
+            dict = [TDCurrentUser sharedInstance].goalsList[indexPath.row];
+        } else {
+            dict = [TDGuestUser sharedInstance].goalsList[indexPath.row];
+        }
         BOOL selected = [[dict objectForKey:@"selected"] boolValue] ;
         NSString *goalName = [dict objectForKey:@"name"];
 
@@ -189,7 +184,9 @@ static const int closeBackgroundViewHeight = 80;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
-    if (indexPath.row == self.goalList.count) {
+    NSInteger row = self.existingUser ? [TDCurrentUser sharedInstance].goalsList.count : [TDGuestUser sharedInstance].goalsList.count;
+
+    if (indexPath.row == row) {
         TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:indexPath];
         if (cell) {
             [cell makeCellFirstResponder];
@@ -209,20 +206,40 @@ static const int closeBackgroundViewHeight = 80;
     if (cell) {
         [cell goalSelected:(cell.selectionButton.tag == 0) ? YES : NO];
         // take out of the list
-        NSMutableDictionary *dict = [[self.goalList objectAtIndex:row] mutableCopy];
+        NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+        if (self.existingUser) {
+            dict = [[[TDCurrentUser sharedInstance].goalsList objectAtIndex:row] mutableCopy];
+        } else {
+            dict= [[[TDGuestUser sharedInstance].goalsList objectAtIndex:row] mutableCopy];
+        }
+
         if ([[dict valueForKey:@"selected"] boolValue] == YES) {
             [dict setValue:@0 forKey:@"selected"];
-            self.goalList[row] = dict;
+            if (self.existingUser) {
+                [TDCurrentUser sharedInstance].goalsList[row] = [dict mutableCopy];
+            } else {
+                [TDGuestUser sharedInstance].goalsList[row] = [dict mutableCopy];
+            }
         } else {
             [dict setValue:@1 forKey:@"selected"];
-            self.goalList[row] = dict;
+            debug NSLog(@"update the goals list w/ selected");
+            if (self.existingUser) {
+                [TDCurrentUser sharedInstance].goalsList[row] = [dict mutableCopy];
+            } else {
+                [TDGuestUser sharedInstance].goalsList[row] = [dict mutableCopy];
+            }
+            debug NSLog(@"update goals list done");
         }
     }
 }
 
 - (void)addGoals:(NSString*)text row:(NSInteger)row{
     NSDictionary *tempDict = @{@"name":text, @"selected":@1, @"id":[[NSNumber numberWithLong:(row+1)] stringValue]};
-    [self.goalList addObject:tempDict];
+    if (self.existingUser) {
+        [[TDCurrentUser sharedInstance].goalsList addObject:tempDict];
+    } else {
+        [[TDGuestUser sharedInstance].goalsList addObject:tempDict];
+    }
 
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:0];
     TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:indexPath];
@@ -230,7 +247,13 @@ static const int closeBackgroundViewHeight = 80;
         [cell changeCellToAddGoals];
     }
     
-    NSIndexPath *path1 = [NSIndexPath indexPathForRow:self.goalList.count inSection:0]; //ALSO TRIED WITH indexPathRow:0
+    NSIndexPath *path1 = nil;
+    if (self.existingUser) {
+        path1 = [NSIndexPath indexPathForRow:[TDCurrentUser sharedInstance].goalsList.count inSection:0];
+    } else {
+        path1 = [NSIndexPath indexPathForRow:[TDGuestUser sharedInstance].goalsList.count inSection:0];
+    }
+
     NSArray *indexArray = [NSArray arrayWithObjects:path1,nil];
     [self.tableView beginUpdates];
     [self.tableView insertRowsAtIndexPaths:indexArray withRowAnimation:UITableViewRowAnimationRight];
@@ -332,7 +355,13 @@ static const int closeBackgroundViewHeight = 80;
 }
 
 - (void)handleSingleTap:(UITapGestureRecognizer *) sender {
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.goalList.count inSection:0];
+    NSIndexPath *indexPath = nil;
+    if (self.existingUser) {
+        indexPath =[NSIndexPath indexPathForRow:[TDCurrentUser sharedInstance].goalsList.count inSection:0];
+    } else {
+        indexPath =
+            [NSIndexPath indexPathForRow:[TDGuestUser sharedInstance].goalsList.count inSection:0];
+    }
     TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:indexPath];
     if (cell && [cell.editableTextField isFirstResponder]) {
         [cell.editableTextField resignFirstResponder];
@@ -348,7 +377,13 @@ static const int closeBackgroundViewHeight = 80;
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
     // If the user hit the "add button", then we return NO, else return the keyboard value
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.goalList.count inSection:0];
+    NSIndexPath *indexPath = nil;
+    if (self.existingUser) {
+        indexPath =[NSIndexPath indexPathForRow:[TDCurrentUser sharedInstance].goalsList.count inSection:0];
+    } else {
+        indexPath =
+        [NSIndexPath indexPathForRow:[TDGuestUser sharedInstance].goalsList.count inSection:0];
+    }
     TDGoalsCell *cell = (TDGoalsCell*)[self.tableView cellForRowAtIndexPath:indexPath];
 
     if (cell && [touch.view isKindOfClass:([cell.addGoalButton class])]) {
