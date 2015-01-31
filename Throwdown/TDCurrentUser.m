@@ -647,13 +647,17 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
 }
 
 - (BOOL)isNewUser {
+    NSString *key = [NSString stringWithFormat:@"isNewUser_%@", [self.userId stringValue]];
+
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    return [defaults boolForKey:@"isNewUser"];
+    return [defaults boolForKey:key];
 }
 
 - (void)isNewUser:(BOOL)yes {
+    NSString *key = [NSString stringWithFormat:@"isNewUser_%@", [self.userId stringValue]];
+
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setBool:yes forKey:@"isNewUser"];
+    [defaults setBool:yes forKey:key];
     [defaults synchronize];
 }
 

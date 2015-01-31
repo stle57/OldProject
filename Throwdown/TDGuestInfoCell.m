@@ -386,8 +386,6 @@ static const int bottomMarginPaddingHeight = 15;
 
         self.topMarginPadding.backgroundColor = [TDConstants darkBackgroundColor];
         [self addSubview:self.topMarginPadding];
-        self.topMarginPadding.layer.borderColor = [[UIColor redColor] CGColor];
-        self.topMarginPadding.layer.borderWidth = 2.;
 
         CGRect topLineFrame = self.topLine.frame;
         topLineFrame.origin.y = topMarginPaddingHeight;
