@@ -817,7 +817,8 @@ static CGFloat const kPostMargin = 22;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
-    if ((![[TDCurrentUser sharedInstance] didAskForGoalsFinal]) && ([[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && indexPath.section == 0 && [[TDCurrentUser sharedInstance] isLoggedIn]) {
+
+    if ((![self onGuestFeed]) && (![[TDCurrentUser sharedInstance] didAskForGoalsFinal]) && ([[TDCurrentUser sharedInstance] didAskForGoalsInitially]) && (indexPath.section == [self noticeCount]) && [[TDCurrentUser sharedInstance] isLoggedIn] && [self isKindOfClass:[TDHomeViewController class]]) {
         [self showGoalsAndInterestsController];
         return;
     }
