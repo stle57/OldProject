@@ -226,6 +226,9 @@ static NSString *buttonBackStr = @"btn_back";
 }
 
 - (void)backButtonPressed {
+    [self.userNameTextField resignFirst];
+    [self.passwordTextField resignFirst];
+    
     [self.navigationController popViewControllerAnimated:YES];
 }
 

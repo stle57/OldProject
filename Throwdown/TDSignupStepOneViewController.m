@@ -226,6 +226,11 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 
 - (IBAction)closeButtonPressed:(UIButton *)sender {
 
+    [self.emailTextField resignFirst];
+
+    [self.firstLastNameTextField resignFirst];
+
+    [self.phoneNumberTextField resignFirst];
     CATransition *transition = [CATransition animation];
     transition.duration = .5;
     transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
