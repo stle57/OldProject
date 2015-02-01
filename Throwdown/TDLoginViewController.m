@@ -69,6 +69,8 @@ static NSString *buttonBackStr = @"btn_back";
 
         [self.backButton addTarget:self action:@selector(closeThisView) forControlEvents:UIControlEventTouchUpInside];
 
+        [self.resetPasswordButton addTarget:self action:@selector(resetButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+
     } else {
         [self.backButton setImage:[UIImage imageNamed:buttonBackStr] forState:UIControlStateNormal];
         [self.backButton setImage:[UIImage imageNamed:buttonBackStr] forState:UIControlStateSelected];
@@ -147,8 +149,6 @@ static NSString *buttonBackStr = @"btn_back";
     CGPoint centerFrame = self.progress.center;
     centerFrame.y = self.loginButton.frame.origin.y;
     self.progress.center = centerFrame;
-    
-    debug NSLog(@"self.resetPasswordButton=%@", NSStringFromCGRect(self.resetPasswordButton.frame));
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -230,6 +230,15 @@ static NSString *buttonBackStr = @"btn_back";
 }
 
 - (void)closeThisView {
+    [self.userNameTextField resignFirst];
+    [self.passwordTextField resignFirst];
+
+    CATransition *transition = [CATransition animation];
+    transition.duration = .45;
+    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    transition.subtype = kCATransitionFromTop;
+    [self.view.layer addAnimation:transition forKey:nil];
+    
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
