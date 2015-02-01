@@ -65,7 +65,9 @@ static const int doneBackgroundViewHeight = 80;
     [self.view addSubview:self.bottomMargin];
     
     self.doneBackgroundView.frame = CGRectMake(0, self.bottomMargin.frame.origin.y + self.bottomMargin.frame.size.height, SCREEN_WIDTH, doneBackgroundViewHeight);
-    self.doneBackgroundView.backgroundColor = [UIColor colorWithRed:(251.0/255.0) green:(250.0/255.0) blue:(249.0/255.0) alpha:1.0];
+    UIColor *color = [[UIColor alloc] initWithRed:(251./255.) green:(250./255.) blue:(249./255.) alpha:1];
+    [self.doneBackgroundView setBackgroundColor:[UIColor whiteColor]];
+    [self.doneBackgroundView setTintColor:color];
     [self.view addSubview:self.doneBackgroundView];
 
     
