@@ -38,6 +38,10 @@
 
     // Background color
     self.tableView.backgroundColor = [TDConstants lightBackgroundColor];
+    CGRect tableViewFrame = self.tableView.frame;
+    //tableViewFrame.size.width = SCREEN_WIDTH;
+    tableViewFrame.size.height = SCREEN_HEIGHT - self.navigationController.navigationBar.frame.size.height - [UIApplication sharedApplication].statusBarFrame.size.height;
+    self.tableView.frame = tableViewFrame;
 
     self.view.backgroundColor = [TDConstants lightBackgroundColor];
 
