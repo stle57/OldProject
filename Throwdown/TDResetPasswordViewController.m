@@ -18,7 +18,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *resetButton;
 @property (weak, nonatomic) IBOutlet UIButton *backButton;
 @property (nonatomic, copy) NSString *emailOrPhoneNumber;
-
+@property (nonatomic) BOOL keyboardUp;
 - (IBAction)backButtonPressed:(UIButton *)sender;
 @end
 
@@ -82,6 +82,11 @@
     CGPoint centerFrame = self.progress.center;
     centerFrame.y = self.resetButton.frame.origin.y;
     self.progress.center = centerFrame;
+
+    self.tapper = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
+    [self.tapper setCancelsTouchesInView:NO];
+    self.tapper.delegate = self;
+    [self.view addGestureRecognizer:self.tapper];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -92,6 +97,7 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [self.userNameTextField becomeFirstResponder];
+    self.keyboardUp = YES;
 }
 
 - (void)viewDidDisappear:(BOOL)animated {
@@ -109,6 +115,7 @@
 #pragma mark - TDTextField delegates
 -(void)textFieldDidChange:(UITextField *)textField type:(kTDTextFieldType)type
 {
+    self.keyboardUp = YES;
     switch (type) {
         case kTDTextFieldType_UsernameOrPhoneNumber:
             self.emailOrPhoneNumber = textField.text;
@@ -196,6 +203,7 @@
                                      self.backButton.enabled = YES;
                                      [self.progress stopAnimating];
                                      [self.userNameTextField becomeFirstResponder];
+                                     self.keyboardUp = YES;
                                  }
                              }];
                          }
@@ -235,5 +243,18 @@
     delegate.window.rootViewController = welcomeViewController;
     [self.navigationController popToRootViewControllerAnimated:NO];
 
+}
+
+
+- (void)handleSingleTap:(UITapGestureRecognizer *) sender {
+    [self.userNameTextField resignFirst];
+    self.keyboardUp = NO;
+}
+
+#pragma mark UIGestureRecognizerDelegate methods
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    return self.keyboardUp;
 }
 @end

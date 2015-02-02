@@ -21,6 +21,7 @@
 @property (strong, nonatomic) NSRegularExpression *usernamePattern;
 @property (nonatomic, copy) NSString *userName;
 @property (nonatomic, copy) NSString *password;
+@property (nonatomic) BOOL keyboardUp;
 
 - (IBAction)backButtonPressed:(UIButton *)sender;
 @end
@@ -131,6 +132,11 @@
     centerFrame.y = self.progress.center.y - self.progress.frame.size.height/2;
     self.progress.center = centerFrame;
 
+    self.tapper = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
+    [self.tapper setCancelsTouchesInView:NO];
+    self.tapper.delegate = self;
+    [self.view addGestureRecognizer:self.tapper];
+
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -141,6 +147,7 @@
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [self.userNameTextField becomeFirstResponder];
+    self.keyboardUp = YES;
 }
 
 - (void)dealloc {
@@ -218,6 +225,7 @@
                                      self.progress.hidden = YES;
                                      self.signUpButton.hidden = NO;
                                      [self.userNameTextField becomeFirstResponder];
+                                     self.keyboardUp = YES;
                                  }
                              }];
                          }
@@ -234,6 +242,7 @@
 #pragma mark - TDTextField delegates
 - (void)textFieldDidBeginEditing:(UITextField *)textField type:(kTDTextFieldType)type {
     [self validateAllFields];
+    self.keyboardUp = YES;
 }
 
 - (void)textFieldDidChange:(UITextField *)textField type:(kTDTextFieldType)type {
@@ -257,10 +266,12 @@
     switch (type) {
         case kTDTextFieldType_UserName:
         [self.passwordTextField becomeFirstResponder];
+        self.keyboardUp = YES;
         break;
 
         case kTDTextFieldType_Password:
         [self.userNameTextField becomeFirstResponder];
+            self.keyboardUp  = YES;
         break;
     }
 
@@ -310,4 +321,16 @@
     [self validateAllFields];
 }
 
+- (void)handleSingleTap:(UITapGestureRecognizer *) sender {
+    [self.passwordTextField resignFirst];
+    [self.userNameTextField resignFirst];
+    self.keyboardUp = NO;
+}
+
+#pragma mark UIGestureRecognizerDelegate methods
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    return self.keyboardUp;
+}
 @end

@@ -10,7 +10,7 @@
 #import "TDTextField.h"
 #import "TDAppCoverBackgroundView.h"
 
-@interface TDSignupStepOneViewController : UIViewController <TDTextFieldDelegate>
+@interface TDSignupStepOneViewController : UIViewController <TDTextFieldDelegate, UIGestureRecognizerDelegate>
 
 @property (weak, nonatomic) IBOutlet TDAppCoverBackgroundView *backgroundImageView;
 @property (weak, nonatomic) IBOutlet UIView *alphaView;
@@ -20,4 +20,6 @@
 @property (weak, nonatomic) IBOutlet TDTextField *emailTextField;
 @property (weak, nonatomic) IBOutlet TDTextField *firstLastNameTextField;
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
+@property (nonatomic) UIGestureRecognizer *tapper;
+
 @end

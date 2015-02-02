@@ -10,7 +10,7 @@
 #import "TDTextField.h"
 #import "TDAppCoverBackgroundView.h"
 
-@interface TDResetPasswordViewController : UIViewController <TDTextFieldDelegate, UITextFieldDelegate>
+@interface TDResetPasswordViewController : UIViewController <TDTextFieldDelegate, UITextFieldDelegate, UIGestureRecognizerDelegate>
 {
 
 }
@@ -20,4 +20,6 @@
 @property (weak, nonatomic) IBOutlet TDTextField *userNameTextField;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *progress;
 @property (weak, nonatomic) IBOutlet UIView *alphaView;
+@property (nonatomic) UIGestureRecognizer *tapper;
+
 @end

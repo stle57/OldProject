@@ -23,6 +23,7 @@
 @property (nonatomic, copy) NSString *userEmail;
 @property (nonatomic, copy) NSString *password;
 @property (nonatomic) BOOL useCloseButton;
+@property (nonatomic) BOOL keyboardUp;
 
 - (IBAction)loginButtonPressed:(id)sender;
 
@@ -144,6 +145,10 @@ static NSString *buttonBackStr = @"btn_back";
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeView) name:TDDismissLoginViewController object:nil];
 
+    self.tapper = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
+    [self.tapper setCancelsTouchesInView:NO];
+    self.tapper.delegate = self;
+    [self.view addGestureRecognizer:self.tapper];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -155,6 +160,7 @@ static NSString *buttonBackStr = @"btn_back";
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [self.userNameTextField becomeFirstResponder];
+    self.keyboardUp = YES;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -175,6 +181,7 @@ static NSString *buttonBackStr = @"btn_back";
 #pragma mark - TDTextField delegates
 -(void)textFieldDidChange:(UITextField *)textField type:(kTDTextFieldType)type
 {
+    self.keyboardUp = YES;
     switch (type) {
         case kTDTextFieldType_Email:
         {
@@ -204,12 +211,14 @@ static NSString *buttonBackStr = @"btn_back";
         {
             self.userEmail = textField.text;
             [self.passwordTextField becomeFirstResponder];
+            self.keyboardUp = YES;
         }
         break;
         case kTDTextFieldType_Password:
         {
             self.password = textField.text;
             [self.userNameTextField becomeFirstResponder];
+            self.keyboardUp = YES;
         }
         break;
         default:
@@ -228,7 +237,7 @@ static NSString *buttonBackStr = @"btn_back";
 - (void)backButtonPressed {
     [self.userNameTextField resignFirst];
     [self.passwordTextField resignFirst];
-    
+    self.keyboardUp = NO;
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -288,6 +297,7 @@ static NSString *buttonBackStr = @"btn_back";
                                      self.backButton.enabled = YES;
                                      [self.progress stopAnimating];
                                      [self.userNameTextField becomeFirstResponder];
+                                     self.keyboardUp = YES;
                                  }
                              }];
                          }
@@ -322,5 +332,18 @@ static NSString *buttonBackStr = @"btn_back";
 
 - (void)removeView {
     [self dismissViewControllerAnimated:NO completion:nil];
+}
+
+- (void)handleSingleTap:(UITapGestureRecognizer *) sender {
+    [self.passwordTextField resignFirst];
+    [self.userNameTextField resignFirst];
+    self.keyboardUp = NO;
+}
+
+#pragma mark UIGestureRecognizerDelegate methods
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    return self.keyboardUp;
 }
 @end

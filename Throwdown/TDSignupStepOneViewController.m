@@ -24,6 +24,7 @@
 @property (nonatomic, copy) NSString *emailAddress;
 @property (nonatomic, copy) NSString *firstLastName;
 @property (nonatomic, copy) NSString *username;
+@property (nonatomic) BOOL keyboardUp;
 
 - (IBAction)closeButtonPressed:(UIButton *)sender;
 - (IBAction)continueButtonPressed:(id)sender;
@@ -124,7 +125,11 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
                                            self.emailTextField.frame.origin.y + self.emailTextField.frame.size.height + 20,
                                            [UIImage imageNamed:@"btn_continue"].size.width,
                                            [UIImage imageNamed:@"btn_continue"].size.height);
-    
+    self.tapper = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
+    [self.tapper setCancelsTouchesInView:NO];
+    self.tapper.delegate = self;
+    [self.view addGestureRecognizer:self.tapper];
+
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -135,6 +140,7 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     [self.firstLastNameTextField becomeFirstResponder];
+    self.keyboardUp = YES;
 }
 
 - (void)dealloc {
@@ -183,6 +189,7 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 #pragma mark - TDTextField delegates
 - (void)textFieldDidBeginEditing:(UITextField *)textField type:(kTDTextFieldType)type {
     [self validateAllFields];
+    self.keyboardUp = YES;
 }
 
 - (void)textFieldDidChange:(UITextField *)textField type:(kTDTextFieldType)type {
@@ -209,14 +216,17 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
     switch (type) {
         case kTDTextFieldType_Phone:
             [self.emailTextField becomeFirstResponder];
+            self.keyboardUp = YES;
         break;
 
         case kTDTextFieldType_Email:
             [self.firstLastNameTextField becomeFirstResponder];
+            self.keyboardUp = YES;
         break;
 
         case kTDTextFieldType_FirstLast:
             [self.phoneNumberTextField becomeFirstResponder];
+            self.keyboardUp = YES;
         break;
     }
     return NO;
@@ -365,4 +375,17 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
     }];
 }
 
+- (void)handleSingleTap:(UITapGestureRecognizer *) sender {
+    [self.firstLastNameTextField resignFirst];
+    [self.phoneNumberTextField resignFirst];
+    [self.emailTextField resignFirst];
+    self.keyboardUp = NO;
+}
+
+#pragma mark UIGestureRecognizerDelegate methods
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    return self.keyboardUp;
+}
 @end
