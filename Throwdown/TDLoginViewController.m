@@ -48,15 +48,10 @@ static NSString *buttonBackStr = @"btn_back";
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
     [self.backgroundImageView setBackgroundImage:YES editingViewOnly:YES];
-    debug NSLog(@"self.backgroundImageView.frame = %@", NSStringFromCGRect(self.backgroundImageView.frame));
-    
+
     self.alphaView.frame = self.view.frame;
     self.alphaView.backgroundColor = [UIColor clearColor];
-    debug NSLog(@"alphaView.frame = %@", NSStringFromCGRect(self.alphaView.frame));
 
-    //NSInteger yPosition = 25-([UIImage imageNamed:buttonBackStr].size.height/2);
-    NSInteger yPosition = 25 - [UIApplication sharedApplication].statusBarFrame.size.height;
-    debug NSLog(@"yPosition-%ld", (long)yPosition);
     if (self.useCloseButton) {
         [self.backButton setImage:[UIImage imageNamed:@"btn_x"] forState:UIControlStateNormal];
         [self.backButton setImage:[UIImage imageNamed:@"btn_x"] forState:UIControlStateSelected];
@@ -69,7 +64,7 @@ static NSString *buttonBackStr = @"btn_back";
 
         [self.backButton addTarget:self action:@selector(closeThisView) forControlEvents:UIControlEventTouchUpInside];
 
-        [self.resetPasswordButton addTarget:self action:@selector(resetButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+        [self.resetPasswordButton addTarget:self action:@selector(showResetPasswordView) forControlEvents:UIControlEventTouchUpInside];
 
     } else {
         [self.backButton setImage:[UIImage imageNamed:buttonBackStr] forState:UIControlStateNormal];
@@ -81,6 +76,7 @@ static NSString *buttonBackStr = @"btn_back";
                                            [UIImage imageNamed:buttonBackStr].size.width,
                                            [UIImage imageNamed:buttonBackStr].size.height);
         [self.backButton addTarget:self action:@selector(backButtonPressed) forControlEvents:UIControlEventTouchUpInside];
+        [self.resetPasswordButton addTarget:self action:@selector(resetButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 
     }
 
@@ -89,7 +85,7 @@ static NSString *buttonBackStr = @"btn_back";
                                        self.backButton.frame.origin.y -10,
                                        self.backButton.frame.size.width + 20,
                                        self.backButton.frame.size.height + 20);
-    debug NSLog(@"backButton frame = %@", NSStringFromCGRect(self.backButton.frame));
+
     [[TDAnalytics sharedInstance] logEvent:@"login_opened"];
     self.topLabel.text = @"Log In";
     self.topLabel.font = [TDConstants fontSemiBoldSized:18];
@@ -101,7 +97,6 @@ static NSString *buttonBackStr = @"btn_back";
     topLabelFrame.origin.y = ([UIApplication sharedApplication].statusBarFrame.size.height +50)/2 - self.topLabel.frame.size.height/2;
     self.topLabel.frame = topLabelFrame;
 
-    debug NSLog(@"self.topLabel.frame = %@", NSStringFromCGRect(self.topLabel.frame));
     [self.resetPasswordButton.titleLabel setFont:[TDConstants fontRegularSized:14]];
     [self.resetPasswordButton setTitleColor:[TDConstants headerTextColor] forState:(UIControlStateNormal)];
     [self.resetPasswordButton sizeToFit];
@@ -118,8 +113,6 @@ static NSString *buttonBackStr = @"btn_back";
     usernameFrame.size.width = SCREEN_WIDTH - 40;
     self.userNameTextField.frame = usernameFrame;
     
-    debug NSLog(@"icon view=%@", NSStringFromCGRect( self.userNameTextField.iconImageView.frame));
-    debug NSLog(@"usernametextfield = %@", NSStringFromCGRect(self.userNameTextField.frame));
     [self.passwordTextField setUpWithIconImageNamed:@"icon_password"
                                         placeHolder:@"Password"
                                        keyboardType:UIKeyboardTypeDefault
@@ -137,8 +130,7 @@ static NSString *buttonBackStr = @"btn_back";
                self.passwordTextField.frame.origin.y + self.passwordTextField.frame.size.height+ 40,
                [UIImage imageNamed:buttonLoginStr].size.width,
                [UIImage imageNamed:buttonLoginStr].size.height);
-    debug NSLog(@"button=%@", NSStringFromCGRect(self.loginButton.frame));
-    
+
     self.resetPasswordButton.frame =
         CGRectMake(SCREEN_WIDTH/2 - self.resetPasswordButton.frame.size.width/2,
                    self.passwordTextField.frame.origin.y +self.passwordTextField.frame.size.height+ 40 + [UIImage imageNamed:buttonLoginStr].size.height + 15,
@@ -149,6 +141,9 @@ static NSString *buttonBackStr = @"btn_back";
     CGPoint centerFrame = self.progress.center;
     centerFrame.y = self.loginButton.frame.origin.y;
     self.progress.center = centerFrame;
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeView) name:TDDismissLoginViewController object:nil];
+
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -162,10 +157,15 @@ static NSString *buttonBackStr = @"btn_back";
     [self.userNameTextField becomeFirstResponder];
 }
 
+- (void)viewWillDisappear:(BOOL)animated {
+    [self.userNameTextField resignFirst];
+    [self.passwordTextField resignFirst];
+    [super viewWillDisappear:animated];
+}
+
 - (void)dealloc {
     self.userEmail = nil;
     self.password = nil;
-   // self.backgroundImageView = nil;
 }
 
 - (BOOL)prefersStatusBarHidden {
@@ -295,7 +295,32 @@ static NSString *buttonBackStr = @"btn_back";
 }
 
 - (IBAction)resetButtonPressed:(id)sender {
+
     TDResetPasswordViewController *vc = [[TDResetPasswordViewController alloc] init];
     [self.navigationController pushViewController:vc animated:YES];
+}
+
+- (void)showResetPasswordView {
+    [self.userNameTextField resignFirst];
+    [self.passwordTextField resignFirst];
+
+    TDResetPasswordViewController *controller = [[TDResetPasswordViewController alloc] init];
+
+    UIViewController *srcViewController = (UIViewController *) self;
+    UIViewController *destViewController = (UIViewController *) controller;
+
+    CATransition *transition = [CATransition animation];
+    transition.duration = 0.3;
+    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    transition.type = kCATransitionPush;
+    transition.subtype = kCATransitionFromRight;
+    [srcViewController.view.window.layer addAnimation:transition forKey:nil];
+
+    [srcViewController presentViewController:destViewController animated:NO completion:nil];
+
+}
+
+- (void)removeView {
+    [self dismissViewControllerAnimated:NO completion:nil];
 }
 @end

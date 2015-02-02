@@ -558,7 +558,7 @@ static CGFloat const kPostMargin = 22;
     }
 
     // Creating second to last row on guest feed. 'realRow' represents the total number of sections in the feed
-    if (![self hasMorePosts] && [self onGuestFeed] && indexPath.section == realRow-1) {
+    if ([self onGuestFeed] && ![self hasMorePosts] && indexPath.section == realRow-2) {
         TDGuestInfoCell *cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGuestInfoCell" owner:self options:nil];
@@ -587,13 +587,13 @@ static CGFloat const kPostMargin = 22;
         cell.bottomLine.frame = CGRectMake(0, cell.frame.size.height - .5, cell.bottomLine.frame.size.width, .5);
         cell.bottomLine.backgroundColor = [TDConstants darkBorderColor];
         cell.topLine.backgroundColor = [TDConstants darkBorderColor];
-        
+
         return cell;
 
     }
 
     // Creating LAST row on guest feed. 'realRow' represents the total number of sections in the feed
-    if ([self onGuestFeed] && ![self hasMorePosts] && indexPath.section == realRow) {
+    if ([self onGuestFeed] && ![self hasMorePosts] && indexPath.section == realRow-1) {
         TDGuestInfoCell*cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGuestInfoCell" owner:self options:nil];
@@ -616,7 +616,7 @@ static CGFloat const kPostMargin = 22;
     }
     
     // Last row if no more
-    if (![self hasMorePosts] && indexPath.section == realRow && ![self onGuestFeed]) {
+    if (![self onGuestFeed]  && ![self hasMorePosts] && (indexPath.section == realRow)) {
         TDNoMorePostsCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_NO_MORE_POSTS];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_NO_MORE_POSTS owner:self options:nil];
@@ -637,6 +637,7 @@ static CGFloat const kPostMargin = 22;
         }
         [cell setPost:post];
         cell.row = indexPath.section;
+
         return cell;
     }
 
@@ -710,7 +711,6 @@ static CGFloat const kPostMargin = 22;
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSUInteger postsCount = [[self postsForThisScreen] count];
-    
     // 1st row is Profile Header
     if (self.profileType != kFeedProfileTypeNone && indexPath.section == 0) {
         return [TDUserProfileCell heightForUserProfile:[self getUser]];
@@ -768,8 +768,7 @@ static CGFloat const kPostMargin = 22;
         return SCREEN_HEIGHT/3;
     }
     
-    if (![self hasMorePosts] && realSection == postsCount && ![self onGuestFeed]) {
-        
+    if ( ![self onGuestFeed] && ![self hasMorePosts] && realSection == postsCount) {
         return uploadMoreHeight;
     }
     
@@ -781,7 +780,7 @@ static CGFloat const kPostMargin = 22;
     }
 
     TDPost *post = [self postForRow:indexPath.section];
-    
+
     if (!post) {
         return 0;
     }
@@ -1120,7 +1119,6 @@ static CGFloat const kPostMargin = 22;
 }
 
  - (void)followerStatButtonPressed {
-     debug NSLog(@"segue to follwers list");
      TDFollowViewController *vc = [[TDFollowViewController alloc] initWithNibName:@"TDFollowViewController" bundle:nil ];
      vc.profileUser = self.getUser;
      vc.followControllerType = kUserListType_Followers;
@@ -1129,7 +1127,6 @@ static CGFloat const kPostMargin = 22;
 
 - (void)inviteButtonPressedFromRow:(NSInteger)tag {
     if (tag == kFollowButtonTag) {
-        debug NSLog(@"follow this person");
         TDUserProfileCell * cell = nil;
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
         UITableViewCell * modifyCell = [self.tableView cellForRowAtIndexPath:indexPath];

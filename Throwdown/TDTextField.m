@@ -33,7 +33,6 @@
         NSArray *nibContents = [[NSBundle mainBundle] loadNibNamed:@"TDTextField" owner:self options:nil];
         self.backgroundColor = [UIColor clearColor];
         UIView *view = (UIView *)[nibContents lastObject];
-        debug NSLog(@"view.frame = %@", NSStringFromCGRect(view.frame));
         CGRect frame = view.frame;
         frame.size.width = self.frame.size.width;
         view.frame = frame;

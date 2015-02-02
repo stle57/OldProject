@@ -31,9 +31,6 @@
     self.topLabel.textColor = [TDConstants headerTextColor];
 
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    
-    //NSInteger yPosition = 25 + ([UIApplication sharedApplication].statusBarFrame.size.height/2);
-    //NSInteger yPosition = 25 - [UIApplication sharedApplication].statusBarFrame.size.height;
 
     self.backButton.frame = CGRectMake(20,
                                        ([UIApplication sharedApplication].statusBarFrame.size.height +50)/2 - [UIImage imageNamed:@"btn_back"].size.height/2,
@@ -56,7 +53,6 @@
     self.topLabel.frame = topLabelFrame;
     
     [self.backgroundImageView setBackgroundImage:YES editingViewOnly:YES];
-    debug NSLog(@"self.backgroundImageView.frame = %@", NSStringFromCGRect(self.backgroundImageView.frame));
     // Textfields
     
     self.alphaView.frame = self.view.frame;
@@ -98,6 +94,10 @@
     [self.userNameTextField becomeFirstResponder];
 }
 
+- (void)viewDidDisappear:(BOOL)animated {
+    [self.userNameTextField resignFirst];
+    [super viewDidDisappear:animated];
+}
 - (void)dealloc {
     self.emailOrPhoneNumber = nil;
 }
@@ -145,7 +145,19 @@
 
 - (IBAction)backButtonPressed:(UIButton *)sender
 {
-    [self.navigationController popViewControllerAnimated:YES];
+    if (self.navigationController.viewControllers.count) {
+        [self.navigationController popViewControllerAnimated:YES];
+
+    } else {
+        CATransition *transition = [CATransition animation];
+        transition.duration = 0.3;
+        transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+        transition.type = kCATransitionPush;
+        transition.subtype = kCATransitionFromLeft;
+        [self.view.window.layer addAnimation:transition forKey:nil];
+
+        [self dismissViewControllerAnimated:NO completion:nil];
+    }
 }
 
 - (IBAction)resetButtonPressed:(id)sender {
@@ -213,12 +225,15 @@
 
 - (void)showWelcomeController {
     [self dismissViewControllerAnimated:NO completion:nil];
-    
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:TDDismissLoginViewController object:self];
+
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *welcomeViewController = [storyboard instantiateViewControllerWithIdentifier:@"WelcomeViewController"];
     
     TDAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
     delegate.window.rootViewController = welcomeViewController;
     [self.navigationController popToRootViewControllerAnimated:NO];
+
 }
 @end
