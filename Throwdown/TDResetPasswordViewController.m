@@ -113,9 +113,13 @@
 }
 
 #pragma mark - TDTextField delegates
+- (void)textFieldDidBeginEditing:(UITextField *)textField type:(kTDTextFieldType)type {
+    [self validateEmailField];
+    self.keyboardUp = YES;
+}
+
 -(void)textFieldDidChange:(UITextField *)textField type:(kTDTextFieldType)type
 {
-    self.keyboardUp = YES;
     switch (type) {
         case kTDTextFieldType_UsernameOrPhoneNumber:
             self.emailOrPhoneNumber = textField.text;
