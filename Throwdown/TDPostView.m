@@ -233,7 +233,14 @@ static NSString *const kTracksKey = @"tracks";
         frame.size.height = kUsernameLocationHeight;
         self.usernameLabel.frame = frame;
 
-        self.locationLabel.text = post.locationName;
+        NSString *locationName = post.locationName;
+        if (locationName.length > 40) {
+            NSRange range = NSMakeRange (0, 40);
+            locationName = [locationName substringWithRange:range];
+            locationName = [locationName stringByAppendingString:@"..."];
+        }
+
+        self.locationLabel.text = locationName;
         CGFloat locationMaxWidth = width - kTextRightMargin - self.locationPinImage.frame.origin.x + self.locationPinImage.frame.size.width + 6;
         size = [self.locationLabel sizeThatFits:CGSizeMake(locationMaxWidth, kUsernameLocationHeight)];
         frame = self.locationLabel.frame;
