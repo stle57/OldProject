@@ -279,7 +279,7 @@ static CGFloat const kPostMargin = 22;
     }
 
     // 1st row for New User Header
-    if ([[TDCurrentUser sharedInstance] isNewUser] && section == [self noticeCount]) {
+    if ([[TDCurrentUser sharedInstance] isNewUser] && section == [self noticeCount] && [self isKindOfClass:[TDHomeViewController class]]) {
         return 1;
     }
 
@@ -479,7 +479,7 @@ static CGFloat const kPostMargin = 22;
     }
 
 
-    if ((![self onGuestFeed]) && [[TDCurrentUser sharedInstance] isNewUser] && indexPath.section == [self noticeCount]) {
+    if ((![self onGuestFeed]) && [[TDCurrentUser sharedInstance] isNewUser] && indexPath.section == [self noticeCount]  && [self isKindOfClass:[TDHomeViewController class]]) {
         TDGuestInfoCell *cell =[tableView dequeueReusableCellWithIdentifier:@"TDGuestInfoCell"];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDGuestInfoCell" owner:self options:nil];
@@ -738,7 +738,7 @@ static CGFloat const kPostMargin = 22;
         return [TDNoticeViewCell heightForNotice:[self getNoticeAt:indexPath.section]];
     }
 
-    if ((![self onGuestFeed]) && [[TDCurrentUser sharedInstance] isNewUser] && (indexPath.section == [self noticeCount])) {
+    if ((![self onGuestFeed]) && [[TDCurrentUser sharedInstance] isNewUser] && (indexPath.section == [self noticeCount])  && [self isKindOfClass:[TDHomeViewController class]]) {
         return [TDGuestInfoCell heightForNewUserCell:(![self noticeCount])];
     }
 
