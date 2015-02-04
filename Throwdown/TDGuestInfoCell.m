@@ -19,7 +19,7 @@ static NSString *setGoalsHitStr = @"btn_set_goals_interests_hit";
 
 static NSString *createPostStr = @"btn_create_first_post";
 static NSString *createPostHitStr = @"btn_create_first_post_hit";
-static NSString *text1 = @"Share with us:\n- Your latest workouts,\n- A proud moment, or\n- A recent healthy meal";
+static NSString *text1 = @"Share with us:\n- Your latest workouts,\n- A proud accomplishment, or\n- A recent healthy meal";
 static NSString *text2 = @"Please remember:\n- No inappropriate posts,\n- No direct advertisements at this time.";
 static NSString *guestWelcomeStr = @"Based on your goals and interests, here's a sample of posts from the community we thought you'd enjoy.\n\nTo like, comment, or make your own post, please join us by creating an account.  We'd love to have you!";
 static NSString *existingUser1 = @"We'd like to personalize your Throwdown experience.";
