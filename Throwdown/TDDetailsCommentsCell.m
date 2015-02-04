@@ -40,7 +40,7 @@ static CGFloat const kMaxUsernameWidth = 230;
     [self.usernameLabel addGestureRecognizer:usernameTap];
 }
 
-- (void)updateWithComment:(TDComment *)comment showIcon:(BOOL)showIcon {
+- (void)updateWithComment:(TDComment *)comment showIcon:(BOOL)showIcon showDate:(BOOL)showDate {
     self.timeLabel.labelDate = comment.createdAt;
     self.timeLabel.text = [comment.createdAt timeAgo];
     self.usernameLabel.text = comment.user.username;
@@ -60,6 +60,7 @@ static CGFloat const kMaxUsernameWidth = 230;
     self.messageLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:self.messageLabel.attributedText];
 
     self.commentIcon.hidden = !showIcon;
+    self.timeLabel.hidden = !showDate;
 }
 
 - (IBAction)userButtonPressed:(UITapGestureRecognizer *)g {

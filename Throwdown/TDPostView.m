@@ -197,7 +197,7 @@ static NSString *const kTracksKey = @"tracks";
     return self;
 }
 
-- (void)setPost:(TDPost *)post {
+- (void)setPost:(TDPost *)post showDate:(BOOL)showDate {
     if (post == nil) {
         return;
     }
@@ -275,8 +275,13 @@ static NSString *const kTracksKey = @"tracks";
         [self downloadUserImage:post.user.picture];
     }
 
-    self.createdLabel.labelDate = post.createdAt;
-    self.createdLabel.text = [post.createdAt timeAgo];
+    if (showDate) {
+        self.createdLabel.labelDate = post.createdAt;
+        self.createdLabel.text = [post.createdAt timeAgo];
+        self.createdLabel.hidden = NO;
+    } else {
+        self.createdLabel.hidden = YES;
+    }
 
     if (post.comment) {
         [self.commentLabel setText:post.comment afterInheritingLabelAttributesAndConfiguringWithBlock:nil];

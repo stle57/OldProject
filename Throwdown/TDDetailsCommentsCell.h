@@ -27,6 +27,6 @@
 @property (weak, nonatomic) IBOutlet TTTAttributedLabel *messageLabel;
 @property (weak, nonatomic) IBOutlet UILabel *usernameLabel;
 
-- (void)updateWithComment:(TDComment *)comment showIcon:(BOOL)showIcon;
+- (void)updateWithComment:(TDComment *)comment showIcon:(BOOL)showIcon showDate:(BOOL)showDate;
 - (IBAction)userButtonPressed:(id)sender;
 @end
