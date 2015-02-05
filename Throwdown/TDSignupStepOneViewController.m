@@ -241,15 +241,8 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
     [self.firstLastNameTextField resignFirst];
 
     [self.phoneNumberTextField resignFirst];
-    CATransition *transition = [CATransition animation];
-    transition.duration = .5;
-    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    //transition.type = kCATransitionReveal;
-    transition.subtype = kCATransitionFromBottom;
-    [self.view.window.layer addAnimation:transition forKey:nil];
-    
-    [self dismissViewControllerAnimated:YES completion:nil];
 
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)continueButtonPressed:(id)sender {

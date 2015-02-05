@@ -248,12 +248,6 @@ static NSString *buttonBackStr = @"btn_back";
     [self.userNameTextField resignFirst];
     [self.passwordTextField resignFirst];
 
-    CATransition *transition = [CATransition animation];
-    transition.duration = .45;
-    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    transition.subtype = kCATransitionFromTop;
-    [self.view.layer addAnimation:transition forKey:nil];
-    
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 

@@ -251,7 +251,7 @@
     CATransition *transition = [CATransition animation];
     transition.duration = .5;
     transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
-    transition.type = kCATransitionReveal;
+   // transition.type = kCATransitionReveal;
     transition.subtype = kCATransitionFromTop;
     [destViewController.view.window.layer addAnimation:transition forKey:nil];
 

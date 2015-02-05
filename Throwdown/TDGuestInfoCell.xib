@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
@@ -29,7 +29,7 @@
                 <outlet property="topLine" destination="LL9-DO-fuL" id="IDg-sp-qR5"/>
                 <outlet property="topMarginPadding" destination="OA3-0n-kd6" id="1IC-j3-iau"/>
             </connections>
-            <point key="canvasLocation" x="21" y="172"/>
+            <point key="canvasLocation" x="-105" y="27"/>
         </tableViewCell>
         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="XWo-6a-AVg">
             <rect key="frame" x="0.0" y="0.0" width="250" height="50"/>
@@ -120,7 +120,7 @@
             </connections>
         </button>
         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="IJn-eZ-x9O">
-            <rect key="frame" x="0.0" y="0.0" width="46" height="30"/>
+            <rect key="frame" x="0.0" y="-4" width="46" height="34"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <state key="normal" title="Button">
                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -128,6 +128,7 @@
             <connections>
                 <action selector="loginButtonPressed:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="0t3-RA-Gqv"/>
             </connections>
+            <point key="canvasLocation" x="435" y="368"/>
         </button>
     </objects>
     <resources>

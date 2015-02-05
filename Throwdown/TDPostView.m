@@ -38,7 +38,8 @@ typedef enum {
 static CGFloat const kMargin = 10;
 static CGFloat const kMarginBottomOfMedia = 13;
 static CGFloat const kHeightOfProfileRow = 65.;
-static CGFloat const kTextRightMargin = 85.;
+static CGFloat const kTextRightMargin = 78.;
+static CGFloat const kPRButtonWidth = 50.;
 static CGFloat const kUsernameMargin = 3;
 static CGFloat const kUsernameNormalHeight = 62.0;
 static CGFloat const kUsernameLocationHeight = 31.5;
@@ -233,24 +234,17 @@ static NSString *const kTracksKey = @"tracks";
         frame.size.height = kUsernameLocationHeight;
         self.usernameLabel.frame = frame;
 
-        NSString *locationName = post.locationName;
-        if (locationName.length > 40) {
-            NSRange range = NSMakeRange (0, 40);
-            locationName = [locationName substringWithRange:range];
-            locationName = [locationName stringByAppendingString:@"..."];
-        }
+        self.locationLabel.text = post.locationName;
+        CGFloat locationMaxWidth = width - (post.personalRecord ? kTextRightMargin : kPRButtonWidth)  - self.locationPinImage.frame.origin.x + self.locationPinImage.frame.size.width + 6;
 
-        self.locationLabel.text = locationName;
-        CGFloat locationMaxWidth = width - kTextRightMargin - self.locationPinImage.frame.origin.x + self.locationPinImage.frame.size.width + 6;
         size = [self.locationLabel sizeThatFits:CGSizeMake(locationMaxWidth, kUsernameLocationHeight)];
         frame = self.locationLabel.frame;
-        frame.size.width = size.width;
+        frame.size.width = post.personalRecord ? locationMaxWidth : size.width;
         frame.size.height = kUsernameLocationHeight;
         self.locationLabel.frame = frame;
-
         self.locationLabel.hidden = NO;
         self.locationPinImage.hidden = NO;
-
+        self.locationLabel.lineBreakMode = NSLineBreakByTruncatingTail;
     } else {
 
         self.usernameLabel.textInsets = UIEdgeInsetsZero;
