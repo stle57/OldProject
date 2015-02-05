@@ -193,19 +193,17 @@ static const NSUInteger BufferSize = 1024*1024;
         // 2
         [assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
             debug NSLog(@"Enumerate group: %@ asset count: %ld %@", [group valueForProperty:ALAssetsGroupPropertyName], (long)group.numberOfAssets, [group valueForProperty:ALAssetsGroupPropertyType]);
-
             if ((long)group.numberOfAssets > 0) {
-                [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
-                    if(result) {
-                        // 3
+                [group enumerateAssetsWithOptions:NSEnumerationReverse usingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+                    if (result) {
                         NSString *videoURL = [[result defaultRepresentation] UTI];
                         NSDictionary *photoInfo = @{@"asset" : result, @"date" : [result valueForProperty:ALAssetPropertyDate], @"uti" :videoURL};
                         [tmpAssets addObject:photoInfo];
                     }
                 }];
+
                 // 4
-                NSSortDescriptor *sort = [NSSortDescriptor sortDescriptorWithKey:@"date" ascending:NO];
-                self.assets = [tmpAssets sortedArrayUsingDescriptors:@[sort]];
+                self.assets = tmpAssets;
                 [[TDCurrentUser sharedInstance] didAskForPhotos:YES];
 
                 // 5
