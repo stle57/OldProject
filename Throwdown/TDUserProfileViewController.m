@@ -96,18 +96,15 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateUserFollowerCount:) name:TDUpdateFollowerCount object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostCount:) name:TDUpdatePostCount object:nil];
+
+    [self refreshPostsList];
+    [self fetchPosts];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
     [self.tableView reloadData];
-
-    if (!self.posts || goneDownstream) {
-        [self refreshPostsList];
-        [self fetchPosts];
-    }
-    goneDownstream = NO;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -117,8 +114,6 @@
 }
 
 - (IBAction)settingsButtonHit:(id)sender {
-    goneDownstream = YES;
-
     TDUserProfileEditViewController *vc = [[TDUserProfileEditViewController alloc] initWithNibName:@"TDUserProfileEditViewController" bundle:nil ];
     vc.profileUser = [[TDCurrentUser sharedInstance] currentUserObject];
     vc.profileType = self.profileType;
