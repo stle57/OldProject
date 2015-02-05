@@ -635,7 +635,7 @@ static CGFloat const kPostMargin = 22;
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             cell.delegate = self;
         }
-        [cell setPost:post];
+        [cell setPost:post showDate:![self onGuestFeed]];
         cell.row = indexPath.section;
 
         return cell;
@@ -704,7 +704,7 @@ static CGFloat const kPostMargin = 22;
     cell.row = indexPath.section;
     TDComment *comment = [post commentAtIndex:commentNumber];
     if (comment) {
-        [cell updateWithComment:comment showIcon:(commentNumber == 0)];
+        [cell updateWithComment:comment showIcon:(commentNumber == 0) showDate:![self onGuestFeed]];
     }
     return cell;
 }

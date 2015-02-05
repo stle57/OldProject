@@ -33,7 +33,7 @@
 @property (nonatomic, copy) NSString *filename;
 @property (nonatomic, copy) NSString *userPicture;
 
-- (void)setPost:(TDPost *)post;
+- (void)setPost:(TDPost *)post showDate:(BOOL)showDate;
 
 + (CGFloat)heightForPost:(TDPost *)post;
 

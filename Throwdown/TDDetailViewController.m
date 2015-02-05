@@ -317,7 +317,7 @@ static int const kToolbarHeight = 64;
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             cell.delegate = self;
         }
-        [cell setPost:self.post];
+        [cell setPost:self.post showDate:YES];
         return cell;
     }
 
@@ -350,7 +350,7 @@ static int const kToolbarHeight = 64;
     TDComment *comment = [self.post commentAtIndex:commentNumber];
     if (comment) {
         cell.commentNumber = commentNumber;
-        [cell updateWithComment:comment showIcon:(commentNumber == 0)];
+        [cell updateWithComment:comment showIcon:(commentNumber == 0) showDate:YES];
     }
 
     return cell;
