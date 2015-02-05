@@ -105,11 +105,6 @@ static const int closeBackgroundViewHeight = 80;
     self.keyboardUp = NO;
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    [[TDAnalytics sharedInstance] logEvent:@"goals_view"];
-}
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

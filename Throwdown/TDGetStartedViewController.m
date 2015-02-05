@@ -20,7 +20,6 @@ static NSString *getStartedButtonStr = @"btn_get_started";
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [[TDAnalytics sharedInstance] logEvent:@"welcome_view"];
 
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     // Do any additional setup after loading the view from its nib.
