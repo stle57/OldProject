@@ -38,8 +38,7 @@ typedef enum {
 static CGFloat const kMargin = 10;
 static CGFloat const kMarginBottomOfMedia = 13;
 static CGFloat const kHeightOfProfileRow = 65.;
-static CGFloat const kTextRightMargin = 78.;
-static CGFloat const kPRButtonWidth = 50.;
+static CGFloat const kTextRightMargin = 85.;
 static CGFloat const kUsernameMargin = 3;
 static CGFloat const kUsernameNormalHeight = 62.0;
 static CGFloat const kUsernameLocationHeight = 31.5;
@@ -235,11 +234,11 @@ static NSString *const kTracksKey = @"tracks";
         self.usernameLabel.frame = frame;
 
         self.locationLabel.text = post.locationName;
-        CGFloat locationMaxWidth = width - (post.personalRecord ? kTextRightMargin : kPRButtonWidth)  - self.locationPinImage.frame.origin.x + self.locationPinImage.frame.size.width + 6;
+        CGFloat locationMaxWidth = width - (post.personalRecord ? kTextRightMargin : kTextRightMargin - [UIImage imageNamed:@"trophy_64x64"].size.width) - self.locationPinImage.frame.origin.x + self.locationPinImage.frame.size.width + 6;
 
         size = [self.locationLabel sizeThatFits:CGSizeMake(locationMaxWidth, kUsernameLocationHeight)];
         frame = self.locationLabel.frame;
-        frame.size.width = post.personalRecord ? locationMaxWidth : size.width;
+        frame.size.width = locationMaxWidth < size.width ? locationMaxWidth : size.width;
         frame.size.height = kUsernameLocationHeight;
         self.locationLabel.frame = frame;
         self.locationLabel.hidden = NO;
