@@ -122,7 +122,7 @@
         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="IJn-eZ-x9O">
             <rect key="frame" x="0.0" y="-4" width="46" height="34"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-            <state key="normal" title="Button">
+            <state key="normal">
                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
             </state>
             <connections>
