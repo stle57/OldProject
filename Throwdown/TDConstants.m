@@ -9,7 +9,6 @@
 #import "TDConstants.h"
 #import "AVFoundation/AVFoundation.h"
 
-static NSString *const kDevHost = @"http://slemac.local:3000";
 static NSString *const kStagingHost = @"http://staging.throwdown.us";
 static NSString *const kProductionHost = @"https://throwdown.us";
 static NSString *const kProductionSharingHost = @"http://tdwn.us";
@@ -34,10 +33,14 @@ static NSString *const kCDNStreamingServer = @"http://139bc8fb83b0918931ad-a6f56
     return [bundleInfo objectForKey:@"ThrowdownURL"];
 }
 
++ (NSString *)devHost {
+    return [[[NSProcessInfo processInfo] environment] objectForKey:@"TD_DEV_HOST"];
+}
+
 + (NSString *)getBaseURL {
     switch ([self environment]) {
         case TDEnvDevelopment:
-            return kDevHost;
+            return [self devHost];
             break;
         case TDEnvStaging:
             return kStagingHost;
@@ -52,7 +55,7 @@ static NSString *const kCDNStreamingServer = @"http://139bc8fb83b0918931ad-a6f56
     NSString *server;
     switch ([self environment]) {
         case TDEnvDevelopment:
-            server = kDevHost;
+            server = [self devHost];
             break;
         case TDEnvStaging:
             server = kStagingHost;

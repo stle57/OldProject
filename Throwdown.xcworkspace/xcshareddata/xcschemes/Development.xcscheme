@@ -67,6 +67,13 @@
             ReferencedContainer = "container:Throwdown.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <EnvironmentVariables>
+         <EnvironmentVariable
+            key = "TD_DEV_HOST"
+            value = "http://localhost:3000"
+            isEnabled = "YES">
+         </EnvironmentVariable>
+      </EnvironmentVariables>
       <AdditionalOptions>
       </AdditionalOptions>
       <LocationScenarioReference
