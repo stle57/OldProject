@@ -114,6 +114,7 @@
 
 - (void)viewDidDisappear:(BOOL)animated {
     [self.userNameTextField resignFirst];
+    self.keyboardUp = NO;
     [super viewDidDisappear:animated];
 }
 - (void)dealloc {
@@ -248,17 +249,12 @@
 }
 
 - (void)showWelcomeController {
-    [self dismissViewControllerAnimated:NO completion:nil];
-
-    [[NSNotificationCenter defaultCenter] postNotificationName:TDDismissLoginViewController object:self];
-
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *welcomeViewController = [storyboard instantiateViewControllerWithIdentifier:@"WelcomeViewController"];
     
     TDAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
     delegate.window.rootViewController = welcomeViewController;
     [self.navigationController popToRootViewControllerAnimated:NO];
-
 }
 
 

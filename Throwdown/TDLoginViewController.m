@@ -148,8 +148,6 @@ static NSString *buttonBackStr = @"btn_back";
     centerFrame.y = self.loginButton.frame.origin.y;
     self.progress.center = centerFrame;
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeView) name:TDDismissLoginViewController object:nil];
-
     self.tapper = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
     [self.tapper setCancelsTouchesInView:NO];
     self.tapper.delegate = self;
@@ -168,10 +166,11 @@ static NSString *buttonBackStr = @"btn_back";
     self.keyboardUp = YES;
 }
 
-- (void)viewWillDisappear:(BOOL)animated {
+- (void)viewDidDisappear:(BOOL)animated {
     [self.userNameTextField resignFirst];
     [self.passwordTextField resignFirst];
-    [super viewWillDisappear:animated];
+    self.keyboardUp = NO;
+    [super viewDidDisappear:animated];
 }
 
 - (void)dealloc {
@@ -325,10 +324,6 @@ static NSString *buttonBackStr = @"btn_back";
 
     [srcViewController presentViewController:destViewController animated:NO completion:nil];
 
-}
-
-- (void)removeView {
-    [self dismissViewControllerAnimated:NO completion:nil];
 }
 
 - (void)handleSingleTap:(UITapGestureRecognizer *) sender {

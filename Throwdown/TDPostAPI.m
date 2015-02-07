@@ -224,13 +224,6 @@
 
 - (void)fetchPostsPath:(NSString *)path parameters:(NSDictionary *)params success:(void(^)(NSDictionary *response))successHandler error:(void (^)(void))errorHandler {
     
-    //TODO: TAKE THIS OUT BEFORE RELEASING 2.3
-    if ([TDConstants environment] == TDEnvProduction){
-        if (![[TDCurrentUser sharedInstance] isLoggedIn]) {
-            return;
-        }
-    }
-    
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager.requestSerializer setValue:TDDeviceInfo.bundleVersion forHTTPHeaderField:kHTTPHeaderBundleVersion];
     [manager GET:[[TDConstants getBaseURL] stringByAppendingString:path] parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
