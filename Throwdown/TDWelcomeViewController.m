@@ -103,6 +103,7 @@
                 }
                 if((dict != nil) && [dict objectForKey:@"interests"]) {
                     [TDCurrentUser sharedInstance].interestsList = [[dict objectForKey:@"interests"] mutableCopy];
+
                     if (self.interestsViewController) {
                         dispatch_async(dispatch_get_main_queue(), ^{
                             [self.interestsViewController.tableView reloadData];
@@ -156,7 +157,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
-    debug NSLog(@"done with welcome view controller ");
 }
 
 -(void)viewWillAppear:(BOOL)animated {
@@ -248,19 +248,9 @@
 
 #pragma mark - GetStartedViewControllerDelegate
 - (void) loginButtonPressed {
-    TDLoginViewController *loginController = [[TDLoginViewController alloc] initWithNibName:@"TDLoginViewController" bundle:nil withCloseButton:NO];
-    CATransition *transition = [CATransition animation];
-    transition.duration = 0.45;
-    transition.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionDefault];
-    transition.type = kCATransitionFromRight;
-    [transition setType:kCATransitionPush];
-    transition.subtype = kCATransitionFromRight;
-    transition.delegate = self;
-    [self.navigationController.view.layer addAnimation:transition forKey:nil];
-    
-    self.navigationController.navigationBarHidden = YES;
-    [self.navigationController pushViewController:loginController animated:NO];
-    
+    TDLoginViewController *loginController = [[TDLoginViewController alloc] initWithNibName:@"TDLoginViewController" bundle:nil withCloseButton:NO withImage:self.blurredBackgroundImage.image];
+
+    [self.navigationController pushViewController:loginController animated:YES];
 }
 
 - (void)getStartedButtonPressed {

@@ -17,8 +17,8 @@
 @property (weak, nonatomic) IBOutlet TDTextField *passwordTextField;
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *progress;
 @property (nonatomic) UIGestureRecognizer *tapper;
+@property (nonatomic) UIImage *blurredImage;
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withCloseButton:(BOOL)yes;
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withCloseButton:(BOOL)yes withImage:(UIImage*)withImage;
 
-- (IBAction)resetButtonPressed:(id)sender;
 @end

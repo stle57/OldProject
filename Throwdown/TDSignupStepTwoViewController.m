@@ -28,13 +28,26 @@
 
 @implementation TDSignupStepTwoViewController
 
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withImage:(UIImage*)withImage{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        self.blurredImage = [[UIImage alloc] initWithCGImage:withImage.CGImage];
+    }
+
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     [[TDAnalytics sharedInstance] logEvent:@"signup_step_two"];
     
-    [self.backgroundImageView setBackgroundImage:YES editingViewOnly:YES];
-    
+    if (self.blurredImage) {
+        [self.backgroundImageView setBlurredImage:self.blurredImage editingViewOnly:YES];
+    } else {
+        [self.backgroundImageView setBackgroundImage:YES editingViewOnly:YES];
+    }
+
     self.alphaView.frame = self.view.frame;
     self.alphaView.backgroundColor = [UIColor clearColor];
     

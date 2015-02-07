@@ -21,5 +21,6 @@
 @property (weak, nonatomic) IBOutlet TDTextField *firstLastNameTextField;
 @property (weak, nonatomic) IBOutlet UIButton *closeButton;
 @property (nonatomic) UIGestureRecognizer *tapper;
+@property (nonatomic) UIImage *blurredImage;
 
 @end

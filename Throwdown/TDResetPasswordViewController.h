@@ -14,6 +14,7 @@
 {
 
 }
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withImage:(UIImage*)withImage;
 
 @property (weak, nonatomic) IBOutlet TDAppCoverBackgroundView *backgroundImageView;
 @property (weak, nonatomic) IBOutlet UILabel *topLabel;
@@ -21,5 +22,6 @@
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *progress;
 @property (weak, nonatomic) IBOutlet UIView *alphaView;
 @property (nonatomic) UIGestureRecognizer *tapper;
+@property (nonatomic) UIImage *blurredImage;
 
 @end

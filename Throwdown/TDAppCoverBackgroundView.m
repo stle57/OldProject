@@ -12,6 +12,25 @@
 #import "UIImageEffects.h"
 @implementation TDAppCoverBackgroundView
 
+- (void)setBlurredImage:(UIImage *)image editingViewOnly:(BOOL)editViewOnly {
+    self.image = image;
+    if ([UIScreen mainScreen].bounds.size.height == 480) {
+        [self setFrame:CGRectMake(0, 0, [UIImage imageNamed:@"AppCover_iPhone4s"].size.width, [UIImage imageNamed:@"AppCover_iPhone4s"].size.height)];
+    } else if ([UIScreen mainScreen].bounds.size.height == 568) {
+        [self setFrame:CGRectMake(0, 0, [UIImage imageNamed:@"AppCover_iPhone5"].size.width, [UIImage imageNamed:@"AppCover_iPhone5"].size.height)];
+    } else if ([UIScreen mainScreen].bounds.size.height == 667) {
+        [self setFrame:CGRectMake(0, 0, [UIImage imageNamed:@"AppCover_iPhone6"].size.width, [UIImage imageNamed:@"AppCover_iPhone6"].size.height)];
+    } else {
+        [self setFrame:CGRectMake(0, 0, [UIImage imageNamed:@"AppCover_iPhone6plus"].size.width, [UIImage imageNamed:@"AppCover_iPhone6plus"].size.height)];
+    }
+
+    if (editViewOnly) {
+        self.alpha = 1;
+    } else {
+        self.alpha = 0;
+    }
+}
+
 - (void)setBackgroundImage:(BOOL)blurEffect editingViewOnly:(BOOL)editViewingOnly{
     if ([UIScreen mainScreen].bounds.size.height == 480) {
         [self setImage:[UIImage imageNamed:@"AppCover_iPhone4s"]];

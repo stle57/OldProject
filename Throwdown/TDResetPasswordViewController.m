@@ -23,6 +23,14 @@
 @end
 
 @implementation TDResetPasswordViewController
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withImage:(UIImage*)withImage{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        self.blurredImage = [[UIImage alloc] initWithCGImage:withImage.CGImage];
+    }
+
+    return self;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -51,9 +59,13 @@
     topLabelFrame.origin.x = SCREEN_WIDTH/2 - self.topLabel.frame.size.width/2;
     topLabelFrame.origin.y = ([UIApplication sharedApplication].statusBarFrame.size.height +50)/2 - self.topLabel.frame.size.height/2;
     self.topLabel.frame = topLabelFrame;
-    
-    [self.backgroundImageView setBackgroundImage:YES editingViewOnly:YES];
-    // Textfields
+
+    if (self.blurredImage) {
+        [self.backgroundImageView setBlurredImage:self.blurredImage editingViewOnly:YES];
+    } else {
+        [self.backgroundImageView setBackgroundImage:YES editingViewOnly:YES];
+    }
+        // Textfields
     
     self.alphaView.frame = self.view.frame;
     self.alphaView.backgroundColor = [UIColor clearColor];

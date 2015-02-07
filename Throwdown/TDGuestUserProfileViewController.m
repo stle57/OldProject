@@ -243,7 +243,7 @@
 }
 
 - (void)loginButtonPressed {
-    TDLoginViewController *loginViewController = [[TDLoginViewController alloc] initWithNibName:@"TDLoginViewController" bundle:nil withCloseButton:YES];
+    TDLoginViewController *loginViewController = [[TDLoginViewController alloc] initWithNibName:@"TDLoginViewController" bundle:nil withCloseButton:YES withImage:nil];
 
     //UIViewController *srcViewController = (UIViewController *) self;
     UIViewController *destViewController = (UIViewController *) loginViewController;

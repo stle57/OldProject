@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface TDAppCoverBackgroundView : UIImageView
-
+- (void)setBlurredImage:(UIImage *)image editingViewOnly:(BOOL)editViewOnly;
 - (void)setBackgroundImage:(BOOL)blurEffect editingViewOnly:(BOOL)editingViewOnly;
 @end

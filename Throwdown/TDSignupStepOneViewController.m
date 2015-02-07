@@ -38,6 +38,7 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
     TDPasswordField
 };
 
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -254,7 +255,8 @@ typedef NS_ENUM(NSInteger, TDSignupFields) {
 # pragma mark - navigation
 
 - (void)transitionToStepTwoController {
-    TDSignupStepTwoViewController *controller = [[TDSignupStepTwoViewController alloc] init];
+    TDSignupStepTwoViewController *controller = [[TDSignupStepTwoViewController alloc] initWithNibName:@"TDSignupStepTwoViewController" bundle:nil withImage:self.backgroundImageView.image];
+
     [controller userParameters:[self userParameters]] ;
     
     UIViewController *srcViewController = (UIViewController *) self;

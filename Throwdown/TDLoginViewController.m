@@ -34,11 +34,12 @@ static NSString *buttonLoginStr = @"btn_login";
 static NSString *buttonLoginHitStr = @"btn_login_hit";
 static NSString *buttonBackStr = @"btn_back";
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withCloseButton:(BOOL)yes {
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withCloseButton:(BOOL)yes withImage:(UIImage *)withImage{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
 
     if (self) {
         self.useCloseButton = yes;
+        self.blurredImage = [[UIImage alloc] initWithCGImage:withImage.CGImage];
     }
 
     return self;
@@ -48,7 +49,11 @@ static NSString *buttonBackStr = @"btn_back";
     [super viewDidLoad];
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-    [self.backgroundImageView setBackgroundImage:YES editingViewOnly:YES];
+    if (self.blurredImage) {
+        [self.backgroundImageView setBlurredImage:self.blurredImage editingViewOnly:YES];
+    } else {
+        [self.backgroundImageView setBackgroundImage:YES editingViewOnly:YES];
+    }
 
     self.alphaView.frame = self.view.frame;
     self.alphaView.backgroundColor = [UIColor clearColor];
@@ -65,8 +70,6 @@ static NSString *buttonBackStr = @"btn_back";
 
         [self.backButton addTarget:self action:@selector(closeThisView) forControlEvents:UIControlEventTouchUpInside];
 
-        [self.resetPasswordButton addTarget:self action:@selector(showResetPasswordView) forControlEvents:UIControlEventTouchUpInside];
-
     } else {
         [self.backButton setImage:[UIImage imageNamed:buttonBackStr] forState:UIControlStateNormal];
         [self.backButton setImage:[UIImage imageNamed:buttonBackStr] forState:UIControlStateSelected];
@@ -77,10 +80,12 @@ static NSString *buttonBackStr = @"btn_back";
                                            [UIImage imageNamed:buttonBackStr].size.width,
                                            [UIImage imageNamed:buttonBackStr].size.height);
         [self.backButton addTarget:self action:@selector(backButtonPressed) forControlEvents:UIControlEventTouchUpInside];
-        [self.resetPasswordButton addTarget:self action:@selector(resetButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+//        [self.resetPasswordButton addTarget:self action:@selector(resetButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
 
     }
 
+
+    [self.resetPasswordButton addTarget:self action:@selector(showResetPasswordView) forControlEvents:UIControlEventTouchUpInside];
     //- Adjust the size of the button to have a larger tap area
     self.backButton.frame = CGRectMake(self.backButton.frame.origin.x -10,
                                        self.backButton.frame.origin.y -10,
@@ -241,6 +246,7 @@ static NSString *buttonBackStr = @"btn_back";
     [self.userNameTextField resignFirst];
     [self.passwordTextField resignFirst];
     self.keyboardUp = NO;
+
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -301,17 +307,11 @@ static NSString *buttonBackStr = @"btn_back";
                      }];
 }
 
-- (IBAction)resetButtonPressed:(id)sender {
-
-    TDResetPasswordViewController *vc = [[TDResetPasswordViewController alloc] init];
-    [self.navigationController pushViewController:vc animated:YES];
-}
-
 - (void)showResetPasswordView {
     [self.userNameTextField resignFirst];
     [self.passwordTextField resignFirst];
 
-    TDResetPasswordViewController *controller = [[TDResetPasswordViewController alloc] init];
+    TDResetPasswordViewController *controller = [[TDResetPasswordViewController alloc] initWithNibName:@"TDResetPasswordViewController" bundle:nil withImage:self.backgroundImageView.image];
 
     UIViewController *srcViewController = (UIViewController *) self;
     UIViewController *destViewController = (UIViewController *) controller;

@@ -11,6 +11,8 @@
 #import "TDAppCoverBackgroundView.h"
 
 @interface TDSignupStepTwoViewController : UIViewController <TDTextFieldDelegate, UIGestureRecognizerDelegate>
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil withImage:(UIImage*)withImage;
+
 @property (weak, nonatomic) IBOutlet UIView *alphaView;
 @property (weak, nonatomic) IBOutlet TDAppCoverBackgroundView *backgroundImageView;
 @property (weak, nonatomic) IBOutlet UILabel *topLabel;
@@ -21,6 +23,7 @@
 @property (weak, nonatomic) IBOutlet TDTextField *userNameTextField;
 @property (weak, nonatomic) IBOutlet TDTextField *passwordTextField;
 @property (nonatomic) UIGestureRecognizer *tapper;
+@property (nonatomic) UIImage *blurredImage;
 
 - (void)userParameters:(NSDictionary *)parameters;
 - (IBAction)signupButtonPressed:(id)sender;
