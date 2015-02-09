@@ -80,12 +80,21 @@
     if ([@"comment" isEqualToString:[activity objectForKey:@"action"]]) {
         NSString *body = [[activity objectForKey:@"comment"] objectForKey:@"body"];
         users = [[activity objectForKey:@"comment"] objectForKey:@"mentions"];
-        if (!users.count) {
-            text = [NSString stringWithFormat:@"%@ said: \"%@\"", username, body];
-        } else {
-            text =  [NSString stringWithFormat:@"%@ mentioned you: \"%@\"", username, body];
+        BOOL foundMention = NO;
+        if (users.count) {
+            // Loop through all mentions and see if the mention id is equal to current user
+            NSArray *ids = [users valueForKey:@"id"];
+            NSUInteger index = [ids indexOfObject:[TDCurrentUser sharedInstance].userId];
+            if (index != NSNotFound) {
+                foundMention = YES;
+            }
         }
-            
+
+        if (foundMention) {
+            text =  [NSString stringWithFormat:@"%@ mentioned you: \"%@\"", username, body];
+        } else {
+            text = [NSString stringWithFormat:@"%@ said: \"%@\"", username, body];
+        }
     } else if ([@"like" isEqualToString:[activity objectForKey:@"action"]]) {
         text = [NSString stringWithFormat:@"%@ liked your post", username];
     } else if ([@"activity" isEqualToString:[activity objectForKey:@"action"]]) {
