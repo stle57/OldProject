@@ -243,15 +243,12 @@
 }
 
 - (void)loadUserList {
-    debug NSLog(@"...going to load user list in background thread, current UTC=%@", [[NSDate alloc] init]);
-    NSInteger unixtime = [[NSNumber numberWithDouble: [[NSDate date] timeIntervalSince1970]] integerValue];
-    debug NSLog(@"  unixtime in integer=%ld", (long)unixtime);
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         [[TDUserList sharedInstance] getListWithCallback:^(NSArray *returnList) {
             if (returnList) {
                 debug NSLog(@"we have a list");
             } else {
-                debug NSLog(@"no list");
+                [[TDAnalytics sharedInstance] logEvent:@"user_list_error" withInfo:@"failed retrieving user list in background" source:nil];
             }
         }];
     });
