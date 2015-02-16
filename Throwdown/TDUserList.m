@@ -15,7 +15,7 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
 
 @interface TDUserList ()
 
-@property (nonatomic) NSMutableArray *userList;
+@property (nonatomic) NSArray *userList;
 @property (nonatomic) long lastFetched;
 @property (nonatomic) BOOL isWaitingForCallback;
 
@@ -41,14 +41,17 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:self.userList forKey:@"users"];
-    [aCoder encodeObject:[NSString stringWithFormat:@"%ld", self.lastFetched] forKey:@"last_fetched"];
+    [aCoder encodeObject:[NSString stringWithFormat:@"%ld", self.lastFetched] forKey:@"last_fetched_int"];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
     self = [super init];
     if (self) {
-        self.userList = [aDecoder decodeObjectForKey:@"users"];
-        self.lastFetched = (int)[aDecoder decodeObjectForKey:@"last_fetched"];
+        id existingList = [aDecoder decodeObjectForKey:@"users"];
+        if ([existingList isKindOfClass:[NSArray class]]) {
+            self.userList = (NSArray *)existingList;
+        }
+        self.lastFetched = (int)[aDecoder decodeObjectForKey:@"last_fetched_int"];
     }
     return self;
 }
@@ -107,7 +110,7 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
             self.isWaitingForCallback = NO;
             if (success && returnList) {
                 if (lastFetched == 0) {
-                    self.userList = [returnList mutableCopy];
+                    self.userList = [NSArray arrayWithArray:returnList];
                 } else {
                     [self mergeUserList:returnList];
                 }
@@ -128,17 +131,19 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
 
 - (void)mergeUserList:(NSArray*)newUserList {
     if (self.userList) {
+        NSMutableArray *newList = [self.userList mutableCopy];
         for (id tempObject in newUserList) {
             NSPredicate *predicate = [NSPredicate predicateWithFormat:@"username MATCHES %@", [tempObject valueForKey:@"username"]];
-            NSArray *results = [self.userList filteredArrayUsingPredicate:predicate];
+            NSArray *results = [newList filteredArrayUsingPredicate:predicate];
             if (results.count == 1) {
                 NSDictionary *result = results[0];
-                [self.userList removeObject:result];
-                [self.userList addObject:tempObject];
+                [newList removeObject:result];
+                [newList addObject:tempObject];
             } else {
-                [self.userList addObject:tempObject];
+                [newList addObject:tempObject];
             }
         }
+        self.userList = [NSArray arrayWithArray:newList];
     }
 }
 @end
