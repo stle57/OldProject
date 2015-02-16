@@ -835,12 +835,14 @@
 }
 
 - (void)saveGoalsAndInterestsForGuest:(void (^) (BOOL success, NSDictionary *posts))callback{
+    NSLog(@"inside saveGoalsAndINterestsForGuest");
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
     NSArray *goalsArray = [[NSMutableArray alloc]init];
     goalsArray = [self createArray:[TDGuestUser sharedInstance].goalsList];
-
+    NSLog(@"  created goalsArray");
     NSArray *interestsArray = [[NSMutableArray alloc] init];
     interestsArray = [self createArray:[TDGuestUser sharedInstance].interestsList];
+    NSLog(@"   created interestsArray");
 
     NSString * url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/guests.json"]];
     NSDictionary *params = @{@"guest":TDDeviceInfo.metrics, @"interests":interestsArray, @"goals":goalsArray};
@@ -852,14 +854,15 @@
             if (success && [success boolValue]) {
                 callback([success boolValue], response);
             } else {
+                NSLog(@"   no boolean value sent in response to guests.json call");
                 callback(NO, @{});
             }
         } else {
-            debug NSLog(@"ERROR in retrieving data for guest user, got: %@", [responseObject class]);
+            NSLog(@"ERROR in retrieving data for guest user, got: %@", [responseObject class]);
             callback(NO, nil);
         }
     } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        debug NSLog(@"ERROR in guest user call: %@", [error localizedDescription]);
+        NSLog(@"ERROR in guest user call: %@", [error localizedDescription]);
         callback(NO, nil);
     }];
 }
