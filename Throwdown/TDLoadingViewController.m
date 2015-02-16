@@ -125,8 +125,8 @@
     NSLog(@"inside saveDataForGuest");
     [[TDAPIClient sharedInstance] saveGoalsAndInterestsForGuest:^(BOOL success, NSDictionary *posts) {
         if (success) {
+            self.guestPosts = [NSDictionary dictionaryWithDictionary:posts];
             [self endAnimation];
-            self.guestPosts = posts;
         } else {
              NSLog(@"error inside saveDataForGuest, endAnimation");
             [self endAnimation];
@@ -174,11 +174,13 @@
 
 - (void)endAnimation {
     self.loadedData = YES;
+    NSLog(@"animate to last view from endAnimation");
     [self animateToLastView];
 }
 
 - (void)setMinReached {
     self.minAnimationReached = YES;
+    NSLog(@"animate to last view from setMinReached");
     [self animateToLastView];
 }
 - (void)animateToLastView {
