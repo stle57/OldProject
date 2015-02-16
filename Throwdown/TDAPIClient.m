@@ -836,6 +836,7 @@
 
 - (void)saveGoalsAndInterestsForGuest:(void (^) (BOOL success, NSDictionary *posts))callback{
     self.httpManager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [self.httpManager.requestSerializer setValue:TDDeviceInfo.bundleVersion forHTTPHeaderField:kHTTPHeaderBundleVersion];
     NSArray *goalsArray = [[NSMutableArray alloc]init];
     goalsArray = [self createArray:[TDGuestUser sharedInstance].goalsList];
 
