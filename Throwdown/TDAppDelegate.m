@@ -75,6 +75,11 @@
         [self openPushNotification:[launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]];
     }
 
+    if ([[TDCurrentUser sharedInstance] isLoggedIn]) {
+        debug NSLog(@"acalling loaduser list form app delegate");
+        [[TDAppDelegate appDelegate] loadUserList];
+    }
+    
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 
     debug NSLog(@"app launched with options: %@", launchOptions);
@@ -237,6 +242,18 @@
     }
 }
 
+- (void)loadUserList {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [[TDUserList sharedInstance] getListWithCallback:^(NSArray *returnList) {
+            if (returnList) {
+                debug NSLog(@"we have a list");
+            } else {
+                [[TDAnalytics sharedInstance] logEvent:@"user_list_error" withInfo:@"failed retrieving user list in background" source:nil];
+            }
+        }];
+    });
+    debug NSLog(@"...done loading data in background thread");
+}
 #pragma mark - Facebook handling callbacks
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {

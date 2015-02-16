@@ -221,10 +221,11 @@
 
 - (void)showHomeController {
     [self dismissViewControllerAnimated:NO completion:nil];
+    [[TDAppDelegate appDelegate] loadUserList];
 
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     UIViewController *homeViewController = [storyboard instantiateViewControllerWithIdentifier:@"HomeViewController"];
-    
+
     TDAppDelegate *delegate = [[UIApplication sharedApplication] delegate];
     delegate.window.rootViewController = homeViewController;
     [self.navigationController popToRootViewControllerAnimated:NO];

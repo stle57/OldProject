@@ -24,6 +24,7 @@
 + (UIViewController *)topMostController;
 + (CGFloat)widthOfTextForString:(NSString *)aString andFont:(UIFont *)aFont maxSize:(CGSize)aSize;
 - (void)showToastWithText:(NSString *)text type:(kToastType)type payload:(NSDictionary *)payload delegate:(id<TDToastViewDelegate>)delegate;
+- (void)loadUserList;
 
 #pragma mark - Facebook
 - (void)sessionStateChanged:(FBSession *)session state:(FBSessionState)state error:(NSError *)error;

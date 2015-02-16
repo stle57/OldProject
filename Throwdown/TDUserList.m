@@ -15,8 +15,8 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
 
 @interface TDUserList ()
 
-@property (nonatomic) NSArray *userList;
-@property (nonatomic) NSDate *lastFetched;
+@property (nonatomic) NSMutableArray *userList;
+@property (nonatomic) long lastFetched;
 @property (nonatomic) BOOL isWaitingForCallback;
 
 
@@ -41,14 +41,14 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:self.userList forKey:@"users"];
-    [aCoder encodeObject:self.lastFetched forKey:@"last_fetched"];
+    [aCoder encodeObject:[NSString stringWithFormat:@"%ld", self.lastFetched] forKey:@"last_fetched"];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
     self = [super init];
     if (self) {
         self.userList = [aDecoder decodeObjectForKey:@"users"];
-        self.lastFetched = [aDecoder decodeObjectForKey:@"last_fetched"];
+        self.lastFetched = (int)[aDecoder decodeObjectForKey:@"last_fetched"];
     }
     return self;
 }
@@ -79,8 +79,10 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
         callback(@[]);
     }
 
-    if (!self.lastFetched || fabs([self.lastFetched timeIntervalSinceNow]) > kReloadUserListTime) {
-        [self getCommunityUserListWithCallback:callback];
+    if (self.userList == nil) {
+        [self getCommunityUserListWithCallback:0 callback:callback];
+    } else {
+        [self getCommunityUserListWithCallback:self.lastFetched callback:callback];
     }
 }
 
@@ -98,21 +100,24 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
 
 #pragma Requests to servers
 
-- (void)getCommunityUserListWithCallback:(void (^)(NSArray *list))callback {
+- (void)getCommunityUserListWithCallback:(long)lastFetched callback:(void (^)(NSArray *list))callback {
     if (!self.isWaitingForCallback) {
         self.isWaitingForCallback = YES;
-        debug NSLog(@"Fetching user list for mentions");
-        [[TDUserAPI sharedInstance] getCommunityUserList:^(BOOL success, NSArray *returnList) {
+        [[TDUserAPI sharedInstance] getCommunityUserList:lastFetched callback:^(BOOL success, NSArray *returnList) {
             self.isWaitingForCallback = NO;
-            if (success && returnList && returnList.count > 0) {
-                self.userList = [returnList copy];
-                self.lastFetched = [NSDate date];
+            if (success && returnList) {
+                if (lastFetched == 0) {
+                    self.userList = [returnList mutableCopy];
+                } else {
+                    [self mergeUserList:returnList];
+                }
+                NSInteger unixtime = [[NSNumber numberWithDouble: [[NSDate date] timeIntervalSince1970]] integerValue];
+                self.lastFetched = unixtime;
                 [self save];
                 if (callback) {
                     callback(self.userList);
                 }
             } else {
-                debug NSLog(@"no list");
                 if (callback) {
                     callback(@[]);
                 }
@@ -121,4 +126,19 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
     }
 }
 
+- (void)mergeUserList:(NSArray*)newUserList {
+    if (self.userList) {
+        for (id tempObject in newUserList) {
+            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"username MATCHES %@", [tempObject valueForKey:@"username"]];
+            NSArray *results = [self.userList filteredArrayUsingPredicate:predicate];
+            if (results.count == 1) {
+                NSDictionary *result = results[0];
+                [self.userList removeObject:result];
+                [self.userList addObject:tempObject];
+            } else {
+                [self.userList addObject:tempObject];
+            }
+        }
+    }
+}
 @end

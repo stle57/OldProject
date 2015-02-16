@@ -159,10 +159,8 @@
     [[TDUserAPI sharedInstance] getSuggestedUserList:^(BOOL success, NSArray *suggestedList) {
         if (success && suggestedList && suggestedList.count > 0) {
             self.suggestedUsers = [suggestedList copy];
-            debug NSLog(@"got suggested user list");
-            [[TDUserAPI sharedInstance] getCommunityUserList:^(BOOL success, NSArray *returnList) {
-                if (success && returnList && returnList.count > 0) {
-                    debug NSLog(@"got community user list");
+            [[TDUserList sharedInstance] getListWithCallback:^(NSArray *returnList) {
+                if (returnList && returnList.count > 0) {
                     self.tdUsers = [returnList copy];
                     if (self.searchText.length > 0) {
                         [self filterContentForSearchText:self.searchText scope:nil];
