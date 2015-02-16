@@ -153,7 +153,7 @@
     if (self.initialLoadDone) {
         return;
     }
-
+    NSLog(@"inside fetchPosts, for guest view controller");
     [[TDAPIClient sharedInstance] saveGoalsAndInterestsForGuest:^(BOOL success, NSDictionary *response) {
         if (response) {
             [self handleNextStart:[response objectForKey:@"next_start"]];
@@ -206,6 +206,8 @@
     if (![self hasMorePosts]) {
         return NO;
     }
+    NSLog(@"inside fetchMorePostsAtBottom, for guest view controller");
+
     [[TDAPIClient sharedInstance] saveGoalsAndInterestsForGuest:^(BOOL success, NSDictionary *response) {
         if (response) {
             [self handleNextStart:[response objectForKey:@"next_start"]];
