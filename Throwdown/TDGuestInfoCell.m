@@ -402,7 +402,7 @@ static const int bottomMarginPaddingHeight = 15;
                                  [UIImage imageNamed:@"td_icon"].size.height );
     [self addSubview:self.icon];
     
-    NSString *welcomeStr = [NSString stringWithFormat:@"%@%@%@", @"Welcome ", [TDCurrentUser sharedInstance].parseFirstName, @"!\nTell us about yourself." ];
+    NSString *welcomeStr = [NSString stringWithFormat:@"%@%@%@", @"Welcome, ", [TDCurrentUser sharedInstance].parseFirstName, @"!\nTell us about yourself." ];
     NSAttributedString *str = [TDViewControllerHelper makeParagraphedTextWithString:welcomeStr font:[TDConstants fontSemiBoldSized:19] color:[TDConstants headerTextColor] lineHeight:23 lineHeightMultipler:23/19];
     self.label1.attributedText = str;
     [self.label1 setNumberOfLines:0];
