@@ -52,6 +52,7 @@
         tdUsers = [[NSMutableArray alloc] init];
         inviteList = [[NSMutableArray alloc] init];
         self.labels = [[NSMutableArray alloc] init];
+        [self createLabels];
     }
     return self;
 }
@@ -265,7 +266,6 @@
             if ([self.searchText isEqual:@""]) {
                 return 65;
             } else {
-                [self createLabels];
                 UILabel *label = [self.labels objectAtIndex:0];
                 UILabel *label2 = [self.labels objectAtIndex:1];
                 return 30 + label.frame.size.height + 7 + label2.frame.size.height + 30 + [UIImage imageNamed:@"btn-invite-friends.png"].size.height+ self.headerView.frame.size.height;
