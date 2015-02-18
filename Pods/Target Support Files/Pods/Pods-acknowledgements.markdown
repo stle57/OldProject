@@ -206,15 +206,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
-## TestFlightSDK
-
-All text and design is copyright © 2010-2014 TestFlight App, Inc.
-
-All rights reserved.
-
-https://testflightapp.com/tos/
-
-
 ## UIImage+BlurredFrame
 
 The MIT License (MIT)

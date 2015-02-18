@@ -102,12 +102,6 @@
 #define COCOAPODS_VERSION_MINOR_TTTAttributedLabel 9
 #define COCOAPODS_VERSION_PATCH_TTTAttributedLabel 5
 
-// TestFlightSDK
-#define COCOAPODS_POD_AVAILABLE_TestFlightSDK
-#define COCOAPODS_VERSION_MAJOR_TestFlightSDK 3
-#define COCOAPODS_VERSION_MINOR_TestFlightSDK 0
-#define COCOAPODS_VERSION_PATCH_TestFlightSDK 0
-
 // UIImage+BlurredFrame
 #define COCOAPODS_POD_AVAILABLE_UIImage_BlurredFrame
 #define COCOAPODS_VERSION_MAJOR_UIImage_BlurredFrame 0

@@ -207,7 +207,7 @@ static CGFloat const kMinHeight = 230 + kBottomMargin;
     UIFont *font2= [TDConstants fontRegularSized:14];
     NSString *number;
     if (statCount) {
-        number = statCount.intValue > 500 ? @"500+" : statCount.stringValue;
+        number = statCount.intValue > kMaxShownFollowers ? [NSString stringWithFormat:@"%ld+", (long)kMaxShownFollowers] : statCount.stringValue;
     } else {
         number = @"";
     }

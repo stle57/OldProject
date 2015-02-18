@@ -255,19 +255,6 @@ THE SOFTWARE.
 		</dict>
 		<dict>
 			<key>FooterText</key>
-			<string>All text and design is copyright © 2010-2014 TestFlight App, Inc.
-
-All rights reserved.
-
-https://testflightapp.com/tos/
-</string>
-			<key>Title</key>
-			<string>TestFlightSDK</string>
-			<key>Type</key>
-			<string>PSGroupSpecifier</string>
-		</dict>
-		<dict>
-			<key>FooterText</key>
 			<string>The MIT License (MIT)
 
 Copyright (c) 2013 Adrián González &lt;bernardogzzf@gmail.com&gt;

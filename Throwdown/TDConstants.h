@@ -140,7 +140,9 @@ static CGFloat const kCommentPadding = 8; // padding between comments
 static CGFloat const kCommentMargin = 40; // 30 on left, 10 on right
 static CGFloat const kCommentLastPadding = 8; // bottom padding of comments
 static CGFloat const kCommentLastPaddingDetail = 25; // same as above for detail view
-static NSInteger const kCommentMaxCharacters = 500; // MAX number of characters allowed in a comment or post
+static NSInteger const kCommentMaxCharacters = 1000; // MAX number of characters allowed in a comment or post
+
+static NSInteger const kMaxShownFollowers = 500; // MAX number of followers/followings we show to a user
 
 // 1.27 is the lowest we can go without cutting off the emoji
 static CGFloat const kTextLineHeight = 1.27;
