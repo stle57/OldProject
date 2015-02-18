@@ -24,7 +24,7 @@
 - (void)logout;
 - (void)uploadAvatarImage:(NSString *)localImagePath withName:(NSString *)newName;
 - (void)setCrashlyticsMeta;
-- (void)getCommunityUserList:(long)lastFetched callback:(void (^)(BOOL success, NSArray *communityList))callback;
+- (void)getCommunityUserList:(NSNumber *)lastFetched callback:(void (^)(BOOL success, NSArray *communityList))callback;
 - (void)followUser:(NSNumber *)userID callback:(void (^)(BOOL success))callback;
 - (void)unFollowUser:(NSNumber *)userID callback:(void (^)(BOOL success))callback;
 - (void)getSuggestedUserList:(void (^)(BOOL success, NSArray *suggestedList))callback;

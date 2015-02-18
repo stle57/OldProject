@@ -82,7 +82,12 @@
     self.inviteButton.titleLabel.textColor = [UIColor whiteColor];
     UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithCustomView:self.inviteButton];
     self.navigationItem.rightBarButtonItem = rightBarButton;
-    
+
+    CGRect inviteFrame = self.inviteButton.frame;
+    inviteFrame.origin.y = 7;
+    inviteFrame.origin.x = 270;
+    self.inviteButton.frame = inviteFrame;
+
     // Title
     self.navLabel.textColor = [UIColor whiteColor];
     self.navLabel.font = [TDConstants fontSemiBoldSized:18];
@@ -128,6 +133,7 @@
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userFollowed:) name:TDNotificationUserFollow object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userUnfollowed:) name:TDNotificationUserUnfollow object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadUserList) name:TDUserListLoadedFromBackground object:nil];
     [self loadData];
 }
 
@@ -159,25 +165,30 @@
     [[TDUserAPI sharedInstance] getSuggestedUserList:^(BOOL success, NSArray *suggestedList) {
         if (success && suggestedList && suggestedList.count > 0) {
             self.suggestedUsers = [suggestedList copy];
-            [[TDUserList sharedInstance] getListWithCallback:^(NSArray *returnList) {
-                if (returnList && returnList.count > 0) {
-                    self.tdUsers = [returnList copy];
-                    if (self.searchText.length > 0) {
-                        [self filterContentForSearchText:self.searchText scope:nil];
-                    }
-                    self.gotFromServer = YES;
-                    [self.tableView reloadData];
-                    [self hideActivity];
-                } else {
-                    self.gotFromServer = NO;
-                    [self hideActivity];
-                }
-            }];
+            [self loadUserList];
         } else {
             self.gotFromServer = NO;
             [self hideActivity];
         }
     }];
+
+
+}
+
+- (void)loadUserList {
+    debug NSLog(@"  inside loadUserList");
+    [[TDUserList sharedInstance] getListWithCallback:^(NSArray *returnList) {
+        if (returnList && returnList.count > 0) {
+            self.tdUsers = [returnList copy];
+            if (self.searchText.length > 0) {
+                [self filterContentForSearchText:self.searchText scope:nil];
+            }
+            self.gotFromServer = YES;
+            [self.tableView reloadData];
+            [self hideActivity];
+        }
+    }];
+
 }
 
 - (void)didReceiveMemoryWarning {

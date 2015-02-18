@@ -16,14 +16,11 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
 @interface TDUserList ()
 
 @property (nonatomic) NSArray *userList;
-@property (nonatomic) long lastFetched;
+@property (nonatomic) NSNumber* lastFetched;
 @property (nonatomic) BOOL isWaitingForCallback;
-
-
 @end
 
 @implementation TDUserList
-
 + (TDUserList *)sharedInstance {
     static TDUserList *_sharedInstance = nil;
     static dispatch_once_t oncePredicate;
@@ -41,7 +38,7 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
 
 - (void)encodeWithCoder:(NSCoder *)aCoder {
     [aCoder encodeObject:self.userList forKey:@"users"];
-    [aCoder encodeObject:[NSString stringWithFormat:@"%ld", self.lastFetched] forKey:@"last_fetched_int"];
+    [aCoder encodeObject:self.lastFetched forKey:@"last_fetched_number"];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
@@ -51,7 +48,7 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
         if ([existingList isKindOfClass:[NSArray class]]) {
             self.userList = (NSArray *)existingList;
         }
-        self.lastFetched = (int)[aDecoder decodeObjectForKey:@"last_fetched_int"];
+        self.lastFetched = [aDecoder decodeObjectForKey:@"last_fetched_number"];
     }
     return self;
 }
@@ -81,11 +78,13 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
     } else {
         callback(@[]);
     }
+    debug NSLog(@"self.lastFetched = %@", self.lastFetched);
+    NSDate *lastFetchedDate = [NSDate dateWithTimeIntervalSince1970:[self.lastFetched doubleValue]];
 
-    if (self.userList == nil) {
-        [self getCommunityUserListWithCallback:0 callback:callback];
-    } else {
+    if (self.userList != nil && fabs([lastFetchedDate timeIntervalSinceNow]) > kReloadUserListTime) {
         [self getCommunityUserListWithCallback:self.lastFetched callback:callback];
+    } else if (self.userList == nil){
+        [self getCommunityUserListWithCallback:0 callback:callback];
     }
 }
 
@@ -103,7 +102,7 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
 
 #pragma Requests to servers
 
-- (void)getCommunityUserListWithCallback:(long)lastFetched callback:(void (^)(NSArray *list))callback {
+- (void)getCommunityUserListWithCallback:(NSNumber*)lastFetched callback:(void (^)(NSArray *list))callback {
     if (!self.isWaitingForCallback) {
         self.isWaitingForCallback = YES;
         [[TDUserAPI sharedInstance] getCommunityUserList:lastFetched callback:^(BOOL success, NSArray *returnList) {
@@ -111,11 +110,13 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
             if (success && returnList) {
                 if (lastFetched == 0) {
                     self.userList = [NSArray arrayWithArray:returnList];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:TDUserListLoadedFromBackground object:self];
                 } else {
+                    debug NSLog(@"   calling mergeUserList");
                     [self mergeUserList:returnList];
                 }
-                NSInteger unixtime = [[NSNumber numberWithDouble: [[NSDate date] timeIntervalSince1970]] integerValue];
-                self.lastFetched = unixtime;
+                self.lastFetched =[NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
+                debug NSLog(@"    LAST_FETCHED = %@", self.lastFetched);
                 [self save];
                 if (callback) {
                     callback(self.userList);
@@ -130,20 +131,21 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
 }
 
 - (void)mergeUserList:(NSArray*)newUserList {
-    if (self.userList) {
-        NSMutableArray *newList = [self.userList mutableCopy];
-        for (id tempObject in newUserList) {
-            NSPredicate *predicate = [NSPredicate predicateWithFormat:@"username MATCHES %@", [tempObject valueForKey:@"username"]];
-            NSArray *results = [newList filteredArrayUsingPredicate:predicate];
-            if (results.count == 1) {
-                NSDictionary *result = results[0];
-                [newList removeObject:result];
-                [newList addObject:tempObject];
-            } else {
-                [newList addObject:tempObject];
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        if (self.userList) {
+            NSMutableArray *newList = [self.userList mutableCopy];
+            for (id tempObject in newUserList) {
+                NSPredicate *predicate = [NSPredicate predicateWithFormat:@"username MATCHES %@", [tempObject valueForKey:@"username"]];
+                NSArray *results = [newList filteredArrayUsingPredicate:predicate];
+                if (results.count == 1) {
+                    NSDictionary *result = results[0];
+                    [newList removeObject:result];
+                }
             }
+            [newList addObjectsFromArray:newUserList];
+            self.userList = [NSArray arrayWithArray:newList];
         }
-        self.userList = [NSArray arrayWithArray:newList];
-    }
+    });
+
 }
 @end

@@ -150,17 +150,26 @@
     }
  }
 
-- (void)getCommunityUserList:(long)lastFetched callback:(void (^)(BOOL success, NSArray *communityList))callback {
+- (void)getCommunityUserList:(NSNumber *)lastFetched callback:(void (^)(BOOL success, NSArray *communityList))callback {
     NSAssert(callback != nil, @"getCommunityUserList callback required");
 
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     TDCurrentUser *currentUser = [TDCurrentUser sharedInstance];
 
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:[NSString stringWithFormat:@"/api/v1/users.json?user_token=%@", currentUser.authToken]];
-    NSNull *null = [NSNull null];
-    
-    NSDictionary *params = @{@"last_fetched": (lastFetched ? [NSString stringWithFormat:@"%ld", lastFetched] : null),
-                             @"bundle_version": [TDDeviceInfo bundleVersion] ? [TDDeviceInfo bundleVersion] : @""};
+
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+
+    if (lastFetched) {
+        [params addEntriesFromDictionary:@{@"last_fetched": [lastFetched stringValue] }];
+    }
+
+    if ([TDDeviceInfo bundleVersion]) {
+        [params addEntriesFromDictionary:@{@"bundle_version": [TDDeviceInfo bundleVersion]}];
+    }
+
+    debug NSLog(@"params = %@", params);
+
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     [manager GET:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {
