@@ -8,7 +8,6 @@
 
 #import "TDAppDelegate.h"
 #import "TDUserAPI.h"
-#import "TestFlight.h"
 #import "Flurry.h"
 #import <Crashlytics/Crashlytics.h>
 #import "TDAPIClient.h"
@@ -40,9 +39,6 @@
     if ([TDConstants flurryKey]) {
         [Flurry setCrashReportingEnabled:NO];
         [Flurry startSession:[TDConstants flurryKey]];
-    }
-    if ([TDConstants environment] != TDEnvProduction) {
-        [TestFlight takeOff:@"6fef227c-c5cb-4505-9502-9052e2819f45"];
     }
 
     if ([[TDCurrentUser sharedInstance] isLoggedIn]) {
