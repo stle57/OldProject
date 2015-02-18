@@ -78,7 +78,6 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
     } else {
         callback(@[]);
     }
-    debug NSLog(@"self.lastFetched = %@", self.lastFetched);
     NSDate *lastFetchedDate = [NSDate dateWithTimeIntervalSince1970:[self.lastFetched doubleValue]];
 
     if (self.userList != nil && fabs([lastFetchedDate timeIntervalSinceNow]) > kReloadUserListTime) {
@@ -112,11 +111,9 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
                     self.userList = [NSArray arrayWithArray:returnList];
                     [[NSNotificationCenter defaultCenter] postNotificationName:TDUserListLoadedFromBackground object:self];
                 } else {
-                    debug NSLog(@"   calling mergeUserList");
                     [self mergeUserList:returnList];
                 }
                 self.lastFetched =[NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
-                debug NSLog(@"    LAST_FETCHED = %@", self.lastFetched);
                 [self save];
                 if (callback) {
                     callback(self.userList);

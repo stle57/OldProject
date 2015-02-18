@@ -167,9 +167,6 @@
     if ([TDDeviceInfo bundleVersion]) {
         [params addEntriesFromDictionary:@{@"bundle_version": [TDDeviceInfo bundleVersion]}];
     }
-
-    debug NSLog(@"params = %@", params);
-
     manager.responseSerializer = [AFJSONResponseSerializer serializer];
     [manager GET:url parameters:params success:^(AFHTTPRequestOperation *operation, id responseObject) {
         if ([responseObject isKindOfClass:[NSDictionary class]]) {

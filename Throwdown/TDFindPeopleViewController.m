@@ -176,7 +176,6 @@
 }
 
 - (void)loadUserList {
-    debug NSLog(@"  inside loadUserList");
     [[TDUserList sharedInstance] getListWithCallback:^(NSArray *returnList) {
         if (returnList && returnList.count > 0) {
             self.tdUsers = [returnList copy];
@@ -522,8 +521,6 @@
     
     self.searchText = searchText;
     [self filterContentForSearchText:searchText scope:nil];
-
-    [self.tableView reloadData];
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -544,15 +541,24 @@
 #pragma mark Content Filtering
 
 - (void)filterContentForSearchText:(NSString*)searchText scope:(NSString*)scope {
-    // Update the filtered array based on the search text and scope.
     // Remove all objects from the filtered search array
     [self.filteredUsersArray removeAllObjects];
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(queue, ^ {
+        // Update the filtered array based on the search text and scope.
 
-    // Filter the arraphy using NSPredicate
-    NSString *regexString = [NSString stringWithFormat:@".*\\B%@.*", searchText];
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(SELF.username matches[c] %@) OR (SELF.name matches[c] %@)", regexString, regexString];
-    NSArray *tempArray = [self.tdUsers filteredArrayUsingPredicate:predicate];
-    self.filteredUsersArray = [NSMutableArray arrayWithArray:tempArray];
+
+        // Filter the arraphy using NSPredicate
+        NSString *regexString = [NSString stringWithFormat:@".*\\B%@.*", searchText];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(SELF.username matches[c] %@) OR (SELF.name matches[c] %@)", regexString, regexString];
+        NSArray *tempArray = [self.tdUsers filteredArrayUsingPredicate:predicate];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.filteredUsersArray = [NSMutableArray arrayWithArray:tempArray];
+            [self.tableView reloadData];
+        });
+    });
+
+
 }
 
 #pragma mark - TDFollowCellProfileDelegate

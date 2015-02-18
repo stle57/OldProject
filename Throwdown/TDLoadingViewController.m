@@ -122,13 +122,11 @@
 
 
 - (void)saveDataForGuest {
-    NSLog(@"inside saveDataForGuest");
     [[TDAPIClient sharedInstance] saveGoalsAndInterestsForGuest:^(BOOL success, NSDictionary *posts) {
         if (success) {
             self.guestPosts = [NSDictionary dictionaryWithDictionary:posts];
             [self endAnimation];
         } else {
-             NSLog(@"error inside saveDataForGuest, endAnimation");
             [self endAnimation];
         }
     }];
@@ -143,7 +141,6 @@
 
         });
     } else {
-        NSLog(@"get guest view in background thread");
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [self saveDataForGuest];
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -161,7 +158,6 @@
         // This is for guest user only;
         if (self.delegate && [self.delegate respondsToSelector:@selector(loadGuestView:)]) {
             if (self.guestViewController.errorLoading) {
-                NSLog(@"...inside loadCorrectView, guestViewController had error, show alert");
                 [TDViewControllerHelper showAlertMessage:@"There was an error, please try again." withTitle:@"Error"];
             } else {
                 if (self.guestPosts) {
@@ -174,13 +170,11 @@
 
 - (void)endAnimation {
     self.loadedData = YES;
-    NSLog(@"animate to last view from endAnimation");
     [self animateToLastView];
 }
 
 - (void)setMinReached {
     self.minAnimationReached = YES;
-    NSLog(@"animate to last view from setMinReached");
     [self animateToLastView];
 }
 - (void)animateToLastView {
@@ -197,7 +191,6 @@
                              [self performSelector:@selector(loadCorrectView) withObject:nil afterDelay:2.0];
                          }];
         } else {
-            NSLog(@"guest post count is empty or user is not logged in");
             [UIView animateWithDuration:.5
                                   delay:0
                                 options:UIViewAnimationOptionCurveEaseIn
@@ -205,7 +198,6 @@
                                  self.loadingView2.alpha = 0;
                              }
                              completion:^(BOOL finished){
-                                NSLog(@"error inside animateToLastView, show alert message, then load interests view");
                                  [TDViewControllerHelper showAlertMessage:@"There was an error, please try again." withTitle:@"Error"];
                                  [self.delegate loadInterestsView];
                              }];
