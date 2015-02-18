@@ -127,8 +127,8 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
     }
 }
 
-- (void)mergeUserList:(NSArray*)newUserList {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+- (void)mergeUserList:(NSArray *)newUserList {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0), ^{
         if (self.userList) {
             NSMutableArray *newList = [self.userList mutableCopy];
             for (id tempObject in newUserList) {
@@ -143,6 +143,6 @@ static NSString *const DATA_LOCATION = @"/Documents/user_list.bin";
             self.userList = [NSArray arrayWithArray:newList];
         }
     });
-
 }
+
 @end
