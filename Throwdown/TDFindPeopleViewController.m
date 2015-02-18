@@ -134,7 +134,6 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userFollowed:) name:TDNotificationUserFollow object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(userUnfollowed:) name:TDNotificationUserUnfollow object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(loadUserList) name:TDUserListLoadedFromBackground object:nil];
-    [self loadData];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -155,6 +154,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 
+    self.searchBar.text = nil;
+    [self loadData];
 }
 
 - (void)loadData {
