@@ -161,6 +161,10 @@
         self.addButton.frame = buttonFrame;
         self.bottomLine.hidden = YES;
     } else {
+        CGRect frame = self.frame;
+        frame.size.height = 44;
+        self.frame = frame;
+
         NSAttributedString *attString = [TDViewControllerHelper makeLeftAlignedTextWithString:text font:[TDConstants fontRegularSized:16.] color:[TDConstants headerTextColor] lineHeight:16. lineHeightMultipler:16./16.];
         self.goalLabel.attributedText = attString;
         [self.goalLabel sizeToFit];
