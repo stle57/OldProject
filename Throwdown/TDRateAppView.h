@@ -9,34 +9,30 @@
 #import <UIKit/UIKit.h>
 #import "TDFeedbackViewController.h"
 #import "iRate.h"
+#import "TDConstants.h"
 
-#define TD_BUTTON_HEIGHT 49.
-
-@protocol CustomAlertDelegate
+@protocol TDRateAppDelegate <NSObject>
+@optional
+-(void)openAppStore;
+-(void)removeReviewAppCell;
+-(void)fadeToReviewPrompt;
+-(void)fadeToFeedbackPrompt;
+-(void)showFeedbackModal;
 @end
 
 @interface TDRateAppView : UIView<iRateDelegate>
-{
-    id delegate;
-    UIView *AlertView;
-}
-
-@property (weak, nonatomic) IBOutlet UIImageView *tdIcon;
-@property (weak, nonatomic) IBOutlet UIButton *rateButton;
-@property (weak, nonatomic) IBOutlet UIButton *feedbackButton;
-@property (weak, nonatomic) IBOutlet UIButton *dismissButton;
-@property (weak, nonatomic) IBOutlet UILabel *label1;
-@property (weak, nonatomic) IBOutlet UILabel *label2;
-@property (weak, nonatomic) IBOutlet UIView *divider;
-@property (weak, nonatomic) IBOutlet UIView *divider2;
-@property (weak, nonatomic) IBOutlet UIView *divider3;
+@property (nonatomic, weak) id <TDRateAppDelegate> delegate;
+@property (weak, nonatomic) IBOutlet UILabel *title;
+@property (weak, nonatomic) IBOutlet UIButton *yesButton;
+@property (weak, nonatomic) IBOutlet UIButton *noButton;
+@property (weak, nonatomic) IBOutlet UIView *bottomPadding;
+@property (weak, nonatomic) IBOutlet UIView *topLine;
+@property (weak, nonatomic) IBOutlet UIView *bottomLine;
 @property (nonatomic, retain) TDFeedbackViewController *feedbackVC;
+@property (nonatomic) kRateAppViewType viewType;
++ (id)rateView:(kRateAppViewType)type;
+- (void)setup:(kLoadingViewType)type;
 
-+ (id)rateView;
-- (void)showInView;
-
-- (IBAction)dismissButtonPressed:(UIButton *)sender;
-- (IBAction)feedbackButtonPressed:(UIButton *)sender;
-- (IBAction)rateButtonPressed:(UIButton *)sender;
-
+- (IBAction)noButtonPressed:(id)sender;
+- (IBAction)yesButtonPressed:(id)sender;
 @end

@@ -649,6 +649,27 @@ static NSString *const kPushNotificationApproved = @"push-notification-approved"
 
 }
 
+-(void)didNotEnjoyThrowdown:(BOOL)yes {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:yes forKey:@"didNotEnjoyThrowdown"];
+    [defaults synchronize];
+}
+
+- (BOOL)didNotEnjoyThrowdown {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    return [defaults boolForKey:@"didNotEnjoyThrowdown"];
+}
+
+- (void)didEnjoyThrowdown:(BOOL)yes {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setBool:yes forKey:@"didEnjoyThrowdown"];
+    [defaults synchronize];
+}
+
+- (BOOL)didEnjoyThrowdown {
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    return [defaults boolForKey:@"didEnjoyThrowdown"];
+}
 - (BOOL)isNewUser {
     NSString *key = [NSString stringWithFormat:@"isNewUser_%@", [self.userId stringValue]];
 

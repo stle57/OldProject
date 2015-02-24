@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6250" systemVersion="14B25" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6254" systemVersion="14C109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6244"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6247"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
@@ -11,87 +11,48 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="td_icon" id="6KC-yW-fTl">
-                    <rect key="frame" x="259" y="54" width="43" height="42"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                </imageView>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="KG8-o1-4ee">
-                    <rect key="frame" x="135" y="140" width="290" height="40"/>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="8mF-Nc-Wa0">
+                    <rect key="frame" x="139" y="274" width="42" height="21"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="eni-a5-3C7">
-                    <rect key="frame" x="135" y="207" width="290" height="21"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="RbI-vc-rWk">
+                    <rect key="frame" x="95" y="268" width="130" height="33"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
-                <view contentMode="scaleToFill" id="Usg-En-of3">
-                    <rect key="frame" x="0.0" y="0.0" width="290" height="1"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                </view>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="X5V-aI-UTf">
-                    <rect key="frame" x="155" y="276" width="290" height="49"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <state key="normal" title="Button">
+                    <state key="normal" image="btn_yes">
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
+                    <state key="selected" image="btn_yes"/>
+                    <state key="highlighted" image="btn_yes"/>
                     <connections>
-                        <action selector="rateButtonPressed:" destination="iN0-l3-epB" eventType="touchUpInside" id="iGm-jY-hrs"/>
+                        <action selector="yesButtonPressed:" destination="iN0-l3-epB" eventType="touchUpInside" id="G6L-Vw-Kep"/>
                     </connections>
                 </button>
-                <view contentMode="scaleToFill" id="Zaw-TR-6z6">
-                    <rect key="frame" x="0.0" y="0.0" width="290" height="1"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="PL6-2f-2Dg">
+                    <rect key="frame" x="95" y="268" width="130" height="33"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                </view>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="soG-Io-7XU">
-                    <rect key="frame" x="113" y="387" width="290" height="49"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <state key="normal" title="Button">
+                    <state key="normal" image="btn_not_really">
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
                     <connections>
-                        <action selector="feedbackButtonPressed:" destination="iN0-l3-epB" eventType="touchUpInside" id="jgh-DW-hOC"/>
-                    </connections>
-                </button>
-                <view contentMode="scaleToFill" id="gOb-1N-eIU">
-                    <rect key="frame" x="0.0" y="0.0" width="290" height="1"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                </view>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="IGd-oZ-pMM">
-                    <rect key="frame" x="113" y="500" width="290" height="49"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                    <state key="normal" title="Button">
-                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                    </state>
-                    <connections>
-                        <action selector="dismissButtonPressed:" destination="iN0-l3-epB" eventType="touchUpInside" id="gcX-cC-N1t"/>
+                        <action selector="noButtonPressed:" destination="iN0-l3-epB" eventType="touchUpInside" id="unY-99-16g"/>
                     </connections>
                 </button>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <connections>
-                <outlet property="dismissButton" destination="IGd-oZ-pMM" id="Gb1-Si-BXA"/>
-                <outlet property="divider" destination="Usg-En-of3" id="U7s-1i-7dc"/>
-                <outlet property="divider2" destination="Zaw-TR-6z6" id="vYg-CT-6ZH"/>
-                <outlet property="divider3" destination="gOb-1N-eIU" id="xLe-yx-J4y"/>
-                <outlet property="feedbackButton" destination="soG-Io-7XU" id="p6G-yU-Gb2"/>
-                <outlet property="label1" destination="KG8-o1-4ee" id="pog-62-D4C"/>
-                <outlet property="label2" destination="eni-a5-3C7" id="huj-sz-rdA"/>
-                <outlet property="rateButton" destination="X5V-aI-UTf" id="jkD-h3-wuW"/>
-                <outlet property="tdIcon" destination="6KC-yW-fTl" id="CRB-BS-Qnd"/>
+                <outlet property="noButton" destination="PL6-2f-2Dg" id="Jzf-Q5-aAD"/>
+                <outlet property="title" destination="8mF-Nc-Wa0" id="pTR-NL-cal"/>
+                <outlet property="yesButton" destination="RbI-vc-rWk" id="Cdq-PK-k9C"/>
             </connections>
             <point key="canvasLocation" x="348" y="231"/>
         </view>
     </objects>
     <resources>
-        <image name="td_icon" width="42" height="42"/>
+        <image name="btn_not_really" width="130" height="33"/>
+        <image name="btn_yes" width="130" height="33"/>
     </resources>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">
         <simulatedStatusBarMetrics key="statusBar"/>

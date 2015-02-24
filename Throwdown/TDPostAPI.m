@@ -303,8 +303,6 @@
     debug NSLog(@"inside likePostWithId");
     //  /api/v1/posts/{post's id}/like.json
     if (self.lastLikedPostId == nil) {
-        debug NSLog(@"setting event count inside like post");
-        [iRate sharedInstance].eventCount = [iRate sharedInstance].eventCount + TD_LIKE_EVENT_COUNT;
         self.lastLikedPostId = postId;
     }
 
@@ -341,9 +339,6 @@
 - (void)unLikePostWithId:(NSNumber *)postId {
     //  /api/v1/posts/{post's id}/like.json
     if (self.lastLikedPostId == nil) {
-        debug NSLog(@"setting event count");
-        // This takes care of the scenario where the user liked a post and then immediately disliked it.
-        [iRate sharedInstance].eventCount = [iRate sharedInstance].eventCount + TD_LIKE_EVENT_COUNT;
         self.lastLikedPostId = postId;
     }
 
@@ -405,8 +400,7 @@
     if (!messageBody || !postId) {
         return;
     }
-    [iRate sharedInstance].eventCount = [iRate sharedInstance].eventCount + TD_COMMENT_EVENT_COUNT;
-    
+
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/comments.json"];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     [manager POST:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken , @"comment[body]" : messageBody, @"comment[post_id]" : postId} success:^(AFHTTPRequestOperation *operation, id responseObject) {
@@ -445,21 +439,16 @@
 }
 
 - (void)uploadVideo:(NSString *)localVideoPath withThumbnail:(NSString *)localPhotoPath withName:(NSString *)newName {
-    [iRate sharedInstance].eventCount = [iRate sharedInstance].eventCount + TD_POST_EVENT_COUNT;
     TDPostUpload *upload = [[TDPostUpload alloc] initWithVideoPath:localVideoPath thumbnailPath:localPhotoPath newName:newName];
     [[NSNotificationCenter defaultCenter] postNotificationName:TDPostUploadStarted object:upload userInfo:nil];
 }
 
 - (void)uploadPhoto:(NSString *)localPhotoPath withName:(NSString *)newName {
-    [iRate sharedInstance].eventCount = [iRate sharedInstance].eventCount + TD_POST_EVENT_COUNT;
-
     TDPostUpload *upload = [[TDPostUpload alloc] initWithPhotoPath:localPhotoPath newName:newName];
     [[NSNotificationCenter defaultCenter] postNotificationName:TDPostUploadStarted object:upload userInfo:nil];
 }
 
 - (void)addTextPost:(NSString *)comment isPR:(BOOL)isPR isPrivate:(BOOL)isPrivate shareOptions:(NSArray *)shareOptions location:(NSDictionary*)location{
-    [iRate sharedInstance].eventCount = [iRate sharedInstance].eventCount + TD_POST_EVENT_COUNT;
-
     TDTextUpload *upload = [[TDTextUpload alloc] initWithComment:comment isPR:isPR isPrivate:isPrivate location:location];
     upload.shareOptions = shareOptions;
     [[NSNotificationCenter defaultCenter] postNotificationName:TDPostUploadStarted object:upload userInfo:nil];

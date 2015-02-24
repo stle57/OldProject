@@ -82,4 +82,8 @@
 - (BOOL)isNewUser;
 - (void)isNewUser:(BOOL)yes;
 - (NSString*)parseFirstName;
+- (void)didNotEnjoyThrowdown:(BOOL)yes;
+- (BOOL)didNotEnjoyThrowdown;
+- (void)didEnjoyThrowdown:(BOOL)yes;
+- (BOOL)didEnjoyThrowdown;
 @end

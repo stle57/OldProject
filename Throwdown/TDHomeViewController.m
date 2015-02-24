@@ -202,8 +202,10 @@
         hasAskedForGoalsFinal = YES; // We don't want to add another section if both values are no.  So override the boolean
     }
 
-
-    NSInteger realRow = row - ([self noticeCount] + ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) + (hasAskedForGoal ? 0 : 1) + (hasAskedForGoalsFinal ? 0 :1) );
+    NSInteger realRow = row - ([self noticeCount] + ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) + (hasAskedForGoal ? 0 : 1) + (hasAskedForGoalsFinal ? 0 :1) ) ;
+    if ([iRate sharedInstance].shouldPromptForRating && (realRow > TD_REVIEW_APP_CELL_POST_NUM)){
+        realRow = realRow - 1;
+    }
 
     if (realRow < [posts count]) {
         return [posts objectAtIndex:realRow];
@@ -860,6 +862,7 @@
 
 - (void)removeOverlay {
     [self.disableViewOverlay removeFromSuperview];
+    [self refreshPostsList];
 }
 
 - (void)showFeedbackViewController {

@@ -10,7 +10,6 @@
 #import "TDConstants.h"
 #import "TDAPIClient.h"
 #import "TDCurrentUser.h"
-#import "TDRateAppView.h"
 #import "UIPlaceHolderTextView.h"
 
 @interface TDFeedbackViewController ()

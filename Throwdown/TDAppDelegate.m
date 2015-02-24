@@ -14,7 +14,7 @@
 #import "TDAnalytics.h"
 #import "TDURLHelper.h"
 #import "TDHomeViewController.h"
-#import "TDRateAppView.h"
+//#import "TDRateAppView.h"
 
 // Used for class reference:
 #import "TDRecordVideoViewController.h"
@@ -129,7 +129,7 @@
         [iRate sharedInstance].applicationBundleID = @"us.throwdown.throwdown";
     }
     [iRate sharedInstance].daysUntilPrompt = 0;
-    [iRate sharedInstance].eventsUntilPrompt = 30;
+    [iRate sharedInstance].usesUntilPrompt = 10;
     [iRate sharedInstance].promptForNewVersionIfUserRated = YES;
 	[iRate sharedInstance].onlyPromptIfLatestVersion = NO;
     
@@ -141,24 +141,15 @@
 }
 
 - (BOOL)iRateShouldPromptForRating {
+    //Bypassing the delegate and using shouldPromptForRating inside the HomeViewController
     TDHomeViewController *homeViewController = [TDHomeViewController getHomeViewController];
     if (homeViewController) {
-        [[TDAppDelegate appDelegate] showRateAppView];
+        [homeViewController.tableView reloadData];
         [[TDAnalytics sharedInstance] logEvent:@"rating_asked"];
     }
     return NO;
 }
 
-- (void)showRateAppView {
-    debug NSLog(@"inside showRateAppView");
-
-    TDHomeViewController *homeViewController = [TDHomeViewController getHomeViewController];
-    [homeViewController addOverlay];
-
-    TDRateAppView * rateView = [TDRateAppView rateView];
-    [rateView showInView];
-    
-}
 #pragma mark - Push notifications
 
 // iOS 8 only

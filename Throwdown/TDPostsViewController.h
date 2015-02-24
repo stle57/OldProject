@@ -25,8 +25,9 @@
 #import "TDNoMorePostsCell.h"
 #import "TDNoticeViewCell.h"
 #import "TDGuestInfoCell.h"
+#import "TDReviewAppCell.h"
 
-@interface TDPostsViewController : UIViewController <TDFeedLikeCommentDelegate, TDPostViewDelegate, TDDetailsCommentsCellDelegate, UIActionSheetDelegate, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate, TDUserProfileCellDelegate, TDGuestUserInfoCellDelegate>
+@interface TDPostsViewController : UIViewController <TDFeedLikeCommentDelegate, TDPostViewDelegate, TDDetailsCommentsCellDelegate, UIActionSheetDelegate, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate, TDUserProfileCellDelegate, TDGuestUserInfoCellDelegate, TDReviewAppCellDelegate>
 {
     BOOL goneDownstream;
     CGFloat likeHeight;

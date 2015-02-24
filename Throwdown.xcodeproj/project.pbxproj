@@ -122,6 +122,8 @@
 		4DC7360D1A49EDEB000A8CA9 /* TDLoginViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DC7360C1A49EDEB000A8CA9 /* TDLoginViewController.xib */; };
 		4DC7360F1A49F237000A8CA9 /* TDResetPasswordViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DC7360E1A49F237000A8CA9 /* TDResetPasswordViewController.xib */; };
 		4DC736121A4A3A9F000A8CA9 /* TDAppCoverBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DC736111A4A3A9F000A8CA9 /* TDAppCoverBackgroundView.m */; };
+		4DCA79951A964F650015CEC3 /* TDReviewAppCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DCA79931A964F650015CEC3 /* TDReviewAppCell.m */; };
+		4DCA79961A964F650015CEC3 /* TDReviewAppCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DCA79941A964F650015CEC3 /* TDReviewAppCell.xib */; };
 		4DD0837019AC585C00149968 /* TDToastViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DD0836F19AC585C00149968 /* TDToastViewController.m */; };
 		4DD170DB19EF15D600979EC8 /* TDFindPeopleViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 4DD170D919EF15D600979EC8 /* TDFindPeopleViewController.m */; };
 		4DD170DC19EF15D600979EC8 /* TDFindPeopleViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4DD170DA19EF15D600979EC8 /* TDFindPeopleViewController.xib */; };
@@ -437,6 +439,9 @@
 		4DC7360E1A49F237000A8CA9 /* TDResetPasswordViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDResetPasswordViewController.xib; sourceTree = "<group>"; };
 		4DC736101A4A3A9F000A8CA9 /* TDAppCoverBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDAppCoverBackgroundView.h; sourceTree = "<group>"; };
 		4DC736111A4A3A9F000A8CA9 /* TDAppCoverBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDAppCoverBackgroundView.m; sourceTree = "<group>"; };
+		4DCA79921A964F650015CEC3 /* TDReviewAppCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDReviewAppCell.h; sourceTree = "<group>"; };
+		4DCA79931A964F650015CEC3 /* TDReviewAppCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDReviewAppCell.m; sourceTree = "<group>"; };
+		4DCA79941A964F650015CEC3 /* TDReviewAppCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TDReviewAppCell.xib; sourceTree = "<group>"; };
 		4DD0836E19AC585C00149968 /* TDToastViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDToastViewController.h; sourceTree = "<group>"; };
 		4DD0836F19AC585C00149968 /* TDToastViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDToastViewController.m; sourceTree = "<group>"; };
 		4DD170D819EF15D600979EC8 /* TDFindPeopleViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDFindPeopleViewController.h; sourceTree = "<group>"; };
@@ -1271,6 +1276,9 @@
 				4D5D43E819EB8A2D00046772 /* TDNoFollowingCell.h */,
 				4D5D43E919EB8A2D00046772 /* TDNoFollowingCell.m */,
 				4D5D43EA19EB8A2D00046772 /* TDNoFollowingCell.xib */,
+				4DCA79921A964F650015CEC3 /* TDReviewAppCell.h */,
+				4DCA79931A964F650015CEC3 /* TDReviewAppCell.m */,
+				4DCA79941A964F650015CEC3 /* TDReviewAppCell.xib */,
 			);
 			name = Feed;
 			sourceTree = "<group>";
@@ -1474,6 +1482,7 @@
 				4D36F51A19CCE66700A279A5 /* TDSendInviteController.xib in Resources */,
 				4D2843D919C649D600E4A56C /* TDNoFollowProfileCell.xib in Resources */,
 				A1F3B3681907821800CDA9F5 /* Dring.caf in Resources */,
+				4DCA79961A964F650015CEC3 /* TDReviewAppCell.xib in Resources */,
 				4D6FCC2519CAA34D00902719 /* TDContactsViewController.xib in Resources */,
 				4DD84DEF1A5EFDDF000AF63B /* Images.xcassets in Resources */,
 				4DC735F91A434C5C000A8CA9 /* TDGoalsCell.xib in Resources */,
@@ -1709,6 +1718,7 @@
 				A109FF351909C76000506F88 /* TDAnalytics.m in Sources */,
 				A1432CE418A99DA40073E492 /* TDSignupStepOneViewController.m in Sources */,
 				A17567901891C7F20034AD05 /* TDPostAPI.m in Sources */,
+				4DCA79951A964F650015CEC3 /* TDReviewAppCell.m in Sources */,
 				4D2843EC19C9F42200E4A56C /* TDInviteCell.m in Sources */,
 				A1FBA27D1981C57D00C65E04 /* TDPRSegue.m in Sources */,
 				2DC7B6AA18FF3D8500261BF7 /* TDToastView.m in Sources */,
@@ -1918,8 +1928,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_DISPLAY_NAME_SUFFIX = "";
 				BUNDLE_ID_SUFFIX = "";
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				EXCLUDED_SOURCE_FILE_NAMES = "FLEX*";
 				FACEBOOK_APP_ID = 1419119258326947;
@@ -2032,8 +2042,8 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				BUNDLE_DISPLAY_NAME_SUFFIX = "-ß";
 				BUNDLE_ID_SUFFIX = .staging;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Throwdown Labs, Inc. (T4FM8T6LS4)";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_RESOURCE_RULES_PATH = "$(SDKROOT)/ResourceRules.plist";
 				EXCLUDED_SOURCE_FILE_NAMES = "";
 				FACEBOOK_APP_ID = 1470514189854120;

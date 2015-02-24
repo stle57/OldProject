@@ -25,7 +25,7 @@
 
 static CGFloat const kWhiteBottomPadding = 6;
 static CGFloat const kPostMargin = 22;
-
+static CGFloat const kReviewAppCellHeight = 128;
 @interface TDPostsViewController ()
 
 @property (nonatomic) TDCustomRefreshControl *customRefreshControl;
@@ -67,7 +67,6 @@ static CGFloat const kPostMargin = 22;
     noFollowingHeight = noFollowingCell.frame.size.height - kHeightOfStatusBar;
     noFollowingCell = nil;
 
-    
     self.loaded = NO;
     self.errorLoading = NO;
 
@@ -254,8 +253,7 @@ static CGFloat const kPostMargin = 22;
         return 1 + (self.profileType != kFeedProfileTypeNone ? 1 : 0);
     }
 
-    // 1 section per post, +1 if we need the Profile Header cell or +1 if we need the new user welcome cell
-    return [posts count] + [self noticeCount] + (showBottomSpinner ? 1 : 0) + ([self hasMorePosts] ? 0 : 1) + (self.profileType != kFeedProfileTypeNone ? 1 : 0) + ([self onGuestFeed] ? 5 : 0) + ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) + (hasAskedForGoal ? 0 : 1) + (hasAskedForGoalsFinal ? 0 :1);
+    return [posts count] + [self noticeCount] + (showBottomSpinner ? 1 : 0) + ([self hasMorePosts] ? 0 : 1) + (self.profileType != kFeedProfileTypeNone ? 1 : 0) + ([self onGuestFeed] ? 5 : 0) + ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) + (hasAskedForGoal ? 0 : 1) + (hasAskedForGoalsFinal ? 0 :1) + ((![self onGuestFeed] && [iRate sharedInstance].shouldPromptForRating) ? 1 :0);
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -303,20 +301,29 @@ static CGFloat const kPostMargin = 22;
         }
     }
 
-    NSInteger row = [[self postsForThisScreen] count] + [self noticeCount] + (self.profileType != kFeedProfileTypeNone ? 1 : 0) + ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) + (hasAskedForGoal ? 0 : 1) + (hasAskedForGoalsFinal ? 0 :1);
+    NSInteger realRow = [[self postsForThisScreen] count] + [self noticeCount] + (self.profileType != kFeedProfileTypeNone ? 1 : 0) + ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) + (hasAskedForGoal ? 0 : 1) + (hasAskedForGoalsFinal ? 0 :1) + ((![self onGuestFeed] && [iRate sharedInstance].shouldPromptForRating) ? 1: 0);
+
     // Last row with Activity
-    if (showBottomSpinner && section == row) {
+    if (showBottomSpinner && section == realRow) {
         return 1;
     }
 
     //When on guest feed, we've added 4 or 5 sections, to display the first 2 sections, 1 middle section, and 2 sections at the end
-    if ([self onGuestFeed] &&  ((section == row+4)|| (section == row+5))) {
+    if ([self onGuestFeed] &&  ((section == realRow+4)|| (section == realRow+5))) {
         // Returns number of rows for last two sections on guest feed.
         return 1;
     }
+
+
+    NSInteger postNumber = section - [self noticeCount] - ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) - (hasAskedForGoal ? 0 : 1) - (hasAskedForGoalsFinal ? 0 :1);
     
+    // Show the review cell if we've met the conditions
+    if ((![self onGuestFeed] && [iRate sharedInstance].shouldPromptForRating) && ((postNumber) == TD_REVIEW_APP_CELL_POST_NUM)) {
+        return 1;
+    }
+
     // Last row with no more posts
-    if ( ![self onGuestFeed] && ![self hasMorePosts] && section == row) {
+    if ( ![self onGuestFeed] && ![self hasMorePosts] && section == realRow) {
         return 1;
     }
 
@@ -329,11 +336,12 @@ static CGFloat const kPostMargin = 22;
         // 1 for bottom padding
         return  3 + ([post.commentsTotalCount integerValue] > 2 ? 3 : [post.commentsTotalCount integerValue]);
     }
+
     return 0;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSInteger realRow = [[self postsForThisScreen] count] + [self noticeCount] + (self.profileType != kFeedProfileTypeNone ? 1 : 0) + ([self onGuestFeed] ? 5 : 0 )+ ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) + ([[TDCurrentUser sharedInstance] didAskForGoalsInitially] ? 0 : 1);
+    NSInteger realRow = [[self postsForThisScreen] count] + [self noticeCount] + (self.profileType != kFeedProfileTypeNone ? 1 : 0) + ([self onGuestFeed] ? 5 : 0 )+ ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) + ([[TDCurrentUser sharedInstance] didAskForGoalsInitially] ? 0 : 1) + ((![self onGuestFeed] && [iRate sharedInstance].shouldPromptForRating) ? 1 :0);
 
     // 1st row for Profile Header
     if (self.profileType != kFeedProfileTypeNone && indexPath.section == 0) {
@@ -614,7 +622,21 @@ static CGFloat const kPostMargin = 22;
         
         return cell;
     }
-    
+
+    NSInteger postNumber = indexPath.section - [self noticeCount] - (self.profileType != kFeedProfileTypeNone ? 1 : 0) - ([self onGuestFeed] ? 5 : 0) - ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) - ([[TDCurrentUser sharedInstance] didAskForGoalsInitially] ? 0 : 1);
+
+    if ((![self onGuestFeed] && [iRate sharedInstance].shouldPromptForRating)  && ((postNumber) == TD_REVIEW_APP_CELL_POST_NUM)) {
+        TDReviewAppCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_REVIEW_APP_CELL];
+        if (!cell) {
+            NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:CELL_IDENTIFIER_REVIEW_APP_CELL owner:self options:nil];
+            cell = [topLevelObjects objectAtIndex:0];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.delegate = self;
+        }
+
+        return cell;
+    }
+
     // Last row if no more
     if (![self onGuestFeed]  && ![self hasMorePosts] && (indexPath.section == realRow)) {
         TDNoMorePostsCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_NO_MORE_POSTS];
@@ -625,7 +647,7 @@ static CGFloat const kPostMargin = 22;
         }
         return cell;
     }
-    
+
     // The actual post row
     TDPost *post = [self postForRow:indexPath.section];
     if (indexPath.row == 0) {
@@ -750,7 +772,6 @@ static CGFloat const kPostMargin = 22;
         return [TDGuestInfoCell heightForEditGoalsCell];
     }
 
-
     NSInteger realSection = indexPath.section - [self noticeCount] - (self.profileType != kFeedProfileTypeNone ? 1 : 0)- ([self onGuestFeed] ? 5 : 0) - ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) - ([[TDCurrentUser sharedInstance] didAskForGoalsInitially] ? 0 : 1);
 
     // Last row with Activity
@@ -767,11 +788,16 @@ static CGFloat const kPostMargin = 22;
     if ([self onGuestFeed] && ![self hasMorePosts] && (indexPath.section == postsCount+5)) {
         return SCREEN_HEIGHT/3;
     }
-    
+
+    // We do realsection+1 because realSection is 0 based index
+    if ((![self onGuestFeed] && [iRate sharedInstance].shouldPromptForRating) && ((realSection) == TD_REVIEW_APP_CELL_POST_NUM) ){
+        return kReviewAppCellHeight;
+    }
+
     if ( ![self onGuestFeed] && ![self hasMorePosts] && realSection == postsCount) {
         return uploadMoreHeight;
     }
-    
+
     NSInteger lastRow = [self tableView:nil numberOfRowsInSection:indexPath.section] - 1;
     
     // Last row in each post section is just background padding and bottom line
@@ -1236,6 +1262,10 @@ static CGFloat const kPostMargin = 22;
 
 - (void)dismissButtonPressed {
     [self.tableView reloadData];
+}
+
+- (void)reloadTable {
+    [self dismissButtonPressed];
 }
 
 @end

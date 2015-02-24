@@ -220,6 +220,7 @@ static NSString *const kActivityCell = @"TDActivitiesCell";
 
 - (void)removeOverlay {
     [self.disableViewOverlay removeFromSuperview];
+    [self.tableView reloadData];
 }
 
 

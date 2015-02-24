@@ -42,6 +42,13 @@ enum {
 };
 typedef NSInteger kLoadingViewType;
 
+enum {
+    kEnjoyView_Rate,
+    kRateAppView_Rate,
+    kFeedbackView_Rate
+};
+typedef NSInteger kRateAppViewType;
+
 // for TDNotificationUpdatePost notifications, set user data's "change" field to a NSNumber version of these:
 const typedef NS_ENUM(NSUInteger, kUpdatePostType) {
     kUpdatePostTypeLike,
@@ -172,6 +179,7 @@ static NSInteger const kFollowingButtonTag = 20003;
 #define CELL_IDENTIFIER_CREATE_POSTHEADER  @"TDCreatePostHeaderCell"
 #define CELL_IDENTIFIER_CREATE_IMAGE_CELL  @"TDPhotoCellCollectionViewCell"
 #define CELL_IDENTIFIER_TD_LOCATION        @"TDLocationCell"
+#define CELL_IDENTIFIER_REVIEW_APP_CELL    @"TDReviewAppCell"
 #define TOAST_TAG                        87352
 #define COMMENT_MESSAGE_WIDTH            306.0
 #define COMMENT_MESSAGE_FONT_SIZE        15.0
@@ -198,6 +206,7 @@ static NSInteger const kFollowingButtonTag = 20003;
 #define TD_IPHONE_5_KEYBOARD_HEIGHT      216
 #define TD_IPHONE_6_KEYBOARD_HEIGHT      225
 #define TD_IPHONE_6PLUS_KEYBOARD_HEIGHT  236
+#define TD_REVIEW_APP_CELL_POST_NUM      5
 
 + (TDEnvironment)environment;
 + (NSString *)appScheme;
