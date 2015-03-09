@@ -19,7 +19,8 @@
 @property (nonatomic, retain) TDLoadingView *loadingView2;
 @property (nonatomic, retain) TDLoadingView *loadingView3;
 @property (nonatomic) BOOL minAnimationReached;
-@property (nonatomic) BOOL loadedData;
+@property (nonatomic) BOOL serverResponded;
+@property (nonatomic) BOOL errorFromServer;
 @property (nonatomic) TDGuestUserProfileViewController *guestViewController;
 @property (nonatomic) NSDictionary *guestPosts;
 @end
@@ -37,7 +38,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.minAnimationReached = NO;
-    self.loadedData = NO;
+    self.serverResponded = NO;
+    self.errorFromServer = NO;
 
     self.view.frame = CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     self.view.backgroundColor = [UIColor clearColor];
@@ -114,8 +116,9 @@
         if (success) {
             [self endAnimation];
         } else {
+            self.errorFromServer = YES;
             [self endAnimation];
-            [TDViewControllerHelper showAlertMessage:@"There was an error, please try again." withTitle:@"Error"];
+            debug NSLog(@"ending animation, there is an error");
         }
     }];
 }
@@ -127,6 +130,7 @@
             self.guestPosts = [NSDictionary dictionaryWithDictionary:posts];
             [self endAnimation];
         } else {
+            self.errorFromServer = YES;
             [self endAnimation];
         }
     }];
@@ -136,7 +140,8 @@
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [self saveDataForUser];
             dispatch_async(dispatch_get_main_queue(), ^{
-                self.loadedData = NO;
+                debug NSLog(@"loaded data set to no on main queue");
+                self.serverResponded = NO;
             });
 
         });
@@ -144,7 +149,9 @@
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
             [self saveDataForGuest];
             dispatch_async(dispatch_get_main_queue(), ^{
-                self.loadedData = NO;
+                debug NSLog(@"loaded data set to no on main queue");
+
+                self.serverResponded = NO;
             });
         });
     }
@@ -158,7 +165,7 @@
         // This is for guest user only;
         if (self.delegate && [self.delegate respondsToSelector:@selector(loadGuestView:)]) {
             if (self.guestViewController.errorLoading) {
-                [TDViewControllerHelper showAlertMessage:@"There was an error, please try again." withTitle:@"Error"];
+                [TDViewControllerHelper showAlertMessage:@"We're sorry. Looks like there was a bad connection to our servers. Please try again." withTitle:@"Error"];
             } else {
                 if (self.guestPosts) {
                     [self.delegate loadGuestView:self.guestPosts];
@@ -169,7 +176,7 @@
 }
 
 - (void)endAnimation {
-    self.loadedData = YES;
+    self.serverResponded = YES;
     [self animateToLastView];
 }
 
@@ -178,19 +185,8 @@
     [self animateToLastView];
 }
 - (void)animateToLastView {
-    if (self.minAnimationReached && self.loadedData) {
-        if (self.guestPosts || [[TDCurrentUser sharedInstance] isLoggedIn]) {
-        [UIView animateWithDuration:.5
-                              delay:0
-                            options:UIViewAnimationOptionCurveEaseIn
-                         animations:^{
-                             self.loadingView2.alpha = 0;
-                             self.loadingView3.alpha = 1;
-                         }
-                         completion:^(BOOL finished){
-                             [self performSelector:@selector(loadCorrectView) withObject:nil afterDelay:2.0];
-                         }];
-        } else {
+    if (self.minAnimationReached && self.serverResponded) {
+        if (self.errorFromServer) {
             [UIView animateWithDuration:.5
                                   delay:0
                                 options:UIViewAnimationOptionCurveEaseIn
@@ -198,11 +194,22 @@
                                  self.loadingView2.alpha = 0;
                              }
                              completion:^(BOOL finished){
-                                 [TDViewControllerHelper showAlertMessage:@"There was an error, please try again." withTitle:@"Error"];
+                                 [TDViewControllerHelper showAlertMessage:@"We're sorry. Looks like there was a bad connection to our servers. Please try again." withTitle:@"Error"];
                                  [self.delegate loadInterestsView];
                              }];
+         } else {
+             [UIView animateWithDuration:.5
+                                   delay:0
+                                 options:UIViewAnimationOptionCurveEaseIn
+                              animations:^{
+                                  self.loadingView2.alpha = 0;
+                                  self.loadingView3.alpha = 1;
+                              }
+                              completion:^(BOOL finished){
+                                  [self performSelector:@selector(loadCorrectView) withObject:nil afterDelay:2.0];
+                              }];
 
-        }
+         }
     }
 }
 @end
