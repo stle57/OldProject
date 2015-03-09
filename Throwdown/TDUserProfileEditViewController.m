@@ -700,7 +700,7 @@
                 case 0:
                 {
                     cell.longTitleLabel.hidden = NO;
-                    cell.longTitleLabel.text = @"Push Notifications";
+                    cell.longTitleLabel.text = @"Notifications";
                     cell.selectionStyle = UITableViewCellSelectionStyleGray;
                     cell.rightArrow.hidden = NO;
                     cell.topLine.hidden = NO;
