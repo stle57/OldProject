@@ -394,6 +394,61 @@
     }];
 }
 
+- (void)unfollowPostWithId:(NSNumber *)postId {
+    // Notify any views to reload
+//    [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUpdatePost
+//                                                        object:self
+//                                                      userInfo:@{
+//                                                                 @"postId": postId,
+//                                                                 @"change": [NSNumber numberWithUnsignedInteger:kUpdatePostTypeUnlike]
+//                                                                 }];
+
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts/[POST_ID]/unfollow_post.json"];
+    url = [url stringByReplacingOccurrencesOfString:@"[POST_ID]"
+                                         withString:[postId stringValue]];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager POST:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *returnDict = [NSDictionary dictionaryWithDictionary:responseObject];
+            if ([returnDict objectForKey:@"success"]) {
+                if ([[returnDict objectForKey:@"success"] boolValue]) {
+                    debug NSLog(@"Unfollow Success!");
+                }
+            }
+        }
+
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"UNFOLLOW POST Error: %@", error);
+        if ([operation.response statusCode] == 401) {
+            [self logOutUser];
+        }
+    }];
+}
+
+- (void)followPostWithId:(NSNumber *)postId {
+    // Notify any views to reload
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts/[POST_ID]/unfollow_post.json"];
+    url = [url stringByReplacingOccurrencesOfString:@"[POST_ID]"
+                                         withString:[postId stringValue]];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager DELETE:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        // TODO: There is no failure handling here
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *returnDict = [NSDictionary dictionaryWithDictionary:responseObject];
+            if ([returnDict objectForKey:@"success"]) {
+                if ([[returnDict objectForKey:@"success"] boolValue]) {
+                    debug NSLog(@"Follow post Success!");
+                }
+            }
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"UNFOLLOW POST Error: %@", error);
+        if ([operation.response statusCode] == 401) {
+            [self logOutUser];
+        }
+    }];
+}
+
 #pragma mark - Comments
 
 - (void)postNewComment:(NSString *)messageBody forPost:(NSNumber *)postId {

@@ -41,12 +41,14 @@ static int const kToolbarHeight = 64;
 @property (nonatomic) UITapGestureRecognizer *tapGesture;
 @property (nonatomic) CGFloat minLikeheight;
 @property (nonatomic) BOOL liking;
+@property (nonatomic) BOOL muting;
 @property (nonatomic) BOOL isEditing;
 @property (nonatomic) BOOL loaded;
 @property (nonatomic) NSString *cachedText;
 @property (nonatomic) TDUserListView *userListView;
 @property (nonatomic) TDActivityIndicator *activityIndicator;
 @property (nonatomic) TDKeyboardObserver *keyboardObserver;
+@property (nonatomic) UIBarButtonItem *dotBarItem;
 @end
 
 @implementation TDDetailViewController
@@ -189,11 +191,19 @@ static int const kToolbarHeight = 64;
 
     UIActionSheet *actionSheet;
     if (self.post.slug) {
-        actionSheet = [[UIActionSheet alloc] initWithTitle:nil
-                                                  delegate:self
-                                         cancelButtonTitle:@"Cancel"
-                                    destructiveButtonTitle:reportText
-                                         otherButtonTitles:@"Copy Share Link", nil];
+        if (self.post.unfollowed || self.muting == YES) {
+            actionSheet = [[UIActionSheet alloc] initWithTitle:nil
+                                                      delegate:self
+                                             cancelButtonTitle:@"Cancel"
+                                        destructiveButtonTitle:reportText
+                                             otherButtonTitles:@"Unmute this post", @"Copy Share Link", nil];
+        } else {
+            actionSheet = [[UIActionSheet alloc] initWithTitle:nil
+                                                      delegate:self
+                                             cancelButtonTitle:@"Cancel"
+                                        destructiveButtonTitle:reportText
+                                             otherButtonTitles:@"Mute this post", @"Copy Share Link", nil];
+        }
     } else {
         actionSheet = [[UIActionSheet alloc] initWithTitle:nil
                                                   delegate:self
@@ -224,7 +234,32 @@ static int const kToolbarHeight = 64;
             alert.tag = 18890;
             [alert show];
         }
-    } else if (buttonIndex != actionSheet.cancelButtonIndex) {
+    } else if (buttonIndex == 1) {
+        debug NSLog(@"unfollow button hit");
+        if (self.post.unfollowed) {
+            [[TDPostAPI sharedInstance] followPostWithId:self.post.postId];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
+                                                            message:@"You will now receive notifications for this post, including any mentions."
+                                                           delegate:self
+                                                  cancelButtonTitle:nil
+                                                  otherButtonTitles:@"OK", nil];
+            [alert show];
+            self.muting = NO;
+            [self.post removeUnfollowUser:[[TDCurrentUser sharedInstance] currentUserObject]];
+        } else {
+            [[TDPostAPI sharedInstance] unfollowPostWithId:self.post.postId];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
+                                                            message:@"You will no longer receive any notifications for this post, including any mentions.  To turn on notifications, please follow this post again."
+                                                           delegate:self
+                                                  cancelButtonTitle:nil
+                                                  otherButtonTitles:@"OK", nil];
+            alert.tag = 18891;
+            [alert show];
+            self.muting = YES;
+            [self.post addUnfollowUser:[[TDCurrentUser sharedInstance] currentUserObject]];
+        }
+
+    }else if (buttonIndex != actionSheet.cancelButtonIndex) {
         // index 1 = Copy Share Link
         [[TDAnalytics sharedInstance] logEvent:@"copied_share_url"];
         [[UIPasteboard generalPasteboard] setString:[TDConstants getShareURL:self.post.slug]];

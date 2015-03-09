@@ -30,8 +30,10 @@ typedef enum {
 @property (nonatomic, assign) BOOL personalRecord;
 @property (nonatomic, assign) BOOL isPrivate;
 @property (nonatomic, assign) BOOL liked;
+@property (nonatomic, assign) BOOL unfollowed;
 @property (nonatomic, copy, readonly) NSArray *mentions;
 @property (nonatomic, readonly) NSArray *likers;
+@property (nonatomic, readonly) NSArray *unfollowers;
 @property (nonatomic, readonly) NSNumber *commentsTotalCount;
 @property (nonatomic, readonly) NSNumber *likersTotalCount;
 @property (nonatomic, readonly) NSNumber *locationId;
@@ -46,6 +48,8 @@ typedef enum {
 - (void)loadUpFromDict:(NSDictionary *)dict;
 - (void)addLikerUser:(TDUser *)likerUser;
 - (void)removeLikerUser:(TDUser *)likerUser;
+- (void)addUnfollowUser:(TDUser *)unfollowUser;
+- (void)removeUnfollowUser:(TDUser *)unfollowUser;
 - (void)addComment:(TDComment *)newComment;
 - (void)removeLastComment;
 - (void)replaceUser:(TDUser *)newUser;

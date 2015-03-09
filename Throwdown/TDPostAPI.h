@@ -35,6 +35,8 @@ const typedef NS_ENUM(NSUInteger, kFetchPostsForFeed) {
 - (void)postNewComment:(NSString *)messageBody forPost:(NSNumber *)postId;
 - (void)reportPostWithId:(NSNumber *)postId;
 - (void)deletePostWithId:(NSNumber *)postId isPR:(BOOL)isPR;
+- (void)unfollowPostWithId:(NSNumber*)postId;
+- (void)followPostWithId:(NSNumber *)postId;
 
 - (void)fetchPostsForFeed:(kFetchPostsForFeed)feed start:(NSNumber *)start success:(void (^)(NSDictionary*response))successHandler error:(void (^)(void))errorHandler;
 - (void)fetchPostsForUser:(NSString *)userIdentifier start:(NSNumber *)start success:(void(^)(NSDictionary *response))successHandler error:(void (^)(void))errorHandler;

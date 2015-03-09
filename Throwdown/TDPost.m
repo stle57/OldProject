@@ -43,7 +43,9 @@ static NSString *const kKindText  = @"text";
     }
     _createdAt = [TDViewControllerHelper dateForRFC3339DateTimeString:[dict objectForKey:@"created_at"]];
     _liked = [[dict objectForKey:@"liked"] boolValue];
+    _unfollowed = [[dict objectForKey:@"unfollowed"] boolValue];
     _likers = [dict objectForKey:@"likers"];
+    _unfollowers = [dict objectForKey:@"unfollow_posts"];
     _commentsTotalCount = [dict objectForKey:@"comment_count"];
     _likersTotalCount = [dict objectForKey:@"like_count"];
     _slug = [dict objectForKey:@"slug"];
@@ -107,6 +109,37 @@ static NSString *const kKindText  = @"text";
             }
         }
         _liked = NO;
+    }
+}
+
+- (void)addUnfollowUser:(TDUser *)unfollowUser {
+    if (!self.unfollowed) {
+        NSMutableDictionary *unfollowDict = [NSMutableDictionary dictionaryWithCapacity:0];
+        [unfollowDict setObject:unfollowUser.userId forKey:@"id"];
+        [unfollowDict setObject:unfollowUser.username forKey:@"username"];
+        [unfollowDict setObject:unfollowUser.name forKey:@"name"];
+        if (unfollowUser.picture) {
+            [unfollowDict setObject:unfollowUser.picture forKey:@"picture"];
+        }
+        NSMutableArray *newArray = [NSMutableArray arrayWithArray:self.likers];
+        [newArray addObject:unfollowDict];
+        _unfollowers = newArray;
+        _unfollowed = YES;
+    }
+}
+
+- (void)removeUnfollowUser:(TDUser *)unfollowUser {
+    if (self.unfollowed) {
+        for (NSDictionary *unfollowDict in [NSArray arrayWithArray:self.unfollowers]) {
+            if ([[unfollowDict objectForKey:@"id"] isEqualToNumber:unfollowUser.userId]) {
+                // Remove it
+                NSMutableArray *newArray = [NSMutableArray arrayWithArray:self.unfollowers];
+                [newArray removeObject:unfollowDict];
+                _unfollowers = newArray;
+                break;
+            }
+        }
+        _unfollowed = NO;
     }
 }
 
