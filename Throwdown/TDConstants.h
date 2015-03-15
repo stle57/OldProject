@@ -22,6 +22,13 @@ const typedef NS_ENUM(NSUInteger, kFeedProfileType) {
     kFeedProfileTypeOther
 };
 
+typedef NS_ENUM(NSUInteger, TDPostPrivacy) {
+    TDPostPrivacyPublic,
+    TDPostPrivacyPrivate,
+    TDPostRestricted, // This is not used in the front end, but need it here.  That way we pass on the correct value to the backend
+    TDPostSemiPrivate
+};
+
 enum {
     kUserListType_Followers,
     kUserListType_Following

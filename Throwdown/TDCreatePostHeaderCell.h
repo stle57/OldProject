@@ -46,6 +46,7 @@
 @property (nonatomic) UIImage *prOnImage;
 @property (nonatomic) UIImage *prOffImage;
 @property (nonatomic) TDKeyboardObserver *keyboardObserver;
+@property (nonatomic) NSInteger taggedUsers;
 
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *textViewConstraint;
 

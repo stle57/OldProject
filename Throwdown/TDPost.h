@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "TDUser.h"
 #import "TDComment.h"
+#import "TDConstants.h"
 
 typedef enum {
     TDPostKindUnknown,
@@ -28,9 +29,10 @@ typedef enum {
 @property (nonatomic, readonly) TDUser *user;
 @property (nonatomic, readonly) NSDate *createdAt;
 @property (nonatomic, assign) BOOL personalRecord;
-@property (nonatomic, assign) BOOL isPrivate;
 @property (nonatomic, assign) BOOL liked;
 @property (nonatomic, assign) BOOL unfollowed;
+@property (nonatomic, assign) BOOL mutedUser;
+@property (nonatomic, readonly) TDPostPrivacy visibility;
 @property (nonatomic, copy, readonly) NSArray *mentions;
 @property (nonatomic, readonly) NSArray *likers;
 @property (nonatomic, readonly) NSArray *unfollowers;

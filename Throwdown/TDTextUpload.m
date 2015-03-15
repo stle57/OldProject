@@ -14,18 +14,18 @@
 
 @property (nonatomic) NSString *comment;
 @property (nonatomic) BOOL isPR;
-@property (nonatomic) BOOL isPrivate;
+@property (nonatomic) TDPostPrivacy visibility;
 @property (nonatomic) NSDictionary *location;
 @end
 
 @implementation TDTextUpload
 
-- (instancetype)initWithComment:(NSString *)comment isPR:(BOOL)isPR isPrivate:(BOOL)isPrivate location:(NSDictionary *)location{
+- (instancetype)initWithComment:(NSString *)comment isPR:(BOOL)isPR visibility:(TDPostPrivacy)visibility location:(NSDictionary *)location{
     self = [super init];
     if (self) {
         self.comment = comment;
         self.isPR = isPR;
-        self.isPrivate = isPrivate;
+        self.visibility = visibility;
         self.location = [location copy];
     }
     return self;
@@ -41,7 +41,7 @@
 }
 
 - (void)upload {
-    [[TDPostAPI sharedInstance] addPost:nil comment:self.comment isPR:self.isPR kind:@"text" userGenerated:NO sharingTo:self.shareOptions isPrivate:self.isPrivate location:self.location success:^(NSDictionary *response) {
+    [[TDPostAPI sharedInstance] addPost:nil comment:self.comment isPR:self.isPR kind:@"text" userGenerated:NO sharingTo:self.shareOptions visibility:self.visibility location:self.location success:^(NSDictionary *response) {
         [self uploadComplete];
     } failure:^{
         [self uploadFailed];

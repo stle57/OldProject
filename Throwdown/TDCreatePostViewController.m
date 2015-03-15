@@ -58,7 +58,7 @@ static const NSUInteger BufferSize = 1024*1024;
 @property (nonatomic) NSDictionary *locationData;
 @property (nonatomic) float cellLength;
 @property (nonatomic) BOOL reloadAssets;
-
+@property (nonatomic) BOOL isTaggedPost;
 @end
 
 @implementation TDCreatePostViewController
@@ -165,6 +165,7 @@ static const NSUInteger BufferSize = 1024*1024;
     self.isOriginal = NO;
     self.postHeaderCell = nil;
     self.viewOverlay = nil;
+    self.isTaggedPost = NO;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -475,8 +476,9 @@ static const NSUInteger BufferSize = 1024*1024;
         }
     } else if ([@"OpenShareWithViewSegue" isEqualToString:segue.identifier]) {
         NSString *comment = [self.postHeaderCell.commentTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        self.isTaggedPost = self.postHeaderCell.taggedUsers;
         TDSharePostViewController *vc = [segue destinationViewController];
-        [vc setValuesForSharing:self.filename withComment:comment isPR:self.isPR userGenerated:self.isOriginal locationData:self.locationData];
+        [vc setValuesForSharing:self.filename withComment:comment isPR:self.isPR userGenerated:self.isOriginal locationData:self.locationData taggedPost:self.isTaggedPost];
     }
 }
 

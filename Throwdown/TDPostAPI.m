@@ -53,12 +53,12 @@
 
 #pragma mark - posts get/add/remove
 
-- (void)addPost:(NSString *)filename comment:(NSString *)comment isPR:(BOOL)pr kind:(NSString *)kind userGenerated:(BOOL)ug sharingTo:(NSArray *)sharing isPrivate:(BOOL)isPrivate location:(NSDictionary*)location success:(void (^)(NSDictionary *response))success failure:(void (^)(void))failure {
+- (void)addPost:(NSString *)filename comment:(NSString *)comment isPR:(BOOL)pr kind:(NSString *)kind userGenerated:(BOOL)ug sharingTo:(NSArray *)sharing visibility:(TDPostPrivacy)visibility location:(NSDictionary*)location success:(void (^)(NSDictionary *response))success failure:(void (^)(void))failure {
     NSMutableDictionary *post = [@{
                                    @"kind": kind,
                                    @"personal_record": [NSNumber numberWithBool:pr],
                                    @"user_generated": [NSNumber numberWithBool:ug],
-                                   @"private": [NSNumber numberWithBool:isPrivate],
+                                   @"visibility": [NSNumber numberWithInteger:visibility],
                                    @"location" : location
                                 } mutableCopy];
     if (filename) {
@@ -72,6 +72,7 @@
     }
     NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/posts.json"];
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    debug NSLog(@">>>inside addPost: visibility value=%lu", (unsigned long)visibility);
     [manager setRequestSerializer:[[TDRequestSerializer alloc] init]];
     [manager POST:url parameters:@{ @"post": post, @"share_to": sharing, @"user_token": [TDCurrentUser sharedInstance].authToken} success:^(AFHTTPRequestOperation *operation, id responseObject) {
         [[TDCurrentUser sharedInstance] updateCurrentUserInfo]; // updates post/or counts etc
@@ -503,8 +504,9 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:TDPostUploadStarted object:upload userInfo:nil];
 }
 
-- (void)addTextPost:(NSString *)comment isPR:(BOOL)isPR isPrivate:(BOOL)isPrivate shareOptions:(NSArray *)shareOptions location:(NSDictionary*)location{
-    TDTextUpload *upload = [[TDTextUpload alloc] initWithComment:comment isPR:isPR isPrivate:isPrivate location:location];
+- (void)addTextPost:(NSString *)comment isPR:(BOOL)isPR visibility:(TDPostPrivacy)visibility  shareOptions:(NSArray *)shareOptions location:(NSDictionary*)location{
+    debug NSLog(@">>> addtextpost: visibilty value = %lu", visibility);
+    TDTextUpload *upload = [[TDTextUpload alloc] initWithComment:comment isPR:isPR visibility:visibility location:location];
     upload.shareOptions = shareOptions;
     [[NSNotificationCenter defaultCenter] postNotificationName:TDPostUploadStarted object:upload userInfo:nil];
 }

@@ -55,6 +55,7 @@ static NSString *const kTracksKey = @"tracks";
 @property (nonatomic) UIImageView *controlView;
 @property (nonatomic) UIImageView *prStar;
 @property (nonatomic) UIImageView *privatePost;
+@property (nonatomic) UIImageView *semiPrivatePost;
 @property (nonatomic) UIImageView *controlImage;
 @property (nonatomic) UIImageView *playerSpinner;
 @property (nonatomic) UIImageView *locationPinImage;
@@ -193,6 +194,12 @@ static NSString *const kTracksKey = @"tracks";
         self.privatePost.hidden = YES;
         [self addSubview:self.privatePost];
 
+        self.semiPrivatePost = [[UIImageView alloc] initWithFrame:CGRectMake(kMargin - 1.5, kMargin + 25.5, 21, 21)]; // the image has a white border (thus the weird half pixels)
+        self.semiPrivatePost.image = [UIImage imageNamed:@"icon_semi_private_feed"];
+        self.semiPrivatePost.hidden = YES;
+        [self addSubview:self.semiPrivatePost];
+
+
     }
     return self;
 }
@@ -260,7 +267,8 @@ static NSString *const kTracksKey = @"tracks";
     self.usernameLabel.text = post.user.username;
 
     self.prStar.hidden = !post.personalRecord;
-    self.privatePost.hidden = !post.isPrivate;
+    self.privatePost.hidden = (post.visibility == TDPostPrivacyPrivate) ? NO : YES;
+    self.semiPrivatePost.hidden = (post.visibility == TDPostSemiPrivate) ? NO : YES;
 
     // Set first to not show the wrong image while loading or if load fails
     [self.userProfileImage setImage:[UIImage imageNamed:@"prof_pic_default"]];

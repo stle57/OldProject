@@ -22,6 +22,7 @@
 #import "TDKeyboardObserver.h"
 #import "TDLocationFeedViewController.h"
 #import "TDTagFeedViewController.h"
+#import "TDUserAPI.h"
 
 static float const kInputLineSpacing = 3;
 static float const kMinInputHeight = 33.;
@@ -41,7 +42,7 @@ static int const kToolbarHeight = 64;
 @property (nonatomic) UITapGestureRecognizer *tapGesture;
 @property (nonatomic) CGFloat minLikeheight;
 @property (nonatomic) BOOL liking;
-@property (nonatomic) BOOL muting;
+@property (nonatomic) BOOL allowMuting;  //used for internal purposes if the user goes back and forth before pressing yes
 @property (nonatomic) BOOL isEditing;
 @property (nonatomic) BOOL loaded;
 @property (nonatomic) NSString *cachedText;
@@ -189,20 +190,45 @@ static int const kToolbarHeight = 64;
         reportText = @"Report as Inappropriate";
     }
 
+    NSString *muteUserText;
+    if (self.post.visibility == TDPostSemiPrivate) {
+        if (self.post.mutedUser) {
+            muteUserText = [NSString stringWithFormat:@"%@%@", @"Unmute @", self.post.user.username];
+        } else {
+            muteUserText = [NSString stringWithFormat:@"%@%@", @"Mute @", self.post.user.username];
+        }
+    }
+
+    NSString *unfollowText;
+    if (self.allowMuting || self.post.unfollowed) {
+        if (self.post.unfollowed) {
+            unfollowText = @"Unmute this post";
+        } else {
+            unfollowText = @"Mute this post";
+        }
+    }
+
     UIActionSheet *actionSheet;
     if (self.post.slug) {
-        if (self.post.unfollowed || self.muting == YES) {
+        if (self.post.visibility == TDPostSemiPrivate) {
             actionSheet = [[UIActionSheet alloc] initWithTitle:nil
                                                       delegate:self
                                              cancelButtonTitle:@"Cancel"
                                         destructiveButtonTitle:reportText
-                                             otherButtonTitles:@"Unmute this post", @"Copy Share Link", nil];
+                                             otherButtonTitles:muteUserText, @"Copy Share Link", nil];
+
+        } else if (self.post.unfollowed || self.allowMuting) {
+            actionSheet = [[UIActionSheet alloc] initWithTitle:nil
+                                                      delegate:self
+                                             cancelButtonTitle:@"Cancel"
+                                        destructiveButtonTitle:reportText
+                                             otherButtonTitles:unfollowText, @"Copy Share Link", nil];
         } else {
             actionSheet = [[UIActionSheet alloc] initWithTitle:nil
                                                       delegate:self
                                              cancelButtonTitle:@"Cancel"
                                         destructiveButtonTitle:reportText
-                                             otherButtonTitles:@"Mute this post", @"Copy Share Link", nil];
+                                             otherButtonTitles:@"Copy Share Link", nil];
         }
     } else {
         actionSheet = [[UIActionSheet alloc] initWithTitle:nil
@@ -235,28 +261,53 @@ static int const kToolbarHeight = 64;
             [alert show];
         }
     } else if (buttonIndex == 1) {
-        debug NSLog(@"unfollow button hit");
-        if (self.post.unfollowed) {
-            [[TDPostAPI sharedInstance] followPostWithId:self.post.postId];
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
-                                                            message:@"You will now receive notifications for this post, including any mentions."
-                                                           delegate:self
-                                                  cancelButtonTitle:nil
-                                                  otherButtonTitles:@"OK", nil];
-            [alert show];
-            self.muting = NO;
-            [self.post removeUnfollowUser:[[TDCurrentUser sharedInstance] currentUserObject]];
+        if (self.post.visibility == TDPostSemiPrivate) {
+            if (self.post.mutedUser) {
+                //unmute
+                // Send unfollow user to server
+                [[TDUserAPI sharedInstance] unmuteUser:self.post.user.userId callback:^(BOOL success) {
+                    if (success) {
+                        debug NSLog(@"Successfully unfollwed user=%@", self.post.user.userId);
+                    } else {
+                        debug NSLog(@"could not unmute user=%@", self.post.user.userId);
+                        [[TDAppDelegate appDelegate] showToastWithText:@"Error occured.  Please try again." type:kToastType_Warning payload:@{} delegate:nil];
+                        debug NSLog(@"could not unmute user=%@", self.post.user.userId);
+                    }
+                }];
+            } else {
+                //mute
+                // Send follow user to server
+                [[TDUserAPI sharedInstance] muteUser:self.post.user.userId callback:^(BOOL success) {
+                    if (success) {
+                    } else {
+                        [[TDAppDelegate appDelegate] showToastWithText:@"Error occured.  Please try again." type:kToastType_Warning payload:@{} delegate:nil];
+                    }
+                }];
+            }
         } else {
-            [[TDPostAPI sharedInstance] unfollowPostWithId:self.post.postId];
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
-                                                            message:@"You will no longer receive any notifications for this post, including any mentions.  To turn on notifications, please follow this post again."
-                                                           delegate:self
-                                                  cancelButtonTitle:nil
-                                                  otherButtonTitles:@"OK", nil];
-            alert.tag = 18891;
-            [alert show];
-            self.muting = YES;
-            [self.post addUnfollowUser:[[TDCurrentUser sharedInstance] currentUserObject]];
+            debug NSLog(@"unfollow button hit");
+            if (self.post.unfollowed) {
+                [[TDPostAPI sharedInstance] followPostWithId:self.post.postId];
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
+                                                                message:@"You will now receive notifications for this post, including any mentions."
+                                                               delegate:self
+                                                      cancelButtonTitle:nil
+                                                      otherButtonTitles:@"OK", nil];
+                [alert show];
+                self.allowMuting = YES;
+                [self.post removeUnfollowUser:[[TDCurrentUser sharedInstance] currentUserObject]];
+            } else {
+                [[TDPostAPI sharedInstance] unfollowPostWithId:self.post.postId];
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
+                                                                message:@"You will no longer receive any notifications for this post, including any mentions.  To turn on notifications, please follow this post again."
+                                                               delegate:self
+                                                      cancelButtonTitle:nil
+                                                      otherButtonTitles:@"OK", nil];
+                alert.tag = 18891;
+                [alert show];
+                self.allowMuting = YES;
+                [self.post addUnfollowUser:[[TDCurrentUser sharedInstance] currentUserObject]];
+            }
         }
 
     }else if (buttonIndex != actionSheet.cancelButtonIndex) {
@@ -367,6 +418,13 @@ static int const kToolbarHeight = 64;
         }
 
         [cell setLike:self.post.liked];
+        if (self.post.liked) {
+            // The user liked this
+            self.allowMuting = YES;
+        } else {
+            self.allowMuting = NO;
+        }
+
         [cell setLikesArray:self.post.likers];
 
         return cell;
@@ -384,6 +442,12 @@ static int const kToolbarHeight = 64;
     NSUInteger commentNumber = (indexPath.row - 2);
     TDComment *comment = [self.post commentAtIndex:commentNumber];
     if (comment) {
+        if (comment.user.userId == [TDCurrentUser sharedInstance].userId) {
+            self.allowMuting = YES;
+        } else {
+            self.allowMuting = NO;
+        }
+
         cell.commentNumber = commentNumber;
         [cell updateWithComment:comment showIcon:(commentNumber == 0) showDate:YES];
     }

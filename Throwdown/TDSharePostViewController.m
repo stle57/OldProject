@@ -19,11 +19,6 @@
 #import <FacebookSDK/FacebookSDK.h>
 #import "TWTAPIManager.h"
 
-typedef NS_ENUM(NSUInteger, TDPostPrivacy) {
-    TDPostPrivacyPublic,
-    TDPostPrivacyPrivate
-};
-
 static NSString *const kFacebookShareKey = @"TDLastShareToFacebook";
 static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
 static NSString *const kInstagramShareKey = @"TDLastShareToInstagram";
@@ -48,7 +43,7 @@ static NSString *const kInstagramShareKey = @"TDLastShareToInstagram";
 @property (nonatomic) ACAccountStore *accountStore;
 @property (nonatomic) TWTAPIManager *apiManager;
 @property (nonatomic) NSArray *accounts;
-
+@property (nonatomic) BOOL tagged;
 @end
 
 @implementation TDSharePostViewController
@@ -98,12 +93,13 @@ static NSString *const kInstagramShareKey = @"TDLastShareToInstagram";
 
 # pragma mark - setting data from previous controller
 
-- (void)setValuesForSharing:(NSString *)filename withComment:(NSString *)comment isPR:(BOOL)isPR userGenerated:(BOOL)ug locationData:(NSDictionary*)locationData {
+- (void)setValuesForSharing:(NSString *)filename withComment:(NSString *)comment isPR:(BOOL)isPR userGenerated:(BOOL)ug locationData:(NSDictionary*)locationData taggedPost:(BOOL)taggedPost{
     self.filename = filename;
     self.comment = comment;
     self.isPR = isPR;
     self.userGenerated = ug;
     self.locationData = [locationData copy];
+    self.tagged = taggedPost;
 }
 
 - (IBAction)saveButtonPressed:(id)sender {
@@ -154,6 +150,7 @@ static NSString *const kInstagramShareKey = @"TDLastShareToInstagram";
     }
     [[NSUserDefaults standardUserDefaults] synchronize];
 
+    debug NSLog(@"  self.privacy value=%lu", (unsigned long)self.privacy);
     if (self.filename) {
         [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUploadComments
                                                             object:nil
@@ -162,11 +159,11 @@ static NSString *const kInstagramShareKey = @"TDLastShareToInstagram";
                                                                       @"pr":            [NSNumber numberWithBool:self.isPR],
                                                                       @"userGenerated": [NSNumber numberWithBool:self.userGenerated],
                                                                       @"shareOptions":  shareOptions,
-                                                                      @"private":       [NSNumber numberWithBool:(self.privacy == TDPostPrivacyPrivate)],
+                                                                      @"visibility":    [NSNumber numberWithInteger:self.privacy],
                                                                       @"location":      location
                                                                       }];
     } else {
-        [[TDPostAPI sharedInstance] addTextPost:self.comment isPR:self.isPR isPrivate:(self.privacy == TDPostPrivacyPrivate) shareOptions:shareOptions location:location];
+        [[TDPostAPI sharedInstance] addTextPost:self.comment isPR:self.isPR visibility:self.privacy shareOptions:shareOptions location:location];
     }
     if (self.isPR) {
         [self performSegueWithIdentifier:@"PRSegue" sender:self];
@@ -207,7 +204,16 @@ static NSString *const kInstagramShareKey = @"TDLastShareToInstagram";
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return section == 0 ? 2 : 3;
+    if (section == 0) {
+        if (self.tagged) {
+            return 3;
+        } else {
+            return 2;
+        }
+    } else {
+        return 3;
+    }
+    //return section == 0 ? 2 : 3;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -216,19 +222,35 @@ static NSString *const kInstagramShareKey = @"TDLastShareToInstagram";
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *finalCell;
+    NSInteger row = indexPath.row;
     if (indexPath.section == 0) {
         TDRadioButtonRowCell *cell = (TDRadioButtonRowCell *)[tableView dequeueReusableCellWithIdentifier:@"TDRadioButtonRowCell"];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDRadioButtonRowCell" owner:self options:nil];
             cell = [topLevelObjects objectAtIndex:0];
         }
-        switch (indexPath.row) {
+        if (!self.tagged && row==1) {
+            row = row +1; // Skip "Just me" row
+        }
+
+        switch (row) {
             case 0:
                 cell.titleLabel.text = @"Everyone";
                 cell.icon.hidden = YES;
                 cell.checkmark.hidden = (self.privacy != TDPostPrivacyPublic);
                 break;
             case 1:
+                cell.titleLabel.text = @"Only tagged people";
+                CGFloat titleWidth = [TDAppDelegate widthOfTextForString:cell.titleLabel.text
+                                                            andFont:cell.titleLabel.font
+                                                            maxSize:CGSizeMake(MAXFLOAT, cell.titleLabel.frame.size.height)];
+                CGRect iconFrame = cell.icon.frame;
+                iconFrame.origin.x = cell.titleLabel.frame.origin.x + titleWidth + 6;
+                cell.icon.frame = iconFrame;
+                cell.icon.hidden = NO;
+                cell.checkmark.hidden = (self.privacy != TDPostSemiPrivate);
+                break;
+            case 2:
                 cell.titleLabel.text = @"Just me";
                 CGFloat width = [TDAppDelegate widthOfTextForString:cell.titleLabel.text
                                                             andFont:cell.titleLabel.font
@@ -239,6 +261,7 @@ static NSString *const kInstagramShareKey = @"TDLastShareToInstagram";
                 cell.icon.hidden = NO;
                 cell.checkmark.hidden = (self.privacy != TDPostPrivacyPrivate);
                 break;
+
         }
 
         finalCell = cell;
@@ -272,14 +295,22 @@ static NSString *const kInstagramShareKey = @"TDLastShareToInstagram";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:indexPath animated:NO];
+    NSInteger row = indexPath.row;
     if (indexPath.section == 0) {
+        if (!self.tagged && row == 1) {
+            row = row + 1;
+        }
         BOOL reload = NO;
-        switch (indexPath.row) {
+        switch (row) {
             case 0:
                 reload = (self.privacy != TDPostPrivacyPublic);
                 self.privacy = TDPostPrivacyPublic;
                 break;
             case 1:
+                reload = (self.privacy != TDPostSemiPrivate);
+                self.privacy = TDPostSemiPrivate;
+                break;
+            case 2:
                 reload = (self.privacy != TDPostPrivacyPrivate);
                 self.privacy = TDPostPrivacyPrivate;
                 break;

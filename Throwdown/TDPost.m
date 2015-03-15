@@ -44,13 +44,13 @@ static NSString *const kKindText  = @"text";
     _createdAt = [TDViewControllerHelper dateForRFC3339DateTimeString:[dict objectForKey:@"created_at"]];
     _liked = [[dict objectForKey:@"liked"] boolValue];
     _unfollowed = [[dict objectForKey:@"unfollowed"] boolValue];
+    _mutedUser = [[dict objectForKey:@"muted"] boolValue];
     _likers = [dict objectForKey:@"likers"];
     _unfollowers = [dict objectForKey:@"unfollow_posts"];
     _commentsTotalCount = [dict objectForKey:@"comment_count"];
     _likersTotalCount = [dict objectForKey:@"like_count"];
     _slug = [dict objectForKey:@"slug"];
     _personalRecord = [[dict objectForKey:@"personal_record"] boolValue];
-    _isPrivate = [[dict objectForKey:@"private"] boolValue];
     if ([dict objectForKey:@"comment"] && ![[dict objectForKey:@"comment"] isEqual:[NSNull null]]) {
         _comment = [[dict objectForKey:@"comment"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
         if ([_comment length] == 0) {
@@ -69,6 +69,14 @@ static NSString *const kKindText  = @"text";
         _kind = TDPostKindText;
     }
 
+    NSString * visibility = [NSString stringWithFormat:@"%@", [dict objectForKey:@"visibility"]];
+    if ([visibility isEqualToString:@"public"]) {
+        _visibility = TDPostPrivacyPublic;
+    } else if ([visibility isEqualToString:@"hidden"]){
+        _visibility = TDPostPrivacyPrivate;
+    } else if ([visibility isEqualToString:@"direct"]){
+        _visibility = TDPostSemiPrivate;
+    }
     NSMutableArray *commentsArray = [NSMutableArray arrayWithCapacity:0];
     for (NSDictionary *commentsDict in [dict objectForKey:@"comments"]) {
         [commentsArray addObject:[[TDComment alloc] initWithDictionary:commentsDict]];

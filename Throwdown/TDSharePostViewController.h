@@ -10,6 +10,6 @@
 
 @interface TDSharePostViewController : UIViewController
 
-- (void)setValuesForSharing:(NSString *)filename withComment:(NSString *)comment isPR:(BOOL)isPR userGenerated:(BOOL)ug locationData:(NSDictionary*)locationData;
+- (void)setValuesForSharing:(NSString *)filename withComment:(NSString *)comment isPR:(BOOL)isPR userGenerated:(BOOL)ug locationData:(NSDictionary*)locationData taggedPost:(BOOL)taggedPost;
 
 @end

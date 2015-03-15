@@ -22,6 +22,11 @@ static int const kBezierMargin = 18;
 static NSString  *newPRStr = @"New PR";
 static NSString  *location = @"Location";
 
+@interface TDCreatePostHeaderCell ()
+@property (nonatomic) BOOL addTaggedUser;
+@property (nonatomic) NSInteger textLength;
+@end
+
 @implementation TDCreatePostHeaderCell
 @synthesize delegate;
 
@@ -105,6 +110,10 @@ static NSString  *location = @"Location";
     UIBezierPath *rect   = [ UIBezierPath bezierPathWithRect: bezFrame];
     
     self.commentTextView.textContainer.exclusionPaths = @[rect];
+
+    self.taggedUsers = 0;
+    self.textLength = 0;
+    self.addTaggedUser = YES;
 }
 
 - (void)dealloc {
@@ -115,6 +124,7 @@ static NSString  *location = @"Location";
     self.userListView = nil;
     [self.keyboardObserver stopListening];
     self.keyboardObserver = nil;
+    self.taggedUsers = 0;
 }
 
 - (void)adjustFramesForView {
@@ -174,6 +184,10 @@ static NSString  *location = @"Location";
     
     self.commentTextView.text = [newText stringByAppendingString:userName];
     [self resetTextViewSize];
+
+    if (self.addTaggedUser) {
+        self.taggedUsers++;
+    }
 }
 
 
@@ -200,6 +214,7 @@ static NSString  *location = @"Location";
 }
 
 - (void)textViewDidChange:(UITextView *)textView {
+    NSInteger currentTextLength = textView.text.length;
     if (delegate && [delegate respondsToSelector:@selector(postButtonEnabled:)]) {
         BOOL enabled = ([[textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0);
         [delegate postButtonEnabled:enabled];
@@ -211,9 +226,21 @@ static NSString  *location = @"Location";
             self.textViewConstraint.constant = height;
             [self.contentView layoutIfNeeded];
             [self alignCarretInTextView:textView];
+            if (self.textLength == 0) {
+                self.textLength = currentTextLength;
+            }
+
+            if (self.textLength == currentTextLength+1) {
+                self.addTaggedUser = NO;
+                self.textLength = currentTextLength;
+            }
         } else {
             [self resetTextViewSize];
+            self.taggedUsers--;
+            self.addTaggedUser = YES;
+            self.textLength = 0;
         }
+        self.textLength = currentTextLength;
     }];
 }
 

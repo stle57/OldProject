@@ -8,13 +8,14 @@
 
 #import <Foundation/Foundation.h>
 #import "TDUploadProgressDelegate.h"
+#import "TDConstants.h"
 
 @interface TDTextUpload : NSObject <TDUploadProgressUIDelegate>
 
 @property (nonatomic, assign) id<TDUploadProgressDelegate> delegate;
 @property (nonatomic) NSArray *shareOptions;
 
-- (instancetype)initWithComment:(NSString *)comment isPR:(BOOL)isPR isPrivate:(BOOL)isPrivate location:(NSDictionary*)location;
+- (instancetype)initWithComment:(NSString *)comment isPR:(BOOL)isPR visibility:(TDPostPrivacy)visibility location:(NSDictionary*)location;
 
 #pragma mark TDUploadProgressUIDelegate
 - (void)setUploadProgressDelegate:(id<TDUploadProgressDelegate>)delegate;
