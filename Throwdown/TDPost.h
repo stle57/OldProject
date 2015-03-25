@@ -24,7 +24,7 @@ typedef enum {
 @property (nonatomic, readonly) NSNumber *postId;
 @property (nonatomic, copy, readonly) NSString *filename;
 @property (nonatomic, copy, readonly) NSString *slug;
-@property (nonatomic, copy, readonly) NSString *comment;
+@property (nonatomic, copy) NSString *comment;
 @property (nonatomic, readonly) TDPostKind kind;
 @property (nonatomic, readonly) TDUser *user;
 @property (nonatomic, readonly) NSDate *createdAt;
@@ -40,6 +40,7 @@ typedef enum {
 @property (nonatomic, readonly) NSNumber *likersTotalCount;
 @property (nonatomic, readonly) NSNumber *locationId;
 @property (nonatomic, readonly) NSString *locationName;
+@property (nonatomic) BOOL updated;
 
 - (id)initWithDictionary:(NSDictionary *)dict;
 
@@ -52,7 +53,10 @@ typedef enum {
 - (void)removeLikerUser:(TDUser *)likerUser;
 - (void)addUnfollowUser:(TDUser *)unfollowUser;
 - (void)removeUnfollowUser:(TDUser *)unfollowUser;
+- (void)updatePostComment:(NSNumber*)postId comment:(NSString*)comment;
 - (void)addComment:(TDComment *)newComment;
+- (void)updateComment:(TDComment *)updateComment text:(NSString*)text;
+- (void)removeComment:(NSNumber *)commentId;
 - (void)removeLastComment;
 - (void)replaceUser:(TDUser *)newUser;
 - (void)replaceLikers:(NSArray *)newLikers;

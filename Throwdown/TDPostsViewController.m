@@ -245,7 +245,7 @@ static CGFloat const kReviewAppCellHeight = 128;
 
         hasAskedForGoalsFinal = [[TDCurrentUser sharedInstance] didAskForGoalsFinal];
         if (!hasAskedForGoal && !hasAskedForGoalsFinal) {
-            hasAskedForGoalsFinal = YES; // We don't want to add another section if both values are no.  So override the boolean
+            hasAskedForGoalsFinal = YES; // We don't want to add another section if both values are no.  So override this boolean
         }
     }
 
@@ -315,8 +315,8 @@ static CGFloat const kReviewAppCellHeight = 128;
     }
 
 
-    NSInteger postNumber = section - [self noticeCount] - ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) - (hasAskedForGoal ? 0 : 1) - (hasAskedForGoalsFinal ? 0 :1);
-    
+    NSInteger postNumber = section - [self noticeCount] - (self.profileType != kFeedProfileTypeNone ? 1 : 0) - ([self onGuestFeed] ? 5 : 0) - ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) - (hasAskedForGoal ? 0 : 1) - (hasAskedForGoalsFinal ? 0 :1);
+
     // Show the review cell if we've met the conditions
     if ((![self onGuestFeed] && [iRate sharedInstance].shouldPromptForRating) && ((postNumber) == TD_REVIEW_APP_CELL_POST_NUM)) {
         return 1;
@@ -623,7 +623,18 @@ static CGFloat const kReviewAppCellHeight = 128;
         return cell;
     }
 
-    NSInteger postNumber = indexPath.section - [self noticeCount] - (self.profileType != kFeedProfileTypeNone ? 1 : 0) - ([self onGuestFeed] ? 5 : 0) - ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) - ([[TDCurrentUser sharedInstance] didAskForGoalsInitially] ? 0 : 1);
+    BOOL hasAskedForGoal = YES;
+    BOOL hasAskedForGoalsFinal = YES;
+    if (![self onGuestFeed]) {
+        hasAskedForGoal = [[TDCurrentUser sharedInstance] didAskForGoalsInitially];
+
+        hasAskedForGoalsFinal = [[TDCurrentUser sharedInstance] didAskForGoalsFinal];
+        if (!hasAskedForGoal && !hasAskedForGoalsFinal) {
+            hasAskedForGoalsFinal = YES; // We don't want to add another section if both values are no.  So override this boolean
+        }
+    }
+
+    NSInteger postNumber = indexPath.section - [self noticeCount] - (self.profileType != kFeedProfileTypeNone ? 1 : 0) - ([self onGuestFeed] ? 5 : 0) - ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) - (hasAskedForGoal ? 0 : 1) - (hasAskedForGoalsFinal ? 0 :1);
 
     if ((![self onGuestFeed] && [iRate sharedInstance].shouldPromptForRating)  && ((postNumber) == TD_REVIEW_APP_CELL_POST_NUM)) {
         TDReviewAppCell *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_REVIEW_APP_CELL];
@@ -633,7 +644,6 @@ static CGFloat const kReviewAppCellHeight = 128;
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             cell.delegate = self;
         }
-
         return cell;
     }
 
@@ -659,7 +669,6 @@ static CGFloat const kReviewAppCellHeight = 128;
         }
         [cell setPost:post showDate:![self onGuestFeed]];
         cell.row = indexPath.section;
-
         return cell;
     }
 
@@ -788,9 +797,22 @@ static CGFloat const kReviewAppCellHeight = 128;
     if ([self onGuestFeed] && ![self hasMorePosts] && (indexPath.section == postsCount+5)) {
         return SCREEN_HEIGHT/3;
     }
+    BOOL hasAskedForGoal = YES;
+    BOOL hasAskedForGoalsFinal = YES;
+    if (![self onGuestFeed]) {
+        hasAskedForGoal = [[TDCurrentUser sharedInstance] didAskForGoalsInitially];
+
+        hasAskedForGoalsFinal = [[TDCurrentUser sharedInstance] didAskForGoalsFinal];
+        if (!hasAskedForGoal && !hasAskedForGoalsFinal) {
+            hasAskedForGoalsFinal = YES; // We don't want to add another section if both values are no.  So override this boolean
+        }
+    }
+
+    NSInteger postNumber = indexPath.section - [self noticeCount] - (self.profileType != kFeedProfileTypeNone ? 1 : 0) - ([self onGuestFeed] ? 5 : 0) - ([[TDCurrentUser sharedInstance] isNewUser] ? 1 : 0) - (hasAskedForGoal ? 0 : 1) - (hasAskedForGoalsFinal ? 0 :1);
+
 
     // We do realsection+1 because realSection is 0 based index
-    if ((![self onGuestFeed] && [iRate sharedInstance].shouldPromptForRating) && ((realSection) == TD_REVIEW_APP_CELL_POST_NUM) ){
+    if ((![self onGuestFeed] && [iRate sharedInstance].shouldPromptForRating) && ((postNumber) == TD_REVIEW_APP_CELL_POST_NUM) ){
         return kReviewAppCellHeight;
     }
 

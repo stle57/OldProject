@@ -51,6 +51,8 @@ static NSString *const kKindText  = @"text";
     _likersTotalCount = [dict objectForKey:@"like_count"];
     _slug = [dict objectForKey:@"slug"];
     _personalRecord = [[dict objectForKey:@"personal_record"] boolValue];
+    _updated = [[dict objectForKey:@"updated"] boolValue];
+
     if ([dict objectForKey:@"comment"] && ![[dict objectForKey:@"comment"] isEqual:[NSNull null]]) {
         _comment = [[dict objectForKey:@"comment"] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
         if ([_comment length] == 0) {
@@ -151,6 +153,13 @@ static NSString *const kKindText  = @"text";
     }
 }
 
+- (void)updatePostComment:(NSNumber*)postId comment:(NSString*)comment {
+    if ([self.postId isEqualToNumber:postId]) {
+        self.updated = YES;
+        self.comment = comment;
+    }
+}
+
 - (void)addComment:(TDComment *)newComment {
     if (newComment == nil) {
         return;
@@ -159,6 +168,46 @@ static NSString *const kKindText  = @"text";
     [newArray addObject:newComment];
     _comments = newArray;
     _commentsTotalCount = [NSNumber numberWithInt:[_commentsTotalCount intValue] + 1];
+}
+
+- (void)updateComment:(TDComment*)updateComment text:(NSString *)text{
+    if (updateComment == nil) {
+        return;
+    }
+
+    updateComment.body = text;
+
+    NSMutableArray *newArray = [NSMutableArray arrayWithArray:self.comments];
+
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"self.body contains %@", text ];
+    NSArray *data = [self.comments filteredArrayUsingPredicate:predicate];
+    if (data) {
+        NSUInteger index = [self.comments indexOfObject:data[0]];
+        TDComment *comment = [self.comments objectAtIndex:index];
+        comment.updated = YES;
+        [newArray replaceObjectAtIndex:index withObject:comment];
+    }
+    _comments = newArray;
+}
+
+- (void)removeComment:(NSNumber *)commentId {
+    if (commentId == nil) {
+        return;
+    }
+    debug NSLog(@"removingComment for commentId=%@", commentId);
+
+    NSMutableArray *newArray = [[NSMutableArray alloc] initWithArray:self.comments];
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"self.commentId = %@", commentId];
+    NSArray *data = [self.comments filteredArrayUsingPredicate:predicate];
+    debug NSLog(@" data size=%lu", (unsigned long)data.count);
+    debug NSLog(@" self.comments size=%lu", (unsigned long)self.comments.count);
+    if (data && data.count) {
+        NSUInteger index = [newArray indexOfObject:data[0]];
+        [newArray removeObjectAtIndex:index];
+    }
+
+    _comments = newArray;
+    _commentsTotalCount = [NSNumber numberWithInt:[_commentsTotalCount intValue] - 1];
 }
 
 - (void)removeLastComment {
@@ -191,6 +240,18 @@ static NSString *const kKindText  = @"text";
         return @[];
     }
     return self.comments;
+}
+
+- (TDComment *)findCommentById:(NSNumber*)commentId {
+    if (self.comments && commentId) {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"self.commentId == %@", commentId];
+        NSArray *data = [self.comments filteredArrayUsingPredicate:predicate];
+        if (data) {
+            NSUInteger index = [self.comments indexOfObject:data[0]];
+            return (TDComment*)[self.comments objectAtIndex:index];
+        }
+    }
+    return nil;
 }
 
 - (TDComment *)commentAtIndex:(NSUInteger)index {
@@ -238,6 +299,19 @@ static NSString *const kKindText  = @"text";
         case kUpdatePostTypeAddComment:
             [self addComment:[[TDComment alloc] initWithDictionary:[n.userInfo objectForKey:@"comment"]]];
             break;
+        case kUpdatePostTypeUpdateComment:
+        {
+            debug NSLog(@"got a notification for updating comment");
+            TDComment *comment = [self findCommentById:[n.userInfo objectForKey:@"commentId"]];
+            [self updateComment:comment text:[n.userInfo objectForKey:@"comment"]];
+        }
+        break;
+        case kUpdatePostTypeUpdatePostComment:
+        {
+            debug NSLog(@"got a notification for updating POST comment");
+            [self updatePostComment:[n.userInfo objectForKey:@"postId"] comment:[n.userInfo objectForKey:@"comment"]];
+        }
+        break;
     }
 }
 

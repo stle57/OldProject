@@ -97,6 +97,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeOverlay) name:TDRemoveHomeViewControllerOverlay object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showFeedbackViewController) name:TDShowFeedbackViewController object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postToInstagram:) name:TDNotificationPostToInstagram object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(removeComment:) name:TDNotificationRemoveComment object:nil];
 
     [self.badgeCountLabel setFont:[TDConstants fontSemiBoldSized:11]];
     [self.badgeCountLabel.layer setCornerRadius:9.0];
@@ -206,7 +207,6 @@
     if ([iRate sharedInstance].shouldPromptForRating && (realRow > TD_REVIEW_APP_CELL_POST_NUM)){
         realRow = realRow - 1;
     }
-
     if (realRow < [posts count]) {
         return [posts objectAtIndex:realRow];
     } else {
@@ -404,6 +404,11 @@
 
     for (TDPost *post in self.posts) {
         if ([post.postId isEqualToNumber:postId]) {
+            NSUInteger change = [(NSNumber *)[n.userInfo objectForKey:@"change"] unsignedIntegerValue];
+            if (change == kUpdatePostTypeUpdatePostComment) {
+                // Leave the changes, so we can detect it inside TDPostView:setPost
+                break;
+            }
             [post updateFromNotification:n];
             changeMade = YES;
             break;
@@ -438,6 +443,54 @@
     [self.tableView reloadData];
 }
 
+#pragma mark - Remove Comment
+- (void)removeComment:(NSNotification *)n {
+    debug NSLog(@"Inside TDHomeViewController - removeComment");
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        // Main posts
+        BOOL changeMade = NO;
+        NSMutableArray *newList = [[NSMutableArray alloc] initWithArray:self.posts];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"self.postId = %@", [n.userInfo objectForKey:@"postId"]];
+        NSArray *data = [self.posts filteredArrayUsingPredicate:predicate];
+        if (data) {
+            NSUInteger index = [self.posts indexOfObject:data[0]];
+            TDPost *post = [newList objectAtIndex:index];
+            [post removeComment:[n.userInfo objectForKey:@"commentId"]];
+            changeMade = YES;
+        }
+
+        if (changeMade) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.posts = [[NSArray alloc] initWithArray:newList];
+                if ([self onAllFeed]) {
+                    [self.tableView reloadData];
+                }
+            });
+        }
+
+        // Following posts
+        changeMade = NO;
+        newList = [[NSMutableArray alloc] initWithArray:self.postsFollowing];
+
+        data = [self.postsFollowing filteredArrayUsingPredicate:predicate];
+        if (data) {
+            NSUInteger index = [self.postsFollowing indexOfObject:data[0]];
+            TDPost *post = [newList objectAtIndex:index];
+
+            [post removeComment:[n.userInfo objectForKey:@"commentId"]];
+            changeMade = YES;
+        }
+
+        if (changeMade) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.postsFollowing = [[NSArray alloc] initWithArray:newList];
+                if (![self onAllFeed]) {
+                    [self.tableView reloadData];
+                }
+            });
+        }
+    });
+}
 
 #pragma mark - Refresh Control
 - (void)refreshControlUsed {

@@ -60,7 +60,9 @@ typedef NSInteger kRateAppViewType;
 const typedef NS_ENUM(NSUInteger, kUpdatePostType) {
     kUpdatePostTypeLike,
     kUpdatePostTypeUnlike,
-    kUpdatePostTypeAddComment
+    kUpdatePostTypeAddComment,
+    kUpdatePostTypeUpdateComment,
+    kUpdatePostTypeUpdatePostComment
 };
 
 // Cloud
@@ -118,10 +120,14 @@ static NSString *const TDNotificationUploadComments = @"TDNotificationUploadComm
 static NSString *const TDNotificationUploadCancelled = @"TDNotificationUploadCancelled";
 static NSString *const TDNotificationUpdate = @"TDNotificationUpdate";
 static NSString *const TDNotificationRemovePost = @"TDNotificationRemovePost";
+static NSString *const TDNotificationRemoveComment = @"TDNotificationRemoveComment";
 static NSString *const TDNotificationUpdatePost = @"TDNotificationUpdatePost"; // When a post gets a new comment or like, tells feeds to update
 static NSString *const TDNotificationRemovePostFailed = @"TDNotificationRemovePostFailed";
+static NSString *const TDNotificationRemoveCommentFailed = @"TDNotificationRemoveCommentFailed";
 static NSString *const TDNotificationNewCommentPostInfo = @"TDNotificationNewCommentPostInfo";
 static NSString *const TDNotificationNewCommentFailed = @"TDNotificationNewCommentFailed";
+static NSString *const TDNotificationUpdateCommentFailed = @"TDNotificationUpdateCommentFailed";
+static NSString *const TDNotificationUpdatePostCommentFailed = @"TDNotificationUpdatePostCommentFailed";
 static NSString *const TDNotificationPauseTapGesture = @"TDNotificationPauseTapGesture";
 static NSString *const TDNotificationResumeTapGesture = @"TDNotificationResumeTapGesture";
 static NSString *const TDNotificationPostToInstagram = @"TDNotificationPostToInstagram";

@@ -29,11 +29,15 @@ const typedef NS_ENUM(NSUInteger, kFetchPostsForFeed) {
 - (void)addTextPost:(NSString *)comment isPR:(BOOL)isPR visibility:(TDPostPrivacy)visibility shareOptions:(NSArray *)shareOptions location:(NSDictionary*)location;
 
 - (void)addPost:(NSString *)filename comment:(NSString *)comment isPR:(BOOL)pr kind:(NSString *)kind userGenerated:(BOOL)ug sharingTo:(NSArray *)sharing visibility:(TDPostPrivacy)visibility location:(NSDictionary*)location success:(void (^)(NSDictionary *response))success failure:(void (^)(void))failure;
+- (void)updatePostText:(NSString *)postComment postId:(NSNumber*)postId;
 - (void)likePostWithId:(NSNumber *)postId;
 - (void)unLikePostWithId:(NSNumber *)postId;
 - (void)getFullPostInfoForPost:(NSString *)identifier success:(void (^)(NSDictionary *response))successCallback error:(void (^)(void))errorCallback;
 - (void)postNewComment:(NSString *)messageBody forPost:(NSNumber *)postId;
+- (void)postUpdateComment:(NSString *)messageBody forPost:(NSNumber *)postId forComment:(NSNumber*)commentId;
+- (void)postDeleteComment:(NSNumber*)commentId forPost:(NSNumber*)postId;
 - (void)reportPostWithId:(NSNumber *)postId;
+- (void)reportCommentWithId:(NSNumber *)commentId postId:(NSNumber*)postId;
 - (void)deletePostWithId:(NSNumber *)postId isPR:(BOOL)isPR;
 - (void)unfollowPostWithId:(NSNumber*)postId;
 - (void)followPostWithId:(NSNumber *)postId;

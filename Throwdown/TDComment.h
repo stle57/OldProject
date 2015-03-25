@@ -12,11 +12,12 @@
 @interface TDComment : NSObject
 
 @property (strong, nonatomic, readonly) NSNumber *commentId;
-@property (strong, nonatomic, readonly) NSString *body;
+@property (strong, nonatomic) NSString *body;
 @property (strong, nonatomic, readonly) NSArray *mentions;
 @property (nonatomic, readonly) NSDate *createdAt;
 @property (strong, nonatomic, readonly) TDUser *user;
 @property (nonatomic, assign) CGFloat messageHeight;
+@property (nonatomic) BOOL updated;
 
 - (id)initWithDictionary:(NSDictionary *)dict;
 - (id)initWithUser:(TDUser *)user body:(NSString *)body createdAt:(NSDate *)date;

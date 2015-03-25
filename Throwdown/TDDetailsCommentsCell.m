@@ -55,7 +55,23 @@ static CGFloat const kMaxUsernameWidth = 230;
     self.messageLabel.verticalAlignment = TTTAttributedLabelVerticalAlignmentTop;
     self.messageLabel.enabledTextCheckingTypes = NSTextCheckingTypeLink;
 
-    [self.messageLabel setText:comment.body afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
+    if (comment.updated) {
+        NSString *editedString = @" (edited)";
+        NSString *bodyString = [NSString stringWithFormat:@"%@%@", comment.body, @" (edited)"];
+
+        [self.messageLabel setText:bodyString afterInheritingLabelAttributesAndConfiguringWithBlock:^(NSMutableAttributedString *mutableAttributedString) {
+            NSRange range = [bodyString rangeOfString:editedString];
+            if (range.location != NSNotFound) {
+                // Core Text APIs use C functions without a direct bridge to UIFont. See Apple's "Core Text Programming Guide" to learn how to configure string attributes.
+                [mutableAttributedString addAttribute:(NSString *)kCTForegroundColorAttributeName value:[TDConstants commentTimeTextColor] range:range];
+            }
+            
+            return mutableAttributedString;
+        }];
+    } else {
+        [self.messageLabel setText:comment.body afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
+    }
+
     [TDViewControllerHelper linkUsernamesInLabel:self.messageLabel users:comment.mentions withHashtags:YES];
     self.messageLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:self.messageLabel.attributedText];
 

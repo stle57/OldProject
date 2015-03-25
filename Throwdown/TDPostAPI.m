@@ -264,6 +264,21 @@
             }];
 }
 
+- (void)reportCommentWithId:(NSNumber *)commentId postId:(NSNumber *)postId{
+    debug NSLog(@"API-report comment with id:%@, postId:%@", commentId, postId);
+
+    NSString *url = [NSString stringWithFormat:@"%@/api/v1/comments/%@/report.json", [TDConstants getBaseURL], commentId];
+
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    manager.responseSerializer = [AFJSONResponseSerializer serializer];
+    [manager POST:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken }
+          success:^(AFHTTPRequestOperation *operation, id responseObject) {
+              NSLog(@"Success reporting %@", commentId);
+            [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationRemoveComment object:nil userInfo:@{@"commentId": commentId, @"postId": postId}];
+          } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+              NSLog(@"Error reporting: %@", error);
+          }];
+}
 #pragma delete post
 
 - (void)deletePostWithId:(NSNumber *)postId isPR:(BOOL)isPR {
@@ -299,6 +314,43 @@
     }];
 }
 
+#pragma mark - update psot text
+- (void)updatePostText:(NSString *)postComment postId:(NSNumber*)postId{
+    if (!postComment || !postId) {
+        return;
+    }
+
+    NSString *url = [NSString stringWithFormat:@"%@/api/v1/posts/%@.json", [TDConstants getBaseURL], postId];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager PUT:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken , @"post[comment]" : postComment, @"comment[post_id]" : postId} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *returnDict = [NSDictionary dictionaryWithDictionary:responseObject];
+            if ([returnDict objectForKey:@"success"] && [[returnDict objectForKey:@"success"] boolValue]) {
+                debug NSLog(@"Update Post Comment Success!:%@", returnDict);
+
+                // Notify any views to reload
+                [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationReloadHome object:nil];
+
+                [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUpdatePost
+                                                                    object:self
+                                                                  userInfo:@{
+                                                                             @"postId": postId,
+                                                                             @"change": [NSNumber numberWithUnsignedInteger:kUpdatePostTypeUpdatePostComment],
+                                                                             @"comment": postComment
+                                                                             }];
+            } else {
+                [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUpdatePostCommentFailed object:nil userInfo:nil];
+            }
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"New Comment Error: %@", error);
+        [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUpdateCommentFailed object:nil userInfo:nil];
+        if (error && [operation.response statusCode] == 401) {
+            [self logOutUser];
+        }
+    }];
+
+}
 #pragma mark - like & comment
 - (void)likePostWithId:(NSNumber *)postId {
     debug NSLog(@"inside likePostWithId");
@@ -486,6 +538,67 @@
     }];
 }
 
+- (void)postUpdateComment:(NSString *)messageBody forPost:(NSNumber *)postId forComment:(NSNumber*)commentId{
+    if (!messageBody || !postId || !commentId) {
+        return;
+    }
+
+    NSString *url = [NSString stringWithFormat:@"%@/api/v1/comments/%@.json", [TDConstants getBaseURL], commentId];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager PUT:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken , @"comment[body]" : messageBody, @"comment[post_id]" : postId} success:^(AFHTTPRequestOperation *operation, id responseObject) {
+        if ([responseObject isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *returnDict = [NSDictionary dictionaryWithDictionary:responseObject];
+            if ([returnDict objectForKey:@"success"] && [[returnDict objectForKey:@"success"] boolValue]) {
+                debug NSLog(@"Update Comment Success!:%@", returnDict);
+
+                // Notify any views to reload
+                [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUpdatePost
+                                                                    object:self
+                                                                  userInfo:@{
+                                                                             @"postId": postId,
+                                                                             @"commentId": commentId,
+                                                                             @"change": [NSNumber numberWithUnsignedInteger:kUpdatePostTypeUpdateComment],
+                                                                             @"comment": messageBody
+                                                                             }];
+            } else {
+                [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUpdateCommentFailed object:nil userInfo:nil];
+            }
+        }
+    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+        debug NSLog(@"New Comment Error: %@", error);
+        [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUpdateCommentFailed object:nil userInfo:nil];
+        if (error && [operation.response statusCode] == 401) {
+            [self logOutUser];
+        }
+    }];
+}
+
+- (void)postDeleteComment:(NSNumber*)commentId  forPost:(NSNumber*)postId{
+    debug NSLog(@"API-delete comment with id:%@, post id:%@", commentId, postId);
+
+    NSString *url = [[TDConstants getBaseURL] stringByAppendingString:@"/api/v1/comments/[COMMENT_ID].json"];
+    url = [url stringByReplacingOccurrencesOfString:@"[COMMENT_ID]"
+                                         withString:[commentId stringValue]];
+    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
+    [manager DELETE:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken}
+            success:^(AFHTTPRequestOperation *operation, id responseObject) {
+                if ([responseObject isKindOfClass:[NSDictionary class]]) {
+                    NSDictionary *returnDict = [NSDictionary dictionaryWithDictionary:responseObject];
+                    if ([returnDict objectForKey:@"success"] && [[returnDict objectForKey:@"success"] boolValue]) {
+                        // Notify any view controllers about the removal which will cache the post and refresh table
+                        [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationRemoveComment object:nil userInfo:@{@"commentId": commentId, @"postId": postId}];
+                    } else {
+                        [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationRemoveCommentFailed object:nil userInfo:@{@"commentId" : commentId, @"postId": postId}];
+                    }
+                }
+            } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
+                debug NSLog(@"Error: %@", error);
+                [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationRemoveCommentFailed
+                                                                    object:nil
+                                                                  userInfo:@{ @"commentId": commentId, @"postId" : postId }];
+            }];
+
+}
 # pragma mark - uploads
 
 - (TDPostUpload *)initializeVideoUploadwithThumnail:(NSString *)localPhotoPath withName:(NSString *)newName {

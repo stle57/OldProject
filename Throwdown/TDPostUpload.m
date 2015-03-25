@@ -163,7 +163,7 @@ typedef enum {
         self.hasReceivedComment = YES;
         self.comment = [notification.userInfo objectForKey:@"comment"];
         self.isPR = [[notification.userInfo objectForKey:@"pr"] boolValue];
-        self.visibility = (TDPostPrivacy)[notification.userInfo objectForKey:@"visibility"];
+        self.visibility = (TDPostPrivacy)[[notification.userInfo objectForKey:@"visibility"] intValue];
         self.userGenerated = [[notification.userInfo objectForKey:@"userGenerated"] boolValue];
         self.shareOptions = [notification.userInfo objectForKey:@"shareOptions"];
         self.locationData = [notification.userInfo objectForKey:@"location"];

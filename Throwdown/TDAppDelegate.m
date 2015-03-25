@@ -79,6 +79,15 @@
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent];
 
     debug NSLog(@"app launched with options: %@", launchOptions);
+
+    NSString *message = [NSString stringWithFormat:@"firstUsed=%@\nlength of installation in seconds=%f\ndaysUntilPrompt=%f\nusesCount=%lu", [iRate sharedInstance].firstUsed, [[NSDate date] timeIntervalSinceDate:[iRate sharedInstance].firstUsed], [iRate sharedInstance].daysUntilPrompt, (unsigned long)[iRate sharedInstance].usesCount ];
+
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"app review conditions"
+                                                    message:message
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
     return YES;
 }
 
@@ -128,7 +137,7 @@
         //but we want to test with an app that's actually on the store
         [iRate sharedInstance].applicationBundleID = @"us.throwdown.throwdown";
     }
-    [iRate sharedInstance].daysUntilPrompt = 0;
+    [iRate sharedInstance].daysUntilPrompt = 3;
     [iRate sharedInstance].usesUntilPrompt = 10;
     [iRate sharedInstance].promptForNewVersionIfUserRated = YES;
 	[iRate sharedInstance].onlyPromptIfLatestVersion = NO;
@@ -136,7 +145,8 @@
     //enable preview mode
     [iRate sharedInstance].previewMode = NO;
     
-    debug NSLog(@"iRate events=%lu", (unsigned long)[iRate sharedInstance].eventCount);
+    debug NSLog(@"iRate firstUsed on=%@", [iRate sharedInstance].firstUsed);
+    debug NSLog(@"iRate daysUntilPrompt=%lu", (unsigned long)[iRate sharedInstance].daysUntilPrompt);
     debug NSLog(@"iRate use count=%lu", (unsigned long)[iRate sharedInstance].usesCount);
 }
 

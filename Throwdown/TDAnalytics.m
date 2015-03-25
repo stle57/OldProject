@@ -181,6 +181,19 @@ NSString *TDURLUnescapedString(NSString *string) {
 
 - (void)willEnterForegroundCallback:(NSNotification *)notification {
 	debug NSLog(@"TDApp willEnterForeground");
+    debug NSLog(@"iRate firstUsed on=%@", [iRate sharedInstance].firstUsed);
+    debug NSLog(@"how long this version has been installed(seconds)=%f", [[NSDate date] timeIntervalSinceDate:[iRate sharedInstance].firstUsed]);
+    debug NSLog(@"iRate daysUntilPrompt=%lu", (unsigned long)[iRate sharedInstance].daysUntilPrompt);
+    debug NSLog(@"iRate use count=%lu", (unsigned long)[iRate sharedInstance].usesCount);
+    NSString *message = [NSString stringWithFormat:@"firstUsed=%@\nlength of installation in seconds=%f\ndaysUntilPrompt=%f\nusesCount=%lu", [iRate sharedInstance].firstUsed, [[NSDate date] timeIntervalSinceDate:[iRate sharedInstance].firstUsed], [iRate sharedInstance].daysUntilPrompt, (unsigned long)[iRate sharedInstance].usesCount ];
+
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"app review conditions"
+                                                    message:message
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+    
 	[self resume];
 }
 

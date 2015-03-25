@@ -24,5 +24,5 @@
 - (instancetype)initWithFrame:(CGRect)frame;
 - (void)showUserSuggestions:(UITextView *)textView callback:(void (^)(BOOL success))callback;
 - (void)updateFrame:(CGRect)frame;
-
+- (void)hideView;
 @end

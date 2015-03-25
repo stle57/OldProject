@@ -40,6 +40,8 @@
     _body = [dict objectForKey:@"body"];
     _mentions = [dict objectForKey:@"mentions"];
     _createdAt = [TDViewControllerHelper dateForRFC3339DateTimeString:[dict objectForKey:@"created_at"]];
+    _updated = [[dict objectForKey:@"updated"] boolValue];
+
     [self calculateHeight];
 }
 

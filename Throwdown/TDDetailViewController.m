@@ -23,6 +23,8 @@
 #import "TDLocationFeedViewController.h"
 #import "TDTagFeedViewController.h"
 #import "TDUserAPI.h"
+#import "TDCreatePostViewController.h"
+#import "TDHomeViewController.h"
 
 static float const kInputLineSpacing = 3;
 static float const kMinInputHeight = 33.;
@@ -38,18 +40,27 @@ static int const kToolbarHeight = 64;
 @property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *textView;
 @property (weak, nonatomic) IBOutlet UIButton *sendButton;
 @property (weak, nonatomic) IBOutlet UIView *topLineView;
+@property (weak, nonatomic) IBOutlet UIView *editingView;
+@property (weak, nonatomic) IBOutlet UIPlaceHolderTextView *editingTextView;
+@property (weak, nonatomic) IBOutlet UIButton *cancelButton;
+@property (weak, nonatomic) IBOutlet UIButton *saveButton;
+@property (weak, nonatomic) IBOutlet UIView *editingTopLineView;
 
 @property (nonatomic) UITapGestureRecognizer *tapGesture;
 @property (nonatomic) CGFloat minLikeheight;
 @property (nonatomic) BOOL liking;
 @property (nonatomic) BOOL allowMuting;  //used for internal purposes if the user goes back and forth before pressing yes
 @property (nonatomic) BOOL isEditing;
+@property (nonatomic) BOOL isEditingOriginalPost;
 @property (nonatomic) BOOL loaded;
 @property (nonatomic) NSString *cachedText;
 @property (nonatomic) TDUserListView *userListView;
 @property (nonatomic) TDActivityIndicator *activityIndicator;
 @property (nonatomic) TDKeyboardObserver *keyboardObserver;
 @property (nonatomic) UIBarButtonItem *dotBarItem;
+@property (nonatomic) NSInteger editingCommentNumber;
+@property (nonatomic) NSInteger actionSheetIdx;
+@property (nonatomic) NSMutableDictionary *actionSheetKey;
 @end
 
 @implementation TDDetailViewController
@@ -125,6 +136,39 @@ static int const kToolbarHeight = 64;
     commentFrame.size.width = SCREEN_WIDTH;
     self.commentView.frame = commentFrame;
 
+    // Typing Bottom
+    CGRect editingTextFrame = self.editingTextView.frame;
+    editingTextFrame.size.width = SCREEN_WIDTH - 10 - 10;
+    self.editingTextView.font = [TDConstants fontRegularSized:17];
+    self.editingTextView.frame = editingTextFrame;
+    self.editingTextView.delegate = self;
+    self.editingTextView.clipsToBounds = YES;
+    self.editingTextView.layoutManager.delegate = self;
+    self.editingTextView.layer.cornerRadius = 4;
+    self.editingTextView.layer.borderWidth = (1.0 / [[UIScreen mainScreen] scale]);
+    self.editingTextView.layer.borderColor = [UIColor colorWithRed:178./255. green:178./255. blue:178./255. alpha:1].CGColor;
+    self.editingTextView.contentInset = UIEdgeInsetsMake(0, 0, -10, 0);
+    self.editingTextView.placeholder = kCommentDefaultText;
+    self.editingTextView.scrollsToTop = NO;
+
+    //self.saveButton.center = CGPointMake(SCREEN_WIDTH - self.sendButton.frame.size.width / 2.0, self.sendButton.center.y);
+    self.cancelButton.titleLabel.font = [TDConstants fontRegularSized:17.];
+    self.cancelButton.enabled = NO;
+    [self.cancelButton sizeToFit];
+
+    //self.saveButton.center = CGPointMake(SCREEN_WIDTH - self.sendButton.frame.size.width / 2.0, self.sendButton.center.y);
+    self.saveButton.titleLabel.font = [TDConstants fontSemiBoldSized:17.];
+    self.saveButton.enabled = NO;
+    [self.saveButton sizeToFit];
+
+    self.editingTopLineView.frame = CGRectMake(0, 0, SCREEN_WIDTH, 1.0 / [[UIScreen mainScreen] scale]);
+
+    CGRect editingFrame = self.editingView.frame;
+    editingFrame.size.width = SCREEN_WIDTH;
+    self.editingView.frame = editingFrame;
+    self.editingView.layer.borderColor = [[UIColor purpleColor] CGColor];
+    self.editingView.layer.borderWidth = 2.0;
+
     // User name filter table view
     if (self.userListView == nil) {
         self.userListView = [[TDUserListView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, self.commentView.frame.origin.y)];
@@ -137,9 +181,15 @@ static int const kToolbarHeight = 64;
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePost:) name:TDNotificationUpdatePost object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(newCommentFailed:) name:TDNotificationNewCommentFailed object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateCommentFailed:) name:TDNotificationUpdateCommentFailed object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostCommentFailed:) name:TDNotificationUpdatePostCommentFailed object:nil];
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updatePostsAfterUserUpdate:) name:TDUpdateWithUserChangeNotification object:nil];
 
     self.keyboardObserver = [[TDKeyboardObserver alloc] initWithDelegate:self];
+
+    self.actionSheetIdx = 0;
+    self.actionSheetKey = [[NSMutableDictionary alloc] init];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -172,6 +222,10 @@ static int const kToolbarHeight = 64;
     if (self.isEditing) {
         [self.textView resignFirstResponder];
     }
+    if (self.isEditingOriginalPost) {
+        [self.editingView resignFirstResponder];
+    }
+
     [self.keyboardObserver stopListening];
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationStopPlayers object:nil];
 }
@@ -185,51 +239,76 @@ static int const kToolbarHeight = 64;
 - (void)reportButtonPressed:(id)sender {
     NSString *reportText;
     if ([self.post.user.userId isEqualToNumber:[[TDCurrentUser sharedInstance] currentUserObject].userId]) {
+        self.actionSheetIdx = 0;
         reportText = @"Delete";
+        [self.actionSheetKey setValue:[NSNumber numberWithInt:TDDeletePost] forKey:[NSString stringWithFormat:@"%ld", (long)self.actionSheetIdx]];
+
     } else {
+        self.actionSheetIdx = 0;
         reportText = @"Report as Inappropriate";
+        [self.actionSheetKey setValue:[NSNumber numberWithInt:TDReportInappropriate] forKey:[NSString stringWithFormat:@"%ld", (long)self.actionSheetIdx]];
+    }
+
+
+    UIActionSheet * actionSheet = [[UIActionSheet alloc] initWithTitle:nil
+                                                              delegate:self
+                                                     cancelButtonTitle:nil /* don't set Cancel title here! */
+                                                destructiveButtonTitle:reportText
+                                                     otherButtonTitles:nil];
+
+    if ([self.post.user.userId isEqualToNumber:[[TDCurrentUser sharedInstance] currentUserObject].userId]) {
+        self.actionSheetIdx++;
+        NSString *editPost = @"Edit";
+        [self.actionSheetKey setValue:[NSNumber numberWithInt:TDEditPost] forKey:[NSString stringWithFormat:@"%ld", (long)self.actionSheetIdx]];
+
+        [actionSheet addButtonWithTitle:editPost];
     }
 
     NSString *muteUserText;
     if (self.post.visibility == TDPostSemiPrivate) {
-        if (self.post.mutedUser) {
-            muteUserText = [NSString stringWithFormat:@"%@%@", @"Unmute @", self.post.user.username];
-        } else {
-            muteUserText = [NSString stringWithFormat:@"%@%@", @"Mute @", self.post.user.username];
+        if (![[TDCurrentUser sharedInstance].userId isEqual:self.post.user.userId]) {
+            self.actionSheetIdx++;
+            if (self.post.mutedUser) {
+                muteUserText = [NSString stringWithFormat:@"%@%@", @"Unmute @", self.post.user.username];
+                [self.actionSheetKey setValue:[NSNumber numberWithInt:TDUnmuteUser] forKey:[NSString stringWithFormat:@"%ld", (long)self.actionSheetIdx]];
+            } else {
+                muteUserText = [NSString stringWithFormat:@"%@%@", @"Mute @", self.post.user.username];
+                [self.actionSheetKey setValue:[NSNumber numberWithInt:TDMuteUser] forKey:[NSString stringWithFormat:@"%ld", (long)self.actionSheetIdx]];
+            }
+            [actionSheet addButtonWithTitle:muteUserText];
         }
     }
 
     NSString *unfollowText;
     if (self.allowMuting || self.post.unfollowed) {
+        self.actionSheetIdx++;
         if (self.post.unfollowed) {
             unfollowText = @"Unmute this post";
+            [self.actionSheetKey setValue:[NSNumber numberWithInt:TDUnmutePost] forKey:[NSString stringWithFormat:@"%ld", (long)self.actionSheetIdx]];
         } else {
             unfollowText = @"Mute this post";
+            [self.actionSheetKey setValue:[NSNumber numberWithInt:TDMutePost] forKey:[NSString stringWithFormat:@"%ld", (long)self.actionSheetIdx]];
         }
+
+        [actionSheet addButtonWithTitle:unfollowText];
     }
 
-    UIActionSheet *actionSheet;
-    if (self.post.slug) {
-        if (self.post.visibility == TDPostSemiPrivate) {
-            actionSheet = [[UIActionSheet alloc] initWithTitle:nil
-                                                      delegate:self
-                                             cancelButtonTitle:@"Cancel"
-                                        destructiveButtonTitle:reportText
-                                             otherButtonTitles:muteUserText, @"Copy Share Link", nil];
+    self.actionSheetIdx++;
+    [actionSheet addButtonWithTitle:@"Copy Share Link"];
+    [self.actionSheetKey setValue:[NSNumber numberWithInt:TDCopyShareLink] forKey:[NSString stringWithFormat:@"%ld", (long)self.actionSheetIdx]];
 
-        } else if (self.post.unfollowed || self.allowMuting) {
-            actionSheet = [[UIActionSheet alloc] initWithTitle:nil
-                                                      delegate:self
-                                             cancelButtonTitle:@"Cancel"
-                                        destructiveButtonTitle:reportText
-                                             otherButtonTitles:unfollowText, @"Copy Share Link", nil];
-        } else {
-            actionSheet = [[UIActionSheet alloc] initWithTitle:nil
-                                                      delegate:self
-                                             cancelButtonTitle:@"Cancel"
-                                        destructiveButtonTitle:reportText
-                                             otherButtonTitles:@"Copy Share Link", nil];
-        }
+    self.actionSheetIdx++;
+    // after all other buttons have been added, include Cancel
+    [actionSheet addButtonWithTitle:@"Cancel"];
+    [actionSheet setCancelButtonIndex:self.actionSheetIdx];
+    [self.actionSheetKey setValue:[NSNumber numberWithInt:TDCancel] forKey:[NSString stringWithFormat:@"%ld", (long)self.actionSheetIdx]];
+
+
+    if (self.post.slug) {
+//        for (NSString *title in actionNames) {
+//            debug NSLog(@"adding title =%@", title);
+//            [actionSheet addButtonWithTitle:title];
+//        }
     } else {
         actionSheet = [[UIActionSheet alloc] initWithTitle:nil
                                                   delegate:self
@@ -238,12 +317,32 @@ static int const kToolbarHeight = 64;
                                          otherButtonTitles:nil];
 
     }
+
     [actionSheet showInView:self.view];
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (buttonIndex == actionSheet.destructiveButtonIndex) {
-        if ([self.post.user.userId isEqualToNumber:[[TDCurrentUser sharedInstance] currentUserObject].userId]) {
+    debug NSLog(@"button index = %ld", (long)buttonIndex);
+    NSString *inStr = [NSString stringWithFormat:@"%@",
+                       [NSNumber numberWithInteger:buttonIndex]];
+
+
+    NSNumber *type = [self.actionSheetKey valueForKey:inStr] ;
+    debug NSLog(@"type - %@", type);
+    switch ([type intValue]) {
+        case TDReportInappropriate:
+        {
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Report as Inappropriate?"
+                                                  message:@"Please confirm you'd like to report this post as inappropriate."
+                                                 delegate:self
+                                        cancelButtonTitle:@"Cancel"
+                                        otherButtonTitles:@"Report", nil];
+            alert.tag = 18890;
+            [alert show];
+        }
+            break;
+        case TDDeletePost:
+        {
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Delete?"
                                                             message:@"Are you sure you want to\ndelete this post?"
                                                            delegate:self
@@ -251,70 +350,95 @@ static int const kToolbarHeight = 64;
                                                   otherButtonTitles:@"Yes", nil];
             alert.tag = 89890;
             [alert show];
-        } else {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Report as Inappropriate?"
-                                                            message:@"Please confirm you'd like to report this post as inappropriate."
-                                                           delegate:self
-                                                  cancelButtonTitle:@"Cancel"
-                                                  otherButtonTitles:@"Report", nil];
-            alert.tag = 18890;
-            [alert show];
         }
-    } else if (buttonIndex == 1) {
-        if (self.post.visibility == TDPostSemiPrivate) {
-            if (self.post.mutedUser) {
-                //unmute
-                // Send unfollow user to server
-                [[TDUserAPI sharedInstance] unmuteUser:self.post.user.userId callback:^(BOOL success) {
-                    if (success) {
-                        debug NSLog(@"Successfully unfollwed user=%@", self.post.user.userId);
-                    } else {
-                        debug NSLog(@"could not unmute user=%@", self.post.user.userId);
-                        [[TDAppDelegate appDelegate] showToastWithText:@"Error occured.  Please try again." type:kToastType_Warning payload:@{} delegate:nil];
-                        debug NSLog(@"could not unmute user=%@", self.post.user.userId);
-                    }
-                }];
-            } else {
-                //mute
-                // Send follow user to server
-                [[TDUserAPI sharedInstance] muteUser:self.post.user.userId callback:^(BOOL success) {
-                    if (success) {
-                    } else {
-                        [[TDAppDelegate appDelegate] showToastWithText:@"Error occured.  Please try again." type:kToastType_Warning payload:@{} delegate:nil];
-                    }
-                }];
-            }
-        } else {
-            debug NSLog(@"unfollow button hit");
-            if (self.post.unfollowed) {
-                [[TDPostAPI sharedInstance] followPostWithId:self.post.postId];
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
-                                                                message:@"You will now receive notifications for this post, including any mentions."
-                                                               delegate:self
-                                                      cancelButtonTitle:nil
-                                                      otherButtonTitles:@"OK", nil];
-                [alert show];
-                self.allowMuting = YES;
-                [self.post removeUnfollowUser:[[TDCurrentUser sharedInstance] currentUserObject]];
-            } else {
-                [[TDPostAPI sharedInstance] unfollowPostWithId:self.post.postId];
-                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
-                                                                message:@"You will no longer receive any notifications for this post, including any mentions.  To turn on notifications, please follow this post again."
-                                                               delegate:self
-                                                      cancelButtonTitle:nil
-                                                      otherButtonTitles:@"OK", nil];
-                alert.tag = 18891;
-                [alert show];
-                self.allowMuting = YES;
-                [self.post addUnfollowUser:[[TDCurrentUser sharedInstance] currentUserObject]];
-            }
+        break;
+        case TDEditPost:
+        {
+            debug NSLog(@"NEED TO OPEN CREATEPOSTVIEWCONTROLLER");
+            //[self openEditPostView];
         }
+        break;
+        case TDUnmuteUser:
+        {
+            //unmute
+            // Send unfollow user to server
+            [[TDUserAPI sharedInstance] unmuteUser:self.post.user.userId callback:^(BOOL success) {
+                if (success) {
+                    debug NSLog(@"Successfully unfollwed user=%@", self.post.user.userId);
+                } else {
+                    debug NSLog(@"could not unmute user=%@", self.post.user.userId);
+                    [[TDAppDelegate appDelegate] showToastWithText:@"Error occured.  Please try again." type:kToastType_Warning payload:@{} delegate:nil];
+                    debug NSLog(@"could not unmute user=%@", self.post.user.userId);
+                }
+            }];
+        }
+        break;
+        case TDMuteUser:
+        {
+            //mute
+            // Send follow user to server
+            [[TDUserAPI sharedInstance] muteUser:self.post.user.userId callback:^(BOOL success) {
+                if (success) {
+                } else {
+                    [[TDAppDelegate appDelegate] showToastWithText:@"Error occured.  Please try again." type:kToastType_Warning payload:@{} delegate:nil];
+                }
+            }];
 
-    }else if (buttonIndex != actionSheet.cancelButtonIndex) {
-        // index 1 = Copy Share Link
-        [[TDAnalytics sharedInstance] logEvent:@"copied_share_url"];
-        [[UIPasteboard generalPasteboard] setString:[TDConstants getShareURL:self.post.slug]];
-        [[TDAppDelegate appDelegate] showToastWithText:@"Share link copied to clipboard" type:kToastType_Info payload:nil delegate:nil];
+        }
+        break;
+        case TDUnmutePost:
+        {
+            [[TDPostAPI sharedInstance] followPostWithId:self.post.postId];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
+                                                            message:@"You will now receive notifications for this post, including any mentions."
+                                                           delegate:self
+                                                  cancelButtonTitle:nil
+                                                  otherButtonTitles:@"OK", nil];
+            [alert show];
+            self.allowMuting = YES;
+            [self.post removeUnfollowUser:[[TDCurrentUser sharedInstance] currentUserObject]];
+        }
+        break;
+        case TDMutePost:
+        {
+            [[TDPostAPI sharedInstance] unfollowPostWithId:self.post.postId];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@""
+                                                            message:@"You will no longer receive any notifications for this post, including any mentions.  To turn on notifications, please unmute this post."
+                                                           delegate:self
+                                                  cancelButtonTitle:nil
+                                                  otherButtonTitles:@"OK", nil];
+            alert.tag = 18892;
+            [alert show];
+            self.allowMuting = YES;
+            [self.post addUnfollowUser:[[TDCurrentUser sharedInstance] currentUserObject]];
+        }
+        break;
+        case TDCopyShareLink:
+        {
+            // index 1 = Copy Share Link
+            [[TDAnalytics sharedInstance] logEvent:@"copied_share_url"];
+            [[UIPasteboard generalPasteboard] setString:[TDConstants getShareURL:self.post.slug]];
+            [[TDAppDelegate appDelegate] showToastWithText:@"Share link copied to clipboard" type:kToastType_Info payload:nil delegate:nil];
+        }
+        break;
+        case TDCancel:
+            break;
+    }
+}
+#pragma mark - UIActionSheet
+- (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex{
+    debug NSLog(@"inside didDismissWithButtonIndex, buttonIndex=%ld", (long)buttonIndex);
+    NSString *inStr = [NSString stringWithFormat:@"%@",
+                       [NSNumber numberWithInteger:buttonIndex]];
+
+
+    NSNumber *type = [self.actionSheetKey valueForKey:inStr] ;
+    debug NSLog(@"type - %@", type);
+    switch ([type intValue]) {
+        case TDEditPost:
+            debug NSLog(@"  got edit post, show controller");
+            [self openEditPostView];
+            break;
     }
 }
 
@@ -326,7 +450,6 @@ static int const kToolbarHeight = 64;
         // Delete from server Server
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postDeleted:) name:TDNotificationRemovePost object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(postDeleteFailed:) name:TDNotificationRemovePostFailed object:nil];
-
         self.activityIndicator = [[TDActivityIndicator alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
         self.activityIndicator.center = [TDViewControllerHelper centerPosition];
         
@@ -351,6 +474,21 @@ static int const kToolbarHeight = 64;
                                               cancelButtonTitle:@"OK"
                                               otherButtonTitles:nil];
         [alert show];
+    } else if (alertView.tag == 18891 && buttonIndex != alertView.cancelButtonIndex) {
+        // Report comment!
+        TDComment *comment = [self.post commentAtIndex:self.editingCommentNumber];
+        debug NSLog(@"reporting comment id = %@", comment.commentId);
+        [[TDPostAPI sharedInstance] reportCommentWithId:comment.commentId postId:self.postId];
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Report Sent"
+                                                        message:@"Our moderators will review this comment within the next 24 hours. Thank you."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles:nil];
+        [alert show];
+
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.editingCommentNumber+2 inSection:0];
+        [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+        self.editingCommentNumber = -1;
     }
 }
 
@@ -373,6 +511,8 @@ static int const kToolbarHeight = 64;
     if ((self.postId && [newPost.postId isEqualToNumber:self.postId]) || (self.slug && ([newPost.slug isEqualToString:self.slug] || [[newPost.postId stringValue] isEqualToString:self.slug]))) {
         [self.post loadUpFromDict:post];
         self.postId = self.post.postId;
+
+        [self allowMutingPost];
         [self.tableView reloadData];
     }
 }
@@ -395,6 +535,7 @@ static int const kToolbarHeight = 64;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+
     // Post View
     if (indexPath.row == 0) {
         TDPostView *cell = [tableView dequeueReusableCellWithIdentifier:CELL_IDENTIFIER_POST_VIEW];
@@ -414,16 +555,10 @@ static int const kToolbarHeight = 64;
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDDetailsLikesCell" owner:self options:nil];
             cell = [topLevelObjects objectAtIndex:0];
             cell.delegate = self;
-            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            cell.selectionStyle = UITableViewCellSelectionStyleDefault;
         }
 
         [cell setLike:self.post.liked];
-        if (self.post.liked) {
-            // The user liked this
-            self.allowMuting = YES;
-        } else {
-            self.allowMuting = NO;
-        }
 
         [cell setLikesArray:self.post.likers];
 
@@ -436,7 +571,7 @@ static int const kToolbarHeight = 64;
         NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDDetailsCommentsCell" owner:self options:nil];
         cell = [topLevelObjects objectAtIndex:0];
         cell.delegate = self;
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        cell.selectionStyle = UITableViewCellSelectionStyleGray;
     }
 
     NSUInteger commentNumber = (indexPath.row - 2);
@@ -444,10 +579,7 @@ static int const kToolbarHeight = 64;
     if (comment) {
         if (comment.user.userId == [TDCurrentUser sharedInstance].userId) {
             self.allowMuting = YES;
-        } else {
-            self.allowMuting = NO;
         }
-
         cell.commentNumber = commentNumber;
         [cell updateWithComment:comment showIcon:(commentNumber == 0) showDate:YES];
     }
@@ -494,6 +626,74 @@ static int const kToolbarHeight = 64;
     }
 }
 
+- (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.row > 1) {
+        NSInteger commentNumber = indexPath.row -2;
+        debug NSLog(@"inside didSelectRowAtIndexPath, commentNumber = %ld, section-%ld", (long)commentNumber, (long)indexPath.section);
+
+        self.editingCommentNumber = commentNumber;
+
+        TDComment *comment = [self.post commentAtIndex:commentNumber];
+        debug NSLog(@"comment userid = %@, current userid=%@", comment.user.userId, [TDCurrentUser sharedInstance].userId);
+        if ([comment.user.userId isEqualToNumber:[TDCurrentUser sharedInstance].userId]) {
+
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(commentDeleted:) name:TDNotificationRemoveComment object:nil];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(commentDeleteFailed:) name:TDNotificationRemoveCommentFailed object:nil];
+
+
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil  message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+
+            UIAlertAction* deleteCommentAction = [UIAlertAction actionWithTitle:@"Delete" style:UIAlertActionStyleDestructive
+                                                                                handler:^(UIAlertAction * action) {
+                                                                                    [self presentDeleteCommentAlertView];
+                                                                                }];
+            UIAlertAction *editCommentAction =[UIAlertAction actionWithTitle:@"Edit" style:UIAlertActionStyleDefault
+                                                                        handler:^(UIAlertAction * action) {
+                                                                            [self editComment:indexPath.row];
+
+                                                                        }];
+            UIAlertAction* cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
+                                                           handler:^(UIAlertAction * action) {
+                                                               [alert dismissViewControllerAnimated:YES completion:nil];
+                                                               [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+                                                           }];
+
+            [alert addAction:deleteCommentAction];
+            [alert addAction:editCommentAction];
+            [alert addAction:cancel];
+            alert.view.tintColor = [UIColor blueColor];
+
+            [self presentViewController:alert animated:YES completion:nil];
+        } else {
+            UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil  message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+
+            UIAlertAction* inappropriateAction = [UIAlertAction actionWithTitle:@"Report as Inappropriate" style:UIAlertActionStyleDestructive
+                                                                        handler:^(UIAlertAction * action) {
+                                                                            debug NSLog(@"comment id we are reporting is %@", comment.commentId);
+                                                                            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Report as Inappropriate?"
+                                                                                                                            message:@"Please confirm you'd like to report this comment as inappropriate."
+                                                                                                                           delegate:self
+                                                                                                                  cancelButtonTitle:@"Cancel"
+                                                                                                                  otherButtonTitles:@"Report", nil];
+                                                                            alert.tag = 18891;
+                                                                            [alert show];
+                                                                        }];
+            UIAlertAction* cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
+                                                           handler:^(UIAlertAction * action) {
+                                                               [alert dismissViewControllerAnimated:YES completion:nil];
+                                                               [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+
+                                                           }];
+
+            [alert addAction:inappropriateAction];
+            [alert addAction:cancel];
+            alert.view.tintColor = [UIColor blueColor];
+
+            [self presentViewController:alert animated:YES completion:nil];
+
+        }
+    }
+}
 #pragma mark - TDDetailsLikesCell Delegates
 
 - (void)likeButtonPressedFromLikes {
@@ -602,7 +802,7 @@ static int const kToolbarHeight = 64;
 #pragma mark - Keyboard / TextView management
 
 - (void)keyboardWillShow:(NSNotification *)notification {
-
+    debug NSLog(@"inside keyboardWillShow");
     NSDictionary *info = [notification userInfo];
 
     NSValue *kbFrame = [info objectForKey:UIKeyboardFrameEndUserInfoKey];
@@ -615,37 +815,108 @@ static int const kToolbarHeight = 64;
     NSNumber *curveValue = [info objectForKey:UIKeyboardAnimationCurveUserInfoKey];
     UIViewAnimationCurve animationCurve = curveValue.intValue;
     NSTimeInterval animationDuration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
+    if (self.isEditingOriginalPost) {
+        debug NSLog(@"SHOW editing View");
+        self.editingView.hidden = NO;
+        self.commentView.hidden = YES;
+        debug NSLog(@"SCREEN_WIDTH=%f", SCREEN_WIDTH);
+        debug NSLog(@"  editingView frame = %@", NSStringFromCGRect(self.editingView.frame));
+        debug NSLog(@"  editingTextView frame = %@", NSStringFromCGRect(self.editingTextView.frame));
+        debug NSLog(@"  save button frame = %@", NSStringFromCGRect(self.saveButton.frame));
+        debug NSLog(@"  cancel button frame = %@", NSStringFromCGRect(self.cancelButton.frame));
 
+        self.editingTextView.layer.borderColor = [[UIColor greenColor] CGColor];
+        self.editingTextView.layer.borderWidth = 2.;
+        debug NSLog(@"  editingTextView.contentSize=%f", self.editingTextView.contentSize.height);
+        CGFloat fixedWidth = self.editingTextView.frame.size.width;
+        CGSize newSize = [self.editingTextView sizeThatFits:CGSizeMake(fixedWidth, MAXFLOAT)];
+        CGRect newFrame = self.editingTextView.frame;
+        newFrame.size = CGSizeMake(fmaxf(newSize.width, fixedWidth), newSize.height);
 
-    CGFloat height = MAX(MIN(self.textView.contentSize.height, kMaxInputHeight), kMinInputHeight);
-    CGFloat bottom = screenHeight - keyboardHeight;
+        CGFloat height = MAX(MIN(newSize.height - kInputLineSpacing, kMaxInputHeight), kMinInputHeight);
+        [self updateEditCommentSize:height];
+        debug NSLog(@"   H: %f / %f", height, self.editingTextView.contentSize.height);
 
-    CGRect textFrame = self.textView.frame;
-    textFrame.size.height = height;
+        CGFloat bottom = screenHeight - keyboardHeight;
 
-    CGRect commentFrame = self.commentView.frame;
-    commentFrame.size.height = textFrame.size.height + kCommentFieldPadding;
-    commentFrame.origin.y = bottom - height - kCommentFieldPadding;
+        CGRect textFrame = self.editingTextView.frame;
+        textFrame.size.height = height;
+        textFrame.origin.y = self.cancelButton.frame.origin.y + self.cancelButton.frame.size.height;
 
-    CGRect tableFrame = self.tableView.layer.frame;
-    tableFrame.size.height = bottom - height - kCommentFieldPadding - kToolbarHeight;
+        CGRect editViewFrame = self.editingView.frame;
+        editViewFrame.size.height = textFrame.size.height + kCommentFieldPadding + MAX(self.cancelButton.frame.size.height, self.saveButton.frame.size.height);
+        editViewFrame.origin.y = bottom - height - kCommentFieldPadding - MAX(self.cancelButton.frame.size.height, self.saveButton.frame.size.height);
 
-    CGRect buttonFrame = self.sendButton.frame;
-    buttonFrame.origin.y = (height + kCommentFieldPadding) - buttonFrame.size.height;
+        CGRect tableFrame = self.tableView.layer.frame;
+        tableFrame.size.height = bottom - height - kCommentFieldPadding - kToolbarHeight;
 
-    // animationCurve << 16 to convert it from a view animation curve to a view animation option
-    [UIView animateWithDuration:animationDuration delay:0.0 options:(animationCurve << 16) animations:^{
-        self.textView.frame = textFrame;
-        self.commentView.frame = commentFrame;
-        self.sendButton.frame = buttonFrame;
-        self.tableView.frame = tableFrame;
-    } completion:nil];
+        CGRect buttonFrame = self.saveButton.frame;
+        buttonFrame.origin.y = (5);
+        buttonFrame.origin.x = (textFrame.origin.x + textFrame.size.width) - buttonFrame.size.width;
+
+        CGRect cancelButtonFrame = self.cancelButton.frame;
+        cancelButtonFrame.origin.y = 5;
+        cancelButtonFrame.origin.x = textFrame.origin.x;
+
+        debug NSLog(@"  Animation going to...");
+        debug NSLog(@"  editingView frame = %@", NSStringFromCGRect(self.editingView.frame));
+        debug NSLog(@"  editingTextView frame = %@", NSStringFromCGRect(self.editingTextView.frame));
+        debug NSLog(@"  save button frame = %@", NSStringFromCGRect(self.saveButton.frame));
+        debug NSLog(@"  cancel button frame = %@", NSStringFromCGRect(self.cancelButton.frame));
+        // animationCurve << 16 to convert it from a view animation curve to a view animation option
+        [UIView animateWithDuration:animationDuration delay:0.0 options:(animationCurve << 16) animations:^{
+
+            self.editingTextView.frame = textFrame;
+            self.editingView.frame = editViewFrame;
+            self.saveButton.frame = buttonFrame;
+            self.cancelButton.frame = cancelButtonFrame;
+            self.tableView.frame = tableFrame;
+        } completion:nil];
+
+    } else {
+        self.commentView.hidden = NO;
+        self.editingView.hidden = YES;
+        CGFloat height = MAX(MIN(self.textView.contentSize.height, kMaxInputHeight), kMinInputHeight);
+        CGFloat bottom = screenHeight - keyboardHeight;
+        debug NSLog(@"show comment view...");
+        debug NSLog(@"SCREEN_WIDTH=%f", SCREEN_WIDTH);
+        debug NSLog(@"  textView frame = %@", NSStringFromCGRect(self.textView.frame));
+        debug NSLog(@"  commentVIew frame = %@", NSStringFromCGRect(self.commentView.frame));
+        debug NSLog(@"  tableViewFrame = %@", NSStringFromCGRect(self.tableView.frame));
+        CGRect textFrame = self.textView.frame;
+        textFrame.size.height = height;
+    
+        CGRect commentFrame = self.commentView.frame;
+        commentFrame.size.height = textFrame.size.height + kCommentFieldPadding;
+        commentFrame.origin.y = bottom - height - kCommentFieldPadding;
+
+        CGRect tableFrame = self.tableView.layer.frame;
+        tableFrame.size.height = bottom - height - kCommentFieldPadding - kToolbarHeight;
+
+        CGRect buttonFrame = self.sendButton.frame;
+        buttonFrame.origin.y = (height + kCommentFieldPadding) - buttonFrame.size.height;
+
+        debug NSLog(@"  animation going to...");
+        debug NSLog(@"  textView frame = %@", NSStringFromCGRect(self.textView.frame));
+        debug NSLog(@"  commentVIew frame = %@", NSStringFromCGRect(self.commentView.frame));
+        debug NSLog(@"  tableViewFrame = %@", NSStringFromCGRect(self.tableView.frame));
+
+        // animationCurve << 16 to convert it from a view animation curve to a view animation option
+        [UIView animateWithDuration:animationDuration delay:0.0 options:(animationCurve << 16) animations:^{
+            self.textView.frame = textFrame;
+            self.commentView.frame = commentFrame;
+            self.sendButton.frame = buttonFrame;
+            self.tableView.frame = tableFrame;
+        } completion:nil];
+    }
 }
 
 
 #pragma mark - TDKeyboardObserverDelegate
 
 - (void)keyboardDidShow:(NSNotification *)notification {
+    debug NSLog(@"inside keyboardDidShow");
+
     self.isEditing = YES;
     self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapFrom:)];
     [self.tableView addGestureRecognizer:self.tapGesture];
@@ -653,6 +924,7 @@ static int const kToolbarHeight = 64;
 }
 
 - (void)keyboardDidHide:(NSNotification *)notification {
+    debug NSLog(@"inside keyboardDidHide");
     self.isEditing = NO;
     [self.tableView removeGestureRecognizer:self.tapGesture];
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationResumeTapGesture object:nil];
@@ -660,39 +932,96 @@ static int const kToolbarHeight = 64;
 }
 
 - (void)keyboardFrameChanged:(CGRect)keyboardFrame {
-    CGRect tableFrame = self.tableView.layer.frame;
-    tableFrame.size.height = keyboardFrame.origin.y - self.commentView.layer.frame.size.height - kToolbarHeight;
-    self.tableView.frame = tableFrame;
+    debug NSLog(@"inside keyboardFrameChanged");
+    if (self.isEditingOriginalPost) {
+        CGRect tableFrame = self.tableView.layer.frame;
+        tableFrame.size.height = keyboardFrame.origin.y - self.editingView.layer.frame.size.height - kToolbarHeight;
+        self.tableView.frame = tableFrame;
 
-    CGPoint current = self.commentView.center;
-    current.y = keyboardFrame.origin.y - (self.commentView.layer.frame.size.height / 2) - kToolbarHeight;
-    self.commentView.center = current;
+        debug NSLog(@"   editingView.layer.frame.size.height=%f", self.editingView.layer.frame.size.height);
+        CGPoint current = self.editingView.center;
+        current.y = keyboardFrame.origin.y - (self.editingView.layer.frame.size.height / 2) - kToolbarHeight;
+        self.editingView.center = current;
+        debug NSLog(@"   editingView.center=%@", NSStringFromCGPoint(current));
+    } else {
+        CGRect tableFrame = self.tableView.layer.frame;
+        tableFrame.size.height = keyboardFrame.origin.y - self.commentView.layer.frame.size.height - kToolbarHeight;
+        self.tableView.frame = tableFrame;
+
+        debug NSLog(@"   commentView.layer.frame.size.height=%f", self.commentView.layer.frame.size.height);
+        CGPoint current = self.commentView.center;
+        current.y = keyboardFrame.origin.y - (self.commentView.layer.frame.size.height / 2) - kToolbarHeight;
+        self.commentView.center = current;
+        debug NSLog(@"   commentView.center=%@", NSStringFromCGPoint(self.commentView.center));
+    }
 }
 
 - (void)handleTapFrom:(UITapGestureRecognizer *)tap {
+    if (!self.userListView.hidden) {
+        [self.userListView hideView];
+    }
+
     if (self.isEditing) {
-        [self.textView resignFirstResponder];
+        if (self.isEditingOriginalPost) {
+            self.editingCommentNumber = -1;
+            [self.editingTextView resignFirstResponder];
+        } else {
+            [self.textView resignFirstResponder];
+        }
     }
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
+    debug NSLog(@"shouldCHangeTextInRange...");
     return [TDTextViewControllerHelper textView:textView shouldChangeTextInRange:range replacementText:text];
 }
 
 - (void)textViewDidChange:(UITextView *)textView {
-    CGFloat height = MAX(MIN(textView.contentSize.height - kInputLineSpacing, kMaxInputHeight), kMinInputHeight);
-    [self updateCommentSize:height];
-    debug NSLog(@"H: %f / %f", height, textView.contentSize.height);
+    debug NSLog(@"text view changing");
 
-    [self.userListView showUserSuggestions:textView callback:^(BOOL success) {
-        if (success) {
-            // Make sure we do this after updateCommentSize
-            [self.userListView updateFrame:CGRectMake(0, 64, SCREEN_WIDTH, self.commentView.frame.origin.y - kToolbarHeight)];
-        }
-    }];
+    if (self.isEditingOriginalPost) {
+        // get the size of the UITextView based on what it would be with the text
+        CGFloat fixedWidth = self.editingTextView.frame.size.width;
+        CGSize newSize = [self.editingTextView sizeThatFits:CGSizeMake(fixedWidth, MAXFLOAT)];
+        CGRect newFrame = self.editingTextView.frame;
+        newFrame.size = CGSizeMake(fmaxf(newSize.width, fixedWidth), newSize.height);
+        CGFloat height = MAX(MIN(newSize.height - kInputLineSpacing, kMaxInputHeight), kMinInputHeight);
+        [self updateEditCommentSize:height];
+
+        debug NSLog(@"  H: %f / %f", height, textView.contentSize.height);
+
+        [self.userListView showUserSuggestions:textView callback:^(BOOL success) {
+            if (success) {
+                // Make sure we do this after updateCommentSize
+                debug NSLog(@"  editing view frame = %@", NSStringFromCGRect(self.editingView.frame));
+                [self.userListView updateFrame:CGRectMake(0, 64, SCREEN_WIDTH, self.editingView.frame.origin.y - kToolbarHeight)];
+                self.userListView.layer.borderColor = [[UIColor redColor] CGColor];
+                self.userListView.layer.borderWidth = 2.;
+                debug NSLog(@"  user list view frame = %@", NSStringFromCGRect(self.userListView.frame));
+            }
+        }];
+    } else {
+        CGFloat height = MAX(MIN(textView.contentSize.height - kInputLineSpacing, kMaxInputHeight), kMinInputHeight);
+
+        [self updateCommentSize:height];
+
+        debug NSLog(@"H: %f / %f", height, textView.contentSize.height);
+
+        [self.userListView showUserSuggestions:textView callback:^(BOOL success) {
+            if (success) {
+                // Make sure we do this after updateCommentSize
+                debug NSLog(@"    comment view frame = %@", NSStringFromCGRect(self.commentView.frame));
+                [self.userListView updateFrame:CGRectMake(0, 64, SCREEN_WIDTH, self.commentView.frame.origin.y - kToolbarHeight)];
+                self.userListView.layer.borderColor = [[UIColor redColor] CGColor];
+                self.userListView.layer.borderWidth = 2.;
+                debug NSLog(@"  user list view frame = %@", NSStringFromCGRect(self.userListView.frame));
+            }
+        }];
+    }
 }
 
 - (void)updateCommentSize:(CGFloat)height {
+    debug NSLog(@"inside updateCommentSize w/ height-%f", height);
     self.sendButton.enabled = ([[self.textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0);
 
     CGRect textFrame = self.textView.frame;
@@ -708,7 +1037,7 @@ static int const kToolbarHeight = 64;
     commentFrame.size.height = textFrame.size.height + kCommentFieldPadding;
     commentFrame.origin.y = bottom - height - kCommentFieldPadding;
     self.commentView.frame = commentFrame;
-
+    debug NSLog(@"    commentView.frame=%@", NSStringFromCGRect(self.commentView.frame));
     CGRect tableFrame = self.tableView.layer.frame;
     tableFrame.size.height = bottom - height - kCommentFieldPadding;
     self.tableView.frame = tableFrame;
@@ -720,10 +1049,51 @@ static int const kToolbarHeight = 64;
     [self.view layoutSubviews];
 }
 
+- (void)updateEditCommentSize:(CGFloat)height {
+    debug NSLog(@"updating comment size to height=%f", height);
+
+    self.saveButton.enabled = ([[self.editingTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0);
+    self.cancelButton.enabled = YES;
+    CGRect saveButtonFrame = self.saveButton.frame;
+    saveButtonFrame.origin.y = 5;
+    self.saveButton.frame = saveButtonFrame;
+
+    CGRect cancelButtonFrame = self.cancelButton.frame;
+    cancelButtonFrame.origin.y = 5;
+    self.cancelButton.frame = cancelButtonFrame;
+    debug NSLog(@"  self.cancelButton frame = %@", NSStringFromCGRect(self.cancelButton.frame));
+    debug NSLog(@"  self.saveButton frame = %@", NSStringFromCGRect(self.saveButton.frame));
+
+    CGRect textFrame = self.editingTextView.frame;
+    textFrame.size.height = height;
+    textFrame.origin.y = self.saveButton.frame.origin.y + self.saveButton.frame.size.height + 5;
+    self.editingTextView.frame = textFrame;
+
+    CGFloat bottom = [UIScreen mainScreen].bounds.size.height - kToolbarHeight;
+    if (self.keyboardObserver.keyboardView) {
+        bottom = self.keyboardObserver.keyboardView.layer.frame.origin.y - kToolbarHeight;
+    }
+    debug NSLog(@"  bottom = %f", bottom);
+
+    CGRect editingViewFrame = self.editingView.frame;
+    editingViewFrame.size.height = textFrame.size.height + kCommentFieldPadding + MAX(self.cancelButton.frame.size.height, self.saveButton.frame.size.height);
+    editingViewFrame.origin.y = bottom - height - kCommentFieldPadding - MAX(self.cancelButton.frame.size.height, self.saveButton.frame.size.height);
+    self.editingView.frame = editingViewFrame;
+    debug NSLog(@"  editingViewFrame is now=%@", NSStringFromCGRect(self.editingView.frame));
+    self.editingView.layer.borderColor = [[UIColor purpleColor] CGColor];
+    self.editingView.layer.borderWidth = 1.;
+
+    CGRect tableFrame = self.tableView.layer.frame;
+    tableFrame.size.height = bottom - height - kCommentFieldPadding;
+    self.tableView.frame = tableFrame;
+    [self.view layoutSubviews];
+}
+
 #pragma mark - Commenting
 
 - (IBAction)sendButtonPressed:(id)sender {
     NSString *body = [self.textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    debug NSLog(@"***sendButtonPressed, body=%@", body);
     if ([body length] > 0 && self.post && self.post.postId) {
         self.cachedText = body;
         self.textView.text = @"";
@@ -738,7 +1108,6 @@ static int const kToolbarHeight = 64;
         [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow: (2 + [self.post.commentsTotalCount intValue]) - 1 inSection: 0]
                               atScrollPosition:UITableViewScrollPositionBottom
                                       animated:NO];
-
         [self.textView resignFirstResponder];
 
         BOOL asked = [[TDCurrentUser sharedInstance] registerForPushNotifications:@"Thanks for making a comment!\nWe'd like to notify you when someone replies. But, we'd like to ask you first. On the next\nscreen, please tap \"OK\" to give\n us permission."];
@@ -750,7 +1119,68 @@ static int const kToolbarHeight = 64;
     }
 }
 
+- (IBAction)cancelButtonPressed:(id)sender {
+    debug NSLog(@"cancel button pressed, reanimate to original view");
+    if (self.isEditingOriginalPost) {
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.editingCommentNumber+2 inSection:0];
+        [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+
+        self.editingCommentNumber = -1;
+        [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow: (2 + [self.post.commentsTotalCount intValue])-1 inSection: 0]
+                              atScrollPosition:UITableViewScrollPositionBottom
+                                      animated:NO];
+        [self.editingTextView resignFirstResponder];
+        self.editingView.hidden = YES;
+        self.commentView.hidden = NO;
+        self.isEditingOriginalPost = NO;
+    }
+}
+
+- (IBAction)saveButtonPressed:(id)sender {
+    debug NSLog(@"save button pressed, send to backend, updated the text");
+    if (self.isEditingOriginalPost) {
+
+        NSString *body = [self.editingTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        if ([body length] > 0 && self.post && self.post.postId) {
+            self.cachedText = body;
+            self.editingTextView.text = @"";
+            [self updateEditCommentSize:kMinInputHeight];
+
+            if (self.editingCommentNumber != -1) {
+                TDComment *updatedComment = [self.post commentAtIndex:self.editingCommentNumber];
+
+                [self.post updateComment:updatedComment text:self.cachedText];
+
+                [self.tableView reloadData];
+                [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow: (2 + [self.post.commentsTotalCount intValue])-1 inSection: 0]
+                                      atScrollPosition:UITableViewScrollPositionBottom
+                                              animated:NO];
+                debug NSLog(@"hide keyboard");
+                [self.editingTextView resignFirstResponder];
+                debug NSLog(@"done hiding");
+                [[TDPostAPI sharedInstance] postUpdateComment:body forPost:self.post.postId forComment:updatedComment.commentId];
+
+            } else {
+                [self.post updatePostComment:self.post.postId comment:self.cachedText];
+    
+                [self.tableView reloadData];
+                [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection: 0]
+                                      atScrollPosition:UITableViewScrollPositionBottom
+                                              animated:NO];
+                [self.editingTextView resignFirstResponder];
+    
+                [[TDPostAPI sharedInstance] updatePostText:body postId:self.post.postId];
+            }
+
+            self.editingView.hidden = YES;
+            self.commentView.hidden = NO;
+            self.isEditingOriginalPost = NO;
+        }
+    }
+}
+
 - (void)updatePost:(NSNotification *)n {
+    debug NSLog(@"inside updatePost");
     if (self.liking) {
         self.liking = NO;
         return;
@@ -779,6 +1209,35 @@ static int const kToolbarHeight = 64;
     self.sendButton.enabled = YES;
 }
 
+- (void)updateCommentFailed:(NSNotification*)notification {
+    //[self.post removeLastComment]; // Naive but will work unless commenter goes crazy during outage
+    [self.tableView reloadData];
+
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                    message:@"Something went wrong while updating your comment. Please try again."
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+    self.editingTextView.text = self.cachedText;
+    self.cachedText = nil;
+    self.saveButton.enabled = YES;
+}
+
+- (void)updatePostCommentFailed:(NSNotification*)notification {
+    //[self.post removeLastComment]; // Naive but will work unless commenter goes crazy during outage
+    [self.tableView reloadData];
+
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
+                                                    message:@"Something went wrong while updating your comment. Please try again."
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    [alert show];
+    //self.editingTextView.text = self.cachedText;
+    //self.cachedText = nil;
+    self.saveButton.enabled = YES;
+}
 #pragma mark - NSLayoutManagerDelegate
 
 - (CGFloat)layoutManager:(NSLayoutManager *)layoutManager lineSpacingAfterGlyphAtIndex:(NSUInteger)glyphIndex withProposedLineFragmentRect:(CGRect)rect {
@@ -788,12 +1247,114 @@ static int const kToolbarHeight = 64;
 #pragma mark - TDUserListViewControllerDelegate
 
 - (void)selectedUser:(NSDictionary *)user forUserNameFilter:(NSString *)userNameFilter {
-    NSString *currentText = self.textView.text;
-    NSString *userName = [[user objectForKey:@"username"] stringByAppendingString:@" "];
-    debug NSLog(@"concatenate with %@", userName);
-    NSString *newText = [currentText substringToIndex:(currentText.length-userNameFilter.length)];
+    if (self.isEditingOriginalPost) {
+        NSString *currentText = self.editingTextView.text;
+        NSString *userName = [[user objectForKey:@"username"] stringByAppendingString:@" "];
+        debug NSLog(@"concatenate with %@", userName);
+        NSString *newText = [currentText substringToIndex:(currentText.length-userNameFilter.length)];
 
-    self.textView.text = [newText stringByAppendingString:userName];
+        self.editingTextView.text = [newText stringByAppendingString:userName];
+    } else {
+        NSString *currentText = self.textView.text;
+        NSString *userName = [[user objectForKey:@"username"] stringByAppendingString:@" "];
+        debug NSLog(@"concatenate with %@", userName);
+        NSString *newText = [currentText substringToIndex:(currentText.length-userNameFilter.length)];
+
+        self.textView.text = [newText stringByAppendingString:userName];
+    }
+}
+
+#pragma mark - UIAlertViewController
+- (void)presentDeleteCommentAlertView {
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.editingCommentNumber+2 inSection:0];
+
+    UIAlertController *alertController = [UIAlertController
+                                          alertControllerWithTitle:@"Delete this comment?"
+                                          message:@"Please confirm you'd like to delete this comment."
+                                          preferredStyle:UIAlertControllerStyleAlert];
+
+    UIAlertAction *cancelAction = [UIAlertAction
+                                   actionWithTitle:NSLocalizedString(@"Cancel", @"Cancel action")
+                                   style:UIAlertActionStyleCancel
+                                   handler:^(UIAlertAction *action)
+                                   {
+                                       NSLog(@"Cancel action");
+                                       [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+                                   }];
+
+    UIAlertAction *okAction = [UIAlertAction
+                               actionWithTitle:NSLocalizedString(@"OK", @"OK action")
+                               style:UIAlertActionStyleDefault
+                               handler:^(UIAlertAction *action)
+                               {
+                                   [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+                                   [self deleteComment];
+                               }];
+    
+    [alertController addAction:cancelAction];
+    [alertController addAction:okAction];
+    alertController.view.tintColor = [TDConstants headerTextColor];
+
+    [self presentViewController:alertController animated:YES completion:nil];
+}
+
+- (void)deleteComment {
+    TDComment *comment = [self.post commentAtIndex:self.editingCommentNumber];
+
+    [[TDPostAPI sharedInstance] postDeleteComment:comment.commentId forPost:self.postId];
+}
+
+- (void)editComment:(NSInteger)commentRow {
+    debug NSLog(@"inside edit Comment");
+    self.isEditingOriginalPost = YES;
+
+    NSUInteger commentNumber = (commentRow - 2);
+    TDComment *comment = [self.post commentAtIndex:commentNumber];
+    [self.editingTextView insertText:comment.body];
+    [self.editingTextView becomeFirstResponder];
+}
+
+
+- (void)commentDeleted:(NSNotification*)notification {
+    
+    debug NSLog(@"inside comment deleted, commentId-%@", [notification.userInfo objectForKey:@"commentId"]);
+
+    [self.post removeComment:[notification.userInfo objectForKey:@"commentId"]];
+
+    [self.tableView reloadData];
+}
+
+- (void)commentDeleteFailed:(NSNotification*)notification {
+    self.navigationItem.rightBarButtonItem.enabled = YES;
+    self.activityIndicator.hidden = YES;
+    [[[UIAlertView alloc] initWithTitle:@"Delete failed" message:@"Sorry, there was a problem communicating with the server. Please try again." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+}
+
+- (void)allowMutingPost {
+    debug NSLog(@"inside allowMutingPost");
+    if ([self.post.user.userId isEqual:[TDCurrentUser sharedInstance].userId]) {
+        self.allowMuting = YES;
+    }
+
+    if (self.post.liked) {
+        // The user liked this
+        self.allowMuting = YES;
+    }
+
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF contains[c] %@",[TDCurrentUser sharedInstance].username]; // if you need case sensitive search avoid '[c]' in the predicate
+
+    NSArray *results = [self.post.mentions filteredArrayUsingPredicate:predicate];
+    if (results.count > 0) {
+        self.allowMuting = YES;
+    }
+}
+
+- (void)openEditPostView {
+    debug NSLog(@"inside openEditPostView");
+    self.editingTextView.text = self.post.comment;
+    self.isEditingOriginalPost = YES;
+    self.editingCommentNumber = -1;
+    [self.editingTextView becomeFirstResponder];
 }
 
 @end

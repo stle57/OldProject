@@ -210,9 +210,11 @@ static NSString *const kTracksKey = @"tracks";
     }
 
     // Only update if this isn't the same post or username or picture has changed
-    if ([self.post.postId isEqual:post.postId] && [self.usernameLabel.text isEqualToString:post.user.username] && [self.userPicture isEqualToString:post.user.picture]) {
+    if ([self.post.postId isEqual:post.postId] && [self.usernameLabel.text isEqualToString:post.user.username] && [self.userPicture isEqualToString:post.user.picture]
+        && [self.post.comment isEqualToString:post.comment]) {
         return;
     }
+
     // If it's the same post bail so that we don't stop video playback (eg table was refreshed)
     if ([self.post.postId isEqual:post.postId] && self.state == PlayerStatePlaying ) {
         return;
@@ -285,11 +287,28 @@ static NSString *const kTracksKey = @"tracks";
     }
 
     if (post.comment) {
-        [self.commentLabel setText:post.comment afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
+        NSString *editedComment;
+
+        if (post.updated) {
+            NSString *editedString = @" (edited)";
+            editedComment = [NSString stringWithFormat:@"%@%@", post.comment, editedString];
+            [self.commentLabel setText:editedComment afterInheritingLabelAttributesAndConfiguringWithBlock:^(NSMutableAttributedString *mutableAttributedString) {
+                NSRange range = [editedComment rangeOfString:editedString];
+                if (range.location != NSNotFound) {
+                    // Core Text APIs use C functions without a direct bridge to UIFont. See Apple's "Core Text Programming Guide" to learn how to configure string attributes.
+                    [mutableAttributedString addAttribute:(NSString *)kCTForegroundColorAttributeName value:[TDConstants commentTimeTextColor] range:range];
+                }
+
+                return mutableAttributedString;
+            }];
+        } else {
+            [self.commentLabel setText:post.comment afterInheritingLabelAttributesAndConfiguringWithBlock:nil];
+         }
+
         [TDViewControllerHelper linkUsernamesInLabel:self.commentLabel users:post.mentions withHashtags:YES];
         self.commentLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithAttributedString:self.commentLabel.attributedText];
 
-        CGFloat commentHeight = [TDViewControllerHelper heightForText:post.comment withMentions:post.mentions withFont:POST_COMMENT_FONT inWidth:width - (kMargin * 2)];
+        CGFloat commentHeight = [TDViewControllerHelper heightForText:self.commentLabel.attributedText.string withMentions:post.mentions withFont:POST_COMMENT_FONT inWidth:width - (kMargin * 2)];
         commentHeight = commentHeight == 0 ? 0 : commentHeight + kCommentBottomPadding;
         CGRect commentFrame = self.commentLabel.frame;
         commentFrame.origin.y = kHeightOfProfileRow + (self.post.kind == TDPostKindText ? 0 : self.mediaSize + kMarginBottomOfMedia);;

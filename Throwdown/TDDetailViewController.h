@@ -15,6 +15,19 @@
 
 @interface TDDetailViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, TDDetailsLikesCellDelegate, TDDetailsCommentsCellDelegate, UIAlertViewDelegate, UIActionSheetDelegate, TDPostViewDelegate, TDUserListViewDelegate>
 
+enum {
+    TDReportInappropriate,
+    TDDeletePost,
+    TDEditPost,
+    TDMutePost,
+    TDUnmutePost,
+    TDMuteUser,
+    TDUnmuteUser,
+    TDCopyShareLink,
+    TDCancel
+};
+typedef NSUInteger TDShareActivityType;
+
 @property (nonatomic, retain) TDPost *post;
 @property (nonatomic) NSNumber *postId;
 @property (nonatomic) NSString *slug;
