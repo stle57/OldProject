@@ -286,10 +286,9 @@
     [manager POST:url parameters:@{ @"user_token": [TDCurrentUser sharedInstance].authToken }
           success:^(AFHTTPRequestOperation *operation, id responseObject) {
               debug NSLog(@"Mute %@", userID);
+              
               callback(YES);
-              [[TDCurrentUser sharedInstance] updateCurrentUserInfo];
-              // Send notification to update user profile stat button-add
-              [[NSNotificationCenter defaultCenter] postNotificationName:TDUpdateFollowingCount object:[[TDCurrentUser sharedInstance] currentUserObject].userId userInfo:@{TD_INCREMENT_STRING: @1}];
+
           } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
               // Triggering this will make UI revert the previous update
               [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUserUnfollow object:userID];

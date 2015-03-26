@@ -375,15 +375,15 @@ static int const kToolbarHeight = 64;
         break;
         case TDMuteUser:
         {
-            //mute
-            // Send follow user to server
-            [[TDUserAPI sharedInstance] muteUser:self.post.user.userId callback:^(BOOL success) {
-                if (success) {
-                } else {
-                    [[TDAppDelegate appDelegate] showToastWithText:@"Error occured.  Please try again." type:kToastType_Warning payload:@{} delegate:nil];
-                }
-            }];
-
+            NSString *muteTitle = [NSString stringWithFormat:@"%@%@", @"Mute @", self.post.user.username];
+            NSString *message = [NSString stringWithFormat:@"%@%@%@", @"Muting prevents @", self.post.user.username, @" from sending you direct messages. Are you sure?"];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:muteTitle
+                                                            message:message
+                                                           delegate:self
+                                                  cancelButtonTitle:@"Cancel"
+                                                  otherButtonTitles:@"Mute", nil];
+            alert.tag = 18894;
+            [alert show];
         }
         break;
         case TDUnmutePost:
@@ -465,7 +465,19 @@ static int const kToolbarHeight = 64;
 
         self.navigationItem.rightBarButtonItem.enabled = NO;
         [[TDPostAPI sharedInstance] deletePostWithId:self.postId isPR:self.post.personalRecord];
-    } else if (alertView.tag == 18890 && buttonIndex != alertView.cancelButtonIndex) {
+    } else if (alertView.tag == 18894 && buttonIndex != alertView.cancelButtonIndex) {
+        //mute
+        // Send follow user to server
+        [[TDUserAPI sharedInstance] muteUser:self.post.user.userId callback:^(BOOL success) {
+            if (success) {
+                debug NSLog(@"Successfully muted user=%@, now remove the post from view", self.post.user.username);
+                // Notify any view controllers about the removal which will cache the post and refresh table
+                [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationRemovePost object:nil userInfo:@{@"postId": self.postId}];
+            } else {
+                [[TDAppDelegate appDelegate] showToastWithText:@"Error occured.  Please try again." type:kToastType_Warning payload:@{} delegate:nil];
+            }
+        }];
+    }else if (alertView.tag == 18890 && buttonIndex != alertView.cancelButtonIndex) {
         // Report!
         [[TDPostAPI sharedInstance] reportPostWithId:self.postId];
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Report Sent"
