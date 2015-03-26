@@ -23,7 +23,6 @@ static NSString  *newPRStr = @"New PR";
 static NSString  *location = @"Location";
 
 @interface TDCreatePostHeaderCell ()
-@property (nonatomic) BOOL addTaggedUser;
 @property (nonatomic) NSInteger textLength;
 @end
 
@@ -111,9 +110,7 @@ static NSString  *location = @"Location";
     
     self.commentTextView.textContainer.exclusionPaths = @[rect];
 
-    self.taggedUsers = 0;
     self.textLength = 0;
-    self.addTaggedUser = YES;
 }
 
 - (void)dealloc {
@@ -124,7 +121,6 @@ static NSString  *location = @"Location";
     self.userListView = nil;
     [self.keyboardObserver stopListening];
     self.keyboardObserver = nil;
-    self.taggedUsers = 0;
 }
 
 - (void)adjustFramesForView {
@@ -184,10 +180,6 @@ static NSString  *location = @"Location";
     
     self.commentTextView.text = [newText stringByAppendingString:userName];
     [self resetTextViewSize];
-
-    if (self.addTaggedUser) {
-        self.taggedUsers++;
-    }
 }
 
 
@@ -226,18 +218,16 @@ static NSString  *location = @"Location";
             self.textViewConstraint.constant = height;
             [self.contentView layoutIfNeeded];
             [self alignCarretInTextView:textView];
+
             if (self.textLength == 0) {
                 self.textLength = currentTextLength;
             }
 
             if (self.textLength == currentTextLength+1) {
-                self.addTaggedUser = NO;
                 self.textLength = currentTextLength;
             }
         } else {
             [self resetTextViewSize];
-            self.taggedUsers--;
-            self.addTaggedUser = YES;
             self.textLength = 0;
         }
         self.textLength = currentTextLength;

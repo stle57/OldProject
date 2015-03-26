@@ -18,6 +18,7 @@
 #import "TDActivityIndicator.h"
 #import <FacebookSDK/FacebookSDK.h>
 #import "TWTAPIManager.h"
+#import "TDTextViewControllerHelper.h"
 
 static NSString *const kFacebookShareKey = @"TDLastShareToFacebook";
 static NSString *const kTwitterShareKey = @"TDLastShareToTwitter";
@@ -93,13 +94,14 @@ static NSString *const kInstagramShareKey = @"TDLastShareToInstagram";
 
 # pragma mark - setting data from previous controller
 
-- (void)setValuesForSharing:(NSString *)filename withComment:(NSString *)comment isPR:(BOOL)isPR userGenerated:(BOOL)ug locationData:(NSDictionary*)locationData taggedPost:(BOOL)taggedPost{
+- (void)setValuesForSharing:(NSString *)filename withComment:(NSString *)comment isPR:(BOOL)isPR userGenerated:(BOOL)ug locationData:(NSDictionary*)locationData{
     self.filename = filename;
     self.comment = comment;
     self.isPR = isPR;
     self.userGenerated = ug;
     self.locationData = [locationData copy];
-    self.tagged = taggedPost;
+    NSString *userNameFilter = [TDTextViewControllerHelper findUsernameInText:comment];
+    self.tagged = userNameFilter.length;
 }
 
 - (IBAction)saveButtonPressed:(id)sender {
@@ -150,7 +152,6 @@ static NSString *const kInstagramShareKey = @"TDLastShareToInstagram";
     }
     [[NSUserDefaults standardUserDefaults] synchronize];
 
-    debug NSLog(@"  self.privacy value=%lu", (unsigned long)self.privacy);
     if (self.filename) {
         [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationUploadComments
                                                             object:nil
@@ -213,7 +214,6 @@ static NSString *const kInstagramShareKey = @"TDLastShareToInstagram";
     } else {
         return 3;
     }
-    //return section == 0 ? 2 : 3;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -224,6 +224,7 @@ static NSString *const kInstagramShareKey = @"TDLastShareToInstagram";
     UITableViewCell *finalCell;
     NSInteger row = indexPath.row;
     if (indexPath.section == 0) {
+
         TDRadioButtonRowCell *cell = (TDRadioButtonRowCell *)[tableView dequeueReusableCellWithIdentifier:@"TDRadioButtonRowCell"];
         if (!cell) {
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDRadioButtonRowCell" owner:self options:nil];
@@ -265,7 +266,8 @@ static NSString *const kInstagramShareKey = @"TDLastShareToInstagram";
                 cell.icon.hidden = NO;
                 cell.checkmark.hidden = (self.privacy != TDPostPrivacyPrivate);
                 break;
-
+            default:
+                break;
         }
 
         finalCell = cell;

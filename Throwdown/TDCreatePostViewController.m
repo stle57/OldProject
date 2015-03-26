@@ -478,7 +478,7 @@ static const NSUInteger BufferSize = 1024*1024;
         NSString *comment = [self.postHeaderCell.commentTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
         self.isTaggedPost = self.postHeaderCell.taggedUsers;
         TDSharePostViewController *vc = [segue destinationViewController];
-        [vc setValuesForSharing:self.filename withComment:comment isPR:self.isPR userGenerated:self.isOriginal locationData:self.locationData taggedPost:self.isTaggedPost];
+        [vc setValuesForSharing:self.filename withComment:comment isPR:self.isPR userGenerated:self.isOriginal locationData:self.locationData  ];
     }
 }
 

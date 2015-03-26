@@ -499,7 +499,7 @@ static int const kToolbarHeight = 64;
         [alert show];
 
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.editingCommentNumber+2 inSection:0];
-        [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+        [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
         self.editingCommentNumber = -1;
     }
 }
@@ -667,7 +667,7 @@ static int const kToolbarHeight = 64;
             UIAlertAction* cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
                                                            handler:^(UIAlertAction * action) {
                                                                [alert dismissViewControllerAnimated:YES completion:nil];
-                                                               [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+                                                               [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
                                                            }];
 
             [alert addAction:deleteCommentAction];
@@ -693,7 +693,7 @@ static int const kToolbarHeight = 64;
             UIAlertAction* cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
                                                            handler:^(UIAlertAction * action) {
                                                                [alert dismissViewControllerAnimated:YES completion:nil];
-                                                               [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+                                                               [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
 
                                                            }];
 
@@ -1005,11 +1005,7 @@ static int const kToolbarHeight = 64;
         [self.userListView showUserSuggestions:textView callback:^(BOOL success) {
             if (success) {
                 // Make sure we do this after updateCommentSize
-                debug NSLog(@"  editing view frame = %@", NSStringFromCGRect(self.editingView.frame));
                 [self.userListView updateFrame:CGRectMake(0, 64, SCREEN_WIDTH, self.editingView.frame.origin.y - kToolbarHeight)];
-                self.userListView.layer.borderColor = [[UIColor redColor] CGColor];
-                self.userListView.layer.borderWidth = 2.;
-                debug NSLog(@"  user list view frame = %@", NSStringFromCGRect(self.userListView.frame));
             }
         }];
     } else {
@@ -1133,6 +1129,10 @@ static int const kToolbarHeight = 64;
 
 - (IBAction)cancelButtonPressed:(id)sender {
     debug NSLog(@"cancel button pressed, reanimate to original view");
+    if (!self.userListView.hidden) {
+        [self.userListView hideView];
+    }
+
     if (self.isEditingOriginalPost) {
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.editingCommentNumber+2 inSection:0];
         [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
@@ -1157,6 +1157,10 @@ static int const kToolbarHeight = 64;
             self.cachedText = body;
             self.editingTextView.text = @"";
             [self updateEditCommentSize:kMinInputHeight];
+
+            if (!self.userListView.hidden) {
+                [self.userListView hideView];
+            }
 
             if (self.editingCommentNumber != -1) {
                 TDComment *updatedComment = [self.post commentAtIndex:self.editingCommentNumber];
@@ -1291,7 +1295,7 @@ static int const kToolbarHeight = 64;
                                    handler:^(UIAlertAction *action)
                                    {
                                        NSLog(@"Cancel action");
-                                       [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+                                       [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
                                    }];
 
     UIAlertAction *okAction = [UIAlertAction
@@ -1299,7 +1303,7 @@ static int const kToolbarHeight = 64;
                                style:UIAlertActionStyleDefault
                                handler:^(UIAlertAction *action)
                                {
-                                   [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+                                   [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
                                    [self deleteComment];
                                }];
     
