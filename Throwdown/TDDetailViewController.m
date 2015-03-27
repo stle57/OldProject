@@ -673,7 +673,6 @@ static int const kToolbarHeight = 64;
             [alert addAction:deleteCommentAction];
             [alert addAction:editCommentAction];
             [alert addAction:cancel];
-            alert.view.tintColor = [UIColor blueColor];
 
             [self presentViewController:alert animated:YES completion:nil];
         } else {
@@ -699,7 +698,6 @@ static int const kToolbarHeight = 64;
 
             [alert addAction:inappropriateAction];
             [alert addAction:cancel];
-            alert.view.tintColor = [UIColor blueColor];
 
             [self presentViewController:alert animated:YES completion:nil];
 
