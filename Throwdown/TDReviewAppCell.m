@@ -39,7 +39,7 @@
     ;
     [self addSubview:self.topLine];
 
-    self.bottomPaddingMargin = [[UIView alloc] initWithFrame:CGRectMake(0, 113, SCREEN_WIDTH, 15)];
+    self.bottomPaddingMargin = [[UIView alloc] initWithFrame:CGRectMake(0, 113, SCREEN_WIDTH, 16)];
     self.bottomPaddingMargin.backgroundColor = [TDConstants darkBackgroundColor];
     [self addSubview:self.bottomPaddingMargin];
 
