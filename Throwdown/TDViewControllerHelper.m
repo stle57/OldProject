@@ -168,6 +168,7 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     paragraphStyle.lineBreakMode = NSLineBreakByWordWrapping;
     [attributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [text length])];
     [attributedString addAttribute:NSFontAttributeName value:BIO_FONT range:NSMakeRange(0, text.length)];
+
     return attributedString;
 }
 
@@ -250,7 +251,7 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
         }
     }];
 
-    [TDViewControllerHelper colorLinksInLabel:label];
+    [TDViewControllerHelper colorLinksInLabel:label centerText:NO];
 
     if (linkHashtags) {
         NSMutableDictionary *hashtagStyle = [TDViewControllerHelper hashTagStyle];
@@ -265,10 +266,11 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
             NSTextCheckingResult *link = [NSTextCheckingResult linkCheckingResultWithRange:matchRange URL:url];
             [label addLinkWithTextCheckingResult:link attributes:hashtagStyle];
         }
+        
     }
 }
 
-+ (void)colorLinksInLabel:(TTTAttributedLabel *)label {
++ (void)colorLinksInLabel:(TTTAttributedLabel *)label centerText:(BOOL)centerText{
     // This runs through any automatically detected links/url/numbers/email etc and sets the red color
     if (label.enabledTextCheckingTypes) {
         NSMutableDictionary *linkStyle = [TDViewControllerHelper linkStyle:label.font];
@@ -279,6 +281,13 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
             for (NSTextCheckingResult *match in results) {
                 [mutableAttributedString setAttributes:linkStyle range:match.range];
             }
+        }
+
+        if (centerText) {
+            // Center the text again
+            NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+            paragraphStyle.alignment = NSTextAlignmentCenter;
+            [mutableAttributedString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [label.attributedText length])];
         }
         label.attributedText = mutableAttributedString;
     }

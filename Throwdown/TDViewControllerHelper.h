@@ -43,7 +43,7 @@
 + (NSString*)getAddressFormat:(NSDictionary*)data;
 + (NSAttributedString *)makeLeftAlignedTextWithString:(NSString *)text font:(UIFont*)font color:(UIColor*)color lineHeight:(CGFloat)lineHeight lineHeightMultipler:(CGFloat)lineHeightMultiplier;
 
-+ (void)colorLinksInLabel:(TTTAttributedLabel *)label;
++ (void)colorLinksInLabel:(TTTAttributedLabel *)label centerText:(BOOL)centerText;
 
 // Hashtags:
 + (NSMutableAttributedString *)boldHashtagsInText:(NSMutableAttributedString *)text fontSize:(CGFloat)fontSize;

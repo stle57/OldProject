@@ -88,7 +88,7 @@ static const int bottomMarginPaddingHeight = 15;
     [detailAttrStr addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, detailStr.length)];
     detailAttrStr = [TDViewControllerHelper boldHashtagsInText:detailAttrStr fontSize:15];
     self.blurbTitle.attributedText = detailAttrStr;
-    [TDViewControllerHelper colorLinksInLabel:self.blurbTitle];
+    [TDViewControllerHelper colorLinksInLabel:self.blurbTitle centerText:NO];
 
     CGSize size = [self.blurbTitle sizeThatFits:CGSizeMake(SCREEN_WIDTH - 60, MAXFLOAT)];
     [self addSubview:self.blurbTitle];
@@ -204,7 +204,7 @@ static const int bottomMarginPaddingHeight = 15;
     [detailAttrStr addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, detailStr.length)];
     detailAttrStr = [TDViewControllerHelper boldHashtagsInText:detailAttrStr fontSize:15];
     label2.attributedText = detailAttrStr;
-    [TDViewControllerHelper colorLinksInLabel:label2];
+    [TDViewControllerHelper colorLinksInLabel:label2 centerText:NO];
 
     CGSize label2size = [label2 sizeThatFits:CGSizeMake(SCREEN_WIDTH - 60, MAXFLOAT)];
 

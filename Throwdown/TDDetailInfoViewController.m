@@ -98,7 +98,7 @@
     [detailAttrStr addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, detailStr.length)];
     detailAttrStr = [TDViewControllerHelper boldHashtagsInText:detailAttrStr fontSize:15];
     self.detailDescription.attributedText = detailAttrStr;
-    [TDViewControllerHelper colorLinksInLabel:self.detailDescription];
+    [TDViewControllerHelper colorLinksInLabel:self.detailDescription centerText:NO];
     [self.detailDescription sizeToFit];
 
     CGRect detailFrame = self.detailDescription.frame;
