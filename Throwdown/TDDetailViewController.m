@@ -835,8 +835,6 @@ static int const kToolbarHeight = 64;
         debug NSLog(@"  save button frame = %@", NSStringFromCGRect(self.saveButton.frame));
         debug NSLog(@"  cancel button frame = %@", NSStringFromCGRect(self.cancelButton.frame));
 
-        self.editingTextView.layer.borderColor = [[UIColor greenColor] CGColor];
-        self.editingTextView.layer.borderWidth = 2.;
         debug NSLog(@"  editingTextView.contentSize=%f", self.editingTextView.contentSize.height);
         CGFloat fixedWidth = self.editingTextView.frame.size.width;
         CGSize newSize = [self.editingTextView sizeThatFits:CGSizeMake(fixedWidth, MAXFLOAT)];
@@ -942,22 +940,28 @@ static int const kToolbarHeight = 64;
 }
 
 - (void)keyboardFrameChanged:(CGRect)keyboardFrame {
-    debug NSLog(@"inside keyboardFrameChanged");
+    debug NSLog(@"inside keyboardFrameChanged, keyboardFrame.origin.y=%f", keyboardFrame.origin.y);
     if (self.isEditingOriginalPost) {
         CGRect tableFrame = self.tableView.layer.frame;
         tableFrame.size.height = keyboardFrame.origin.y - self.editingView.layer.frame.size.height - kToolbarHeight;
         self.tableView.frame = tableFrame;
 
+        debug NSLog(@"    tableView.frame= %@", NSStringFromCGRect(self.tableView.frame));
         debug NSLog(@"   editingView.layer.frame.size.height=%f", self.editingView.layer.frame.size.height);
         CGPoint current = self.editingView.center;
         current.y = keyboardFrame.origin.y - (self.editingView.layer.frame.size.height / 2) - kToolbarHeight;
         self.editingView.center = current;
+
+        debug NSLog(@"   tableView frame = %@", NSStringFromCGRect(self.tableView.frame));
         debug NSLog(@"   editingView.center=%@", NSStringFromCGPoint(current));
+        debug NSLog(@"   editingView.frame = %@", NSStringFromCGRect(self.editingView.frame));
+        debug NSLog(@"   editingViewText.frame = %@", NSStringFromCGRect(self.editingTextView.frame));
     } else {
         CGRect tableFrame = self.tableView.layer.frame;
         tableFrame.size.height = keyboardFrame.origin.y - self.commentView.layer.frame.size.height - kToolbarHeight;
         self.tableView.frame = tableFrame;
 
+        debug NSLog(@"   tableView frame = %@", NSStringFromCGRect(self.tableView.frame));
         debug NSLog(@"   commentView.layer.frame.size.height=%f", self.commentView.layer.frame.size.height);
         CGPoint current = self.commentView.center;
         current.y = keyboardFrame.origin.y - (self.commentView.layer.frame.size.height / 2) - kToolbarHeight;
@@ -1018,8 +1022,6 @@ static int const kToolbarHeight = 64;
                 // Make sure we do this after updateCommentSize
                 debug NSLog(@"    comment view frame = %@", NSStringFromCGRect(self.commentView.frame));
                 [self.userListView updateFrame:CGRectMake(0, 64, SCREEN_WIDTH, self.commentView.frame.origin.y - kToolbarHeight)];
-                self.userListView.layer.borderColor = [[UIColor redColor] CGColor];
-                self.userListView.layer.borderWidth = 2.;
                 debug NSLog(@"  user list view frame = %@", NSStringFromCGRect(self.userListView.frame));
             }
         }];
@@ -1072,8 +1074,10 @@ static int const kToolbarHeight = 64;
 
     CGRect textFrame = self.editingTextView.frame;
     textFrame.size.height = height;
-    textFrame.origin.y = self.saveButton.frame.origin.y + self.saveButton.frame.size.height + 5;
+    textFrame.origin.y = self.saveButton.frame.origin.y + self.saveButton.frame.size.height;
     self.editingTextView.frame = textFrame;
+    debug NSLog(@"  editingTextViewFrame = %@", NSStringFromCGRect(self.editingTextView.frame));
+
 
     CGFloat bottom = [UIScreen mainScreen].bounds.size.height - kToolbarHeight;
     if (self.keyboardObserver.keyboardView) {
@@ -1169,9 +1173,7 @@ static int const kToolbarHeight = 64;
                 [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow: (2 + [self.post.commentsTotalCount intValue])-1 inSection: 0]
                                       atScrollPosition:UITableViewScrollPositionBottom
                                               animated:NO];
-                debug NSLog(@"hide keyboard");
-                [self.editingTextView resignFirstResponder];
-                debug NSLog(@"done hiding");
+
                 [[TDPostAPI sharedInstance] postUpdateComment:body forPost:self.post.postId forComment:updatedComment.commentId];
 
             } else {
@@ -1181,7 +1183,6 @@ static int const kToolbarHeight = 64;
                 [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection: 0]
                                       atScrollPosition:UITableViewScrollPositionBottom
                                               animated:NO];
-                [self.editingTextView resignFirstResponder];
     
                 [[TDPostAPI sharedInstance] updatePostText:body postId:self.post.postId];
             }
@@ -1189,6 +1190,8 @@ static int const kToolbarHeight = 64;
             self.editingView.hidden = YES;
             self.commentView.hidden = NO;
             self.isEditingOriginalPost = NO;
+
+            [self.editingTextView resignFirstResponder];
         }
     }
 }
@@ -1324,7 +1327,7 @@ static int const kToolbarHeight = 64;
 
     NSUInteger commentNumber = (commentRow - 2);
     TDComment *comment = [self.post commentAtIndex:commentNumber];
-    [self.editingTextView insertText:comment.body];
+    [self.editingTextView setText:comment.body];
     [self.editingTextView becomeFirstResponder];
 }
 
