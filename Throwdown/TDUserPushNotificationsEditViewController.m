@@ -56,7 +56,7 @@ settings: [
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet TDActivityIndicator *activityIndicator;
 
-@property (nonatomic) NSArray *settings;
+@property (nonatomic) NSMutableArray *settings;
 @property (nonatomic) NSMutableDictionary *pushSettings;
 @property (nonatomic) NSDictionary *originalSettings;
 @property (nonatomic) BOOL gotFromServer;
@@ -117,8 +117,9 @@ settings: [
     self.activityIndicator.text.text = @"Loading";
     [self showActivity];
     [[TDAPIClient sharedInstance] getPushNotificationSettingsForUserToken:[TDCurrentUser sharedInstance].authToken success:^(id settings) {
-        if ([settings isKindOfClass:[NSArray class]]) {
-            self.settings = settings;
+        if ([settings isKindOfClass:[NSMutableArray class]]) {
+            self.settings = [NSMutableArray arrayWithArray:settings];
+            debug NSLog(@"  settings = %@", self.settings);
             self.pushSettings = [@{} mutableCopy];
             for (NSDictionary *group in settings) {
                 for (NSDictionary *setting in [group objectForKey:@"keys"]) {
@@ -291,9 +292,11 @@ settings: [
         [cell.emailButton setImage:[UIImage imageNamed:@"email-off.png"] forState:UIControlStateNormal];
     }
     if ([[[self settingFor:indexPath] objectForKey:@"push"] boolValue]) {
+        debug NSLog(@"setting push value to YES");
         cell.pushValue = YES;
         [cell.pushButton setImage:[UIImage imageNamed:@"push-on.png"] forState:UIControlStateNormal];
     } else {
+        debug NSLog(@"setting push value to NO");
         cell.pushValue = NO;
         [cell.pushButton setImage:[UIImage imageNamed:@"push-off.png"] forState:UIControlStateNormal];
     }
@@ -301,6 +304,7 @@ settings: [
         cell.segmentControl.hidden = NO;
         cell.pushButton.hidden = YES;
         cell.emailButton.hidden = YES;
+        debug NSLog(@"segment value = %ld", (long)[[[self settingFor:indexPath] objectForKey:@"value"] integerValue]);
         cell.segmentControl.selectedSegmentIndex =[[[self settingFor:indexPath] objectForKey:@"value"] integerValue];
         NSUInteger index = 0;
         for (NSString *opt in [[self settingFor:indexPath] objectForKey:@"options"]) {
@@ -358,6 +362,17 @@ settings: [
 }
 
 - (void)emailValue:(BOOL)value forIndexPath:(NSIndexPath *)indexPath {
+    NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithDictionary:[self settingFor:indexPath]];
+    [data setValue:[NSNumber numberWithBool:value] forKey:@"email"];
+
+    NSMutableArray *keysData = [[NSMutableArray alloc] initWithArray:[[self.settings objectAtIndex:indexPath.section] objectForKey:@"keys"]];
+    [keysData setObject:data atIndexedSubscript:indexPath.row];
+
+    NSMutableDictionary *settingsSection = [[NSMutableDictionary alloc] initWithDictionary:[self.settings objectAtIndex:indexPath.section]];
+
+    [settingsSection setValue:keysData forKey:@"keys"];
+    [self.settings setObject:settingsSection atIndexedSubscript:indexPath.section];
+
     NSString *key = [NSString stringWithFormat:@"%@_email", [[self settingFor:indexPath] objectForKey:@"key"]];
     [self.pushSettings setObject:[NSNumber numberWithBool:value] forKey:key];
     TDPushEditCell *cell = (TDPushEditCell*) [self.tableView cellForRowAtIndexPath:indexPath];
@@ -381,10 +396,21 @@ settings: [
         [alert show];
     } else if ([[TDCurrentUser sharedInstance] isRegisteredForPush]){
         // change the value
+        NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithDictionary:[self settingFor:indexPath]];
+        [data setValue:[NSNumber numberWithBool:value] forKey:@"push"];
+
+        NSMutableArray *keysData = [[NSMutableArray alloc] initWithArray:[[self.settings objectAtIndex:indexPath.section] objectForKey:@"keys"]];
+        [keysData setObject:data atIndexedSubscript:indexPath.row];
+
+        NSMutableDictionary *settingsSection = [[NSMutableDictionary alloc] initWithDictionary:[self.settings objectAtIndex:indexPath.section]];
+
+        [settingsSection setValue:keysData forKey:@"keys"];
+        [self.settings setObject:settingsSection atIndexedSubscript:indexPath.section];
+
         NSString *key = [NSString stringWithFormat:@"%@_push", [[self settingFor:indexPath] objectForKey:@"key"]];
         [self.pushSettings setObject:[NSNumber numberWithBool:value] forKey:key];
-        
         [self togglePushImage:value indexPath:indexPath];
+
     } else {
         // Show for prompt, user never been on this page before
         NSString * message = @"We'd like to ask for your\n permission for push notifications.\n On the next screen, please tap\n \"OK\" to give us permission.";
@@ -409,7 +435,17 @@ settings: [
                          [self.pushSettings setValue:@1 forKey:key];
                     }
                 }
-                
+
+                for (NSMutableDictionary *group in self.settings) {
+                    for (NSMutableDictionary *setting in [group objectForKey:@"keys"]) {
+                        if ([setting objectForKey:@"email"] != nil) {
+                            [setting setObject:@0 forKey:@"email"];
+                        } else if ([setting objectForKey:@"push"]){
+                            [setting setObject:@1 forKey:@"push"];
+                        }
+                    }
+                }
+                debug NSLog(@"settings values after confirming push = %@", self.settings);
                 for (int secNum = 0; secNum < [self.tableView numberOfSections]; secNum ++) {
                     for (int row= 0; row < [self.tableView numberOfRowsInSection:secNum]; row++) {
                         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:secNum];
