@@ -404,11 +404,6 @@
 
     for (TDPost *post in self.posts) {
         if ([post.postId isEqualToNumber:postId]) {
-            NSUInteger change = [(NSNumber *)[n.userInfo objectForKey:@"change"] unsignedIntegerValue];
-            if (change == kUpdatePostTypeUpdatePostComment) {
-                // Leave the changes, so we can detect it inside TDPostView:setPost
-                break;
-            }
             [post updateFromNotification:n];
             changeMade = YES;
             break;
@@ -446,50 +441,28 @@
 #pragma mark - Remove Comment
 - (void)removeComment:(NSNotification *)n {
     debug NSLog(@"Inside TDHomeViewController - removeComment");
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        // Main posts
-        BOOL changeMade = NO;
-        NSMutableArray *newList = [[NSMutableArray alloc] initWithArray:self.posts];
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"self.postId = %@", [n.userInfo objectForKey:@"postId"]];
-        NSArray *data = [self.posts filteredArrayUsingPredicate:predicate];
-        if (data) {
-            NSUInteger index = [self.posts indexOfObject:data[0]];
-            TDPost *post = [newList objectAtIndex:index];
+    BOOL changeMade = NO;
+    NSNumber *postId = (NSNumber *)[n.userInfo objectForKey:@"postId"];
+
+    for (TDPost *post in self.posts) {
+        if ([post.postId isEqualToNumber:postId]) {
             [post removeComment:[n.userInfo objectForKey:@"commentId"]];
             changeMade = YES;
+            break;
         }
+    }
 
-        if (changeMade) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self.posts = [[NSArray alloc] initWithArray:newList];
-                if ([self onAllFeed]) {
-                    [self.tableView reloadData];
-                }
-            });
-        }
-
-        // Following posts
-        changeMade = NO;
-        newList = [[NSMutableArray alloc] initWithArray:self.postsFollowing];
-
-        data = [self.postsFollowing filteredArrayUsingPredicate:predicate];
-        if (data) {
-            NSUInteger index = [self.postsFollowing indexOfObject:data[0]];
-            TDPost *post = [newList objectAtIndex:index];
-
+    for (TDPost *post in self.postsFollowing) {
+        if ([post.postId isEqualToNumber:postId]) {
             [post removeComment:[n.userInfo objectForKey:@"commentId"]];
             changeMade = YES;
+            break;
         }
+    }
 
-        if (changeMade) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                self.postsFollowing = [[NSArray alloc] initWithArray:newList];
-                if (![self onAllFeed]) {
-                    [self.tableView reloadData];
-                }
-            });
-        }
-    });
+    if (changeMade) {
+        [self.tableView reloadData];
+    }
 }
 
 #pragma mark - Refresh Control

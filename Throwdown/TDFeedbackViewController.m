@@ -107,7 +107,7 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
+    [super viewWillDisappear:animated];
     self.origFrame = self.view.frame;
 
     [self.keyboardObserver startListening];

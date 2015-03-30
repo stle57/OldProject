@@ -80,14 +80,14 @@
 
     debug NSLog(@"app launched with options: %@", launchOptions);
 
-    NSString *message = [NSString stringWithFormat:@"firstUsed=%@\nlength of installation in seconds=%f\ndaysUntilPrompt=%f\nusesCount=%lu", [iRate sharedInstance].firstUsed, [[NSDate date] timeIntervalSinceDate:[iRate sharedInstance].firstUsed], [iRate sharedInstance].daysUntilPrompt, (unsigned long)[iRate sharedInstance].usesCount ];
-
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"app review conditions"
-                                                    message:message
-                                                   delegate:nil
-                                          cancelButtonTitle:@"OK"
-                                          otherButtonTitles:nil];
-    [alert show];
+//    NSString *message = [NSString stringWithFormat:@"firstUsed=%@\nlength of installation in seconds=%f\ndaysUntilPrompt=%f\nusesCount=%lu", [iRate sharedInstance].firstUsed, [[NSDate date] timeIntervalSinceDate:[iRate sharedInstance].firstUsed], [iRate sharedInstance].daysUntilPrompt, (unsigned long)[iRate sharedInstance].usesCount ];
+//
+//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"app review conditions"
+//                                                    message:message
+//                                                   delegate:nil
+//                                          cancelButtonTitle:@"OK"
+//                                          otherButtonTitles:nil];
+//    [alert show];
     return YES;
 }
 
@@ -141,6 +141,8 @@
     [iRate sharedInstance].usesUntilPrompt = 10;
     [iRate sharedInstance].promptForNewVersionIfUserRated = YES;
 	[iRate sharedInstance].onlyPromptIfLatestVersion = NO;
+    [iRate sharedInstance].verboseLogging = NO;
+
     
     //enable preview mode
     [iRate sharedInstance].previewMode = NO;

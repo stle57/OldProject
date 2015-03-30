@@ -194,20 +194,17 @@ static NSString *const kKindText  = @"text";
     if (commentId == nil) {
         return;
     }
-    debug NSLog(@"removingComment for commentId=%@", commentId);
 
     NSMutableArray *newArray = [[NSMutableArray alloc] initWithArray:self.comments];
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"self.commentId = %@", commentId];
     NSArray *data = [self.comments filteredArrayUsingPredicate:predicate];
-    debug NSLog(@" data size=%lu", (unsigned long)data.count);
-    debug NSLog(@" self.comments size=%lu", (unsigned long)self.comments.count);
     if (data && data.count) {
         NSUInteger index = [newArray indexOfObject:data[0]];
         [newArray removeObjectAtIndex:index];
-    }
 
-    _comments = newArray;
-    _commentsTotalCount = [NSNumber numberWithInt:[_commentsTotalCount intValue] - 1];
+        _comments = newArray;
+        _commentsTotalCount = [NSNumber numberWithInt:[_commentsTotalCount intValue] - 1];
+    }
 }
 
 - (void)removeLastComment {
@@ -232,6 +229,7 @@ static NSString *const kKindText  = @"text";
     if ([newList count] > 2) {
         [newList removeObjectsInRange:NSMakeRange(2, [newList count] - 2)];
     }
+
     return [NSArray arrayWithArray:newList];
 }
 
@@ -244,9 +242,9 @@ static NSString *const kKindText  = @"text";
 
 - (TDComment *)findCommentById:(NSNumber*)commentId {
     if (self.comments && commentId) {
-        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"self.commentId == %@", commentId];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"self.commentId = %@", commentId];
         NSArray *data = [self.comments filteredArrayUsingPredicate:predicate];
-        if (data) {
+        if (data && data.count) {
             NSUInteger index = [self.comments indexOfObject:data[0]];
             return (TDComment*)[self.comments objectAtIndex:index];
         }
@@ -301,14 +299,12 @@ static NSString *const kKindText  = @"text";
             break;
         case kUpdatePostTypeUpdateComment:
         {
-            debug NSLog(@"got a notification for updating comment");
             TDComment *comment = [self findCommentById:[n.userInfo objectForKey:@"commentId"]];
             [self updateComment:comment text:[n.userInfo objectForKey:@"comment"]];
         }
         break;
         case kUpdatePostTypeUpdatePostComment:
         {
-            debug NSLog(@"got a notification for updating POST comment");
             [self updatePostComment:[n.userInfo objectForKey:@"postId"] comment:[n.userInfo objectForKey:@"comment"]];
         }
         break;

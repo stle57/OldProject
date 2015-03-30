@@ -166,8 +166,6 @@ static int const kToolbarHeight = 64;
     CGRect editingFrame = self.editingView.frame;
     editingFrame.size.width = SCREEN_WIDTH;
     self.editingView.frame = editingFrame;
-    self.editingView.layer.borderColor = [[UIColor purpleColor] CGColor];
-    self.editingView.layer.borderWidth = 2.0;
 
     // User name filter table view
     if (self.userListView == nil) {
@@ -219,6 +217,8 @@ static int const kToolbarHeight = 64;
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+
     if (self.isEditing) {
         [self.textView resignFirstResponder];
     }
@@ -640,6 +640,10 @@ static int const kToolbarHeight = 64;
 
 - (void)tableView:(UITableView*)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (indexPath.row > 1) {
+
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(commentDeleted:) name:TDNotificationRemoveComment object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(commentDeleteFailed:) name:TDNotificationRemoveCommentFailed object:nil];
+
         NSInteger commentNumber = indexPath.row -2;
         debug NSLog(@"inside didSelectRowAtIndexPath, commentNumber = %ld, section-%ld", (long)commentNumber, (long)indexPath.section);
 
@@ -648,9 +652,6 @@ static int const kToolbarHeight = 64;
         TDComment *comment = [self.post commentAtIndex:commentNumber];
         debug NSLog(@"comment userid = %@, current userid=%@", comment.user.userId, [TDCurrentUser sharedInstance].userId);
         if ([comment.user.userId isEqualToNumber:[TDCurrentUser sharedInstance].userId]) {
-
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(commentDeleted:) name:TDNotificationRemoveComment object:nil];
-            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(commentDeleteFailed:) name:TDNotificationRemoveCommentFailed object:nil];
 
 
             UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil  message:nil preferredStyle:UIAlertControllerStyleActionSheet];
@@ -923,8 +924,6 @@ static int const kToolbarHeight = 64;
 #pragma mark - TDKeyboardObserverDelegate
 
 - (void)keyboardDidShow:(NSNotification *)notification {
-    debug NSLog(@"inside keyboardDidShow");
-
     self.isEditing = YES;
     self.tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapFrom:)];
     [self.tableView addGestureRecognizer:self.tapGesture];
@@ -932,7 +931,6 @@ static int const kToolbarHeight = 64;
 }
 
 - (void)keyboardDidHide:(NSNotification *)notification {
-    debug NSLog(@"inside keyboardDidHide");
     self.isEditing = NO;
     [self.tableView removeGestureRecognizer:self.tapGesture];
     [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationResumeTapGesture object:nil];
@@ -986,13 +984,10 @@ static int const kToolbarHeight = 64;
 }
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
-    debug NSLog(@"shouldCHangeTextInRange...");
     return [TDTextViewControllerHelper textView:textView shouldChangeTextInRange:range replacementText:text];
 }
 
 - (void)textViewDidChange:(UITextView *)textView {
-    debug NSLog(@"text view changing");
-
     if (self.isEditingOriginalPost) {
         // get the size of the UITextView based on what it would be with the text
         CGFloat fixedWidth = self.editingTextView.frame.size.width;
@@ -1089,9 +1084,6 @@ static int const kToolbarHeight = 64;
     editingViewFrame.size.height = textFrame.size.height + kCommentFieldPadding + MAX(self.cancelButton.frame.size.height, self.saveButton.frame.size.height);
     editingViewFrame.origin.y = bottom - height - kCommentFieldPadding - MAX(self.cancelButton.frame.size.height, self.saveButton.frame.size.height);
     self.editingView.frame = editingViewFrame;
-    debug NSLog(@"  editingViewFrame is now=%@", NSStringFromCGRect(self.editingView.frame));
-    self.editingView.layer.borderColor = [[UIColor purpleColor] CGColor];
-    self.editingView.layer.borderWidth = 1.;
 
     CGRect tableFrame = self.tableView.layer.frame;
     tableFrame.size.height = bottom - height - kCommentFieldPadding;
@@ -1103,7 +1095,6 @@ static int const kToolbarHeight = 64;
 
 - (IBAction)sendButtonPressed:(id)sender {
     NSString *body = [self.textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-    debug NSLog(@"***sendButtonPressed, body=%@", body);
     if ([body length] > 0 && self.post && self.post.postId) {
         self.cachedText = body;
         self.textView.text = @"";
@@ -1130,7 +1121,6 @@ static int const kToolbarHeight = 64;
 }
 
 - (IBAction)cancelButtonPressed:(id)sender {
-    debug NSLog(@"cancel button pressed, reanimate to original view");
     if (!self.userListView.hidden) {
         [self.userListView hideView];
     }
@@ -1151,7 +1141,6 @@ static int const kToolbarHeight = 64;
 }
 
 - (IBAction)saveButtonPressed:(id)sender {
-    debug NSLog(@"save button pressed, send to backend, updated the text");
     if (self.isEditingOriginalPost) {
 
         NSString *body = [self.editingTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
@@ -1183,7 +1172,7 @@ static int const kToolbarHeight = 64;
                 [self.tableView scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:1 inSection: 0]
                                       atScrollPosition:UITableViewScrollPositionBottom
                                               animated:NO];
-    
+
                 [[TDPostAPI sharedInstance] updatePostText:body postId:self.post.postId];
             }
 
@@ -1317,7 +1306,7 @@ static int const kToolbarHeight = 64;
 
 - (void)deleteComment {
     TDComment *comment = [self.post commentAtIndex:self.editingCommentNumber];
-
+    debug NSLog(@" deleting comment number = %ld, body=%@", (long)self.editingCommentNumber, comment.body);
     [[TDPostAPI sharedInstance] postDeleteComment:comment.commentId forPost:self.postId];
 }
 
@@ -1334,7 +1323,7 @@ static int const kToolbarHeight = 64;
 
 - (void)commentDeleted:(NSNotification*)notification {
     
-    debug NSLog(@"inside comment deleted, commentId-%@", [notification.userInfo objectForKey:@"commentId"]);
+    debug NSLog(@"TDDetailViewController: inside comment deleted, commentId-%@", [notification.userInfo objectForKey:@"commentId"]);
 
     [self.post removeComment:[notification.userInfo objectForKey:@"commentId"]];
 
