@@ -404,6 +404,10 @@
 
     for (TDPost *post in self.posts) {
         if ([post.postId isEqualToNumber:postId]) {
+            NSUInteger change = [(NSNumber *)[n.userInfo objectForKey:@"change"] unsignedIntegerValue];
+            if (change == kUpdatePostTypeUpdatePostComment) {
+                break; // don't change the comment because we need TDPostView to detect a difference inside setPost.
+            }
             [post updateFromNotification:n];
             changeMade = YES;
             break;
