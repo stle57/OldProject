@@ -100,8 +100,7 @@ static NSString *const kInstagramShareKey = @"TDLastShareToInstagram";
     self.isPR = isPR;
     self.userGenerated = ug;
     self.locationData = [locationData copy];
-    NSString *userNameFilter = [TDTextViewControllerHelper findUsernameInText:comment];
-    self.tagged = userNameFilter.length;
+    self.tagged = [TDTextViewControllerHelper usernameInString:comment];
 }
 
 - (IBAction)saveButtonPressed:(id)sender {
