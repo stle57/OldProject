@@ -244,12 +244,8 @@ static NSString *const kInstagramShareKey = @"TDLastShareToInstagram";
                 CGFloat titleWidth = [TDAppDelegate widthOfTextForString:cell.titleLabel.text
                                                             andFont:cell.titleLabel.font
                                                             maxSize:CGSizeMake(MAXFLOAT, cell.titleLabel.frame.size.height)];
-                [cell.icon setImage:[UIImage imageNamed:@"icon_semi_private"]];
-                [cell.icon sizeToFit];
-                CGRect iconFrame = cell.icon.frame;
-                iconFrame.origin.x = cell.titleLabel.frame.origin.x + titleWidth + 6;
-                cell.icon.frame = iconFrame;
-                cell.icon.hidden = NO;
+
+                cell.icon.hidden = YES;
                 cell.checkmark.hidden = (self.privacy != TDPostSemiPrivate);
                 break;
             case 2:
@@ -257,12 +253,8 @@ static NSString *const kInstagramShareKey = @"TDLastShareToInstagram";
                 CGFloat width = [TDAppDelegate widthOfTextForString:cell.titleLabel.text
                                                             andFont:cell.titleLabel.font
                                                             maxSize:CGSizeMake(MAXFLOAT, cell.titleLabel.frame.size.height)];
-                [cell.icon setImage:[UIImage imageNamed:@"lock_icon_30x30"]];
-                [cell.icon sizeToFit];
-                CGRect frame = cell.icon.frame;
-                frame.origin.x = cell.titleLabel.frame.origin.x + width + 6;
-                cell.icon.frame = frame;
-                cell.icon.hidden = NO;
+
+                cell.icon.hidden = YES;
                 cell.checkmark.hidden = (self.privacy != TDPostPrivacyPrivate);
                 break;
             default:
