@@ -195,7 +195,7 @@ static NSString *const kTracksKey = @"tracks";
         [self addSubview:self.privatePost];
 
         self.semiPrivatePost = [[UIImageView alloc] initWithFrame:CGRectMake(kMargin - 1.5, kMargin + 25.5, 21, 21)]; // the image has a white border (thus the weird half pixels)
-        self.semiPrivatePost.image = [UIImage imageNamed:@"icon_semi_private_feed"];
+        self.semiPrivatePost.image = [UIImage imageNamed:@"icon_semi_private_feed_blue"];
         self.semiPrivatePost.hidden = YES;
         [self addSubview:self.semiPrivatePost];
 
