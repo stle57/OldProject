@@ -1094,6 +1094,9 @@ static int const kToolbarHeight = 64;
 #pragma mark - Commenting
 
 - (IBAction)sendButtonPressed:(id)sender {
+    if (!self.userListView.hidden) {
+        [self.userListView hideView];
+    }
     NSString *body = [self.textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     if ([body length] > 0 && self.post && self.post.postId) {
         self.cachedText = body;
