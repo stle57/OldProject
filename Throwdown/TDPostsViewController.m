@@ -964,7 +964,7 @@ static CGFloat const kReviewAppCellHeight = 128;
         vc.userId = [NSNumber numberWithInteger:[[[url path] lastPathComponent] integerValue]];
         vc.profileType = kFeedProfileTypeOther;
         [self.navigationController pushViewController:vc animated:YES];
-    } else if ([[url host] isEqualToString:@"tag"]) {
+    } else if (![self onGuestFeed] && [[url host] isEqualToString:@"tag"]) {
         TDTagFeedViewController *vc = [[TDTagFeedViewController alloc] initWithNibName:@"TDTagFeedViewController" bundle:nil ];
         vc.tagName = [[url path] lastPathComponent];
         [self.navigationController pushViewController:vc animated:YES];
