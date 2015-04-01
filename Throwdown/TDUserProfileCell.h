@@ -9,7 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "TDUser.h"
 #import "TDConstants.h"
-#import <TTTAttributedLabel/TTTAttributedLabel.h>
 
 #define USERNAME_PROFILE_FONT [TDConstants fontSemiBoldSized:18.0];
 
@@ -38,8 +37,8 @@ static CGFloat const kInviteButtonStatButtonPadding = 25; // padding between inv
 @property (nonatomic, weak) id <TDUserProfileCellDelegate> delegate;
 @property (weak, nonatomic) IBOutlet UIImageView *userImageView;
 @property (weak, nonatomic) IBOutlet UILabel *userNameLabel;
-@property (weak, nonatomic) IBOutlet TTTAttributedLabel *bioLabel;
-@property (weak, nonatomic) IBOutlet TTTAttributedLabel *locationLabel;
+@property (weak, nonatomic) IBOutlet UILabel *bioLabel;
+@property (weak, nonatomic) IBOutlet UILabel *locationLabel;
 @property (weak, nonatomic) IBOutlet UIView *whiteUnderView;
 @property (weak, nonatomic) IBOutlet UIView *bottomLine;
 @property (weak, nonatomic) IBOutlet UIButton *postButton;
