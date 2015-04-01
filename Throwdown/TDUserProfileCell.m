@@ -32,7 +32,6 @@ static CGFloat const kMinHeight = 230 + kBottomMargin;
     self.userImageView.layer.cornerRadius = 35;
     self.userImageView.layer.masksToBounds = YES;
     self.origBioLabelRect = self.bioLabel.frame;
-    self.bioLabel.enabledTextCheckingTypes = NSTextCheckingTypeLink;
     CGRect borderFrame = self.buttonsTopBorder.frame;
     borderFrame.size.height = (1.0 / [[UIScreen mainScreen] scale]);
     self.buttonsTopBorder.frame = borderFrame;
@@ -80,9 +79,6 @@ static CGFloat const kMinHeight = 230 + kBottomMargin;
         if (user.bio && ![user.bio isKindOfClass:[NSNull class]]) {
 
             self.bioLabel.attributedText = [TDViewControllerHelper makeParagraphedTextWithBioString:user.bio];
-            [TDViewControllerHelper colorLinksInLabel:self.bioLabel centerText:YES];
-
-  
 
             CGRect bioFrame = self.bioLabel.frame;
             bioFrame.size.height = user.bioHeight;
