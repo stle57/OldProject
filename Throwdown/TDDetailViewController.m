@@ -25,12 +25,16 @@
 #import "TDUserAPI.h"
 #import "TDCreatePostViewController.h"
 #import "TDHomeViewController.h"
+#import "UIActionSheet+Blocks.h"
+#import "UIAlertView+TDBlockAlert.h"
 
 static float const kInputLineSpacing = 3;
 static float const kMinInputHeight = 33.;
 static float const kMaxInputHeight = 100.;
 static int const kCommentFieldPadding = 14;
 static int const kToolbarHeight = 64;
+static int const kReportCommentTag = 18891;
+//static int const kCommentActionSheetTag = 18893;
 
 @interface TDDetailViewController () <UITextViewDelegate, NSLayoutManagerDelegate, TDKeyboardObserverDelegate>
 
@@ -322,23 +326,32 @@ static int const kToolbarHeight = 64;
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-    debug NSLog(@"button index = %ld", (long)buttonIndex);
+    debug NSLog(@"button index = %ld, actionSheet tag = %ld", (long)buttonIndex, (long)actionSheet.tag);
     NSString *inStr = [NSString stringWithFormat:@"%@",
                        [NSNumber numberWithInteger:buttonIndex]];
 
-
     NSNumber *type = [self.actionSheetKey valueForKey:inStr] ;
-    debug NSLog(@"type - %@", type);
+    debug NSLog(@"type - %@", [type stringValue]);
     switch ([type intValue]) {
         case TDReportInappropriate:
         {
-            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Report as Inappropriate?"
-                                                  message:@"Please confirm you'd like to report this post as inappropriate."
-                                                 delegate:self
-                                        cancelButtonTitle:@"Cancel"
-                                        otherButtonTitles:@"Report", nil];
-            alert.tag = 18890;
-            [alert show];
+            if (actionSheet.tag == kReportCommentTag) {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Report as Inappropriate?"
+                                                                message:@"Please confirm you'd like to report this comment as inappropriate."
+                                                               delegate:self
+                                                      cancelButtonTitle:@"Cancel"
+                                                      otherButtonTitles:@"Report", nil];
+                alert.tag = kReportCommentTag;
+                [alert show];
+            } else {
+                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Report as Inappropriate?"
+                                                      message:@"Please confirm you'd like to report this post as inappropriate."
+                                                     delegate:self
+                                            cancelButtonTitle:@"Cancel"
+                                            otherButtonTitles:@"Report", nil];
+                alert.tag = 18890;
+                [alert show];
+            }
         }
             break;
         case TDDeletePost:
@@ -444,6 +457,7 @@ static int const kToolbarHeight = 64;
 
 - (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex {
     // Delete Yes is index 0
+    debug NSLog(@"inside willDismissWithButtonIndex..., buttonIndex=%ld, alertTag=%ld", (long)buttonIndex, (long)alertView.tag);
     if (alertView.tag == 89890 && buttonIndex != alertView.cancelButtonIndex) {
         self.navigationItem.rightBarButtonItem.enabled = NO;
 
@@ -465,6 +479,7 @@ static int const kToolbarHeight = 64;
 
         self.navigationItem.rightBarButtonItem.enabled = NO;
         [[TDPostAPI sharedInstance] deletePostWithId:self.postId isPR:self.post.personalRecord];
+        
     } else if (alertView.tag == 18894 && buttonIndex != alertView.cancelButtonIndex) {
         //mute
         // Send follow user to server
@@ -486,18 +501,19 @@ static int const kToolbarHeight = 64;
                                               cancelButtonTitle:@"OK"
                                               otherButtonTitles:nil];
         [alert show];
-    } else if (alertView.tag == 18891 && buttonIndex != alertView.cancelButtonIndex) {
+    } else if (alertView.tag == kReportCommentTag) {
         // Report comment!
-        TDComment *comment = [self.post commentAtIndex:self.editingCommentNumber];
-        debug NSLog(@"reporting comment id = %@", comment.commentId);
-        [[TDPostAPI sharedInstance] reportCommentWithId:comment.commentId postId:self.postId];
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Report Sent"
-                                                        message:@"Our moderators will review this comment within the next 24 hours. Thank you."
-                                                       delegate:nil
-                                              cancelButtonTitle:@"OK"
-                                              otherButtonTitles:nil];
-        [alert show];
-
+        if (buttonIndex != alertView.cancelButtonIndex) {
+            TDComment *comment = [self.post commentAtIndex:self.editingCommentNumber];
+            debug NSLog(@"reporting comment id = %@", comment.commentId);
+            [[TDPostAPI sharedInstance] reportCommentWithId:comment.commentId postId:self.postId];
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Report Sent"
+                                                            message:@"Our moderators will review this comment within the next 24 hours. Thank you."
+                                                           delegate:nil
+                                                  cancelButtonTitle:@"OK"
+                                                  otherButtonTitles:nil];
+            [alert show];
+        }
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.editingCommentNumber+2 inSection:0];
         [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
         self.editingCommentNumber = -1;
@@ -567,7 +583,7 @@ static int const kToolbarHeight = 64;
             NSArray *topLevelObjects = [[NSBundle mainBundle] loadNibNamed:@"TDDetailsLikesCell" owner:self options:nil];
             cell = [topLevelObjects objectAtIndex:0];
             cell.delegate = self;
-            cell.selectionStyle = UITableViewCellSelectionStyleDefault;
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
         }
 
         [cell setLike:self.post.liked];
@@ -584,6 +600,10 @@ static int const kToolbarHeight = 64;
         cell = [topLevelObjects objectAtIndex:0];
         cell.delegate = self;
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
+        UILongPressGestureRecognizer *longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPress:)];
+        [longPressGesture setMinimumPressDuration:1.0];
+        [longPressGesture setAllowableMovement:50.];
+        [cell addGestureRecognizer:longPressGesture];
     }
 
     NSUInteger commentNumber = (indexPath.row - 2);
@@ -653,55 +673,114 @@ static int const kToolbarHeight = 64;
         debug NSLog(@"comment userid = %@, current userid=%@", comment.user.userId, [TDCurrentUser sharedInstance].userId);
         if ([comment.user.userId isEqualToNumber:[TDCurrentUser sharedInstance].userId]) {
 
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] < 8.0){
+                NSMutableArray *buttonStrings = [[NSMutableArray alloc] init];
+                [buttonStrings addObject:@"Edit"];
 
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil  message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+                [UIActionSheet showInView:self.view
+                                withTitle:nil
+                        cancelButtonTitle:@"Cancel"
+                   destructiveButtonTitle:@"Delete"
+                        otherButtonTitles:buttonStrings
+                                 tapBlock:^(UIActionSheet *actionSheet, NSInteger buttonIndex) {
+                                     if (buttonIndex == actionSheet.cancelButtonIndex) {
+                                         [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
+                                         return;
+                                     }
 
-            UIAlertAction* deleteCommentAction = [UIAlertAction actionWithTitle:@"Delete" style:UIAlertActionStyleDestructive
-                                                                                handler:^(UIAlertAction * action) {
-                                                                                    [self presentDeleteCommentAlertView];
-                                                                                }];
-            UIAlertAction *editCommentAction =[UIAlertAction actionWithTitle:@"Edit" style:UIAlertActionStyleDefault
-                                                                        handler:^(UIAlertAction * action) {
-                                                                            [self editComment:indexPath.row];
+                                     if (buttonIndex == actionSheet.destructiveButtonIndex) {
+                                         debug NSLog(@"delete comment stuff");
+                                         [self presentDeleteCommentAlertView];
 
-                                                                        }];
-            UIAlertAction* cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
-                                                           handler:^(UIAlertAction * action) {
-                                                               [alert dismissViewControllerAnimated:YES completion:nil];
-                                                               [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
-                                                           }];
+                                     } else {
+                                         debug NSLog(@"edit comment stuff");
+                                         [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
+                                         [self editComment:indexPath.row];
+                                         return;
+                                     }
 
-            [alert addAction:deleteCommentAction];
-            [alert addAction:editCommentAction];
-            [alert addAction:cancel];
+                }];
+                debug NSLog(@"done with actionsheet");
+            } else {
 
-            [self presentViewController:alert animated:YES completion:nil];
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil  message:nil preferredStyle:UIAlertControllerStyleActionSheet];
+
+                UIAlertAction* deleteCommentAction = [UIAlertAction actionWithTitle:@"Delete" style:UIAlertActionStyleDestructive
+                                                                                    handler:^(UIAlertAction * action) {
+                                                                                        [self presentDeleteCommentAlertView];
+                                                                                    }];
+                UIAlertAction *editCommentAction =[UIAlertAction actionWithTitle:@"Edit" style:UIAlertActionStyleDefault
+                                                                            handler:^(UIAlertAction * action) {
+                                                                                [self editComment:indexPath.row];
+
+                                                                            }];
+                UIAlertAction* cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
+                                                               handler:^(UIAlertAction * action) {
+                                                                   [alert dismissViewControllerAnimated:YES completion:nil];
+                                                                   [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
+                                                               }];
+
+                [alert addAction:deleteCommentAction];
+                [alert addAction:editCommentAction];
+                [alert addAction:cancel];
+
+                [self presentViewController:alert animated:YES completion:nil];
+            }
         } else {
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil  message:nil preferredStyle:UIAlertControllerStyleActionSheet];
 
-            UIAlertAction* inappropriateAction = [UIAlertAction actionWithTitle:@"Report as Inappropriate" style:UIAlertActionStyleDestructive
-                                                                        handler:^(UIAlertAction * action) {
-                                                                            debug NSLog(@"comment id we are reporting is %@", comment.commentId);
-                                                                            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Report as Inappropriate?"
-                                                                                                                            message:@"Please confirm you'd like to report this comment as inappropriate."
-                                                                                                                           delegate:self
-                                                                                                                  cancelButtonTitle:@"Cancel"
-                                                                                                                  otherButtonTitles:@"Report", nil];
-                                                                            alert.tag = 18891;
-                                                                            [alert show];
-                                                                        }];
-            UIAlertAction* cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
-                                                           handler:^(UIAlertAction * action) {
-                                                               [alert dismissViewControllerAnimated:YES completion:nil];
-                                                               [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
+            if ([[[UIDevice currentDevice] systemVersion] floatValue] < 8.0){
+                NSMutableArray *buttonStrings = [[NSMutableArray alloc] init];
+                [buttonStrings addObject:@"Edit"];
 
-                                                           }];
+                [UIActionSheet showInView:self.view
+                                withTitle:nil
+                        cancelButtonTitle:@"Cancel"
+                   destructiveButtonTitle:@"Report as Inappropriate"
+                        otherButtonTitles:nil
+                                 tapBlock:^(UIActionSheet *actionSheet, NSInteger buttonIndex) {
+                                     if (buttonIndex == actionSheet.cancelButtonIndex) {
+                                         [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
+                                         return;
+                                     }
 
-            [alert addAction:inappropriateAction];
-            [alert addAction:cancel];
+                                     if (buttonIndex == actionSheet.destructiveButtonIndex) {
+                                         debug NSLog(@"delete comment stuff");
+                                         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Report as Inappropriate?"
+                                                                                         message:@"Please confirm you'd like to report this comment as inappropriate."
+                                                                                        delegate:self
+                                                                               cancelButtonTitle:@"Cancel"
+                                                                               otherButtonTitles:@"Report", nil];
+                                         alert.tag = kReportCommentTag;
+                                         [alert show];
+                                     }
+                                 }];
+            } else {
 
-            [self presentViewController:alert animated:YES completion:nil];
+                UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil  message:nil preferredStyle:UIAlertControllerStyleActionSheet];
 
+                UIAlertAction* inappropriateAction = [UIAlertAction actionWithTitle:@"Report as Inappropriate" style:UIAlertActionStyleDestructive
+                                                                            handler:^(UIAlertAction * action) {
+                                                                                debug NSLog(@"comment id we are reporting is %@", comment.commentId);
+                                                                                UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Report as Inappropriate?"
+                                                                                                                                message:@"Please confirm you'd like to report this comment as inappropriate."
+                                                                                                                               delegate:self
+                                                                                                                      cancelButtonTitle:@"Cancel"
+                                                                                                                      otherButtonTitles:@"Report", nil];
+                                                                                alert.tag = kReportCommentTag;
+                                                                                [alert show];
+                                                                            }];
+                UIAlertAction* cancel = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
+                                                               handler:^(UIAlertAction * action) {
+                                                                   [alert dismissViewControllerAnimated:YES completion:nil];
+                                                                   [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
+
+                                                               }];
+
+                [alert addAction:inappropriateAction];
+                [alert addAction:cancel];
+
+                [self presentViewController:alert animated:YES completion:nil];
+            }
         }
     }
 }
@@ -1277,34 +1356,50 @@ static int const kToolbarHeight = 64;
 - (void)presentDeleteCommentAlertView {
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:self.editingCommentNumber+2 inSection:0];
 
-    UIAlertController *alertController = [UIAlertController
-                                          alertControllerWithTitle:@"Delete this comment?"
-                                          message:@"Please confirm you'd like to delete this comment."
-                                          preferredStyle:UIAlertControllerStyleAlert];
+    if ([[[UIDevice currentDevice] systemVersion] floatValue] < 8.0){
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Delete this comment?"
+                                                        message:@"Please confirm you'd like to delete this comment."
+                                                       delegate:nil
+                                              cancelButtonTitle:@"Cancel"
+                                              otherButtonTitles:@"OK", nil];
+        [alert showWithCompletionBlock:^(UIAlertView *alertView, NSInteger buttonIndex) {
+            if (buttonIndex != alertView.cancelButtonIndex) {
+                [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
+                [self deleteComment];
+            } else {
+                [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
+            }
+        }];
+    } else {
 
-    UIAlertAction *cancelAction = [UIAlertAction
-                                   actionWithTitle:NSLocalizedString(@"Cancel", @"Cancel action")
-                                   style:UIAlertActionStyleCancel
+        UIAlertController *alertController = [UIAlertController
+                                              alertControllerWithTitle:@"Delete this comment?"
+                                              message:@"Please confirm you'd like to delete this comment."
+                                              preferredStyle:UIAlertControllerStyleAlert];
+
+        UIAlertAction *cancelAction = [UIAlertAction
+                                       actionWithTitle:NSLocalizedString(@"Cancel", @"Cancel action")
+                                       style:UIAlertActionStyleCancel
+                                       handler:^(UIAlertAction *action)
+                                       {
+                                           NSLog(@"Cancel action");
+                                           [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
+                                       }];
+
+        UIAlertAction *okAction = [UIAlertAction
+                                   actionWithTitle:NSLocalizedString(@"OK", @"OK action")
+                                   style:UIAlertActionStyleDefault
                                    handler:^(UIAlertAction *action)
                                    {
-                                       NSLog(@"Cancel action");
                                        [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
+                                       [self deleteComment];
                                    }];
+        
+        [alertController addAction:cancelAction];
+        [alertController addAction:okAction];
 
-    UIAlertAction *okAction = [UIAlertAction
-                               actionWithTitle:NSLocalizedString(@"OK", @"OK action")
-                               style:UIAlertActionStyleDefault
-                               handler:^(UIAlertAction *action)
-                               {
-                                   [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
-                                   [self deleteComment];
-                               }];
-    
-    [alertController addAction:cancelAction];
-    [alertController addAction:okAction];
-    alertController.view.tintColor = [TDConstants headerTextColor];
-
-    [self presentViewController:alertController animated:YES completion:nil];
+        [self presentViewController:alertController animated:YES completion:nil];
+    }
 }
 
 - (void)deleteComment {
@@ -1366,4 +1461,22 @@ static int const kToolbarHeight = 64;
     [self.editingTextView becomeFirstResponder];
 }
 
+- (void)longPress:(UILongPressGestureRecognizer *)gesture
+{
+    // only when gesture was recognized, not when ended
+    if (gesture.state == UIGestureRecognizerStateBegan)
+    {
+        // get affected cell
+        UITableViewCell *cell = (UITableViewCell *)[gesture view];
+
+        // get indexPath of cell
+        NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
+
+        // do something with this action
+        NSLog(@"Long-pressed cell at row %@", indexPath);
+        [self tableView:self.tableView didSelectRowAtIndexPath:indexPath];
+    } else {
+        debug NSLog(@"leaving long press, with gesture state=%ld", gesture.state);
+    }
+}
 @end
