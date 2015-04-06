@@ -601,11 +601,8 @@ static int const kReportCommentTag = 18891;
         cell.delegate = self;
         cell.selectionStyle = UITableViewCellSelectionStyleGray;
         UILongPressGestureRecognizer *longPressGesture = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPress:)];
-        [longPressGesture setMinimumPressDuration:1.0];
+        [longPressGesture setMinimumPressDuration:.3];
         [longPressGesture setDelaysTouchesEnded:YES];
-        //longPressGesture.delaysTouchesEnded = YES;
-        //longPressGesture.cancelsTouchesInView = YES;
-       // [longPressGesture setAllowableMovement:50.];
         [cell addGestureRecognizer:longPressGesture];
     }
 
@@ -739,8 +736,6 @@ static int const kReportCommentTag = 18891;
 #pragma mark - TDDetailsCommentsCellDelegate
 
 - (void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber {
-    debug NSLog(@"detail-userButtonPressedFromRow:%ld commentNumber:%ld, %@ %@", (long)row, (long)commentNumber, self.post.user.userId, [[TDCurrentUser sharedInstance] currentUserObject].userId);
-
     if ([self.post.commentsTotalCount intValue] > row) {
         TDComment *comment = [self.post commentAtIndex:commentNumber];
         if (comment) {
@@ -1193,7 +1188,6 @@ static int const kReportCommentTag = 18891;
 }
 
 - (void)updatePostCommentFailed:(NSNotification*)notification {
-    //[self.post removeLastComment]; // Naive but will work unless commenter goes crazy during outage
     [self.tableView reloadData];
 
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error"
@@ -1202,8 +1196,7 @@ static int const kReportCommentTag = 18891;
                                           cancelButtonTitle:@"OK"
                                           otherButtonTitles:nil];
     [alert show];
-    //self.editingTextView.text = self.cachedText;
-    //self.cachedText = nil;
+
     self.saveButton.enabled = YES;
 }
 #pragma mark - NSLayoutManagerDelegate
@@ -1345,7 +1338,6 @@ static int const kReportCommentTag = 18891;
 {
     // only when gesture was recognized, not when ended
     if (gesture.state == UIGestureRecognizerStateBegan) {
-        debug NSLog(@"state began");
         // get affected cell
         UITableViewCell *cell = (UITableViewCell *)[gesture view];
 
@@ -1353,39 +1345,23 @@ static int const kReportCommentTag = 18891;
         NSIndexPath *indexPath = [self.tableView indexPathForCell:cell];
 
         // do something with this action
-        NSLog(@"Long-pressed cell at row %@", indexPath);
         if (indexPath.row > 1) {
 
             [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(commentDeleted:) name:TDNotificationRemoveComment object:nil];
             [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(commentDeleteFailed:) name:TDNotificationRemoveCommentFailed object:nil];
             [self.tableView selectRowAtIndexPath:indexPath animated:NO scrollPosition:UITableViewScrollPositionNone];
             NSInteger commentNumber = indexPath.row -2;
-            debug NSLog(@"inside longpress, commentNumber = %ld, section-%ld", (long)commentNumber, (long)indexPath.section);
 
             self.editingCommentNumber = commentNumber;
 
             TDComment *comment = [self.post commentAtIndex:commentNumber];
-            debug NSLog(@"comment userid = %@, current userid=%@", comment.user.userId, [TDCurrentUser sharedInstance].userId);
             if ([comment.user.userId isEqualToNumber:[TDCurrentUser sharedInstance].userId]) {
                 [self modifyCurrentUserComment:indexPath];
             } else {
                 [self reportComment:indexPath];
             }
-
-//            if ([cell isSelected]) {
-//                [cell setSelected:YES];
-//            }
-//            if ([cell isHighlighted]) {
-//                debug NSLog(@"cell is highlighted");
-//            }
         }
     }
-//    } else if (gesture.state == UIGestureRecognizerStateCancelled) {
-//        debug NSLog(@"cancelled");
-//    } else if (gesture.state == UIGestureRecognizerStateEnded) {
-//        debug NSLog(@"ended");
-//
-//    }
 }
 
 - (void)modifyCurrentUserComment:(NSIndexPath*)indexPath {
@@ -1405,18 +1381,15 @@ static int const kReportCommentTag = 18891;
                              }
 
                              if (buttonIndex == actionSheet.destructiveButtonIndex) {
-                                 debug NSLog(@"delete comment stuff");
                                  [self presentDeleteCommentAlertView];
 
                              } else {
-                                 debug NSLog(@"edit comment stuff");
                                  [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
                                  [self editComment:indexPath.row];
                                  return;
                              }
 
                          }];
-        debug NSLog(@"done with actionsheet");
     } else {
 
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil  message:nil preferredStyle:UIAlertControllerStyleActionSheet];
@@ -1501,7 +1474,6 @@ static int const kReportCommentTag = 18891;
 - (void)touchesCancelled:(NSSet *)touches
                withEvent:(UIEvent *)event
 {
-    debug NSLog(@"touchesCancelled");
     [super touchesCancelled:touches withEvent:event];
 }
 @end

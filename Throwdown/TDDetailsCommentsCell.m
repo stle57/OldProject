@@ -94,12 +94,4 @@ static CGFloat const kMaxUsernameWidth = 230;
         [TDViewControllerHelper askUserToOpenInSafari:url];
     }
 }
-
-- (void)setSelected:(BOOL)selected animated:(BOOL)animated
-{
-    [super setSelected:selected animated:animated];
-    if (selected) {
-        [self setSelectionStyle:UITableViewCellSelectionStyleGray];
-    }
-}
 @end
