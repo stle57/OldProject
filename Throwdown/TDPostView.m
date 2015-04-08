@@ -881,7 +881,10 @@ static NSString *const kTracksKey = @"tracks";
 - (void)attributedLabel:(TTTAttributedLabel *)label didSelectLinkWithURL:(NSURL *)url {
     if ([TDViewControllerHelper isThrowdownURL:url] && self.delegate && [self.delegate respondsToSelector:@selector(userTappedURL:)]) {
         [self.delegate userTappedURL:url];
-    } else {
+    } else if ([TDViewControllerHelper isEmailURL:url] && self.delegate && [self.delegate respondsToSelector:@selector(emailTappedURL:)])
+    {
+        [self.delegate emailTappedURL:url];
+    }else {
         [TDViewControllerHelper askUserToOpenInSafari:url];
     }
 }

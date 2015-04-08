@@ -44,7 +44,7 @@
 + (NSAttributedString *)makeLeftAlignedTextWithString:(NSString *)text font:(UIFont*)font color:(UIColor*)color lineHeight:(CGFloat)lineHeight lineHeightMultipler:(CGFloat)lineHeightMultiplier;
 
 + (void)colorLinksInLabel:(TTTAttributedLabel *)label centerText:(BOOL)centerText;
-
++ (BOOL)isEmailURL:(NSURL *)url;
 // Hashtags:
 + (NSMutableAttributedString *)boldHashtagsInText:(NSMutableAttributedString *)text fontSize:(CGFloat)fontSize;
 + (NSMutableDictionary *)hashTagStyle;

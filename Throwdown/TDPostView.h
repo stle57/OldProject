@@ -18,6 +18,7 @@
 - (void)locationButtonPressedFromRow:(NSInteger)row;
 - (void)userButtonPressedFromRow:(NSInteger)row;
 - (void)userTappedURL:(NSURL *)url;
+- (void)emailTappedURL:(NSURL *)url;
 - (void)horizontalScrollingStarted;
 - (void)horizontalScrollingEnded;
 @end

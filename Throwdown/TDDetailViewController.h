@@ -7,13 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MessageUI/MessageUI.h>
 #import "TDPost.h"
 #import "TDDetailsLikesCell.h"
 #import "TDDetailsCommentsCell.h"
 #import "TDPostView.h"
 #import "TDUserListView.h"
 
-@interface TDDetailViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, TDDetailsLikesCellDelegate, TDDetailsCommentsCellDelegate, UIAlertViewDelegate, UIActionSheetDelegate, TDPostViewDelegate, TDUserListViewDelegate>
+@interface TDDetailViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, TDDetailsLikesCellDelegate, TDDetailsCommentsCellDelegate, UIAlertViewDelegate, UIActionSheetDelegate, TDPostViewDelegate, TDUserListViewDelegate, MFMailComposeViewControllerDelegate>
 
 enum {
     TDReportInappropriate,

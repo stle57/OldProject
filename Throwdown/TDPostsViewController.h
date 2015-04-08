@@ -26,8 +26,9 @@
 #import "TDNoticeViewCell.h"
 #import "TDGuestInfoCell.h"
 #import "TDReviewAppCell.h"
+#import <MessageUI/MessageUI.h>
 
-@interface TDPostsViewController : UIViewController <TDFeedLikeCommentDelegate, TDPostViewDelegate, TDDetailsCommentsCellDelegate, UIActionSheetDelegate, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate, TDUserProfileCellDelegate, TDGuestUserInfoCellDelegate, TDReviewAppCellDelegate>
+@interface TDPostsViewController : UIViewController <TDFeedLikeCommentDelegate, TDPostViewDelegate, TDDetailsCommentsCellDelegate, UIActionSheetDelegate, UIScrollViewDelegate, UITableViewDataSource, UITableViewDelegate, TDUserProfileCellDelegate, TDGuestUserInfoCellDelegate, TDReviewAppCellDelegate, MFMailComposeViewControllerDelegate>
 {
     BOOL goneDownstream;
     CGFloat likeHeight;

@@ -22,6 +22,7 @@
 #import "TDWelcomeViewController.h"
 #import "TDGuestUserJoinView.h"
 #import "TDViewControllerHelper.h"
+#import "UIAlertView+TDBlockAlert.h"
 
 static CGFloat const kWhiteBottomPadding = 6;
 static CGFloat const kPostMargin = 22;
@@ -978,6 +979,17 @@ static CGFloat const kReviewAppCellHeight = 128;
     [self.navigationController pushViewController:vc animated:YES];
 }
 
+- (void)emailTappedURL:(NSURL *)url {
+    NSString *mailtoParameterString = [[url absoluteString] substringFromIndex:[@"mailto:" length]];
+    if ([MFMailComposeViewController canSendMail]) {
+        MFMailComposeViewController* controller = [[MFMailComposeViewController alloc] init];
+        [controller setToRecipients:@[mailtoParameterString]];
+        controller.mailComposeDelegate = self;
+        if (controller) [self presentViewController:controller animated:YES completion:nil];
+    } else {
+        return;
+    }
+}
 - (void)locationButtonPressedFromRow:(NSInteger)row {
 
     TDPost *post = [self postForRow:row];
@@ -1290,4 +1302,12 @@ static CGFloat const kReviewAppCellHeight = 128;
     [self dismissButtonPressed];
 }
 
+#pragma mark MFCompostMailDelegate
+-(void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error;
+{
+    if (result == MFMailComposeResultSent) {
+        debug NSLog(@"It's away!");
+    }
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
 @end

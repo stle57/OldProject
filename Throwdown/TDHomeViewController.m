@@ -691,6 +691,11 @@
     [super userTappedURL:url];
 }
 
+- (void)emailTappedURL:(NSURL *)url {
+    [self showNavBar];
+    [super emailTappedURL:url];
+}
+
 - (void)locationButtonPressedFromRow:(NSInteger)row {
     [self showNavBar];
     [super locationButtonPressedFromRow:row];

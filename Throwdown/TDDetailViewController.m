@@ -733,6 +733,18 @@ static int const kReportCommentTag = 18891;
     }
 }
 
+- (void)emailTappedURL:(NSURL *)url {
+    NSString *mailtoParameterString = [[url absoluteString] substringFromIndex:[@"mailto:" length]];
+    if ([MFMailComposeViewController canSendMail]) {
+        MFMailComposeViewController* controller = [[MFMailComposeViewController alloc] init];
+        [controller setToRecipients:@[mailtoParameterString]];
+        controller.mailComposeDelegate = self;
+        if (controller) [self presentViewController:controller animated:YES completion:nil];
+    } else {
+        return;
+    }
+
+}
 #pragma mark - TDDetailsCommentsCellDelegate
 
 - (void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber {
@@ -1475,5 +1487,14 @@ static int const kReportCommentTag = 18891;
                withEvent:(UIEvent *)event
 {
     [super touchesCancelled:touches withEvent:event];
+}
+
+#pragma mark MFCompostMailDelegate
+-(void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error;
+{
+    if (result == MFMailComposeResultSent) {
+        debug NSLog(@"It's away!");
+    }
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 @end

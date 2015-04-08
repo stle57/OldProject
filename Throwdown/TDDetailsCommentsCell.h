@@ -10,14 +10,16 @@
 #import "TDComment.h"
 #import "TDUpdatingDateLabel.h"
 #import <TTTAttributedLabel.h>
+#import <MessageUI/MFMailComposeViewController.h>
 
 @protocol TDDetailsCommentsCellDelegate <NSObject>
 @optional
 - (void)userButtonPressedFromRow:(NSInteger)row commentNumber:(NSInteger)commentNumber;
 - (void)userTappedURL:(NSURL *)url;
+- (void)emailTappedURL:(NSURL *)url;
 @end
 
-@interface TDDetailsCommentsCell : UITableViewCell <TTTAttributedLabelDelegate>
+@interface TDDetailsCommentsCell : UITableViewCell <TTTAttributedLabelDelegate, MFMailComposeViewControllerDelegate>
 
 @property (nonatomic, weak) id <TDDetailsCommentsCellDelegate> delegate;
 @property (nonatomic, assign) NSInteger row;

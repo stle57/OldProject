@@ -364,6 +364,10 @@ static const NSString *EMAIL_REGEX = @".+@([A-Za-z0-9]+\\.)+[A-Za-z]{2}[A-Za-z]*
     return (([[url scheme] caseInsensitiveCompare:@"http"] == NSOrderedSame || [[url scheme] caseInsensitiveCompare:@"https"] == NSOrderedSame) && [[UIApplication sharedApplication] canOpenURL:url]);
 }
 
++ (BOOL)isEmailURL:(NSURL *)url {
+    return [[url scheme] isEqualToString:@"mailto"];
+}
+
 + (BOOL)askUserToOpenInSafari:(NSURL *)url {
     BOOL isSafariURL = [self isSafariURL:url];
     if (isSafariURL) {
