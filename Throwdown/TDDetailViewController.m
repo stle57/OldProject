@@ -297,9 +297,11 @@ static int const kReportCommentTag = 18891;
         [actionSheet addButtonWithTitle:unfollowText];
     }
 
-    self.actionSheetIdx++;
-    [actionSheet addButtonWithTitle:@"Copy Text"];
-    [self.actionSheetKey setValue:[NSNumber numberWithInt:TDCopyPostText] forKey:[NSString stringWithFormat:@"%ld", (long)self.actionSheetIdx]];
+    if (self.post.comment.length) {
+        self.actionSheetIdx++;
+        [actionSheet addButtonWithTitle:@"Copy Text"];
+        [self.actionSheetKey setValue:[NSNumber numberWithInt:TDCopyPostText] forKey:[NSString stringWithFormat:@"%ld", (long)self.actionSheetIdx]];
+    }
 
     self.actionSheetIdx++;
     [actionSheet addButtonWithTitle:@"Copy Share Link"];
