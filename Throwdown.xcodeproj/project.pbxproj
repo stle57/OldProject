@@ -188,6 +188,7 @@
 		A150F08A18A31B14009A72AD /* TDConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = A150F08918A31B14009A72AD /* TDConstants.m */; };
 		A151958B18BAE8FD0050A45B /* TDUser.m in Sources */ = {isa = PBXBuildFile; fileRef = A151958A18BAE8FD0050A45B /* TDUser.m */; };
 		A15596D819E9E96000C7C0B8 /* TDRequestSerializer.m in Sources */ = {isa = PBXBuildFile; fileRef = A15596D719E9E96000C7C0B8 /* TDRequestSerializer.m */; };
+		A169725A1AD328A800E46737 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A16972591AD328A800E46737 /* Fabric.framework */; };
 		A17567901891C7F20034AD05 /* TDPostAPI.m in Sources */ = {isa = PBXBuildFile; fileRef = A175678F1891C7F20034AD05 /* TDPostAPI.m */; };
 		A180D4DF18C14EA7003B9378 /* TDNavigationController.m in Sources */ = {isa = PBXBuildFile; fileRef = A180D4DE18C14EA7003B9378 /* TDNavigationController.m */; };
 		A180D4E518C33D26003B9378 /* TDUnwindSlideLeftSegue.m in Sources */ = {isa = PBXBuildFile; fileRef = A180D4E418C33D26003B9378 /* TDUnwindSlideLeftSegue.m */; };
@@ -546,6 +547,7 @@
 		A151958A18BAE8FD0050A45B /* TDUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDUser.m; sourceTree = "<group>"; };
 		A15596D619E9E96000C7C0B8 /* TDRequestSerializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDRequestSerializer.h; sourceTree = "<group>"; };
 		A15596D719E9E96000C7C0B8 /* TDRequestSerializer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDRequestSerializer.m; sourceTree = "<group>"; };
+		A16972591AD328A800E46737 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
 		A175678E1891C7F20034AD05 /* TDPostAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDPostAPI.h; sourceTree = "<group>"; };
 		A175678F1891C7F20034AD05 /* TDPostAPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TDPostAPI.m; sourceTree = "<group>"; };
 		A180D4DD18C14EA7003B9378 /* TDNavigationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDNavigationController.h; sourceTree = "<group>"; };
@@ -664,6 +666,7 @@
 				A14483B619A7F05300B3BC8D /* Social.framework in Frameworks */,
 				A1D13FF01905E93A000980E0 /* CoreImage.framework in Frameworks */,
 				A1D13FEE1905E931000980E0 /* QuartzCore.framework in Frameworks */,
+				A169725A1AD328A800E46737 /* Fabric.framework in Frameworks */,
 				A1D13FEC1905E923000980E0 /* MobileCoreServices.framework in Frameworks */,
 				A1D13FEA1905E919000980E0 /* ImageIO.framework in Frameworks */,
 				A1D13FE81905E913000980E0 /* Accelerate.framework in Frameworks */,
@@ -889,6 +892,7 @@
 		A11E04DA1888CB79002F981A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A16972591AD328A800E46737 /* Fabric.framework */,
 				A1AB84C91A1B0020007DEF64 /* ScrollWheel */,
 				A1D7072819DBE8ED00ECB221 /* ObservingPlayerItem */,
 				A14483B719A8026000B3BC8D /* ABOAuthCore */,
@@ -1610,7 +1614,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./Crashlytics.framework/run 52059d9d37002218b9f7913616f80b1294e806c2 999104e51bd4c1db75573da66b0f124087bcd82c76cf5a3ff94b47a46854664a";
+			shellScript = "./Fabric.framework/run 52059d9d37002218b9f7913616f80b1294e806c2 999104e51bd4c1db75573da66b0f124087bcd82c76cf5a3ff94b47a46854664a\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

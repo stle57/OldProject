@@ -9,6 +9,7 @@
 #import "TDAppDelegate.h"
 #import "TDUserAPI.h"
 #import "Flurry.h"
+#import <Fabric/Fabric.h>
 #import <Crashlytics/Crashlytics.h>
 #import "TDAPIClient.h"
 #import "TDAnalytics.h"
@@ -31,7 +32,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [Crashlytics startWithAPIKey:@"52059d9d37002218b9f7913616f80b1294e806c2"];
+    [Fabric with:@[CrashlyticsKit]];
     [[TDUserAPI sharedInstance] setCrashlyticsMeta];
 
     [[TDAnalytics sharedInstance] start];
