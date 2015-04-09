@@ -298,6 +298,10 @@ static int const kReportCommentTag = 18891;
     }
 
     self.actionSheetIdx++;
+    [actionSheet addButtonWithTitle:@"Copy Text"];
+    [self.actionSheetKey setValue:[NSNumber numberWithInt:TDCopyPostText] forKey:[NSString stringWithFormat:@"%ld", (long)self.actionSheetIdx]];
+
+    self.actionSheetIdx++;
     [actionSheet addButtonWithTitle:@"Copy Share Link"];
     [self.actionSheetKey setValue:[NSNumber numberWithInt:TDCopyShareLink] forKey:[NSString stringWithFormat:@"%ld", (long)self.actionSheetIdx]];
 
@@ -326,12 +330,10 @@ static int const kReportCommentTag = 18891;
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex {
-    debug NSLog(@"button index = %ld, actionSheet tag = %ld", (long)buttonIndex, (long)actionSheet.tag);
     NSString *inStr = [NSString stringWithFormat:@"%@",
                        [NSNumber numberWithInteger:buttonIndex]];
 
     NSNumber *type = [self.actionSheetKey valueForKey:inStr] ;
-    debug NSLog(@"type - %@", [type stringValue]);
     switch ([type intValue]) {
         case TDReportInappropriate:
         {
@@ -428,10 +430,17 @@ static int const kReportCommentTag = 18891;
         break;
         case TDCopyShareLink:
         {
-            // index 1 = Copy Share Link
+            // index 2 = Copy Share Link
             [[TDAnalytics sharedInstance] logEvent:@"copied_share_url"];
             [[UIPasteboard generalPasteboard] setString:[TDConstants getShareURL:self.post.slug]];
             [[TDAppDelegate appDelegate] showToastWithText:@"Share link copied to clipboard" type:kToastType_Info payload:nil delegate:nil];
+        }
+        break;
+        case TDCopyPostText:
+        {
+            [[TDAnalytics sharedInstance] logEvent:@"copied_post_text"];
+            [[UIPasteboard generalPasteboard] setString:self.post.comment];
+            [[TDAppDelegate appDelegate] showToastWithText:@"Text copied to clipboard" type:kToastType_Info payload:nil delegate:nil];
         }
         break;
         case TDCancel:
@@ -440,16 +449,13 @@ static int const kReportCommentTag = 18891;
 }
 #pragma mark - UIActionSheet
 - (void)actionSheet:(UIActionSheet *)actionSheet didDismissWithButtonIndex:(NSInteger)buttonIndex{
-    debug NSLog(@"inside didDismissWithButtonIndex, buttonIndex=%ld", (long)buttonIndex);
     NSString *inStr = [NSString stringWithFormat:@"%@",
                        [NSNumber numberWithInteger:buttonIndex]];
 
 
     NSNumber *type = [self.actionSheetKey valueForKey:inStr] ;
-    debug NSLog(@"type - %@", type);
     switch ([type intValue]) {
         case TDEditPost:
-            debug NSLog(@"  got edit post, show controller");
             [self openEditPostView];
             break;
     }
@@ -457,7 +463,6 @@ static int const kReportCommentTag = 18891;
 
 - (void)alertView:(UIAlertView *)alertView willDismissWithButtonIndex:(NSInteger)buttonIndex {
     // Delete Yes is index 0
-    debug NSLog(@"inside willDismissWithButtonIndex..., buttonIndex=%ld, alertTag=%ld", (long)buttonIndex, (long)alertView.tag);
     if (alertView.tag == 89890 && buttonIndex != alertView.cancelButtonIndex) {
         self.navigationItem.rightBarButtonItem.enabled = NO;
 
@@ -485,7 +490,6 @@ static int const kReportCommentTag = 18891;
         // Send follow user to server
         [[TDUserAPI sharedInstance] muteUser:self.post.user.userId callback:^(BOOL success) {
             if (success) {
-                debug NSLog(@"Successfully muted user=%@, now remove the post from view", self.post.user.username);
                 // Notify any view controllers about the removal which will cache the post and refresh table
                 [[NSNotificationCenter defaultCenter] postNotificationName:TDNotificationRemovePost object:nil userInfo:@{@"postId": self.postId}];
             } else {
@@ -505,7 +509,6 @@ static int const kReportCommentTag = 18891;
         // Report comment!
         if (buttonIndex != alertView.cancelButtonIndex) {
             TDComment *comment = [self.post commentAtIndex:self.editingCommentNumber];
-            debug NSLog(@"reporting comment id = %@", comment.commentId);
             [[TDPostAPI sharedInstance] reportCommentWithId:comment.commentId postId:self.postId];
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Report Sent"
                                                             message:@"Our moderators will review this comment within the next 24 hours. Thank you."
@@ -772,14 +775,12 @@ static int const kReportCommentTag = 18891;
 #pragma mark - support unwinding on push notification
 
 - (void)unwindToRoot {
-    debug NSLog(@"unwind from detail view");
     [self.navigationController popViewControllerAnimated:NO];
 }
 
 #pragma mark - Keyboard / TextView management
 
 - (void)keyboardWillShow:(NSNotification *)notification {
-    debug NSLog(@"inside keyboardWillShow");
     NSDictionary *info = [notification userInfo];
 
     NSValue *kbFrame = [info objectForKey:UIKeyboardFrameEndUserInfoKey];
@@ -793,16 +794,15 @@ static int const kReportCommentTag = 18891;
     UIViewAnimationCurve animationCurve = curveValue.intValue;
     NSTimeInterval animationDuration = [[info objectForKey:UIKeyboardAnimationDurationUserInfoKey] doubleValue];
     if (self.isEditingOriginalPost) {
-        debug NSLog(@"SHOW editing View");
         self.editingView.hidden = NO;
         self.commentView.hidden = YES;
-        debug NSLog(@"SCREEN_WIDTH=%f", SCREEN_WIDTH);
-        debug NSLog(@"  editingView frame = %@", NSStringFromCGRect(self.editingView.frame));
-        debug NSLog(@"  editingTextView frame = %@", NSStringFromCGRect(self.editingTextView.frame));
-        debug NSLog(@"  save button frame = %@", NSStringFromCGRect(self.saveButton.frame));
-        debug NSLog(@"  cancel button frame = %@", NSStringFromCGRect(self.cancelButton.frame));
-
-        debug NSLog(@"  editingTextView.contentSize=%f", self.editingTextView.contentSize.height);
+//        debug NSLog(@"SCREEN_WIDTH=%f", SCREEN_WIDTH);
+//        debug NSLog(@"  editingView frame = %@", NSStringFromCGRect(self.editingView.frame));
+//        debug NSLog(@"  editingTextView frame = %@", NSStringFromCGRect(self.editingTextView.frame));
+//        debug NSLog(@"  save button frame = %@", NSStringFromCGRect(self.saveButton.frame));
+//        debug NSLog(@"  cancel button frame = %@", NSStringFromCGRect(self.cancelButton.frame));
+//
+//        debug NSLog(@"  editingTextView.contentSize=%f", self.editingTextView.contentSize.height);
         CGFloat fixedWidth = self.editingTextView.frame.size.width;
         CGSize newSize = [self.editingTextView sizeThatFits:CGSizeMake(fixedWidth, MAXFLOAT)];
         CGRect newFrame = self.editingTextView.frame;
@@ -810,7 +810,7 @@ static int const kReportCommentTag = 18891;
 
         CGFloat height = MAX(MIN(newSize.height - kInputLineSpacing, kMaxInputHeight), kMinInputHeight);
         [self updateEditCommentSize:height];
-        debug NSLog(@"   H: %f / %f", height, self.editingTextView.contentSize.height);
+//        debug NSLog(@"   H: %f / %f", height, self.editingTextView.contentSize.height);
 
         CGFloat bottom = screenHeight - keyboardHeight;
 
@@ -833,11 +833,11 @@ static int const kReportCommentTag = 18891;
         cancelButtonFrame.origin.y = 5;
         cancelButtonFrame.origin.x = textFrame.origin.x;
 
-        debug NSLog(@"  Animation going to...");
-        debug NSLog(@"  editingView frame = %@", NSStringFromCGRect(self.editingView.frame));
-        debug NSLog(@"  editingTextView frame = %@", NSStringFromCGRect(self.editingTextView.frame));
-        debug NSLog(@"  save button frame = %@", NSStringFromCGRect(self.saveButton.frame));
-        debug NSLog(@"  cancel button frame = %@", NSStringFromCGRect(self.cancelButton.frame));
+//        debug NSLog(@"  Animation going to...");
+//        debug NSLog(@"  editingView frame = %@", NSStringFromCGRect(self.editingView.frame));
+//        debug NSLog(@"  editingTextView frame = %@", NSStringFromCGRect(self.editingTextView.frame));
+//        debug NSLog(@"  save button frame = %@", NSStringFromCGRect(self.saveButton.frame));
+//        debug NSLog(@"  cancel button frame = %@", NSStringFromCGRect(self.cancelButton.frame));
         // animationCurve << 16 to convert it from a view animation curve to a view animation option
         [UIView animateWithDuration:animationDuration delay:0.0 options:(animationCurve << 16) animations:^{
 
@@ -853,11 +853,11 @@ static int const kReportCommentTag = 18891;
         self.editingView.hidden = YES;
         CGFloat height = MAX(MIN(self.textView.contentSize.height, kMaxInputHeight), kMinInputHeight);
         CGFloat bottom = screenHeight - keyboardHeight;
-        debug NSLog(@"show comment view...");
-        debug NSLog(@"SCREEN_WIDTH=%f", SCREEN_WIDTH);
-        debug NSLog(@"  textView frame = %@", NSStringFromCGRect(self.textView.frame));
-        debug NSLog(@"  commentVIew frame = %@", NSStringFromCGRect(self.commentView.frame));
-        debug NSLog(@"  tableViewFrame = %@", NSStringFromCGRect(self.tableView.frame));
+//        debug NSLog(@"show comment view...");
+//        debug NSLog(@"SCREEN_WIDTH=%f", SCREEN_WIDTH);
+//        debug NSLog(@"  textView frame = %@", NSStringFromCGRect(self.textView.frame));
+//        debug NSLog(@"  commentVIew frame = %@", NSStringFromCGRect(self.commentView.frame));
+//        debug NSLog(@"  tableViewFrame = %@", NSStringFromCGRect(self.tableView.frame));
         CGRect textFrame = self.textView.frame;
         textFrame.size.height = height;
     
@@ -870,11 +870,11 @@ static int const kReportCommentTag = 18891;
 
         CGRect buttonFrame = self.sendButton.frame;
         buttonFrame.origin.y = (height + kCommentFieldPadding) - buttonFrame.size.height;
-
-        debug NSLog(@"  animation going to...");
-        debug NSLog(@"  textView frame = %@", NSStringFromCGRect(self.textView.frame));
-        debug NSLog(@"  commentVIew frame = %@", NSStringFromCGRect(self.commentView.frame));
-        debug NSLog(@"  tableViewFrame = %@", NSStringFromCGRect(self.tableView.frame));
+//
+//        debug NSLog(@"  animation going to...");
+//        debug NSLog(@"  textView frame = %@", NSStringFromCGRect(self.textView.frame));
+//        debug NSLog(@"  commentVIew frame = %@", NSStringFromCGRect(self.commentView.frame));
+//        debug NSLog(@"  tableViewFrame = %@", NSStringFromCGRect(self.tableView.frame));
 
         // animationCurve << 16 to convert it from a view animation curve to a view animation option
         [UIView animateWithDuration:animationDuration delay:0.0 options:(animationCurve << 16) animations:^{
@@ -904,33 +904,23 @@ static int const kReportCommentTag = 18891;
 }
 
 - (void)keyboardFrameChanged:(CGRect)keyboardFrame {
-    debug NSLog(@"inside keyboardFrameChanged, keyboardFrame.origin.y=%f", keyboardFrame.origin.y);
+//    debug NSLog(@"inside keyboardFrameChanged, keyboardFrame.origin.y=%f", keyboardFrame.origin.y);
     if (self.isEditingOriginalPost) {
         CGRect tableFrame = self.tableView.layer.frame;
         tableFrame.size.height = keyboardFrame.origin.y - self.editingView.layer.frame.size.height - kToolbarHeight;
         self.tableView.frame = tableFrame;
 
-        debug NSLog(@"    tableView.frame= %@", NSStringFromCGRect(self.tableView.frame));
-        debug NSLog(@"   editingView.layer.frame.size.height=%f", self.editingView.layer.frame.size.height);
         CGPoint current = self.editingView.center;
         current.y = keyboardFrame.origin.y - (self.editingView.layer.frame.size.height / 2) - kToolbarHeight;
         self.editingView.center = current;
-
-        debug NSLog(@"   tableView frame = %@", NSStringFromCGRect(self.tableView.frame));
-        debug NSLog(@"   editingView.center=%@", NSStringFromCGPoint(current));
-        debug NSLog(@"   editingView.frame = %@", NSStringFromCGRect(self.editingView.frame));
-        debug NSLog(@"   editingViewText.frame = %@", NSStringFromCGRect(self.editingTextView.frame));
     } else {
         CGRect tableFrame = self.tableView.layer.frame;
         tableFrame.size.height = keyboardFrame.origin.y - self.commentView.layer.frame.size.height - kToolbarHeight;
         self.tableView.frame = tableFrame;
 
-        debug NSLog(@"   tableView frame = %@", NSStringFromCGRect(self.tableView.frame));
-        debug NSLog(@"   commentView.layer.frame.size.height=%f", self.commentView.layer.frame.size.height);
         CGPoint current = self.commentView.center;
         current.y = keyboardFrame.origin.y - (self.commentView.layer.frame.size.height / 2) - kToolbarHeight;
         self.commentView.center = current;
-        debug NSLog(@"   commentView.center=%@", NSStringFromCGPoint(self.commentView.center));
     }
 }
 
@@ -981,16 +971,13 @@ static int const kReportCommentTag = 18891;
         [self.userListView showUserSuggestions:textView callback:^(BOOL success) {
             if (success) {
                 // Make sure we do this after updateCommentSize
-                debug NSLog(@"    comment view frame = %@", NSStringFromCGRect(self.commentView.frame));
                 [self.userListView updateFrame:CGRectMake(0, 64, SCREEN_WIDTH, self.commentView.frame.origin.y - kToolbarHeight)];
-                debug NSLog(@"  user list view frame = %@", NSStringFromCGRect(self.userListView.frame));
             }
         }];
     }
 }
 
 - (void)updateCommentSize:(CGFloat)height {
-    debug NSLog(@"inside updateCommentSize w/ height-%f", height);
     self.sendButton.enabled = ([[self.textView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0);
 
     CGRect textFrame = self.textView.frame;
@@ -1006,7 +993,6 @@ static int const kReportCommentTag = 18891;
     commentFrame.size.height = textFrame.size.height + kCommentFieldPadding;
     commentFrame.origin.y = bottom - height - kCommentFieldPadding;
     self.commentView.frame = commentFrame;
-    debug NSLog(@"    commentView.frame=%@", NSStringFromCGRect(self.commentView.frame));
     CGRect tableFrame = self.tableView.layer.frame;
     tableFrame.size.height = bottom - height - kCommentFieldPadding;
     self.tableView.frame = tableFrame;
@@ -1019,8 +1005,6 @@ static int const kReportCommentTag = 18891;
 }
 
 - (void)updateEditCommentSize:(CGFloat)height {
-    debug NSLog(@"updating comment size to height=%f", height);
-
     self.saveButton.enabled = ([[self.editingTextView.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length] > 0);
     self.cancelButton.enabled = YES;
     CGRect saveButtonFrame = self.saveButton.frame;
@@ -1030,21 +1014,16 @@ static int const kReportCommentTag = 18891;
     CGRect cancelButtonFrame = self.cancelButton.frame;
     cancelButtonFrame.origin.y = 5;
     self.cancelButton.frame = cancelButtonFrame;
-    debug NSLog(@"  self.cancelButton frame = %@", NSStringFromCGRect(self.cancelButton.frame));
-    debug NSLog(@"  self.saveButton frame = %@", NSStringFromCGRect(self.saveButton.frame));
-
     CGRect textFrame = self.editingTextView.frame;
     textFrame.size.height = height;
     textFrame.origin.y = self.saveButton.frame.origin.y + self.saveButton.frame.size.height;
     self.editingTextView.frame = textFrame;
-    debug NSLog(@"  editingTextViewFrame = %@", NSStringFromCGRect(self.editingTextView.frame));
 
 
     CGFloat bottom = [UIScreen mainScreen].bounds.size.height - kToolbarHeight;
     if (self.keyboardObserver.keyboardView) {
         bottom = self.keyboardObserver.keyboardView.layer.frame.origin.y - kToolbarHeight;
     }
-    debug NSLog(@"  bottom = %f", bottom);
 
     CGRect editingViewFrame = self.editingView.frame;
     editingViewFrame.size.height = textFrame.size.height + kCommentFieldPadding + MAX(self.cancelButton.frame.size.height, self.saveButton.frame.size.height);
@@ -1155,7 +1134,6 @@ static int const kReportCommentTag = 18891;
 }
 
 - (void)updatePost:(NSNotification *)n {
-    debug NSLog(@"inside updatePost");
     if (self.liking) {
         self.liking = NO;
         return;
@@ -1303,6 +1281,13 @@ static int const kReportCommentTag = 18891;
     [self.editingTextView becomeFirstResponder];
 }
 
+- (void)copyCommentToClipboard {
+    TDComment *comment = [self.post commentAtIndex:self.editingCommentNumber];
+    [[TDAnalytics sharedInstance] logEvent:@"copied_comment_text"];
+    [[UIPasteboard generalPasteboard] setString:comment.body];
+    [[TDAppDelegate appDelegate] showToastWithText:@"Text copied to clipboard" type:kToastType_Info payload:nil delegate:nil];
+
+}
 
 - (void)commentDeleted:(NSNotification*)notification {
     
@@ -1378,8 +1363,7 @@ static int const kReportCommentTag = 18891;
 
 - (void)modifyCurrentUserComment:(NSIndexPath*)indexPath {
     if ([[[UIDevice currentDevice] systemVersion] floatValue] < 8.0){
-        NSMutableArray *buttonStrings = [[NSMutableArray alloc] init];
-        [buttonStrings addObject:@"Edit"];
+        NSArray *buttonStrings = @[@"Copy Text", @"Edit"];
 
         [UIActionSheet showInView:self.view
                         withTitle:nil
@@ -1395,7 +1379,12 @@ static int const kReportCommentTag = 18891;
                              if (buttonIndex == actionSheet.destructiveButtonIndex) {
                                  [self presentDeleteCommentAlertView];
 
-                             } else {
+                             } else if (buttonIndex == 1) {
+                                 [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
+                                 [self copyCommentToClipboard];
+                                 return;
+                             }
+                             else {
                                  [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
                                  [self editComment:indexPath.row];
                                  return;
@@ -1410,6 +1399,13 @@ static int const kReportCommentTag = 18891;
                                                                     handler:^(UIAlertAction * action) {
                                                                         [self presentDeleteCommentAlertView];
                                                                     }];
+
+        UIAlertAction *copyAction = [UIAlertAction actionWithTitle:@"Copy Text" style:UIAlertActionStyleDefault
+                                                                    handler:^(UIAlertAction * action) {
+                                                                        [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
+                                                                        [self copyCommentToClipboard];
+                                                                    }];
+
         UIAlertAction *editCommentAction =[UIAlertAction actionWithTitle:@"Edit" style:UIAlertActionStyleDefault
                                                                  handler:^(UIAlertAction * action) {
                                                                      [self editComment:indexPath.row];
@@ -1422,6 +1418,7 @@ static int const kReportCommentTag = 18891;
                                                        }];
 
         [alert addAction:deleteCommentAction];
+        [alert addAction:copyAction];
         [alert addAction:editCommentAction];
         [alert addAction:cancel];
 
@@ -1431,12 +1428,12 @@ static int const kReportCommentTag = 18891;
 
 - (void)reportComment:(NSIndexPath*)indexPath {
     if ([[[UIDevice currentDevice] systemVersion] floatValue] < 8.0){
-
+        NSArray *otherButtons = @[@"Copy Text"];
         [UIActionSheet showInView:self.view
                         withTitle:nil
                 cancelButtonTitle:@"Cancel"
            destructiveButtonTitle:@"Report as Inappropriate"
-                otherButtonTitles:nil
+                otherButtonTitles:otherButtons
                          tapBlock:^(UIActionSheet *actionSheet, NSInteger buttonIndex) {
                              if (buttonIndex == actionSheet.cancelButtonIndex) {
                                  [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
@@ -1444,7 +1441,6 @@ static int const kReportCommentTag = 18891;
                              }
 
                              if (buttonIndex == actionSheet.destructiveButtonIndex) {
-                                 debug NSLog(@"delete comment stuff");
                                  UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Report as Inappropriate?"
                                                             message:@"Please confirm you'd like to report this comment as inappropriate."
                                                             delegate:self
@@ -1452,6 +1448,11 @@ static int const kReportCommentTag = 18891;
                                                             otherButtonTitles:@"Report", nil];
                                  alert.tag = kReportCommentTag;
                                  [alert show];
+                             }
+
+                             if (buttonIndex == 1) {
+                                 [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
+                                 [self copyCommentToClipboard];
                              }
                          }];
     } else {
@@ -1476,7 +1477,13 @@ static int const kReportCommentTag = 18891;
 
                                                        }];
 
+        UIAlertAction* copyTextAction = [UIAlertAction actionWithTitle:@"Copy Text" style:UIAlertActionStyleDefault
+                                                       handler:^(UIAlertAction * action) {
+                                                           [self copyCommentToClipboard];
+                                                           [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
+                                                       }];
         [alert addAction:inappropriateAction];
+        [alert addAction:copyTextAction];
         [alert addAction:cancel];
 
         [self presentViewController:alert animated:YES completion:nil];

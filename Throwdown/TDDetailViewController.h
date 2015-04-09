@@ -25,6 +25,8 @@ enum {
     TDMuteUser,
     TDUnmuteUser,
     TDCopyShareLink,
+    TDCopyPostText,
+    TDCopyCommentText,
     TDCancel
 };
 typedef NSUInteger TDShareActivityType;
