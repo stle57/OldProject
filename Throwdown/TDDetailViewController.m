@@ -1365,7 +1365,7 @@ static int const kReportCommentTag = 18891;
 
 - (void)modifyCurrentUserComment:(NSIndexPath*)indexPath {
     if ([[[UIDevice currentDevice] systemVersion] floatValue] < 8.0){
-        NSArray *buttonStrings = @[@"Copy Text", @"Edit"];
+        NSArray *buttonStrings = @[@"Edit", @"Copy Text"];
 
         [UIActionSheet showInView:self.view
                         withTitle:nil
@@ -1383,12 +1383,12 @@ static int const kReportCommentTag = 18891;
 
                              } else if (buttonIndex == 1) {
                                  [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
-                                 [self copyCommentToClipboard];
+                                 [self editComment:indexPath.row];
                                  return;
                              }
                              else {
                                  [self.tableView deselectRowAtIndexPath:indexPath animated:NO];
-                                 [self editComment:indexPath.row];
+                                 [self copyCommentToClipboard];
                                  return;
                              }
 
@@ -1420,8 +1420,8 @@ static int const kReportCommentTag = 18891;
                                                        }];
 
         [alert addAction:deleteCommentAction];
-        [alert addAction:copyAction];
         [alert addAction:editCommentAction];
+        [alert addAction:copyAction];
         [alert addAction:cancel];
 
         [self presentViewController:alert animated:YES completion:nil];
